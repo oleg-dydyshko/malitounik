@@ -1,0 +1,1160 @@
+<resources>
+    <string name="navigation_drawer_open">Адкрыць навігацыйнае меню</string>
+    <string name="navigation_drawer_close">Закрыць навігацыйнае меню</string>
+    <string name="app_name">МалітоўнікBeta</string>
+    <string name="kaliandar">Каляндар БГКЦ</string>
+    <string name="kaliandar2">КАЛЯНДАР БГКЦ</string>
+    <string name="stary_zapaviet">Стары Запавет</string>
+    <string name="novy_zapaviet">Новы Запавет</string>
+    <string name="title_activity_stary_zapaviet2">Стары Запавет</string>
+    <string name="exit">Націсьніце другі раз, каб закрыць</string>
+    <string name="error">Памылка</string>
+    <string name="error_up">ПАМЫЛКА</string>
+    <string name="ok">Добра</string>
+    <string name="cansel">Скасаваць</string>
+    <string name="ok_u">ДОБРА</string>
+    <string name="cansel_u">СКАСАВАЦЬ</string>
+    <string name="close">Зачыніць</string>
+    <string name="title_biblia">БІБЛІЯ (пераклад В. Сёмухі)</string>
+    <string name="title_biblia_bokun">БІБЛІЯ (пераклад А. Бокуна)</string>
+    <string name="title_biblia_charniauski">БІБЛІЯ (пераклад У. Чарняўскага 2017)</string>
+    <string name="title_biblia2">Пераклад В. Сёмухі</string>
+    <string name="title_biblia_bokun2">Пераклад А. Бокуна</string>
+    <string name="title_biblia_charniauski2">Пераклад У. Чарняўскага 2017</string>
+    <string name="tools_item">Налады</string>
+    <string name="tools_admin_item">Налады%1$s</string>
+    <string name="search_call">Абраць сёньняшні дзень</string>
+    <string name="data_search">ВЫБЯРЫЦЕ РАЗЬДЗЕЛ</string>
+    <string name="razdzel">Разьдзел</string>
+    <string name="psalom">Псальма</string>
+    <string name="liturgikon">БОГАСЛУЖБОВЫЯ ТЭКСТЫ</string>
+    <string name="liturgikon2">Богаслужбовыя тэксты</string>
+    <string name="malitvy">МАЛІТВЫ</string>
+    <string name="akafisty">АКАФІСТЫ</string>
+    <string name="akafist0">Пра Акафіст</string>
+    <string name="akafist1">Найсьвяцейшай Багародзіцы</string>
+    <string name="akafist2">Маці Божай Нястомнай дапамогі</string>
+    <string name="akafist3">перад Жыровіцкай іконай</string>
+    <string name="akafist4">у гонар Падляшскіх мучанікаў</string>
+    <string name="akafist5">Імю Ісусаваму</string>
+    <string name="akafist6">да Духа Сьвятога</string>
+    <string name="akafist7">сьвятым апосталам Пятру і Паўлу</string>
+    <string name="other">ІНШАЕ</string>
+    <string name="czytanne">Чытаньне</string>
+    <string name="czytanne3">Чытаньне, за %1$d %2$s</string>
+    <string name="czytanne2">Чытаньні</string>
+    <string name="carkva_sviaty">Царкоўныя сьвяты</string>
+    <string name="kaliandar_bel">Даты Вялікадня</string>
+    <string name="font_size_app2">Шрыфт</string>
+    <string name="font_size_app">ВЫБРАЦЬ ПАМЕР ШРЫФТУ</string>
+    <string name="menu_font_size_app">Выбраць памер шрыфту</string>
+    <string name="apav_only">Толькі абавязковыя сьвяты</string>
+    <string name="apav_all">Усе сьвяты</string>
+    <string name="apav_no">Без апавяшчэньняў</string>
+    <string name="pascha">Даты Вялікадня</string>
+    <string name="sviaty">Царкоўныя сьвяты</string>
+    <string name="pamiatka">Памятка для вернiкаў</string>
+    <string name="natatka_add">Дадаць нататку</string>
+    <string name="natatka_name">Назва нататкі</string>
+    <string name="natatka">Нататка</string>
+    <string name="maje_natatki">МАЕ НАТАТКІ</string>
+    <string name="maje_natatki2">Мае нататкі</string>
+    <string name="add_color_zakladka">КОЛЕР ЗАКЛАДКІ</string>
+    <string name="sound">Гук</string>
+    <string name="vibration">Вібрацыя</string>
+    <string name="symbols">УМОЎНЫЯ ПАЗНАЧЭНЬНІ</string>
+    <string name="munu_symbols">Умоўныя пазначэньні</string>
+    <string name="help">Дапамагчы праекту</string>
+    <string name="pra_nas">Пра праграму</string>
+    <string name="juljan">Юльянскі каляндар</string>
+    <string name="hryharyjan">Грыгарыянскі каляндар</string>
+    <string name="zmiest">Сьвятыя і сьвяты</string>
+    <string name="sviatyia">Сьвятыя</string>
+    <string name="pascha_kaliandar_bel">ГРЫГАРЫЯНСКІ КАЛЯНДАР У БЕЛАРУСІ. ПАСХАЛІЯ</string>
+    <string name="paschalia">Пасхалія</string>
+    <string name="fullscreen">Тэксты на ўвесь экран</string>
+    <string name="song">ПЕСЬНІ</string>
+    <string name="data_search2">УВЯДЗІЦЕ ГОД\nЗ 1583 ПА 2093:</string>
+    <string name="data_search3">Увядзіце год</string>
+    <string name="ruzanec">РУЖАНЕЦ</string>
+    <string name="malitvy1">Малітвы ранішнія</string>
+    <string name="malitvy2">Малітвы вячэрнія</string>
+    <string name="S1">ПАСХА ХРЫСТОВА (ВЯЛІКДЗЕНЬ)</string>
+    <string name="S2">Богазьяўленьне (Вадохрышча)</string>
+    <string name="S3">Сустрэча Госпада нашага Ісуса Хрыста (Грамніцы)</string>
+    <string name="S4">Дабравешчаньне</string>
+    <string name="S5">Уваход Гасподні ў Ерусалім (Вербніца)</string>
+    <string name="S6">Узьнясеньне Гасподняе (Ушэсьце)</string>
+    <string name="S7">Зыход Сьвятога Духа (Тройца)</string>
+    <string name="S8">Перамяненьне Гасподняе (Спас)</string>
+    <string name="S9">Усьпеньне Найсьвяцейшай Багародзіцы</string>
+    <string name="S10">Нараджэньне Найсьвяцейшай Багародзіцы</string>
+    <string name="S11">Крыжаўзвышэньне</string>
+    <string name="S12">Уваход у Храм Найсьвяцейшай Багародзіцы</string>
+    <string name="S13">Нараджэньне Хрыстова (Каляды)</string>
+    <string name="S14">Абрэзаньне Гасподняе</string>
+    <string name="S15">Нараджэньне сьв. Яна Прадвесьніка і Хрысьціцеля</string>
+    <string name="S16">Сьвятых вярхоўных апосталаў Пятра і Паўла</string>
+    <string name="S17">Адсячэньне галавы сьв. Яна Прадвесьніка і Хрысьціцеля</string>
+    <string name="S18">Покрыва Найсьвяцейшай Багародзіцы</string>
+    <string name="Sv1">Заўтра сьвята</string>
+    <string name="Sv2">Сьвята</string>
+    <string name="Sv3">Заўтра абавязковае сьвята</string>
+    <string name="Sv4">Абавязковае сьвята</string>
+    <string name="spovedz">Падрыхтоўка да споведзі</string>
+    <string name="pesny1">Песьні праслаўленьня</string>
+    <string name="pesny2">З малітвай за Беларусь</string>
+    <string name="pesny3">Да Багародзіцы</string>
+    <string name="pesny4">Калядныя</string>
+    <string name="pesny5">Сьпевы Taize</string>
+    <string name="prynagodnyia">Прынагодныя малітвы</string>
+    <string name="search">Пошук песень</string>
+    <string name="rsinaidal">Глава</string>
+    <string name="psinaidal">Псалтирь</string>
+    <string name="bsinaidal">БІБЛІЯ (Расейскі Сінадальны пераклад)</string>
+    <string name="bsinaidal2">Расейскі Сінадальны пераклад</string>
+    <string name="stsinaidal">Ветхий завет</string>
+    <string name="novsinaidal">Новый завет</string>
+    <string name="maranata">Штодзённае чытаньне Бібліі за год:</string>
+    <string name="maranata2">Штодзённае чытаньне Бібліі за год, за %1$d %2$s</string>
+    <string name="maranata_opis">Штодзённае чытаньне Бібліі за год, паводле плану супольнасьці «Μαραν αθα»</string>
+    <string name="pasliaPrychscia">Малітвы пасьля сьвятога прычасьця</string>
+    <string name="vybranoe">Дадаць у Выбранае</string>
+    <string name="vybranoe_del">Выдаліць з Выбранага</string>
+    <string name="MenuVybranoe">ВЫБРАНАЕ</string>
+    <string name="Trash">Выдаліць усё</string>
+    <string name="remove">ВЫДАЛІЦЬ?</string>
+    <string name="addVybranoe">Дабаўлена ў Выбранае</string>
+    <string name="autoScroll">Аўтапрагортка</string>
+    <string name="parafii">Дзе знайсьці грэка-католікаў Беларусі</string>
+    <string name="paralel_smoll">Паралельныя месцы для %1$s</string>
+    <string name="paralel_opis">%1$s \n</string>
+    <string name="sabytie">Падзеі</string>
+    <string name="poshuk_semuxa">Пошук па перакладу В. Сёмухі</string>
+    <string name="poshuk">Пошук</string>
+    <string name="poshuk_sinoidal">Пошук па Сінадальным расейскім перакладзе</string>
+    <string name="poshuk_bokun">Пошук па перакладу А. Бокуна</string>
+    <string name="poshuk_charniauski">Пошук па перакладу У. Чарняўскага 2017</string>
+    <string name="procent">%1$d%%</string>
+    <string name="sabytieKali">Калі: %1$s %2$s \n%3$s\nРэдагаваць/Выдаліць</string>
+    <string name="sabytieDoKuda">Пачатак: %1$s %2$s \nКанец: %3$s %4$s \n%5$s\nРэдагаваць/Выдаліць</string>
+    <string name="error_ch">Памылка, даруйце\n</string>
+    <string name="error_ch2">Памылка, даруйце</string>
+    <string name="error_ch_email">carkvagazeta@gmail.com\nНапішыце пра памылку ў праграме\n\nЗагадзя шчыра дзякуем!</string>
+    <string name="Sabytie">%1$s%2$d.%3$s%4$d.%5$d</string>
+    <string name="seash">(%1$d)</string>
+    <string name="sabytie_name">Назва падзеі</string>
+    <string name="sabytie_pachatak">Пачатак:</string>
+    <string name="Sabytie_end">Канец:</string>
+    <string name="Sabytie_uved">Паведаміць за:</string>
+    <string name="Sabytie_repit">Паўтор:</string>
+    <string name="Sabytie_no_data_zakan">Няма даты заканчэньня</string>
+    <string name="Sabytie_install_kolkast_paz">Усталяваць колькасьць разоў</string>
+    <string name="Sabytie_paz">Раз (-оў)</string>
+    <string name="Sabytie_install_data_end">Усталяваць дату заканчэньня</string>
+    <string name="seashmin">ня менш за тры сымбалі</string>
+    <string name="settings_default">Налады па змаўчаньні</string>
+    <string name="tipicon_fon">ФОН У КАЛЕНДАРЫ:</string>
+    <string name="Post">Пост</string>
+    <string name="Strogi_post">Строгі\nпост</string>
+    <string name="Strogi_post_n">Строгі пост</string>
+    <string name="No_post">Посту\nняма</string>
+    <string name="No_post_n">Посту няма</string>
+    <string name="niadzeli_i_sviaty">Нядзелі і сьвяты</string>
+    <string name="zvychaynye_dny">Звычайныя дні</string>
+    <string name="Znaki_cviat">ЗНАЧКІ СЬВЯТАЎ:</string>
+    <string name="Vial_Dvun">Вялікія і двунадзясятыя сьвяты</string>
+    <string name="Z_Lic_na_ve">З ліцьцёй на вячэрні</string>
+    <string name="Z_v_v_v_u_n_u">З вялікай вячэрняй і вялікім услаўленьнем на ютрані</string>
+    <string name="Z_sh_v_v_u_u">З штодзённай вячэрняй і вялікім услаўленьнем на ютрані</string>
+    <string name="Z_sh_v_m_u_u">З штодзённай вячэрняй і малым услаўленьнем на ютрані</string>
+    <string name="malitva_za_pamerlyx">МАЛІТВА ЗА ПАМЕРЛЫХ</string>
+    <string name="malitva_za_paclicanyx">МАЛІТВА ЗА ПАКЛІКАНЫХ</string>
+    <string name="ps_102">СЬПЯВАЮЦЦА НАСТУПНЫЯ РАДКІ З Пс 102:</string>
+    <string name="ps_91">СЬПЯВАЕЦЦА АНТЫФОН (Пс 91)</string>
+    <string name="ps_145">ІНШЫ АНТЫФОН НЯДЗЕЛЬНЫ І СЬВЯТОЧНЫ (Пс 145):</string>
+    <string name="ps_92">АНТЫФОН У БУДНІЯ ДНІ - З Пс 92</string>
+    <string name="ps_94">ШТОДЗЁННЫ І НЯДЗЕЛЬНЫ АНТЫФОН - З Пс 94</string>
+    <string name="mc_5_3_12">ІНШЫ АНТЫФОН СЬВЯТОЧНЫ І НЯДЗЕЛЬНЫ (Мц 5:3&#8211;12):</string>
+    <string name="wifi_error">АДСУТНІЧАЕ ЗЛУЧЭНЬНЕ ПРАЗ WI-FI</string>
+    <string name="sviaty_notifi">АПАВЯШЧЭНЬНЕ ПРА ЦАРКОЎНЫЯ СЬВЯТЫ:</string>
+    <string name="biblia">БІБЛІЯ:</string>
+    <string name="vygliad">ВЫГЛЯД:</string>
+    <string name="vygliad2">ДЗЕНЬ-НОЧ</string>
+    <string name="delite_full">Вы сапраўды жадаеце выдаліць %1$s \"%2$s\"?</string>
+    <string name="delite_niadaunia">Вы сапраўды жадаеце выдаліць з нядаўніх кніг \"%1$s\"?</string>
+    <string name="delite_all_niadaunia">Вы сапраўды жадаеце выдаліць усе нядаўна прагледжанае?</string>
+    <string name="autotext">Шрыфт па змаўчаньні</string>
+    <string name="ton_n">Трапары і кандакі нядзельныя васьмі тонаў</string>
+    <string name="ton_sh">Трапары і кандакі штодзённыя - на кожны дзень тыдня</string>
+    <string name="widget_day_d_n">Начны</string>
+    <string name="auto_widget_day_d_n">Аўтаматычна</string>
+    <string name="type_signal_notif">СІГНАЛ ДЛЯ АПАВЯШЧЭНЬНЯ ПРА ПАДЗЕЮ:</string>
+    <string name="sviaty_pfes">Прафесійныя сьвяты і памятныя даты ў Беларусі</string>
+    <string name="sviaty_dziar">Дзяржаўныя сьвяты ў Беларусі</string>
+    <string name="sviaty_ulian">Сьвяты паводле юльянскага календара</string>
+    <string name="uriAlarm">Гук будзільніка: %1$s</string>
+    <string name="uriNotification">Гук апавяшчэньня: %1$s</string>
+    <string name="uriRingtone">Гук званка: %1$s</string>
+    <string name="uriPicker">Іншая мелодыя: %1$s</string>
+    <string name="uriPicker2">Іншая мелодыя</string>
+    <string name="content_open_popup">Адчыніць Меню</string>
+    <string name="redagaktirovat">Рэдагаваць</string>
+    <string name="delite">Выдаліць</string>
+    <string name="widget_settings">НАЛАДЫ ВІДЖЭТУ</string>
+    <string name="opisanie">Апісаньне</string>
+    <string name="download_bibliateka_file">Праглядзець (%1$s)</string>
+    <string name="pkc">Урачыстасьці і сьвяты ў рыма-католікаў Беларусі</string>
+    <string name="search_svityia">Пошук сьвятых і сьвятаў</string>
+    <string name="set_page_bibliateka">Выбраць старонку</string>
+    <string name="str_short_label1">Выбранае</string>
+    <string name="str_disable_message">Выключана</string>
+    <string name="sabytie_check_mun">Больш не паказваць</string>
+    <string name="bible_time">Працягнуць чытаньне</string>
+    <string name="paralel">Паралельныя месцы</string>
+    <string name="no_internet">НЯМА ІНТЭРНЭТ-ЗЛУЧЭНЬНЯ</string>
+    <string name="check_internet">Праверце налады злучэньня</string>
+    <string name="alesyaSemukha">ПРА ПЕРАКЛАД І ЎМОВЫ КАРЫСТАНЬНЯ ТЭКСТАМІ</string>
+    <string name="alesyaSemukha2">Пра пераклад і ўмовы карыстаньня тэкстамі</string>
+    <string name="vybor_daty">Выбраць дату</string>
+    <string name="vybor_mun">ВЫБРАЦЬ МЕСЯЦ</string>
+    <string name="vybor_year">ВЫБРАЦЬ ГОД</string>
+    <string name="copy">Скапіявана</string>
+    <string name="natatka_bersha_biblii">НАТАТКА ДЛЯ ВЕРША</string>
+    <string name="zakladki_bible">Закладкі</string>
+    <string name="natatki_biblii">Нататкі</string>
+    <string name="helpbible">Каб дадаць нататку або закладку, скапіяваць, выдзяліць або падкрэсьліць тэкст, націсьніце на патрэбны верш і ўтрымлівайце, тады зьнізу зьявіцца панэль дзеяньняў.</string>
+    <string name="delite_natatki_i_zakladki">Вы сапраўды жадаеце выдаліць %1$s\n\"%2$s\"?</string>
+    <string name="delite_all_natatki_i_zakladki">Вы сапраўды жадаеце выдаліць усе %1$s?</string>
+    <string name="zakladki_bible2">закладку</string>
+    <string name="natatki_biblii2">нататку</string>
+    <string name="stix_ru">/Стих</string>
+    <string name="stix_by">/Верш</string>
+    <string name="semuxa_maran_ata_error">У перакладзе Бібліі %1$s на беларускую мову гэтая кніга адсутнічае\n</string>
+    <string name="semuxa_maran_ata_error_glava">У перакладзе Бібліі %1$s на беларускую мову гэты разьдзел адсутнічае\n</string>
+    <string name="end_fabreary_be">Чытаецца 28.02 альбо 1.03</string>
+    <string name="end_fabreary_ru">Читается 28.02 или 1.03</string>
+    <string name="get_date">Выберыце дату</string>
+    <string name="title_psalter">ПСАЛТЫР (пераклад А. Надсана)</string>
+    <string name="title_psalter_privila">Правілы чытаньня Псалтыра</string>
+    <string name="dalshe">Далей</string>
+    <string name="nazad">Назад</string>
+    <string name="psalter">Псалмы</string>
+    <string name="peryiady">Царкоўныя перыяды</string>
+    <string name="kafizma">КАТЫЗМЫ</string>
+    <string name="kafizma2">Катызма %1$d</string>
+    <string name="pesni">Песьні Сьвятога Пісаньня</string>
+    <string name="malitva_pered">Малітвы перад\nчытаньнем Псалтыра</string>
+    <string name="malitva_posle">Малітвы пасьля\nчытаньня Псалтыра</string>
+    <string name="psalom2">Псалом</string>
+    <string name="poshuk_nadsan">Пошук па перакладу А. Надсана</string>
+    <string name="niama">Няма</string>
+    <string name="searche_text">Пошук у тэксьце</string>
+    <string name="searche_on_text">Пошук па тэкстах</string>
+    <string name="searche_on_data">Пошук даты Пасхі</string>
+    <string name="sort_alf">Сартаваць паводле алфавіту</string>
+    <string name="sort_time">Сартаваць паводле часу</string>
+    <string name="title_biblijateka">Бібліятэка Царквы</string>
+    <string name="title_download_module2">СПАМПОЎВАЕМ \"КІРАВАНЬНЕ РЭСУРСАМІ ПРАГРАМЫ\"</string>
+    <string name="title_resources">Рэсурсы Дадатка</string>
+    <string name="settings_notifi_sviata">Налады апавяшчэньня сьвятаў</string>
+    <string name="filter">Фільтар</string>
+    <string name="notifi">Апавяшчэньні</string>
+    <string name="notifi_full">Апавяшчэньні пра царкоўныя сьвяты</string>
+    <string name="notify_help">На вашай прыладзе не спрацоўваюць своечасова апавяшчэньні, трэба зрабіць наступнае:\n\n1. Налады -> батарэя -> запуск прыкладаньняў -> Малітоўнік: выключыць аўтаматычнае кіраваньне і ў ручным рэжыме ўсё ўключыць.\n\n2. Налады -> Прыкладаньні -> сьпецыяльны доступ (меню ўверсе справа) -> аптымізацыя працы батарэі -> Малітоўнік: забараніць.</string>
+    <string name="padzeia_on">Уключыць рэжым паказу Падзей</string>
+    <string name="padzeia_off">Выключыць рэжым паказу Падзей</string>
+    <string name="copynadsan">Скапіявана: %1$s</string>
+    <string name="dazvolic">Дазволіць</string>
+    <string name="download_bibliateka">Спампаваць з дапамогай мабільнай сеткі?</string>
+    <string name="download_opisanie">Спампаваць%1$sз дапамогай мабільнай сеткі?</string>
+    <string name="download_opisanie_all">Спампаваць усе іконы</string>
+    <string name="skid_brightness">СКІД</string>
+    <string name="default_font">Па змаўчаньні</string>
+    <string name="notifi_fix">Рамонт апавяшчэньняў</string>
+    <string name="sviaty_under">ІНШЫЯ СЬВЯТЫ:</string>
+    <string name="pamerlyia">Памінаньне памерлых</string>
+    <string name="bibliateka_carkvy">БІБЛІЯТЭКА ЦАРКВЫ</string>
+    <string name="bibliateka_niadaunia">Нядаўна прагледжанае</string>
+    <string name="bibliateka_gistoryia_carkvy">Гісторыя Царквы</string>
+    <string name="bibliateka_malitouniki">Малітоўнікі</string>
+    <string name="bibliateka_speuniki">Сьпеўнікі</string>
+    <string name="bibliateka_rel_litaratura">Рэлігійная літаратура</string>
+    <string name="bibliateka_file">Выбраць файл</string>
+    <string name="del_all_vybranoe">Вы сапраўды жадаеце выдаліць усё Выбранае?</string>
+    <string name="delite_all_vybranoe">Выдаліць усё Выбранае</string>
+    <string name="share">Падзяліцца&#8230;</string>
+    <string name="slugby_vialikaga_postu">Трыёдзь посная</string>
+    <string name="bad_internet">ДРЭННАЕ ІНТЭРНЭТ ЗЛУЧЭНЬНЕ\nПраверце якасьць сігналу</string>
+    <string name="copy_big">Cкапіяваць</string>
+    <string name="copy_big_full">Вылучыць усё</string>
+    <string name="set_versh">Выберыце верш</string>
+    <string name="add_to_zakladki">Дабаўлена у закладкі</string>
+    <string name="clean_histopy">Ачысьціць гісторыю пошуку</string>
+    <string name="clean_histopy_title">АЧЫСЬЦІЦЬ ГІСТОРЫЮ?</string>
+    <string name="all_clean_histopy">Вы сапраўды жадаеце выдаліць усю гісторыю пошуку?</string>
+    <string name="all_clean_item_histopy">Вы сапраўды жадаеце выдаліць \"%1$s\" із гісторыі пошуку?</string>
+    <string name="search_malitv">Пошук малітвы</string>
+    <string name="searche_bogasluz_text">Пошук тэкстаў</string>
+    <string name="registr">Улічваць рэгістар</string>
+    <string name="dakladnae_supadzenne">Дакладнае супадзеньне</string>
+    <string name="pavedamic">Паведамляць а %1$d-й гадзіне</string>
+    <string name="save">Захавана</string>
+    <string name="mun">Месяц</string>
+    <string name="niadzelia">Тыдзень</string>
+    <string name="remove_padzea">Выдалена</string>
+    <string name="data_sabytie_error">Дата заканчэньня павінна быць пазней, чым дата пачатку</string>
+    <string name="data_sabytie_error2">Дата паўтору павінна быць пазней, чым дата пачатку</string>
+    <string name="remove_sabytie_iak">Якія падзеі Вы жадаеце выдаліць?</string>
+    <string name="no_file">Файл не існуе</string>
+    <string name="sabytie_del_all">Усё</string>
+    <string name="sabytie_del_old">Старыя</string>
+    <string name="set_time_sabytie">Выберыце час</string>
+    <string name="opisanie_error">Даруйце, апісаньня няма</string>
+    <string name="add_sabytie">Дадаць падзею</string>
+    <string name="del_sabytie">Выдаліць падзеі</string>
+    <string name="save_sabytie">Захаваць</string>
+    <string name="save_sabytie_up">ЗАХАВАЦЬ</string>
+    <string name="download_file">СПАМПАВАЦЬ ФАЙЛ? %1$s</string>
+    <string name="dastupna_bat">: ДАСТУПНА %1$s КБ</string>
+    <string name="dastupna_bates">: ДАСТУПНА %1$d БАЙТ</string>
+    <string name="bible_natatki">%1$s \n\n%2$s</string>
+    <string name="mesiach">%1$s, %2$s</string>
+    <string name="tydzen_name2">%1$s %2$s %3$s</string>
+    <string name="tydzen_name3">%1$s %2$s %3$s, %4$s</string>
+    <string name="get_font">%1$d sp</string>
+    <string name="sabytie_kali">Калі: %1$s %2$s\n%3$s</string>
+    <string name="sabytie_pachatak_show">Пачатак: %1$s %2$s\nКанец: %3$s %4$s\n%5$s</string>
+    <string name="empty"> </string>
+    <string name="chytanne">Чытаньне:</string>
+    <string name="vybranoe_biblia_delite">Вы сапраўды жадаеце выдаліць \"%1$s\"?</string>
+    <string name="ekpan_on">Экран заўсёды ўключаны</string>
+    <string name="color_padzei">Колер:</string>
+    <string name="sabytie_no_pavedam">Паведаміць: Ніколі</string>
+    <string name="sabytie_pavedam">Паведаміць: %1$s%2$d.%3$s%4$d.%5$d у %6$d:%7$s%8$d</string>
+    <string name="sabytie_zmenena">ПАДЗЕЯ ЗЬМЕНЕНА</string>
+    <string name="sabytie_zaxavac">Захаваць зьмены?</string>
+    <string name="sabytie_no">Не</string>
+    <string name="sabytie_yes">Так</string>
+    <string name="sabytie_bez_kanca">Без канца</string>
+    <string name="dvuna_i_vial">Двунадзясятыя\nі вялікія сьвяты</string>
+    <string name="help_davedka">ДАВЕДКА</string>
+    <string name="help_full_screen">Па краях экрана:\nСправа - рэгуляваньне памеру шрыфту\nУнізе - уключэньне аўтапрагорткі</string>
+    <string-array name="malitvy_pasli_prychastia">
+        <item>Малітва падзякі</item>
+        <item>Малітва сьв. Васіля Вялікага</item>
+        <item>Малітва Сымона Мэтафраста</item>
+        <item>Iншая малітва</item>
+        <item>Малітва да Найсьвяцейшай Багародзіцы</item>
+    </string-array>
+    <string-array name="akafisty">
+        <item>Пра Акафіст</item>
+        <item>Найсьвяцейшай Багародзіцы</item>
+        <item>Маці Божай Нястомнай Дапамогі</item>
+        <item>перад Жыровіцкай іконай</item>
+        <item>у гонар Падляшскіх мучанікаў</item>
+        <item>Імю Ісусаваму</item>
+        <item>да Духа Сьвятога</item>
+        <item>сьв. Апосталам Пятру і Паўлу</item>
+        <item>Акафіст сьв. Язэпу</item>
+        <item>Акафіст Росіцкім мучанікам</item>
+    </string-array>
+    <string-array name="sub_bogaslugbovuia_vichernia">
+        <item>Вячэрня ў нядзелі і сьвяты</item>
+        <item>Ліцьця і блаславеньне хлябоў</item>
+        <item>Вячэрня ў звычайныя дні</item>
+        <item>Вячэрня ў Вялікім посьце</item>
+        <item>Вячэрняя служба штодзённая (без сьвятара)</item>
+        <item>Вячэрня на Сьветлым тыдні</item>
+    </string-array>
+    <string-array name="sub_bogaslugbovuia_vialiki_post">
+        <item>Службы 1-га тыдня Вялікага посту</item>
+        <item>Службы 2-га тыдня Вялікага посту</item>
+        <item>Службы 3-га тыдня Вялікага посту</item>
+        <item>Службы 4-га тыдня Вялікага посту</item>
+        <item>Службы 5-га тыдня Вялікага посту</item>
+        <item>Службы 6-га тыдня Вялікага посту</item>
+    </string-array>
+    <string-array name="bogaslugbovuia_tryjodz">
+        <item>Трыёдзь посная</item>
+        <item>Службы Вялікага тыдня</item>
+        <item>Службы Сьветлага тыдня</item>
+        <item>Трыёдзь Кветная</item>
+    </string-array>
+    <string-array name="malitvy">
+        <item>Ранішняя малітвы</item>
+        <item>Вячэрнія малітвы</item>
+        <item>Прынагодныя малітвы</item>
+    </string-array>
+    <string-array name="ruzanec">
+        <item>Малітвы на вяровіцы</item>
+        <item>Молімся на ружанцы</item>
+        <item>Разважаньні на Ружанец</item>
+        <item>Частка I. Радасныя таямніцы (пн, сб)</item>
+        <item>Частка II. Балесныя таямніцы (аўт, пт)</item>
+        <item>Частка III. Слаўныя таямніцы (ср, ндз)</item>
+        <item>Частка IV. Таямніцы сьвятла (чц)</item>
+    </string-array>
+    <string-array name="ton_kogny_dzen">
+        <item>ПАНЯДЗЕЛАК\nСлужба сьвятым анёлам</item>
+        <item>АЎТОРАК\nСлужба сьвятому Яну Хрысьціцелю</item>
+        <item>СЕРАДА\nСлужба Найсьвяцейшай Багародзіцы і Крыжу</item>
+        <item>ЧАЦЬВЕР\nСлужба апосталам і сьвятому Мікалаю</item>
+        <item>ПЯТНІЦА\nСлужба Крыжу Гасподняму</item>
+        <item>СУБОТА\nСлужба ўсім сьвятым і памёрлым</item>
+    </string-array>
+    <string-array name="serche_bible">
+        <item>Уся Біблія</item>
+        <item>Евангельлі</item>
+        <item>Новы Запавет</item>
+        <item>Пяцікніжжа</item>
+        <item>Стары Запавет</item>
+    </string-array>
+    <string-array name="sabytie_izmerenie">
+        <item>хвілінаў</item>
+        <item>часоў</item>
+        <item>дзён</item>
+        <item>тыдняў</item>
+    </string-array>
+    <string-array name="sabytie_repit">
+        <item>Няма</item>
+        <item>Кожны дзень</item>
+        <item>Па будных днях</item>
+        <item>Два дні праз два</item>
+        <item>Кожны тыдзень</item>
+        <item>Кожныя два тыдні</item>
+        <item>Кожныя чатыры тыдні</item>
+        <item>Кожны месяц</item>
+        <item>Раз на год</item>
+    </string-array>
+    <string name="help_list_view">Націснуўшы на стрэлкі можна перамяшчаць пункт меню ў адвольнае месца.\nРухам направа па пункце меню - яго рэдагаваньне, калі даступна.\nРухам налева па пункце меню - яго выдаленьне.</string>
+    <string name="no_danyx">Прабачце, няма дадзеных</string>
+    <string name="no_lityrgii">Літургіі няма</string>
+    <string name="skip_utran">Прапусьціць ютрань</string>
+    <string name="pvaslavnye_sviaty">Праваслаўныя сьвяты</string>
+    <string name="ryma_katalickia_sviaty">Рыма-каталіцкія сьвяты</string>
+    <string name="dziarjaunyia_sviaty">Дзяржаўныя сьвяты</string>
+    <string name="prafisijnyia_sviaty">Прафісійныя сьвяты</string>
+    <string name="ndz">Ндз</string>
+    <string name="pn">Пн</string>
+    <string name="au">Аў</string>
+    <string name="sp">Ср</string>
+    <string name="ch">Чц</string>
+    <string name="pt">Пт</string>
+    <string name="sb">Сб</string>
+    <string name="font_pa_zmauchanni">ПА ЗМАЎЧАНЬНІ</string>
+    <string name="plus">+</string>
+    <string name="minus">-</string>
+    <string name="font_size">Памер шрыфту</string>
+    <string name="trsviata">Сьвяту</string>
+    <string name="trsviatoy">Сьвятому</string>
+    <string name="ton">Тон %1$s</string>
+    <string name="pesnia">Песьня %1$d</string>
+    <string name="set_yelloy">Вылучыць чырвоным</string>
+    <string name="set_underline">Вылучыць падкрэсьліваньнем</string>
+    <string name="set_bold">Вылучыць тоўстым</string>
+    <string name="set_italic">Вылучыць курсівам</string>
+    <string name="set_red">Вылучыць чырвоным</string>
+    <string name="set_bookmark">Дадаць у закладкі</string>
+    <string name="viachernia">Вячэрня</string>
+    <string name="raviachernica">Павячэрніца</string>
+    <string name="paunochnica">Паўночніца</string>
+    <string name="utran">Ютрань</string>
+    <string name="gadziny">Гадзіны</string>
+    <string name="liturgia">Літургія</string>
+    <string name="jyci">Жыцьці</string>
+    <string name="piarliny">Пярліны</string>
+    <string name="piarliny2">Пярліна за %1$d %2$s</string>
+    <string name="ustau">Устаў</string>
+    <string-array name="dni_nedeli">
+        <item />
+        <item>нядзеля</item>
+        <item>панядзелак</item>
+        <item>аўторак</item>
+        <item>серада</item>
+        <item>чацьвер</item>
+        <item>пятніца</item>
+        <item>субота</item>
+    </string-array>
+    <string-array name="meciac">
+        <item>СТУДЗЕНЯ</item>
+        <item>ЛЮТАГА</item>
+        <item>САКАВІКА</item>
+        <item>КРАСАВІКА</item>
+        <item>ТРАЎНЯ</item>
+        <item>ЧЭРВЕНЯ</item>
+        <item>ЛІПЕНЯ</item>
+        <item>ЖНІЎНЯ</item>
+        <item>ВЕРАСЬНЯ</item>
+        <item>КАСТРЫЧНІКА</item>
+        <item>ЛІСТАПАДА</item>
+        <item>СЬНЕЖНЯ</item>
+    </string-array>
+    <string-array name="meciac2">
+        <item>СТУДЗЕНЬ</item>
+        <item>ЛЮТЫ</item>
+        <item>САКАВІК</item>
+        <item>КРАСАВІК</item>
+        <item>ТРАВЕНЬ</item>
+        <item>ЧЭРВЕНЬ</item>
+        <item>ЛІПЕНЬ</item>
+        <item>ЖНІВЕНЬ</item>
+        <item>ВЕРАСЕНЬ</item>
+        <item>КАСТРЫЧНІК</item>
+        <item>ЛІСТАПАД</item>
+        <item>СЬНЕЖАНЬ</item>
+    </string-array>
+    <string name="bgkc_kuryia">Курыя Апостальскай Візітатуры БГКЦ</string>
+    <string-array name="bgkc">
+        <item>Цэнтральны дэканат</item>
+        <item>Усходні дэканат</item>
+        <item>Заходні дэканат</item>
+        <item>Замежжа</item>
+    </string-array>
+    <string-array name="meciac3">
+        <item>Студзень</item>
+        <item>Люты</item>
+        <item>Сакавік</item>
+        <item>Красавік</item>
+        <item>Травень</item>
+        <item>Чэрвень</item>
+        <item>Ліпень</item>
+        <item>Жнівень</item>
+        <item>Верасень</item>
+        <item>Кастрычнік</item>
+        <item>Лістапад</item>
+        <item>Сьнежань</item>
+    </string-array>
+    <string-array name="meciac_smoll">
+        <item>студзеня</item>
+        <item>лютага</item>
+        <item>сакавіка</item>
+        <item>красавіка</item>
+        <item>траўня</item>
+        <item>чэрвеня</item>
+        <item>ліпеня</item>
+        <item>жніўня</item>
+        <item>верасьня</item>
+        <item>кастрычніка</item>
+        <item>лістапада</item>
+        <item>сьнежня</item>
+    </string-array>
+    <string name="site_admin">Кіраваньне рэсурсамі праграмы</string>
+    <string name="admin_panel">ПАНЭЛЬ КІРАВАНЬНЯ</string>
+    <string name="login">Логін</string>
+    <string name="password">Пароль</string>
+    <string name="pre_view">Прадпрагляд</string>
+    <string name="fing_count">%1$d/%2$d</string>
+    <string name="pasochnica">Пясочніца</string>
+    <string name="set_file_name">ВЫБЯРЫЦЕ ІМЯ ФАЙЛА</string>
+    <string name="add_file">Дадаць файл</string>
+    <string name="rename_file">Перайменаваць</string>
+    <string name="save_as_up">ЗАХАВАЦЬ ЯК&#8230;</string>
+    <string name="save_as">Захаваць як&#8230;</string>
+    <string name="file_name">Імя файла:</string>
+    <string name="file_name2">Імя файла</string>
+    <string name="file_perazapisac">Перазапісаць</string>
+    <string name="file_exists">ФАЙЛ ІСНУЕ</string>
+    <string name="file_exists_opis">Перазапісаць існуючы файл \"%1$s\"?</string>
+    <string name="mk_dir">СТВАРЫЦЬ КАТАЛОГ</string>
+    <string name="set_file_dir">ВЫБЯРЫЦЕ ІМЯ КАТАЛОГА</string>
+    <string name="image_upload">Загрузіць ікону</string>
+    <string name="image_help_ok">Уставіць</string>
+    <string name="zmena_chastki">Зьменныя часткі</string>
+    <string name="add_piarliny">Дадаць пярліну</string>
+    <string name="mineia_agulnaia">Мінэя агульная</string>
+    <string name="aktoix">Актоіх</string>
+    <string-array name="aktoix_list">
+        <item>Вячэрня Тон 1</item>
+        <item>Вячэрня Тон 2</item>
+        <item>Вячэрня Тон 3</item>
+        <item>Вячэрня Тон 4</item>
+        <item>Вячэрня Тон 5</item>
+        <item>Вячэрня Тон 6</item>
+        <item>Вячэрня Тон 7</item>
+        <item>Вячэрня Тон 8</item>
+        <item>Багародзічныя адпушчальныя</item>
+    </string-array>
+    <string-array name="trebnik_list">
+        <item>Служба аб вызваленьні бязьвінна зьняволеных</item>
+        <item>Служба за памерлых — Малая паніхіда</item>
+        <item>Чын асьвячэньня транспартнага сродку</item>
+        <item>Асьвячэньне крыжа на сьвятой Літургіі</item>
+        <item>Блаславеньне ўсялякае рэчы</item>
+        <item>Малітва на асьвячэньне памятнай табліцы Слузе Божаму</item>
+        <item>Малітва на асьвячэньне памятнай табліцы Слузе Божаму, які пацярпеў за Беларусь</item>
+        <item>Малітва на асьвячэньне памятнай табліцы ўсім бязьвінным ахвярам, якія пацярпелі за Беларусь</item>
+    </string-array>
+    <string-array name="mineia_agulnaia_list">
+        <item>Вячэрня агульная Найсьвяцейшай Багародзіцы</item>
+        <item>Вячэрня агульная Яну Хрысьціцелю</item>
+        <item>Вячэрня агульная прароку</item>
+        <item>Вячэрня агульная апосталу</item>
+        <item>Вячэрня агульная апосталам</item>
+        <item>Вячэрня агульная сьвятаначальніку</item>
+        <item>Вячэрня агульная сьвятаначальнікам</item>
+        <item>Вячэрня агульная посьніку, манаху і пустэльніку</item>
+        <item>Вячэрня агульная посьнікам, манахам і пустэльнікам</item>
+        <item>Вячэрня агульная вызнаўцу і настаўніку царкоўнаму</item>
+        <item>Вячэрня агульная мучаніку</item>
+        <item>Вячэрня агульная мучаніку (іншая)</item>
+        <item>Вячэрня агульная мучанікам</item>
+        <item>Вячэрня агульная сьвятамучаніку</item>
+        <item>Вячэрня агульная сьвятамучанікам</item>
+        <item>Вячэрня агульная мучаніку сьвятару або манаху</item>
+        <item>Вячэрня агульная мучанікам сьвятарам або манахам</item>
+        <item>Вячэрня агульная мучаніцы</item>
+        <item>Вячэрня агульная мучаніцы (іншая)</item>
+        <item>Вячэрня агульная мучаніцам</item>
+        <item>Вячэрня агульная мучаніцы манахіні</item>
+        <item>Вячэрня агульная сьвятой жанчыне</item>
+        <item>Вячэрня агульная сьвятым жанчынам</item>
+        <item>Вячэрня агульная бескарысьлівым лекарам і цудатворцам</item>
+        <item>Служба апосталу або апосталам</item>
+        <item>Служба настаўніку царкоўнаму і вызнаўцу</item>
+        <item>Служба сьвятаначальнікам</item>
+        <item>Служба сьвятаначальніку</item>
+        <item>Служба Найсьвяцейшай Багародзіцы</item>
+        <item>Служба за памерлых на кожны дзень тыдня</item>
+        <item>Служба бескарысьлівым лекарам і цудатворцам</item>
+        <item>Служба мучаніцам</item>
+        <item>Служба мучаніцы</item>
+        <item>Служба мучанікам</item>
+        <item>Служба мучанікам сьвятарам і манахам</item>
+        <item>Служба мучаніку</item>
+        <item>Служба мучаніку сьвятару і манаху</item>
+        <item>Служба сьвятой жанчыне</item>
+        <item>Служба сьвятым жанчынам</item>
+        <item>Служба посьнікам, манахам і пустэльнікам</item>
+        <item>Служба посьніку / аскету, манаху і пустэльніку</item>
+        <item>Служба сьвятому Яну Хрысьціцелю</item>
+        <item>Служба прароку</item>
+        <item>ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ</item>
+    </string-array>
+    <string name="title_dynamicfeature">Admin</string>
+    <string name="left_caliandar">Лева календаря</string>
+    <string name="right_caliandar">Права календаря</string>
+    <string name="speed_auto_scroll">Хуткасьць прагорткі</string>
+    <string name="search_sabytie">Пошук Падзей</string>
+    <string name="sabytie_data_name">%1$s %2$s</string>
+    <string name="trash_sabytie">ВЫДАЛІЦЬ УСЁ ПАДЗЕІ?</string>
+    <string name="del_all_sabytie">Вы сапраўды жадаеце выдаліць усё Падзеі?</string>
+    <string name="help_alarm_title">БУДЗІЛЬНІКІ</string>
+    <string name="help_alarm_content">Праграме патрэбны будзільнікі для паказу апавяшчэньняў пра Падзеі.</string>
+    <string name="update_title">СПАМПОЎВАЕМ АБНАЎЛЕНЬНЕ ПРАГРАМЫ</string>
+    <string name="update_title2">АБНАЎЛЕНЬНЕ ПРАГРАМЫ</string>
+    <string name="admin_update">АБНАЎЛЕНЬНЕ</string>
+    <string name="admin_update_all">Абнаўленьне павінна існаваць у Google Play.\nНапішыце нумар %1$s версіі:</string>
+    <string name="admin_update_ok">Апублікаваць</string>
+    <string name="mineia_shtodzennaia">Мінэя месячная</string>
+    <string name="mineia_sviatochnaia">Трыёдзь Кветная</string>
+    <string-array name="admin_svity">
+        <item>Чырвоны</item>
+        <item>Чырвоны тоўсты</item>
+        <item>Нармальны</item>
+    </string-array>
+    <string name="viaczernia_bierascie_1">Выбраныя вершы з псалмаў 1–3</string>
+    <string name="viaczernia_bierascie_3">На нядзельнай вячэрні вершапесьні сьпяваюцца з наступнымі вершамі:</string>
+    <string name="del_all_back_copy">Вы сапраўды жадаеце выдаліць усё рэзервовыя копіі?</string>
+    <string name="del_all_pasochnica">Вы сапраўды жадаеце выдаліць усю пясочніцу?</string>
+    <string name="del_pasochnica">Выдаліць усю пясочніцу</string>
+    <string name="del_all_copy">Выдаліць усе рэзервовыя копіі</string>
+    <string name="tryjodz">Трыёдзь</string>
+    <string name="admin_day_in_year">Дзень ад пачатку года (да і пасьля Пасxi)</string>
+    <string name="admin_show_day_in_year">Год (Пасха): %1$s (%2$s)</string>
+    <string name="admin_set_name_link">СПАСЫЛКА</string>
+    <string name="admin_link">Спасылка:</string>
+    <string name="admin_title_link">Імя спасылкі:</string>
+    <string name="malitva_za_paclicanyx_i_jyvyx">УСПАМІН ПАМЕРЛЫХ І ЖЫВЫХ</string>
+    <string name="bible_time_error">Няма захаванай старонкі</string>
+    <string name="bible_vybranoe_error">Каб дадаць у Выбранае, націсьніце на зорачку ці \"Дадаць у Выбранае\"</string>
+    <string name="gl_tyt">%1$s: Глядзіце тут</string>
+    <string name="settings_poshuk">НАЛАДЫ ПОШУКУ</string>
+    <string name="settings_poshuk_smoll">Налады пошуку</string>
+    <string name="help_notifications_api33">Для паказу апавяшчэньняў пра падзеі і сьвяты, патрабуецца дазвол на паказ апавяшчэньняў.</string>
+    <string name="no_notifikations">Апавяшчэньні адключаны. Для ўключэньня апавяшчэньняў націсніце тут.</string>
+    <string name="searsh_null_vynik">Вынікаў няма</string>
+    <string name="tryjodz_opisanie">%1$s%2$s</string>
+    <string name="bogaslujbovyia_data">%1$s за %2$d %3$s %4$d года</string>
+    <string name="dialog_error_data">ПАМЫЛКА КАЛЕНДАРА</string>
+    <string name="dialog_error_data_opisanie">Праверце сістэмную дату або абярыце дату %1$d %2$s %3$d года у меню.</string>
+    <string name="dialog_error_data_ok">Абраць</string>
+    <string name="admin_file_upload_server">Загрузіць файл</string>
+    <string name="malitounik_name">Малітоўнік.\nКаляндар БГКЦ</string>
+    <string name="bgkc_resource">БЕЛАРУСКІ ГРЭКА-КАТАЛІЦКІ РЭСУРС</string>
+    <string name="log">ЛОГ</string>
+    <string name="log_m">Лог праграмы</string>
+    <string name="set_log">Даслаць файлы</string>
+    <string name="setd_log_file">Даслаць лог</string>
+    <string name="check_update_resourse">Ёсьць абнаўленьне рэсурсаў</string>
+    <string name="set_log_file">Адправіць файл</string>
+    <string name="admin_date">%1$d %2$s</string>
+    <string name="admin_img_sviat">Іконкі сьвятых</string>
+    <string name="admin_title">Назва кнігі</string>
+    <string name="arx_num_gaz">Архіў нумароў газеты</string>
+    <string name="dialog_help_share">У некаторых сацыяльных сетках, напрыклад Ficebook, тэкст не з\'явіцца, яго трэба ўставіць уручную.</string>
+    <string name="copy_text">Тэкст скапіяваны</string>
+    <string name="admin_resourse_error">Шмат рэсурсаў у %1$d дзень!</string>
+    <string name="padie_maryia">РАДЫЁ МАРЫЯ</string>
+    <string name="padie_maryia_s">Радыё Марыя</string>
+    <string name="program_radio_maryia">ПРАГРАМА ПЕРАДАЧ РАДЫЁ МАРЫЯ</string>
+    <string name="widget_title">Каляндар на дзень</string>
+    <string name="widget_mun_title">Каляндар на месяц</string>
+    <string name="cytaty_staronka">Старонка %1$d</string>
+    <string name="cytaty_z_biblii">Цытаты з Бібліі</string>
+    <string name="convert_to_html">Канвертаваньне ў html</string>
+    <string name="is_html_title">ФАРМАТ HTML</string>
+    <string name="is_html">Тэкст у фармаце HTML?</string>
+    <string name="citata_error">Памылка: у файле \"citata\" няма \"(\" у страке %1$d</string>
+    <string name="vybrac_file">ВЫБЕРЫЦЕ ФАЙЛ</string>
+    <string name="dvunad_sv">ДВУНАДЗЯСЯТЫЯ СЬВЯТЫ</string>
+    <string name="vial_sv">ВЯЛІКІЯ СЬВЯТЫ</string>
+    <string name="dni_yspamin_pam">ДНІ ЎСПАМІНУ ПАМЁРЛЫХ</string>
+    <string name="carkva_pamiat_data">ЦАРКОЎНЫЯ ПАМЯТНЫЯ ДАТЫ</string>
+    <string name="parafia_sv">ПАРАФІЯЛЬНЫЯ СЬВЯТЫ</string>
+    <string-array name="colors">
+        <item>#D00505</item>
+        <item>#800080</item>
+        <item>#C71585</item>
+        <item>#FF00FF</item>
+        <item>#F4A460</item>
+        <item>#D2691E</item>
+        <item>#A52A2A</item>
+        <item>#1E90FF</item>
+        <item>#6A5ACD</item>
+        <item>#228B22</item>
+        <item>#9ACD32</item>
+        <item>#20B2AA</item>
+    </string-array>
+    <string name="update_program">Даступна абнаўленьне</string>
+    <string name="update_program_progress">%1$s з %2$s</string>
+    <string name="update_no_biblijateka">Абнаўленьняў няма</string>
+    <string name="day">Дзённы</string>
+    <string name="gallery">Галерэя</string>
+    <string name="gallery_search">Шукаем выявы ікон:\n%1$s</string>
+    <string name="gallery_download">Спампоўваем выявы ікон:\n%1$s</string>
+    <string name="admin_opisanne_icon">Апісаньне іконы</string>
+    <string name="settengs_font_size_app">Выбраць памер шрыфту інтэрфэйсу:</string>
+    <string name="mineia_slugba">%1$s%2$s</string>
+    <string-array name="fonts">
+        <item>18sp</item>
+        <item>22sp (па змаўчаньні)</item>
+        <item>24sp</item>
+        <item>26sp</item>
+        <item>28sp</item>
+    </string-array>
+    <string name="chto_novaga_title">ШТО НОВАГА?</string>
+    <string name="admin_dialog_check_log_title">ПРАВЕР</string>
+    <string name="admin_upload_contine">Праверка скончана. Няма зьмен.</string>
+    <string name="admin_upload_no_wi_fi">Працуе толькі на WI-FI.</string>
+    <string name="admin_upload_log_contine">У логу няма зьмен. Усё роўна праверыць?</string>
+    <string name="admin_update_log">Абнаўленьне лога</string>
+    <string name="admin_sviatya_pyxomyia">Сьвятыя рухомыя</string>
+    <string name="admin_update_meta">Абнавіць метададзеныя</string>
+    <string name="gallery_slayd_show">Запусціць слайд-шоў</string>
+    <string name="settings_gallery">Налады галерэі</string>
+    <string name="settings_gallery_item_name">%1$d секунд(-ы)</string>
+    <string name="gallery_slayd_show_speed">Інтэрвал:</string>
+    <string name="gallery_slayd_show_repit">Паўтараць бясконца</string>
+    <string name="gallery_slayd_show_on_start">З пачатку</string>
+    <string name="trebnik">Трэбнік</string>
+    <string-array name="vek">
+        <item>Пошук даты Пасхі</item>
+        <item>XVI стагоддзе</item>
+        <item>XVII стагоддзе</item>
+        <item>XVIII стагоддзе</item>
+        <item>XIX стагоддзе</item>
+        <item>XX стагоддзе</item>
+        <item>XXI стагоддзе</item>
+    </string-array>
+    <string name="pashalii_help">22.03 – 25.04</string>
+    <string name="play_ton">Прайграць трапар %1$d</string>
+    <string name="play">Прайграць</string>
+    <string name="stop">Спыніць</string>
+    <string name="pause">Паўза</string>
+    <string name="open_bibl">Раскрыць Бібліятэку Царквы</string>
+    <string name="open_pesny">Раскрыць Песьні</string>
+    <string name="open_under">Раскрыць ІНШАЕ</string>
+    <string name="go_back">Вернуцца назад</string>
+    <string name="go_forward">Ісці наперад</string>
+    <string name="action_plus">Павялічыць хуткасць аўтапракруткі</string>
+    <string name="action_minus">Паменшыць хуткасць аўтапракруткі</string>
+    <string name="find_up">Шукаць уверх</string>
+    <string name="find_niz">Шукаць уніз</string>
+    <string name="padzei_i_sviaty">Падзеі і сьвяты за %1$d %2$s</string>
+    <string name="padzei_no">Падзей няма</string>
+    <string-array name="psalter_list">
+        <item>Псалмы</item>
+    </string-array>
+    <string-array name="semuxan">
+        <item>Паводле Мацьвея</item>
+        <item>Паводле Марка</item>
+        <item>Паводле Лукаша</item>
+        <item>Паводле Яна</item>
+        <item>Дзеі Апосталаў</item>
+        <item>Якава</item>
+        <item>1-е Пятра</item>
+        <item>2-е Пятра</item>
+        <item>1-е Яна Багаслова</item>
+        <item>2-е Яна Багаслова</item>
+        <item>3-е Яна Багаслова</item>
+        <item>Юды</item>
+        <item>Да Рымлянаў</item>
+        <item>1-е да Карынфянаў</item>
+        <item>2-е да Карынфянаў</item>
+        <item>Да Галятаў</item>
+        <item>Да Эфэсянаў</item>
+        <item>Да Піліпянаў</item>
+        <item>Да Каласянаў</item>
+        <item>1-е да Фесаланікійцаў</item>
+        <item>2-е да Фесаланікійцаў</item>
+        <item>1-е да Цімафея</item>
+        <item>2-е да Цімафея</item>
+        <item>Да Ціта</item>
+        <item>Да Філімона</item>
+        <item>Да Габрэяў</item>
+        <item>Адкрыцьцё (Апакаліпсіс)</item>
+    </string-array>
+    <string-array name="semuxas">
+        <item>Быцьцё</item>
+        <item>Выхад</item>
+        <item>Лявіт</item>
+        <item>Лікі</item>
+        <item>Другі Закон</item>
+        <item>Ісуса сына Нава</item>
+        <item>Судзьдзяў</item>
+        <item>Рут</item>
+        <item>1-я Царстваў</item>
+        <item>2-я Царстваў</item>
+        <item>3-я Царстваў</item>
+        <item>4-я Царстваў</item>
+        <item>1-я Летапісаў</item>
+        <item>2-я Летапісаў</item>
+        <item>Эздры</item>
+        <item>Нээміі</item>
+        <item>Эстэр</item>
+        <item>Ёва</item>
+        <item>Псалтыр</item>
+        <item>Выслоўяў Саламонавых</item>
+        <item>Эклезіяста</item>
+        <item>Найвышэйшая Песьня Саламонава</item>
+        <item>Ісаі</item>
+        <item>Ераміі</item>
+        <item>Ераміін Плач</item>
+        <item>Езэкііля</item>
+        <item>Данііла</item>
+        <item>Асіі</item>
+        <item>Ёіля</item>
+        <item>Амоса</item>
+        <item>Аўдзея</item>
+        <item>Ёны</item>
+        <item>Міхея</item>
+        <item>Навума</item>
+        <item>Абакума</item>
+        <item>Сафона</item>
+        <item>Агея</item>
+        <item>Захарыі</item>
+        <item>Малахіі</item>
+    </string-array>
+    <string-array name="bokunan">
+        <item>Мацьвея</item>
+        <item>Марка</item>
+        <item>Лукі</item>
+        <item>Яна</item>
+        <item>Дзеі</item>
+        <item>Якуба</item>
+        <item>1 Пятра</item>
+        <item>2 Пятра</item>
+        <item>1 Яна</item>
+        <item>2 Яна</item>
+        <item>3 Яна</item>
+        <item>Юды</item>
+        <item>Рымлянам</item>
+        <item>1 Карыньцянам</item>
+        <item>2 Карыньцянам</item>
+        <item>Галятам</item>
+        <item>Эфэсцам</item>
+        <item>Філіпянам</item>
+        <item>Каласянам</item>
+        <item>1 Тэсалонцам</item>
+        <item>2 Тэсалонцам</item>
+        <item>1 Цімафею</item>
+        <item>2 Цімафею</item>
+        <item>Ціту</item>
+        <item>Філімону</item>
+        <item>Гебраям</item>
+        <item>Адкрыцьцё</item>
+    </string-array>
+    <string-array name="bokunas">
+        <item>Быцьцё</item>
+        <item>Выхад</item>
+        <item>Лявіт</item>
+        <item>Лікі</item>
+        <item>Другазаконьне</item>
+        <item>Егошуа</item>
+        <item>Судзьдзяў</item>
+        <item>Рут</item>
+        <item>1 Самуэля</item>
+        <item>2 Самуэля</item>
+        <item>1 Валадароў</item>
+        <item>2 Валадароў</item>
+        <item>1 Летапісаў</item>
+        <item>2 Летапісаў</item>
+        <item>Эзры</item>
+        <item>Нээміі</item>
+        <item>Эстэр</item>
+        <item>Ёва</item>
+        <item>Псальмы</item>
+        <item>Прыповесьцяў</item>
+        <item>Эклезіяста</item>
+        <item>Песьня Песьняў</item>
+        <item>Ісаі</item>
+        <item>Ярэміі</item>
+        <item>Плач</item>
+        <item>Эзэкіэля</item>
+        <item>Данііла</item>
+        <item>Осіі</item>
+        <item>Ёэля</item>
+        <item>Амоса</item>
+        <item>Абадыі</item>
+        <item>Ёны</item>
+        <item>Міхея</item>
+        <item>Навума</item>
+        <item>Абакума</item>
+        <item>Сафоніі</item>
+        <item>Агея</item>
+        <item>Захарыі</item>
+        <item>Малахіі</item>
+    </string-array>
+    <string-array name="charniauskin">
+        <item>Мацвея</item>
+        <item>Марка</item>
+        <item>Лукі</item>
+        <item>Яна</item>
+        <item>Дзеі</item>
+        <item>Да Рымлянаў</item>
+        <item>1 да Карынцянаў</item>
+        <item>2 да Карынцянаў</item>
+        <item>Да Галатаў</item>
+        <item>Да Эфесцаў</item>
+        <item>Да Піліпцаў</item>
+        <item>Да Калосцаў</item>
+        <item>1 да Тэсалонцаў</item>
+        <item>2 да Тэсалонцаў</item>
+        <item>1 да Цімафея</item>
+        <item>2 да Цімафея</item>
+        <item>Да Ціта</item>
+        <item>Да Філімона</item>
+        <item>Да Гебраяў</item>
+        <item>Якуба</item>
+        <item>1 Пятра</item>
+        <item>2 Пятра</item>
+        <item>1 Яна</item>
+        <item>2 Яна</item>
+        <item>3 Яна</item>
+        <item>Юды</item>
+        <item>Адкрыццё</item>
+    </string-array>
+    <string-array name="charniauskis">
+        <item>Роду</item>
+        <item>Выхад</item>
+        <item>Святарская</item>
+        <item>Лічбаў</item>
+        <item>Паўтор Закону</item>
+        <item>Ешуа</item>
+        <item>Суддзяў</item>
+        <item>Рут</item>
+        <item>1 Самуэля</item>
+        <item>2 Самуэля</item>
+        <item>1 Цароў</item>
+        <item>2 Цароў</item>
+        <item>1 Хронікаў</item>
+        <item>2 Хронікаў</item>
+        <item>Эздры</item>
+        <item>Нэгэміі</item>
+        <item>Эстэр</item>
+        <item>Ёва</item>
+        <item>Псальмаў</item>
+        <item>Выслоўяў</item>
+        <item>Эклезіяста</item>
+        <item>Песня з Песняў</item>
+        <item>Ісаі</item>
+        <item>Ярэміі</item>
+        <item>Ламентацыі</item>
+        <item>Эзэкіэля</item>
+        <item>Даніэля</item>
+        <item>Осіі</item>
+        <item>Ёэля</item>
+        <item>Амоса</item>
+        <item>Абдыі</item>
+        <item>Ёны</item>
+        <item>Міхея</item>
+        <item>Навума</item>
+        <item>Абакука</item>
+        <item>Сафоніі</item>
+        <item>Агэя</item>
+        <item>Захарыі</item>
+        <item>Малахіі</item>
+        <item>Тобіі</item>
+        <item>Юдыт</item>
+        <item>Мудрасці</item>
+        <item>Эклезіясціка</item>
+        <item>Баруха</item>
+        <item>1 Макабэяў</item>
+        <item>2 Макабэяў</item>
+    </string-array>
+    <string-array name="sinoidaln">
+        <item>От Матфея</item>
+        <item>От Марка</item>
+        <item>От Луки</item>
+        <item>От Иоанна</item>
+        <item>Деяния святых апостолов</item>
+        <item>Иакова</item>
+        <item>1-е Петра</item>
+        <item>2-е Петра</item>
+        <item>1-е Иоанна</item>
+        <item>2-е Иоанна</item>
+        <item>3-е Иоанна</item>
+        <item>Иуды</item>
+        <item>Римлянам</item>
+        <item>1-е Коринфянам</item>
+        <item>2-е Коринфянам</item>
+        <item>Галатам</item>
+        <item>Ефесянам</item>
+        <item>Филиппийцам</item>
+        <item>Колоссянам</item>
+        <item>1-е Фессалоникийцам (Солунянам)</item>
+        <item>2-е Фессалоникийцам (Солунянам)</item>
+        <item>1-е Тимофею</item>
+        <item>2-е Тимофею</item>
+        <item>Титу</item>
+        <item>Филимону</item>
+        <item>Евреям</item>
+        <item>Откровение (Апокалипсис)</item>
+    </string-array>
+    <string-array name="sinoidals">
+        <item>Бытие</item>
+        <item>Исход</item>
+        <item>Левит</item>
+        <item>Числа</item>
+        <item>Второзаконие</item>
+        <item>Иисуса Навина</item>
+        <item>Судей израилевых</item>
+        <item>Руфи</item>
+        <item>1-я Царств</item>
+        <item>2-я Царств</item>
+        <item>3-я Царств</item>
+        <item>4-я Царств</item>
+        <item>1-я Паралипоменон</item>
+        <item>2-я Паралипоменон</item>
+        <item>1-я Ездры</item>
+        <item>Неемии</item>
+        <item>2-я Ездры</item>
+        <item>Товита</item>
+        <item>Иудифи</item>
+        <item>Есфири</item>
+        <item>Иова</item>
+        <item>Псалтирь</item>
+        <item>Притчи Соломона</item>
+        <item>Екклезиаста</item>
+        <item>Песнь песней Соломона</item>
+        <item>Премудрости Соломона</item>
+        <item>Премудрости Иисуса, сына Сирахова</item>
+        <item>Исаии</item>
+        <item>Иеремии</item>
+        <item>Плач Иеремии</item>
+        <item>Послание Иеремии</item>
+        <item>Варуха</item>
+        <item>Иезекииля</item>
+        <item>Даниила</item>
+        <item>Осии</item>
+        <item>Иоиля</item>
+        <item>Амоса</item>
+        <item>Авдия</item>
+        <item>Ионы</item>
+        <item>Михея</item>
+        <item>Наума</item>
+        <item>Аввакума</item>
+        <item>Сафонии</item>
+        <item>Аггея</item>
+        <item>Захарии</item>
+        <item>Малахии</item>
+        <item>1-я Маккавейская</item>
+        <item>2-я Маккавейская</item>
+        <item>3-я Маккавейская</item>
+        <item>3-я Ездры</item>
+    </string-array>
+    <string name="perevod">ПЕРАКЛАД БІБЛІІ</string>
+    <string name="perevody">Пераклады Бібліі</string>
+    <string name="biblia_semuxi">В. Сёмухі</string>
+    <string name="biblia_bokun">А. Бокуна</string>
+    <string name="biblia_charniauski">У. Чарняўскага</string>
+    <string name="biblia_error">Кніга альбо разьдзел не існуе.</string>
+    <string name="pdf_page_count">%1$d/%2$d</string>
+    <string name="bibleGrupOpis">Пераклад Бібліі па змаўчаньні:</string>
+    <string name="admin_exit">Выйсьці</string>
+    <string name="print">Раздрукаваць</string>
+    <string name="system">Сістэмны</string>
+    <string name="dzen_noch">Дзень-ноч</string>
+    <string name="prynad_1">МАЛІТВЫ ДА БАГАРОДЗІЦЫ</string>
+    <string name="prynad_2">МАЛІТВЫ БАЦЬКОЎ І ДЗЯЦЕЙ</string>
+    <string name="prynad_3">МАЛІТВЫ ЗА БЕЛАРУСЬ І БЕЛАРУСКІ НАРОД</string>
+    <string name="prynad_4">МАЛІТВЫ ЗА ЦАРКВУ І ЦАРКОЎНУЮ ЕДНАСЬЦЬ</string>
+    <string name="prynad_5">МАЛІТВЫ ЗА ЗДАРОЎЕ</string>
+    <string name="prynad_6">МАЛІТВЫ Ў РОЗНЫХ ПАТРЭБАХ</string>
+    <string name="paslia_prychascia">\nМалітвы пасьля сьвятога прычасьця</string>
+    <array name="paslia_prychascia_list">
+        <item>Малітва падзякі</item>
+        <item>Малітва сьв. Васіля Вялікага</item>
+        <item>Малітва Сымона Мэтафраста</item>
+        <item>Iншая малітва</item>
+        <item>Малітва да Найсьвяцейшай Багародзіцы</item>
+    </array>
+    <string name="vichernia">\nВячэрня</string>
+    <string name="aктоіх">\nАктоіх</string>
+    <string name="trebnik_n">\nТрэбнік</string>
+    <string name="ton_na_kozny_dzen_list">\nМінэя агульная -> Трапары і кандакі штодзённыя - на кожны дзень тыдня</string>
+    <string name="mineia_agulnaia_n">\nМінэя агульная</string>
+    <string name="bogaslugbovyia">\nБогаслужбовыя тэксты</string>
+    <array name="bogaslugbovyia_list">
+        <item>Боская Літургія сьв. Яна Залатавуснага</item>
+        <item>Боская Літургія ў Велікодны перыяд</item>
+        <item>Боская Літургія сьв. Васіля Вялікага</item>
+        <item>Літургія раней асьвячаных дароў</item>
+        <item>Набажэнства ў гонар Маці Божай Нястомнай Дапамогі</item>
+        <item>Ютрань нядзельная (у скароце)</item>
+        <item>Абедніца</item>
+        <item>Малебны канон Найсьвяцейшай Багародзіцы</item>
+        <item>Вялікі пакаянны канон сьвятога Андрэя Крыцкага</item>
+        <item>Малебен сьв. Кірылу і Мятоду, настаўнікам славянскім</item>
+        <item>Павячэрніца малая</item>
+        <item>Вялікі пакаянны канон сьвятога Андрэя Крыцкага(у 4-х частках)</item>
+    </array>
+    <array name="bogaslugbovyia_folder_list">
+        <item>МАЛІТВЫ ПАСЬЛЯ СЬВЯТОГА ПРЫЧАСЬЦЯ</item>
+        <item>ВЯЧЭРНЯ</item>
+        <item>ТРАПАРЫ І КАНДАКІ НЯДЗЕЛЬНЫЯ ВАСЬМІ ТОНАЎ</item>
+        <item>МІНЭЯ МЕСЯЧНАЯ</item>
+        <item>ТРЫЁДЗЬ</item>
+        <item>МІНЭЯ АГУЛЬНАЯ</item>
+        <item>АКТОІХ</item>
+        <item>ТРЭБНІК</item>
+    </array>
+    <string name="ton_na_niadzelu">\nТрапары і кандакі нядзельныя васьмі тонаў</string>
+    <string name="mineia_mesiachnaia">\nМінэя месячная</string>
+    <string name="tryedz_1">\nТрыёдзь -> Службы Вялікага тыдня</string>
+    <string name="tryedz_2">\nТрыёдзь -> Службы Сьветлага тыдня</string>
+    <string name="tryedz_3">\nТрыёдзь -> Трыёдзь Кветная</string>
+    <string name="tryedz_4">\nТрыёдзь -> Трыёдзь посная -> Службы 1-га тыдня Вялікага пост</string>
+    <string name="tryedz_5">\nТрыёдзь -> Трыёдзь посная -> Службы 2-га тыдня Вялікага посту</string>
+    <string name="tryedz_6">\nТрыёдзь -> Трыёдзь посная -> Службы 3-га тыдня Вялікага посту</string>
+    <string name="tryedz_7">\nТрыёдзь -> Трыёдзь посная -> Службы 4-га тыдня Вялікага посту</string>
+    <string name="tryedz_8">\nТрыёдзь -> Трыёдзь посная -> Службы 5-га тыдня Вялікага посту</string>
+    <string name="tryedz_9">\nТрыёдзь -> Трыёдзь посная -> Службы 6-га тыдня Вялікага посту</string>
+    <string name="open_in">Адчыніць у&#8230;</string>
+    <string name="pdfView_page_no" >%1$d/%2$d</string>
+    <string name="zmest">ЗЬМЕСТ</string>
+    <string name="zmest_smoll">Зьмест</string>
+    <string name="admin_cyrylic_no_support">Кірыліца не падтрымліваецца</string>
+    <!--%1$s is a string and %2$d is a decimal number-->
+</resources>

@@ -1,0 +1,639 @@
+package by.carkva_gazeta.malitounik2.views
+
+import android.app.Activity
+import android.content.Context
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerDefaults
+import androidx.compose.foundation.pager.PagerSnapDistance
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
+import androidx.core.view.WindowCompat
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import by.carkva_gazeta.malitounik2.BibliaList
+import by.carkva_gazeta.malitounik2.BibliaMenu
+import by.carkva_gazeta.malitounik2.BogaslujbovyiaScreen
+import by.carkva_gazeta.malitounik2.CytanniList
+import by.carkva_gazeta.malitounik2.KaliandarScreen
+import by.carkva_gazeta.malitounik2.KaliandarScreenMounth
+import by.carkva_gazeta.malitounik2.KaliandarScreenYear
+import by.carkva_gazeta.malitounik2.MainActivity
+import by.carkva_gazeta.malitounik2.R
+import by.carkva_gazeta.malitounik2.Settings
+import by.carkva_gazeta.malitounik2.VybranaeList
+import by.carkva_gazeta.malitounik2.ui.theme.BezPosta
+import by.carkva_gazeta.malitounik2.ui.theme.Divider
+import by.carkva_gazeta.malitounik2.ui.theme.Post
+import by.carkva_gazeta.malitounik2.ui.theme.Primary
+import by.carkva_gazeta.malitounik2.ui.theme.PrimaryText
+import by.carkva_gazeta.malitounik2.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik2.ui.theme.StrogiPost
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.util.Calendar
+
+@Composable
+fun AppNavGraph(
+    navController: NavHostController = rememberNavController(),
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
+) {
+    BackHandler(
+        enabled = drawerState.isClosed,
+    ) {
+        coroutineScope.launch { drawerState.open() }
+    }
+    val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+    val start = if (k.getBoolean("caliandarList", false)) AllDestinations.KALIANDAR_YEAR
+    else AllDestinations.KALIANDAR
+    val navigationActions = remember(navController) {
+        AppNavigationActions(navController)
+    }
+    NavHost(
+        navController = navController,
+        startDestination = start
+    ) {
+        composable(AllDestinations.KALIANDAR) {
+            Settings.destinations = AllDestinations.KALIANDAR
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+        /*composable(
+            AllDestinations.KALIANDAR + "/{position}",
+            arguments = listOf(navArgument("position") { type = NavType.IntType })
+        ) { stackEntry ->
+            val position =
+                stackEntry.arguments?.getInt("position")
+                    ?: vm.caliandarPosition
+            vm.setDestinations(AllDestinations.KALIANDAR + "/{position}")
+            MainConteiner(
+                vm = vm,
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState,
+                loadContent = AllDestinations.KALIANDAR,
+                position = position
+            )
+        }*/
+
+        composable(AllDestinations.BOGASLUJBOVYIA) {
+            Settings.destinations = AllDestinations.BOGASLUJBOVYIA
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(AllDestinations.BIBLIA_CEMUXA) {
+            Settings.destinations = AllDestinations.BIBLIA_CEMUXA
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(AllDestinations.BIBLIA_BOKUNA) {
+            Settings.destinations = AllDestinations.BIBLIA_BOKUNA
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(AllDestinations.BIBLIA_CHARNIAUSKI) {
+            Settings.destinations = AllDestinations.BIBLIA_CHARNIAUSKI
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(AllDestinations.BIBLIA_NADSAN) {
+            Settings.destinations = AllDestinations.BIBLIA_NADSAN
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(AllDestinations.BIBLIA_SINODAL) {
+            Settings.destinations = AllDestinations.BIBLIA_SINODAL
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(AllDestinations.KALIANDAR_YEAR) {
+            Settings.destinations = AllDestinations.KALIANDAR_YEAR
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(AllDestinations.VYBRANAE_LIST) {
+            Settings.destinations = AllDestinations.VYBRANAE_LIST
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(
+            AllDestinations.CYTANNI_LIST + "/{cytanne}/{title}/{biblia}/{perevod}/{count}",
+            arguments = listOf(
+                navArgument("biblia") { type = NavType.IntType },
+                navArgument("count") { type = NavType.IntType })
+        ) { stackEntry ->
+            val cytanne = stackEntry.arguments?.getString("cytanne") ?: ""
+            val title = stackEntry.arguments?.getString("title") ?: ""
+            val biblia = stackEntry.arguments?.getInt("biblia", Settings.CHYTANNI_LITURGICHNYIA)
+                ?: Settings.CHYTANNI_LITURGICHNYIA
+            Settings.destinations = AllDestinations.CYTANNI_LIST
+            val perevod = stackEntry.arguments?.getString("perevod", Settings.PEREVODSEMUXI)
+                ?: Settings.PEREVODSEMUXI
+            val count = stackEntry.arguments?.getInt("count", 1) ?: 1
+            CytanniList(navController, title, cytanne, biblia, perevod, count)
+        }
+
+        composable(
+            AllDestinations.BIBLIA_LIST + "/{novyZapavet}/{perevod}",
+            arguments = listOf(
+                navArgument("novyZapavet") { type = NavType.BoolType })
+        ) { stackEntry ->
+            val isNovyZapavet = stackEntry.arguments?.getBoolean("novyZapavet", false) ?: false
+            val perevod = stackEntry.arguments?.getString("perevod", AllDestinations.BIBLIA_CEMUXA)
+                ?: AllDestinations.BIBLIA_CEMUXA
+            BibliaList(
+                navController,
+                isNovyZapavet,
+                perevod,
+                navigateToCytanniList = { title, chytanne, perevod2, count ->
+                    navigationActions.navigateToCytanniList(
+                        title,
+                        chytanne,
+                        Settings.CHYTANNI_BIBLIA,
+                        perevod2,
+                        count
+                    )
+                })
+        }
+    }
+}
+
+@Composable
+fun findCaliandarPosition(position: Int): ArrayList<ArrayList<String>> {
+    if (Settings.data.isEmpty()) {
+        val gson = Gson()
+        val type = TypeToken.getParameterized(
+            java.util.ArrayList::class.java,
+            TypeToken.getParameterized(
+                java.util.ArrayList::class.java,
+                String::class.java
+            ).type
+        ).type
+        val inputStream = LocalContext.current.resources.openRawResource(R.raw.caliandar)
+        val isr = InputStreamReader(inputStream)
+        val reader = BufferedReader(isr)
+        val builder = reader.use {
+            it.readText()
+        }
+        Settings.data.addAll(gson.fromJson(builder, type))
+    }
+    if (position == -1 && Settings.initCaliandarPosition == 0) {
+        val calendar = Calendar.getInstance()
+        for (i in Settings.data.indices) {
+            if (calendar[Calendar.DATE] == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
+                Settings.caliandarPosition = i
+                Settings.initCaliandarPosition = i
+                break
+            }
+        }
+    } else Settings.caliandarPosition = position
+    return Settings.data
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MainConteiner(
+    navController: NavHostController,
+    coroutineScope: CoroutineScope,
+    drawerState: DrawerState
+) {
+    val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = currentNavBackStackEntry?.destination?.route ?: AllDestinations.KALIANDAR
+    val navigationActions = remember(navController) {
+        AppNavigationActions(navController)
+    }
+    val initPage = if (Settings.caliandarPosition == -1) {
+        findCaliandarPosition(-1)
+        Settings.initCaliandarPosition
+    } else Settings.caliandarPosition
+    val lazyColumnState = rememberLazyListState()
+    val pagerState = rememberPagerState(pageCount = {
+        Settings.data.size
+    }, initialPage = initPage)
+    var showDropdown by rememberSaveable { mutableStateOf(false) }
+    BackHandler(showDropdown) {
+        showDropdown = !showDropdown
+    }
+    val view = LocalView.current
+    var isAppearanceLight = false
+    if (Settings.destinations == AllDestinations.KALIANDAR) {
+        if (Settings.data[Settings.caliandarPosition][7].toInt() == 3 && !(Settings.data[Settings.caliandarPosition][0].toInt() == Calendar.SUNDAY || Settings.data[Settings.caliandarPosition][0].toInt() == Calendar.SATURDAY)) {
+            isAppearanceLight = true
+        }
+        if (Settings.data[Settings.caliandarPosition][5].toInt() > 0) {
+            isAppearanceLight = true
+        }
+        isAppearanceLight = !isAppearanceLight
+    }
+
+    if (drawerState.isOpen) isAppearanceLight =
+        !(LocalActivity.current as MainActivity).dzenNoch //!isSystemInDarkTheme()
+    SideEffect {
+        val window = (view.context as Activity).window
+        WindowCompat.getInsetsController(
+            window,
+            view
+        ).isAppearanceLightStatusBars = isAppearanceLight
+    }
+    ModalNavigationDrawer(drawerContent = {
+        DrawView(
+            route = currentRoute,
+            navigateToRazdel = { razdzel ->
+                when (razdzel) {
+                    AllDestinations.KALIANDAR -> navigationActions.navigateToKaliandar()
+                    AllDestinations.BOGASLUJBOVYIA -> navigationActions.navigateToBogaslujbovyia()
+                    AllDestinations.BIBLIA_CEMUXA -> navigationActions.navigateToBibliaCemuxa()
+                    AllDestinations.BIBLIA_BOKUNA -> navigationActions.navigateToBibliaBokuna()
+                    AllDestinations.BIBLIA_CHARNIAUSKI -> navigationActions.navigateToBibliaCharniauski()
+                    AllDestinations.BIBLIA_NADSAN -> navigationActions.navigateToBibliaNadsan()
+                    AllDestinations.BIBLIA_SINODAL -> navigationActions.navigateToBibliaSinodal()
+                    AllDestinations.VYBRANAE_LIST -> {
+                        navigationActions.navigateToVybranaeList()
+                    }
+                }
+                coroutineScope.launch { drawerState.close() }
+            },
+        )
+    }, drawerState = drawerState) {
+        val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+        val col = MaterialTheme.colorScheme.onTertiary
+        var tollBarColor by remember { mutableStateOf(col) }
+        var textTollBarColor by remember { mutableStateOf(PrimaryTextBlack) }
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        val title = when (currentRoute) {
+                            AllDestinations.KALIANDAR -> stringResource(R.string.kaliandar2)
+                            AllDestinations.KALIANDAR_YEAR -> stringResource(R.string.kaliandar2)
+                            AllDestinations.BOGASLUJBOVYIA -> stringResource(R.string.liturgikon)
+                            AllDestinations.BIBLIA_CEMUXA -> stringResource(R.string.title_biblia)
+                            AllDestinations.BIBLIA_BOKUNA -> stringResource(R.string.title_biblia_bokun)
+                            AllDestinations.BIBLIA_CHARNIAUSKI -> stringResource(R.string.title_biblia_charniauski)
+                            AllDestinations.BIBLIA_NADSAN -> stringResource(R.string.title_psalter)
+                            AllDestinations.BIBLIA_SINODAL -> stringResource(R.string.bsinaidal)
+                            AllDestinations.VYBRANAE_LIST -> stringResource(R.string.MenuVybranoe)
+                            else -> ""
+                        }
+                        Text(
+                            title,
+                            color = textTollBarColor,
+                            fontWeight = FontWeight.Bold
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { coroutineScope.launch { drawerState.open() } },
+                            content = {
+                                Icon(
+                                    imageVector = Icons.Default.Menu,
+                                    tint = textTollBarColor,
+                                    contentDescription = ""
+                                )
+                            })
+                    },
+                    actions = {
+                        if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
+                            IconButton({
+                                val edit = k.edit()
+                                if (k.getBoolean("caliandarList", false)) {
+                                    navigationActions.navigateToKaliandar()
+                                    edit.putBoolean("caliandarList", false)
+                                } else {
+                                    edit.putBoolean("caliandarList", true)
+                                    navigationActions.navigateToKaliandarYear()
+                                }
+                                edit.apply()
+                            }) {
+                                val icon = if (k.getBoolean(
+                                        "caliandarList",
+                                        false
+                                    )
+                                ) painterResource(R.drawable.calendar_today)
+                                else painterResource(R.drawable.list)
+                                Icon(
+                                    painter = icon,
+                                    tint = textTollBarColor,
+                                    contentDescription = ""
+                                )
+                            }
+                            IconButton({ showDropdown = !showDropdown }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.event_upcoming),
+                                    tint = textTollBarColor,
+                                    contentDescription = ""
+                                )
+                            }
+                        }
+                        var expanded by remember { mutableStateOf(false) }
+                        Box {
+                            IconButton(onClick = { expanded = true }) {
+                                Icon(
+                                    Icons.Default.MoreVert,
+                                    contentDescription = "",
+                                    tint = textTollBarColor
+                                )
+                            }
+                            DropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false }
+                            ) {
+                                if (currentRoute.contains(AllDestinations.KALIANDAR)) {
+                                    DropdownMenuItem(
+                                        onClick = { },
+                                        text = { Text(stringResource(R.string.munu_symbols)) }
+                                    )
+                                }
+                                DropdownMenuItem(
+                                    onClick = { },
+                                    text = { Text(stringResource(R.string.tools_item)) }
+                                )
+                                DropdownMenuItem(
+                                    onClick = { },
+                                    text = { Text(stringResource(R.string.sabytie)) }
+                                )
+                                DropdownMenuItem(
+                                    onClick = { },
+                                    text = { Text(stringResource(R.string.search_svityia)) }
+                                )
+                                DropdownMenuItem(
+                                    onClick = { },
+                                    text = { Text(stringResource(R.string.pra_nas)) }
+                                )
+                                DropdownMenuItem(
+                                    onClick = { },
+                                    text = { Text(stringResource(R.string.help)) }
+                                )
+                                if (k.getBoolean("admin", false)) {
+                                    HorizontalDivider()
+                                    DropdownMenuItem(
+                                        onClick = { },
+                                        text = { Text(stringResource(R.string.redagaktirovat)) }
+                                    )
+                                    DropdownMenuItem(
+                                        onClick = { },
+                                        text = { Text(stringResource(R.string.log_m)) }
+                                    )
+                                }
+                            }
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(tollBarColor)
+                )
+            },
+            modifier = Modifier,
+            /*bottomBar = {
+                BottomAppBar {
+                    var expanded by remember { mutableStateOf(false) }
+                    IconButton(onClick = { expanded = true }) {
+                        //MenuKalendra(expanded = true, isExpanded = { expanded = false })
+                        Icon(Icons.Filled.Menu, contentDescription = "Меню")
+                    }
+                    IconButton(onClick = { showDropdown = !showDropdown }) {
+                        Icon(Icons.Filled.Info, contentDescription = "О приложении")
+                    }
+                    IconButton(onClick = { }) {
+                        Icon(Icons.Filled.Search, contentDescription = "Поиск")
+                    }
+                }
+            }*/
+        ) { innerPadding ->
+            Box(
+                modifier = Modifier.padding(
+                    innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+                    innerPadding.calculateTopPadding(),
+                    innerPadding.calculateEndPadding(LayoutDirection.Rtl),
+                    0.dp
+                )
+            ) {
+                val color = MaterialTheme.colorScheme.onTertiary
+                var colorBlackboard by remember { mutableStateOf(color) }
+                when (Settings.destinations) {
+                    AllDestinations.KALIANDAR -> {
+                        val fling = PagerDefaults.flingBehavior(
+                            state = pagerState,
+                            pagerSnapDistance = PagerSnapDistance.atMost(1)
+                        )
+                        LaunchedEffect(pagerState) {
+                            snapshotFlow { pagerState.currentPage }.collect { page ->
+                                Settings.caliandarPosition = page
+                                colorBlackboard = Divider
+                                val data = Settings.data[page]
+                                var colorText = PrimaryText
+                                isAppearanceLight = false
+                                if (data[7].toInt() == 2) {
+                                    colorBlackboard = Post
+                                }
+                                if (data[7].toInt() == 1) {
+                                    colorBlackboard = BezPosta
+                                }
+                                if (data[7].toInt() == 3 && !(data[0].toInt() == Calendar.SUNDAY || data[0].toInt() == Calendar.SATURDAY)) {
+                                    colorBlackboard = StrogiPost
+                                    colorText = PrimaryTextBlack
+                                    isAppearanceLight = true
+                                }
+                                if (data[5].toInt() > 0) {
+                                    colorBlackboard = Primary
+                                    colorText = PrimaryTextBlack
+                                    isAppearanceLight = true
+                                }
+                                tollBarColor = colorBlackboard
+                                textTollBarColor = colorText
+                                val window = (view.context as Activity).window
+                                WindowCompat.getInsetsController(
+                                    window,
+                                    view
+                                ).isAppearanceLightStatusBars = !isAppearanceLight
+                            }
+                        }
+                        HorizontalPager(
+                            pageSpacing = 10.dp,
+                            state = pagerState,
+                            flingBehavior = fling,
+                            modifier = Modifier.padding(10.dp)
+                        ) { page ->
+                            KaliandarScreen(
+                                data = Settings.data[page],
+                                navigateToCytanneList = { title, chytanne, biblia ->
+                                    navigationActions.navigateToCytanniList(
+                                        title,
+                                        chytanne,
+                                        biblia,
+                                        Settings.PEREVODSEMUXI,
+                                        1
+                                    )
+                                },
+                                innerPadding
+                            )
+                        }
+                    }
+
+                    AllDestinations.BOGASLUJBOVYIA -> BogaslujbovyiaScreen()
+
+                    AllDestinations.BIBLIA_CEMUXA -> BibliaMenu(
+                        navController,
+                        Settings.PEREVODSEMUXI
+                    )
+
+                    AllDestinations.BIBLIA_BOKUNA -> BibliaMenu(
+                        navController,
+                        Settings.PEREVODBOKUNA
+                    )
+
+                    AllDestinations.BIBLIA_CHARNIAUSKI -> BibliaMenu(
+                        navController,
+                        Settings.PEREVODCARNIAUSKI
+                    )
+
+                    AllDestinations.BIBLIA_NADSAN -> BibliaMenu(
+                        navController,
+                        Settings.PEREVODNADSAN
+                    )
+
+                    AllDestinations.BIBLIA_SINODAL -> BibliaMenu(
+                        navController,
+                        Settings.PEREVODSINOIDAL
+                    )
+
+                    AllDestinations.KALIANDAR_YEAR -> KaliandarScreenYear(
+                        coroutineScope = coroutineScope,
+                        lazyColumnState = lazyColumnState,
+                        innerPadding
+                    )
+
+                    AllDestinations.VYBRANAE_LIST -> VybranaeList(navController,
+                        navigateToCytanniList = { title, chytanne, perevod2, count ->
+                            navigationActions.navigateToCytanniList(
+                                title,
+                                chytanne,
+                                Settings.CHYTANNI_VYBRANAE,
+                                perevod2,
+                                count
+                            )
+                        })
+                }
+                Popup(
+                    alignment = Alignment.TopCenter,
+                    onDismissRequest = { showDropdown = false }
+                ) {
+                    AnimatedVisibility(
+                        showDropdown,
+                        enter = slideInVertically(
+                            tween(
+                                durationMillis = 500,
+                                easing = LinearOutSlowInEasing
+                            )
+                        ),
+                        exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
+                    ) {
+                        KaliandarScreenMounth(
+                            colorBlackboard = colorBlackboard,
+                            setPageCaliandar = { date ->
+                                showDropdown = false
+                                coroutineScope.launch {
+                                    if (k.getBoolean(
+                                            "caliandarList",
+                                            false
+                                        )
+                                    ) lazyColumnState.scrollToItem(date)
+                                    else pagerState.scrollToPage(date)
+                                }
+                            })
+                    }
+                }
+            }
+        }
+    }
+}
