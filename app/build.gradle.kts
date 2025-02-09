@@ -69,7 +69,6 @@ dependencies {
     api (libs.firebase.appcheck.playintegrity)
     implementation(libs.feature.delivery.ktx)
     implementation(libs.app.update.ktx)
-    implementation (libs.drag.and.drop.compose.library)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

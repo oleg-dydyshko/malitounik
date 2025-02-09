@@ -1,6 +1,5 @@
 [versions]
 agp = "8.6.1"
-dragAndDropComposeLibrary = "<version>"
 kotlin = "1.9.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -22,7 +21,6 @@ appUpdateKtx = "2.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-drag-and-drop-compose-library = { module = "com.github.JGomez-Dev:drag-and-drop-compose-library", version.ref = "dragAndDropComposeLibrary" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

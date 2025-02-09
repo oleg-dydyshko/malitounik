@@ -1,8 +1,14 @@
 package by.carkva_gazeta.malitounik2
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.VisibilityThreshold
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,12 +16,15 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -25,17 +34,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik2.ui.theme.Divider
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
+import java.util.Calendar
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun VybranaeList(
     navController: NavHostController,
-    navigateToCytanniList: (String, String, String, Int) -> Unit = { _, _, _, _ -> }
+    navigateToCytanniList: (String, String, String, Int) -> Unit = { _, _, _, _ -> },
+    sorted: Int
 ) {
     val title = stringResource(R.string.MenuVybranoe)
     var initVybranoe by remember { mutableStateOf(true) }
@@ -47,7 +60,8 @@ fun VybranaeList(
         ).type
     val list = remember { ArrayList<VybranaeListData>() }
     if (initVybranoe) {
-        list.add(VybranaeListData("Літургія Яна", ArrayList(), "lit_jiaj_ksjh"))
+        val time = Calendar.getInstance().timeInMillis
+        list.add(VybranaeListData(time, "Літургія Яна", ArrayList(), "lit_jiaj_ksjh"))
         initVybranoe = false
         for (i in 1..5) {
             val vybranoeList = ArrayList<VybranoeData>()
@@ -70,14 +84,63 @@ fun VybranaeList(
             val file = File("${LocalContext.current.filesDir}/vybranoe_${prevodName}.json")
             if (file.exists()) {
                 vybranoeList.addAll(gson.fromJson(file.readText(), type))
-                list.add(VybranaeListData(titlePerevod, vybranoeList, ""))
+                list.add(VybranaeListData(time, titlePerevod, vybranoeList, ""))
             }
         }
-        list.add(VybranaeListData("Літургія Васіля", ArrayList(), "lit_jiaj_ksjh"))
+        list.add(VybranaeListData(time, "Я вауацугш ушепоц", ArrayList(), "lit_jiaj_ksjh"))
+        list.add(VybranaeListData(time, "Літургія Васіля", ArrayList(), "lit_jiaj_ksjh"))
+    }
+    if (sorted == Settings.SORT_BY_ABC) {
+        list.sortBy { it.title }
+    } else {
+        list.sortByDescending { it.id }
     }
     val collapsedState =
         remember(list) { list.map { true }.toMutableStateList() }
     val lazyColumnState = rememberLazyListState()
+    val context = LocalContext.current
+    var removeItem by remember { mutableIntStateOf(-1) }
+    var removeItemBible by remember { mutableIntStateOf(-1) }
+    if (removeItem != -1) {
+        val titleVybrenae = stringResource(
+            R.string.vybranoe_biblia_delite,
+            if (removeItemBible != -1) list[removeItem].listBible[removeItemBible].glavaTitle
+            else list[removeItem].title
+        )
+        Dialog(
+            title = titleVybrenae,
+            onDismissRequest = {
+                removeItem = -1
+            },
+            onConfirmation = {
+                if (removeItemBible != -1) {
+                    val perevod = list[removeItem].listBible[removeItemBible].perevod
+                    list[removeItem].listBible.removeAt(removeItemBible)
+                    val prevodName = when (perevod) {
+                        Settings.PEREVODSEMUXI -> "biblia"
+                        Settings.PEREVODBOKUNA -> "bokuna"
+                        Settings.PEREVODCARNIAUSKI -> "carniauski"
+                        Settings.PEREVODNADSAN -> "nadsan"
+                        Settings.PEREVODSINOIDAL -> "sinaidal"
+                        else -> "biblia"
+                    }
+                    val file = File("${context.filesDir}/vybranoe_${prevodName}.json")
+                    if (list[removeItem].listBible.isEmpty() && file.exists()) {
+                        list.removeAt(removeItem)
+                        file.delete()
+                    } else {
+                        file.writer().use {
+                            it.write(gson.toJson(list[removeItem].listBible, type))
+                        }
+                    }
+                    removeItemBible = -1
+                } else {
+                    list.removeAt(removeItem)
+                }
+                removeItem = -1
+            }
+        )
+    }
     LazyColumn(
         state = lazyColumnState
     ) {
@@ -91,6 +154,7 @@ fun VybranaeList(
                             .clickable {
                                 collapsedState[i] = !collapsed
                             }
+                            .fillMaxWidth()
                     ) {
                         Icon(
                             Icons.Default.run {
@@ -105,6 +169,14 @@ fun VybranaeList(
                         Text(
                             dataItem.title,
                             modifier = Modifier
+                                .animateItem(
+                                    fadeInSpec = null,
+                                    fadeOutSpec = null,
+                                    placementSpec = spring(
+                                        stiffness = Spring.StiffnessMediumLow,
+                                        visibilityThreshold = IntOffset.VisibilityThreshold
+                                    )
+                                )
                                 .padding(10.dp)
                                 .weight(1f),
                             color = MaterialTheme.colorScheme.secondary
@@ -112,26 +184,17 @@ fun VybranaeList(
                     }
                     HorizontalDivider()
                 }
-            }
-            if (dataItem.recourse == "") {
                 if (!collapsed) {
+                    if (sorted == Settings.SORT_BY_ABC) {
+                        dataItem.listBible.sortBy { it.glavaTitle }
+                    } else {
+                        dataItem.listBible.sortByDescending { it.id }
+                    }
                     items(dataItem.listBible.size) { index ->
                         Row(
-                            modifier = Modifier.padding(start = 20.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                modifier = Modifier.size(12.dp, 12.dp),
-                                painter = painterResource(R.drawable.krest),
-                                tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
-                            )
-                            Text(
-                                dataItem.listBible[index].title + " " + (dataItem.listBible[index].glava + 1),
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(10.dp)
-                                    .clickable {
+                            modifier = Modifier
+                                .combinedClickable(
+                                    onClick = {
                                         val newList = StringBuilder()
                                         for (r in 0 until dataItem.listBible.size) {
                                             val char = if (r == dataItem.listBible.size - 1) ""
@@ -145,6 +208,25 @@ fun VybranaeList(
                                             dataItem.listBible[index].count
                                         )
                                     },
+                                    onLongClick = {
+                                        removeItemBible = index
+                                        removeItem = i
+                                    }
+                                )
+                                .padding(start = 30.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(12.dp, 12.dp),
+                                painter = painterResource(R.drawable.krest),
+                                tint = MaterialTheme.colorScheme.primary,
+                                contentDescription = null
+                            )
+                            Text(
+                                dataItem.listBible[index].title + " " + (dataItem.listBible[index].glava + 1),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(10.dp),
                                 color = MaterialTheme.colorScheme.secondary
                             )
                         }
@@ -154,7 +236,15 @@ fun VybranaeList(
             } else {
                 item {
                     Row(
-                        modifier = Modifier.padding(start = 10.dp),
+                        modifier = Modifier
+                            .combinedClickable(
+                                onClick = {
+                                },
+                                onLongClick = {
+                                    removeItem = i
+                                }
+                            )
+                            .padding(start = 10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
@@ -166,10 +256,16 @@ fun VybranaeList(
                         Text(
                             dataItem.title,
                             modifier = Modifier
+                                .animateItem(
+                                    fadeInSpec = null,
+                                    fadeOutSpec = null,
+                                    placementSpec = spring(
+                                        stiffness = Spring.StiffnessMediumLow,
+                                        visibilityThreshold = IntOffset.VisibilityThreshold
+                                    )
+                                )
                                 .fillMaxSize()
-                                .padding(10.dp)
-                                .clickable {
-                                },
+                                .padding(10.dp),
                             color = MaterialTheme.colorScheme.secondary
                         )
                     }
@@ -180,7 +276,48 @@ fun VybranaeList(
     }
 }
 
+@Composable
+fun Dialog(
+    title: String,
+    onDismissRequest: () -> Unit,
+    onConfirmation: () -> Unit
+) {
+    AlertDialog(
+        icon = {
+            Icon(painter = painterResource(R.drawable.delete), contentDescription = "")
+        },
+        title = {
+            Text(text = stringResource(R.string.remove))
+        },
+        text = {
+            Text(text = title)
+        },
+        onDismissRequest = {
+            onDismissRequest()
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onConfirmation()
+                }
+            ) {
+                Text(stringResource(R.string.ok))
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text(stringResource(R.string.cansel))
+            }
+        }
+    )
+}
+
 data class VybranaeListData(
+    val id: Long,
     val title: String,
     val listBible: ArrayList<VybranoeData>,
     val recourse: String

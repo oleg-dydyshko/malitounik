@@ -277,7 +277,9 @@ fun CytanniList(
             vybranoeList.add(
                 0,
                 VybranoeData(
+                    Calendar.getInstance().timeInMillis,
                     titleBible,
+                    "$titleBible ${selectedIndex + 1}",
                     knigaText,
                     selectedIndex,
                     perevodRoot,
@@ -1930,7 +1932,9 @@ fun getParalel(kniga: Int, glava: Int, styx: Int, isPsaltyrGreek: Boolean = true
 
 data class CytanniListData(val title: String, val text: String = "", val parallel: String = "+-+")
 data class VybranoeData(
+    val id: Long,
     val title: String,
+    val glavaTitle: String,
     val knigaText: String,
     val glava: Int,
     val perevod: String,

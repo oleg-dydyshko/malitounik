@@ -40,6 +40,8 @@ object Settings {
     const val CHYTANNI_MARANATA = 11
     const val CHYTANNI_BIBLIA = 12
     const val CHYTANNI_VYBRANAE = 13
+    const val SORT_BY_ABC = 1
+    const val SORT_BY_TIME = 2
     var bibleTime = false
     var bibleTimeList = false
     var destinations = AllDestinations.KALIANDAR

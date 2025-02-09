@@ -40,6 +40,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -68,6 +69,7 @@ import by.carkva_gazeta.malitounik2.BibliaList
 import by.carkva_gazeta.malitounik2.BibliaMenu
 import by.carkva_gazeta.malitounik2.BogaslujbovyiaScreen
 import by.carkva_gazeta.malitounik2.CytanniList
+import by.carkva_gazeta.malitounik2.Dialog
 import by.carkva_gazeta.malitounik2.KaliandarScreen
 import by.carkva_gazeta.malitounik2.KaliandarScreenMounth
 import by.carkva_gazeta.malitounik2.KaliandarScreenYear
@@ -87,6 +89,7 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
+import java.io.File
 import java.io.InputStreamReader
 import java.util.Calendar
 
@@ -328,6 +331,34 @@ fun MainConteiner(
             view
         ).isAppearanceLightStatusBars = isAppearanceLight
     }
+    val context = LocalContext.current
+    val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+    var sorted by remember { mutableIntStateOf(k.getInt("sortedVybranae", Settings.SORT_BY_ABC)) }
+    var removeAllVybranae by remember { mutableStateOf(false) }
+    if (removeAllVybranae) {
+        Dialog(
+            title = stringResource(R.string.del_all_vybranoe),
+            onDismissRequest = {
+                removeAllVybranae = false
+            },
+            onConfirmation = {
+                for (perevod in 1..5) {
+                    val prevodName = when (perevod.toString()) {
+                        Settings.PEREVODSEMUXI -> "biblia"
+                        Settings.PEREVODBOKUNA -> "bokuna"
+                        Settings.PEREVODCARNIAUSKI -> "carniauski"
+                        Settings.PEREVODNADSAN -> "nadsan"
+                        Settings.PEREVODSINOIDAL -> "sinaidal"
+                        else -> "biblia"
+                    }
+                    val file = File("${context.filesDir}/vybranoe_${prevodName}.json")
+                    if (file.exists()) file.delete()
+
+                }
+                removeAllVybranae = false
+            }
+        )
+    }
     ModalNavigationDrawer(drawerContent = {
         DrawView(
             route = currentRoute,
@@ -348,7 +379,6 @@ fun MainConteiner(
             },
         )
     }, drawerState = drawerState) {
-        val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
         val col = MaterialTheme.colorScheme.onTertiary
         var tollBarColor by remember { mutableStateOf(col) }
         var textTollBarColor by remember { mutableStateOf(PrimaryTextBlack) }
@@ -417,6 +447,15 @@ fun MainConteiner(
                                 )
                             }
                         }
+                        if (currentRoute == AllDestinations.VYBRANAE_LIST) {
+                            IconButton({ removeAllVybranae = !removeAllVybranae }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.delete),
+                                    tint = textTollBarColor,
+                                    contentDescription = ""
+                                )
+                            }
+                        }
                         var expanded by remember { mutableStateOf(false) }
                         Box {
                             IconButton(onClick = { expanded = true }) {
@@ -430,24 +469,45 @@ fun MainConteiner(
                                 expanded = expanded,
                                 onDismissRequest = { expanded = false }
                             ) {
+                                DropdownMenuItem(
+                                    onClick = { },
+                                    text = { Text(stringResource(R.string.tools_item)) }
+                                )
                                 if (currentRoute.contains(AllDestinations.KALIANDAR)) {
                                     DropdownMenuItem(
                                         onClick = { },
                                         text = { Text(stringResource(R.string.munu_symbols)) }
                                     )
+                                    DropdownMenuItem(
+                                        onClick = { },
+                                        text = { Text(stringResource(R.string.sabytie)) }
+                                    )
+                                    DropdownMenuItem(
+                                        onClick = { },
+                                        text = { Text(stringResource(R.string.search_svityia)) }
+                                    )
                                 }
-                                DropdownMenuItem(
-                                    onClick = { },
-                                    text = { Text(stringResource(R.string.tools_item)) }
-                                )
-                                DropdownMenuItem(
-                                    onClick = { },
-                                    text = { Text(stringResource(R.string.sabytie)) }
-                                )
-                                DropdownMenuItem(
-                                    onClick = { },
-                                    text = { Text(stringResource(R.string.search_svityia)) }
-                                )
+                                if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) {
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            expanded = false
+                                            sorted =
+                                                if (sorted == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
+                                                else Settings.SORT_BY_ABC
+                                            val edit = k.edit()
+                                            edit.putInt("sortedVybranae", sorted)
+                                            edit.apply()
+                                        },
+                                        text = {
+                                            if (sorted == Settings.SORT_BY_TIME) Text(
+                                                stringResource(
+                                                    R.string.sort_alf
+                                                )
+                                            )
+                                            else Text(stringResource(R.string.sort_add))
+                                        }
+                                    )
+                                }
                                 DropdownMenuItem(
                                     onClick = { },
                                     text = { Text(stringResource(R.string.pra_nas)) }
@@ -593,7 +653,8 @@ fun MainConteiner(
                         innerPadding
                     )
 
-                    AllDestinations.VYBRANAE_LIST -> VybranaeList(navController,
+                    AllDestinations.VYBRANAE_LIST -> VybranaeList(
+                        navController,
                         navigateToCytanniList = { title, chytanne, perevod2, count ->
                             navigationActions.navigateToCytanniList(
                                 title,
@@ -602,7 +663,9 @@ fun MainConteiner(
                                 perevod2,
                                 count
                             )
-                        })
+                        },
+                        sorted
+                    )
                 }
                 Popup(
                     alignment = Alignment.TopCenter,
