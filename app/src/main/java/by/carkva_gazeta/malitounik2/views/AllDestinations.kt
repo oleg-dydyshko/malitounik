@@ -1,5 +1,6 @@
 package by.carkva_gazeta.malitounik2.views
 
+import android.content.SharedPreferences
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA_BOKUNA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA_CEMUXA
@@ -29,14 +30,16 @@ object AllDestinations {
     const val VYBRANAE_LIST = "Bybranae_List"
 }
 
-class AppNavigationActions(private val navController: NavHostController) {
-
+class AppNavigationActions(private val navController: NavHostController, k: SharedPreferences) {
+    private val edit = k.edit()
     fun navigateToKaliandar() {
         navController.navigate(KALIANDAR) {
             popUpTo(navController.currentBackStackEntry?.destination?.route ?: KALIANDAR) {
                 inclusive = true
             }
         }
+        edit.putString("navigate", KALIANDAR)
+        edit.apply()
     }
 
     fun navigateToBogaslujbovyia() {
@@ -45,6 +48,8 @@ class AppNavigationActions(private val navController: NavHostController) {
                 inclusive = true
             }
         }
+        edit.putString("navigate", BOGASLUJBOVYIA)
+        edit.apply()
     }
 
     fun navigateToKaliandarYear() {
@@ -53,6 +58,8 @@ class AppNavigationActions(private val navController: NavHostController) {
                 inclusive = true
             }
         }
+        edit.putString("navigate", KALIANDAR_YEAR)
+        edit.apply()
     }
 
     fun navigateToBibliaCemuxa() {
@@ -61,6 +68,8 @@ class AppNavigationActions(private val navController: NavHostController) {
                 inclusive = true
             }
         }
+        edit.putString("navigate", BIBLIA_CEMUXA)
+        edit.apply()
     }
 
     fun navigateToBibliaBokuna() {
@@ -69,6 +78,8 @@ class AppNavigationActions(private val navController: NavHostController) {
                 inclusive = true
             }
         }
+        edit.putString("navigate", BIBLIA_BOKUNA)
+        edit.apply()
     }
 
     fun navigateToBibliaCharniauski() {
@@ -77,6 +88,8 @@ class AppNavigationActions(private val navController: NavHostController) {
                 inclusive = true
             }
         }
+        edit.putString("navigate", BIBLIA_CHARNIAUSKI)
+        edit.apply()
     }
 
     fun navigateToBibliaNadsan() {
@@ -85,6 +98,8 @@ class AppNavigationActions(private val navController: NavHostController) {
                 inclusive = true
             }
         }
+        edit.putString("navigate", BIBLIA_NADSAN)
+        edit.apply()
     }
 
     fun navigateToBibliaSinodal() {
@@ -93,6 +108,8 @@ class AppNavigationActions(private val navController: NavHostController) {
                 inclusive = true
             }
         }
+        edit.putString("navigate", BIBLIA_SINODAL)
+        edit.apply()
     }
 
     fun navigateToCytanniList(title: String, cytanne: String, biblia: Int, perevod: String, count: Int) {
@@ -113,6 +130,8 @@ class AppNavigationActions(private val navController: NavHostController) {
                 inclusive = true
             }
         }
+        edit.putString("navigate", VYBRANAE_LIST)
+        edit.apply()
     }
 
     fun navigateToBogaslujbovyiaMenu() {

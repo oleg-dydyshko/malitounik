@@ -89,7 +89,6 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
-import java.io.File
 import java.io.InputStreamReader
 import java.util.Calendar
 
@@ -105,10 +104,11 @@ fun AppNavGraph(
         coroutineScope.launch { drawerState.open() }
     }
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-    val start = if (k.getBoolean("caliandarList", false)) AllDestinations.KALIANDAR_YEAR
+    val kalindar = if (k.getBoolean("caliandarList", false)) AllDestinations.KALIANDAR_YEAR
     else AllDestinations.KALIANDAR
+    val start = k.getString("navigate", kalindar) ?: kalindar
     val navigationActions = remember(navController) {
-        AppNavigationActions(navController)
+        AppNavigationActions(navController, k)
     }
     NavHost(
         navController = navController,
@@ -295,8 +295,10 @@ fun MainConteiner(
 ) {
     val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentNavBackStackEntry?.destination?.route ?: AllDestinations.KALIANDAR
+    val context = LocalContext.current
+    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
-        AppNavigationActions(navController)
+        AppNavigationActions(navController, k)
     }
     val initPage = if (Settings.caliandarPosition == -1) {
         findCaliandarPosition(-1)
@@ -331,18 +333,17 @@ fun MainConteiner(
             view
         ).isAppearanceLightStatusBars = isAppearanceLight
     }
-    val context = LocalContext.current
-    val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var sorted by remember { mutableIntStateOf(k.getInt("sortedVybranae", Settings.SORT_BY_ABC)) }
+    var removeAllVybranaeDialog by remember { mutableStateOf(false) }
     var removeAllVybranae by remember { mutableStateOf(false) }
-    if (removeAllVybranae) {
+    if (removeAllVybranaeDialog) {
         Dialog(
             title = stringResource(R.string.del_all_vybranoe),
             onDismissRequest = {
-                removeAllVybranae = false
+                removeAllVybranaeDialog = false
             },
             onConfirmation = {
-                for (perevod in 1..5) {
+                /*for (perevod in 1..5) {
                     val prevodName = when (perevod.toString()) {
                         Settings.PEREVODSEMUXI -> "biblia"
                         Settings.PEREVODBOKUNA -> "bokuna"
@@ -354,8 +355,9 @@ fun MainConteiner(
                     val file = File("${context.filesDir}/vybranoe_${prevodName}.json")
                     if (file.exists()) file.delete()
 
-                }
-                removeAllVybranae = false
+                }*/
+                removeAllVybranae = true
+                removeAllVybranaeDialog = false
             }
         )
     }
@@ -448,7 +450,7 @@ fun MainConteiner(
                             }
                         }
                         if (currentRoute == AllDestinations.VYBRANAE_LIST) {
-                            IconButton({ removeAllVybranae = !removeAllVybranae }) {
+                            IconButton({ removeAllVybranaeDialog = !removeAllVybranaeDialog }) {
                                 Icon(
                                     painter = painterResource(R.drawable.delete),
                                     tint = textTollBarColor,
@@ -664,7 +666,8 @@ fun MainConteiner(
                                 count
                             )
                         },
-                        sorted
+                        sorted,
+                        removeAllVybranae
                     )
                 }
                 Popup(

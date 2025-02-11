@@ -48,7 +48,8 @@ import java.util.Calendar
 fun VybranaeList(
     navController: NavHostController,
     navigateToCytanniList: (String, String, String, Int) -> Unit = { _, _, _, _ -> },
-    sorted: Int
+    sorted: Int,
+    removeAllVybranae: Boolean
 ) {
     val title = stringResource(R.string.MenuVybranoe)
     var initVybranoe by remember { mutableStateOf(true) }
@@ -61,7 +62,7 @@ fun VybranaeList(
     val list = remember { ArrayList<VybranaeListData>() }
     if (initVybranoe) {
         val time = Calendar.getInstance().timeInMillis
-        list.add(VybranaeListData(time, "Літургія Яна", ArrayList(), "lit_jiaj_ksjh"))
+        //list.add(VybranaeListData(time, "Літургія Яна", ArrayList(), "lit_jiaj_ksjh"))
         initVybranoe = false
         for (i in 1..5) {
             val vybranoeList = ArrayList<VybranoeData>()
@@ -87,8 +88,8 @@ fun VybranaeList(
                 list.add(VybranaeListData(time, titlePerevod, vybranoeList, ""))
             }
         }
-        list.add(VybranaeListData(time, "Я вауацугш ушепоц", ArrayList(), "lit_jiaj_ksjh"))
-        list.add(VybranaeListData(time, "Літургія Васіля", ArrayList(), "lit_jiaj_ksjh"))
+        //list.add(VybranaeListData(time, "Я вауацугш ушепоц", ArrayList(), "lit_jiaj_ksjh"))
+        //list.add(VybranaeListData(time, "Літургія Васіля", ArrayList(), "lit_jiaj_ksjh"))
     }
     if (sorted == Settings.SORT_BY_ABC) {
         list.sortBy { it.title }
@@ -104,13 +105,14 @@ fun VybranaeList(
     if (removeItem != -1) {
         val titleVybrenae = stringResource(
             R.string.vybranoe_biblia_delite,
-            if (removeItemBible != -1) list[removeItem].listBible[removeItemBible].glavaTitle
+            if (removeItemBible != -1) list[removeItem].listBible[removeItemBible].title + " " + (list[removeItem].listBible[removeItemBible].glava + 1)
             else list[removeItem].title
         )
         Dialog(
             title = titleVybrenae,
             onDismissRequest = {
                 removeItem = -1
+                removeItemBible = -1
             },
             onConfirmation = {
                 if (removeItemBible != -1) {
@@ -127,11 +129,11 @@ fun VybranaeList(
                     val file = File("${context.filesDir}/vybranoe_${prevodName}.json")
                     if (list[removeItem].listBible.isEmpty() && file.exists()) {
                         list.removeAt(removeItem)
-                        file.delete()
+                        //file.delete()
                     } else {
-                        file.writer().use {
+                        /*file.writer().use {
                             it.write(gson.toJson(list[removeItem].listBible, type))
-                        }
+                        }*/
                     }
                     removeItemBible = -1
                 } else {
@@ -140,6 +142,9 @@ fun VybranaeList(
                 removeItem = -1
             }
         )
+    }
+    if (removeAllVybranae) {
+        list.clear()
     }
     LazyColumn(
         state = lazyColumnState
@@ -186,7 +191,13 @@ fun VybranaeList(
                 }
                 if (!collapsed) {
                     if (sorted == Settings.SORT_BY_ABC) {
-                        dataItem.listBible.sortBy { it.glavaTitle }
+                        dataItem.listBible.sortWith(
+                            compareBy({
+                                it.knigaText
+                            }, {
+                                    it.glava
+                                })
+                        )
                     } else {
                         dataItem.listBible.sortByDescending { it.id }
                     }
@@ -241,6 +252,7 @@ fun VybranaeList(
                                 onClick = {
                                 },
                                 onLongClick = {
+                                    removeItemBible = -1
                                     removeItem = i
                                 }
                             )

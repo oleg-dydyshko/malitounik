@@ -32,12 +32,12 @@ fun BibliaMenu(
     navController: NavHostController,
     perevod: String
 ) {
+    val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
-        AppNavigationActions(navController)
+        AppNavigationActions(navController, k)
     }
     val bibleTime = remember { mutableStateOf(false) }
     if (bibleTime.value) {
-        val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
         val prevodName = when (perevod) {
             Settings.PEREVODSEMUXI -> "biblia"
             Settings.PEREVODBOKUNA -> "bokuna"

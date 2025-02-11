@@ -279,5 +279,8 @@ fun getNameBook(context: Context, kniga: Int, perevod: String, novyZapavet: Bool
         }
         return bookList[kniga]
     }
+    if (perevod == Settings.PEREVODNADSAN) {
+        return context.resources.getStringArray(R.array.psalter_list)[0]
+    }
     return ""
 }
