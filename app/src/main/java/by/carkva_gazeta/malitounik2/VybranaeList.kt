@@ -47,11 +47,10 @@ import java.util.Calendar
 @Composable
 fun VybranaeList(
     navController: NavHostController,
-    navigateToCytanniList: (String, String, String, Int) -> Unit = { _, _, _, _ -> },
+    navigateToCytanniList: (String, String) -> Unit = { _, _ -> },
     sorted: Int,
     removeAllVybranae: Boolean
 ) {
-    val title = stringResource(R.string.MenuVybranoe)
     var initVybranoe by remember { mutableStateOf(true) }
     val gson = Gson()
     val type =
@@ -129,11 +128,11 @@ fun VybranaeList(
                     val file = File("${context.filesDir}/vybranoe_${prevodName}.json")
                     if (list[removeItem].listBible.isEmpty() && file.exists()) {
                         list.removeAt(removeItem)
-                        //file.delete()
+                        file.delete()
                     } else {
-                        /*file.writer().use {
+                        file.writer().use {
                             it.write(gson.toJson(list[removeItem].listBible, type))
-                        }*/
+                        }
                     }
                     removeItemBible = -1
                 } else {
@@ -213,10 +212,8 @@ fun VybranaeList(
                                             newList.append(dataItem.listBible[r].knigaText + " " + (dataItem.listBible[r].glava + 1) + char)
                                         }
                                         navigateToCytanniList(
-                                            title,
                                             newList.toString(),
-                                            dataItem.listBible[index].perevod,
-                                            dataItem.listBible[index].count
+                                            dataItem.listBible[index].perevod
                                         )
                                     },
                                     onLongClick = {

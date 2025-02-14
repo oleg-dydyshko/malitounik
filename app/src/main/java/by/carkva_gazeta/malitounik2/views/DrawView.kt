@@ -115,96 +115,12 @@ fun DrawView(
         NavigationDrawerItem(
             label = {
                 Text(
-                    text = stringResource(id = R.string.title_biblia),
+                    text = stringResource(id = R.string.bibliaAll),
                 )
             },
-            selected = route == AllDestinations.BIBLIA_CEMUXA,
+            selected = route == AllDestinations.BIBLIA,
             onClick = {
-                navigateToRazdel(AllDestinations.BIBLIA_CEMUXA)
-            },
-            icon = {
-                Icon(
-                    modifier = Modifier.size(24.dp, 24.dp),
-                    painter = painterResource(R.drawable.krest),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
-                )
-            },
-            shape = MaterialTheme.shapes.medium,
-            modifier = modifier.padding(horizontal = 5.dp)
-        )
-        NavigationDrawerItem(
-            label = {
-                Text(
-                    text = stringResource(id = R.string.title_biblia_bokun),
-                )
-            },
-            selected = route == AllDestinations.BIBLIA_BOKUNA,
-            onClick = {
-                navigateToRazdel(AllDestinations.BIBLIA_BOKUNA)
-            },
-            icon = {
-                Icon(
-                    modifier = Modifier.size(24.dp, 24.dp),
-                    painter = painterResource(R.drawable.krest),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
-                )
-            },
-            shape = MaterialTheme.shapes.medium,
-            modifier = modifier.padding(horizontal = 5.dp)
-        )
-        NavigationDrawerItem(
-            label = {
-                Text(
-                    text = stringResource(id = R.string.title_biblia_charniauski),
-                )
-            },
-            selected = route == AllDestinations.BIBLIA_CHARNIAUSKI,
-            onClick = {
-                navigateToRazdel(AllDestinations.BIBLIA_CHARNIAUSKI)
-            },
-            icon = {
-                Icon(
-                    modifier = Modifier.size(24.dp, 24.dp),
-                    painter = painterResource(R.drawable.krest),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
-                )
-            },
-            shape = MaterialTheme.shapes.medium,
-            modifier = modifier.padding(horizontal = 5.dp)
-        )
-        NavigationDrawerItem(
-            label = {
-                Text(
-                    text = stringResource(id = R.string.title_psalter),
-                )
-            },
-            selected = route == AllDestinations.BIBLIA_NADSAN,
-            onClick = {
-                navigateToRazdel(AllDestinations.BIBLIA_NADSAN)
-            },
-            icon = {
-                Icon(
-                    modifier = Modifier.size(24.dp, 24.dp),
-                    painter = painterResource(R.drawable.krest),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
-                )
-            },
-            shape = MaterialTheme.shapes.medium,
-            modifier = modifier.padding(horizontal = 5.dp)
-        )
-        NavigationDrawerItem(
-            label = {
-                Text(
-                    text = stringResource(id = R.string.bsinaidal),
-                )
-            },
-            selected = route == AllDestinations.BIBLIA_SINODAL,
-            onClick = {
-                navigateToRazdel(AllDestinations.BIBLIA_SINODAL)
+                navigateToRazdel(AllDestinations.BIBLIA)
             },
             icon = {
                 Icon(

@@ -5,13 +5,24 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,22 +37,27 @@ import by.carkva_gazeta.malitounik2.ui.theme.Primary
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik2.views.AppNavigationActions
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun BibliaMenu(
     navController: NavHostController,
-    perevod: String
+    setTitle: (String) -> Unit = { }
 ) {
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
+    var perevod by remember { mutableStateOf(k.getString("perevodBibileMenu", Settings.PEREVODSEMUXI) ?: Settings.PEREVODSEMUXI) }
     val bibleTime = remember { mutableStateOf(false) }
     if (bibleTime.value) {
         val prevodName = when (perevod) {
             Settings.PEREVODSEMUXI -> "biblia"
             Settings.PEREVODBOKUNA -> "bokuna"
             Settings.PEREVODCARNIAUSKI -> "carniauski"
+            Settings.PEREVODNADSAN -> "nadsan"
             Settings.PEREVODSINOIDAL -> "sinaidal"
             else -> "biblia"
         }
@@ -51,11 +67,119 @@ fun BibliaMenu(
         bibleTime.value = false
         navigationActions.navigateToBibliaList(kniga >= 50, perevod)
     }
+    val lazyRowState = rememberLazyListState()
+    val list = listOf(
+        Settings.PEREVODSEMUXI,
+        Settings.PEREVODBOKUNA,
+        Settings.PEREVODNADSAN,
+        Settings.PEREVODCARNIAUSKI,
+        Settings.PEREVODSINOIDAL
+    )
+    val context = LocalContext.current
+    val selectState = remember(list) { list.map { false }.toMutableStateList() }
+    LaunchedEffect(Unit) {
+        CoroutineScope(Dispatchers.Main).launch {
+            when (perevod) {
+                Settings.PEREVODSEMUXI -> {
+                    selectState[0] = true
+                    lazyRowState.scrollToItem(0)
+                }
+
+                Settings.PEREVODBOKUNA -> {
+                    selectState[1] = true
+                    lazyRowState.scrollToItem(1)
+                }
+
+                Settings.PEREVODNADSAN -> {
+                    selectState[2] = true
+                    lazyRowState.scrollToItem(2)
+                }
+
+                Settings.PEREVODCARNIAUSKI -> {
+                    selectState[3] = true
+                    lazyRowState.scrollToItem(3)
+                }
+
+                Settings.PEREVODSINOIDAL -> {
+                    selectState[4] = true
+                    lazyRowState.scrollToItem(4)
+                }
+            }
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
     ) {
+        LazyRow(state = lazyRowState, modifier = Modifier.fillMaxWidth()) {
+            items(list.size) { index ->
+                val titlePerevod = when (index) {
+                    0 -> stringResource(R.string.title_biblia2)
+                    1 -> stringResource(R.string.title_biblia_bokun2)
+                    2 -> stringResource(R.string.title_psalter)
+                    3 -> stringResource(R.string.title_biblia_charniauski2)
+                    4 -> stringResource(R.string.bsinaidal2)
+                    else -> stringResource(R.string.title_biblia2)
+                }
+                FilterChip(
+                    modifier = Modifier.padding(end = 10.dp),
+                    onClick = {
+                        for (i in 0..4)
+                            selectState[i] = false
+                        selectState[index] = !selectState[index]
+                        val edit = k.edit()
+                        when (index) {
+                            0 -> {
+                                edit.putString("perevodBibileMenu", Settings.PEREVODSEMUXI)
+                                setTitle(context.getString(R.string.title_biblia))
+                                perevod = Settings.PEREVODSEMUXI
+
+                            }
+                            1 -> {
+                                edit.putString("perevodBibileMenu", Settings.PEREVODBOKUNA)
+                                setTitle(context.getString(R.string.title_biblia_bokun))
+                                perevod = Settings.PEREVODBOKUNA
+                            }
+                            2 -> {
+                                edit.putString("perevodBibileMenu", Settings.PEREVODNADSAN)
+                                setTitle(context.getString(R.string.title_psalter))
+                                perevod = Settings.PEREVODNADSAN
+                            }
+                            3 -> {
+                                edit.putString("perevodBibileMenu", Settings.PEREVODCARNIAUSKI)
+                                setTitle(context.getString(R.string.title_biblia_charniauski))
+                                perevod = Settings.PEREVODCARNIAUSKI
+                            }
+                            4 -> {
+                                edit.putString("perevodBibileMenu", Settings.PEREVODSINOIDAL)
+                                setTitle(context.getString(R.string.bsinaidal))
+                                perevod = Settings.PEREVODSINOIDAL
+                            }
+                        }
+                        CoroutineScope(Dispatchers.Main).launch {
+                            lazyRowState.scrollToItem(index)
+                        }
+                        edit.apply()
+                    },
+                    label = {
+                        Text(titlePerevod, fontSize = 18.sp)
+                    },
+                    selected = selectState[index],
+                    leadingIcon = if (selectState[index]) {
+                        {
+                            Icon(
+                                imageVector = Icons.Filled.Done,
+                                contentDescription = "",
+                                modifier = Modifier.size(FilterChipDefaults.IconSize)
+                            )
+                        }
+                    } else {
+                        null
+                    },
+                )
+            }
+        }
         TextButton(
             onClick = {
                 navigationActions.navigateToBibliaList(false, perevod)

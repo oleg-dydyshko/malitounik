@@ -89,6 +89,7 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
+import java.io.File
 import java.io.InputStreamReader
 import java.util.Calendar
 
@@ -104,9 +105,10 @@ fun AppNavGraph(
         coroutineScope.launch { drawerState.open() }
     }
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-    val kalindar = if (k.getBoolean("caliandarList", false)) AllDestinations.KALIANDAR_YEAR
-    else AllDestinations.KALIANDAR
-    val start = k.getString("navigate", kalindar) ?: kalindar
+    val remove = k.getString("navigate", "Biblia_Cemuxa")
+    if (remove == "Biblia_Cemuxa" || remove == "Biblia_Bokuna" || remove == "Biblia_Charniauski" || remove == "Biblia_Nadsan" || remove == "Biblia_Sinodal")
+        k.edit().remove("navigate").apply()
+    val start = k.getString("navigate", AllDestinations.KALIANDAR) ?: AllDestinations.KALIANDAR
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
@@ -149,44 +151,8 @@ fun AppNavGraph(
             )
         }
 
-        composable(AllDestinations.BIBLIA_CEMUXA) {
-            Settings.destinations = AllDestinations.BIBLIA_CEMUXA
-            MainConteiner(
-                navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState
-            )
-        }
-
-        composable(AllDestinations.BIBLIA_BOKUNA) {
-            Settings.destinations = AllDestinations.BIBLIA_BOKUNA
-            MainConteiner(
-                navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState
-            )
-        }
-
-        composable(AllDestinations.BIBLIA_CHARNIAUSKI) {
-            Settings.destinations = AllDestinations.BIBLIA_CHARNIAUSKI
-            MainConteiner(
-                navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState
-            )
-        }
-
-        composable(AllDestinations.BIBLIA_NADSAN) {
-            Settings.destinations = AllDestinations.BIBLIA_NADSAN
-            MainConteiner(
-                navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState
-            )
-        }
-
-        composable(AllDestinations.BIBLIA_SINODAL) {
-            Settings.destinations = AllDestinations.BIBLIA_SINODAL
+        composable(AllDestinations.BIBLIA) {
+            Settings.destinations = AllDestinations.BIBLIA
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
@@ -213,10 +179,9 @@ fun AppNavGraph(
         }
 
         composable(
-            AllDestinations.CYTANNI_LIST + "/{cytanne}/{title}/{biblia}/{perevod}/{count}",
+            AllDestinations.CYTANNI_LIST + "/{cytanne}/{title}/{biblia}/{perevod}",
             arguments = listOf(
-                navArgument("biblia") { type = NavType.IntType },
-                navArgument("count") { type = NavType.IntType })
+                navArgument("biblia") { type = NavType.IntType })
         ) { stackEntry ->
             val cytanne = stackEntry.arguments?.getString("cytanne") ?: ""
             val title = stackEntry.arguments?.getString("title") ?: ""
@@ -225,8 +190,7 @@ fun AppNavGraph(
             Settings.destinations = AllDestinations.CYTANNI_LIST
             val perevod = stackEntry.arguments?.getString("perevod", Settings.PEREVODSEMUXI)
                 ?: Settings.PEREVODSEMUXI
-            val count = stackEntry.arguments?.getInt("count", 1) ?: 1
-            CytanniList(navController, title, cytanne, biblia, perevod, count)
+            CytanniList(navController, title, cytanne, biblia, perevod)
         }
 
         composable(
@@ -235,19 +199,18 @@ fun AppNavGraph(
                 navArgument("novyZapavet") { type = NavType.BoolType })
         ) { stackEntry ->
             val isNovyZapavet = stackEntry.arguments?.getBoolean("novyZapavet", false) ?: false
-            val perevod = stackEntry.arguments?.getString("perevod", AllDestinations.BIBLIA_CEMUXA)
-                ?: AllDestinations.BIBLIA_CEMUXA
+            val perevod = stackEntry.arguments?.getString("perevod", Settings.PEREVODSEMUXI)
+                ?: Settings.PEREVODSEMUXI
             BibliaList(
                 navController,
                 isNovyZapavet,
                 perevod,
-                navigateToCytanniList = { title, chytanne, perevod2, count ->
+                navigateToCytanniList = { chytanne, perevod2 ->
                     navigationActions.navigateToCytanniList(
-                        title,
+                        "",
                         chytanne,
                         Settings.CHYTANNI_BIBLIA,
-                        perevod2,
-                        count
+                        perevod2
                     )
                 })
         }
@@ -343,7 +306,7 @@ fun MainConteiner(
                 removeAllVybranaeDialog = false
             },
             onConfirmation = {
-                /*for (perevod in 1..5) {
+                for (perevod in 1..5) {
                     val prevodName = when (perevod.toString()) {
                         Settings.PEREVODSEMUXI -> "biblia"
                         Settings.PEREVODBOKUNA -> "bokuna"
@@ -355,7 +318,7 @@ fun MainConteiner(
                     val file = File("${context.filesDir}/vybranoe_${prevodName}.json")
                     if (file.exists()) file.delete()
 
-                }*/
+                }
                 removeAllVybranae = true
                 removeAllVybranaeDialog = false
             }
@@ -368,11 +331,7 @@ fun MainConteiner(
                 when (razdzel) {
                     AllDestinations.KALIANDAR -> navigationActions.navigateToKaliandar()
                     AllDestinations.BOGASLUJBOVYIA -> navigationActions.navigateToBogaslujbovyia()
-                    AllDestinations.BIBLIA_CEMUXA -> navigationActions.navigateToBibliaCemuxa()
-                    AllDestinations.BIBLIA_BOKUNA -> navigationActions.navigateToBibliaBokuna()
-                    AllDestinations.BIBLIA_CHARNIAUSKI -> navigationActions.navigateToBibliaCharniauski()
-                    AllDestinations.BIBLIA_NADSAN -> navigationActions.navigateToBibliaNadsan()
-                    AllDestinations.BIBLIA_SINODAL -> navigationActions.navigateToBibliaSinodal()
+                    AllDestinations.BIBLIA -> navigationActions.navigateToBiblia()
                     AllDestinations.VYBRANAE_LIST -> {
                         navigationActions.navigateToVybranaeList()
                     }
@@ -384,22 +343,30 @@ fun MainConteiner(
         val col = MaterialTheme.colorScheme.onTertiary
         var tollBarColor by remember { mutableStateOf(col) }
         var textTollBarColor by remember { mutableStateOf(PrimaryTextBlack) }
+        var title by rememberSaveable {
+            mutableStateOf("")
+        }
+        title = when (currentRoute) {
+            AllDestinations.KALIANDAR -> stringResource(R.string.kaliandar2)
+            AllDestinations.KALIANDAR_YEAR -> stringResource(R.string.kaliandar2)
+            AllDestinations.BOGASLUJBOVYIA -> stringResource(R.string.liturgikon)
+            AllDestinations.VYBRANAE_LIST -> stringResource(R.string.MenuVybranoe)
+            AllDestinations.BIBLIA -> {
+                when (k.getString("perevodBibileMenu", Settings.PEREVODSEMUXI) ?: Settings.PEREVODSEMUXI) {
+                    Settings.PEREVODSEMUXI -> stringResource(R.string.title_biblia)
+                    Settings.PEREVODBOKUNA -> stringResource(R.string.title_biblia_bokun)
+                    Settings.PEREVODCARNIAUSKI -> stringResource(R.string.title_biblia_charniauski)
+                    Settings.PEREVODNADSAN -> stringResource(R.string.title_psalter)
+                    Settings.PEREVODSINOIDAL -> stringResource(R.string.bsinaidal)
+                    else -> stringResource(R.string.kaliandar2)
+                }
+            }
+            else -> ""
+        }
         Scaffold(
             topBar = {
                 TopAppBar(
                     title = {
-                        val title = when (currentRoute) {
-                            AllDestinations.KALIANDAR -> stringResource(R.string.kaliandar2)
-                            AllDestinations.KALIANDAR_YEAR -> stringResource(R.string.kaliandar2)
-                            AllDestinations.BOGASLUJBOVYIA -> stringResource(R.string.liturgikon)
-                            AllDestinations.BIBLIA_CEMUXA -> stringResource(R.string.title_biblia)
-                            AllDestinations.BIBLIA_BOKUNA -> stringResource(R.string.title_biblia_bokun)
-                            AllDestinations.BIBLIA_CHARNIAUSKI -> stringResource(R.string.title_biblia_charniauski)
-                            AllDestinations.BIBLIA_NADSAN -> stringResource(R.string.title_psalter)
-                            AllDestinations.BIBLIA_SINODAL -> stringResource(R.string.bsinaidal)
-                            AllDestinations.VYBRANAE_LIST -> stringResource(R.string.MenuVybranoe)
-                            else -> ""
-                        }
                         Text(
                             title,
                             color = textTollBarColor,
@@ -613,8 +580,7 @@ fun MainConteiner(
                                         title,
                                         chytanne,
                                         biblia,
-                                        Settings.PEREVODSEMUXI,
-                                        1
+                                        Settings.PEREVODSEMUXI
                                     )
                                 },
                                 innerPadding
@@ -624,29 +590,11 @@ fun MainConteiner(
 
                     AllDestinations.BOGASLUJBOVYIA -> BogaslujbovyiaScreen()
 
-                    AllDestinations.BIBLIA_CEMUXA -> BibliaMenu(
+                    AllDestinations.BIBLIA -> BibliaMenu(
                         navController,
-                        Settings.PEREVODSEMUXI
-                    )
-
-                    AllDestinations.BIBLIA_BOKUNA -> BibliaMenu(
-                        navController,
-                        Settings.PEREVODBOKUNA
-                    )
-
-                    AllDestinations.BIBLIA_CHARNIAUSKI -> BibliaMenu(
-                        navController,
-                        Settings.PEREVODCARNIAUSKI
-                    )
-
-                    AllDestinations.BIBLIA_NADSAN -> BibliaMenu(
-                        navController,
-                        Settings.PEREVODNADSAN
-                    )
-
-                    AllDestinations.BIBLIA_SINODAL -> BibliaMenu(
-                        navController,
-                        Settings.PEREVODSINOIDAL
+                        setTitle = {
+                            title = it
+                        }
                     )
 
                     AllDestinations.KALIANDAR_YEAR -> KaliandarScreenYear(
@@ -657,13 +605,12 @@ fun MainConteiner(
 
                     AllDestinations.VYBRANAE_LIST -> VybranaeList(
                         navController,
-                        navigateToCytanniList = { title, chytanne, perevod2, count ->
+                        navigateToCytanniList = { chytanne, perevod2 ->
                             navigationActions.navigateToCytanniList(
-                                title,
+                                "",
                                 chytanne,
                                 Settings.CHYTANNI_VYBRANAE,
-                                perevod2,
-                                count
+                                perevod2
                             )
                         },
                         sorted,

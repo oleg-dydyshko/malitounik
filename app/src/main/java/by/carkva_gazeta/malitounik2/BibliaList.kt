@@ -62,7 +62,7 @@ fun BibliaList(
     navController: NavHostController,
     isNovyZapavet: Boolean,
     perevod: String,
-    navigateToCytanniList: (String, String, String, Int) -> Unit = { _, _, _, _ -> }
+    navigateToCytanniList: (String, String) -> Unit = { _, _ -> }
 ) {
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
     val maxLine = remember { mutableIntStateOf(1) }
@@ -77,7 +77,6 @@ fun BibliaList(
     if (Settings.bibleTime) {
         Settings.bibleTime = false
         Settings.bibleTimeList = true
-        val bibleCount = bibleCount(perevod, isNovyZapavet)
         val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
         val prevodName = when (perevod) {
             Settings.PEREVODSEMUXI -> "biblia"
@@ -88,14 +87,7 @@ fun BibliaList(
         }
         val knigaText = k.getString("bible_time_${prevodName}_kniga", "Быц") ?: "Быц"
         val glava = k.getInt("bible_time_${prevodName}_glava", 0)
-        var count = 0
-        for (i in 0 until bibleCount.size) {
-            if (bibleCount[i].subTitle == knigaText) {
-                count = bibleCount[i].count
-                break
-            }
-        }
-        navigateToCytanniList(title, "$knigaText ${glava + 1}", perevod, count)
+        navigateToCytanniList("$knigaText ${glava + 1}", perevod)
     }
     val subTitle = if (isNovyZapavet) stringResource(R.string.novy_zapaviet)
     else stringResource(R.string.stary_zapaviet)
@@ -230,10 +222,8 @@ fun BibliaList(
                                             .background(Divider)
                                             .clickable {
                                                 navigateToCytanniList(
-                                                    title,
                                                     dataItem.subTitle + " " + (item + 1).toString(),
-                                                    perevod,
-                                                    dataItem.count
+                                                    perevod
                                                 )
                                             }
                                     ) {
@@ -318,6 +308,101 @@ fun bibleCount(perevod: String, isNovyZapavet: Boolean): ArrayList<BibliaList> {
                 result.addAll(setStaryZapavet(list, perevod))
             }
         }
+    }
+    return result
+}
+
+fun bibleCount(kniga: Int, perevod: String): Int {
+    val result: Int
+    if (perevod == Settings.PEREVODNADSAN) {
+        result = 151
+        return result
+    }
+    result = when(kniga) {
+        0 -> 50
+        1 -> 40
+        2 -> 27
+        3 -> 36
+        4 -> 34
+        5 -> 24
+        6 -> 21
+        7 -> 4
+        8 -> 31
+        9 -> 24
+        10 -> 22
+        11 -> 25
+        12 -> 29
+        13 -> 37
+        14 -> 10
+        15 -> 13
+        16 -> 9
+        17 -> 14
+        18 -> 16
+        19 -> 10
+        20 -> 44
+        21 -> {
+            if (perevod == Settings.PEREVODSEMUXI) 151
+            else 150
+        }
+        22 -> 31
+        23 -> 12
+        24 -> 8
+        25 -> 19
+        26 -> 51
+        27 -> 66
+        28 -> 52
+        29 -> 5
+        30 -> 1
+        31 -> {
+            if (perevod == Settings.PEREVODCARNIAUSKI) 6
+            else 5
+        }
+        32 -> 48
+        33 -> 14
+        34 -> 14
+        35 -> 3
+        36 -> 9
+        37 -> 1
+        38 -> 4
+        39 -> 7
+        40 -> 3
+        41 -> 3
+        42 -> 3
+        43 -> 2
+        44 -> 14
+        45 -> 4
+        46 -> 16
+        47 -> 15
+        48 -> 7
+        49 -> 16
+        50 -> 28
+        51 -> 16
+        52 -> 24
+        53 -> 21
+        54 -> 28
+        55 -> 5
+        56 -> 5
+        57 -> 3
+        58 -> 5
+        59 -> 1
+        60 -> 1
+        61 -> 1
+        62 -> 16
+        63 -> 16
+        64 -> 13
+        65 -> 6
+        66 -> 6
+        67 -> 4
+        68 -> 4
+        69 -> 5
+        70 -> 3
+        71 -> 6
+        72 -> 4
+        73 -> 3
+        74 -> 1
+        75 -> 13
+        76 -> 22
+        else -> 1
     }
     return result
 }

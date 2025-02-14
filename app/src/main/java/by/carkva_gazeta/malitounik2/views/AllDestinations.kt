@@ -2,12 +2,8 @@ package by.carkva_gazeta.malitounik2.views
 
 import android.content.SharedPreferences
 import androidx.navigation.NavHostController
-import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA_BOKUNA
-import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA_CEMUXA
-import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA_CHARNIAUSKI
+import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA_LIST
-import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA_NADSAN
-import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA_SINODAL
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BOGASLUJBOVYIA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BOGASLUJBOVYIA_MENU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.CYTANNI_LIST
@@ -21,11 +17,7 @@ object AllDestinations {
     const val BOGASLUJBOVYIA = "Bogaslujbovyia"
     const val KALIANDAR_YEAR = "Kaliandar_Year"
     const val CYTANNI_LIST = "Cytanni_List"
-    const val BIBLIA_CEMUXA = "Biblia_Cemuxa"
-    const val BIBLIA_BOKUNA = "Biblia_Bokuna"
-    const val BIBLIA_CHARNIAUSKI = "Biblia_Charniauski"
-    const val BIBLIA_NADSAN = "Biblia_Nadsan"
-    const val BIBLIA_SINODAL = "Biblia_Sinodal"
+    const val BIBLIA = "Biblia"
     const val BIBLIA_LIST = "Biblia_List"
     const val VYBRANAE_LIST = "Bybranae_List"
 }
@@ -62,58 +54,18 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
         edit.apply()
     }
 
-    fun navigateToBibliaCemuxa() {
-        navController.navigate(BIBLIA_CEMUXA) {
-            popUpTo(navController.currentBackStackEntry?.destination?.route ?: BIBLIA_CEMUXA) {
+    fun navigateToBiblia() {
+        navController.navigate(BIBLIA) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: BIBLIA) {
                 inclusive = true
             }
         }
-        edit.putString("navigate", BIBLIA_CEMUXA)
+        edit.putString("navigate", BIBLIA)
         edit.apply()
     }
 
-    fun navigateToBibliaBokuna() {
-        navController.navigate(BIBLIA_BOKUNA) {
-            popUpTo(navController.currentBackStackEntry?.destination?.route ?: BIBLIA_BOKUNA) {
-                inclusive = true
-            }
-        }
-        edit.putString("navigate", BIBLIA_BOKUNA)
-        edit.apply()
-    }
-
-    fun navigateToBibliaCharniauski() {
-        navController.navigate(BIBLIA_CHARNIAUSKI) {
-            popUpTo(navController.currentBackStackEntry?.destination?.route ?: BIBLIA_CHARNIAUSKI) {
-                inclusive = true
-            }
-        }
-        edit.putString("navigate", BIBLIA_CHARNIAUSKI)
-        edit.apply()
-    }
-
-    fun navigateToBibliaNadsan() {
-        navController.navigate(BIBLIA_NADSAN) {
-            popUpTo(navController.currentBackStackEntry?.destination?.route ?: BIBLIA_NADSAN) {
-                inclusive = true
-            }
-        }
-        edit.putString("navigate", BIBLIA_NADSAN)
-        edit.apply()
-    }
-
-    fun navigateToBibliaSinodal() {
-        navController.navigate(BIBLIA_SINODAL) {
-            popUpTo(navController.currentBackStackEntry?.destination?.route ?: BIBLIA_SINODAL) {
-                inclusive = true
-            }
-        }
-        edit.putString("navigate", BIBLIA_SINODAL)
-        edit.apply()
-    }
-
-    fun navigateToCytanniList(title: String, cytanne: String, biblia: Int, perevod: String, count: Int) {
-        navController.navigate("$CYTANNI_LIST/$cytanne/$title/$biblia/$perevod/$count") {
+    fun navigateToCytanniList(title: String, cytanne: String, biblia: Int, perevod: String) {
+        navController.navigate("$CYTANNI_LIST/$cytanne/$title/$biblia/$perevod") {
             CYTANNI_LIST
         }
     }
