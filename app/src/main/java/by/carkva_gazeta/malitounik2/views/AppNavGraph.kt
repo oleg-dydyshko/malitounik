@@ -179,9 +179,10 @@ fun AppNavGraph(
         }
 
         composable(
-            AllDestinations.CYTANNI_LIST + "/{cytanne}/{title}/{biblia}/{perevod}",
+            AllDestinations.CYTANNI_LIST + "/{cytanne}/{title}/{biblia}/{perevod}/{position}",
             arguments = listOf(
-                navArgument("biblia") { type = NavType.IntType })
+                navArgument("biblia") { type = NavType.IntType },
+                navArgument("position") { type = NavType.IntType })
         ) { stackEntry ->
             val cytanne = stackEntry.arguments?.getString("cytanne") ?: ""
             val title = stackEntry.arguments?.getString("title") ?: ""
@@ -190,7 +191,8 @@ fun AppNavGraph(
             Settings.destinations = AllDestinations.CYTANNI_LIST
             val perevod = stackEntry.arguments?.getString("perevod", Settings.PEREVODSEMUXI)
                 ?: Settings.PEREVODSEMUXI
-            CytanniList(navController, title, cytanne, biblia, perevod)
+            val position = stackEntry.arguments?.getInt("position", 0) ?: 0
+            CytanniList(navController, title, cytanne, biblia, perevod, position)
         }
 
         composable(
@@ -210,7 +212,8 @@ fun AppNavGraph(
                         "",
                         chytanne,
                         Settings.CHYTANNI_BIBLIA,
-                        perevod2
+                        perevod2,
+                        -1
                     )
                 })
         }
@@ -580,7 +583,8 @@ fun MainConteiner(
                                         title,
                                         chytanne,
                                         biblia,
-                                        Settings.PEREVODSEMUXI
+                                        Settings.PEREVODSEMUXI,
+                                        -1
                                     )
                                 },
                                 innerPadding
@@ -605,12 +609,13 @@ fun MainConteiner(
 
                     AllDestinations.VYBRANAE_LIST -> VybranaeList(
                         navController,
-                        navigateToCytanniList = { chytanne, perevod2 ->
+                        navigateToCytanniList = { chytanne, position, perevod2 ->
                             navigationActions.navigateToCytanniList(
                                 "",
                                 chytanne,
                                 Settings.CHYTANNI_VYBRANAE,
-                                perevod2
+                                perevod2,
+                                position
                             )
                         },
                         sorted,

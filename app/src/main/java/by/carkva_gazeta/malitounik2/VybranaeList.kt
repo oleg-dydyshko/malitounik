@@ -47,7 +47,7 @@ import java.util.Calendar
 @Composable
 fun VybranaeList(
     navController: NavHostController,
-    navigateToCytanniList: (String, String) -> Unit = { _, _ -> },
+    navigateToCytanniList: (String, Int, String) -> Unit = { _, _, _ -> },
     sorted: Int,
     removeAllVybranae: Boolean
 ) {
@@ -213,6 +213,7 @@ fun VybranaeList(
                                         }
                                         navigateToCytanniList(
                                             newList.toString(),
+                                            index,
                                             dataItem.listBible[index].perevod
                                         )
                                     },

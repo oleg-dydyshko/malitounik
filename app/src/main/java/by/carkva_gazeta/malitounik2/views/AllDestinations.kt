@@ -64,8 +64,8 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
         edit.apply()
     }
 
-    fun navigateToCytanniList(title: String, cytanne: String, biblia: Int, perevod: String) {
-        navController.navigate("$CYTANNI_LIST/$cytanne/$title/$biblia/$perevod") {
+    fun navigateToCytanniList(title: String, cytanne: String, biblia: Int, perevod: String, position: Int) {
+        navController.navigate("$CYTANNI_LIST/$cytanne/$title/$biblia/$perevod/$position") {
             CYTANNI_LIST
         }
     }

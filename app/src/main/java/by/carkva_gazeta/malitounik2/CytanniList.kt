@@ -134,7 +134,8 @@ fun CytanniList(
     title: String,
     cytanne: String,
     biblia: Int,
-    perevodRoot: String
+    perevodRoot: String,
+    position: Int
 ) {
     val t1 = cytanne.indexOf(";")
     var knigaText by remember {
@@ -283,7 +284,7 @@ fun CytanniList(
             listState.add(rememberScrollState())
         }
     }
-    if (selectPerevod) {
+    if (biblia == Settings.CHYTANNI_BIBLIA && selectPerevod) {
         selectPerevod = false
         if (!(selectOldPerevod == Settings.PEREVODCARNIAUSKI || selectOldPerevod == Settings.PEREVODBOKUNA)) {
             if (perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODBOKUNA) {
@@ -317,27 +318,26 @@ fun CytanniList(
     }
     if (perevod == Settings.PEREVODSINOIDAL) {
         if (knigaBiblii(knigaText) == 31 && listState.size == 6) {
-            listState.removeAt(5)
-            listState.removeAt(4)
-            listState.removeAt(3)
-            listState.removeAt(2)
-            listState.removeAt(1)
-            selectedIndex = 0
-            knigaText = "Пасл Ер"
+            if (selectedIndex == 5) {
+                for (i in 5 downTo 1)
+                    listState.removeAt(i)
+                selectedIndex = 0
+                knigaText = "Пасл Ер"
+            } else {
+                listState.removeAt(5)
+            }
         }
     }
     if (perevod == Settings.PEREVODCARNIAUSKI) {
-        if (knigaBiblii(knigaText) == 30 && listState.size == 1) {
-            listState.add(rememberScrollState())
-            listState.add(rememberScrollState())
-            listState.add(rememberScrollState())
-            listState.add(rememberScrollState())
-            listState.add(rememberScrollState())
+        if (knigaBiblii(knigaText) == 30) {
+            for (i in 1..5)
+                listState.add(rememberScrollState())
             selectedIndex = 5
             knigaText = "Бар"
         }
     }
     val vybranoeList = remember { ArrayList<VybranoeData>() }
+    var isPerevodError by remember { mutableStateOf(false) }
     var initVybranoe by remember { mutableStateOf(true) }
     var isVybranoe by remember { mutableStateOf(false) }
     var saveVybranoe by remember { mutableStateOf(false) }
@@ -418,7 +418,6 @@ fun CytanniList(
                 showDropdown = false
                 if (autoScrollSensor) autoScroll = true
             }
-
             !backPressHandled -> {
                 val prefEditors = k.edit()
                 if (biblia == Settings.CHYTANNI_BIBLIA) {
@@ -526,23 +525,33 @@ fun CytanniList(
                                 })
                         } else {
                             IconButton(onClick = {
-                                val prefEditors = k.edit()
-                                if (biblia == Settings.CHYTANNI_BIBLIA) {
-                                    prefEditors.putString(
-                                        "bible_time_${prevodName}_kniga",
-                                        knigaText
-                                    )
-                                    prefEditors.putInt(
-                                        "bible_time_${prevodName}_glava",
-                                        selectedIndex
-                                    )
-                                    prefEditors.putInt(
-                                        "bible_time_${prevodName}_stix",
-                                        listState[selectedIndex].value
-                                    )
+                                when {
+                                    fullscreen -> fullscreen = false
+                                    isParallelVisable -> isParallelVisable = false
+                                    showDropdown -> {
+                                        showDropdown = false
+                                        if (autoScrollSensor) autoScroll = true
+                                    }
+                                    else -> {
+                                        val prefEditors = k.edit()
+                                        if (biblia == Settings.CHYTANNI_BIBLIA) {
+                                            prefEditors.putString(
+                                                "bible_time_${prevodName}_kniga",
+                                                knigaText
+                                            )
+                                            prefEditors.putInt(
+                                                "bible_time_${prevodName}_glava",
+                                                selectedIndex
+                                            )
+                                            prefEditors.putInt(
+                                                "bible_time_${prevodName}_stix",
+                                                listState[selectedIndex].value
+                                            )
+                                        }
+                                        prefEditors.apply()
+                                        navController.popBackStack()
+                                    }
                                 }
-                                prefEditors.apply()
-                                navController.popBackStack()
                             },
                                 content = {
                                     Icon(
@@ -641,7 +650,7 @@ fun CytanniList(
                                     )
                                 }
                             )
-                            if (biblia == Settings.CHYTANNI_BIBLIA) {
+                            if (biblia == Settings.CHYTANNI_BIBLIA && listState.size - 1 > 1) {
                                 DropdownMenuItem(
                                     onClick = {
                                         showDropdown = !showDropdown
@@ -959,6 +968,14 @@ fun CytanniList(
                             if (menuPosition == 2) {
                                 Column(Modifier.selectableGroup())
                                 {
+                                    if (isPerevodError) {
+                                        Text(
+                                            stringResource(R.string.biblia_error),
+                                            modifier = Modifier.padding(start = 10.dp, top = 10.dp),
+                                            textAlign = TextAlign.Center,
+                                            color = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
                                     Text(
                                         stringResource(R.string.perevody),
                                         modifier = Modifier.padding(start = 10.dp, top = 10.dp),
@@ -1302,9 +1319,19 @@ fun CytanniList(
                     ) { page ->
                         val chteniaNewPage = knigaText + " ${page + 1}"
                         val resultPage = getBible(context, chteniaNewPage, perevod, biblia)
+                        if (resultPage.isEmpty()) {
+                            val inputStream =
+                                context.resources.openRawResource(R.raw.biblia_error)
+                            val isr = InputStreamReader(inputStream)
+                            val reader = BufferedReader(isr)
+                            resultPage.add(CytanniListData(subTitle, reader.readText()))
+                            isPerevodError = true
+                        } else {
+                            isPerevodError = false
+                        }
                         val selectState =
                             remember(resultPage) { resultPage.map { false }.toMutableStateList() }
-                        if (perevodRoot != Settings.PEREVODNADSAN) {
+                        if (!isPerevodError && perevodRoot != Settings.PEREVODNADSAN) {
                             subTitle = resultPage[0].title.substringBeforeLast(" ")
                         }
                         if (isSelectAll) {
@@ -1429,6 +1456,28 @@ fun CytanniList(
                 val resultList = getBible(context, cytanne, perevod, biblia, true)
                 val selectState =
                     remember(resultList) { resultList.map { false }.toMutableStateList() }
+                if (position != -1) {
+                    var resultCount = 0
+                    if (position != 0) {
+                        var tit = ""
+                        var cnt = 0
+                        for (i in 0 until resultList.size) {
+                            if (tit.isNotEmpty() && resultList[i].title != tit) {
+                                cnt++
+                                if (cnt == position) {
+                                    resultCount = i + 1
+                                    break
+                                }
+                            }
+                            tit = resultList[i].title
+                        }
+                    }
+                    LaunchedEffect(Unit) {
+                        coroutineScope.launch {
+                            lazyState.scrollToItem(resultCount)
+                        }
+                    }
+                }
                 if (isSelectAll) {
                     isSelectAll = false
                     var findTitle = ""
@@ -1775,13 +1824,15 @@ fun getBible(
                         var perevodNew = perevod
                         val knigiBiblii = knigaBiblii(knigaText)
                         var kniga = getRealBook(knigiBiblii, perevodNew)
-                        if (kniga == -1) {
-                            perevodNew = Settings.PEREVODCARNIAUSKI
-                            kniga = getRealBook(knigiBiblii, perevodNew)
-                        }
-                        if (biblia != Settings.CHYTANNI_LITURGICHNYIA && kniga == -1) {
-                            perevodNew = Settings.PEREVODSINOIDAL
-                            kniga = getRealBook(knigiBiblii, perevodNew)
+                        if (biblia != Settings.CHYTANNI_BIBLIA) {
+                            if (kniga == -1) {
+                                perevodNew = Settings.PEREVODCARNIAUSKI
+                                kniga = getRealBook(knigiBiblii, perevodNew)
+                            }
+                            if (biblia != Settings.CHYTANNI_LITURGICHNYIA && kniga == -1) {
+                                perevodNew = Settings.PEREVODSINOIDAL
+                                kniga = getRealBook(knigiBiblii, perevodNew)
+                            }
                         }
                         val textBible = if (styxStart == 0 && styxEnd == 0) {
                             biblia(
@@ -1910,11 +1961,7 @@ fun getBible(
             }
         }
     } catch (_: Throwable) {
-        val inputStream =
-            context.resources.openRawResource(R.raw.biblia_error)
-        val isr = InputStreamReader(inputStream)
-        val reader = BufferedReader(isr)
-        result.add(CytanniListData(reader.readText()))
+        result.clear()
     }
     return result
 }
@@ -2326,5 +2373,5 @@ data class VybranoeData(
     val title: String,
     val knigaText: String,
     val glava: Int,
-    val perevod: String,
+    val perevod: String
 )
