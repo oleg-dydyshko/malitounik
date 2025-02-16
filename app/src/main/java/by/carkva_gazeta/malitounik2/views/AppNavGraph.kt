@@ -75,6 +75,7 @@ import by.carkva_gazeta.malitounik2.KaliandarScreenMounth
 import by.carkva_gazeta.malitounik2.KaliandarScreenYear
 import by.carkva_gazeta.malitounik2.MainActivity
 import by.carkva_gazeta.malitounik2.R
+import by.carkva_gazeta.malitounik2.SearchBible
 import by.carkva_gazeta.malitounik2.Settings
 import by.carkva_gazeta.malitounik2.VybranaeList
 import by.carkva_gazeta.malitounik2.ui.theme.BezPosta
@@ -216,6 +217,26 @@ fun AppNavGraph(
                         -1
                     )
                 })
+        }
+
+        composable(
+            AllDestinations.SEARCH_BIBLIA + "/{perevod}"
+        ) { stackEntry ->
+            val perevod = stackEntry.arguments?.getString("perevod", Settings.PEREVODSEMUXI)
+                ?: Settings.PEREVODSEMUXI
+            SearchBible(
+                navController,
+                perevod,
+                navigateToCytanniList = { chytanne, position, perevod2 ->
+                    navigationActions.navigateToCytanniList(
+                        "",
+                        chytanne,
+                        Settings.CHYTANNI_BIBLIA,
+                        perevod2,
+                        position
+                    )
+                }
+            )
         }
     }
 }
@@ -598,6 +619,9 @@ fun MainConteiner(
                         navController,
                         setTitle = {
                             title = it
+                        },
+                        navigateToSearchBible = { perevod ->
+                            navigationActions.navigateToSearchBiblia(perevod)
                         }
                     )
 

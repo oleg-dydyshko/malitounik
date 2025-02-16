@@ -15,7 +15,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -33,9 +32,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
@@ -79,7 +80,11 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
@@ -93,6 +98,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
@@ -150,9 +156,9 @@ fun CytanniList(
     val count = remember { bibleCount(knigaBiblii(knigaText), perevodRoot) }
     val coroutineScope = rememberCoroutineScope()
     val lazyState = rememberLazyListState()
-    val list = ArrayList<ScrollState>()
+    val list = ArrayList<LazyListState>()
     for (i in 0 until count) {
-        list.add(rememberScrollState())
+        list.add(rememberLazyListState())
     }
     val listState = remember { list }
     val view = LocalView.current
@@ -264,13 +270,13 @@ fun CytanniList(
         Settings.bibleTimeList = false
         LaunchedEffect(Unit) {
             coroutineScope.launch {
-                listState[selectedIndex].scrollTo(k.getInt("bible_time_${prevodName}_stix", 0))
+                listState[selectedIndex].scrollToItem(k.getInt("bible_time_${prevodName}_stix", 0))
             }
         }
     }
     if (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODNADSAN || perevod == Settings.PEREVODSINOIDAL) {
         if (knigaBiblii(knigaText) == 21 && listState.size == 150) {
-            listState.add(rememberScrollState())
+            listState.add(rememberLazyListState())
         }
     }
     if (perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODCARNIAUSKI) {
@@ -281,7 +287,7 @@ fun CytanniList(
     }
     if (perevod == Settings.PEREVODCARNIAUSKI) {
         if (knigaBiblii(knigaText) == 31 && listState.size == 5) {
-            listState.add(rememberScrollState())
+            listState.add(rememberLazyListState())
         }
     }
     if (biblia == Settings.CHYTANNI_BIBLIA && selectPerevod) {
@@ -331,7 +337,7 @@ fun CytanniList(
     if (perevod == Settings.PEREVODCARNIAUSKI) {
         if (knigaBiblii(knigaText) == 30) {
             for (i in 1..5)
-                listState.add(rememberScrollState())
+                listState.add(rememberLazyListState())
             selectedIndex = 5
             knigaText = "Бар"
         }
@@ -418,6 +424,7 @@ fun CytanniList(
                 showDropdown = false
                 if (autoScrollSensor) autoScroll = true
             }
+
             !backPressHandled -> {
                 val prefEditors = k.edit()
                 if (biblia == Settings.CHYTANNI_BIBLIA) {
@@ -425,7 +432,7 @@ fun CytanniList(
                     prefEditors.putInt("bible_time_${prevodName}_glava", selectedIndex)
                     prefEditors.putInt(
                         "bible_time_${prevodName}_stix",
-                        listState[selectedIndex].value
+                        listState[selectedIndex].firstVisibleItemIndex
                     )
                 }
                 prefEditors.apply()
@@ -532,6 +539,7 @@ fun CytanniList(
                                         showDropdown = false
                                         if (autoScrollSensor) autoScroll = true
                                     }
+
                                     else -> {
                                         val prefEditors = k.edit()
                                         if (biblia == Settings.CHYTANNI_BIBLIA) {
@@ -545,7 +553,7 @@ fun CytanniList(
                                             )
                                             prefEditors.putInt(
                                                 "bible_time_${prevodName}_stix",
-                                                listState[selectedIndex].value
+                                                listState[selectedIndex].firstVisibleItemIndex
                                             )
                                         }
                                         prefEditors.apply()
@@ -593,7 +601,7 @@ fun CytanniList(
                                 )
                             }
                         } else {
-                            if (listState[selectedIndex].maxValue != 0 && !isParallelVisable) {
+                            if (listState[selectedIndex].canScrollForward && !isParallelVisable) {
                                 val iconAutoScroll =
                                     if (autoScrollSensor) painterResource(R.drawable.stop_circle)
                                     else painterResource(R.drawable.play_circle)
@@ -1311,11 +1319,39 @@ fun CytanniList(
                             }
                         }
                     }
-                    pagerState.targetPage
+                    var isScrollRun by remember { mutableStateOf(false) }
+                    val nestedScrollConnection = remember {
+                        object : NestedScrollConnection {
+                            override fun onPreScroll(
+                                available: Offset,
+                                source: NestedScrollSource
+                            ): Offset {
+                                isScrollRun = true
+                                return super.onPreScroll(available, source)
+                            }
+
+                            override suspend fun onPostFling(
+                                consumed: Velocity,
+                                available: Velocity
+                            ): Velocity {
+                                isScrollRun = false
+                                if (autoScrollSensor) autoScroll = true
+                                return super.onPostFling(consumed, available)
+                            }
+                        }
+                    }
+                    if (position != -1) {
+                        LaunchedEffect(Unit) {
+                            coroutineScope.launch {
+                                listState[selectedIndex].scrollToItem(position)
+                            }
+                        }
+                    }
                     HorizontalPager(
                         pageSpacing = 10.dp,
                         state = pagerState,
-                        flingBehavior = fling
+                        flingBehavior = fling,
+                        verticalAlignment = Alignment.Top
                     ) { page ->
                         val chteniaNewPage = knigaText + " ${page + 1}"
                         val resultPage = getBible(context, chteniaNewPage, perevod, biblia)
@@ -1378,7 +1414,7 @@ fun CytanniList(
                             isShareMode = false
                             isSelectMode = false
                         }
-                        Column(
+                        LazyColumn(
                             Modifier
                                 .pointerInput(PointerEventType.Press) {
                                     awaitPointerEventScope {
@@ -1387,37 +1423,36 @@ fun CytanniList(
                                             if (event.type == PointerEventType.Press) {
                                                 autoScroll = false
                                             }
-                                            if (autoScrollSensor && event.type == PointerEventType.Release) {
+                                            if (autoScrollSensor && event.type == PointerEventType.Release && !isScrollRun) {
                                                 autoScroll = true
                                             }
                                         }
                                     }
                                 }
-                                .verticalScroll(
-                                    state = listState[page]
-                                )
+                                .nestedScroll(nestedScrollConnection),
+                            state = listState[page]
                         ) {
-                            resultPage.forEachIndexed { index, res ->
+                            itemsIndexed(resultPage) { index, res ->
                                 HtmlText(
-                                    modifier = Modifier
-                                        .combinedClickable(
-                                            onClick = {
-                                                if (!autoScrollSensor && !showDropdown) {
+                                    modifier = if (!autoScrollSensor && !showDropdown) {
+                                        Modifier
+                                            .combinedClickable(
+                                                onClick = {
                                                     if (!isSelectMode && isParallel && res.parallel != "+-+") {
                                                         isParallelVisable = true
                                                         paralelChtenia = res.parallel
                                                     } else {
                                                         selectState[index] = !selectState[index]
                                                     }
-                                                }
-                                            },
-                                            onLongClick = {
-                                                if (!autoScrollSensor && !showDropdown) {
+                                                },
+                                                onLongClick = {
                                                     isSelectMode = true
                                                     selectState[index] = !selectState[index]
                                                 }
-                                            }
-                                        )
+                                            )
+                                    } else {
+                                        Modifier
+                                    }
                                         .padding(horizontal = 10.dp)
                                         .background(if (selectState[index]) Post else Color.Unspecified),
                                     text = res.text,
@@ -1436,10 +1471,12 @@ fun CytanniList(
                                     )
                                 }
                             }
-                            Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
-                            if (listState[page].lastScrolledForward && !listState[page].canScrollForward) {
-                                autoScroll = false
-                                autoScrollSensor = false
+                            item {
+                                Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
+                                if (listState[page].lastScrolledForward && !listState[page].canScrollForward) {
+                                    autoScroll = false
+                                    autoScrollSensor = false
+                                }
                             }
                         }
                     }

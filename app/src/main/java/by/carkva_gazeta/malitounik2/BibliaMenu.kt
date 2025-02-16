@@ -44,7 +44,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun BibliaMenu(
     navController: NavHostController,
-    setTitle: (String) -> Unit = { }
+    setTitle: (String) -> Unit = { },
+    navigateToSearchBible: (String) -> Unit = { }
 ) {
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
@@ -265,6 +266,7 @@ fun BibliaMenu(
         }*/
         TextButton(
             onClick = {
+                navigateToSearchBible(perevod)
             },
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)

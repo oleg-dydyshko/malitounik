@@ -9,6 +9,7 @@ import by.carkva_gazeta.malitounik2.views.AllDestinations.BOGASLUJBOVYIA_MENU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.CYTANNI_LIST
 import by.carkva_gazeta.malitounik2.views.AllDestinations.KALIANDAR
 import by.carkva_gazeta.malitounik2.views.AllDestinations.KALIANDAR_YEAR
+import by.carkva_gazeta.malitounik2.views.AllDestinations.SEARCH_BIBLIA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.VYBRANAE_LIST
 
 object AllDestinations {
@@ -20,6 +21,7 @@ object AllDestinations {
     const val BIBLIA = "Biblia"
     const val BIBLIA_LIST = "Biblia_List"
     const val VYBRANAE_LIST = "Bybranae_List"
+    const val SEARCH_BIBLIA = "Search_Biblia"
 }
 
 class AppNavigationActions(private val navController: NavHostController, k: SharedPreferences) {
@@ -84,6 +86,12 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
         }
         edit.putString("navigate", VYBRANAE_LIST)
         edit.apply()
+    }
+
+    fun navigateToSearchBiblia(perevod: String) {
+        navController.navigate("$SEARCH_BIBLIA/$perevod") {
+            SEARCH_BIBLIA
+        }
     }
 
     fun navigateToBogaslujbovyiaMenu() {

@@ -284,3 +284,40 @@ fun getNameBook(context: Context, kniga: Int, perevod: String, novyZapavet: Bool
     }
     return ""
 }
+
+fun getNameBook(context: Context, perevod: String, novyZapavet: Boolean): Array<String> {
+    if (perevod == Settings.PEREVODSINOIDAL) {
+        val bookList = if (novyZapavet) {
+            context.resources.getStringArray(R.array.sinoidaln)
+        } else context.resources.getStringArray(R.array.sinoidals)
+        return bookList
+    }
+    if (perevod == Settings.PEREVODSEMUXI) {
+        val bookList = if (novyZapavet) {
+            context.resources.getStringArray(R.array.semuxan)
+        } else {
+            context.resources.getStringArray(R.array.semuxas)
+        }
+        return bookList
+    }
+    if (perevod == Settings.PEREVODBOKUNA) {
+        val bookList = if (novyZapavet) {
+            context.resources.getStringArray(R.array.bokunan)
+        } else {
+            context.resources.getStringArray(R.array.bokunas)
+        }
+        return bookList
+    }
+    if (perevod == Settings.PEREVODCARNIAUSKI) {
+        val bookList = if (novyZapavet) {
+            context.resources.getStringArray(R.array.charniauskin)
+        } else {
+            context.resources.getStringArray(R.array.charniauskis)
+        }
+        return bookList
+    }
+    if (perevod == Settings.PEREVODNADSAN) {
+        return context.resources.getStringArray(R.array.psalter_list)
+    }
+    return arrayOf("")
+}
