@@ -20,14 +20,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -59,6 +65,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -96,7 +103,8 @@ fun SearchBible(
     perevod: String,
     navigateToCytanniList: (String, Int, String) -> Unit = { _, _, _ -> }
 ) {
-    val search = rememberSaveable { mutableStateOf("") }
+    var search by rememberSaveable { mutableStateOf("") }
+    var searchSettings by remember { mutableStateOf(false) }
     var isProgressVisable by remember { mutableStateOf(false) }
     val lazyRowState = rememberLazyListState()
     val res = remember { result }
@@ -106,8 +114,12 @@ fun SearchBible(
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
-    LaunchedEffect(search.value) {
-        if (search.value.trim().length >= 3 && result.isEmpty()) {
+    LaunchedEffect(search, searchSettings) {
+        if (searchSettings) {
+            result.clear()
+            searchSettings = false
+        }
+        if (search.trim().length >= 3 && result.isEmpty()) {
             if (searchJob?.isActive == true) {
                 searchJob?.cancel()
             }
@@ -115,7 +127,7 @@ fun SearchBible(
                 isProgressVisable = true
                 result.clear()
                 val list = withContext(Dispatchers.IO) {
-                    return@withContext doInBackground(context, search.value.trim(), perevod)
+                    return@withContext doInBackground(context, search.trim(), perevod)
                 }
                 result.addAll(list)
                 isProgressVisable = false
@@ -145,24 +157,38 @@ fun SearchBible(
                         modifier = Modifier
                             .fillMaxWidth()
                             .focusRequester(focusRequester),
-                        value = search.value,
+                        value = search,
                         onValueChange = { newText ->
                             result.clear()
-                            search.value = newText
+                            var edit = newText
+                            if (perevod == Settings.PEREVODSINOIDAL) {
+                                edit = edit.replace("і", "и")
+                                edit = edit.replace("ў", "щ")
+                                edit = edit.replace("І", "И")
+                                edit = edit.replace("Ў", "Щ")
+                                edit = edit.replace("'", "ъ")
+                            } else {
+                                edit = edit.replace("и", "і")
+                                edit = edit.replace("щ", "ў")
+                                edit = edit.replace("И", "І")
+                                edit = edit.replace("Щ", "Ў")
+                                edit = edit.replace("ъ", "'")
+                            }
+                            search = edit
                         },
                         singleLine = true,
                         leadingIcon = {
                             Icon(
-                                Icons.Filled.Search,
+                                imageVector = Icons.Filled.Search,
                                 tint = MaterialTheme.colorScheme.onSecondary,
                                 contentDescription = ""
                             )
                         },
                         trailingIcon = {
-                            if (search.value.isNotEmpty()) {
-                                IconButton(onClick = { search.value = "" }) {
+                            if (search.isNotEmpty()) {
+                                IconButton(onClick = { search = "" }) {
                                     Icon(
-                                        Icons.Filled.Clear,
+                                        painter = painterResource(R.drawable.close),
                                         contentDescription = "",
                                         tint = MaterialTheme.colorScheme.onSecondary
                                     )
@@ -241,18 +267,26 @@ fun SearchBible(
                             .padding(10.dp)
                             .background(MaterialTheme.colorScheme.tertiary)
                     ) {
-                        Column {
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            if (perevod != Settings.PEREVODNADSAN) {
+                                DropdownMenuBox(onSearchStart = { searchSettings = true })
+                            }
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Checkbox(
-                                    checked = isRegistr,
+                                    checked = !isRegistr,
                                     onCheckedChange = {
                                         isRegistr = !isRegistr
                                         val edit = k.edit()
                                         edit.putBoolean("pegistrbukv", isRegistr)
                                         edit.apply()
+                                        searchSettings = true
                                     }
                                 )
-                                Text(stringResource(R.string.registr), fontSize = 18.sp)
+                                Text(
+                                    stringResource(R.string.registr),
+                                    fontSize = 18.sp,
+                                    color = MaterialTheme.colorScheme.secondary
+                                )
                             }
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Checkbox(
@@ -263,9 +297,14 @@ fun SearchBible(
                                         val edit = k.edit()
                                         edit.putInt("slovocalkam", isDakladnaeSupadzenne)
                                         edit.apply()
+                                        searchSettings = true
                                     }
                                 )
-                                Text(stringResource(R.string.dakladnae_supadzenne), fontSize = 18.sp)
+                                Text(
+                                    stringResource(R.string.dakladnae_supadzenne),
+                                    fontSize = 18.sp,
+                                    color = MaterialTheme.colorScheme.secondary
+                                )
                             }
                             TextButton(
                                 onClick = {
@@ -295,7 +334,7 @@ fun SearchBible(
             Column {
                 Text(
                     modifier = Modifier.padding(start = 10.dp),
-                    text = "Знойдзена " + res.size + " стыхоў",
+                    text = stringResource(R.string.searh_bibile_result, res.size),
                     fontStyle = FontStyle.Italic,
                     fontSize = 18.sp,
                     color = MaterialTheme.colorScheme.secondary
@@ -332,6 +371,51 @@ fun SearchBible(
                     .fillMaxSize()
             ) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DropdownMenuBox(
+    onSearchStart: () -> Unit
+) {
+    val context = LocalContext.current
+    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+    val options = stringArrayResource(R.array.serche_bible)
+    var expanded by remember { mutableStateOf(false) }
+    val textFieldState = rememberTextFieldState(options[k.getInt("biblia_seash", 0)])
+    ExposedDropdownMenuBox(
+        modifier = Modifier.padding(start = 10.dp, top = 10.dp),
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+    ) {
+        TextField(
+            modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+            state = textFieldState,
+            readOnly = true,
+            lineLimits = TextFieldLineLimits.SingleLine,
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+            options.forEachIndexed { index, option ->
+                DropdownMenuItem(
+                    text = { Text(option, style = MaterialTheme.typography.bodyLarge) },
+                    onClick = {
+                        textFieldState.setTextAndPlaceCursorAtEnd(option)
+                        expanded = false
+                        val prefEditors = k.edit()
+                        prefEditors.putInt("biblia_seash", index)
+                        prefEditors.apply()
+                        onSearchStart()
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                )
             }
         }
     }
@@ -592,11 +676,15 @@ fun getInputStream(
         Settings.PEREVODSINOIDAL -> "sinaidal"
         else -> "biblia"
     }
-    for (element in fields) {
-        val name = element.name
-        if (name == "$prevodName$zavet${kniga + 1}") {
-            return context.resources.openRawResource(element.getInt(name))
+    if (perevod != Settings.PEREVODNADSAN) {
+        for (element in fields) {
+            val name = element.name
+            if (name == "$prevodName$zavet${kniga + 1}") {
+                return context.resources.openRawResource(element.getInt(name))
+            }
         }
+    } else {
+        return context.resources.openRawResource(R.raw.psaltyr_nadsan)
     }
     return context.resources.openRawResource(R.raw.biblia_error)
 }

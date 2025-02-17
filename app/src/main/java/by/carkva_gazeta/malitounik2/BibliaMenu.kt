@@ -7,8 +7,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -27,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -37,9 +41,12 @@ import by.carkva_gazeta.malitounik2.ui.theme.Primary
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik2.views.AppNavigationActions
+import by.carkva_gazeta.malitounik2.views.HtmlText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 @Composable
 fun BibliaMenu(
@@ -52,8 +59,14 @@ fun BibliaMenu(
         AppNavigationActions(navController, k)
     }
     var perevod by remember { mutableStateOf(k.getString("perevodBibileMenu", Settings.PEREVODSEMUXI) ?: Settings.PEREVODSEMUXI) }
-    val bibleTime = remember { mutableStateOf(false) }
-    if (bibleTime.value) {
+    var bibleTime by remember { mutableStateOf(false) }
+    var dialogVisable by remember { mutableStateOf(false) }
+    if (dialogVisable) {
+        DialogSemuxa(perevod == Settings.PEREVODSEMUXI) {
+            dialogVisable = false
+        }
+    }
+    if (bibleTime) {
         val prevodName = when (perevod) {
             Settings.PEREVODSEMUXI -> "biblia"
             Settings.PEREVODBOKUNA -> "bokuna"
@@ -65,7 +78,7 @@ fun BibliaMenu(
         val knigaText = k.getString("bible_time_${prevodName}_kniga", "Быц") ?: "Быц"
         val kniga = knigaBiblii(knigaText)
         Settings.bibleTime = true
-        bibleTime.value = false
+        bibleTime = false
         navigationActions.navigateToBibliaList(kniga >= 50, perevod)
     }
     val lazyRowState = rememberLazyListState()
@@ -230,7 +243,7 @@ fun BibliaMenu(
         }
         TextButton(
             onClick = {
-                bibleTime.value = true
+                bibleTime = true
             },
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
@@ -318,22 +331,62 @@ fun BibliaMenu(
         ) {
             Text(stringResource(R.string.natatki_biblii), fontSize = 18.sp, color = PrimaryText)
         }*/
-        TextButton(
-            onClick = {
-            },
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(5.dp)
-                .size(width = 200.dp, height = Dp.Unspecified),
-            colors = ButtonColors(
-                Divider,
-                Color.Unspecified,
-                Color.Unspecified,
-                Color.Unspecified
-            ),
-            shape = MaterialTheme.shapes.medium
-        ) {
-            Text(stringResource(R.string.alesyaSemukha2), fontSize = 18.sp, color = PrimaryText)
+        if (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODBOKUNA) {
+            TextButton(
+                onClick = {
+                    dialogVisable = true
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(5.dp)
+                    .size(width = 200.dp, height = Dp.Unspecified),
+                colors = ButtonColors(
+                    Divider,
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified
+                ),
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Text(stringResource(R.string.alesyaSemukha2), fontSize = 18.sp, color = PrimaryText)
+            }
         }
     }
+}
+
+@Composable
+fun DialogSemuxa(
+    isSemuxa: Boolean,
+    onDismissRequest: () -> Unit,
+) {
+    AlertDialog(
+        icon = {
+            Icon(painter = painterResource(R.drawable.warning), contentDescription = "")
+        },
+        title = {
+            Text(text = stringResource(R.string.alesyaSemukha))
+        },
+        text = {
+            val context = LocalContext.current
+            val inputStream = if (isSemuxa) context.resources.openRawResource(R.raw.all_rights_reserved_semuxa)
+            else context.resources.openRawResource(R.raw.all_rights_reserved_bokun)
+            val isr = InputStreamReader(inputStream)
+            val reader = BufferedReader(isr)
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                HtmlText(text = reader.readText(), fontSize = 18.sp)
+            }
+        },
+        onDismissRequest = {
+            onDismissRequest()
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text(stringResource(R.string.close), fontSize = 18.sp)
+            }
+        }
+    )
 }

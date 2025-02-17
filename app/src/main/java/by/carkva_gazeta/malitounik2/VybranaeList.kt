@@ -36,6 +36,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik2.ui.theme.Divider
 import com.google.gson.Gson
@@ -300,7 +301,7 @@ fun Dialog(
             Text(text = stringResource(R.string.remove))
         },
         text = {
-            Text(text = title)
+            Text(text = title, fontSize = 18.sp)
         },
         onDismissRequest = {
             onDismissRequest()
@@ -311,7 +312,7 @@ fun Dialog(
                     onConfirmation()
                 }
             ) {
-                Text(stringResource(R.string.ok))
+                Text(stringResource(R.string.ok), fontSize = 18.sp)
             }
         },
         dismissButton = {
@@ -320,7 +321,7 @@ fun Dialog(
                     onDismissRequest()
                 }
             ) {
-                Text(stringResource(R.string.cansel))
+                Text(stringResource(R.string.cansel), fontSize = 18.sp)
             }
         }
     )
