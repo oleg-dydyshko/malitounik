@@ -72,9 +72,9 @@ fun DrawView(
                     text = stringResource(id = R.string.liturgikon),
                 )
             },
-            selected = route == AllDestinations.BOGASLUJBOVYIA,
+            selected = route == AllDestinations.BOGASLUJBOVYIA_MENU,
             onClick = {
-                navigateToRazdel(AllDestinations.BOGASLUJBOVYIA)
+                navigateToRazdel(AllDestinations.BOGASLUJBOVYIA_MENU)
             },
             icon = {
                 Icon(

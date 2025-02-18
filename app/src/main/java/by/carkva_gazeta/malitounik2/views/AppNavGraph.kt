@@ -67,7 +67,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import by.carkva_gazeta.malitounik2.BibliaList
 import by.carkva_gazeta.malitounik2.BibliaMenu
-import by.carkva_gazeta.malitounik2.BogaslujbovyiaScreen
+import by.carkva_gazeta.malitounik2.BogaslujbovyiaMenu
 import by.carkva_gazeta.malitounik2.CytanniList
 import by.carkva_gazeta.malitounik2.Dialog
 import by.carkva_gazeta.malitounik2.KaliandarScreen
@@ -143,8 +143,8 @@ fun AppNavGraph(
             )
         }*/
 
-        composable(AllDestinations.BOGASLUJBOVYIA) {
-            Settings.destinations = AllDestinations.BOGASLUJBOVYIA
+        composable(AllDestinations.BOGASLUJBOVYIA_MENU) {
+            Settings.destinations = AllDestinations.BOGASLUJBOVYIA_MENU
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
@@ -354,7 +354,7 @@ fun MainConteiner(
             navigateToRazdel = { razdzel ->
                 when (razdzel) {
                     AllDestinations.KALIANDAR -> navigationActions.navigateToKaliandar()
-                    AllDestinations.BOGASLUJBOVYIA -> navigationActions.navigateToBogaslujbovyia()
+                    AllDestinations.BOGASLUJBOVYIA_MENU -> navigationActions.navigateToBogaslujbovyiaMenu()
                     AllDestinations.BIBLIA -> navigationActions.navigateToBiblia()
                     AllDestinations.VYBRANAE_LIST -> {
                         navigationActions.navigateToVybranaeList()
@@ -373,10 +373,11 @@ fun MainConteiner(
         title = when (currentRoute) {
             AllDestinations.KALIANDAR -> stringResource(R.string.kaliandar2)
             AllDestinations.KALIANDAR_YEAR -> stringResource(R.string.kaliandar2)
-            AllDestinations.BOGASLUJBOVYIA -> stringResource(R.string.liturgikon)
+            AllDestinations.BOGASLUJBOVYIA_MENU -> stringResource(R.string.liturgikon)
             AllDestinations.VYBRANAE_LIST -> stringResource(R.string.MenuVybranoe)
             AllDestinations.BIBLIA -> {
-                when (k.getString("perevodBibileMenu", Settings.PEREVODSEMUXI) ?: Settings.PEREVODSEMUXI) {
+                when (k.getString("perevodBibileMenu", Settings.PEREVODSEMUXI)
+                    ?: Settings.PEREVODSEMUXI) {
                     Settings.PEREVODSEMUXI -> stringResource(R.string.title_biblia)
                     Settings.PEREVODBOKUNA -> stringResource(R.string.title_biblia_bokun)
                     Settings.PEREVODCARNIAUSKI -> stringResource(R.string.title_biblia_charniauski)
@@ -385,6 +386,7 @@ fun MainConteiner(
                     else -> stringResource(R.string.kaliandar2)
                 }
             }
+
             else -> ""
         }
         Scaffold(
@@ -613,7 +615,7 @@ fun MainConteiner(
                         }
                     }
 
-                    AllDestinations.BOGASLUJBOVYIA -> BogaslujbovyiaScreen()
+                    AllDestinations.BOGASLUJBOVYIA_MENU -> BogaslujbovyiaMenu(innerPadding)
 
                     AllDestinations.BIBLIA -> BibliaMenu(
                         navController,
@@ -622,6 +624,15 @@ fun MainConteiner(
                         },
                         navigateToSearchBible = { perevod ->
                             navigationActions.navigateToSearchBiblia(perevod)
+                        },
+                        navigateToCytanniList = { chytanne, perevod2 ->
+                            navigationActions.navigateToCytanniList(
+                                "",
+                                chytanne,
+                                Settings.CHYTANNI_BIBLIA,
+                                perevod2,
+                                -1
+                            )
                         }
                     )
 
@@ -632,7 +643,6 @@ fun MainConteiner(
                     )
 
                     AllDestinations.VYBRANAE_LIST -> VybranaeList(
-                        navController,
                         navigateToCytanniList = { chytanne, position, perevod2 ->
                             navigationActions.navigateToCytanniList(
                                 "",

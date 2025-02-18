@@ -4,7 +4,6 @@ import android.content.SharedPreferences
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA_LIST
-import by.carkva_gazeta.malitounik2.views.AllDestinations.BOGASLUJBOVYIA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BOGASLUJBOVYIA_MENU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.CYTANNI_LIST
 import by.carkva_gazeta.malitounik2.views.AllDestinations.KALIANDAR
@@ -36,13 +35,13 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
         edit.apply()
     }
 
-    fun navigateToBogaslujbovyia() {
-        navController.navigate(BOGASLUJBOVYIA) {
-            popUpTo(navController.currentBackStackEntry?.destination?.route ?: BOGASLUJBOVYIA) {
+    fun navigateToBogaslujbovyiaMenu() {
+        navController.navigate(BOGASLUJBOVYIA_MENU) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: BOGASLUJBOVYIA_MENU) {
                 inclusive = true
             }
         }
-        edit.putString("navigate", BOGASLUJBOVYIA)
+        edit.putString("navigate", BOGASLUJBOVYIA_MENU)
         edit.apply()
     }
 
@@ -94,9 +93,9 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
         }
     }
 
-    fun navigateToBogaslujbovyiaMenu() {
+    /*fun navigateToBogaslujbovyiaMenu() {
         navController.navigate(BOGASLUJBOVYIA_MENU) {
             BOGASLUJBOVYIA_MENU
         }
-    }
+    }*/
 }

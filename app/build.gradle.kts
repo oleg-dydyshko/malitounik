@@ -69,7 +69,7 @@ dependencies {
     api (libs.firebase.appcheck.playintegrity)
     implementation(libs.feature.delivery.ktx)
     implementation(libs.app.update.ktx)
-    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.androidx.material.icons.extended.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -125,6 +125,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
@@ -162,7 +163,7 @@ fun CytanniList(
         )
     }
     else 1
-    //val lazyState = rememberLazyListState()
+    var positionRemember by rememberSaveable { mutableIntStateOf(position) }
     val list = ArrayList<LazyListState>()
     for (i in 0 until count) {
         list.add(rememberLazyListState())
@@ -426,9 +427,11 @@ fun CytanniList(
         if (autoScroll) {
             autoScrollJob?.cancel()
             autoScrollJob = CoroutineScope(Dispatchers.Main).launch {
-                while (true) {
-                    delay(autoScrollSpeed.toLong())
-                    listState[selectedIndex].scrollBy(2f)
+                withContext(Dispatchers.Main) {
+                    while (true) {
+                        delay(autoScrollSpeed.toLong())
+                        listState[selectedIndex].scrollBy(2f)
+                    }
                 }
             }
         } else {
@@ -462,10 +465,12 @@ fun CytanniList(
         }
     }
     var isUpList by remember { mutableStateOf(false) }
-    LaunchedEffect(isUpList) {
-        isUpList = false
-        coroutineScope.launch {
-            listState[selectedIndex].scrollToItem(0)
+    if (isUpList) {
+        LaunchedEffect(Unit) {
+            isUpList = false
+            coroutineScope.launch {
+                listState[selectedIndex].scrollToItem(0)
+            }
         }
     }
     LaunchedEffect(fullscreen) {
@@ -727,7 +732,13 @@ fun CytanniList(
                                     if (autoScrollSensor) autoScroll = true
                                     fullscreen = true
                                 },
-                                text = { Text(stringResource(R.string.fullscreen)) }
+                                text = { Text(stringResource(R.string.fullscreen)) },
+                                trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.fullscreen),
+                                        contentDescription = ""
+                                    )
+                                }
                             )
                             if (!(biblia == Settings.CHYTANNI_LITURGICHNYIA || perevodRoot == Settings.PEREVODNADSAN || biblia == Settings.CHYTANNI_VYBRANAE)) {
                                 DropdownMenuItem(
@@ -1384,13 +1395,14 @@ fun CytanniList(
                         }
                     }
                 }
-                    if (biblia == Settings.CHYTANNI_BIBLIA && position != -1) {
-                        LaunchedEffect(Unit) {
-                            coroutineScope.launch {
-                                listState[selectedIndex].scrollToItem(position)
-                            }
+                if (biblia == Settings.CHYTANNI_BIBLIA && positionRemember != -1) {
+                    LaunchedEffect(Unit) {
+                        coroutineScope.launch {
+                            listState[selectedIndex].scrollToItem(positionRemember)
                         }
                     }
+                    positionRemember = -1
+                }
 
                 HorizontalPager(
                     pageSpacing = 10.dp,
@@ -1400,17 +1412,22 @@ fun CytanniList(
                     userScrollEnabled = biblia == Settings.CHYTANNI_BIBLIA
                 ) { page ->
                     val chteniaNewPage = knigaText + " ${page + 1}"
-                    val resultPage = if (biblia == Settings.CHYTANNI_BIBLIA) getBible(context, chteniaNewPage, perevod, biblia)
+                    val resultPage = if (biblia == Settings.CHYTANNI_BIBLIA) getBible(
+                        context,
+                        chteniaNewPage,
+                        perevod,
+                        biblia
+                    )
                     else getBible(context, cytanne, perevod, biblia, true)
-                    if (biblia != Settings.CHYTANNI_BIBLIA && position != -1) {
+                    if (biblia != Settings.CHYTANNI_BIBLIA && positionRemember != -1) {
                         var resultCount = 0
-                        if (position != 0) {
+                        if (positionRemember != 0) {
                             var tit = ""
                             var cnt = 0
                             for (i in 0 until resultPage.size) {
                                 if (tit.isNotEmpty() && resultPage[i].title != tit) {
                                     cnt++
-                                    if (cnt == position) {
+                                    if (cnt == positionRemember) {
                                         resultCount = i + 1
                                         break
                                     }
@@ -1423,6 +1440,7 @@ fun CytanniList(
                                 listState[selectedIndex].scrollToItem(resultCount)
                             }
                         }
+                        positionRemember = -1
                     }
                     if (resultPage.isEmpty()) {
                         val inputStream =
@@ -1503,7 +1521,8 @@ fun CytanniList(
                     ) {
                         if (biblia != Settings.CHYTANNI_BIBLIA) {
                             if (subTitle != resultPage[listState[selectedIndex].firstVisibleItemIndex].title)
-                                subTitle = resultPage[listState[selectedIndex].firstVisibleItemIndex].title
+                                subTitle =
+                                    resultPage[listState[selectedIndex].firstVisibleItemIndex].title
                             item {
                                 val titlePerevod = when (perevod) {
                                     Settings.PEREVODSEMUXI -> stringResource(R.string.title_biblia2)
@@ -1573,171 +1592,6 @@ fun CytanniList(
                     }
                 }
             }
-            /*} else {
-                val titlePerevod = when (perevod) {
-                    Settings.PEREVODSEMUXI -> stringResource(R.string.title_biblia2)
-                    Settings.PEREVODSINOIDAL -> stringResource(R.string.bsinaidal2)
-                    Settings.PEREVODNADSAN -> stringResource(R.string.title_psalter)
-                    Settings.PEREVODBOKUNA -> stringResource(R.string.title_biblia_bokun2)
-                    Settings.PEREVODCARNIAUSKI -> stringResource(R.string.title_biblia_charniauski2)
-                    else -> stringResource(R.string.title_biblia2)
-                }
-                val resultList = getBible(context, cytanne, perevod, biblia, true)
-                val selectState =
-                    remember(resultList) { resultList.map { false }.toMutableStateList() }
-                if (position != -1) {
-                    var resultCount = 0
-                    if (position != 0) {
-                        var tit = ""
-                        var cnt = 0
-                        for (i in 0 until resultList.size) {
-                            if (tit.isNotEmpty() && resultList[i].title != tit) {
-                                cnt++
-                                if (cnt == position) {
-                                    resultCount = i + 1
-                                    break
-                                }
-                            }
-                            tit = resultList[i].title
-                        }
-                    }
-                    LaunchedEffect(Unit) {
-                        coroutineScope.launch {
-                            lazyState.scrollToItem(resultCount)
-                        }
-                    }
-                }
-                if (isSelectAll) {
-                    isSelectAll = false
-                    var findTitle = ""
-                    resultList.forEachIndexed { index, text ->
-                        if (selectState[index]) {
-                            findTitle = text.title
-                            return@forEachIndexed
-                        }
-                    }
-                    resultList.forEachIndexed { index, text ->
-                        if (findTitle == text.title) {
-                            selectState[index] = true
-                        }
-                    }
-                }
-                if (!isSelectMode) {
-                    selectState.forEachIndexed { index, _ ->
-                        selectState[index] = false
-                    }
-                }
-                if (isCopyMode || isShareMode) {
-                    val sb = StringBuilder()
-                    resultList.forEachIndexed { index, text ->
-                        if (selectState[index]) {
-                            sb.append(
-                                HtmlCompat.fromHtml(
-                                    text.text,
-                                    HtmlCompat.FROM_HTML_MODE_LEGACY
-                                )
-                                    .toString() + "\n"
-                            )
-                        }
-                    }
-                    val clipboard =
-                        context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    if (isCopyMode) {
-                        val clip = ClipData.newPlainText(
-                            "",
-                            sb.toString()
-                        )
-                        clipboard.setPrimaryClip(clip)
-                    }
-                    if (isShareMode) {
-                        val sendIntent = Intent()
-                        sendIntent.action = Intent.ACTION_SEND
-                        sendIntent.putExtra(Intent.EXTRA_TEXT, sb.toString())
-                        sendIntent.type = "text/plain"
-                        context.startActivity(Intent.createChooser(sendIntent, null))
-                    }
-                    isCopyMode = false
-                    isShareMode = false
-                    isSelectMode = false
-                }
-                LazyColumn(
-                    Modifier
-                        .pointerInput(PointerEventType.Press) {
-                            awaitPointerEventScope {
-                                while (true) {
-                                    val event = awaitPointerEvent()
-                                    if (event.type == PointerEventType.Press) {
-                                        autoScroll = false
-                                    }
-                                    if (autoScrollSensor && event.type == PointerEventType.Release) {
-                                        autoScroll = true
-                                    }
-                                }
-                            }
-                        },
-                    state = lazyState
-                ) {
-                    if (subTitle != resultList[lazyState.firstVisibleItemIndex].title)
-                        subTitle = resultList[lazyState.firstVisibleItemIndex].title
-                    item {
-                        Text(
-                            modifier = Modifier
-                                .padding(horizontal = 10.dp),
-                            text = titlePerevod,
-                            fontSize = TextUnit(fontSize, TextUnitType.Sp),
-                            lineHeight = TextUnit(fontSize, TextUnitType.Sp),
-                            fontStyle = FontStyle.Italic,
-                            color = MaterialTheme.colorScheme.secondary
-                        )
-                    }
-                    items(resultList.size) { index ->
-                        HtmlText(
-                            modifier = Modifier
-                                .combinedClickable(
-                                    onClick = {
-                                        if (!autoScrollSensor && !showDropdown) {
-                                            if (!isSelectMode && isParallel && resultList[index].parallel != "+-+") {
-                                                isParallelVisable = true
-                                                paralelChtenia = resultList[index].parallel
-                                            } else {
-                                                selectState[index] = !selectState[index]
-                                            }
-                                        }
-                                    },
-                                    onLongClick = {
-                                        if (!autoScrollSensor && !showDropdown) {
-                                            isSelectMode = true
-                                            selectState[index] = !selectState[index]
-                                        }
-                                    }
-                                )
-                                .padding(horizontal = 10.dp)
-                                .background(if (selectState[index]) Post else Color.Unspecified),
-                            text = resultList[index].text,
-                            fontSize = TextUnit(fontSize, TextUnitType.Sp),
-                            lineHeight = TextUnit(fontSize, TextUnitType.Sp),
-                            color = if (selectState[index]) PrimaryText else MaterialTheme.colorScheme.secondary
-                        )
-                        if (isParallel && resultList[index].parallel != "+-+") {
-                            Text(
-                                text = resultList[index].parallel,
-                                modifier = Modifier
-                                    .padding(horizontal = 10.dp),
-                                fontSize = TextUnit(fontSize - 4, TextUnitType.Sp),
-                                lineHeight = TextUnit(fontSize - 4, TextUnitType.Sp),
-                                color = SecondaryText
-                            )
-                        }
-                    }
-                    item {
-                        Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
-                    }
-                    if (lazyState.lastScrolledForward && !lazyState.canScrollForward) {
-                        autoScroll = false
-                        autoScrollSensor = false
-                    }
-                }
-            }*/
         }
 
         Box(

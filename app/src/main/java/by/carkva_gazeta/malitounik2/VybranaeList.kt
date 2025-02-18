@@ -4,7 +4,6 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,7 +36,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik2.ui.theme.Divider
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -47,7 +45,6 @@ import java.util.Calendar
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun VybranaeList(
-    navController: NavHostController,
     navigateToCytanniList: (String, Int, String) -> Unit = { _, _, _ -> },
     sorted: Int,
     removeAllVybranae: Boolean
@@ -102,6 +99,7 @@ fun VybranaeList(
     val context = LocalContext.current
     var removeItem by remember { mutableIntStateOf(-1) }
     var removeItemBible by remember { mutableIntStateOf(-1) }
+    var removeItemBibleAll by remember { mutableStateOf(false) }
     if (removeItem != -1) {
         val titleVybrenae = stringResource(
             R.string.vybranoe_biblia_delite,
@@ -113,20 +111,21 @@ fun VybranaeList(
             onDismissRequest = {
                 removeItem = -1
                 removeItemBible = -1
+                removeItemBibleAll = false
             },
             onConfirmation = {
+                val perevod = list[removeItem].listBible[0].perevod
+                val prevodName = when (perevod) {
+                    Settings.PEREVODSEMUXI -> "biblia"
+                    Settings.PEREVODBOKUNA -> "bokuna"
+                    Settings.PEREVODCARNIAUSKI -> "carniauski"
+                    Settings.PEREVODNADSAN -> "nadsan"
+                    Settings.PEREVODSINOIDAL -> "sinaidal"
+                    else -> "biblia"
+                }
+                val file = File("${context.filesDir}/vybranoe_${prevodName}.json")
                 if (removeItemBible != -1) {
-                    val perevod = list[removeItem].listBible[removeItemBible].perevod
                     list[removeItem].listBible.removeAt(removeItemBible)
-                    val prevodName = when (perevod) {
-                        Settings.PEREVODSEMUXI -> "biblia"
-                        Settings.PEREVODBOKUNA -> "bokuna"
-                        Settings.PEREVODCARNIAUSKI -> "carniauski"
-                        Settings.PEREVODNADSAN -> "nadsan"
-                        Settings.PEREVODSINOIDAL -> "sinaidal"
-                        else -> "biblia"
-                    }
-                    val file = File("${context.filesDir}/vybranoe_${prevodName}.json")
                     if (list[removeItem].listBible.isEmpty() && file.exists()) {
                         list.removeAt(removeItem)
                         file.delete()
@@ -138,6 +137,11 @@ fun VybranaeList(
                     removeItemBible = -1
                 } else {
                     list.removeAt(removeItem)
+                }
+                if (removeItemBibleAll) {
+                    if (file.exists()) {
+                        file.delete()
+                    }
                 }
                 removeItem = -1
             }
@@ -156,9 +160,15 @@ fun VybranaeList(
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
-                            .clickable {
-                                collapsedState[i] = !collapsed
-                            }
+                            .combinedClickable(
+                                onClick = {
+                                    collapsedState[i] = !collapsed
+                                },
+                                onLongClick = {
+                                    removeItemBibleAll = true
+                                    removeItem = i
+                                }
+                            )
                             .fillMaxWidth()
                     ) {
                         Icon(

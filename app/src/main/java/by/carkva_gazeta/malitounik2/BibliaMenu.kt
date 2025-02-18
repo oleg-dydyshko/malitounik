@@ -1,13 +1,19 @@
 package by.carkva_gazeta.malitounik2
 
 import android.content.Context
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
@@ -28,10 +34,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,6 +48,7 @@ import by.carkva_gazeta.malitounik2.ui.theme.Divider
 import by.carkva_gazeta.malitounik2.ui.theme.Primary
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik2.ui.theme.TitleCalendarMounth
 import by.carkva_gazeta.malitounik2.views.AppNavigationActions
 import by.carkva_gazeta.malitounik2.views.HtmlText
 import kotlinx.coroutines.CoroutineScope
@@ -52,13 +61,21 @@ import java.io.InputStreamReader
 fun BibliaMenu(
     navController: NavHostController,
     setTitle: (String) -> Unit = { },
-    navigateToSearchBible: (String) -> Unit = { }
+    navigateToSearchBible: (String) -> Unit = { },
+    navigateToCytanniList: (String, String) -> Unit = { _, _ -> }
 ) {
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
-    var perevod by remember { mutableStateOf(k.getString("perevodBibileMenu", Settings.PEREVODSEMUXI) ?: Settings.PEREVODSEMUXI) }
+    var perevod by remember {
+        mutableStateOf(
+            k.getString(
+                "perevodBibileMenu",
+                Settings.PEREVODSEMUXI
+            ) ?: Settings.PEREVODSEMUXI
+        )
+    }
     var bibleTime by remember { mutableStateOf(false) }
     var dialogVisable by remember { mutableStateOf(false) }
     if (dialogVisable) {
@@ -125,6 +142,7 @@ fun BibliaMenu(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
+            .verticalScroll(rememberScrollState())
     ) {
         LazyRow(state = lazyRowState, modifier = Modifier.fillMaxWidth()) {
             items(list.size) { index ->
@@ -150,21 +168,25 @@ fun BibliaMenu(
                                 perevod = Settings.PEREVODSEMUXI
 
                             }
+
                             1 -> {
                                 edit.putString("perevodBibileMenu", Settings.PEREVODBOKUNA)
                                 setTitle(context.getString(R.string.title_biblia_bokun))
                                 perevod = Settings.PEREVODBOKUNA
                             }
+
                             2 -> {
                                 edit.putString("perevodBibileMenu", Settings.PEREVODNADSAN)
                                 setTitle(context.getString(R.string.title_psalter))
                                 perevod = Settings.PEREVODNADSAN
                             }
+
                             3 -> {
                                 edit.putString("perevodBibileMenu", Settings.PEREVODCARNIAUSKI)
                                 setTitle(context.getString(R.string.title_biblia_charniauski))
                                 perevod = Settings.PEREVODCARNIAUSKI
                             }
+
                             4 -> {
                                 edit.putString("perevodBibileMenu", Settings.PEREVODSINOIDAL)
                                 setTitle(context.getString(R.string.bsinaidal))
@@ -296,6 +318,166 @@ fun BibliaMenu(
             Text(stringResource(R.string.poshuk), fontSize = 18.sp, color = PrimaryText)
         }
         if (perevod == Settings.PEREVODNADSAN) {
+            Column(
+                modifier = Modifier
+                    .padding(5.dp)
+                    .clip(shape = RoundedCornerShape(10.dp))
+                    .border(
+                        1.dp,
+                        color = MaterialTheme.colorScheme.secondary,
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                    .align(Alignment.CenterHorizontally)
+                    .size(width = 400.dp, height = Dp.Unspecified)
+            ) {
+                Row {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(5.dp)
+                            .weight(1f)
+                            .clip(shape = RoundedCornerShape(10.dp))
+                            .background(TitleCalendarMounth)
+                            .padding(10.dp),
+                        text = stringResource(R.string.kafizma),
+                        fontSize = 18.sp,
+                        textAlign = TextAlign.Center,
+                        color = PrimaryTextBlack,
+                    )
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    for (i in 1..5) {
+                        Text(
+                            modifier = Modifier
+                                .padding(5.dp)
+                                .weight(1f)
+                                .clip(shape = RoundedCornerShape(10.dp))
+                                .background(Divider)
+                                .padding(vertical = 5.dp)
+                                .clickable {
+                                    val index = when(i) {
+                                        1 -> "1"
+                                        2 -> "9"
+                                        3 -> "17"
+                                        4 -> "24"
+                                        5 -> "32"
+                                        else -> "1"
+                                    }
+                                    navigateToCytanniList(
+                                        "Пс $index",
+                                        perevod
+                                    )
+                                },
+                            text = i.toString(),
+                            fontSize = 18.sp,
+                            textAlign = TextAlign.Center,
+                            color = PrimaryText
+                        )
+                    }
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    for (i in 6..10) {
+                        Text(
+                            modifier = Modifier
+                                .padding(5.dp)
+                                .weight(1f)
+                                .clip(shape = RoundedCornerShape(10.dp))
+                                .background(Divider)
+                                .padding(vertical = 5.dp)
+                                .clickable {
+                                    val index = when(i) {
+                                        6 -> "37"
+                                        7 -> "46"
+                                        8 -> "55"
+                                        9 -> "64"
+                                        10 -> "70"
+                                        else -> "37"
+                                    }
+                                    navigateToCytanniList(
+                                        "Пс $index",
+                                        perevod
+                                    )
+                                },
+                            text = i.toString(),
+                            fontSize = 18.sp,
+                            textAlign = TextAlign.Center,
+                            color = PrimaryText
+                        )
+                    }
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    for (i in 11..15) {
+                        Text(
+                            modifier = Modifier
+                                .padding(5.dp)
+                                .weight(1f)
+                                .clip(shape = RoundedCornerShape(10.dp))
+                                .background(Divider)
+                                .padding(vertical = 5.dp)
+                                .clickable {
+                                    val index = when(i) {
+                                        11 -> "77"
+                                        12 -> "85"
+                                        13 -> "91"
+                                        14 -> "101"
+                                        15 -> "105"
+                                        else -> "77"
+                                    }
+                                    navigateToCytanniList(
+                                        "Пс $index",
+                                        perevod
+                                    )
+                                },
+                            text = i.toString(),
+                            fontSize = 18.sp,
+                            textAlign = TextAlign.Center,
+                            color = PrimaryText
+                        )
+                    }
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    for (i in 16..20) {
+                        Text(
+                            modifier = Modifier
+                                .padding(5.dp)
+                                .weight(1f)
+                                .clip(shape = RoundedCornerShape(10.dp))
+                                .background(Divider)
+                                .padding(vertical = 5.dp)
+                                .clickable {
+                                    val index = when(i) {
+                                        16 -> "109"
+                                        17 -> "118"
+                                        18 -> "119"
+                                        19 -> "134"
+                                        20 -> "143"
+                                        else -> "109"
+                                    }
+                                    navigateToCytanniList(
+                                        "Пс $index",
+                                        perevod
+                                    )
+                                },
+                            text = i.toString(),
+                            fontSize = 18.sp,
+                            textAlign = TextAlign.Center,
+                            color = PrimaryText
+                        )
+                    }
+                }
+            }
         }
         /*TextButton(
             onClick = {
@@ -361,15 +543,16 @@ fun DialogSemuxa(
 ) {
     AlertDialog(
         icon = {
-            Icon(painter = painterResource(R.drawable.warning), contentDescription = "")
+            Icon(painter = painterResource(R.drawable.copyright), contentDescription = "")
         },
         title = {
             Text(text = stringResource(R.string.alesyaSemukha))
         },
         text = {
             val context = LocalContext.current
-            val inputStream = if (isSemuxa) context.resources.openRawResource(R.raw.all_rights_reserved_semuxa)
-            else context.resources.openRawResource(R.raw.all_rights_reserved_bokun)
+            val inputStream =
+                if (isSemuxa) context.resources.openRawResource(R.raw.all_rights_reserved_semuxa)
+                else context.resources.openRawResource(R.raw.all_rights_reserved_bokun)
             val isr = InputStreamReader(inputStream)
             val reader = BufferedReader(isr)
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {

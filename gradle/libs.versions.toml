@@ -19,6 +19,7 @@ firebaseBom = "33.7.0"
 featureDeliveryKtx = "2.1.0"
 appUpdateKtx = "2.1.0"
 materialIconsExtended = "1.7.8"
+materialIconsExtendedAndroid = "1.7.8"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -47,6 +48,7 @@ gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 feature-delivery-ktx = { group = "com.google.android.play", name = "feature-delivery-ktx", version.ref = "featureDeliveryKtx" }
 app-update-ktx = { group = "com.google.android.play", name = "app-update-ktx", version.ref = "appUpdateKtx" }
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "materialIconsExtended" }
+androidx-material-icons-extended-android = { group = "androidx.compose.material", name = "material-icons-extended-android", version.ref = "materialIconsExtendedAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -271,7 +271,15 @@ fun SearchBible(
                             if (perevod != Settings.PEREVODNADSAN) {
                                 DropdownMenuBox(onSearchStart = { searchSettings = true })
                             }
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.clickable {
+                                    isRegistr = !isRegistr
+                                    val edit = k.edit()
+                                    edit.putBoolean("pegistrbukv", isRegistr)
+                                    edit.apply()
+                                    searchSettings = true
+                                }) {
                                 Checkbox(
                                     checked = !isRegistr,
                                     onCheckedChange = {
@@ -288,7 +296,16 @@ fun SearchBible(
                                     color = MaterialTheme.colorScheme.secondary
                                 )
                             }
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.clickable {
+                                    isDakladnaeSupadzenne = if (isDakladnaeSupadzenne == 0) 1
+                                    else 0
+                                    val edit = k.edit()
+                                    edit.putInt("slovocalkam", isDakladnaeSupadzenne)
+                                    edit.apply()
+                                    searchSettings = true
+                                }) {
                                 Checkbox(
                                     checked = isDakladnaeSupadzenne == 1,
                                     onCheckedChange = {
@@ -387,7 +404,7 @@ fun DropdownMenuBox(
     var expanded by remember { mutableStateOf(false) }
     val textFieldState = rememberTextFieldState(options[k.getInt("biblia_seash", 0)])
     ExposedDropdownMenuBox(
-        modifier = Modifier.padding(start = 10.dp, top = 10.dp),
+        modifier = Modifier.padding(10.dp),
         expanded = expanded,
         onExpandedChange = { expanded = it },
     ) {
