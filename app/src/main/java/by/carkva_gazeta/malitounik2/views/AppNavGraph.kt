@@ -67,6 +67,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import by.carkva_gazeta.malitounik2.BibliaList
 import by.carkva_gazeta.malitounik2.BibliaMenu
+import by.carkva_gazeta.malitounik2.Bogaslujbovyia
 import by.carkva_gazeta.malitounik2.BogaslujbovyiaMenu
 import by.carkva_gazeta.malitounik2.CytanniList
 import by.carkva_gazeta.malitounik2.Dialog
@@ -74,6 +75,7 @@ import by.carkva_gazeta.malitounik2.KaliandarScreen
 import by.carkva_gazeta.malitounik2.KaliandarScreenMounth
 import by.carkva_gazeta.malitounik2.KaliandarScreenYear
 import by.carkva_gazeta.malitounik2.MainActivity
+import by.carkva_gazeta.malitounik2.MalitvyListAll
 import by.carkva_gazeta.malitounik2.R
 import by.carkva_gazeta.malitounik2.SearchBible
 import by.carkva_gazeta.malitounik2.Settings
@@ -125,26 +127,18 @@ fun AppNavGraph(
                 drawerState = drawerState
             )
         }
-        /*composable(
-            AllDestinations.KALIANDAR + "/{position}",
-            arguments = listOf(navArgument("position") { type = NavType.IntType })
-        ) { stackEntry ->
-            val position =
-                stackEntry.arguments?.getInt("position")
-                    ?: vm.caliandarPosition
-            vm.setDestinations(AllDestinations.KALIANDAR + "/{position}")
-            MainConteiner(
-                vm = vm,
-                navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
-                loadContent = AllDestinations.KALIANDAR,
-                position = position
-            )
-        }*/
 
         composable(AllDestinations.BOGASLUJBOVYIA_MENU) {
             Settings.destinations = AllDestinations.BOGASLUJBOVYIA_MENU
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(AllDestinations.MALITVY_MENU) {
+            Settings.destinations = AllDestinations.MALITVY_MENU
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
@@ -177,6 +171,25 @@ fun AppNavGraph(
                 coroutineScope = coroutineScope,
                 drawerState = drawerState
             )
+        }
+
+        composable(
+            AllDestinations.MALITVY_LIST_ALL + "/{title}/{menuItem}/{subTitle}",
+            arguments = listOf(navArgument("menuItem") { type = NavType.IntType })
+        ) { stackEntry ->
+            val title = stackEntry.arguments?.getString("title") ?: ""
+            val subTitle = stackEntry.arguments?.getString("subTitle") ?: ""
+            val menuItemt = stackEntry.arguments?.getInt("menuItem") ?: Settings.MENU_BOGASLUJBOVYIA
+            MalitvyListAll(navController, title, menuItemt, subTitle)
+        }
+
+        composable(
+            AllDestinations.BOGASLUJBOVYIA + "/{title}/{resurs}",
+            arguments = listOf(navArgument("resurs") { type = NavType.IntType })
+        ) { stackEntry ->
+            val title = stackEntry.arguments?.getString("title") ?: ""
+            val resurs = stackEntry.arguments?.getInt("resurs") ?: R.raw.bogashlugbovya_error
+            Bogaslujbovyia(navController, title, resurs)
         }
 
         composable(
@@ -355,6 +368,7 @@ fun MainConteiner(
                 when (razdzel) {
                     AllDestinations.KALIANDAR -> navigationActions.navigateToKaliandar()
                     AllDestinations.BOGASLUJBOVYIA_MENU -> navigationActions.navigateToBogaslujbovyiaMenu()
+                    AllDestinations.MALITVY_MENU -> navigationActions.navigateToMalitvyMenu()
                     AllDestinations.BIBLIA -> navigationActions.navigateToBiblia()
                     AllDestinations.VYBRANAE_LIST -> {
                         navigationActions.navigateToVybranaeList()
@@ -374,6 +388,7 @@ fun MainConteiner(
             AllDestinations.KALIANDAR -> stringResource(R.string.kaliandar2)
             AllDestinations.KALIANDAR_YEAR -> stringResource(R.string.kaliandar2)
             AllDestinations.BOGASLUJBOVYIA_MENU -> stringResource(R.string.liturgikon)
+            AllDestinations.MALITVY_MENU -> stringResource(R.string.malitvy)
             AllDestinations.VYBRANAE_LIST -> stringResource(R.string.MenuVybranoe)
             AllDestinations.BIBLIA -> {
                 when (k.getString("perevodBibileMenu", Settings.PEREVODSEMUXI)
@@ -615,7 +630,9 @@ fun MainConteiner(
                         }
                     }
 
-                    AllDestinations.BOGASLUJBOVYIA_MENU -> BogaslujbovyiaMenu(innerPadding)
+                    AllDestinations.BOGASLUJBOVYIA_MENU -> BogaslujbovyiaMenu(navController, innerPadding, Settings.MENU_BOGASLUJBOVYIA)
+
+                    AllDestinations.MALITVY_MENU -> BogaslujbovyiaMenu(navController, innerPadding, Settings.MENU_MALITVY)
 
                     AllDestinations.BIBLIA -> BibliaMenu(
                         navController,

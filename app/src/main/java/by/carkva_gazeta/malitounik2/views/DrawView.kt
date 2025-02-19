@@ -90,6 +90,27 @@ fun DrawView(
         NavigationDrawerItem(
             label = {
                 Text(
+                    text = stringResource(id = R.string.malitvy),
+                )
+            },
+            selected = route == AllDestinations.MALITVY_MENU,
+            onClick = {
+                navigateToRazdel(AllDestinations.MALITVY_MENU)
+            },
+            icon = {
+                Icon(
+                    modifier = Modifier.size(24.dp, 24.dp),
+                    painter = painterResource(R.drawable.krest),
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = null
+                )
+            },
+            shape = MaterialTheme.shapes.medium,
+            modifier = modifier.padding(horizontal = 5.dp)
+        )
+        NavigationDrawerItem(
+            label = {
+                Text(
                     text = stringResource(id = R.string.MenuVybranoe),
                 )
             },

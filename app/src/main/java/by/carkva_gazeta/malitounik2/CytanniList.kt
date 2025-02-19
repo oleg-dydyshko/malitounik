@@ -189,7 +189,7 @@ fun CytanniList(
     }
     var subTitle by remember { mutableStateOf("") }
     val colorTollBar =
-        if (isToDay == Settings.caliandarPosition || biblia == Settings.CHYTANNI_BIBLIA) MaterialTheme.colorScheme.onTertiary
+        if (isToDay == Settings.caliandarPosition || biblia == Settings.CHYTANNI_BIBLIA || biblia == Settings.CHYTANNI_VYBRANAE) MaterialTheme.colorScheme.onTertiary
         else StrogiPost
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var showDropdown by remember { mutableStateOf(false) }

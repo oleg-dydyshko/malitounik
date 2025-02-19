@@ -4,10 +4,13 @@ import android.content.SharedPreferences
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA_LIST
+import by.carkva_gazeta.malitounik2.views.AllDestinations.BOGASLUJBOVYIA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BOGASLUJBOVYIA_MENU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.CYTANNI_LIST
 import by.carkva_gazeta.malitounik2.views.AllDestinations.KALIANDAR
 import by.carkva_gazeta.malitounik2.views.AllDestinations.KALIANDAR_YEAR
+import by.carkva_gazeta.malitounik2.views.AllDestinations.MALITVY_LIST_ALL
+import by.carkva_gazeta.malitounik2.views.AllDestinations.MALITVY_MENU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.SEARCH_BIBLIA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.VYBRANAE_LIST
 
@@ -15,6 +18,8 @@ object AllDestinations {
     const val KALIANDAR = "Kaliandar"
     const val BOGASLUJBOVYIA_MENU = "Bogaslujbovyia_Menu"
     const val BOGASLUJBOVYIA = "Bogaslujbovyia"
+    const val MALITVY_MENU = "Malitvy_Menu"
+    const val MALITVY_LIST_ALL = "Malitvy_List_All"
     const val KALIANDAR_YEAR = "Kaliandar_Year"
     const val CYTANNI_LIST = "Cytanni_List"
     const val BIBLIA = "Biblia"
@@ -42,6 +47,16 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
             }
         }
         edit.putString("navigate", BOGASLUJBOVYIA_MENU)
+        edit.apply()
+    }
+
+    fun navigateToMalitvyMenu() {
+        navController.navigate(MALITVY_MENU) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: MALITVY_MENU) {
+                inclusive = true
+            }
+        }
+        edit.putString("navigate", MALITVY_MENU)
         edit.apply()
     }
 
@@ -93,9 +108,15 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
         }
     }
 
-    /*fun navigateToBogaslujbovyiaMenu() {
-        navController.navigate(BOGASLUJBOVYIA_MENU) {
-            BOGASLUJBOVYIA_MENU
+    fun navigateToMalitvyListAll(title: String, menuItem: Int, subTitle: String = "") {
+        navController.navigate("$MALITVY_LIST_ALL/$title/$menuItem/$subTitle") {
+            MALITVY_LIST_ALL
         }
-    }*/
+    }
+
+    fun navigateToBogaslujbovyia(title: String, resurs: Int) {
+        navController.navigate("$BOGASLUJBOVYIA/$title/$resurs") {
+            BOGASLUJBOVYIA
+        }
+    }
 }

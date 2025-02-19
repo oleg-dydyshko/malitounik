@@ -42,6 +42,8 @@ object Settings {
     const val CHYTANNI_VYBRANAE = 13
     const val SORT_BY_ABC = 1
     const val SORT_BY_TIME = 2
+    const val MENU_BOGASLUJBOVYIA = 100
+    const val MENU_MALITVY = 101
     var bibleTime = false
     var bibleTimeList = false
     var destinations = AllDestinations.KALIANDAR
