@@ -46,6 +46,7 @@ import java.util.Calendar
 @Composable
 fun VybranaeList(
     navigateToCytanniList: (String, Int, String) -> Unit = { _, _, _ -> },
+    navigateToBogaslujbovyia: (String, Int) -> Unit = { _, _ -> },
     sorted: Int,
     removeAllVybranae: Boolean
 ) {
@@ -53,16 +54,22 @@ fun VybranaeList(
     val gson = Gson()
     val type =
         TypeToken.getParameterized(
-            java.util.ArrayList::class.java,
-            VybranoeData::class.java
+            ArrayList::class.java,
+            VybranaeData::class.java
+        ).type
+    val type2 =
+        TypeToken.getParameterized(
+            ArrayList::class.java,
+            VybranaeDataAll::class.java
         ).type
     val list = remember { ArrayList<VybranaeListData>() }
     if (initVybranoe) {
         val time = Calendar.getInstance().timeInMillis
         //list.add(VybranaeListData(time, "Літургія Яна", ArrayList(), "lit_jiaj_ksjh"))
         initVybranoe = false
+        val vybranoeList2 = ArrayList<VybranaeDataAll>()
         for (i in 1..5) {
-            val vybranoeList = ArrayList<VybranoeData>()
+            val vybranoeList = ArrayList<VybranaeData>()
             val prevodName = when (i.toString()) {
                 Settings.PEREVODSEMUXI -> "biblia"
                 Settings.PEREVODBOKUNA -> "bokuna"
@@ -83,6 +90,20 @@ fun VybranaeList(
             if (file.exists()) {
                 vybranoeList.addAll(gson.fromJson(file.readText(), type))
                 list.add(VybranaeListData(time, titlePerevod, vybranoeList, ""))
+            }
+        }
+        val file2 = File("${LocalContext.current.filesDir}/vybranoe_all.json")
+        if (file2.exists()) {
+            vybranoeList2.addAll(gson.fromJson(file2.readText(), type2))
+            for (e in vybranoeList2.indices) {
+                list.add(
+                    VybranaeListData(
+                        vybranoeList2[e].id,
+                        vybranoeList2[e].title,
+                        ArrayList(),
+                        vybranoeList2[e].resource
+                    )
+                )
             }
         }
         //list.add(VybranaeListData(time, "Я вауацугш ушепоц", ArrayList(), "lit_jiaj_ksjh"))
@@ -205,8 +226,8 @@ fun VybranaeList(
                             compareBy({
                                 it.knigaText
                             }, {
-                                    it.glava
-                                })
+                                it.glava
+                            })
                         )
                     } else {
                         dataItem.listBible.sortByDescending { it.id }
@@ -259,6 +280,16 @@ fun VybranaeList(
                         modifier = Modifier
                             .combinedClickable(
                                 onClick = {
+                                    val fields = R.raw::class.java.fields
+                                    var recourseInt = R.raw.bogashlugbovya_error
+                                    for (element in fields) {
+                                        val name = element.name
+                                        if (dataItem.recourse == name) {
+                                            recourseInt = element.getInt(name)
+                                            break
+                                        }
+                                    }
+                                    navigateToBogaslujbovyia(dataItem.title, recourseInt)
                                 },
                                 onLongClick = {
                                     removeItemBible = -1
@@ -340,6 +371,6 @@ fun Dialog(
 data class VybranaeListData(
     val id: Long,
     val title: String,
-    val listBible: ArrayList<VybranoeData>,
+    val listBible: ArrayList<VybranaeData>,
     val recourse: String
 )

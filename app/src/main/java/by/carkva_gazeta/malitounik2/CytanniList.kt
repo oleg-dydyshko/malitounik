@@ -364,14 +364,14 @@ fun CytanniList(
             }
         }
     }
-    val vybranoeList = remember { ArrayList<VybranoeData>() }
+    val vybranoeList = remember { ArrayList<VybranaeData>() }
     var isPerevodError by remember { mutableStateOf(false) }
     var initVybranoe by remember { mutableStateOf(true) }
     var isVybranoe by remember { mutableStateOf(false) }
     var saveVybranoe by remember { mutableStateOf(false) }
     val gson = Gson()
     val type =
-        TypeToken.getParameterized(ArrayList::class.java, VybranoeData::class.java).type
+        TypeToken.getParameterized(ArrayList::class.java, VybranaeData::class.java).type
     val file = File("${LocalContext.current.filesDir}/vybranoe_${prevodName}.json")
     if (initVybranoe) {
         vybranoeList.clear()
@@ -403,7 +403,7 @@ fun CytanniList(
             }
             vybranoeList.add(
                 0,
-                VybranoeData(
+                VybranaeData(
                     Calendar.getInstance().timeInMillis,
                     titleBibleVybranoe,
                     knigaText,
@@ -2351,7 +2351,7 @@ data class CytanniListData(
     val parallel: String = "+-+"
 )
 
-data class VybranoeData(
+data class VybranaeData(
     val id: Long,
     val title: String,
     val knigaText: String,

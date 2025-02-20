@@ -669,6 +669,9 @@ fun MainConteiner(
                                 position
                             )
                         },
+                        navigateToBogaslujbovyia = { title, resourse ->
+                            navigationActions.navigateToBogaslujbovyia(title, resourse)
+                        },
                         sorted,
                         removeAllVybranae
                     )
