@@ -29,9 +29,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -73,6 +70,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -218,18 +216,6 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                 backPressHandled = true
                 navController.popBackStack()
             }
-            /*!backPressHandled -> {
-                val prefEditors = k.edit()
-                    prefEditors.putString("bible_time_${prevodName}_kniga", knigaText)
-                    prefEditors.putInt("bible_time_${prevodName}_glava", selectedIndex)
-                    prefEditors.putInt(
-                        "bible_time_${prevodName}_stix",
-                        listState[selectedIndex].firstVisibleItemIndex
-                    )
-                prefEditors.apply()
-                backPressHandled = true
-                navController.popBackStack()
-            }*/
         }
     }
     var isUpList by remember { mutableStateOf(false) }
@@ -255,22 +241,44 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
             controller.show(WindowInsetsCompat.Type.navigationBars())
         }
     }
+    val maxLine = remember { mutableIntStateOf(1) }
     Scaffold(
         topBar = {
             if (!fullscreen) {
                 TopAppBar(
                     title = {
                         Text(
-                            title,
+                            modifier = Modifier.clickable {
+                                maxLine.intValue = Int.MAX_VALUE
+                                coroutineScope.launch {
+                                    delay(5000L)
+                                    maxLine.intValue = 1
+                                }
+                            },
+                            text = title,
                             color = MaterialTheme.colorScheme.onSecondary,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            maxLines = maxLine.intValue,
+                            overflow = TextOverflow.Ellipsis
                         )
                     },
                     navigationIcon = {
-                        IconButton(onClick = { coroutineScope.launch { } },
+                        IconButton(onClick = {
+                            when {
+                                fullscreen -> fullscreen = false
+                                showDropdown -> {
+                                    showDropdown = false
+                                    if (autoScrollSensor) autoScroll = true
+                                }
+
+                                else -> {
+                                    navController.popBackStack()
+                                }
+                            }
+                        },
                             content = {
                                 Icon(
-                                    imageVector = Icons.Default.Menu,
+                                    painter = painterResource(R.drawable.arrow_back),
                                     tint = MaterialTheme.colorScheme.onSecondary,
                                     contentDescription = ""
                                 )
@@ -302,7 +310,7 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                                 isUpList = true
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.arrow_circle_up),
+                                    painter = painterResource(R.drawable.arrow_upward),
                                     contentDescription = "",
                                     tint = MaterialTheme.colorScheme.onSecondary
                                 )
@@ -310,7 +318,7 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                         }
                         IconButton(onClick = { expanded = true }) {
                             Icon(
-                                Icons.Default.MoreVert,
+                                painter = painterResource(R.drawable.more_vert),
                                 contentDescription = "",
                                 tint = MaterialTheme.colorScheme.onSecondary
                             )
@@ -668,6 +676,10 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                 }
                 item {
                     Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
+                    if (listState.lastScrolledForward && !listState.canScrollForward) {
+                        autoScroll = false
+                        autoScrollSensor = false
+                    }
                 }
             }
         }
@@ -769,7 +781,6 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                         )
                     }
                 }
-                //Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
             }
         }
     }

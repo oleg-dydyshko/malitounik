@@ -46,9 +46,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
@@ -595,7 +592,7 @@ fun CytanniList(
                             },
                                 content = {
                                     Icon(
-                                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                        painter = painterResource(R.drawable.arrow_back),
                                         tint = MaterialTheme.colorScheme.onSecondary,
                                         contentDescription = ""
                                     )
@@ -658,7 +655,7 @@ fun CytanniList(
                                         isUpList = true
                                     }) {
                                         Icon(
-                                            painter = painterResource(R.drawable.arrow_circle_up),
+                                            painter = painterResource(R.drawable.arrow_upward),
                                             contentDescription = "",
                                             tint = MaterialTheme.colorScheme.onSecondary
                                         )
@@ -673,7 +670,7 @@ fun CytanniList(
                             }
                             ) {
                                 Icon(
-                                    Icons.Default.MoreVert,
+                                    painter = painterResource(R.drawable.more_vert),
                                     contentDescription = "",
                                     tint = MaterialTheme.colorScheme.onSecondary
                                 )

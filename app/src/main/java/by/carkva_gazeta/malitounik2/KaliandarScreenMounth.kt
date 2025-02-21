@@ -201,6 +201,7 @@ fun KaliandarScreenMounth(colorBlackboard: Color = Primary, setPageCaliandar: (I
                 pageSpacing = 10.dp,
                 state = pagerState,
                 flingBehavior = fling,
+                verticalAlignment = Alignment.Top,
                 modifier = Modifier
                     .padding(10.dp)
             ) { page ->

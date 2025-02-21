@@ -18,9 +18,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
@@ -418,7 +415,7 @@ fun MainConteiner(
                         IconButton(onClick = { coroutineScope.launch { drawerState.open() } },
                             content = {
                                 Icon(
-                                    imageVector = Icons.Default.Menu,
+                                    painter = painterResource(R.drawable.menu),
                                     tint = textTollBarColor,
                                     contentDescription = ""
                                 )
@@ -470,7 +467,7 @@ fun MainConteiner(
                         Box {
                             IconButton(onClick = { expanded = true }) {
                                 Icon(
-                                    Icons.Default.MoreVert,
+                                    painter = painterResource(R.drawable.more_vert),
                                     contentDescription = "",
                                     tint = textTollBarColor
                                 )
@@ -612,6 +609,7 @@ fun MainConteiner(
                             pageSpacing = 10.dp,
                             state = pagerState,
                             flingBehavior = fling,
+                            verticalAlignment = Alignment.Top,
                             modifier = Modifier.padding(10.dp)
                         ) { page ->
                             KaliandarScreen(

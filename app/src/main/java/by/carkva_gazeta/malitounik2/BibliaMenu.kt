@@ -15,8 +15,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.FilterChip
@@ -205,7 +203,7 @@ fun BibliaMenu(
                     leadingIcon = if (selectState[index]) {
                         {
                             Icon(
-                                imageVector = Icons.Filled.Done,
+                                painter = painterResource(R.drawable.check),
                                 contentDescription = "",
                                 modifier = Modifier.size(FilterChipDefaults.IconSize)
                             )

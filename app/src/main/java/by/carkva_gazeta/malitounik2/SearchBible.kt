@@ -23,9 +23,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
@@ -179,7 +176,7 @@ fun SearchBible(
                         singleLine = true,
                         leadingIcon = {
                             Icon(
-                                imageVector = Icons.Filled.Search,
+                                painter = painterResource(R.drawable.search),
                                 tint = MaterialTheme.colorScheme.onSecondary,
                                 contentDescription = ""
                             )
@@ -209,7 +206,7 @@ fun SearchBible(
                     IconButton(onClick = { navController.popBackStack() },
                         content = {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                painter = painterResource(R.drawable.arrow_back),
                                 tint = MaterialTheme.colorScheme.onSecondary,
                                 contentDescription = ""
                             )

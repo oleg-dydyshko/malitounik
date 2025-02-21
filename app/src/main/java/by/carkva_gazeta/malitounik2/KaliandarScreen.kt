@@ -21,8 +21,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -552,8 +554,8 @@ fun KaliandarScreen(
                 )
             }
         }
+        Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
     }
-    Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
 }
 
 fun setListPadzeia(): ArrayList<Padzeia> {
@@ -638,13 +640,14 @@ fun SetPadzeia(title: String, apisanne: String, color: Int, raznica: Boolean, re
             .background(Divider),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        val message = remember { mutableStateOf(false) }
+        var message by remember { mutableStateOf(false) }
         val colors = stringArrayResource(R.array.colors)
         Column {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color(colors[color].toColorInt())),
+                    .background(Color(colors[color].toColorInt()))
+                    .clickable { message = !message },
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -653,25 +656,24 @@ fun SetPadzeia(title: String, apisanne: String, color: Int, raznica: Boolean, re
                         .padding(start = 10.dp)
                 ) {
                     val image =
-                        if (message.value) painterResource(android.R.drawable.arrow_up_float)
-                        else painterResource(android.R.drawable.arrow_down_float)
+                        if (message) painterResource(R.drawable.keyboard_arrow_up)
+                        else painterResource(R.drawable.keyboard_arrow_down)
                     Image(
                         painter = image,
                         contentDescription = "",
                         modifier = Modifier
                             .size(20.dp)
-                            .clickable { message.value = !message.value }
                     )
                 }
                 Text(
                     modifier = Modifier
-                        .padding(horizontal = 10.dp),
+                        .padding(horizontal = 10.dp, vertical = 5.dp),
                     text = title,
                     fontWeight = FontWeight.Bold,
                     color = PrimaryTextBlack
                 )
             }
-            if (message.value) {
+            if (message) {
                 val t1 = apisanne.indexOf(res)
                 val newApisanne = AnnotatedString.Builder(apisanne).apply {
                     if (raznica) {

@@ -38,15 +38,37 @@ fun BogaslujbovyiaMenu(navController: NavHostController, innerPadding: PaddingVa
         else -> ArrayList()
     }
     folderList.sort()
-    list.sortBy {
-        it.title
+    if (menuItem == Settings.MENU_BOGASLUJBOVYIA) {
+        list.sortBy {
+            it.title
+        }
     }
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         if (menuItem == Settings.MENU_BOGASLUJBOVYIA) {
             items(folderList.size) { index ->
                 Row(
                     modifier = Modifier
-                        .padding(start = 10.dp),
+                        .padding(start = 10.dp)
+                        .clickable {
+                            if (folderList[index] == "АКТОІХ") {
+                                navigationActions.navigateToMalitvyListAll(folderList[index], Settings.MENU_AKTOIX)
+                            }
+                            if (folderList[index] == "ВЯЧЭРНЯ") {
+                                navigationActions.navigateToMalitvyListAll(folderList[index], Settings.MENU_VIACHERNIA)
+                            }
+                            if (folderList[index] == "ТРАПАРЫ І КАНДАКІ НЯДЗЕЛЬНЫЯ ВАСЬМІ ТОНАЎ") {
+                                navigationActions.navigateToMalitvyListAll(folderList[index], Settings.MENU_TRAPARY_KANDAKI_NIADZELNYIA)
+                            }
+                            if (folderList[index] == "МАЛІТВЫ ПАСЬЛЯ СЬВЯТОГА ПРЫЧАСЬЦЯ") {
+                                navigationActions.navigateToMalitvyListAll(folderList[index], Settings.MENU_MALITVY_PASLIA_PRYCHASCIA)
+                            }
+                            if (folderList[index] == "ТРЭБНІК") {
+                                navigationActions.navigateToMalitvyListAll(folderList[index], Settings.MENU_TREBNIK)
+                            }
+                            if (folderList[index] == "МІНЭЯ АГУЛЬНАЯ") {
+                                navigationActions.navigateToMalitvyListAll(folderList[index], Settings.MENU_MINEIA_AGULNAIA)
+                            }
+                        },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
@@ -98,7 +120,7 @@ fun BogaslujbovyiaMenu(navController: NavHostController, innerPadding: PaddingVa
                     modifier = Modifier
                         .padding(start = 10.dp)
                         .clickable {
-                            navigationActions.navigateToMalitvyListAll(title, menuItem)
+                            navigationActions.navigateToMalitvyListAll(title, Settings.MENU_MALITVY_PRYNAGODNYIA)
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {

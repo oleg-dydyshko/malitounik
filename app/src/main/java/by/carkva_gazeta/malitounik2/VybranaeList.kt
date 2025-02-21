@@ -12,9 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -40,7 +37,6 @@ import by.carkva_gazeta.malitounik2.ui.theme.Divider
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
-import java.util.Calendar
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -63,11 +59,9 @@ fun VybranaeList(
             VybranaeDataAll::class.java
         ).type
     val list = remember { ArrayList<VybranaeListData>() }
+    val vybranoeList2 = remember { ArrayList<VybranaeDataAll>() }
     if (initVybranoe) {
-        val time = Calendar.getInstance().timeInMillis
-        //list.add(VybranaeListData(time, "Літургія Яна", ArrayList(), "lit_jiaj_ksjh"))
         initVybranoe = false
-        val vybranoeList2 = ArrayList<VybranaeDataAll>()
         for (i in 1..5) {
             val vybranoeList = ArrayList<VybranaeData>()
             val prevodName = when (i.toString()) {
@@ -89,7 +83,7 @@ fun VybranaeList(
             val file = File("${LocalContext.current.filesDir}/vybranoe_${prevodName}.json")
             if (file.exists()) {
                 vybranoeList.addAll(gson.fromJson(file.readText(), type))
-                list.add(VybranaeListData(time, titlePerevod, vybranoeList, ""))
+                list.add(VybranaeListData(vybranoeList[0].id, titlePerevod, vybranoeList, ""))
             }
         }
         val file2 = File("${LocalContext.current.filesDir}/vybranoe_all.json")
@@ -106,8 +100,6 @@ fun VybranaeList(
                 )
             }
         }
-        //list.add(VybranaeListData(time, "Я вауацугш ушепоц", ArrayList(), "lit_jiaj_ksjh"))
-        //list.add(VybranaeListData(time, "Літургія Васіля", ArrayList(), "lit_jiaj_ksjh"))
     }
     if (sorted == Settings.SORT_BY_ABC) {
         list.sortBy { it.title }
@@ -121,6 +113,7 @@ fun VybranaeList(
     var removeItem by remember { mutableIntStateOf(-1) }
     var removeItemBible by remember { mutableIntStateOf(-1) }
     var removeItemBibleAll by remember { mutableStateOf(false) }
+    var removeResourse by remember { mutableStateOf("-1") }
     if (removeItem != -1) {
         val titleVybrenae = stringResource(
             R.string.vybranoe_biblia_delite,
@@ -135,17 +128,17 @@ fun VybranaeList(
                 removeItemBibleAll = false
             },
             onConfirmation = {
-                val perevod = list[removeItem].listBible[0].perevod
-                val prevodName = when (perevod) {
-                    Settings.PEREVODSEMUXI -> "biblia"
-                    Settings.PEREVODBOKUNA -> "bokuna"
-                    Settings.PEREVODCARNIAUSKI -> "carniauski"
-                    Settings.PEREVODNADSAN -> "nadsan"
-                    Settings.PEREVODSINOIDAL -> "sinaidal"
-                    else -> "biblia"
-                }
-                val file = File("${context.filesDir}/vybranoe_${prevodName}.json")
                 if (removeItemBible != -1) {
+                    val perevod = list[removeItem].listBible[0].perevod
+                    val prevodName = when (perevod) {
+                        Settings.PEREVODSEMUXI -> "biblia"
+                        Settings.PEREVODBOKUNA -> "bokuna"
+                        Settings.PEREVODCARNIAUSKI -> "carniauski"
+                        Settings.PEREVODNADSAN -> "nadsan"
+                        Settings.PEREVODSINOIDAL -> "sinaidal"
+                        else -> "biblia"
+                    }
+                    val file = File("${context.filesDir}/vybranoe_${prevodName}.json")
                     list[removeItem].listBible.removeAt(removeItemBible)
                     if (list[removeItem].listBible.isEmpty() && file.exists()) {
                         list.removeAt(removeItem)
@@ -157,9 +150,37 @@ fun VybranaeList(
                     }
                     removeItemBible = -1
                 } else {
+                    var index = -1
+                    for (i in vybranoeList2.indices) {
+                        if (removeResourse == vybranoeList2[i].resource) {
+                            index = i
+                            break
+                        }
+                    }
+                    if (index != -1) {
+                        vybranoeList2.removeAt(index)
+                        val file2 = File("${context.filesDir}/vybranoe_all.json")
+                        if (vybranoeList2.isEmpty() && file2.exists()) {
+                            file2.delete()
+                        } else {
+                            file2.writer().use {
+                                it.write(gson.toJson(vybranoeList2, type2))
+                            }
+                        }
+                    }
                     list.removeAt(removeItem)
                 }
                 if (removeItemBibleAll) {
+                    val perevod = list[removeItem].listBible[0].perevod
+                    val prevodName = when (perevod) {
+                        Settings.PEREVODSEMUXI -> "biblia"
+                        Settings.PEREVODBOKUNA -> "bokuna"
+                        Settings.PEREVODCARNIAUSKI -> "carniauski"
+                        Settings.PEREVODNADSAN -> "nadsan"
+                        Settings.PEREVODSINOIDAL -> "sinaidal"
+                        else -> "biblia"
+                    }
+                    val file = File("${context.filesDir}/vybranoe_${prevodName}.json")
                     if (file.exists()) {
                         file.delete()
                     }
@@ -193,12 +214,10 @@ fun VybranaeList(
                             .fillMaxWidth()
                     ) {
                         Icon(
-                            Icons.Default.run {
-                                if (collapsed)
-                                    KeyboardArrowDown
-                                else
-                                    KeyboardArrowUp
-                            },
+                            painter = if (collapsed)
+                                painterResource(R.drawable.keyboard_arrow_down)
+                            else
+                                painterResource(R.drawable.keyboard_arrow_up),
                             contentDescription = "",
                             tint = Divider,
                         )
@@ -294,6 +313,7 @@ fun VybranaeList(
                                 onLongClick = {
                                     removeItemBible = -1
                                     removeItem = i
+                                    removeResourse = dataItem.recourse
                                 }
                             )
                             .padding(start = 10.dp),

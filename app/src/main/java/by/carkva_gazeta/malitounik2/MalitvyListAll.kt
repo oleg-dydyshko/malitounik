@@ -15,10 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -63,7 +59,7 @@ fun MalitvyListAll(
     }
     val coroutineScope = rememberCoroutineScope()
     val maxLine = remember { mutableIntStateOf(1) }
-    val list = arrayOf(
+    val listPrynagodnyia = arrayOf(
         stringResource(R.string.prynad_1),
         stringResource(R.string.prynad_2),
         stringResource(R.string.prynad_3),
@@ -71,7 +67,17 @@ fun MalitvyListAll(
         stringResource(R.string.prynad_5),
         stringResource(R.string.prynad_6)
     )
-    val collapsedState = remember(list) { list.map { true }.toMutableStateList() }
+    val list = when(menuItem) {
+        Settings.MENU_AKTOIX -> getAktoix()
+        Settings.MENU_VIACHERNIA -> getViachernia()
+        Settings.MENU_TRAPARY_KANDAKI_NIADZELNYIA -> getTraparyKandakiNiadzelnyia()
+        Settings.MENU_TRAPARY_KANDAKI_SHTODZENNYIA -> getTraparyKandakiShtodzennyia()
+        Settings.MENU_MALITVY_PASLIA_PRYCHASCIA -> getMalitvyPasliaPrychascia()
+        Settings.MENU_TREBNIK -> getTrebnik()
+        Settings.MENU_MINEIA_AGULNAIA -> getMineiaAgulnaia()
+        else -> ArrayList()
+    }
+    val collapsedState = remember(listPrynagodnyia) { listPrynagodnyia.map { true }.toMutableStateList() }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -115,7 +121,7 @@ fun MalitvyListAll(
                     },
                         content = {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                painter = painterResource(R.drawable.arrow_back),
                                 tint = MaterialTheme.colorScheme.onSecondary,
                                 contentDescription = ""
                             )
@@ -135,109 +141,313 @@ fun MalitvyListAll(
                 )
                 .fillMaxSize()
         ) {
-            list.forEachIndexed { i, dataItem ->
-                val collapsed = collapsedState[i]
-                item(key = "header_$i") {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                collapsedState[i] = !collapsed
-                            }
-                    ) {
-                        Icon(
-                            Icons.Default.run {
-                                if (collapsed)
-                                    KeyboardArrowDown
-                                else
-                                    KeyboardArrowUp
-                            },
-                            contentDescription = "",
-                            tint = Divider,
-                        )
-                        Text(
-                            dataItem,
-                            modifier = Modifier
-                                .animateItem(
-                                    fadeInSpec = null,
-                                    fadeOutSpec = null,
-                                    placementSpec = spring(
-                                        stiffness = Spring.StiffnessMediumLow,
-                                        visibilityThreshold = IntOffset.VisibilityThreshold
-                                    )
-                                )
-                                .padding(10.dp)
-                                .weight(1f),
-                            color = MaterialTheme.colorScheme.secondary
-                        )
-                    }
-                    HorizontalDivider()
-                }
-                if (!collapsed) {
-                    val subList = when (i) {
-                        0 -> getPrynagodnyia1()
-                        1 -> getPrynagodnyia2()
-                        2 -> getPrynagodnyia3()
-                        3 -> getPrynagodnyia4()
-                        4 -> getPrynagodnyia5()
-                        5 -> getPrynagodnyia6()
-                        else -> getPrynagodnyia1()
-                    }
-                    items(subList.size) { index ->
+            if (menuItem == Settings.MENU_MALITVY_PRYNAGODNYIA) {
+                listPrynagodnyia.forEachIndexed { i, dataItem ->
+                    val collapsed = collapsedState[i]
+                    item(key = "header_$i") {
                         Row(
+                            verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
-                                .padding(start = 30.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                                .fillMaxWidth()
+                                .clickable {
+                                    collapsedState[i] = !collapsed
+                                }
                         ) {
                             Icon(
-                                modifier = Modifier.size(12.dp, 12.dp),
-                                painter = painterResource(R.drawable.krest),
-                                tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                painter = if (collapsed)
+                                    painterResource(R.drawable.keyboard_arrow_down)
+                                else
+                                    painterResource(R.drawable.keyboard_arrow_up),
+                                contentDescription = "",
+                                tint = Divider,
                             )
                             Text(
-                                subList[index].title,
+                                dataItem,
                                 modifier = Modifier
-                                    .fillMaxSize()
+                                    .animateItem(
+                                        fadeInSpec = null,
+                                        fadeOutSpec = null,
+                                        placementSpec = spring(
+                                            stiffness = Spring.StiffnessMediumLow,
+                                            visibilityThreshold = IntOffset.VisibilityThreshold
+                                        )
+                                    )
                                     .padding(10.dp)
-                                    .clickable {
-                                        navigationActions.navigateToBogaslujbovyia(subList[index].title, subList[index].resurs)
-                                    },
+                                    .weight(1f),
                                 color = MaterialTheme.colorScheme.secondary
                             )
                         }
                         HorizontalDivider()
                     }
+                    if (!collapsed) {
+                        val subList = when (i) {
+                            0 -> getPrynagodnyia1()
+                            1 -> getPrynagodnyia2()
+                            2 -> getPrynagodnyia3()
+                            3 -> getPrynagodnyia4()
+                            4 -> getPrynagodnyia5()
+                            5 -> getPrynagodnyia6()
+                            else -> getPrynagodnyia1()
+                        }
+                        items(subList.size) { index ->
+                            Row(
+                                modifier = Modifier
+                                    .padding(start = 30.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(12.dp, 12.dp),
+                                    painter = painterResource(R.drawable.krest),
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    contentDescription = null
+                                )
+                                Text(
+                                    subList[index].title,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(10.dp)
+                                        .clickable {
+                                            navigationActions.navigateToBogaslujbovyia(
+                                                subList[index].title,
+                                                subList[index].resurs
+                                            )
+                                        },
+                                    color = MaterialTheme.colorScheme.secondary
+                                )
+                            }
+                            HorizontalDivider()
+                        }
+                    }
+                }
+            } else {
+                items(list.size) { index ->
+                    Row(
+                        modifier = Modifier
+                            .padding(start = 10.dp)
+                            .clickable {
+                                navigationActions.navigateToBogaslujbovyia(list[index].title, list[index].resurs)
+                            },
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(12.dp, 12.dp),
+                            painter = painterResource(R.drawable.krest),
+                            tint = MaterialTheme.colorScheme.primary,
+                            contentDescription = null
+                        )
+                        Text(
+                            list[index].title,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(10.dp),
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                    HorizontalDivider()
                 }
             }
-            /*items(list.size) { index ->
-                Row(
-                    modifier = Modifier
-                        .padding(start = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        modifier = Modifier.size(12.dp, 12.dp),
-                        painter = painterResource(R.drawable.krest),
-                        tint = MaterialTheme.colorScheme.primary,
-                        contentDescription = null
-                    )
-                    Text(
-                        list[index],
+            if (menuItem == Settings.MENU_MINEIA_AGULNAIA) {
+                item {
+                    Row(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(10.dp),
-                        color = MaterialTheme.colorScheme.secondary
-                    )
+                            .padding(start = 10.dp)
+                            .clickable {
+                                navigationActions.navigateToMalitvyListAll("ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ", Settings.MENU_TRAPARY_KANDAKI_SHTODZENNYIA)
+                            },
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(12.dp, 12.dp),
+                            painter = painterResource(R.drawable.folder),
+                            tint = MaterialTheme.colorScheme.primary,
+                            contentDescription = null
+                        )
+                        Text(
+                            "ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ",
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(10.dp),
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                    HorizontalDivider()
                 }
-                HorizontalDivider()
-            }*/
+            }
             item {
                 Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
             }
         }
     }
+}
+
+//list.add(BogaslujbovyiaListData("", R.raw.))
+fun getMineiaAgulnaia(): ArrayList<BogaslujbovyiaListData> {
+    val list = ArrayList<BogaslujbovyiaListData>()
+    list.add(BogaslujbovyiaListData("Вячэрня агульная Найсьвяцейшай Багародзіцы", R.raw.viachernia_mineia_agulnaia1))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная Яну Хрысьціцелю", R.raw.viachernia_mineia_agulnaia2))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная прароку", R.raw.viachernia_mineia_agulnaia3))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная апосталу", R.raw.viachernia_mineia_agulnaia4))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная апосталам", R.raw.viachernia_mineia_agulnaia5))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная сьвятаначальніку", R.raw.viachernia_mineia_agulnaia6))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная сьвятаначальнікам", R.raw.viachernia_mineia_agulnaia7))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная посьніку, манаху і пустэльніку", R.raw.viachernia_mineia_agulnaia8))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная посьнікам, манахам і пустэльнікам", R.raw.viachernia_mineia_agulnaia9))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная вызнаўцу і настаўніку царкоўнаму", R.raw.viachernia_mineia_agulnaia10))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная мучаніку", R.raw.viachernia_mineia_agulnaia11))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная мучаніку (іншая)", R.raw.viachernia_mineia_agulnaia12))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная мучанікам", R.raw.viachernia_mineia_agulnaia13))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная сьвятамучаніку", R.raw.viachernia_mineia_agulnaia14))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная сьвятамучанікам", R.raw.viachernia_mineia_agulnaia15))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная мучаніку сьвятару або манаху", R.raw.viachernia_mineia_agulnaia16))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная мучанікам сьвятарам або манахам", R.raw.viachernia_mineia_agulnaia17))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная мучаніцы", R.raw.viachernia_mineia_agulnaia18))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная мучаніцы (іншая)", R.raw.viachernia_mineia_agulnaia19))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная мучаніцам", R.raw.viachernia_mineia_agulnaia20))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная мучаніцы манахіні", R.raw.viachernia_mineia_agulnaia21))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная сьвятой жанчыне", R.raw.viachernia_mineia_agulnaia22))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная сьвятым жанчынам", R.raw.viachernia_mineia_agulnaia23))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная бескарысьлівым лекарам і цудатворцам", R.raw.viachernia_mineia_agulnaia24))
+    list.add(BogaslujbovyiaListData("Служба апосталу або апосталам", R.raw.sluzba_apostalu_apostalam))
+    list.add(BogaslujbovyiaListData("Служба настаўніку царкоўнаму і вызнаўцу", R.raw.sluzba_nastauniku_cark_vyznaucu))
+    list.add(BogaslujbovyiaListData("Служба сьвятаначальнікам", R.raw.sluzba_sviatanaczalnikam))
+    list.add(BogaslujbovyiaListData("Служба сьвятаначальніку", R.raw.sluzba_sviatanaczalniku))
+    list.add(BogaslujbovyiaListData("Служба Найсьвяцейшай Багародзіцы", R.raw.sluzba_najsviaciejszaj_baharodzicy))
+    list.add(BogaslujbovyiaListData("Служба за памерлых на кожны дзень тыдня", R.raw.sluzba_za_pamierlych_na_kozny_dzien_tydnia))
+    list.add(BogaslujbovyiaListData("Служба бескарысьлівым лекарам і цудатворцам", R.raw.sluzba_bieskaryslivym_lekaram_cudatvorcam))
+    list.add(BogaslujbovyiaListData("Служба мучаніцам", R.raw.sluzba_muczanicam))
+    list.add(BogaslujbovyiaListData("Служба мучаніцы", R.raw.sluzba_muczanicy))
+    list.add(BogaslujbovyiaListData("Служба мучанікам", R.raw.sluzba_muczanikam))
+    list.add(BogaslujbovyiaListData("Служба мучанікам сьвятарам і манахам", R.raw.sluzba_muczanikam_sviataram_i_manacham))
+    list.add(BogaslujbovyiaListData("Служба мучаніку", R.raw.sluzba_muczaniku))
+    list.add(BogaslujbovyiaListData("Служба мучаніку сьвятару і манаху", R.raw.sluzba_muczaniku_sviataru_i_manachu))
+    list.add(BogaslujbovyiaListData("Служба сьвятой жанчыне", R.raw.sluzba_sviatoj_zanczynie))
+    list.add(BogaslujbovyiaListData("Служба сьвятым жанчынам", R.raw.sluzba_sviatym_zanczynam))
+    list.add(BogaslujbovyiaListData("Служба посьнікам, манахам і пустэльнікам", R.raw.sluzba_posnikam_manacham_pustelnikam))
+    list.add(BogaslujbovyiaListData("Служба посьніку / аскету, манаху і пустэльніку", R.raw.sluzba_posniku_manachu_pustelniku))
+    list.add(BogaslujbovyiaListData("Служба сьвятому Яну Хрысьціцелю", R.raw.sluzba_janu_chryscicielu))
+    list.add(BogaslujbovyiaListData("Служба прароку", R.raw.sluzba_praroku))
+    list.add(BogaslujbovyiaListData("Служба сьвятым анёлам", R.raw.sluzba_aniolam))
+    list.add(BogaslujbovyiaListData("Служба сьвятому крыжу", R.raw.sluzba_kryzu))
+    list.add(BogaslujbovyiaListData("Служба сьвятамучанікам", R.raw.sluzba_sviatamuczanikam))
+    list.add(BogaslujbovyiaListData("Служба сьвятамучаніку", R.raw.sluzba_sviatamuczaniku))
+    return list
+}
+
+fun getTrebnik(): ArrayList<BogaslujbovyiaListData> {
+    val list = ArrayList<BogaslujbovyiaListData>()
+    list.add(BogaslujbovyiaListData("Служба аб вызваленьні бязьвінна зьняволеных", R.raw.sluzba_vyzvalen_biazvinna_zniavolenych))
+    list.add(BogaslujbovyiaListData("Служба за памерлых — Малая паніхіда", R.raw.panichida_malaja))
+    list.add(BogaslujbovyiaListData("Чын асьвячэньня транспартнага сродку", R.raw.czyn_asviaczennia_transpartnaha_srodku))
+    list.add(BogaslujbovyiaListData("Асьвячэньне крыжа на сьвятой Літургіі", R.raw.asviaczennie_kryza))
+    list.add(BogaslujbovyiaListData("Блаславеньне ўсялякае рэчы", R.raw.mltv_blaslaviennie_usialakaj_reczy))
+    list.add(BogaslujbovyiaListData("Малітва на асьвячэньне памятнай табліцы Слузе Божаму", R.raw.mltv_asviacz_pamiatnaj_tablicy))
+    list.add(BogaslujbovyiaListData("Малітва на асьвячэньне памятнай табліцы Слузе Божаму, які пацярпеў за Беларусь", R.raw.mltv_asviacz_pamiatnaj_tablicy_paciarpieu_za_bielarus1))
+    list.add(BogaslujbovyiaListData("Малітва на асьвячэньне памятнай табліцы ўсім бязьвінным ахвярам, якія пацярпелі за Беларусь", R.raw.mltv_asviacz_pamiatnaj_tablicy_biazvinnym_achviaram_paciarpieli_za_bielarus))
+    return list
+}
+
+fun getMalitvyPasliaPrychascia(): ArrayList<BogaslujbovyiaListData> {
+    val list = ArrayList<BogaslujbovyiaListData>()
+    list.add(BogaslujbovyiaListData("Малітва падзякі", R.raw.paslia_prychascia1))
+    list.add(BogaslujbovyiaListData("Малітва сьв. Васіля Вялікага", R.raw.paslia_prychascia2))
+    list.add(BogaslujbovyiaListData("Малітва Сымона Мэтафраста", R.raw.paslia_prychascia3))
+    list.add(BogaslujbovyiaListData("Iншая малітва", R.raw.paslia_prychascia4))
+    list.add(BogaslujbovyiaListData("Малітва да Найсьвяцейшай Багародзіцы", R.raw.paslia_prychascia5))
+    return list
+}
+
+fun getTraparyKandakiNiadzelnyia(): ArrayList<BogaslujbovyiaListData> {
+    val list = ArrayList<BogaslujbovyiaListData>()
+    list.add(BogaslujbovyiaListData("Тон 1", R.raw.ton1))
+    list.add(BogaslujbovyiaListData("Тон 2", R.raw.ton2))
+    list.add(BogaslujbovyiaListData("Тон 3", R.raw.ton3))
+    list.add(BogaslujbovyiaListData("Тон 4", R.raw.ton4))
+    list.add(BogaslujbovyiaListData("Тон 5", R.raw.ton5))
+    list.add(BogaslujbovyiaListData("Тон 6", R.raw.ton6))
+    list.add(BogaslujbovyiaListData("Тон 7", R.raw.ton7))
+    list.add(BogaslujbovyiaListData("Тон 8", R.raw.ton8))
+    return list
+}
+
+fun getTraparyKandakiShtodzennyia(): ArrayList<BogaslujbovyiaListData> {
+    val list = ArrayList<BogaslujbovyiaListData>()
+    list.add(BogaslujbovyiaListData("ПАНЯДЗЕЛАК\nСлужба сьвятым анёлам", R.raw.ton1_budni))
+    list.add(BogaslujbovyiaListData("АЎТОРАК\nСлужба сьвятому Яну Хрысьціцелю", R.raw.ton2_budni))
+    list.add(BogaslujbovyiaListData("СЕРАДА\nСлужба Найсьвяцейшай Багародзіцы і Крыжу", R.raw.ton3_budni))
+    list.add(BogaslujbovyiaListData("ЧАЦЬВЕР\nСлужба апосталам і сьвятому Мікалаю", R.raw.ton4_budni))
+    list.add(BogaslujbovyiaListData("ПЯТНІЦА\nСлужба Крыжу Гасподняму", R.raw.ton5_budni))
+    list.add(BogaslujbovyiaListData("СУБОТА\nСлужба ўсім сьвятым і памёрлым", R.raw.ton6_budni))
+    return list
+}
+
+fun getViachernia(): ArrayList<BogaslujbovyiaListData> {
+    val list = ArrayList<BogaslujbovyiaListData>()
+    list.add(BogaslujbovyiaListData("Вячэрня ў нядзелі і сьвяты", R.raw.viaczernia_niadzelnaja))
+    list.add(BogaslujbovyiaListData("Ліцьця і блаславеньне хлябоў", R.raw.viaczernia_liccia_i_blaslavenne_chliabou))
+    list.add(BogaslujbovyiaListData("Вячэрня ў звычайныя дні", R.raw.viaczernia_na_kozny_dzen))
+    list.add(BogaslujbovyiaListData("Вячэрня ў Вялікім посьце", R.raw.viaczernia_u_vialikim_poscie))
+    list.add(BogaslujbovyiaListData("Вячэрняя служба штодзённая (без сьвятара)", R.raw.viaczerniaja_sluzba_sztodzionnaja_biez_sviatara))
+    list.add(BogaslujbovyiaListData("Вячэрня на Сьветлым тыдні", R.raw.viaczernia_svietly_tydzien))
+    return list
+}
+
+fun getAktoix(): ArrayList<BogaslujbovyiaListData> {
+    val list = ArrayList<BogaslujbovyiaListData>()
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня Тон 1",
+            R.raw.viaczernia_ton1
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня Тон 2",
+            R.raw.viaczernia_ton2
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня Тон 3",
+            R.raw.viaczernia_ton3
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня Тон 4",
+            R.raw.viaczernia_ton4
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня Тон 5",
+            R.raw.viaczernia_ton5
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня Тон 6",
+            R.raw.viaczernia_ton6
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня Тон 7",
+            R.raw.viaczernia_ton7
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня Тон 8",
+            R.raw.viaczernia_ton8
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Багародзічныя адпушчальныя",
+            R.raw.viaczernia_baharodzicznyja_adpuszczalnyja
+        )
+    )
+    return list
 }
 
 fun getPrynagodnyia1(): ArrayList<BogaslujbovyiaListData> {

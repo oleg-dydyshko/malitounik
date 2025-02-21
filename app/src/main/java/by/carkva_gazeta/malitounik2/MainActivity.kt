@@ -44,6 +44,14 @@ object Settings {
     const val SORT_BY_TIME = 2
     const val MENU_BOGASLUJBOVYIA = 100
     const val MENU_MALITVY = 101
+    const val MENU_AKTOIX = 102
+    const val MENU_MALITVY_PRYNAGODNYIA= 103
+    const val MENU_VIACHERNIA= 104
+    const val MENU_TRAPARY_KANDAKI_NIADZELNYIA = 105
+    const val MENU_TRAPARY_KANDAKI_SHTODZENNYIA = 106
+    const val MENU_MALITVY_PASLIA_PRYCHASCIA = 107
+    const val MENU_TREBNIK = 108
+    const val MENU_MINEIA_AGULNAIA = 109
     var bibleTime = false
     var bibleTimeList = false
     var destinations = AllDestinations.KALIANDAR

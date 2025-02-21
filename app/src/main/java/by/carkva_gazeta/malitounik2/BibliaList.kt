@@ -18,10 +18,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -41,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -132,7 +129,7 @@ fun BibliaList(
                     IconButton(onClick = { navController.popBackStack() },
                         content = {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                painter = painterResource(R.drawable.arrow_back),
                                 tint = MaterialTheme.colorScheme.onSecondary,
                                 contentDescription = ""
                             )
@@ -172,12 +169,10 @@ fun BibliaList(
                                     }
                             ) {
                                 Icon(
-                                    Icons.Default.run {
-                                        if (collapsed)
-                                            KeyboardArrowDown
-                                        else
-                                            KeyboardArrowUp
-                                    },
+                                    painter = if (collapsed)
+                                        painterResource(R.drawable.keyboard_arrow_down)
+                                    else
+                                        painterResource(R.drawable.keyboard_arrow_up),
                                     contentDescription = "",
                                     tint = Divider,
                                 )
@@ -318,7 +313,7 @@ fun bibleCount(kniga: Int, perevod: String): Int {
         result = 151
         return result
     }
-    result = when(kniga) {
+    result = when (kniga) {
         0 -> 50
         1 -> 40
         2 -> 27
@@ -344,6 +339,7 @@ fun bibleCount(kniga: Int, perevod: String): Int {
             if (perevod == Settings.PEREVODSEMUXI) 151
             else 150
         }
+
         22 -> 31
         23 -> 12
         24 -> 8
@@ -357,6 +353,7 @@ fun bibleCount(kniga: Int, perevod: String): Int {
             if (perevod == Settings.PEREVODCARNIAUSKI) 6
             else 5
         }
+
         32 -> 48
         33 -> 14
         34 -> 14
