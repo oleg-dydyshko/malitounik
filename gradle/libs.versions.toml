@@ -1,6 +1,7 @@
 [versions]
 agp = "8.6.1"
 kotlin = "1.9.0"
+services = "4.4.2"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -53,4 +54,4 @@ androidx-material-icons-extended-android = { group = "androidx.compose.material"
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-
+google-services = { id = "com.google.gms.google-services", version.ref = "services" }

@@ -5,6 +5,8 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
@@ -18,13 +20,23 @@ import by.carkva_gazeta.malitounik2.ui.theme.MalitounikTheme
 import by.carkva_gazeta.malitounik2.views.AllDestinations
 import by.carkva_gazeta.malitounik2.views.AppNavGraph
 import com.google.firebase.FirebaseApp
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
+import java.io.File
 
 object Settings {
+    const val TRANSPORT_ALL = 100
+    const val TRANSPORT_WIFI = 101
+    const val TRANSPORT_CELLULAR = 102
     const val GET_CALIANDAR_YEAR_MIN = 2023
     const val GET_CALIANDAR_YEAR_MAX = 2026
     const val PEREVODSEMUXI = "1"
@@ -45,13 +57,20 @@ object Settings {
     const val MENU_BOGASLUJBOVYIA = 100
     const val MENU_MALITVY = 101
     const val MENU_AKTOIX = 102
-    const val MENU_MALITVY_PRYNAGODNYIA= 103
-    const val MENU_VIACHERNIA= 104
+    const val MENU_MALITVY_PRYNAGODNYIA = 103
+    const val MENU_VIACHERNIA = 104
     const val MENU_TRAPARY_KANDAKI_NIADZELNYIA = 105
     const val MENU_TRAPARY_KANDAKI_SHTODZENNYIA = 106
     const val MENU_MALITVY_PASLIA_PRYCHASCIA = 107
     const val MENU_TREBNIK = 108
     const val MENU_MINEIA_AGULNAIA = 109
+    const val MENU_MINEIA_MESIACHNAIA_MOUNTH = 110
+    const val MENU_MINEIA_MESIACHNAIA = 111
+    const val MENU_TRYEDZ = 112
+    const val MENU_TRYEDZ_POSNAIA = 113
+    const val MENU_TRYEDZ_BIALIKAGA_TYDNIA = 114
+    const val MENU_TRYEDZ_SVETLAGA_TYDNIA = 115
+    const val MENU_TRYEDZ_KVETNAIA = 116
     var bibleTime = false
     var bibleTimeList = false
     var destinations = AllDestinations.KALIANDAR
@@ -84,7 +103,6 @@ class MainActivity : ComponentActivity(), SensorEventListener {
                 dzenNoch = isSystemInDarkTheme()
                 if (modeNight == Settings.MODE_NIGHT_NO) dzenNoch = false
                 if (modeNight == Settings.MODE_NIGHT_YES) dzenNoch = true
-                //if (modeNight == Settings.MODE_NIGHT_SYSTEM) dzenNoch = isSystemInDarkTheme()
             }
             checkDzenNoch = dzenNoch
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -99,6 +117,86 @@ class MainActivity : ComponentActivity(), SensorEventListener {
                 })
             }
         }
+        CoroutineScope(Dispatchers.IO).launch {
+            if (isNetworkAvailable()) {//k.getBoolean("admin", false) &&
+                val dir = File("$filesDir/cache")
+                if (!dir.exists()) dir.mkdir()
+                val localFile = File("$filesDir/cache/cache.txt")
+                referens.child("/admin/log.txt").getFile(localFile)
+                    .addOnFailureListener {
+                        val mes = Toast.makeText(
+                            this@MainActivity,
+                            getString(R.string.error),
+                            Toast.LENGTH_SHORT
+                        )
+                        mes.show()
+                    }.await()
+                val log = localFile.readText()
+                if (log != "") {
+                    withContext(Dispatchers.Main) {
+                        val mes = Toast.makeText(
+                            this@MainActivity,
+                            getString(R.string.check_update_resourse),
+                            Toast.LENGTH_SHORT
+                        )
+                        mes.show()
+                    }
+                }
+            }
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    fun isNetworkAvailable(typeTransport: Int = Settings.TRANSPORT_ALL): Boolean {
+        val connectivityManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val nw = connectivityManager.activeNetwork ?: return false
+            val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
+            when (typeTransport) {
+                Settings.TRANSPORT_CELLULAR -> {
+                    if (actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) return true
+                }
+
+                Settings.TRANSPORT_WIFI -> {
+                    if (actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) return true
+                }
+
+                Settings.TRANSPORT_ALL -> {
+                    return when {
+                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_VPN) -> true
+                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+                        else -> false
+                    }
+                }
+            }
+        } else {
+            val activeNetwork = connectivityManager.activeNetworkInfo ?: return false
+            if (activeNetwork.isConnectedOrConnecting) {
+                when (typeTransport) {
+                    Settings.TRANSPORT_CELLULAR -> {
+                        if (activeNetwork.type == ConnectivityManager.TYPE_MOBILE) return true
+                    }
+
+                    Settings.TRANSPORT_WIFI -> {
+                        if (activeNetwork.type == ConnectivityManager.TYPE_WIFI) return true
+                    }
+
+                    Settings.TRANSPORT_ALL -> {
+                        return when (activeNetwork.type) {
+                            ConnectivityManager.TYPE_WIFI -> true
+                            ConnectivityManager.TYPE_MOBILE -> true
+                            ConnectivityManager.TYPE_VPN -> true
+                            ConnectivityManager.TYPE_ETHERNET -> true
+                            else -> false
+                        }
+                    }
+                }
+            }
+        }
+        return false
     }
 
     override fun attachBaseContext(context: Context) {
@@ -109,7 +207,7 @@ class MainActivity : ComponentActivity(), SensorEventListener {
             applyOverrideConfiguration(this)
         }*/
         super.attachBaseContext(context)
-        FirebaseApp.initializeApp(this)
+        FirebaseApp.initializeApp(context)
         //Firebase.appCheck.installAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.getInstance())
     }
 
@@ -263,6 +361,13 @@ class MainActivity : ComponentActivity(), SensorEventListener {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean("dzenNoch", dzenNoch)
+    }
+
+    companion object {
+        private val storage: FirebaseStorage
+            get() = Firebase.storage
+        val referens: StorageReference
+            get() = storage.reference
     }
 }
 /*@Composable

@@ -5,7 +5,9 @@ import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -44,7 +46,8 @@ fun VybranaeList(
     navigateToCytanniList: (String, Int, String) -> Unit = { _, _, _ -> },
     navigateToBogaslujbovyia: (String, Int) -> Unit = { _, _ -> },
     sorted: Int,
-    removeAllVybranae: Boolean
+    removeAllVybranae: Boolean,
+    innerPadding: PaddingValues
 ) {
     var initVybranoe by remember { mutableStateOf(true) }
     val gson = Gson()
@@ -344,6 +347,9 @@ fun VybranaeList(
                     HorizontalDivider()
                 }
             }
+        }
+        item {
+            Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
         }
     }
 }

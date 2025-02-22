@@ -68,6 +68,12 @@ fun BogaslujbovyiaMenu(navController: NavHostController, innerPadding: PaddingVa
                             if (folderList[index] == "МІНЭЯ АГУЛЬНАЯ") {
                                 navigationActions.navigateToMalitvyListAll(folderList[index], Settings.MENU_MINEIA_AGULNAIA)
                             }
+                            if (folderList[index] == "МІНЭЯ МЕСЯЧНАЯ") {
+                                navigationActions.navigateToMalitvyListAll(folderList[index], Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH)
+                            }
+                            if (folderList[index] == "ТРЫЁДЗЬ") {
+                                navigationActions.navigateToMalitvyListAll(folderList[index], Settings.MENU_TRYEDZ)
+                            }
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {

@@ -64,7 +64,8 @@ fun KaliandarScreen(
     navigateToCytanneList: (String, String, Int) -> Unit = { _, _, _ -> },
     innerPadding: PaddingValues
 ) {
-    val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+    val context = LocalContext.current
+    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -421,7 +422,7 @@ fun KaliandarScreen(
             }
         }
         //}
-        val padzeia = setListPadzeia()
+        val padzeia = setListPadzeia(context)
         if (padzeia.isNotEmpty()) {
             val gc = Calendar.getInstance() as GregorianCalendar
             for (index in padzeia.indices) {
@@ -558,11 +559,11 @@ fun KaliandarScreen(
     }
 }
 
-fun setListPadzeia(): ArrayList<Padzeia> {
+fun setListPadzeia(context: Context): ArrayList<Padzeia> {
     val padzeia = ArrayList<Padzeia>()
     val gson = Gson()
     val type = TypeToken.getParameterized(ArrayList::class.java, Padzeia::class.java).type
-    val dir = File(Malitounik.applicationContext().filesDir.toString() + "/Sabytie")
+    val dir = File(context.filesDir.toString() + "/Sabytie")
     if (dir.exists()) {
         dir.walk().forEach { file ->
             if (file.isFile && file.exists()) {
@@ -612,13 +613,13 @@ fun setListPadzeia(): ArrayList<Padzeia> {
                 inputStream.close()
             }
         }
-        val file = File(Malitounik.applicationContext().filesDir.toString() + "/Sabytie.json")
+        val file = File(context.filesDir.toString() + "/Sabytie.json")
         file.writer().use {
             it.write(gson.toJson(padzeia, type))
         }
         dir.deleteRecursively()
     } else {
-        val file = File(Malitounik.applicationContext().filesDir.toString() + "/Sabytie.json")
+        val file = File(context.filesDir.toString() + "/Sabytie.json")
         if (file.exists()) {
             try {
                 padzeia.addAll(gson.fromJson(file.readText(), type))

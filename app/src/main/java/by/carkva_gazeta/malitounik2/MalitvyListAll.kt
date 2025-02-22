@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -44,6 +45,8 @@ import by.carkva_gazeta.malitounik2.ui.theme.Divider
 import by.carkva_gazeta.malitounik2.views.AppNavigationActions
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.Calendar
+import java.util.GregorianCalendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,15 +62,47 @@ fun MalitvyListAll(
     }
     val coroutineScope = rememberCoroutineScope()
     val maxLine = remember { mutableIntStateOf(1) }
-    val listPrynagodnyia = arrayOf(
-        stringResource(R.string.prynad_1),
-        stringResource(R.string.prynad_2),
-        stringResource(R.string.prynad_3),
-        stringResource(R.string.prynad_4),
-        stringResource(R.string.prynad_5),
-        stringResource(R.string.prynad_6)
-    )
-    val list = when(menuItem) {
+    val listPrynagodnyia = when (menuItem) {
+        Settings.MENU_MALITVY_PRYNAGODNYIA -> {
+            val arrayList = ArrayList<Malitvy>()
+            arrayList.add(Malitvy(stringResource(R.string.prynad_1)))
+            arrayList.add(Malitvy(stringResource(R.string.prynad_2)))
+            arrayList.add(Malitvy(stringResource(R.string.prynad_3)))
+            arrayList.add(Malitvy(stringResource(R.string.prynad_4)))
+            arrayList.add(Malitvy(stringResource(R.string.prynad_5)))
+            arrayList.add(Malitvy(stringResource(R.string.prynad_6)))
+            arrayList
+        }
+
+        Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA -> {
+            val list = getTtyedzBialikagaTydnia()
+            val arrayList = ArrayList<Malitvy>()
+            list.forEach { item ->
+                var isAdd = true
+                arrayList.forEach {
+                    if (it.day == item.dayOfMonth) isAdd = false
+                }
+                if (isAdd) arrayList.add(Malitvy(item.dayOfMonth.toString() + " " + stringArrayResource(R.array.meciac_smoll)[item.month], item.dayOfMonth))
+            }
+            arrayList
+        }
+
+        Settings.MENU_MINEIA_MESIACHNAIA -> {
+            val list = getMineiaMesiachnaia(subTitle)
+            val arrayList = ArrayList<Malitvy>()
+            list.forEach { item ->
+                var isAdd = true
+                arrayList.forEach {
+                    if (it.day == item.dayOfMonth) isAdd = false
+                }
+                if (isAdd) arrayList.add(Malitvy(item.dayOfMonth.toString(), item.dayOfMonth))
+            }
+            arrayList
+        }
+
+        else -> ArrayList()
+    }
+    val list = when (menuItem) {
         Settings.MENU_AKTOIX -> getAktoix()
         Settings.MENU_VIACHERNIA -> getViachernia()
         Settings.MENU_TRAPARY_KANDAKI_NIADZELNYIA -> getTraparyKandakiNiadzelnyia()
@@ -75,9 +110,12 @@ fun MalitvyListAll(
         Settings.MENU_MALITVY_PASLIA_PRYCHASCIA -> getMalitvyPasliaPrychascia()
         Settings.MENU_TREBNIK -> getTrebnik()
         Settings.MENU_MINEIA_AGULNAIA -> getMineiaAgulnaia()
+        Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH -> getMineiaMesiachnaiaMounth()
+        Settings.MENU_TRYEDZ -> getTtyedz()
         else -> ArrayList()
     }
-    val collapsedState = remember(listPrynagodnyia) { listPrynagodnyia.map { true }.toMutableStateList() }
+    val collapsedState =
+        remember(listPrynagodnyia) { listPrynagodnyia.map { true }.toMutableStateList() }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -141,7 +179,7 @@ fun MalitvyListAll(
                 )
                 .fillMaxSize()
         ) {
-            if (menuItem == Settings.MENU_MALITVY_PRYNAGODNYIA) {
+            if (menuItem == Settings.MENU_MALITVY_PRYNAGODNYIA || menuItem == Settings.MENU_MINEIA_MESIACHNAIA || menuItem == Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA) {
                 listPrynagodnyia.forEachIndexed { i, dataItem ->
                     val collapsed = collapsedState[i]
                     item(key = "header_$i") {
@@ -162,7 +200,7 @@ fun MalitvyListAll(
                                 tint = Divider,
                             )
                             Text(
-                                dataItem,
+                                dataItem.title,
                                 modifier = Modifier
                                     .animateItem(
                                         fadeInSpec = null,
@@ -180,14 +218,49 @@ fun MalitvyListAll(
                         HorizontalDivider()
                     }
                     if (!collapsed) {
-                        val subList = when (i) {
-                            0 -> getPrynagodnyia1()
-                            1 -> getPrynagodnyia2()
-                            2 -> getPrynagodnyia3()
-                            3 -> getPrynagodnyia4()
-                            4 -> getPrynagodnyia5()
-                            5 -> getPrynagodnyia6()
-                            else -> getPrynagodnyia1()
+                        val subList = when (menuItem) {
+                            Settings.MENU_MALITVY_PRYNAGODNYIA -> when (i) {
+                                0 -> getPrynagodnyia1()
+                                1 -> getPrynagodnyia2()
+                                2 -> getPrynagodnyia3()
+                                3 -> getPrynagodnyia4()
+                                4 -> getPrynagodnyia5()
+                                5 -> getPrynagodnyia6()
+                                else -> getPrynagodnyia1()
+                            }
+                            Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA -> {
+                                val listMineiaList = getTtyedzBialikagaTydnia()
+                                val arrayList = ArrayList<BogaslujbovyiaListData>()
+                                listMineiaList.forEach {
+                                    if (dataItem.day == it.dayOfMonth) {
+                                        arrayList.add(
+                                            BogaslujbovyiaListData(
+                                                it.title,
+                                                it.resource
+                                            )
+                                        )
+                                    }
+                                }
+                                arrayList
+                            }
+                            Settings.MENU_MINEIA_MESIACHNAIA -> {
+                                val listMineiaList = getMineiaMesiachnaia(subTitle)
+                                val arrayList = ArrayList<BogaslujbovyiaListData>()
+                                listMineiaList.forEach {
+                                    if (dataItem.day == it.dayOfMonth) {
+                                        arrayList.add(
+                                            BogaslujbovyiaListData(
+                                                it.title,
+                                                it.resource
+                                            )
+                                        )
+                                    }
+                                }
+                                arrayList
+                            }
+                            else -> {
+                                ArrayList()
+                            }
                         }
                         items(subList.size) { index ->
                             Row(
@@ -225,7 +298,58 @@ fun MalitvyListAll(
                         modifier = Modifier
                             .padding(start = 10.dp)
                             .clickable {
-                                navigationActions.navigateToBogaslujbovyia(list[index].title, list[index].resurs)
+                                when (menuItem) {
+                                    Settings.MENU_TRYEDZ -> {
+                                        when (list[index].resurs) {
+                                            10 -> {
+                                                navigationActions.navigateToMalitvyListAll(
+                                                    title,
+                                                    Settings.MENU_TRYEDZ_POSNAIA,
+                                                    list[index].title
+                                                )
+                                            }
+
+                                            11 -> {
+                                                navigationActions.navigateToMalitvyListAll(
+                                                    title,
+                                                    Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA,
+                                                    list[index].title
+                                                )
+                                            }
+
+                                            12 -> {
+                                                navigationActions.navigateToMalitvyListAll(
+                                                    title,
+                                                    Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA,
+                                                    list[index].title
+                                                )
+                                            }
+
+                                            13 -> {
+                                                navigationActions.navigateToMalitvyListAll(
+                                                    title,
+                                                    Settings.MENU_TRYEDZ_KVETNAIA,
+                                                    list[index].title
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                    Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH -> {
+                                        navigationActions.navigateToMalitvyListAll(
+                                            title,
+                                            Settings.MENU_MINEIA_MESIACHNAIA,
+                                            list[index].title
+                                        )
+                                    }
+
+                                    else -> {
+                                        navigationActions.navigateToBogaslujbovyia(
+                                            list[index].title,
+                                            list[index].resurs
+                                        )
+                                    }
+                                }
                             },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -240,7 +364,16 @@ fun MalitvyListAll(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(10.dp),
-                            color = MaterialTheme.colorScheme.secondary
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontWeight = if (menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH) {
+                                if (Calendar.getInstance()[Calendar.MONTH] == index) {
+                                    FontWeight.Bold
+                                } else {
+                                    FontWeight.Normal
+                                }
+                            } else {
+                                FontWeight.Normal
+                            }
                         )
                     }
                     HorizontalDivider()
@@ -252,7 +385,10 @@ fun MalitvyListAll(
                         modifier = Modifier
                             .padding(start = 10.dp)
                             .clickable {
-                                navigationActions.navigateToMalitvyListAll("ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ", Settings.MENU_TRAPARY_KANDAKI_SHTODZENNYIA)
+                                navigationActions.navigateToMalitvyListAll(
+                                    "ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ",
+                                    Settings.MENU_TRAPARY_KANDAKI_SHTODZENNYIA
+                                )
                             },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -281,50 +417,371 @@ fun MalitvyListAll(
 }
 
 //list.add(BogaslujbovyiaListData("", R.raw.))
+
+fun getTtyedzBialikagaTydnia(): ArrayList<MineiaList> {
+    val slugbovyiaTextu = SlugbovyiaTextu()
+    val mineia = slugbovyiaTextu.getVilikiTydzen()
+    var dayOfYear: Int
+    var day: Int
+    val mineiaList = ArrayList<MineiaList>()
+    for (i in mineia.indices) {
+        day = mineia[i].day
+        when {
+            day >= 1000 -> {
+                dayOfYear = slugbovyiaTextu.getRealDay(
+                    day,
+                    Calendar.getInstance()[Calendar.DAY_OF_YEAR],
+                    Calendar.getInstance()[Calendar.YEAR]
+                )
+            }
+
+            mineia[i].pasxa -> {
+                dayOfYear = pasha(day)
+            }
+
+            else -> {
+                dayOfYear = day
+            }
+        }
+        val cal = Calendar.getInstance()
+        cal.set(Calendar.DAY_OF_YEAR, dayOfYear)
+        val opisanie = ". " + slugbovyiaTextu.getNazouSluzby(mineia[i].sluzba)
+        mineiaList.add(
+            MineiaList(
+                cal[Calendar.DATE],
+                cal[Calendar.MONTH],
+                mineia[i].title + opisanie,
+                mineia[i].resource,
+                mineia[i].sluzba
+            )
+        )
+    }
+    mineiaList.sortWith(
+        compareBy({
+            it.dayOfMonth
+        }, {
+            it.sluzba
+        })
+    )
+    return mineiaList
+}
+
+fun getTtyedz(): ArrayList<BogaslujbovyiaListData> {
+    val list = ArrayList<BogaslujbovyiaListData>()
+    list.add(BogaslujbovyiaListData("Трыёдзь посная", 10))
+    list.add(BogaslujbovyiaListData("Службы Вялікага тыдня", 11))
+    list.add(BogaslujbovyiaListData("Службы Сьветлага тыдня", 12))
+    list.add(BogaslujbovyiaListData("Трыёдзь Кветная", 13))
+    return list
+}
+
+fun getMineiaMesiachnaia(subTitle: String): ArrayList<MineiaList> {
+    val slugbovyiaTextu = SlugbovyiaTextu()
+    val mounth = when (subTitle) {
+        "Студзень" -> 0
+        "Люты" -> 1
+        "Сакавік" -> 2
+        "Красавік" -> 3
+        "Травень" -> 4
+        "Чэрвень" -> 5
+        "Ліпень" -> 6
+        "Жнівень" -> 7
+        "Верасень" -> 8
+        "Кастрычнік" -> 9
+        "Лістапад" -> 10
+        "Сьнежань" -> 11
+        else -> 0
+    }
+    val mineia = slugbovyiaTextu.getMineiaMesiachnaia()
+    var dayOfYear: Int
+    var day: Int
+    val mineiaList = ArrayList<MineiaList>()
+    for (i in mineia.indices) {
+        day = mineia[i].day
+        when {
+            day >= 1000 -> {
+                dayOfYear = slugbovyiaTextu.getRealDay(
+                    day,
+                    Calendar.getInstance()[Calendar.DAY_OF_YEAR],
+                    Calendar.getInstance()[Calendar.YEAR]
+                )
+            }
+
+            mineia[i].pasxa -> {
+                dayOfYear = pasha(day)
+            }
+
+            else -> {
+                dayOfYear = day
+            }
+        }
+        val cal = Calendar.getInstance()
+        cal.set(Calendar.DAY_OF_YEAR, dayOfYear)
+        val opisanie = ". " + slugbovyiaTextu.getNazouSluzby(mineia[i].sluzba)
+        if (cal[Calendar.MONTH] == mounth) {
+            mineiaList.add(
+                MineiaList(
+                    cal[Calendar.DATE],
+                    cal[Calendar.MONTH],
+                    mineia[i].title + opisanie,
+                    mineia[i].resource,
+                    mineia[i].sluzba
+                )
+            )
+        }
+    }
+    mineiaList.sortWith(
+        compareBy({
+            it.dayOfMonth
+        }, {
+            it.sluzba
+        })
+    )
+    return mineiaList
+}
+
+fun pasha(day: Int): Int {
+    val year = Calendar.getInstance()[Calendar.YEAR]
+    var dataP: Int
+    val monthP: Int
+    val a = year % 19
+    val b = year % 4
+    val cx = year % 7
+    val k = year / 100
+    val p = (13 + 8 * k) / 25
+    val q = k / 4
+    val m = (15 - p + k - q) % 30
+    val n = (4 + k - q) % 7
+    val d = (19 * a + m) % 30
+    val ex = (2 * b + 4 * cx + 6 * d + n) % 7
+    if (d + ex <= 9) {
+        dataP = d + ex + 22
+        monthP = Calendar.MARCH
+    } else {
+        dataP = d + ex - 9
+        if (d == 29 && ex == 6) dataP = 19
+        if (d == 28 && ex == 6) dataP = 18
+        monthP = Calendar.APRIL
+    }
+    val gCalendar = GregorianCalendar(year, monthP, dataP)
+    gCalendar.add(Calendar.DATE, day)
+    return gCalendar[Calendar.DAY_OF_YEAR]
+}
+
+@Composable
+fun getMineiaMesiachnaiaMounth(): ArrayList<BogaslujbovyiaListData> {
+    val list = ArrayList<BogaslujbovyiaListData>()
+    val mounthList = stringArrayResource(R.array.meciac3)
+    mounthList.forEachIndexed { index, item ->
+        list.add(BogaslujbovyiaListData(item, index))
+    }
+    return list
+}
+
 fun getMineiaAgulnaia(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
-    list.add(BogaslujbovyiaListData("Вячэрня агульная Найсьвяцейшай Багародзіцы", R.raw.viachernia_mineia_agulnaia1))
-    list.add(BogaslujbovyiaListData("Вячэрня агульная Яну Хрысьціцелю", R.raw.viachernia_mineia_agulnaia2))
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня агульная Найсьвяцейшай Багародзіцы",
+            R.raw.viachernia_mineia_agulnaia1
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня агульная Яну Хрысьціцелю",
+            R.raw.viachernia_mineia_agulnaia2
+        )
+    )
     list.add(BogaslujbovyiaListData("Вячэрня агульная прароку", R.raw.viachernia_mineia_agulnaia3))
     list.add(BogaslujbovyiaListData("Вячэрня агульная апосталу", R.raw.viachernia_mineia_agulnaia4))
-    list.add(BogaslujbovyiaListData("Вячэрня агульная апосталам", R.raw.viachernia_mineia_agulnaia5))
-    list.add(BogaslujbovyiaListData("Вячэрня агульная сьвятаначальніку", R.raw.viachernia_mineia_agulnaia6))
-    list.add(BogaslujbovyiaListData("Вячэрня агульная сьвятаначальнікам", R.raw.viachernia_mineia_agulnaia7))
-    list.add(BogaslujbovyiaListData("Вячэрня агульная посьніку, манаху і пустэльніку", R.raw.viachernia_mineia_agulnaia8))
-    list.add(BogaslujbovyiaListData("Вячэрня агульная посьнікам, манахам і пустэльнікам", R.raw.viachernia_mineia_agulnaia9))
-    list.add(BogaslujbovyiaListData("Вячэрня агульная вызнаўцу і настаўніку царкоўнаму", R.raw.viachernia_mineia_agulnaia10))
-    list.add(BogaslujbovyiaListData("Вячэрня агульная мучаніку", R.raw.viachernia_mineia_agulnaia11))
-    list.add(BogaslujbovyiaListData("Вячэрня агульная мучаніку (іншая)", R.raw.viachernia_mineia_agulnaia12))
-    list.add(BogaslujbovyiaListData("Вячэрня агульная мучанікам", R.raw.viachernia_mineia_agulnaia13))
-    list.add(BogaslujbovyiaListData("Вячэрня агульная сьвятамучаніку", R.raw.viachernia_mineia_agulnaia14))
-    list.add(BogaslujbovyiaListData("Вячэрня агульная сьвятамучанікам", R.raw.viachernia_mineia_agulnaia15))
-    list.add(BogaslujbovyiaListData("Вячэрня агульная мучаніку сьвятару або манаху", R.raw.viachernia_mineia_agulnaia16))
-    list.add(BogaslujbovyiaListData("Вячэрня агульная мучанікам сьвятарам або манахам", R.raw.viachernia_mineia_agulnaia17))
-    list.add(BogaslujbovyiaListData("Вячэрня агульная мучаніцы", R.raw.viachernia_mineia_agulnaia18))
-    list.add(BogaslujbovyiaListData("Вячэрня агульная мучаніцы (іншая)", R.raw.viachernia_mineia_agulnaia19))
-    list.add(BogaslujbovyiaListData("Вячэрня агульная мучаніцам", R.raw.viachernia_mineia_agulnaia20))
-    list.add(BogaslujbovyiaListData("Вячэрня агульная мучаніцы манахіні", R.raw.viachernia_mineia_agulnaia21))
-    list.add(BogaslujbovyiaListData("Вячэрня агульная сьвятой жанчыне", R.raw.viachernia_mineia_agulnaia22))
-    list.add(BogaslujbovyiaListData("Вячэрня агульная сьвятым жанчынам", R.raw.viachernia_mineia_agulnaia23))
-    list.add(BogaslujbovyiaListData("Вячэрня агульная бескарысьлівым лекарам і цудатворцам", R.raw.viachernia_mineia_agulnaia24))
-    list.add(BogaslujbovyiaListData("Служба апосталу або апосталам", R.raw.sluzba_apostalu_apostalam))
-    list.add(BogaslujbovyiaListData("Служба настаўніку царкоўнаму і вызнаўцу", R.raw.sluzba_nastauniku_cark_vyznaucu))
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня агульная апосталам",
+            R.raw.viachernia_mineia_agulnaia5
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня агульная сьвятаначальніку",
+            R.raw.viachernia_mineia_agulnaia6
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня агульная сьвятаначальнікам",
+            R.raw.viachernia_mineia_agulnaia7
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня агульная посьніку, манаху і пустэльніку",
+            R.raw.viachernia_mineia_agulnaia8
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня агульная посьнікам, манахам і пустэльнікам",
+            R.raw.viachernia_mineia_agulnaia9
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня агульная вызнаўцу і настаўніку царкоўнаму",
+            R.raw.viachernia_mineia_agulnaia10
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня агульная мучаніку",
+            R.raw.viachernia_mineia_agulnaia11
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня агульная мучаніку (іншая)",
+            R.raw.viachernia_mineia_agulnaia12
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня агульная мучанікам",
+            R.raw.viachernia_mineia_agulnaia13
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня агульная сьвятамучаніку",
+            R.raw.viachernia_mineia_agulnaia14
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня агульная сьвятамучанікам",
+            R.raw.viachernia_mineia_agulnaia15
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня агульная мучаніку сьвятару або манаху",
+            R.raw.viachernia_mineia_agulnaia16
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня агульная мучанікам сьвятарам або манахам",
+            R.raw.viachernia_mineia_agulnaia17
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня агульная мучаніцы",
+            R.raw.viachernia_mineia_agulnaia18
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня агульная мучаніцы (іншая)",
+            R.raw.viachernia_mineia_agulnaia19
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня агульная мучаніцам",
+            R.raw.viachernia_mineia_agulnaia20
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня агульная мучаніцы манахіні",
+            R.raw.viachernia_mineia_agulnaia21
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня агульная сьвятой жанчыне",
+            R.raw.viachernia_mineia_agulnaia22
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня агульная сьвятым жанчынам",
+            R.raw.viachernia_mineia_agulnaia23
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрня агульная бескарысьлівым лекарам і цудатворцам",
+            R.raw.viachernia_mineia_agulnaia24
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Служба апосталу або апосталам",
+            R.raw.sluzba_apostalu_apostalam
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Служба настаўніку царкоўнаму і вызнаўцу",
+            R.raw.sluzba_nastauniku_cark_vyznaucu
+        )
+    )
     list.add(BogaslujbovyiaListData("Служба сьвятаначальнікам", R.raw.sluzba_sviatanaczalnikam))
     list.add(BogaslujbovyiaListData("Служба сьвятаначальніку", R.raw.sluzba_sviatanaczalniku))
-    list.add(BogaslujbovyiaListData("Служба Найсьвяцейшай Багародзіцы", R.raw.sluzba_najsviaciejszaj_baharodzicy))
-    list.add(BogaslujbovyiaListData("Служба за памерлых на кожны дзень тыдня", R.raw.sluzba_za_pamierlych_na_kozny_dzien_tydnia))
-    list.add(BogaslujbovyiaListData("Служба бескарысьлівым лекарам і цудатворцам", R.raw.sluzba_bieskaryslivym_lekaram_cudatvorcam))
+    list.add(
+        BogaslujbovyiaListData(
+            "Служба Найсьвяцейшай Багародзіцы",
+            R.raw.sluzba_najsviaciejszaj_baharodzicy
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Служба за памерлых на кожны дзень тыдня",
+            R.raw.sluzba_za_pamierlych_na_kozny_dzien_tydnia
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Служба бескарысьлівым лекарам і цудатворцам",
+            R.raw.sluzba_bieskaryslivym_lekaram_cudatvorcam
+        )
+    )
     list.add(BogaslujbovyiaListData("Служба мучаніцам", R.raw.sluzba_muczanicam))
     list.add(BogaslujbovyiaListData("Служба мучаніцы", R.raw.sluzba_muczanicy))
     list.add(BogaslujbovyiaListData("Служба мучанікам", R.raw.sluzba_muczanikam))
-    list.add(BogaslujbovyiaListData("Служба мучанікам сьвятарам і манахам", R.raw.sluzba_muczanikam_sviataram_i_manacham))
+    list.add(
+        BogaslujbovyiaListData(
+            "Служба мучанікам сьвятарам і манахам",
+            R.raw.sluzba_muczanikam_sviataram_i_manacham
+        )
+    )
     list.add(BogaslujbovyiaListData("Служба мучаніку", R.raw.sluzba_muczaniku))
-    list.add(BogaslujbovyiaListData("Служба мучаніку сьвятару і манаху", R.raw.sluzba_muczaniku_sviataru_i_manachu))
+    list.add(
+        BogaslujbovyiaListData(
+            "Служба мучаніку сьвятару і манаху",
+            R.raw.sluzba_muczaniku_sviataru_i_manachu
+        )
+    )
     list.add(BogaslujbovyiaListData("Служба сьвятой жанчыне", R.raw.sluzba_sviatoj_zanczynie))
     list.add(BogaslujbovyiaListData("Служба сьвятым жанчынам", R.raw.sluzba_sviatym_zanczynam))
-    list.add(BogaslujbovyiaListData("Служба посьнікам, манахам і пустэльнікам", R.raw.sluzba_posnikam_manacham_pustelnikam))
-    list.add(BogaslujbovyiaListData("Служба посьніку / аскету, манаху і пустэльніку", R.raw.sluzba_posniku_manachu_pustelniku))
-    list.add(BogaslujbovyiaListData("Служба сьвятому Яну Хрысьціцелю", R.raw.sluzba_janu_chryscicielu))
+    list.add(
+        BogaslujbovyiaListData(
+            "Служба посьнікам, манахам і пустэльнікам",
+            R.raw.sluzba_posnikam_manacham_pustelnikam
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Служба посьніку / аскету, манаху і пустэльніку",
+            R.raw.sluzba_posniku_manachu_pustelniku
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Служба сьвятому Яну Хрысьціцелю",
+            R.raw.sluzba_janu_chryscicielu
+        )
+    )
     list.add(BogaslujbovyiaListData("Служба прароку", R.raw.sluzba_praroku))
     list.add(BogaslujbovyiaListData("Служба сьвятым анёлам", R.raw.sluzba_aniolam))
     list.add(BogaslujbovyiaListData("Служба сьвятому крыжу", R.raw.sluzba_kryzu))
@@ -335,14 +792,49 @@ fun getMineiaAgulnaia(): ArrayList<BogaslujbovyiaListData> {
 
 fun getTrebnik(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
-    list.add(BogaslujbovyiaListData("Служба аб вызваленьні бязьвінна зьняволеных", R.raw.sluzba_vyzvalen_biazvinna_zniavolenych))
+    list.add(
+        BogaslujbovyiaListData(
+            "Служба аб вызваленьні бязьвінна зьняволеных",
+            R.raw.sluzba_vyzvalen_biazvinna_zniavolenych
+        )
+    )
     list.add(BogaslujbovyiaListData("Служба за памерлых — Малая паніхіда", R.raw.panichida_malaja))
-    list.add(BogaslujbovyiaListData("Чын асьвячэньня транспартнага сродку", R.raw.czyn_asviaczennia_transpartnaha_srodku))
-    list.add(BogaslujbovyiaListData("Асьвячэньне крыжа на сьвятой Літургіі", R.raw.asviaczennie_kryza))
-    list.add(BogaslujbovyiaListData("Блаславеньне ўсялякае рэчы", R.raw.mltv_blaslaviennie_usialakaj_reczy))
-    list.add(BogaslujbovyiaListData("Малітва на асьвячэньне памятнай табліцы Слузе Божаму", R.raw.mltv_asviacz_pamiatnaj_tablicy))
-    list.add(BogaslujbovyiaListData("Малітва на асьвячэньне памятнай табліцы Слузе Божаму, які пацярпеў за Беларусь", R.raw.mltv_asviacz_pamiatnaj_tablicy_paciarpieu_za_bielarus1))
-    list.add(BogaslujbovyiaListData("Малітва на асьвячэньне памятнай табліцы ўсім бязьвінным ахвярам, якія пацярпелі за Беларусь", R.raw.mltv_asviacz_pamiatnaj_tablicy_biazvinnym_achviaram_paciarpieli_za_bielarus))
+    list.add(
+        BogaslujbovyiaListData(
+            "Чын асьвячэньня транспартнага сродку",
+            R.raw.czyn_asviaczennia_transpartnaha_srodku
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Асьвячэньне крыжа на сьвятой Літургіі",
+            R.raw.asviaczennie_kryza
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Блаславеньне ўсялякае рэчы",
+            R.raw.mltv_blaslaviennie_usialakaj_reczy
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Малітва на асьвячэньне памятнай табліцы Слузе Божаму",
+            R.raw.mltv_asviacz_pamiatnaj_tablicy
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Малітва на асьвячэньне памятнай табліцы Слузе Божаму, які пацярпеў за Беларусь",
+            R.raw.mltv_asviacz_pamiatnaj_tablicy_paciarpieu_za_bielarus1
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Малітва на асьвячэньне памятнай табліцы ўсім бязьвінным ахвярам, якія пацярпелі за Беларусь",
+            R.raw.mltv_asviacz_pamiatnaj_tablicy_biazvinnym_achviaram_paciarpieli_za_bielarus
+        )
+    )
     return list
 }
 
@@ -352,7 +844,12 @@ fun getMalitvyPasliaPrychascia(): ArrayList<BogaslujbovyiaListData> {
     list.add(BogaslujbovyiaListData("Малітва сьв. Васіля Вялікага", R.raw.paslia_prychascia2))
     list.add(BogaslujbovyiaListData("Малітва Сымона Мэтафраста", R.raw.paslia_prychascia3))
     list.add(BogaslujbovyiaListData("Iншая малітва", R.raw.paslia_prychascia4))
-    list.add(BogaslujbovyiaListData("Малітва да Найсьвяцейшай Багародзіцы", R.raw.paslia_prychascia5))
+    list.add(
+        BogaslujbovyiaListData(
+            "Малітва да Найсьвяцейшай Багародзіцы",
+            R.raw.paslia_prychascia5
+        )
+    )
     return list
 }
 
@@ -373,8 +870,18 @@ fun getTraparyKandakiShtodzennyia(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
     list.add(BogaslujbovyiaListData("ПАНЯДЗЕЛАК\nСлужба сьвятым анёлам", R.raw.ton1_budni))
     list.add(BogaslujbovyiaListData("АЎТОРАК\nСлужба сьвятому Яну Хрысьціцелю", R.raw.ton2_budni))
-    list.add(BogaslujbovyiaListData("СЕРАДА\nСлужба Найсьвяцейшай Багародзіцы і Крыжу", R.raw.ton3_budni))
-    list.add(BogaslujbovyiaListData("ЧАЦЬВЕР\nСлужба апосталам і сьвятому Мікалаю", R.raw.ton4_budni))
+    list.add(
+        BogaslujbovyiaListData(
+            "СЕРАДА\nСлужба Найсьвяцейшай Багародзіцы і Крыжу",
+            R.raw.ton3_budni
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "ЧАЦЬВЕР\nСлужба апосталам і сьвятому Мікалаю",
+            R.raw.ton4_budni
+        )
+    )
     list.add(BogaslujbovyiaListData("ПЯТНІЦА\nСлужба Крыжу Гасподняму", R.raw.ton5_budni))
     list.add(BogaslujbovyiaListData("СУБОТА\nСлужба ўсім сьвятым і памёрлым", R.raw.ton6_budni))
     return list
@@ -383,10 +890,20 @@ fun getTraparyKandakiShtodzennyia(): ArrayList<BogaslujbovyiaListData> {
 fun getViachernia(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
     list.add(BogaslujbovyiaListData("Вячэрня ў нядзелі і сьвяты", R.raw.viaczernia_niadzelnaja))
-    list.add(BogaslujbovyiaListData("Ліцьця і блаславеньне хлябоў", R.raw.viaczernia_liccia_i_blaslavenne_chliabou))
+    list.add(
+        BogaslujbovyiaListData(
+            "Ліцьця і блаславеньне хлябоў",
+            R.raw.viaczernia_liccia_i_blaslavenne_chliabou
+        )
+    )
     list.add(BogaslujbovyiaListData("Вячэрня ў звычайныя дні", R.raw.viaczernia_na_kozny_dzen))
     list.add(BogaslujbovyiaListData("Вячэрня ў Вялікім посьце", R.raw.viaczernia_u_vialikim_poscie))
-    list.add(BogaslujbovyiaListData("Вячэрняя служба штодзённая (без сьвятара)", R.raw.viaczerniaja_sluzba_sztodzionnaja_biez_sviatara))
+    list.add(
+        BogaslujbovyiaListData(
+            "Вячэрняя служба штодзённая (без сьвятара)",
+            R.raw.viaczerniaja_sluzba_sztodzionnaja_biez_sviatara
+        )
+    )
     list.add(BogaslujbovyiaListData("Вячэрня на Сьветлым тыдні", R.raw.viaczernia_svietly_tydzien))
     return list
 }
@@ -693,3 +1210,6 @@ fun getPrynagodnyia6(): ArrayList<BogaslujbovyiaListData> {
     }
     return list
 }
+
+data class MineiaList(val dayOfMonth: Int, val month: Int, val title: String, val resource: Int, val sluzba: Int)
+data class Malitvy(val title: String, val day: Int = 0)

@@ -50,7 +50,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -62,11 +61,11 @@ dependencies {
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.ui.text.google.fonts)
-    api (platform(libs.firebase.bom))
+    implementation (platform(libs.firebase.bom))
     implementation (libs.play.services.instantapps)
-    api (libs.gson)
-    api (libs.firebase.storage.ktx)
-    api (libs.firebase.appcheck.playintegrity)
+    implementation (libs.gson)
+    implementation (libs.firebase.storage.ktx)
+    implementation (libs.firebase.appcheck.playintegrity)
     implementation(libs.feature.delivery.ktx)
     implementation(libs.app.update.ktx)
     testImplementation(libs.junit)
@@ -77,3 +76,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
+
+apply(plugin = "com.google.gms.google-services")

@@ -45,6 +45,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -240,6 +241,13 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
             controller.show(WindowInsetsCompat.Type.systemBars())
             controller.show(WindowInsetsCompat.Type.navigationBars())
         }
+    }
+    SideEffect {
+        val window = (view.context as Activity).window
+        WindowCompat.getInsetsController(
+            window,
+            view
+        ).isAppearanceLightStatusBars = false
     }
     val maxLine = remember { mutableIntStateOf(1) }
     Scaffold(
@@ -670,8 +678,7 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                 item {
                     HtmlText(
                         text = text,
-                        fontSize = TextUnit(fontSize, TextUnitType.Sp),
-                        lineHeight = TextUnit(fontSize, TextUnitType.Sp)
+                        fontSize = TextUnit(fontSize, TextUnitType.Sp)
                     )
                 }
                 item {

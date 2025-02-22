@@ -1565,7 +1565,6 @@ fun CytanniList(
                                     .background(if (selectState[index]) Post else Color.Unspecified),
                                 text = res.text,
                                 fontSize = TextUnit(fontSize, TextUnitType.Sp),
-                                lineHeight = TextUnit(fontSize, TextUnitType.Sp),
                                 color = if (selectState[index]) PrimaryText else MaterialTheme.colorScheme.secondary
                             )
                             if (isParallel && res.parallel != "+-+") {
@@ -1710,8 +1709,7 @@ fun CytanniList(
                         modifier = Modifier
                             .padding(horizontal = 10.dp),
                         text = resultParalel[i].text,
-                        fontSize = TextUnit(fontSize, TextUnitType.Sp),
-                        lineHeight = TextUnit(fontSize, TextUnitType.Sp),
+                        fontSize = TextUnit(fontSize, TextUnitType.Sp)
                     )
                 }
                 Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))

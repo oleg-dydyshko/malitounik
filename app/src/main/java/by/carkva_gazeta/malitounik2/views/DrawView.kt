@@ -3,9 +3,12 @@ package by.carkva_gazeta.malitounik2.views
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -14,6 +17,7 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -27,7 +31,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import by.carkva_gazeta.malitounik2.Malitounik
 import by.carkva_gazeta.malitounik2.R
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -39,7 +42,9 @@ fun DrawView(
     route: String,
     navigateToRazdel: (String) -> Unit = { }
 ) {
-    ModalDrawerSheet(modifier = Modifier) {
+    ModalDrawerSheet(modifier = Modifier
+        .fillMaxHeight()
+        .verticalScroll(rememberScrollState())) {
         DrawerHeader(modifier)
         HorizontalDivider(
             modifier = modifier.padding(vertical = 10.dp),
@@ -159,13 +164,14 @@ fun DrawView(
 
 @Composable
 fun DrawerHeader(modifier: Modifier) {
+    val context = LocalContext.current
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = modifier
             .padding(10.dp)
             .fillMaxWidth()
     ) {
-        val inputStream = Malitounik.applicationContext().resources.openRawResource(R.raw.citata)
+        val inputStream = context.resources.openRawResource(R.raw.citata)
         val isr = InputStreamReader(inputStream)
         val reader = BufferedReader(isr)
         val citataList = ArrayList<String>()

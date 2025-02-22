@@ -671,7 +671,8 @@ fun MainConteiner(
                             navigationActions.navigateToBogaslujbovyia(title, resourse)
                         },
                         sorted,
-                        removeAllVybranae
+                        removeAllVybranae,
+                        innerPadding
                     )
                 }
                 Popup(
