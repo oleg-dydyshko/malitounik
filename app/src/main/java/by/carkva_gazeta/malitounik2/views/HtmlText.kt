@@ -24,7 +24,7 @@ fun HtmlText(
     color: Color = MaterialTheme.colorScheme.secondary,
     fontWeight: FontWeight? = null,
     textAlign: TextAlign? = null,
-    fontSize: TextUnit = 22.sp
+    fontSize: TextUnit = 18.sp
 ) {
     /*val annotatedString = buildAnnotatedString {
         val spanned = HtmlCompat.fromHtml(text, mode)
@@ -73,7 +73,7 @@ fun HtmlText(
     }*/
     val context = LocalContext.current
     val dzenHoch by remember { mutableStateOf((context as MainActivity).dzenNoch) }
-    val newText = if (dzenHoch) text.replace("#d00505", "#ff6666")
+    val newText = if (dzenHoch) text.replace("#d00505", "#ff6666", true)
     else text
     Text(
         fontWeight = fontWeight,

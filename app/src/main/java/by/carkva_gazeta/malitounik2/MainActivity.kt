@@ -71,6 +71,15 @@ object Settings {
     const val MENU_TRYEDZ_BIALIKAGA_TYDNIA = 114
     const val MENU_TRYEDZ_SVETLAGA_TYDNIA = 115
     const val MENU_TRYEDZ_KVETNAIA = 116
+    const val MENU_TRYEDZ_POSNAIA_1 = 117
+    const val MENU_TRYEDZ_POSNAIA_2 = 118
+    const val MENU_TRYEDZ_POSNAIA_3 = 119
+    const val MENU_TRYEDZ_POSNAIA_4 = 120
+    const val MENU_TRYEDZ_POSNAIA_5 = 121
+    const val MENU_TRYEDZ_POSNAIA_6 = 122
+    const val MENU_AKAFIST = 123
+    const val MENU_RUJANEC = 124
+    const val MENU_MAE_NATATKI = 125
     var bibleTime = false
     var bibleTimeList = false
     var destinations = AllDestinations.KALIANDAR
@@ -95,6 +104,7 @@ class MainActivity : ComponentActivity(), SensorEventListener {
         if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) {
             setlightSensor()
         }
+        ferstStart = true
         setContent {
             if (savedInstanceState != null) {
                 dzenNoch = savedInstanceState.getBoolean("dzenNoch", false)

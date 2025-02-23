@@ -71,6 +71,7 @@ import by.carkva_gazeta.malitounik2.Dialog
 import by.carkva_gazeta.malitounik2.KaliandarScreen
 import by.carkva_gazeta.malitounik2.KaliandarScreenMounth
 import by.carkva_gazeta.malitounik2.KaliandarScreenYear
+import by.carkva_gazeta.malitounik2.MaeNatatki
 import by.carkva_gazeta.malitounik2.MainActivity
 import by.carkva_gazeta.malitounik2.MalitvyListAll
 import by.carkva_gazeta.malitounik2.R
@@ -123,6 +124,28 @@ fun AppNavGraph(
                 coroutineScope = coroutineScope,
                 drawerState = drawerState
             )
+        }
+
+        composable(AllDestinations.AKAFIST_MENU) {
+            Settings.destinations = AllDestinations.AKAFIST_MENU
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(AllDestinations.RUJANEC_MENU) {
+            Settings.destinations = AllDestinations.RUJANEC_MENU
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(AllDestinations.MAE_NATATKI_MENU) {
+            MaeNatatki(navController)
         }
 
         composable(AllDestinations.BOGASLUJBOVYIA_MENU) {
@@ -367,9 +390,10 @@ fun MainConteiner(
                     AllDestinations.BOGASLUJBOVYIA_MENU -> navigationActions.navigateToBogaslujbovyiaMenu()
                     AllDestinations.MALITVY_MENU -> navigationActions.navigateToMalitvyMenu()
                     AllDestinations.BIBLIA -> navigationActions.navigateToBiblia()
-                    AllDestinations.VYBRANAE_LIST -> {
-                        navigationActions.navigateToVybranaeList()
-                    }
+                    AllDestinations.VYBRANAE_LIST -> navigationActions.navigateToVybranaeList()
+                    AllDestinations.AKAFIST_MENU -> navigationActions.navigateToAkafistMenu()
+                    AllDestinations.RUJANEC_MENU -> navigationActions.navigateToRujanecMenu()
+                    AllDestinations.MAE_NATATKI_MENU -> navigationActions.navigateToMaeNatatkiMenu()
                 }
                 coroutineScope.launch { drawerState.close() }
             },
@@ -385,6 +409,8 @@ fun MainConteiner(
             AllDestinations.KALIANDAR -> stringResource(R.string.kaliandar2)
             AllDestinations.KALIANDAR_YEAR -> stringResource(R.string.kaliandar2)
             AllDestinations.BOGASLUJBOVYIA_MENU -> stringResource(R.string.liturgikon)
+            AllDestinations.AKAFIST_MENU -> stringResource(R.string.akafisty)
+            AllDestinations.RUJANEC_MENU -> stringResource(R.string.ruzanec)
             AllDestinations.MALITVY_MENU -> stringResource(R.string.malitvy)
             AllDestinations.VYBRANAE_LIST -> stringResource(R.string.MenuVybranoe)
             AllDestinations.BIBLIA -> {
@@ -629,6 +655,10 @@ fun MainConteiner(
                     }
 
                     AllDestinations.BOGASLUJBOVYIA_MENU -> BogaslujbovyiaMenu(navController, innerPadding, Settings.MENU_BOGASLUJBOVYIA)
+
+                    AllDestinations.AKAFIST_MENU -> BogaslujbovyiaMenu(navController, innerPadding, Settings.MENU_AKAFIST)
+
+                    AllDestinations.RUJANEC_MENU -> BogaslujbovyiaMenu(navController, innerPadding, Settings.MENU_RUJANEC)
 
                     AllDestinations.MALITVY_MENU -> BogaslujbovyiaMenu(navController, innerPadding, Settings.MENU_MALITVY)
 

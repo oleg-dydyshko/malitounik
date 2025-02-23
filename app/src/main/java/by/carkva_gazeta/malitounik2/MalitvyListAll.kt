@@ -75,14 +75,58 @@ fun MalitvyListAll(
         }
 
         Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA -> {
-            val list = getTtyedzBialikagaTydnia()
+            val list = getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA)
             val arrayList = ArrayList<Malitvy>()
             list.forEach { item ->
                 var isAdd = true
                 arrayList.forEach {
                     if (it.day == item.dayOfMonth) isAdd = false
                 }
-                if (isAdd) arrayList.add(Malitvy(item.dayOfMonth.toString() + " " + stringArrayResource(R.array.meciac_smoll)[item.month], item.dayOfMonth))
+                if (isAdd) arrayList.add(
+                    Malitvy(
+                        item.dayOfMonth.toString() + " " + stringArrayResource(
+                            R.array.meciac_smoll
+                        )[item.month], item.dayOfMonth
+                    )
+                )
+            }
+            arrayList
+        }
+
+        Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA -> {
+            val list = getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA)
+            val arrayList = ArrayList<Malitvy>()
+            list.forEach { item ->
+                var isAdd = true
+                arrayList.forEach {
+                    if (it.day == item.dayOfMonth) isAdd = false
+                }
+                if (isAdd) arrayList.add(
+                    Malitvy(
+                        item.dayOfMonth.toString() + " " + stringArrayResource(
+                            R.array.meciac_smoll
+                        )[item.month], item.dayOfMonth
+                    )
+                )
+            }
+            arrayList
+        }
+
+        Settings.MENU_TRYEDZ_KVETNAIA -> {
+            val list = getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_KVETNAIA)
+            val arrayList = ArrayList<Malitvy>()
+            list.forEach { item ->
+                var isAdd = true
+                arrayList.forEach {
+                    if (it.day == item.dayOfMonth) isAdd = false
+                }
+                if (isAdd) arrayList.add(
+                    Malitvy(
+                        item.dayOfMonth.toString() + " " + stringArrayResource(
+                            R.array.meciac_smoll
+                        )[item.month], item.dayOfMonth
+                    )
+                )
             }
             arrayList
         }
@@ -112,6 +156,13 @@ fun MalitvyListAll(
         Settings.MENU_MINEIA_AGULNAIA -> getMineiaAgulnaia()
         Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH -> getMineiaMesiachnaiaMounth()
         Settings.MENU_TRYEDZ -> getTtyedz()
+        Settings.MENU_TRYEDZ_POSNAIA -> getTtyedzPosnaia()
+        Settings.MENU_TRYEDZ_POSNAIA_1 -> getTtyedzPosnaia(Settings.MENU_TRYEDZ_POSNAIA_1)
+        Settings.MENU_TRYEDZ_POSNAIA_2 -> getTtyedzPosnaia(Settings.MENU_TRYEDZ_POSNAIA_2)
+        Settings.MENU_TRYEDZ_POSNAIA_3 -> getTtyedzPosnaia(Settings.MENU_TRYEDZ_POSNAIA_3)
+        Settings.MENU_TRYEDZ_POSNAIA_4 -> getTtyedzPosnaia(Settings.MENU_TRYEDZ_POSNAIA_4)
+        Settings.MENU_TRYEDZ_POSNAIA_5 -> getTtyedzPosnaia(Settings.MENU_TRYEDZ_POSNAIA_5)
+        Settings.MENU_TRYEDZ_POSNAIA_6 -> getTtyedzPosnaia(Settings.MENU_TRYEDZ_POSNAIA_6)
         else -> ArrayList()
     }
     val collapsedState =
@@ -179,7 +230,7 @@ fun MalitvyListAll(
                 )
                 .fillMaxSize()
         ) {
-            if (menuItem == Settings.MENU_MALITVY_PRYNAGODNYIA || menuItem == Settings.MENU_MINEIA_MESIACHNAIA || menuItem == Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA) {
+            if (menuItem == Settings.MENU_MALITVY_PRYNAGODNYIA || menuItem == Settings.MENU_MINEIA_MESIACHNAIA || menuItem == Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA || menuItem == Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA || menuItem == Settings.MENU_TRYEDZ_KVETNAIA) {
                 listPrynagodnyia.forEachIndexed { i, dataItem ->
                     val collapsed = collapsedState[i]
                     item(key = "header_$i") {
@@ -228,8 +279,10 @@ fun MalitvyListAll(
                                 5 -> getPrynagodnyia6()
                                 else -> getPrynagodnyia1()
                             }
+
                             Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA -> {
-                                val listMineiaList = getTtyedzBialikagaTydnia()
+                                val listMineiaList =
+                                    getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA)
                                 val arrayList = ArrayList<BogaslujbovyiaListData>()
                                 listMineiaList.forEach {
                                     if (dataItem.day == it.dayOfMonth) {
@@ -243,6 +296,41 @@ fun MalitvyListAll(
                                 }
                                 arrayList
                             }
+
+                            Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA -> {
+                                val listMineiaList =
+                                    getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA)
+                                val arrayList = ArrayList<BogaslujbovyiaListData>()
+                                listMineiaList.forEach {
+                                    if (dataItem.day == it.dayOfMonth) {
+                                        arrayList.add(
+                                            BogaslujbovyiaListData(
+                                                it.title,
+                                                it.resource
+                                            )
+                                        )
+                                    }
+                                }
+                                arrayList
+                            }
+
+                            Settings.MENU_TRYEDZ_KVETNAIA -> {
+                                val listMineiaList =
+                                    getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_KVETNAIA)
+                                val arrayList = ArrayList<BogaslujbovyiaListData>()
+                                listMineiaList.forEach {
+                                    if (dataItem.day == it.dayOfMonth) {
+                                        arrayList.add(
+                                            BogaslujbovyiaListData(
+                                                it.title,
+                                                it.resource
+                                            )
+                                        )
+                                    }
+                                }
+                                arrayList
+                            }
+
                             Settings.MENU_MINEIA_MESIACHNAIA -> {
                                 val listMineiaList = getMineiaMesiachnaia(subTitle)
                                 val arrayList = ArrayList<BogaslujbovyiaListData>()
@@ -258,6 +346,7 @@ fun MalitvyListAll(
                                 }
                                 arrayList
                             }
+
                             else -> {
                                 ArrayList()
                             }
@@ -299,6 +388,58 @@ fun MalitvyListAll(
                             .padding(start = 10.dp)
                             .clickable {
                                 when (menuItem) {
+                                    Settings.MENU_TRYEDZ_POSNAIA -> {
+                                        when (list[index].resurs) {
+                                            1 -> {
+                                                navigationActions.navigateToMalitvyListAll(
+                                                    title,
+                                                    Settings.MENU_TRYEDZ_POSNAIA_1,
+                                                    list[index].title
+                                                )
+                                            }
+
+                                            2 -> {
+                                                navigationActions.navigateToMalitvyListAll(
+                                                    title,
+                                                    Settings.MENU_TRYEDZ_POSNAIA_2,
+                                                    list[index].title
+                                                )
+                                            }
+
+                                            3 -> {
+                                                navigationActions.navigateToMalitvyListAll(
+                                                    title,
+                                                    Settings.MENU_TRYEDZ_POSNAIA_3,
+                                                    list[index].title
+                                                )
+                                            }
+
+                                            4 -> {
+                                                navigationActions.navigateToMalitvyListAll(
+                                                    title,
+                                                    Settings.MENU_TRYEDZ_POSNAIA_4,
+                                                    list[index].title
+                                                )
+                                            }
+
+                                            5 -> {
+                                                navigationActions.navigateToMalitvyListAll(
+                                                    title,
+                                                    Settings.MENU_TRYEDZ_POSNAIA_5,
+                                                    list[index].title
+                                                )
+                                            }
+
+                                            6 -> {
+                                                navigationActions.navigateToMalitvyListAll(
+                                                    title,
+                                                    Settings.MENU_TRYEDZ_POSNAIA_6,
+                                                    list[index].title
+                                                )
+                                            }
+                                        }
+                                    }
+
                                     Settings.MENU_TRYEDZ -> {
                                         when (list[index].resurs) {
                                             10 -> {
@@ -416,11 +557,47 @@ fun MalitvyListAll(
     }
 }
 
-//list.add(BogaslujbovyiaListData("", R.raw.))
+@Composable
+fun getTtyedzPosnaia(menuItem: Int): ArrayList<BogaslujbovyiaListData> {
+    val list = ArrayList<BogaslujbovyiaListData>()
+    val subList = getTtyedzBialikagaTydnia(menuItem)
+    subList.forEach { item ->
+        list.add(
+            BogaslujbovyiaListData(
+                item.dayOfMonth.toString() + " " + stringArrayResource(
+                    R.array.meciac_smoll
+                )[item.month] + "\n" + item.title, item.resource
+            )
+        )
+    }
+    return list
+}
 
-fun getTtyedzBialikagaTydnia(): ArrayList<MineiaList> {
+fun getTtyedzPosnaia(): ArrayList<BogaslujbovyiaListData> {
+    val list = ArrayList<BogaslujbovyiaListData>()
+    list.add(BogaslujbovyiaListData("Службы 1-га тыдня Вялікага посту", 1))
+    list.add(BogaslujbovyiaListData("Службы 2-га тыдня Вялікага посту", 2))
+    list.add(BogaslujbovyiaListData("Службы 3-га тыдня Вялікага посту", 3))
+    list.add(BogaslujbovyiaListData("Службы 4-га тыдня Вялікага посту", 4))
+    list.add(BogaslujbovyiaListData("Службы 5-га тыдня Вялікага посту", 5))
+    list.add(BogaslujbovyiaListData("Службы 6-га тыдня Вялікага посту", 6))
+    return list
+}
+
+fun getTtyedzBialikagaTydnia(menuItem: Int): ArrayList<MineiaList> {
     val slugbovyiaTextu = SlugbovyiaTextu()
-    val mineia = slugbovyiaTextu.getVilikiTydzen()
+    val mineia = when (menuItem) {
+        Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA -> slugbovyiaTextu.getVilikiTydzen()
+        Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA -> slugbovyiaTextu.getSvetlyTydzen()
+        Settings.MENU_TRYEDZ_KVETNAIA -> slugbovyiaTextu.getMineiaKvetnaia()
+        Settings.MENU_TRYEDZ_POSNAIA_1 -> slugbovyiaTextu.getTydzen1()
+        Settings.MENU_TRYEDZ_POSNAIA_2 -> slugbovyiaTextu.getTydzen2()
+        Settings.MENU_TRYEDZ_POSNAIA_3 -> slugbovyiaTextu.getTydzen3()
+        Settings.MENU_TRYEDZ_POSNAIA_4 -> slugbovyiaTextu.getTydzen4()
+        Settings.MENU_TRYEDZ_POSNAIA_5 -> slugbovyiaTextu.getTydzen5()
+        Settings.MENU_TRYEDZ_POSNAIA_6 -> slugbovyiaTextu.getTydzen6()
+        else -> ArrayList()
+    }
     var dayOfYear: Int
     var day: Int
     val mineiaList = ArrayList<MineiaList>()
@@ -445,7 +622,8 @@ fun getTtyedzBialikagaTydnia(): ArrayList<MineiaList> {
         }
         val cal = Calendar.getInstance()
         cal.set(Calendar.DAY_OF_YEAR, dayOfYear)
-        val opisanie = ". " + slugbovyiaTextu.getNazouSluzby(mineia[i].sluzba)
+        val opisanie = if (menuItem == Settings.MENU_TRYEDZ_POSNAIA_1 || menuItem == Settings.MENU_TRYEDZ_POSNAIA_2 || menuItem == Settings.MENU_TRYEDZ_POSNAIA_3 || menuItem == Settings.MENU_TRYEDZ_POSNAIA_4 || menuItem == Settings.MENU_TRYEDZ_POSNAIA_5 || menuItem == Settings.MENU_TRYEDZ_POSNAIA_6) ""
+        else ". " + slugbovyiaTextu.getNazouSluzby(mineia[i].sluzba)
         mineiaList.add(
             MineiaList(
                 cal[Calendar.DATE],
@@ -458,6 +636,8 @@ fun getTtyedzBialikagaTydnia(): ArrayList<MineiaList> {
     }
     mineiaList.sortWith(
         compareBy({
+            it.month
+        }, {
             it.dayOfMonth
         }, {
             it.sluzba
@@ -478,18 +658,18 @@ fun getTtyedz(): ArrayList<BogaslujbovyiaListData> {
 fun getMineiaMesiachnaia(subTitle: String): ArrayList<MineiaList> {
     val slugbovyiaTextu = SlugbovyiaTextu()
     val mounth = when (subTitle) {
-        "Студзень" -> 0
-        "Люты" -> 1
-        "Сакавік" -> 2
-        "Красавік" -> 3
-        "Травень" -> 4
-        "Чэрвень" -> 5
-        "Ліпень" -> 6
-        "Жнівень" -> 7
-        "Верасень" -> 8
-        "Кастрычнік" -> 9
-        "Лістапад" -> 10
-        "Сьнежань" -> 11
+        "Студзень" -> Calendar.JANUARY
+        "Люты" -> Calendar.FEBRUARY
+        "Сакавік" -> Calendar.MARCH
+        "Красавік" -> Calendar.APRIL
+        "Травень" -> Calendar.MAY
+        "Чэрвень" -> Calendar.JUNE
+        "Ліпень" -> Calendar.JULY
+        "Жнівень" -> Calendar.AUGUST
+        "Верасень" -> Calendar.SEPTEMBER
+        "Кастрычнік" -> Calendar.OCTOBER
+        "Лістапад" -> Calendar.NOVEMBER
+        "Сьнежань" -> Calendar.DECEMBER
         else -> 0
     }
     val mineia = slugbovyiaTextu.getMineiaMesiachnaia()
@@ -1211,5 +1391,12 @@ fun getPrynagodnyia6(): ArrayList<BogaslujbovyiaListData> {
     return list
 }
 
-data class MineiaList(val dayOfMonth: Int, val month: Int, val title: String, val resource: Int, val sluzba: Int)
+data class MineiaList(
+    val dayOfMonth: Int,
+    val month: Int,
+    val title: String,
+    val resource: Int,
+    val sluzba: Int
+)
+
 data class Malitvy(val title: String, val day: Int = 0)

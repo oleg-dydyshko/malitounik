@@ -73,8 +73,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -678,7 +676,7 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                 item {
                     HtmlText(
                         text = text,
-                        fontSize = TextUnit(fontSize, TextUnitType.Sp)
+                        fontSize = fontSize.sp
                     )
                 }
                 item {

@@ -88,18 +88,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
-import androidx.core.text.HtmlCompat
 import androidx.core.text.isDigitsOnly
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -192,7 +191,7 @@ fun CytanniList(
     var showDropdown by remember { mutableStateOf(false) }
     var fontSize by remember { mutableFloatStateOf(k.getFloat("font_biblia", 22F)) }
     var autoScroll by rememberSaveable { mutableStateOf(false) }
-    var autoScrollSensor by remember { mutableStateOf(false) }
+    var autoScrollSensor by rememberSaveable { mutableStateOf(false) }
     var autoScrollSpeed by remember { mutableIntStateOf(k.getInt("autoscrollSpid", 60)) }
     var autoScrollTextVisable by remember { mutableStateOf(false) }
     var autoScrollText by remember { mutableStateOf("") }
@@ -435,9 +434,11 @@ fun CytanniList(
             autoScrollJob?.cancel()
         }
     }
+    var isSelectMode by rememberSaveable { mutableStateOf(false) }
     var backPressHandled by remember { mutableStateOf(false) }
-    BackHandler(!backPressHandled || fullscreen || isParallelVisable || showDropdown) {
+    BackHandler(!backPressHandled || isSelectMode || fullscreen || isParallelVisable || showDropdown) {
         when {
+            isSelectMode -> isSelectMode = false
             fullscreen -> fullscreen = false
             isParallelVisable -> isParallelVisable = false
             showDropdown -> {
@@ -485,7 +486,6 @@ fun CytanniList(
     }
     var isCopyMode by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    var isSelectMode by remember { mutableStateOf(false) }
     var isShareMode by remember { mutableStateOf(false) }
     var isSelectAll by remember { mutableStateOf(false) }
     Scaffold(
@@ -1456,8 +1456,23 @@ fun CytanniList(
                     }
                     if (isSelectAll) {
                         isSelectAll = false
-                        selectState.forEachIndexed { index, _ ->
-                            selectState[index] = true
+                        if (biblia == Settings.CHYTANNI_BIBLIA) {
+                            selectState.forEachIndexed { index, _ ->
+                                selectState[index] = true
+                            }
+                        } else {
+                            var findTitle = ""
+                            resultPage.forEachIndexed { index, text ->
+                                if (selectState[index]) {
+                                    findTitle = text.title
+                                    return@forEachIndexed
+                                }
+                            }
+                            resultPage.forEachIndexed { index, text ->
+                                if (findTitle == text.title) {
+                                    selectState[index] = true
+                                }
+                            }
                         }
                     }
                     if (!isSelectMode) {
@@ -1470,11 +1485,7 @@ fun CytanniList(
                         resultPage.forEachIndexed { index, text ->
                             if (selectState[index]) {
                                 sb.append(
-                                    HtmlCompat.fromHtml(
-                                        text.text,
-                                        HtmlCompat.FROM_HTML_MODE_LEGACY
-                                    )
-                                        .toString() + "\n"
+                                    AnnotatedString.fromHtml(text.text).toString() + "\n"
                                 )
                             }
                         }
@@ -1533,8 +1544,8 @@ fun CytanniList(
                                     modifier = Modifier
                                         .padding(horizontal = 10.dp),
                                     text = titlePerevod,
-                                    fontSize = TextUnit(fontSize, TextUnitType.Sp),
-                                    lineHeight = TextUnit(fontSize, TextUnitType.Sp),
+                                    fontSize = fontSize.sp,
+                                    lineHeight = fontSize.sp * 1.15,
                                     fontStyle = FontStyle.Italic,
                                     color = MaterialTheme.colorScheme.secondary
                                 )
@@ -1564,7 +1575,7 @@ fun CytanniList(
                                     .padding(horizontal = 10.dp)
                                     .background(if (selectState[index]) Post else Color.Unspecified),
                                 text = res.text,
-                                fontSize = TextUnit(fontSize, TextUnitType.Sp),
+                                fontSize = fontSize.sp,
                                 color = if (selectState[index]) PrimaryText else MaterialTheme.colorScheme.secondary
                             )
                             if (isParallel && res.parallel != "+-+") {
@@ -1572,8 +1583,8 @@ fun CytanniList(
                                     text = res.parallel,
                                     modifier = Modifier
                                         .padding(horizontal = 10.dp),
-                                    fontSize = TextUnit(fontSize - 4, TextUnitType.Sp),
-                                    lineHeight = TextUnit(fontSize - 4, TextUnitType.Sp),
+                                    fontSize = (fontSize - 4).sp,
+                                    lineHeight = (fontSize - 4).sp * 1.15,
                                     color = SecondaryText
                                 )
                             }
@@ -1709,7 +1720,7 @@ fun CytanniList(
                         modifier = Modifier
                             .padding(horizontal = 10.dp),
                         text = resultParalel[i].text,
-                        fontSize = TextUnit(fontSize, TextUnitType.Sp)
+                        fontSize = fontSize.sp
                     )
                 }
                 Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
@@ -1795,10 +1806,8 @@ fun getBible(
                             }
                         }
                     }
-                    var ctyx = if (styxStart == 0) 1
-                    else styxStart
                     var run = true
-                    for (z in glavaStart..glavaEnd) {
+                    for (glava in glavaStart..glavaEnd) {
                         var perevodNew = perevod
                         val knigiBiblii = knigaBiblii(knigaText)
                         var kniga = getRealBook(knigiBiblii, perevodNew)
@@ -1816,8 +1825,8 @@ fun getBible(
                             biblia(
                                 context,
                                 knigiBiblii,
-                                z,
-                                z,
+                                glava,
+                                glava,
                                 styxStart,
                                 styxEnd,
                                 perevodNew
@@ -1836,17 +1845,16 @@ fun getBible(
                         if (run) {
                             if (!(styxStart == 0 && styxEnd == 0)) run = false
                             for (w in textBible.indices) {
-                                var t5 = textBible[w].indexOf("<br>")
+                                var t5 = textBible[w].styx.indexOf("<br>")
                                 if (t5 == -1) t5 = 0
                                 else t5 += 4
-                                val t6 = textBible[w].indexOf(" ", t5)
+                                val t6 = textBible[w].styx.indexOf(" ", t5)
                                 val isInt =
                                     if (t6 != -1) {
-                                        val item = textBible[w].substring(t5, t6)
+                                        val item = textBible[w].styx.substring(t5, t6)
                                         item.isNotEmpty() && item.isDigitsOnly()
                                     } else false
                                 if (w == 0) {
-                                    ctyx = 1
                                     if (e > 0) {
                                         result.add(
                                             CytanniListData(
@@ -1857,7 +1865,7 @@ fun getBible(
                                                         perevodNew,
                                                         knigiBiblii >= 50
                                                     )
-                                                } $z",
+                                                } $glava",
                                                 "[&#8230;]"
                                             )
                                         )
@@ -1872,12 +1880,12 @@ fun getBible(
                                                             perevodNew,
                                                             knigiBiblii >= 50
                                                         )
-                                                    } $z"
+                                                    } $glava"
                                                 } else {
                                                     val tg =
                                                         if (knigiBiblii == 21) context.getString(R.string.psalom2)
                                                         else context.getString(R.string.razdzel)
-                                                    "$tg $z"
+                                                    "$tg $glava"
                                                 },
                                                 if (isTitle) {
                                                     if (biblia != Settings.CHYTANNI_VYBRANAE) {
@@ -1886,29 +1894,29 @@ fun getBible(
                                                             kniga,
                                                             perevodNew,
                                                             knigiBiblii >= 50
-                                                        ) + " " + "$z<strong><br>"
+                                                        ) + " " + "$glava<strong><br>"
                                                     } else {
                                                         val tg =
                                                             if (knigiBiblii == 21) context.getString(
                                                                 R.string.psalom2
                                                             )
                                                             else context.getString(R.string.razdzel)
-                                                        "<strong><br>$tg $z<strong><br>"
+                                                        "<strong><br>$tg $glava<strong><br>"
                                                     }
                                                 } else ""
                                             )
                                         )
                                     }
                                 }
-                                var text = textBible[w]
+                                var text = textBible[w].styx
                                 if (isInt) {
-                                    text = textBible[w].substring(
+                                    text = textBible[w].styx.substring(
                                         0,
                                         t5
-                                    ) + "<font color=#D00505>" + textBible[w].substring(
+                                    ) + "<font color=#D00505>" + textBible[w].styx.substring(
                                         t5,
                                         t6
-                                    ) + ". </font>" + textBible[w].substring(t6)
+                                    ) + ". </font>" + textBible[w].styx.substring(t6)
                                 }
                                 result.add(
                                     CytanniListData(
@@ -1920,18 +1928,17 @@ fun getBible(
                                                     perevodNew,
                                                     knigiBiblii >= 50
                                                 )
-                                            } $z"
+                                            } $glava"
                                         } else {
                                             val tg =
                                                 if (knigiBiblii == 21) context.getString(R.string.psalom2)
                                                 else context.getString(R.string.razdzel)
-                                            "$tg $z"
+                                            "$tg $glava"
                                         },
                                         text,
-                                        getParalel(knigiBiblii, z, ctyx)
+                                        textBible[w].paralelStyx
                                     )
                                 )
-                                ctyx++
                             }
                         }
                     }
@@ -2038,7 +2045,6 @@ fun translateToBelarus(paralelString: String): String {
     paralel = paralel.replace("Габ", "Гбр")
     paralel = paralel.replace("Муд", "Мдр")
     paralel = paralel.replace("Друг", "Дрг")
-    //paralel = paralel.replace("Лк", "Лук");
     paralel = paralel.replace("Быт", "Быц")
     paralel = paralel.replace("Исх", "Вых")
     paralel = paralel.replace("Лев", "Ляв")
@@ -2054,7 +2060,6 @@ fun translateToBelarus(paralelString: String): String {
     paralel = paralel.replace("Иудифь", "Юдт")
     paralel = paralel.replace("Есф", "Эст")
     paralel = paralel.replace("Иов", "Ёва")
-    //paralel = paralel.replace("Пс", "Пс");
     paralel = paralel.replace("Притч", "Высл")
     paralel = paralel.replace("Еккл", "Экл")
     paralel = paralel.replace("Песн", "Псн")
@@ -2064,10 +2069,8 @@ fun translateToBelarus(paralelString: String): String {
     paralel = paralel.replace("Посл Иер", "Пасл Ер")
     paralel = paralel.replace("Иер", "Ер")
     paralel = paralel.replace("Иез", "Езк")
-    //paralel = paralel.replace("Дан", "Дан");
     paralel = paralel.replace("Ос", "Ас")
     paralel = paralel.replace("Иоил", "Ёіл")
-    //paralel = paralel.replace("Ам", "Ам");
     paralel = paralel.replace("Авд", "Аўдз")
     paralel = paralel.replace("Иона", "Ёны")
     paralel = paralel.replace("Мих", "Міх")
@@ -2089,20 +2092,18 @@ fun translateToBelarus(paralelString: String): String {
     paralel = paralel.replace("Рим", "Рым")
     paralel = paralel.replace("1 Кор", "1 Кар")
     paralel = paralel.replace("2 Кор", "2 Кар")
-    //paralel = paralel.replace("Гал", "Гал");
     paralel = paralel.replace("Еф", "Эф")
     paralel = paralel.replace("Флп", "Плп")
     paralel = paralel.replace("Кол", "Клс")
     paralel = paralel.replace("1 Тим", "1 Цім")
     paralel = paralel.replace("2 Тим", "2 Цім")
     paralel = paralel.replace("Тит", "Ціт")
-    //paralel = paralel.replace("Флм", "Флм");
     paralel = paralel.replace("Евр", "Гбр")
     paralel = paralel.replace("Откр", "Адкр")
     return paralel
 }
 
-fun getParalel(kniga: Int, glava: Int, styx: Int, isPsaltyrGreek: Boolean = true): String {
+fun getParalel(kniga: Int, glava: Int, styx: Int, isPsaltyrGreek: Boolean): String {
     val parallel = BibliaParallelChtenia()
     var res = "+-+"
     if (kniga == 0) {

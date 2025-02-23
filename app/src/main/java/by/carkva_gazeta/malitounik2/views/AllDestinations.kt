@@ -2,6 +2,7 @@ package by.carkva_gazeta.malitounik2.views
 
 import android.content.SharedPreferences
 import androidx.navigation.NavHostController
+import by.carkva_gazeta.malitounik2.views.AllDestinations.AKAFIST_MENU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA_LIST
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BOGASLUJBOVYIA
@@ -9,8 +10,10 @@ import by.carkva_gazeta.malitounik2.views.AllDestinations.BOGASLUJBOVYIA_MENU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.CYTANNI_LIST
 import by.carkva_gazeta.malitounik2.views.AllDestinations.KALIANDAR
 import by.carkva_gazeta.malitounik2.views.AllDestinations.KALIANDAR_YEAR
+import by.carkva_gazeta.malitounik2.views.AllDestinations.MAE_NATATKI_MENU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.MALITVY_LIST_ALL
 import by.carkva_gazeta.malitounik2.views.AllDestinations.MALITVY_MENU
+import by.carkva_gazeta.malitounik2.views.AllDestinations.RUJANEC_MENU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.SEARCH_BIBLIA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.VYBRANAE_LIST
 
@@ -26,6 +29,9 @@ object AllDestinations {
     const val BIBLIA_LIST = "Biblia_List"
     const val VYBRANAE_LIST = "Bybranae_List"
     const val SEARCH_BIBLIA = "Search_Biblia"
+    const val AKAFIST_MENU = "Akafist_Menu"
+    const val RUJANEC_MENU = "Rujanec_Menu"
+    const val MAE_NATATKI_MENU = "Mae_Natatki_Menu"
 }
 
 class AppNavigationActions(private val navController: NavHostController, k: SharedPreferences) {
@@ -38,6 +44,32 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
         }
         edit.putString("navigate", KALIANDAR)
         edit.apply()
+    }
+
+    fun navigateToAkafistMenu() {
+        navController.navigate(AKAFIST_MENU) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: AKAFIST_MENU) {
+                inclusive = true
+            }
+        }
+        edit.putString("navigate", AKAFIST_MENU)
+        edit.apply()
+    }
+
+    fun navigateToRujanecMenu() {
+        navController.navigate(RUJANEC_MENU) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: RUJANEC_MENU) {
+                inclusive = true
+            }
+        }
+        edit.putString("navigate", RUJANEC_MENU)
+        edit.apply()
+    }
+
+    fun navigateToMaeNatatkiMenu() {
+        navController.navigate(MAE_NATATKI_MENU) {
+            MAE_NATATKI_MENU
+        }
     }
 
     fun navigateToBogaslujbovyiaMenu() {

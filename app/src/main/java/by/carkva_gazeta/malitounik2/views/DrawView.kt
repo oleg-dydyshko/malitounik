@@ -27,8 +27,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import by.carkva_gazeta.malitounik2.R
@@ -101,6 +99,69 @@ fun DrawView(
             selected = route == AllDestinations.MALITVY_MENU,
             onClick = {
                 navigateToRazdel(AllDestinations.MALITVY_MENU)
+            },
+            icon = {
+                Icon(
+                    modifier = Modifier.size(24.dp, 24.dp),
+                    painter = painterResource(R.drawable.krest),
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = null
+                )
+            },
+            shape = MaterialTheme.shapes.medium,
+            modifier = modifier.padding(horizontal = 5.dp)
+        )
+        NavigationDrawerItem(
+            label = {
+                Text(
+                    text = stringResource(id = R.string.akafisty),
+                )
+            },
+            selected = route == AllDestinations.AKAFIST_MENU,
+            onClick = {
+                navigateToRazdel(AllDestinations.AKAFIST_MENU)
+            },
+            icon = {
+                Icon(
+                    modifier = Modifier.size(24.dp, 24.dp),
+                    painter = painterResource(R.drawable.krest),
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = null
+                )
+            },
+            shape = MaterialTheme.shapes.medium,
+            modifier = modifier.padding(horizontal = 5.dp)
+        )
+        NavigationDrawerItem(
+            label = {
+                Text(
+                    text = stringResource(id = R.string.ruzanec),
+                )
+            },
+            selected = route == AllDestinations.RUJANEC_MENU,
+            onClick = {
+                navigateToRazdel(AllDestinations.RUJANEC_MENU)
+            },
+            icon = {
+                Icon(
+                    modifier = Modifier.size(24.dp, 24.dp),
+                    painter = painterResource(R.drawable.krest),
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = null
+                )
+            },
+            shape = MaterialTheme.shapes.medium,
+            modifier = modifier.padding(horizontal = 5.dp)
+        )
+        NavigationDrawerItem(
+            label = {
+                Text(
+                    text = stringResource(id = R.string.maje_natatki),
+                )
+            },
+            selected = route == AllDestinations.MAE_NATATKI_MENU,
+            onClick = {
+                navigateToRazdel(AllDestinations.MAE_NATATKI_MENU)
             },
             icon = {
                 Icon(
@@ -192,7 +253,7 @@ fun DrawerHeader(modifier: Modifier) {
                     fontWeight = FontWeight.Bold,
                     fontStyle = FontStyle.Italic,
                     color = MaterialTheme.colorScheme.primary,
-                    fontSize = TextUnit(30f, TextUnitType.Sp)
+                    fontSize = 30.sp
                 ), 0, 1
             )
             addStyle(SpanStyle(fontFamily = FontFamily(Font(R.font.comici))), 1, this.length)
@@ -212,7 +273,7 @@ fun DrawerHeader(modifier: Modifier) {
             text = stringResource(R.string.malitounik_name),
             textAlign = TextAlign.Center,
             fontSize = 30.sp,
-            lineHeight = TextUnit(30f, TextUnitType.Sp),
+            lineHeight = 30.sp * 1.15,
             color = MaterialTheme.colorScheme.primary,
         )
 
