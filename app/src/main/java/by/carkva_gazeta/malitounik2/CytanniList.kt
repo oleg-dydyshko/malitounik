@@ -1289,7 +1289,7 @@ fun CytanniList(
                                     shape = MaterialTheme.shapes.medium
                                 ) {
                                     Text(
-                                        stringResource(R.string.ok),
+                                        stringResource(R.string.close),
                                         fontSize = 18.sp,
                                         color = PrimaryText
                                     )

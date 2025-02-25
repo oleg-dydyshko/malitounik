@@ -145,7 +145,12 @@ fun AppNavGraph(
         }
 
         composable(AllDestinations.MAE_NATATKI_MENU) {
-            MaeNatatki(navController)
+            Settings.destinations = AllDestinations.MAE_NATATKI_MENU
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
         }
 
         composable(AllDestinations.BOGASLUJBOVYIA_MENU) {
@@ -353,31 +358,44 @@ fun MainConteiner(
             view
         ).isAppearanceLightStatusBars = isAppearanceLight
     }
-    var sorted by remember { mutableIntStateOf(k.getInt("sortedVybranae", Settings.SORT_BY_ABC)) }
+    var sorted by remember { mutableIntStateOf(if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) k.getInt("sortedVybranae", Settings.SORT_BY_ABC)
+    else k.getInt("natatki_sort", Settings.SORT_BY_ABC)) }
+    var addFileNatatki by remember { mutableStateOf(false) }
     var removeAllVybranaeDialog by remember { mutableStateOf(false) }
+    var removeAllNatatkiDialog by remember { mutableStateOf(false) }
     var removeAllVybranae by remember { mutableStateOf(false) }
-    if (removeAllVybranaeDialog) {
+    var removeAllNatatki by remember { mutableStateOf(false) }
+    if (removeAllVybranaeDialog || removeAllNatatkiDialog) {
         Dialog(
-            title = stringResource(R.string.del_all_vybranoe),
+            title = if (removeAllVybranaeDialog) stringResource(R.string.del_all_vybranoe)
+            else stringResource(R.string.delite_all_natatki),
             onDismissRequest = {
                 removeAllVybranaeDialog = false
+                removeAllNatatkiDialog = false
             },
             onConfirmation = {
-                for (perevod in 1..5) {
-                    val prevodName = when (perevod.toString()) {
-                        Settings.PEREVODSEMUXI -> "biblia"
-                        Settings.PEREVODBOKUNA -> "bokuna"
-                        Settings.PEREVODCARNIAUSKI -> "carniauski"
-                        Settings.PEREVODNADSAN -> "nadsan"
-                        Settings.PEREVODSINOIDAL -> "sinaidal"
-                        else -> "biblia"
-                    }
-                    val file = File("${context.filesDir}/vybranoe_${prevodName}.json")
-                    if (file.exists()) file.delete()
+                if (removeAllVybranaeDialog) {
+                    for (perevod in 1..5) {
+                        val prevodName = when (perevod.toString()) {
+                            Settings.PEREVODSEMUXI -> "biblia"
+                            Settings.PEREVODBOKUNA -> "bokuna"
+                            Settings.PEREVODCARNIAUSKI -> "carniauski"
+                            Settings.PEREVODNADSAN -> "nadsan"
+                            Settings.PEREVODSINOIDAL -> "sinaidal"
+                            else -> "biblia"
+                        }
+                        val file = File("${context.filesDir}/vybranoe_${prevodName}.json")
+                        if (file.exists()) file.delete()
 
+                    }
+                    removeAllVybranae = true
+                    removeAllVybranaeDialog = false
+                } else {
+                    val dir = File("${context.filesDir}/Malitva")
+                    if (dir.exists()) dir.deleteRecursively()
+                    removeAllNatatkiDialog = false
+                    removeAllNatatki = true
                 }
-                removeAllVybranae = true
-                removeAllVybranaeDialog = false
             }
         )
     }
@@ -413,6 +431,7 @@ fun MainConteiner(
             AllDestinations.RUJANEC_MENU -> stringResource(R.string.ruzanec)
             AllDestinations.MALITVY_MENU -> stringResource(R.string.malitvy)
             AllDestinations.VYBRANAE_LIST -> stringResource(R.string.MenuVybranoe)
+            AllDestinations.MAE_NATATKI_MENU -> stringResource(R.string.maje_natatki)
             AllDestinations.BIBLIA -> {
                 when (k.getString("perevodBibileMenu", Settings.PEREVODSEMUXI)
                     ?: Settings.PEREVODSEMUXI) {
@@ -480,8 +499,22 @@ fun MainConteiner(
                                 )
                             }
                         }
-                        if (currentRoute == AllDestinations.VYBRANAE_LIST) {
-                            IconButton({ removeAllVybranaeDialog = !removeAllVybranaeDialog }) {
+                        if (currentRoute == AllDestinations.MAE_NATATKI_MENU) {
+                            IconButton({
+                                addFileNatatki = true
+                            }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.add),
+                                    tint = textTollBarColor,
+                                    contentDescription = ""
+                                )
+                            }
+                        }
+                        if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.MAE_NATATKI_MENU) {
+                            IconButton({
+                                if (currentRoute == AllDestinations.VYBRANAE_LIST) removeAllVybranaeDialog = !removeAllVybranaeDialog
+                                else removeAllNatatkiDialog = !removeAllNatatkiDialog
+                            }) {
                                 Icon(
                                     painter = painterResource(R.drawable.delete),
                                     tint = textTollBarColor,
@@ -520,7 +553,7 @@ fun MainConteiner(
                                         text = { Text(stringResource(R.string.search_svityia)) }
                                     )
                                 }
-                                if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) {
+                                if (currentRoute.contains(AllDestinations.VYBRANAE_LIST) || currentRoute.contains(AllDestinations.MAE_NATATKI_MENU)) {
                                     DropdownMenuItem(
                                         onClick = {
                                             expanded = false
@@ -528,7 +561,8 @@ fun MainConteiner(
                                                 if (sorted == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
                                                 else Settings.SORT_BY_ABC
                                             val edit = k.edit()
-                                            edit.putInt("sortedVybranae", sorted)
+                                            if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) edit.putInt("sortedVybranae", sorted)
+                                            else edit.putInt("natatki_sort", sorted)
                                             edit.apply()
                                         },
                                         text = {
@@ -565,23 +599,7 @@ fun MainConteiner(
                     },
                     colors = TopAppBarDefaults.topAppBarColors(tollBarColor)
                 )
-            },
-            modifier = Modifier,
-            /*bottomBar = {
-                BottomAppBar {
-                    var expanded by remember { mutableStateOf(false) }
-                    IconButton(onClick = { expanded = true }) {
-                        //MenuKalendra(expanded = true, isExpanded = { expanded = false })
-                        Icon(Icons.Filled.Menu, contentDescription = "Меню")
-                    }
-                    IconButton(onClick = { showDropdown = !showDropdown }) {
-                        Icon(Icons.Filled.Info, contentDescription = "О приложении")
-                    }
-                    IconButton(onClick = { }) {
-                        Icon(Icons.Filled.Search, contentDescription = "Поиск")
-                    }
-                }
-            }*/
+            }
         ) { innerPadding ->
             Box(
                 modifier = Modifier.padding(
@@ -602,25 +620,25 @@ fun MainConteiner(
                         LaunchedEffect(pagerState) {
                             snapshotFlow { pagerState.currentPage }.collect { page ->
                                 Settings.caliandarPosition = page
-                                colorBlackboard = Divider
                                 val data = Settings.data[page]
                                 var colorText = PrimaryText
                                 isAppearanceLight = false
-                                if (data[7].toInt() == 2) {
-                                    colorBlackboard = Post
-                                }
-                                if (data[7].toInt() == 1) {
-                                    colorBlackboard = BezPosta
-                                }
-                                if (data[7].toInt() == 3 && !(data[0].toInt() == Calendar.SUNDAY || data[0].toInt() == Calendar.SATURDAY)) {
-                                    colorBlackboard = StrogiPost
-                                    colorText = PrimaryTextBlack
-                                    isAppearanceLight = true
-                                }
-                                if (data[5].toInt() > 0) {
-                                    colorBlackboard = Primary
-                                    colorText = PrimaryTextBlack
-                                    isAppearanceLight = true
+                                when {
+                                    data[7].toInt() == 2 -> colorBlackboard = Post
+                                    data[7].toInt() == 1 -> colorBlackboard = BezPosta
+                                    data[7].toInt() == 3 && !(data[0].toInt() == Calendar.SUNDAY || data[0].toInt() == Calendar.SATURDAY) -> {
+                                        colorBlackboard = StrogiPost
+                                        colorText = PrimaryTextBlack
+                                        isAppearanceLight = true
+                                    }
+                                    data[5].toInt() > 0 -> {
+                                        colorBlackboard = Primary
+                                        colorText = PrimaryTextBlack
+                                        isAppearanceLight = true
+                                    }
+                                    else -> {
+                                        colorBlackboard = Divider
+                                    }
                                 }
                                 tollBarColor = colorBlackboard
                                 textTollBarColor = colorText
@@ -659,6 +677,12 @@ fun MainConteiner(
                     AllDestinations.AKAFIST_MENU -> BogaslujbovyiaMenu(navController, innerPadding, Settings.MENU_AKAFIST)
 
                     AllDestinations.RUJANEC_MENU -> BogaslujbovyiaMenu(navController, innerPadding, Settings.MENU_RUJANEC)
+
+                    AllDestinations.MAE_NATATKI_MENU -> {
+                        MaeNatatki(innerPadding, sorted, addFileNatatki, removeAllNatatki, onDismissAddFile = {
+                            addFileNatatki = false
+                        })
+                    }
 
                     AllDestinations.MALITVY_MENU -> BogaslujbovyiaMenu(navController, innerPadding, Settings.MENU_MALITVY)
 

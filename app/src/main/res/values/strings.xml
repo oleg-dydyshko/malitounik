@@ -226,7 +226,7 @@
     <string name="natatki_biblii">Нататкі</string>
     <string name="helpbible">Каб дадаць нататку або закладку, скапіяваць, выдзяліць або падкрэсьліць тэкст, націсьніце на патрэбны верш і ўтрымлівайце, тады зьнізу зьявіцца панэль дзеяньняў.</string>
     <string name="delite_natatki_i_zakladki">Вы сапраўды жадаеце выдаліць %1$s\n\"%2$s\"?</string>
-    <string name="delite_all_natatki_i_zakladki">Вы сапраўды жадаеце выдаліць усе %1$s?</string>
+    <string name="delite_all_natatki">Вы сапраўды жадаеце выдаліць усе нататкі?</string>
     <string name="zakladki_bible2">закладку</string>
     <string name="natatki_biblii2">нататку</string>
     <string name="stix_ru">/Стих</string>
@@ -698,7 +698,7 @@
     <string name="admin_resourse_error">Шмат рэсурсаў у %1$d дзень!</string>
     <string name="padie_maryia">РАДЫЁ МАРЫЯ</string>
     <string name="padie_maryia_s">Радыё Марыя</string>
-    <string name="program_radio_maryia">ПРАГРАМА ПЕРАДАЧ РАДЫЁ МАРЫЯ</string>
+    <string name="program_radio_maryia">Праграма перадач Радыё Марыя</string>
     <string name="widget_title">Каляндар на дзень</string>
     <string name="widget_mun_title">Каляндар на месяц</string>
     <string name="cytaty_staronka">Старонка %1$d</string>
@@ -744,7 +744,7 @@
         <item>26sp</item>
         <item>28sp</item>
     </string-array>
-    <string name="chto_novaga_title">ШТО НОВАГА?</string>
+    <string name="chto_novaga_title">Што новага?</string>
     <string name="admin_dialog_check_log_title">ПРАВЕР</string>
     <string name="admin_upload_contine">Праверка скончана. Няма зьмен.</string>
     <string name="admin_upload_no_wi_fi">Працуе толькі на WI-FI.</string>

@@ -1015,6 +1015,12 @@ fun getTrebnik(): ArrayList<BogaslujbovyiaListData> {
             R.raw.mltv_asviacz_pamiatnaj_tablicy_biazvinnym_achviaram_paciarpieli_za_bielarus
         )
     )
+    list.add(
+        BogaslujbovyiaListData(
+            "Малітоўны чын сьвятарскіх адведзінаў парафіянаў",
+            R.raw.malitouny_czyn_sviatarskich_adviedzinau_parafijanau
+        )
+    )
     return list
 }
 
@@ -1383,6 +1389,12 @@ fun getPrynagodnyia6(): ArrayList<BogaslujbovyiaListData> {
         BogaslujbovyiaListData(
             "Малітвы за памерлых («Божа духаў і ўсякага цялеснага стварэньня»)",
             R.raw.mltv_za_pamierlych_boza_duchau
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Юбілейная малітва",
+            R.raw.mltv_jubilejnaja
         )
     )
     list.sortBy {

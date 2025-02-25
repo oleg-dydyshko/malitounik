@@ -24,9 +24,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik2.views.AppNavigationActions
-import java.io.BufferedReader
-import java.io.File
-import java.io.FileReader
 
 @Composable
 fun BogaslujbovyiaMenu(
@@ -44,7 +41,6 @@ fun BogaslujbovyiaMenu(
         Settings.MENU_MALITVY -> getMalitvy()
         Settings.MENU_AKAFIST -> getAkafist()
         Settings.MENU_RUJANEC -> getRujanec()
-        Settings.MENU_MAE_NATATKI -> getMaeNatatki()
         else -> ArrayList()
     }
     folderList.sort()
@@ -224,34 +220,6 @@ fun getRujanec(): ArrayList<BogaslujbovyiaListData> {
     list.add(BogaslujbovyiaListData("Частка II. Балесныя таямніцы (аўт, пт)", R.raw.ruzanec4))
     list.add(BogaslujbovyiaListData("Частка III. Слаўныя таямніцы (ср, ндз)", R.raw.ruzanec5))
     list.add(BogaslujbovyiaListData("Частка IV. Таямніцы сьвятла (чц)", R.raw.ruzanec6))
-    return list
-}
-
-@Composable
-fun getMaeNatatki(): ArrayList<BogaslujbovyiaListData> {
-    val context = LocalContext.current
-    val list = ArrayList<BogaslujbovyiaListData>()
-    File(context.filesDir.toString().plus("/Malitva")).walk().forEach {
-        if (it.isFile) {
-            val name = it.name
-            val t1 = name.lastIndexOf("_")
-            val index = name.substring(t1 + 1).toLong()
-            val inputStream = FileReader(it)
-            val reader = BufferedReader(inputStream)
-            val res = reader.readText().split("<MEMA></MEMA>")
-            inputStream.close()
-            /*var lRTE: Long = 1
-            if (res[1].contains("<RTE></RTE>")) {
-                val start = res[1].indexOf("<RTE></RTE>")
-                val end = res[1].length
-                lRTE = res[1].substring(start + 11, end).toLong()
-            }
-            if (lRTE <= 1) {
-                lRTE = it.lastModified()
-            }*/
-            list.add(BogaslujbovyiaListData(res[0], index.toInt()))
-        }
-    }
     return list
 }
 

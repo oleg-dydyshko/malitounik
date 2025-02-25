@@ -37,6 +37,8 @@ android {
         jvmTarget = "17"
     }
     buildFeatures {
+        viewBinding = true
+        buildConfig = true
         compose = true
     }
     composeOptions {
@@ -68,6 +70,10 @@ dependencies {
     implementation (libs.firebase.appcheck.playintegrity)
     implementation(libs.feature.delivery.ktx)
     implementation(libs.app.update.ktx)
+    implementation (libs.androidx.media3.exoplayer)
+    implementation (libs.androidx.media3.exoplayer.smoothstreaming)
+    implementation (libs.androidx.media)
+    implementation (libs.androidx.appcompat)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -68,8 +68,12 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
 
     fun navigateToMaeNatatkiMenu() {
         navController.navigate(MAE_NATATKI_MENU) {
-            MAE_NATATKI_MENU
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: MAE_NATATKI_MENU) {
+                inclusive = true
+            }
         }
+        edit.putString("navigate", MAE_NATATKI_MENU)
+        edit.apply()
     }
 
     fun navigateToBogaslujbovyiaMenu() {
