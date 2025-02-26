@@ -22,6 +22,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.os.SystemClock
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
@@ -127,6 +128,9 @@ object Settings {
     var initCaliandarPosition = 0
     var data = ArrayList<ArrayList<String>>()
     val vibrate = longArrayOf(0, 1000, 700, 1000)
+    var titleRadioMaryia = mutableStateOf("")
+    var isPlayRadyjoMaryia = mutableStateOf(false)
+    var isProgressVisableRadyjoMaryia = mutableStateOf(false)
 
     @Suppress("DEPRECATION")
     fun isNetworkAvailable(context: Context, typeTransport: Int = TRANSPORT_ALL): Boolean {
@@ -136,15 +140,15 @@ object Settings {
             val nw = connectivityManager.activeNetwork ?: return false
             val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
             when (typeTransport) {
-                Settings.TRANSPORT_CELLULAR -> {
+                TRANSPORT_CELLULAR -> {
                     if (actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) return true
                 }
 
-                Settings.TRANSPORT_WIFI -> {
+                TRANSPORT_WIFI -> {
                     if (actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) return true
                 }
 
-                Settings.TRANSPORT_ALL -> {
+                TRANSPORT_ALL -> {
                     return when {
                         actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
                         actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
@@ -158,15 +162,15 @@ object Settings {
             val activeNetwork = connectivityManager.activeNetworkInfo ?: return false
             if (activeNetwork.isConnectedOrConnecting) {
                 when (typeTransport) {
-                    Settings.TRANSPORT_CELLULAR -> {
+                    TRANSPORT_CELLULAR -> {
                         if (activeNetwork.type == ConnectivityManager.TYPE_MOBILE) return true
                     }
 
-                    Settings.TRANSPORT_WIFI -> {
+                    TRANSPORT_WIFI -> {
                         if (activeNetwork.type == ConnectivityManager.TYPE_WIFI) return true
                     }
 
-                    Settings.TRANSPORT_ALL -> {
+                    TRANSPORT_ALL -> {
                         return when (activeNetwork.type) {
                             ConnectivityManager.TYPE_WIFI -> true
                             ConnectivityManager.TYPE_MOBILE -> true
@@ -1574,6 +1578,7 @@ class MainActivity : ComponentActivity(), SensorEventListener,
     }
 
     override fun setTitleRadioMaryia(title: String) {
+        Settings.titleRadioMaryia.value = title
     }
 
     override fun unBinding() {
@@ -1581,12 +1586,17 @@ class MainActivity : ComponentActivity(), SensorEventListener,
             unbindService(mConnection)
         }
         isConnectServise = false
+        Settings.isProgressVisableRadyjoMaryia.value = false
     }
 
     override fun playingRadioMaria(isPlayingRadioMaria: Boolean) {
+        Settings.isPlayRadyjoMaryia.value = isPlayingRadioMaria
+        Log.d("Oleg", isPlayingRadioMaria.toString())
     }
 
     override fun playingRadioMariaStateReady() {
+        Settings.isPlayRadyjoMaryia.value = true
+        Settings.isProgressVisableRadyjoMaryia.value = false
         setTitleRadioMaryia(ServiceRadyjoMaryia.titleRadyjoMaryia)
     }
 

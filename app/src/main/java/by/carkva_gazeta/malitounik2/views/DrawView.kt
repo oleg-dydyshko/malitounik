@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -299,6 +301,9 @@ fun DrawView(
                     .weight(1f),
                 text = stringResource(id = R.string.padie_maryia),
             )
+            if (Settings.isProgressVisableRadyjoMaryia.value) {
+                CircularProgressIndicator(modifier = Modifier.padding(horizontal = 10.dp).size(24.dp, 24.dp))
+            }
             Icon(
                 modifier = Modifier
                     .padding(horizontal = 10.dp)
@@ -308,8 +313,7 @@ fun DrawView(
                 painter = painterResource(R.drawable.description),
                 contentDescription = ""
             )
-            var icons by remember { mutableStateOf(!ServiceRadyjoMaryia.isServiceRadioMaryiaRun) }
-            val icon = if (icons) painterResource(R.drawable.play_arrow)
+            val icon = if (!Settings.isPlayRadyjoMaryia.value) painterResource(R.drawable.play_arrow)
             else painterResource(R.drawable.pause)
             Icon(
                 modifier = Modifier
@@ -317,6 +321,7 @@ fun DrawView(
                     .clickable {
                         if (Settings.isNetworkAvailable(context)) {
                             if (!ServiceRadyjoMaryia.isServiceRadioMaryiaRun) {
+                                Settings.isProgressVisableRadyjoMaryia.value = true
                                 val intent = Intent(context, ServiceRadyjoMaryia::class.java)
                                 ContextCompat.startForegroundService(context, intent)
                                 context.bindService(
@@ -324,7 +329,7 @@ fun DrawView(
                                     context.mConnection,
                                     Context.BIND_AUTO_CREATE
                                 )
-                                icons = false
+                                Settings.isPlayRadyjoMaryia.value = true
                             } else {
                                 context.mRadyjoMaryiaService?.apply {
                                     if (k.getBoolean("WIDGET_RADYJO_MARYIA_ENABLED", false)) {
@@ -336,7 +341,7 @@ fun DrawView(
                                         )
                                     }
                                     playOrPause()
-                                    icons = !isPlayingRadioMaria()
+                                    Settings.isPlayRadyjoMaryia.value = isPlayingRadioMaria()
                                 }
                             }
                         } else {
@@ -357,12 +362,34 @@ fun DrawView(
                             }
                             context.isConnectServise = false
                             context.mRadyjoMaryiaService?.stopServiceRadioMaria()
-                            icons = true
+                            Settings.isPlayRadyjoMaryia.value = false
                         }
                     },
                 painter = painterResource(R.drawable.stop),
                 contentDescription = ""
             )
+        }
+        if (ServiceRadyjoMaryia.isServiceRadioMaryiaRun) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 28.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    modifier = Modifier.size(12.dp, 12.dp),
+                    painter = painterResource(R.drawable.krest),
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = null
+                )
+                Text(
+                    Settings.titleRadioMaryia.value,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(10.dp),
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
         }
     }
 }

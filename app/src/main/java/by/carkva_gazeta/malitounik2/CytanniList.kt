@@ -1820,6 +1820,14 @@ fun getBible(
                                 perevodNew = Settings.PEREVODSINOIDAL
                                 kniga = getRealBook(knigiBiblii, perevodNew)
                             }
+                            if (biblia != Settings.CHYTANNI_LITURGICHNYIA && (knigiBiblii == 21 && glavaEnd == 151 && (perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODBOKUNA))) {
+                                perevodNew = Settings.PEREVODSINOIDAL
+                                kniga = getRealBook(knigiBiblii, perevodNew)
+                            }
+                            if ((knigiBiblii == 33 && (glavaEnd == 13 || glavaEnd == 14)) && (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODBOKUNA)) {
+                                perevodNew = Settings.PEREVODCARNIAUSKI
+                                kniga = getRealBook(knigiBiblii, perevodNew)
+                            }
                         }
                         val textBible = if (styxStart == 0 && styxEnd == 0) {
                             biblia(
