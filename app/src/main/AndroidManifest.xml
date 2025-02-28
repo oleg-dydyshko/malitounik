@@ -41,6 +41,15 @@
         <service android:name=".ServiceRadyjoMaryia"
             android:foregroundServiceType="mediaPlayback"
             android:exported="false" />
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="by.carkva_gazeta.malitounik2.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_path" />
+        </provider>
         <receiver
             android:name=".ReceiverBroad"
             android:exported="false">
@@ -70,5 +79,4 @@
                 android:resource="@xml/widget_radyjo_maryia_metadata" />
         </receiver>
     </application>
-
 </manifest>

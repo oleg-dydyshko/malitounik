@@ -391,6 +391,27 @@ fun DrawView(
                 )
             }
         }
+        NavigationDrawerItem(
+            label = {
+                Text(
+                    text = stringResource(id = R.string.bibliateka_carkvy),
+                )
+            },
+            selected = route == AllDestinations.BIBLIJATEKA_LIST,
+            onClick = {
+                navigateToRazdel(AllDestinations.BIBLIJATEKA_LIST)
+            },
+            icon = {
+                Icon(
+                    modifier = Modifier.size(24.dp, 24.dp),
+                    painter = painterResource(R.drawable.krest),
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = null
+                )
+            },
+            shape = MaterialTheme.shapes.medium,
+            modifier = modifier.padding(horizontal = 5.dp)
+        )
     }
 }
 

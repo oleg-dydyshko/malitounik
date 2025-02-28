@@ -2,6 +2,8 @@ package by.carkva_gazeta.malitounik2.views
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.pdf.PdfRenderer
+import android.os.ParcelFileDescriptor
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
@@ -62,8 +64,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
 import by.carkva_gazeta.malitounik2.BibliaList
 import by.carkva_gazeta.malitounik2.BibliaMenu
+import by.carkva_gazeta.malitounik2.Biblijateka
+import by.carkva_gazeta.malitounik2.BiblijtekaList
 import by.carkva_gazeta.malitounik2.Bogaslujbovyia
 import by.carkva_gazeta.malitounik2.BogaslujbovyiaMenu
 import by.carkva_gazeta.malitounik2.CytanniList
@@ -91,8 +99,42 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
 import java.io.File
+import java.io.IOException
 import java.io.InputStreamReader
 import java.util.Calendar
+
+class Biblijateka(private val fileName: String) : PagingSource<Int, Int>() {
+    override fun getRefreshKey(state: PagingState<Int, Int>): Int? {
+        return state.anchorPosition?.let { state.closestItemToPosition(it) }
+    }
+
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Int> {
+        return try {
+            val list = ArrayList<Int>()
+            var count = 0
+            try {
+                val file = File("${MainActivity.applicationContext().filesDir}/bibliatekaPdf/$fileName")
+                val fileReader = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
+                val pdfRenderer = PdfRenderer(fileReader!!)
+                count = pdfRenderer.pageCount
+                for (i in 0 until count) {
+                    list.add(i)
+                }
+            } catch (_: Throwable) {
+            }
+            val pageNumber = params.key ?: 0
+            val prevKey = if (pageNumber > 0) pageNumber - 1 else null
+            val nextKey = if (count > pageNumber + 1) pageNumber + 1 else null
+            LoadResult.Page(
+                data = list,
+                prevKey = prevKey,
+                nextKey = nextKey
+            )
+        } catch (e: IOException) {
+            LoadResult.Error(e)
+        }
+    }
+}
 
 @Composable
 fun AppNavGraph(
@@ -196,6 +238,26 @@ fun AppNavGraph(
                 coroutineScope = coroutineScope,
                 drawerState = drawerState
             )
+        }
+
+        composable(AllDestinations.BIBLIJATEKA_LIST) {
+            Settings.destinations = AllDestinations.BIBLIJATEKA_LIST
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(
+            AllDestinations.BIBLIJATEKA + "/{title}/{fileName}",
+        ) { stackEntry ->
+            val title = stackEntry.arguments?.getString("title") ?: ""
+            val fileName = stackEntry.arguments?.getString("fileName") ?: ""
+            val page = Pager(PagingConfig(1)) {
+                Biblijateka(fileName)
+            }
+            Biblijateka(navController, title, fileName, page)
         }
 
         composable(
@@ -358,8 +420,15 @@ fun MainConteiner(
             view
         ).isAppearanceLightStatusBars = isAppearanceLight
     }
-    var sorted by remember { mutableIntStateOf(if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) k.getInt("sortedVybranae", Settings.SORT_BY_ABC)
-    else k.getInt("natatki_sort", Settings.SORT_BY_ABC)) }
+    var sorted by remember {
+        mutableIntStateOf(
+            if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) k.getInt(
+                "sortedVybranae",
+                Settings.SORT_BY_ABC
+            )
+            else k.getInt("natatki_sort", Settings.SORT_BY_ABC)
+        )
+    }
     var addFileNatatki by remember { mutableStateOf(false) }
     var removeAllVybranaeDialog by remember { mutableStateOf(false) }
     var removeAllNatatkiDialog by remember { mutableStateOf(false) }
@@ -412,6 +481,7 @@ fun MainConteiner(
                     AllDestinations.AKAFIST_MENU -> navigationActions.navigateToAkafistMenu()
                     AllDestinations.RUJANEC_MENU -> navigationActions.navigateToRujanecMenu()
                     AllDestinations.MAE_NATATKI_MENU -> navigationActions.navigateToMaeNatatkiMenu()
+                    AllDestinations.BIBLIJATEKA_LIST -> navigationActions.navigateToBiblijatekaList()
                 }
                 coroutineScope.launch { drawerState.close() }
             },
@@ -432,6 +502,7 @@ fun MainConteiner(
             AllDestinations.MALITVY_MENU -> stringResource(R.string.malitvy)
             AllDestinations.VYBRANAE_LIST -> stringResource(R.string.MenuVybranoe)
             AllDestinations.MAE_NATATKI_MENU -> stringResource(R.string.maje_natatki)
+            AllDestinations.BIBLIJATEKA_LIST -> stringResource(R.string.bibliateka_carkvy)
             AllDestinations.BIBLIA -> {
                 when (k.getString("perevodBibileMenu", Settings.PEREVODSEMUXI)
                     ?: Settings.PEREVODSEMUXI) {
@@ -512,7 +583,8 @@ fun MainConteiner(
                         }
                         if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.MAE_NATATKI_MENU) {
                             IconButton({
-                                if (currentRoute == AllDestinations.VYBRANAE_LIST) removeAllVybranaeDialog = !removeAllVybranaeDialog
+                                if (currentRoute == AllDestinations.VYBRANAE_LIST) removeAllVybranaeDialog =
+                                    !removeAllVybranaeDialog
                                 else removeAllNatatkiDialog = !removeAllNatatkiDialog
                             }) {
                                 Icon(
@@ -553,7 +625,10 @@ fun MainConteiner(
                                         text = { Text(stringResource(R.string.search_svityia)) }
                                     )
                                 }
-                                if (currentRoute.contains(AllDestinations.VYBRANAE_LIST) || currentRoute.contains(AllDestinations.MAE_NATATKI_MENU)) {
+                                if (currentRoute.contains(AllDestinations.VYBRANAE_LIST) || currentRoute.contains(
+                                        AllDestinations.MAE_NATATKI_MENU
+                                    )
+                                ) {
                                     DropdownMenuItem(
                                         onClick = {
                                             expanded = false
@@ -561,7 +636,10 @@ fun MainConteiner(
                                                 if (sorted == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
                                                 else Settings.SORT_BY_ABC
                                             val edit = k.edit()
-                                            if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) edit.putInt("sortedVybranae", sorted)
+                                            if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) edit.putInt(
+                                                "sortedVybranae",
+                                                sorted
+                                            )
                                             else edit.putInt("natatki_sort", sorted)
                                             edit.apply()
                                         },
@@ -631,11 +709,13 @@ fun MainConteiner(
                                         colorText = PrimaryTextBlack
                                         isAppearanceLight = true
                                     }
+
                                     data[5].toInt() > 0 -> {
                                         colorBlackboard = Primary
                                         colorText = PrimaryTextBlack
                                         isAppearanceLight = true
                                     }
+
                                     else -> {
                                         colorBlackboard = Divider
                                     }
@@ -672,19 +752,42 @@ fun MainConteiner(
                         }
                     }
 
-                    AllDestinations.BOGASLUJBOVYIA_MENU -> BogaslujbovyiaMenu(navController, innerPadding, Settings.MENU_BOGASLUJBOVYIA)
+                    AllDestinations.BOGASLUJBOVYIA_MENU -> BogaslujbovyiaMenu(
+                        navController,
+                        innerPadding,
+                        Settings.MENU_BOGASLUJBOVYIA
+                    )
 
-                    AllDestinations.AKAFIST_MENU -> BogaslujbovyiaMenu(navController, innerPadding, Settings.MENU_AKAFIST)
+                    AllDestinations.AKAFIST_MENU -> BogaslujbovyiaMenu(
+                        navController,
+                        innerPadding,
+                        Settings.MENU_AKAFIST
+                    )
 
-                    AllDestinations.RUJANEC_MENU -> BogaslujbovyiaMenu(navController, innerPadding, Settings.MENU_RUJANEC)
+                    AllDestinations.BIBLIJATEKA_LIST -> BiblijtekaList(navController, innerPadding)
+
+                    AllDestinations.RUJANEC_MENU -> BogaslujbovyiaMenu(
+                        navController,
+                        innerPadding,
+                        Settings.MENU_RUJANEC
+                    )
 
                     AllDestinations.MAE_NATATKI_MENU -> {
-                        MaeNatatki(innerPadding, sorted, addFileNatatki, removeAllNatatki, onDismissAddFile = {
-                            addFileNatatki = false
-                        })
+                        MaeNatatki(
+                            innerPadding,
+                            sorted,
+                            addFileNatatki,
+                            removeAllNatatki,
+                            onDismissAddFile = {
+                                addFileNatatki = false
+                            })
                     }
 
-                    AllDestinations.MALITVY_MENU -> BogaslujbovyiaMenu(navController, innerPadding, Settings.MENU_MALITVY)
+                    AllDestinations.MALITVY_MENU -> BogaslujbovyiaMenu(
+                        navController,
+                        innerPadding,
+                        Settings.MENU_MALITVY
+                    )
 
                     AllDestinations.BIBLIA -> BibliaMenu(
                         navController,

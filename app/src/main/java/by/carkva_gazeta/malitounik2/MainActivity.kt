@@ -18,6 +18,7 @@ import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -1880,6 +1881,10 @@ class MainActivity : ComponentActivity(), SensorEventListener,
         //if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
         if (backPressed + 2000 > System.currentTimeMillis()) {
             moveTaskToBack(true)
+            val k = getSharedPreferences("biblia", Context.MODE_PRIVATE)
+            val prefEditors = k.edit()
+            prefEditors.putBoolean("setAlarm", true)
+            prefEditors.apply()
             finish()
             /*for ((key) in k.all) {
                 if (key.contains("Scroll") || key.contains("position")) {
@@ -1930,11 +1935,20 @@ class MainActivity : ComponentActivity(), SensorEventListener,
         outState.putBoolean("dzenNoch", dzenNoch)
     }
 
+    init {
+        instance = this
+    }
+
     companion object {
+        private var instance: MainActivity? = null
         private val storage: FirebaseStorage
             get() = Firebase.storage
         val referens: StorageReference
             get() = storage.reference
+
+        fun applicationContext(): Context {
+            return instance!!.applicationContext
+        }
     }
 }
 

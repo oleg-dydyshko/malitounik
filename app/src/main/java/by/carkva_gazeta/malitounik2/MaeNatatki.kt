@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -88,7 +87,6 @@ fun MaeNatatki(
             }
         }
     }
-    val lazyColumnState = rememberLazyListState()
     var isNatatkaVisable by rememberSaveable { mutableStateOf(false) }
     var natatkaPosition by remember { mutableIntStateOf(0) }
     var removeNatatka by remember { mutableStateOf(false) }
@@ -151,9 +149,7 @@ fun MaeNatatki(
     if (removeAllNatatki) {
         fileList.clear()
     }
-    LazyColumn(
-        state = lazyColumnState
-    ) {
+    LazyColumn {
         items(fileList.size) { index ->
             Row(
                 modifier = Modifier
@@ -257,7 +253,7 @@ fun DialogMyNatatli(
                 }
             ) {
                 if (editMode) Text(stringResource(R.string.save_sabytie), fontSize = 18.sp)
-                else Text(stringResource(R.string.close), fontSize = 18.sp)
+                else Text(stringResource(R.string.cansel), fontSize = 18.sp)
             }
         }
     )

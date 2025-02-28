@@ -5,6 +5,8 @@ import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik2.views.AllDestinations.AKAFIST_MENU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA_LIST
+import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIJATEKA
+import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIJATEKA_LIST
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BOGASLUJBOVYIA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BOGASLUJBOVYIA_MENU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.CYTANNI_LIST
@@ -32,6 +34,8 @@ object AllDestinations {
     const val AKAFIST_MENU = "Akafist_Menu"
     const val RUJANEC_MENU = "Rujanec_Menu"
     const val MAE_NATATKI_MENU = "Mae_Natatki_Menu"
+    const val BIBLIJATEKA_LIST = "Biblijateka_List"
+    const val BIBLIJATEKA = "Biblijateka"
 }
 
 class AppNavigationActions(private val navController: NavHostController, k: SharedPreferences) {
@@ -114,6 +118,22 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
         }
         edit.putString("navigate", BIBLIA)
         edit.apply()
+    }
+
+    fun navigateToBiblijatekaList() {
+        navController.navigate(BIBLIJATEKA_LIST) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: BIBLIJATEKA_LIST) {
+                inclusive = true
+            }
+        }
+        edit.putString("navigate", BIBLIJATEKA_LIST)
+        edit.apply()
+    }
+
+    fun navigateToBiblijateka(title: String, fileName: String) {
+        navController.navigate("$BIBLIJATEKA/$title/$fileName") {
+            BIBLIJATEKA
+        }
     }
 
     fun navigateToCytanniList(title: String, cytanne: String, biblia: Int, perevod: String, position: Int) {

@@ -2,4 +2,5 @@
 <paths>
     <external-files-path name="malitounik" path="Download/" />
     <files-path name="sviatyia" path="icons/" />
+    <files-path name="pdf" path="bibliatekaPdf/" />
 </paths>

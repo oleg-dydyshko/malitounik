@@ -1344,7 +1344,7 @@ fun CytanniList(
                     }
                 }
             }
-
+            //val flingBehavior = rememberSnapFlingBehavior(lazyListState = lazyRowState)
             Column {
                 if (biblia == Settings.CHYTANNI_BIBLIA && listState.size - 1 != 0) {
                     LazyRow(
@@ -1393,7 +1393,7 @@ fun CytanniList(
                     }
                 }
                 if (biblia == Settings.CHYTANNI_BIBLIA && positionRemember != -1) {
-                    LaunchedEffect(Unit) {
+                    LaunchedEffect(positionRemember) {
                         coroutineScope.launch {
                             listState[selectedIndex].scrollToItem(positionRemember)
                         }
@@ -1432,7 +1432,7 @@ fun CytanniList(
                                 tit = resultPage[i].title
                             }
                         }
-                        LaunchedEffect(Unit) {
+                        LaunchedEffect(resultCount) {
                             coroutineScope.launch {
                                 listState[selectedIndex].scrollToItem(resultCount)
                             }
@@ -1711,7 +1711,7 @@ fun CytanniList(
                         0.dp
                     )
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.tertiary)
+                    .background(MaterialTheme.colorScheme.background)
                     .verticalScroll(rememberScrollState())
             ) {
                 val resultParalel = getBible(context, paralelChtenia, perevod, biblia, true)
@@ -2022,7 +2022,7 @@ fun knigaBiblii(kniga: String): Int {
     if (kniga == "1 Ян") bible = 58
     if (kniga == "2 Ян") bible = 59
     if (kniga == "3 Ян") bible = 60
-    if (kniga == "Юды") bible = 61
+    if (kniga == "Юд") bible = 61
     if (kniga == "Рым") bible = 62
     if (kniga == "1 Кар") bible = 63
     if (kniga == "2 Кар") bible = 64

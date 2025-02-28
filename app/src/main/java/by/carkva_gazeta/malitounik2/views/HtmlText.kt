@@ -1,5 +1,6 @@
 package by.carkva_gazeta.malitounik2.views
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -8,7 +9,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
@@ -71,9 +71,9 @@ fun HtmlText(
             }
         }
     }*/
-    val context = LocalContext.current
-    val dzenHoch by remember { mutableStateOf((context as MainActivity).dzenNoch) }
-    val newText = if (dzenHoch) text.replace("#d00505", "#ff6666", true)
+    val context = LocalActivity.current
+    val dzenHoch by remember { mutableStateOf((context as? MainActivity)?.dzenNoch) }
+    val newText = if (dzenHoch == true) text.replace("#d00505", "#ff6666", true)
     else text
     Text(
         fontWeight = fontWeight,
