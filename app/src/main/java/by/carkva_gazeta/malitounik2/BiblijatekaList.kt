@@ -203,7 +203,10 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
                             filteredItems[fileListPosition][0],
                             filteredItems[fileListPosition][2]
                         )
-                    })
+                    },
+                        inProcess = {
+                            isProgressVisable = it
+                        })
                 }
                 isDialogBiblijatekaVisable = false
             }
@@ -221,7 +224,10 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
                         filteredItems[fileListPosition][0],
                         filteredItems[fileListPosition][2]
                     )
-                })
+                },
+                    inProcess = {
+                        isProgressVisable = it
+                    })
                 isDialogNoWIFIVisable = false
             }
         )
@@ -291,7 +297,9 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
             }
         }
         LazyColumn {
-            items(filteredItems.size, key = { index -> filteredItems[index][2] + filteredItems[index][4] }) { index ->
+            items(
+                filteredItems.size,
+                key = { index -> filteredItems[index][2] + filteredItems[index][4] }) { index ->
                 Column {
                     Row(
                         modifier = Modifier
@@ -373,7 +381,12 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
     }
 }
 
-fun addNiadaunia(context: Context, filteredItems: ArrayList<ArrayList<String>>, index: Int, viewModel: FilterBiblijatekaModel) {
+fun addNiadaunia(
+    context: Context,
+    filteredItems: ArrayList<ArrayList<String>>,
+    index: Int,
+    viewModel: FilterBiblijatekaModel
+) {
     val gson = Gson()
     val type = TypeToken.getParameterized(
         ArrayList::class.java,
@@ -421,8 +434,14 @@ fun fileExistsBiblijateka(context: Context, fileName: String): Boolean {
     return file.exists()
 }
 
-private fun writeFile(context: Context, url: String, loadComplete: () -> Unit) {
+private fun writeFile(
+    context: Context,
+    url: String,
+    loadComplete: () -> Unit,
+    inProcess: (Boolean) -> Unit
+) {
     CoroutineScope(Dispatchers.Main).launch {
+        inProcess(true)
         var error = false
         try {
             for (i in 0..2) {
@@ -436,6 +455,7 @@ private fun writeFile(context: Context, url: String, loadComplete: () -> Unit) {
             saveFile(context, url)
             loadComplete()
         }
+        inProcess(false)
     }
 }
 

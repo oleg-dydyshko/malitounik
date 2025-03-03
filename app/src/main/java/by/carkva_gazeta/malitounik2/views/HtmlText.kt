@@ -9,10 +9,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import by.carkva_gazeta.malitounik2.MainActivity
@@ -75,11 +80,15 @@ fun HtmlText(
     val dzenHoch by remember { mutableStateOf((context as? MainActivity)?.dzenNoch) }
     val newText = if (dzenHoch == true) text.replace("#d00505", "#ff6666", true)
     else text
+    val uriHandler = LocalUriHandler.current
     Text(
         fontWeight = fontWeight,
         color = color,
         modifier = modifier,
-        text = AnnotatedString.fromHtml(newText),
+        text = AnnotatedString.fromHtml(newText, TextLinkStyles(SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline))) { link ->
+            val url = (link as LinkAnnotation.Url).url
+            uriHandler.openUri(url)
+        },
         fontSize = fontSize,
         lineHeight = fontSize * 1.15f,
         textAlign = textAlign

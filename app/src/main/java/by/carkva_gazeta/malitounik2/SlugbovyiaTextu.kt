@@ -3844,6 +3844,7 @@ class SlugbovyiaTextu {
                 LITURHIJA
             )
         )
+        datMinALL.add(SlugbovyiaTextuData(69, "40 мучанікаў Себастыйскіх", R.raw.mm_09_03_40_muczanikau_siebastyjskich_viaczernia, VIACZERNIA))
     }
 
     fun getNazouSluzby(sluzba: Int): String {

@@ -82,6 +82,7 @@ import by.carkva_gazeta.malitounik2.KaliandarScreenYear
 import by.carkva_gazeta.malitounik2.MaeNatatki
 import by.carkva_gazeta.malitounik2.MainActivity
 import by.carkva_gazeta.malitounik2.MalitvyListAll
+import by.carkva_gazeta.malitounik2.PiesnyList
 import by.carkva_gazeta.malitounik2.R
 import by.carkva_gazeta.malitounik2.SearchBible
 import by.carkva_gazeta.malitounik2.Settings
@@ -242,6 +243,50 @@ fun AppNavGraph(
 
         composable(AllDestinations.BIBLIJATEKA_LIST) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_LIST
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(AllDestinations.PIESNY_LIST) {
+            Settings.destinations = AllDestinations.PIESNY_LIST
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(AllDestinations.PADRYXTOUKA) {
+            Bogaslujbovyia(navController, stringResource(R.string.spovedz), R.raw.padryxtouka_da_spovedzi)
+        }
+
+        composable(AllDestinations.PAMIATKA) {
+            Bogaslujbovyia(navController, stringResource(R.string.pamiatka), R.raw.pamiatka)
+        }
+
+        composable(AllDestinations.SVAITY_MUNU) {
+            Settings.destinations = AllDestinations.SVAITY_MUNU
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(AllDestinations.PARAFII_BGKC) {
+            Settings.destinations = AllDestinations.PARAFII_BGKC
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(AllDestinations.PASHALIA) {
+            Settings.destinations = AllDestinations.PASHALIA
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
@@ -482,6 +527,12 @@ fun MainConteiner(
                     AllDestinations.RUJANEC_MENU -> navigationActions.navigateToRujanecMenu()
                     AllDestinations.MAE_NATATKI_MENU -> navigationActions.navigateToMaeNatatkiMenu()
                     AllDestinations.BIBLIJATEKA_LIST -> navigationActions.navigateToBiblijatekaList()
+                    AllDestinations.PIESNY_LIST -> navigationActions.navigateToPiesnyList()
+                    AllDestinations.PADRYXTOUKA -> navigationActions.navigateToPadryxtouka()
+                    AllDestinations.PAMIATKA -> navigationActions.navigateToPamiatka()
+                    AllDestinations.SVAITY_MUNU -> navigationActions.navigateToSviaty()
+                    AllDestinations.PARAFII_BGKC -> navigationActions.navigateToParafiiBgkc()
+                    AllDestinations.PASHALIA -> navigationActions.navigateToPashalia()
                 }
                 coroutineScope.launch { drawerState.close() }
             },
@@ -503,6 +554,10 @@ fun MainConteiner(
             AllDestinations.VYBRANAE_LIST -> stringResource(R.string.MenuVybranoe)
             AllDestinations.MAE_NATATKI_MENU -> stringResource(R.string.maje_natatki)
             AllDestinations.BIBLIJATEKA_LIST -> stringResource(R.string.bibliateka_carkvy)
+            AllDestinations.PIESNY_LIST -> stringResource(R.string.song)
+            AllDestinations.SVAITY_MUNU -> stringResource(R.string.sviaty)
+            AllDestinations.PARAFII_BGKC -> stringResource(R.string.parafii)
+            AllDestinations.PASHALIA -> stringResource(R.string.paschalia)
             AllDestinations.BIBLIA -> {
                 when (k.getString("perevodBibileMenu", Settings.PEREVODSEMUXI)
                     ?: Settings.PEREVODSEMUXI) {
@@ -765,6 +820,8 @@ fun MainConteiner(
                     )
 
                     AllDestinations.BIBLIJATEKA_LIST -> BiblijtekaList(navController, innerPadding)
+
+                    AllDestinations.PIESNY_LIST -> PiesnyList(navController, innerPadding)
 
                     AllDestinations.RUJANEC_MENU -> BogaslujbovyiaMenu(
                         navController,

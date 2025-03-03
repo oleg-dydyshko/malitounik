@@ -15,8 +15,14 @@ import by.carkva_gazeta.malitounik2.views.AllDestinations.KALIANDAR_YEAR
 import by.carkva_gazeta.malitounik2.views.AllDestinations.MAE_NATATKI_MENU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.MALITVY_LIST_ALL
 import by.carkva_gazeta.malitounik2.views.AllDestinations.MALITVY_MENU
+import by.carkva_gazeta.malitounik2.views.AllDestinations.PADRYXTOUKA
+import by.carkva_gazeta.malitounik2.views.AllDestinations.PAMIATKA
+import by.carkva_gazeta.malitounik2.views.AllDestinations.PARAFII_BGKC
+import by.carkva_gazeta.malitounik2.views.AllDestinations.PASHALIA
+import by.carkva_gazeta.malitounik2.views.AllDestinations.PIESNY_LIST
 import by.carkva_gazeta.malitounik2.views.AllDestinations.RUJANEC_MENU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.SEARCH_BIBLIA
+import by.carkva_gazeta.malitounik2.views.AllDestinations.SVAITY_MUNU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.VYBRANAE_LIST
 
 object AllDestinations {
@@ -36,6 +42,12 @@ object AllDestinations {
     const val MAE_NATATKI_MENU = "Mae_Natatki_Menu"
     const val BIBLIJATEKA_LIST = "Biblijateka_List"
     const val BIBLIJATEKA = "Biblijateka"
+    const val PIESNY_LIST = "Piesny_List"
+    const val PAMIATKA = "Pamiatka"
+    const val PADRYXTOUKA = "Padryxtouka"
+    const val SVAITY_MUNU = "Svity_Menu"
+    const val PARAFII_BGKC = "Parafii_Bgkc"
+    const val PASHALIA = "Pashalia"
 }
 
 class AppNavigationActions(private val navController: NavHostController, k: SharedPreferences) {
@@ -130,10 +142,62 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
         edit.apply()
     }
 
+    fun navigateToPiesnyList() {
+        navController.navigate(PIESNY_LIST) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: PIESNY_LIST) {
+                inclusive = true
+            }
+        }
+        edit.putString("navigate", PIESNY_LIST)
+        edit.apply()
+    }
+
     fun navigateToBiblijateka(title: String, fileName: String) {
         navController.navigate("$BIBLIJATEKA/$title/$fileName") {
             BIBLIJATEKA
         }
+    }
+
+    fun navigateToPamiatka() {
+        navController.navigate(PAMIATKA) {
+            PAMIATKA
+        }
+    }
+
+    fun navigateToPadryxtouka() {
+        navController.navigate(PADRYXTOUKA) {
+            PADRYXTOUKA
+        }
+    }
+
+    fun navigateToSviaty() {
+        navController.navigate(SVAITY_MUNU) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: SVAITY_MUNU) {
+                inclusive = true
+            }
+        }
+        edit.putString("navigate", SVAITY_MUNU)
+        edit.apply()
+    }
+
+    fun navigateToParafiiBgkc() {
+        navController.navigate(PARAFII_BGKC) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: PARAFII_BGKC) {
+                inclusive = true
+            }
+        }
+        edit.putString("navigate", PARAFII_BGKC)
+        edit.apply()
+    }
+
+    fun navigateToPashalia() {
+        navController.navigate(PASHALIA) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: PASHALIA) {
+                inclusive = true
+            }
+        }
+        edit.putString("navigate", PASHALIA)
+        edit.apply()
     }
 
     fun navigateToCytanniList(title: String, cytanne: String, biblia: Int, perevod: String, position: Int) {

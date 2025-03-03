@@ -5,6 +5,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.WindowManager
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
@@ -162,12 +163,18 @@ class CytanniListItems(
     })
     var filteredItems: StateFlow<ArrayList<CytanniListData>> = _filteredItems
     private fun checkList(): ArrayList<CytanniListData> {
+        val result = ArrayList<CytanniListData>()
+        val removeList = ArrayList<CytanniListItemData>()
         for(i in 0 until cytanniListItemData.value.size) {
+            if (cytanniListItemData.value[i].page !in page - 1 .. page + 1) {
+                removeList.add(cytanniListItemData.value[i])
+            }
             if (cytanniListItemData.value[i].page == page) {
-                return cytanniListItemData.value[i].item
+                result.addAll(cytanniListItemData.value[i].item)
             }
         }
-        return ArrayList()
+        cytanniListItemData.value.removeAll(removeList.toSet())
+        return result
     }
 }
 

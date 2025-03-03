@@ -412,6 +412,136 @@ fun DrawView(
             shape = MaterialTheme.shapes.medium,
             modifier = modifier.padding(horizontal = 5.dp)
         )
+        NavigationDrawerItem(
+            label = {
+                Text(
+                    text = stringResource(id = R.string.song),
+                )
+            },
+            selected = route == AllDestinations.PIESNY_LIST,
+            onClick = {
+                navigateToRazdel(AllDestinations.PIESNY_LIST)
+            },
+            icon = {
+                Icon(
+                    modifier = Modifier.size(24.dp, 24.dp),
+                    painter = painterResource(R.drawable.krest),
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = null
+                )
+            },
+            shape = MaterialTheme.shapes.medium,
+            modifier = modifier.padding(horizontal = 5.dp)
+        )
+        HorizontalDivider(
+            modifier = modifier.padding(vertical = 10.dp),
+            color = MaterialTheme.colorScheme.secondary
+        )
+        NavigationDrawerItem(
+            label = {
+                Text(
+                    text = stringResource(id = R.string.spovedz),
+                )
+            },
+            selected = route == AllDestinations.PADRYXTOUKA,
+            onClick = {
+                navigateToRazdel(AllDestinations.PADRYXTOUKA)
+            },
+            icon = {
+                Icon(
+                    modifier = Modifier.size(24.dp, 24.dp),
+                    painter = painterResource(R.drawable.krest),
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = null
+                )
+            },
+            shape = MaterialTheme.shapes.medium,
+            modifier = modifier.padding(horizontal = 5.dp)
+        )
+        NavigationDrawerItem(
+            label = {
+                Text(
+                    text = stringResource(id = R.string.pamiatka),
+                )
+            },
+            selected = route == AllDestinations.PAMIATKA,
+            onClick = {
+                navigateToRazdel(AllDestinations.PAMIATKA)
+            },
+            icon = {
+                Icon(
+                    modifier = Modifier.size(24.dp, 24.dp),
+                    painter = painterResource(R.drawable.krest),
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = null
+                )
+            },
+            shape = MaterialTheme.shapes.medium,
+            modifier = modifier.padding(horizontal = 5.dp)
+        )
+        NavigationDrawerItem(
+            label = {
+                Text(
+                    text = stringResource(id = R.string.sviaty),
+                )
+            },
+            selected = route == AllDestinations.SVAITY_MUNU,
+            onClick = {
+                navigateToRazdel(AllDestinations.SVAITY_MUNU)
+            },
+            icon = {
+                Icon(
+                    modifier = Modifier.size(24.dp, 24.dp),
+                    painter = painterResource(R.drawable.krest),
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = null
+                )
+            },
+            shape = MaterialTheme.shapes.medium,
+            modifier = modifier.padding(horizontal = 5.dp)
+        )
+        NavigationDrawerItem(
+            label = {
+                Text(
+                    text = stringResource(id = R.string.parafii),
+                )
+            },
+            selected = route == AllDestinations.PARAFII_BGKC,
+            onClick = {
+                navigateToRazdel(AllDestinations.PARAFII_BGKC)
+            },
+            icon = {
+                Icon(
+                    modifier = Modifier.size(24.dp, 24.dp),
+                    painter = painterResource(R.drawable.krest),
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = null
+                )
+            },
+            shape = MaterialTheme.shapes.medium,
+            modifier = modifier.padding(horizontal = 5.dp)
+        )
+        NavigationDrawerItem(
+            label = {
+                Text(
+                    text = stringResource(id = R.string.paschalia),
+                )
+            },
+            selected = route == AllDestinations.PASHALIA,
+            onClick = {
+                navigateToRazdel(AllDestinations.PASHALIA)
+            },
+            icon = {
+                Icon(
+                    modifier = Modifier.size(24.dp, 24.dp),
+                    painter = painterResource(R.drawable.krest),
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = null
+                )
+            },
+            shape = MaterialTheme.shapes.medium,
+            modifier = modifier.padding(horizontal = 5.dp)
+        )
     }
 }
 
