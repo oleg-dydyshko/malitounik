@@ -601,6 +601,7 @@ fun getTtyedzBialikagaTydnia(menuItem: Int): ArrayList<MineiaList> {
     var dayOfYear: Int
     var day: Int
     val mineiaList = ArrayList<MineiaList>()
+    val cal = Calendar.getInstance()
     for (i in mineia.indices) {
         day = mineia[i].day
         when {
@@ -620,7 +621,6 @@ fun getTtyedzBialikagaTydnia(menuItem: Int): ArrayList<MineiaList> {
                 dayOfYear = day
             }
         }
-        val cal = Calendar.getInstance()
         cal.set(Calendar.DAY_OF_YEAR, dayOfYear)
         val opisanie = if (menuItem == Settings.MENU_TRYEDZ_POSNAIA_1 || menuItem == Settings.MENU_TRYEDZ_POSNAIA_2 || menuItem == Settings.MENU_TRYEDZ_POSNAIA_3 || menuItem == Settings.MENU_TRYEDZ_POSNAIA_4 || menuItem == Settings.MENU_TRYEDZ_POSNAIA_5 || menuItem == Settings.MENU_TRYEDZ_POSNAIA_6) ""
         else ". " + slugbovyiaTextu.getNazouSluzby(mineia[i].sluzba)
@@ -676,6 +676,7 @@ fun getMineiaMesiachnaia(subTitle: String): ArrayList<MineiaList> {
     var dayOfYear: Int
     var day: Int
     val mineiaList = ArrayList<MineiaList>()
+    val cal = Calendar.getInstance() as GregorianCalendar
     for (i in mineia.indices) {
         day = mineia[i].day
         when {
@@ -692,10 +693,10 @@ fun getMineiaMesiachnaia(subTitle: String): ArrayList<MineiaList> {
             }
 
             else -> {
+                if (!cal.isLeapYear(cal[Calendar.YEAR]) && day > 59) day -= 1
                 dayOfYear = day
             }
         }
-        val cal = Calendar.getInstance()
         cal.set(Calendar.DAY_OF_YEAR, dayOfYear)
         val opisanie = ". " + slugbovyiaTextu.getNazouSluzby(mineia[i].sluzba)
         if (cal[Calendar.MONTH] == mounth) {

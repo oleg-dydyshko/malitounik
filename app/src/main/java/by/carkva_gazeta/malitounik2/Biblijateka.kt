@@ -8,7 +8,6 @@ import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
 import android.print.PrintAttributes
 import android.print.PrintManager
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -20,6 +19,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.calculateZoom
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -80,6 +81,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -97,6 +99,7 @@ import by.carkva_gazeta.malitounik2.ui.theme.PrimaryTextBlack
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -303,7 +306,7 @@ fun Biblijateka(
                             .padding(10.dp)
                             .background(MaterialTheme.colorScheme.tertiary)
                     ) {
-                        DropdownMenuPdf(pageState, lazyPagingItems.itemCount, selectPage = { selectPage = it })
+                        DropdownMenuPdf(lazyPagingItems.itemCount, selectPage = { selectPage = it })
                         TextButton(
                             onClick = {
                                 showDropdown = false
@@ -339,7 +342,6 @@ fun Biblijateka(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DropdownMenuPdf(
-    pageState: String,
     count: Int,
     selectPage: (Int) -> Unit
 ) {
@@ -395,6 +397,12 @@ fun SpisStaronak(
     var width by remember { mutableIntStateOf(0) }
     val pdfRenderer = PdfRenderer(fileReader)
     var zoomAll by remember { mutableFloatStateOf(1f) }
+    var offsetX by remember { mutableFloatStateOf(0f) }
+    var offsetY by remember { mutableFloatStateOf(0f) }
+    if (zoomAll == 1f) {
+        offsetX = 0f
+        offsetY = 0f
+    }
     //flingBehavior = rememberSnapFlingBehavior(lazyListState = pagerState),
     LazyColumn(
         state = lazyListState,
@@ -404,11 +412,17 @@ fun SpisStaronak(
             }
             .fillMaxSize()
             .clipToBounds()
+            .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
             .graphicsLayer {
                 scaleX = zoomAll
                 scaleY = zoomAll
             }
             .pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    offsetX += dragAmount.x * 3
+                    offsetY += dragAmount.y * 3
+                }
                 awaitEachGesture {
                     awaitFirstDown()
                     do {
@@ -433,7 +447,6 @@ fun SpisStaronak(
             LaunchedEffect(index) {
                 pageState((lazyListState.firstVisibleItemIndex + 1).toString() + "/" + lazyPagingItems.itemCount)
             }
-            Log.d("Oleg", index.toString())
             var page: PdfRenderer.Page? = null
             var bitmap: Bitmap? = null
             try {

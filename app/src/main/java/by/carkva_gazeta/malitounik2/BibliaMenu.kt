@@ -106,7 +106,7 @@ fun BibliaMenu(
     )
     val context = LocalContext.current
     val selectState = remember(list) { list.map { false }.toMutableStateList() }
-    LaunchedEffect(Unit) {
+    LaunchedEffect(perevod) {
         CoroutineScope(Dispatchers.Main).launch {
             when (perevod) {
                 Settings.PEREVODSEMUXI -> {

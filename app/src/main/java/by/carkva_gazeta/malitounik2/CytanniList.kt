@@ -36,7 +36,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
@@ -103,6 +102,8 @@ import androidx.core.text.isDigitsOnly
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik2.ui.theme.Button
 import by.carkva_gazeta.malitounik2.ui.theme.Divider
@@ -120,6 +121,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
@@ -127,8 +130,46 @@ import java.io.File
 import java.io.InputStreamReader
 import java.util.Calendar
 
+val cytanniListItemData = MutableStateFlow(ArrayList<CytanniListItemData>())
 var autoScrollJob: Job? = null
 var autoScrollTextVisableJob: Job? = null
+
+class CytanniListItems(
+    biblia: Int,
+    private val page: Int,
+    cytanne: String,
+    perevod: String
+) : ViewModel() {
+    private val t1 = cytanne.indexOf(";")
+    private val knigaText = if (t1 == -1) cytanne.substringBeforeLast(" ")
+    else {
+        val sb = cytanne.substring(0, t1)
+        sb.substringBeforeLast(" ")
+    }
+    private val chteniaNewPage = knigaText + " ${page + 1}"
+    private val mChekList = checkList()
+    private val _filteredItems = MutableStateFlow(if (mChekList.isEmpty()) {
+        val resultPage = if (biblia == Settings.CHYTANNI_BIBLIA) getBible(
+            chteniaNewPage,
+            perevod,
+            biblia
+        )
+        else getBible(cytanne, perevod, biblia, true)
+        cytanniListItemData.value.add(CytanniListItemData(page, resultPage))
+        resultPage
+    } else {
+        mChekList
+    })
+    var filteredItems: StateFlow<ArrayList<CytanniListData>> = _filteredItems
+    private fun checkList(): ArrayList<CytanniListData> {
+        for(i in 0 until cytanniListItemData.value.size) {
+            if (cytanniListItemData.value[i].page == page) {
+                return cytanniListItemData.value[i].item
+            }
+        }
+        return ArrayList()
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -457,6 +498,9 @@ fun CytanniList(
                     )
                 }
                 prefEditors.apply()
+                cytanniListItemData.value.clear()
+                autoScrollJob?.cancel()
+                autoScrollTextVisableJob?.cancel()
                 backPressHandled = true
                 navController.popBackStack()
             }
@@ -1400,7 +1444,6 @@ fun CytanniList(
                     }
                     positionRemember = -1
                 }
-
                 HorizontalPager(
                     pageSpacing = 10.dp,
                     state = pagerState,
@@ -1408,14 +1451,8 @@ fun CytanniList(
                     verticalAlignment = Alignment.Top,
                     userScrollEnabled = biblia == Settings.CHYTANNI_BIBLIA
                 ) { page ->
-                    val chteniaNewPage = knigaText + " ${page + 1}"
-                    val resultPage = if (biblia == Settings.CHYTANNI_BIBLIA) getBible(
-                        context,
-                        chteniaNewPage,
-                        perevod,
-                        biblia
-                    )
-                    else getBible(context, cytanne, perevod, biblia, true)
+                    val viewModel = CytanniListItems(biblia, page, cytanne, perevod)
+                    val resultPage by viewModel.filteredItems.collectAsStateWithLifecycle()
                     if (biblia != Settings.CHYTANNI_BIBLIA && positionRemember != -1) {
                         var resultCount = 0
                         if (positionRemember != 0) {
@@ -1444,7 +1481,7 @@ fun CytanniList(
                             context.resources.openRawResource(R.raw.biblia_error)
                         val isr = InputStreamReader(inputStream)
                         val reader = BufferedReader(isr)
-                        resultPage.add(CytanniListData(subTitle, reader.readText()))
+                        resultPage.add(CytanniListData(0, subTitle, reader.readText()))
                         isPerevodError = true
                     } else {
                         isPerevodError = false
@@ -1551,15 +1588,15 @@ fun CytanniList(
                                 )
                             }
                         }
-                        itemsIndexed(resultPage) { index, res ->
+                        items(resultPage.size, key = { index -> resultPage[index].id }) { index ->
                             HtmlText(
                                 modifier = if (!autoScrollSensor && !showDropdown) {
                                     Modifier
                                         .combinedClickable(
                                             onClick = {
-                                                if (!isSelectMode && isParallel && res.parallel != "+-+") {
+                                                if (!isSelectMode && isParallel && resultPage[index].parallel != "+-+") {
                                                     isParallelVisable = true
-                                                    paralelChtenia = res.parallel
+                                                    paralelChtenia = resultPage[index].parallel
                                                 } else {
                                                     selectState[index] = !selectState[index]
                                                 }
@@ -1574,13 +1611,13 @@ fun CytanniList(
                                 }
                                     .padding(horizontal = 10.dp)
                                     .background(if (selectState[index]) Post else Color.Unspecified),
-                                text = res.text,
+                                text = resultPage[index].text,
                                 fontSize = fontSize.sp,
                                 color = if (selectState[index]) PrimaryText else MaterialTheme.colorScheme.secondary
                             )
-                            if (isParallel && res.parallel != "+-+") {
+                            if (isParallel && resultPage[index].parallel != "+-+") {
                                 Text(
-                                    text = res.parallel,
+                                    text = resultPage[index].parallel,
                                     modifier = Modifier
                                         .padding(horizontal = 10.dp),
                                     fontSize = (fontSize - 4).sp,
@@ -1714,7 +1751,7 @@ fun CytanniList(
                     .background(MaterialTheme.colorScheme.background)
                     .verticalScroll(rememberScrollState())
             ) {
-                val resultParalel = getBible(context, paralelChtenia, perevod, biblia, true)
+                val resultParalel = getBible(paralelChtenia, perevod, biblia, true)
                 for (i in resultParalel.indices) {
                     HtmlText(
                         modifier = Modifier
@@ -1730,16 +1767,17 @@ fun CytanniList(
 }
 
 fun getBible(
-    context: Context,
     cytanne: String,
     perevod: String,
     biblia: Int,
     isTitle: Boolean = false
 ): ArrayList<CytanniListData> {
+    val context = MainActivity.applicationContext()
     val result = ArrayList<CytanniListData>()
     try {
         val list = cytanne.split(";")
         var knigaText = ""
+        var id = 0
         for (i in list.indices) {
             val itemList = list[i].trim()
             if (itemList != "") {
@@ -1866,6 +1904,7 @@ fun getBible(
                                     if (e > 0) {
                                         result.add(
                                             CytanniListData(
+                                                id,
                                                 "${
                                                     getNameBook(
                                                         context,
@@ -1880,6 +1919,7 @@ fun getBible(
                                     } else {
                                         result.add(
                                             CytanniListData(
+                                                id,
                                                 if (biblia != Settings.CHYTANNI_VYBRANAE) {
                                                     "${
                                                         getNameBook(
@@ -1915,6 +1955,7 @@ fun getBible(
                                             )
                                         )
                                     }
+                                    id++
                                 }
                                 var text = textBible[w].styx
                                 if (isInt) {
@@ -1928,6 +1969,7 @@ fun getBible(
                                 }
                                 result.add(
                                     CytanniListData(
+                                        id,
                                         if (biblia != Settings.CHYTANNI_VYBRANAE) {
                                             "${
                                                 getNameBook(
@@ -1947,6 +1989,7 @@ fun getBible(
                                         textBible[w].paralelStyx
                                     )
                                 )
+                                id++
                             }
                         }
                     }
@@ -2349,7 +2392,10 @@ fun getParalel(kniga: Int, glava: Int, styx: Int, isPsaltyrGreek: Boolean): Stri
     return translateToBelarus(res)
 }
 
+data class CytanniListItemData(val page: Int, val item: ArrayList<CytanniListData>)
+
 data class CytanniListData(
+    val id: Int,
     val title: String,
     val text: String = "",
     val parallel: String = "+-+"

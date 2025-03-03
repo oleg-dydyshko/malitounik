@@ -4065,8 +4065,8 @@ class SlugbovyiaTextu {
         var realDay = day
         val calendar = GregorianCalendar()
         calendar[Calendar.YEAR] = year
-        var addDay = 0
-        if (!calendar.isLeapYear(calendar.get(Calendar.YEAR))) addDay = 1
+        //var addDay = 0
+        //if (!calendar.isLeapYear(calendar.get(Calendar.YEAR))) addDay = 1
         when (day) {
             AICOU_VII_SUSVETNAGA_SABORY -> {
                 //Айцоў VII Сусьветнага Сабору
@@ -4074,7 +4074,7 @@ class SlugbovyiaTextu {
                     calendar.set(calendar.get(Calendar.YEAR), Calendar.OCTOBER, i)
                     val wik = calendar.get(Calendar.DAY_OF_WEEK)
                     if (wik == Calendar.SUNDAY) {
-                        realDay = calendar.get(Calendar.DAY_OF_YEAR) + addDay
+                        realDay = calendar.get(Calendar.DAY_OF_YEAR)
                         break
                     }
                 }
@@ -4086,7 +4086,7 @@ class SlugbovyiaTextu {
                     calendar.set(calendar.get(Calendar.YEAR), Calendar.DECEMBER, i)
                     val wik = calendar.get(Calendar.DAY_OF_WEEK)
                     if (wik == Calendar.SUNDAY) {
-                        realDay = calendar.get(Calendar.DAY_OF_YEAR) + addDay
+                        realDay = calendar.get(Calendar.DAY_OF_YEAR)
                         break
                     }
                 }
@@ -4098,7 +4098,7 @@ class SlugbovyiaTextu {
                     calendar.set(calendar.get(Calendar.YEAR), Calendar.JULY, i)
                     val wik = calendar.get(Calendar.DAY_OF_WEEK)
                     if (wik == Calendar.SUNDAY) {
-                        realDay = calendar.get(Calendar.DAY_OF_YEAR) + addDay
+                        realDay = calendar.get(Calendar.DAY_OF_YEAR)
                         break
                     }
                 }
@@ -4110,7 +4110,7 @@ class SlugbovyiaTextu {
                     calendar.set(calendar.get(Calendar.YEAR), Calendar.DECEMBER, i)
                     val wik = calendar.get(Calendar.DAY_OF_WEEK)
                     if (wik == Calendar.SATURDAY) {
-                        realDay = calendar.get(Calendar.DAY_OF_YEAR) + addDay
+                        realDay = calendar.get(Calendar.DAY_OF_YEAR)
                         break
                     }
                 }
@@ -4122,7 +4122,7 @@ class SlugbovyiaTextu {
                     calendar.set(calendar.get(Calendar.YEAR), Calendar.DECEMBER, i)
                     val wik = calendar.get(Calendar.DAY_OF_WEEK)
                     if (wik == Calendar.SUNDAY) {
-                        realDay = calendar.get(Calendar.DAY_OF_YEAR) + addDay
+                        realDay = calendar.get(Calendar.DAY_OF_YEAR)
                         break
                     }
                 }
@@ -4133,12 +4133,11 @@ class SlugbovyiaTextu {
                 if (dayOfYear > 5) calendar.set(calendar.get(Calendar.YEAR), Calendar.DECEMBER, 30)
                 else calendar.set(calendar.get(Calendar.YEAR) - 1, Calendar.DECEMBER, 30)
                 for (i in 1..7) {
-                    addDay = 0
+                    //addDay = 0
                     val wik = calendar.get(Calendar.DAY_OF_WEEK)
                     if (wik == Calendar.SUNDAY) {
-                        if (!calendar.isLeapYear(calendar.get(Calendar.YEAR)) && calendar[Calendar.MONTH] > Calendar.FEBRUARY) addDay =
-                            1
-                        realDay = calendar.get(Calendar.DAY_OF_YEAR) + addDay
+                        //if (!calendar.isLeapYear(calendar.get(Calendar.YEAR)) && calendar[Calendar.MONTH] > Calendar.FEBRUARY) addDay = 1
+                        realDay = calendar.get(Calendar.DAY_OF_YEAR)
                         break
                     }
                     calendar.add(Calendar.DATE, 1)
