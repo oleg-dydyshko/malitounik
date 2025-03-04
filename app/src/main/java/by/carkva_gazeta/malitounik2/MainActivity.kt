@@ -18,12 +18,10 @@ import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.os.SystemClock
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
@@ -43,6 +41,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
@@ -1548,6 +1547,45 @@ object Settings {
     }
 }
 
+@Composable
+fun DialogSztoHovaha(
+    onDismissRequest: () -> Unit
+) {
+    AlertDialog(
+        icon = {
+            Icon(painter = painterResource(R.drawable.description), contentDescription = "")
+        },
+        title = {
+            Text(text = stringResource(R.string.chto_novaga_title))
+        },
+        text = {
+            var content: String
+            val inputStream = LocalContext.current.resources.openRawResource(R.raw.a_szto_novaha)
+            val isr = InputStreamReader(inputStream)
+            val reader = BufferedReader(isr)
+            reader.use { bufferedReader ->
+                content = bufferedReader.readText()
+            }
+            Text(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                text = content,
+                fontSize = 18.sp
+            )
+        },
+        onDismissRequest = {
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text(stringResource(R.string.close), fontSize = 18.sp)
+            }
+        }
+    )
+}
+
 class MainActivity : ComponentActivity(), SensorEventListener,
     ServiceRadyjoMaryia.ServiceRadyjoMaryiaListener {
     private var backPressed: Long = 0
@@ -1592,7 +1630,6 @@ class MainActivity : ComponentActivity(), SensorEventListener,
 
     override fun playingRadioMaria(isPlayingRadioMaria: Boolean) {
         Settings.isPlayRadyjoMaryia.value = isPlayingRadioMaria
-        Log.d("Oleg", isPlayingRadioMaria.toString())
     }
 
     override fun playingRadioMariaStateReady() {
@@ -1683,45 +1720,6 @@ class MainActivity : ComponentActivity(), SensorEventListener,
             }
         }
 
-    }
-
-    @Composable
-    fun DialogSztoHovaha(
-        onDismissRequest: () -> Unit
-    ) {
-        AlertDialog(
-            icon = {
-                Icon(painter = painterResource(R.drawable.description), contentDescription = "")
-            },
-            title = {
-                Text(text = stringResource(R.string.chto_novaga_title))
-            },
-            text = {
-                var content: String
-                val inputStream = resources.openRawResource(R.raw.a_szto_novaha)
-                val isr = InputStreamReader(inputStream)
-                val reader = BufferedReader(isr)
-                reader.use { bufferedReader ->
-                    content = bufferedReader.readText()
-                }
-                Text(
-                    modifier = Modifier.verticalScroll(rememberScrollState()),
-                    text = content,
-                    fontSize = 18.sp
-                )
-            },
-            onDismissRequest = {
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onDismissRequest()
-                    }
-                ) {
-                    Text(stringResource(R.string.close), fontSize = 18.sp)
-                }
-            }
-        )
     }
 
     private fun checkASztoNovagaMD5Sum(): Boolean {

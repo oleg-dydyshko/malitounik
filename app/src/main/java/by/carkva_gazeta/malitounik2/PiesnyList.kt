@@ -1,50 +1,50 @@
 package by.carkva_gazeta.malitounik2
 
-import android.app.Activity
 import android.content.Context
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toMutableStateList
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik2.views.AppNavigationActions
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -73,21 +73,13 @@ class FilterPiesnyListModel : ViewModel() {
 
 @Composable
 fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues) {
-    val view = LocalView.current
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
-    SideEffect {
-        val window = (view.context as Activity).window
-        WindowCompat.getInsetsController(
-            window,
-            view
-        ).isAppearanceLightStatusBars = false
-    }
     val viewModel: FilterPiesnyListModel = viewModel()
     var isInit by remember { mutableStateOf(true) }
-    var rubrika by remember {
+    val rubrika by remember {
         mutableIntStateOf(
             k.getInt(
                 "pubrikaPesnyMenu",
@@ -942,102 +934,107 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues) {
         }
     }
     val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
-    val lazyRowState = rememberLazyListState()
     val list = listOf(
-        0,
-        1,
-        2,
-        3,
-        4
+        stringResource(R.string.pesny1),
+        stringResource(R.string.pesny2),
+        stringResource(R.string.pesny3),
+        stringResource(R.string.pesny4),
+        stringResource(R.string.pesny5)
     )
-    val selectState = remember(list) { list.map { false }.toMutableStateList() }
-    LaunchedEffect(rubrika) {
-        CoroutineScope(Dispatchers.Main).launch {
-            selectState[rubrika] = true
-            lazyRowState.scrollToItem(rubrika)
-            viewModel.filterItem(rubrika)
+    val pagerState = rememberPagerState(pageCount = {
+        list.size
+    }, initialPage = rubrika)
+    val coroutineScope = rememberCoroutineScope()
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }.collect { page ->
+            val edit = k.edit()
+            edit.putInt("pubrikaPesnyMenu", page)
+            edit.apply()
         }
     }
     Column {
-        LazyRow(state = lazyRowState, modifier = Modifier.fillMaxWidth()) {
-            items(list.size) { index ->
-                val title = when (index) {
-                    0 -> stringResource(R.string.pesny1)
-                    1 -> stringResource(R.string.pesny2)
-                    2 -> stringResource(R.string.pesny3)
-                    3 -> stringResource(R.string.pesny4)
-                    4 -> stringResource(R.string.pesny5)
-                    else -> stringResource(R.string.pesny1)
-                }
-                val modifier = if (index == 0) Modifier.padding(horizontal = 10.dp)
-                else Modifier.padding(end = 10.dp)
-                FilterChip(
-                    modifier = modifier,
+        ScrollableTabRow(
+            modifier = Modifier.background(MaterialTheme.colorScheme.onPrimary),
+            selectedTabIndex = pagerState.currentPage,
+            indicator = { tabPositions ->
+                TabRowDefaults.PrimaryIndicator(
+                    modifier = Modifier
+                        .tabIndicatorOffset(tabPositions[pagerState.currentPage]),
+                    width = Dp.Unspecified,
+                    shape = RoundedCornerShape(
+                        topStart = 5.dp,
+                        topEnd = 5.dp,
+                        bottomEnd = 0.dp,
+                        bottomStart = 0.dp,
+                    )
+                )
+            }
+        ) {
+            list.forEachIndexed { index, title ->
+                Tab(
+                    selected = pagerState.currentPage == index,
                     onClick = {
-                        for (i in 0..4)
-                            selectState[i] = false
-                        selectState[index] = !selectState[index]
                         val edit = k.edit()
                         edit.putInt("pubrikaPesnyMenu", index)
-                        rubrika = index
-                        CoroutineScope(Dispatchers.Main).launch {
-                            lazyRowState.scrollToItem(index)
-                        }
                         edit.apply()
-                    },
-                    label = {
-                        Text(title, fontSize = 18.sp)
-                    },
-                    selected = selectState[index],
-                    leadingIcon = if (selectState[index]) {
-                        {
-                            Icon(
-                                painter = painterResource(R.drawable.check),
-                                contentDescription = "",
-                                modifier = Modifier.size(FilterChipDefaults.IconSize)
-                            )
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(index)
                         }
-                    } else {
-                        null
                     },
+                    text = {
+                        Text(
+                            text = title,
+                            fontSize = 18.sp,
+                            lineHeight = 18.sp * 1.15f,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            color = MaterialTheme.colorScheme.secondary,
+                        )
+                    }
                 )
             }
         }
-        LazyColumn {
-            items(
-                filteredItems.size,
-                key = { index -> filteredItems[index].title + filteredItems[index].rubrika }) { index ->
-                Column {
-                    Row(
-                        modifier = Modifier
-                            .padding(start = 10.dp)
-                            .clickable {
-                                navigationActions.navigateToBogaslujbovyia(
-                                    filteredItems[index].title,
-                                    filteredItems[index].resurs
-                                )
-                            },
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(12.dp, 12.dp),
-                            painter = painterResource(R.drawable.krest),
-                            tint = MaterialTheme.colorScheme.primary,
-                            contentDescription = null
-                        )
-                        Text(
-                            text = filteredItems[index].title,
+        HorizontalPager(
+            state = pagerState,
+            verticalAlignment = Alignment.Top
+        ) {
+            viewModel.filterItem(pagerState.currentPage)
+            LazyColumn {
+                items(
+                    filteredItems.size,
+                    key = { index -> filteredItems[index].title + filteredItems[index].rubrika }) { index ->
+                    Column {
+                        Row(
                             modifier = Modifier
-                                .fillMaxSize()
-                                .padding(10.dp),
-                            color = MaterialTheme.colorScheme.secondary
-                        )
+                                .padding(start = 10.dp)
+                                .clickable {
+                                    navigationActions.navigateToBogaslujbovyia(
+                                        filteredItems[index].title,
+                                        filteredItems[index].resurs
+                                    )
+                                },
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(12.dp, 12.dp),
+                                painter = painterResource(R.drawable.krest),
+                                tint = MaterialTheme.colorScheme.primary,
+                                contentDescription = null
+                            )
+                            Text(
+                                text = filteredItems[index].title,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(10.dp),
+                                color = MaterialTheme.colorScheme.secondary
+                            )
+                        }
                     }
+                    HorizontalDivider()
                 }
-                HorizontalDivider()
-            }
-            item {
-                Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
+                item {
+                    Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
+                }
             }
         }
     }

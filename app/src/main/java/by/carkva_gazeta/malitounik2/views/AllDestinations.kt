@@ -2,6 +2,7 @@ package by.carkva_gazeta.malitounik2.views
 
 import android.content.SharedPreferences
 import androidx.navigation.NavHostController
+import by.carkva_gazeta.malitounik2.cytanniListItemData
 import by.carkva_gazeta.malitounik2.views.AllDestinations.AKAFIST_MENU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA_LIST
@@ -10,6 +11,7 @@ import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIJATEKA_LIST
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BOGASLUJBOVYIA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BOGASLUJBOVYIA_MENU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.CYTANNI_LIST
+import by.carkva_gazeta.malitounik2.views.AllDestinations.HELP
 import by.carkva_gazeta.malitounik2.views.AllDestinations.KALIANDAR
 import by.carkva_gazeta.malitounik2.views.AllDestinations.KALIANDAR_YEAR
 import by.carkva_gazeta.malitounik2.views.AllDestinations.MAE_NATATKI_MENU
@@ -20,6 +22,7 @@ import by.carkva_gazeta.malitounik2.views.AllDestinations.PAMIATKA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.PARAFII_BGKC
 import by.carkva_gazeta.malitounik2.views.AllDestinations.PASHALIA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.PIESNY_LIST
+import by.carkva_gazeta.malitounik2.views.AllDestinations.PRANAS
 import by.carkva_gazeta.malitounik2.views.AllDestinations.RUJANEC_MENU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.SEARCH_BIBLIA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.SVAITY_MUNU
@@ -48,6 +51,8 @@ object AllDestinations {
     const val SVAITY_MUNU = "Svity_Menu"
     const val PARAFII_BGKC = "Parafii_Bgkc"
     const val PASHALIA = "Pashalia"
+    const val PRANAS = "PraNas"
+    const val HELP = "Help"
 }
 
 class AppNavigationActions(private val navController: NavHostController, k: SharedPreferences) {
@@ -164,6 +169,18 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
         }
     }
 
+    fun navigateToPraNas() {
+        navController.navigate(PRANAS) {
+            PRANAS
+        }
+    }
+
+    fun navigateToHelp() {
+        navController.navigate(HELP) {
+            HELP
+        }
+    }
+
     fun navigateToPadryxtouka() {
         navController.navigate(PADRYXTOUKA) {
             PADRYXTOUKA
@@ -201,6 +218,7 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
     }
 
     fun navigateToCytanniList(title: String, cytanne: String, biblia: Int, perevod: String, position: Int) {
+        cytanniListItemData.value.clear()
         navController.navigate("$CYTANNI_LIST/$cytanne/$title/$biblia/$perevod/$position") {
             CYTANNI_LIST
         }

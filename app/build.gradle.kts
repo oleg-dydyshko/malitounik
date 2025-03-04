@@ -73,7 +73,6 @@ dependencies {
     implementation (libs.androidx.media3.exoplayer)
     implementation (libs.androidx.media3.exoplayer.smoothstreaming)
     implementation (libs.androidx.media)
-    implementation (libs.androidx.appcompat)
     implementation(libs.androidx.documentfile)
     implementation(libs.androidx.paging.compose)
     testImplementation(libs.junit)

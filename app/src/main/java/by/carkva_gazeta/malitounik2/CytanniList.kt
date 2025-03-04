@@ -5,7 +5,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.WindowManager
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
@@ -149,24 +148,26 @@ class CytanniListItems(
     }
     private val chteniaNewPage = knigaText + " ${page + 1}"
     private val mChekList = checkList()
-    private val _filteredItems = MutableStateFlow(if (mChekList.isEmpty()) {
-        val resultPage = if (biblia == Settings.CHYTANNI_BIBLIA) getBible(
-            chteniaNewPage,
-            perevod,
-            biblia
-        )
-        else getBible(cytanne, perevod, biblia, true)
-        cytanniListItemData.value.add(CytanniListItemData(page, resultPage))
-        resultPage
-    } else {
-        mChekList
-    })
+    private val _filteredItems = MutableStateFlow(
+        if (mChekList.isEmpty()) {
+            val resultPage = if (biblia == Settings.CHYTANNI_BIBLIA) getBible(
+                chteniaNewPage,
+                perevod,
+                biblia
+            )
+            else getBible(cytanne, perevod, biblia, true)
+            cytanniListItemData.value.add(CytanniListItemData(page, resultPage))
+            resultPage
+        } else {
+            mChekList
+        }
+    )
     var filteredItems: StateFlow<ArrayList<CytanniListData>> = _filteredItems
     private fun checkList(): ArrayList<CytanniListData> {
         val result = ArrayList<CytanniListData>()
         val removeList = ArrayList<CytanniListItemData>()
-        for(i in 0 until cytanniListItemData.value.size) {
-            if (cytanniListItemData.value[i].page !in page - 1 .. page + 1) {
+        for (i in 0 until cytanniListItemData.value.size) {
+            if (cytanniListItemData.value[i].page !in page - 1..page + 1) {
                 removeList.add(cytanniListItemData.value[i])
             }
             if (cytanniListItemData.value[i].page == page) {
@@ -505,7 +506,6 @@ fun CytanniList(
                     )
                 }
                 prefEditors.apply()
-                cytanniListItemData.value.clear()
                 autoScrollJob?.cancel()
                 autoScrollTextVisableJob?.cancel()
                 backPressHandled = true
@@ -1098,6 +1098,7 @@ fun CytanniList(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .clickable {
+                                                cytanniListItemData.value.clear()
                                                 selectOldPerevod = perevod
                                                 perevod = Settings.PEREVODSEMUXI
                                                 initVybranoe = true
@@ -1117,6 +1118,7 @@ fun CytanniList(
                                         RadioButton(
                                             selected = perevod == Settings.PEREVODSEMUXI,
                                             onClick = {
+                                                cytanniListItemData.value.clear()
                                                 selectOldPerevod = perevod
                                                 perevod = Settings.PEREVODSEMUXI
                                                 initVybranoe = true
@@ -1142,6 +1144,7 @@ fun CytanniList(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .clickable {
+                                                cytanniListItemData.value.clear()
                                                 selectOldPerevod = perevod
                                                 perevod = Settings.PEREVODBOKUNA
                                                 initVybranoe = true
@@ -1161,6 +1164,7 @@ fun CytanniList(
                                         RadioButton(
                                             selected = perevod == Settings.PEREVODBOKUNA,
                                             onClick = {
+                                                cytanniListItemData.value.clear()
                                                 selectOldPerevod = perevod
                                                 perevod = Settings.PEREVODBOKUNA
                                                 initVybranoe = true
@@ -1186,6 +1190,7 @@ fun CytanniList(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .clickable {
+                                                cytanniListItemData.value.clear()
                                                 selectOldPerevod = perevod
                                                 perevod = Settings.PEREVODCARNIAUSKI
                                                 initVybranoe = true
@@ -1205,6 +1210,7 @@ fun CytanniList(
                                         RadioButton(
                                             selected = perevod == Settings.PEREVODCARNIAUSKI,
                                             onClick = {
+                                                cytanniListItemData.value.clear()
                                                 selectOldPerevod = perevod
                                                 perevod = Settings.PEREVODCARNIAUSKI
                                                 initVybranoe = true
@@ -1233,6 +1239,7 @@ fun CytanniList(
                                                 modifier = Modifier
                                                     .fillMaxWidth()
                                                     .clickable {
+                                                        cytanniListItemData.value.clear()
                                                         selectOldPerevod = perevod
                                                         perevod = Settings.PEREVODNADSAN
                                                         initVybranoe = true
@@ -1243,6 +1250,7 @@ fun CytanniList(
                                                 RadioButton(
                                                     selected = perevod == Settings.PEREVODNADSAN,
                                                     onClick = {
+                                                        cytanniListItemData.value.clear()
                                                         selectOldPerevod = perevod
                                                         perevod = Settings.PEREVODNADSAN
                                                         initVybranoe = true
@@ -1262,6 +1270,7 @@ fun CytanniList(
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .clickable {
+                                                    cytanniListItemData.value.clear()
                                                     selectOldPerevod = perevod
                                                     perevod = Settings.PEREVODSINOIDAL
                                                     initVybranoe = true
@@ -1279,6 +1288,7 @@ fun CytanniList(
                                             RadioButton(
                                                 selected = perevod == Settings.PEREVODSINOIDAL,
                                                 onClick = {
+                                                    cytanniListItemData.value.clear()
                                                     selectOldPerevod = perevod
                                                     perevod = Settings.PEREVODSINOIDAL
                                                     initVybranoe = true

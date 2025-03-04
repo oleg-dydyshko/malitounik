@@ -82,10 +82,13 @@ import by.carkva_gazeta.malitounik2.KaliandarScreenYear
 import by.carkva_gazeta.malitounik2.MaeNatatki
 import by.carkva_gazeta.malitounik2.MainActivity
 import by.carkva_gazeta.malitounik2.MalitvyListAll
+import by.carkva_gazeta.malitounik2.ParafiiBGKC
+import by.carkva_gazeta.malitounik2.Pashalia
 import by.carkva_gazeta.malitounik2.PiesnyList
 import by.carkva_gazeta.malitounik2.R
 import by.carkva_gazeta.malitounik2.SearchBible
 import by.carkva_gazeta.malitounik2.Settings
+import by.carkva_gazeta.malitounik2.SviatyList
 import by.carkva_gazeta.malitounik2.VybranaeList
 import by.carkva_gazeta.malitounik2.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik2.ui.theme.Divider
@@ -265,6 +268,14 @@ fun AppNavGraph(
 
         composable(AllDestinations.PAMIATKA) {
             Bogaslujbovyia(navController, stringResource(R.string.pamiatka), R.raw.pamiatka)
+        }
+
+        composable(AllDestinations.PRANAS) {
+            Bogaslujbovyia(navController, stringResource(R.string.pra_nas), R.raw.onas)
+        }
+
+        composable(AllDestinations.HELP) {
+            Bogaslujbovyia(navController, stringResource(R.string.help), R.raw.help)
         }
 
         composable(AllDestinations.SVAITY_MUNU) {
@@ -558,18 +569,7 @@ fun MainConteiner(
             AllDestinations.SVAITY_MUNU -> stringResource(R.string.sviaty)
             AllDestinations.PARAFII_BGKC -> stringResource(R.string.parafii)
             AllDestinations.PASHALIA -> stringResource(R.string.paschalia)
-            AllDestinations.BIBLIA -> {
-                when (k.getString("perevodBibileMenu", Settings.PEREVODSEMUXI)
-                    ?: Settings.PEREVODSEMUXI) {
-                    Settings.PEREVODSEMUXI -> stringResource(R.string.title_biblia)
-                    Settings.PEREVODBOKUNA -> stringResource(R.string.title_biblia_bokun)
-                    Settings.PEREVODCARNIAUSKI -> stringResource(R.string.title_biblia_charniauski)
-                    Settings.PEREVODNADSAN -> stringResource(R.string.title_psalter)
-                    Settings.PEREVODSINOIDAL -> stringResource(R.string.bsinaidal)
-                    else -> stringResource(R.string.kaliandar2)
-                }
-            }
-
+            AllDestinations.BIBLIA -> stringResource(R.string.bibliaAll)
             else -> ""
         }
         Scaffold(
@@ -709,11 +709,17 @@ fun MainConteiner(
                                     )
                                 }
                                 DropdownMenuItem(
-                                    onClick = { },
+                                    onClick = {
+                                        expanded = false
+                                        navigationActions.navigateToPraNas()
+                                    },
                                     text = { Text(stringResource(R.string.pra_nas)) }
                                 )
                                 DropdownMenuItem(
-                                    onClick = { },
+                                    onClick = {
+                                        expanded = false
+                                        navigationActions.navigateToHelp()
+                                    },
                                     text = { Text(stringResource(R.string.help)) }
                                 )
                                 if (k.getBoolean("admin", false)) {
@@ -823,6 +829,12 @@ fun MainConteiner(
 
                     AllDestinations.PIESNY_LIST -> PiesnyList(navController, innerPadding)
 
+                    AllDestinations.SVAITY_MUNU -> SviatyList(navController, innerPadding)
+
+                    AllDestinations.PARAFII_BGKC -> ParafiiBGKC(navController, innerPadding)
+
+                    AllDestinations.PASHALIA -> Pashalia(navController, innerPadding)
+
                     AllDestinations.RUJANEC_MENU -> BogaslujbovyiaMenu(
                         navController,
                         innerPadding,
@@ -848,9 +860,6 @@ fun MainConteiner(
 
                     AllDestinations.BIBLIA -> BibliaMenu(
                         navController,
-                        setTitle = {
-                            title = it
-                        },
                         navigateToSearchBible = { perevod ->
                             navigationActions.navigateToSearchBiblia(perevod)
                         },
