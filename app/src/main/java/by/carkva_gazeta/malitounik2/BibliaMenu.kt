@@ -92,7 +92,6 @@ fun BibliaMenu(
         bibleTime = false
         navigationActions.navigateToBibliaList(kniga >= 50, perevod)
     }
-    //val lazyRowState = rememberLazyListState()
     val list = listOf(
         stringResource(R.string.title_biblia2),
         stringResource(R.string.title_biblia_bokun2),
@@ -100,8 +99,6 @@ fun BibliaMenu(
         stringResource(R.string.title_biblia_charniauski2),
         stringResource(R.string.bsinaidal2)
     )
-    //val context = LocalContext.current
-    //val selectState = remember(list) { list.map { false }.toMutableStateList() }
     val getPerevod = when (perevod) {
         Settings.PEREVODSEMUXI -> 0
         Settings.PEREVODBOKUNA -> 1
@@ -189,78 +186,6 @@ fun BibliaMenu(
                 )
             }
         }
-        /*LazyRow(state = lazyRowState, modifier = Modifier.fillMaxWidth()) {
-            items(list.size) { index ->
-                val titlePerevod = when (index) {
-                    0 -> stringResource(R.string.title_biblia2)
-                    1 -> stringResource(R.string.title_biblia_bokun2)
-                    2 -> stringResource(R.string.title_psalter)
-                    3 -> stringResource(R.string.title_biblia_charniauski2)
-                    4 -> stringResource(R.string.bsinaidal2)
-                    else -> stringResource(R.string.title_biblia2)
-                }
-                FilterChip(
-                    modifier = Modifier.padding(end = 10.dp),
-                    onClick = {
-                        for (i in 0..4)
-                            selectState[i] = false
-                        selectState[index] = !selectState[index]
-                        val edit = k.edit()
-                        when (index) {
-                            0 -> {
-                                edit.putString("perevodBibileMenu", Settings.PEREVODSEMUXI)
-                                setTitle(context.getString(R.string.title_biblia))
-                                perevod = Settings.PEREVODSEMUXI
-
-                            }
-
-                            1 -> {
-                                edit.putString("perevodBibileMenu", Settings.PEREVODBOKUNA)
-                                setTitle(context.getString(R.string.title_biblia_bokun))
-                                perevod = Settings.PEREVODBOKUNA
-                            }
-
-                            2 -> {
-                                edit.putString("perevodBibileMenu", Settings.PEREVODNADSAN)
-                                setTitle(context.getString(R.string.title_psalter))
-                                perevod = Settings.PEREVODNADSAN
-                            }
-
-                            3 -> {
-                                edit.putString("perevodBibileMenu", Settings.PEREVODCARNIAUSKI)
-                                setTitle(context.getString(R.string.title_biblia_charniauski))
-                                perevod = Settings.PEREVODCARNIAUSKI
-                            }
-
-                            4 -> {
-                                edit.putString("perevodBibileMenu", Settings.PEREVODSINOIDAL)
-                                setTitle(context.getString(R.string.bsinaidal))
-                                perevod = Settings.PEREVODSINOIDAL
-                            }
-                        }
-                        CoroutineScope(Dispatchers.Main).launch {
-                            lazyRowState.scrollToItem(index)
-                        }
-                        edit.apply()
-                    },
-                    label = {
-                        Text(titlePerevod, fontSize = 18.sp)
-                    },
-                    selected = selectState[index],
-                    leadingIcon = if (selectState[index]) {
-                        {
-                            Icon(
-                                painter = painterResource(R.drawable.check),
-                                contentDescription = "",
-                                modifier = Modifier.size(FilterChipDefaults.IconSize)
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                )
-            }
-        }*/
         HorizontalPager(
             state = pagerState,
             verticalAlignment = Alignment.Top

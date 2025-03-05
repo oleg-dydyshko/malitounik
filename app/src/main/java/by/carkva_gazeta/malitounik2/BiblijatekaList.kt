@@ -3,6 +3,7 @@ package by.carkva_gazeta.malitounik2
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -78,27 +79,31 @@ import java.math.RoundingMode
 import java.text.DecimalFormat
 
 class FilterBiblijatekaModel : ViewModel() {
-    private val items = ArrayList<ArrayList<String>>()
+    private val items = ArrayList<ArrayList<ArrayList<String>>>()
 
     private val _filteredItems = MutableStateFlow(items)
-    var filteredItems: StateFlow<ArrayList<ArrayList<String>>> = _filteredItems
+    var filteredItems: StateFlow<ArrayList<ArrayList<ArrayList<String>>>> = _filteredItems
 
     fun clear() {
         items.clear()
     }
 
     fun addItemList(item: ArrayList<String>) {
+        items[0].add(item)
+    }
+
+    fun addAllItemsList(item: ArrayList<ArrayList<String>>) {
         items.add(item)
     }
 
     fun remove(item: ArrayList<String>) {
-        items.remove(item)
+        items[0].remove(item)
     }
 
-    fun filterItem(rubrika: Int) {
+    /*fun filterItem(rubrika: Int) {
         _filteredItems.value =
             items.filter { it[4].toInt() == rubrika } as ArrayList<ArrayList<String>>
-    }
+    }*/
 }
 
 var biblijatekaJob: Job? = null
@@ -126,6 +131,16 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
             )
         )
     }
+    val list = listOf(
+        stringResource(R.string.bibliateka_niadaunia),
+        stringResource(R.string.bibliateka_gistoryia_carkvy),
+        stringResource(R.string.bibliateka_malitouniki),
+        stringResource(R.string.bibliateka_speuniki),
+        stringResource(R.string.bibliateka_rel_litaratura)
+    )
+    val pagerState = rememberPagerState(pageCount = {
+        list.size
+    }, initialPage = rubrika)
     if (isInit) {
         LaunchedEffect(Unit) {
             isInit = false
@@ -134,9 +149,6 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
             biblijatekaJob = CoroutineScope(Dispatchers.IO).launch {
                 getBibliateka(context,
                     bibliatekaList = { list ->
-                        for (i in list.indices) {
-                            viewModel.addItemList(list[i])
-                        }
                         val gson = Gson()
                         val type = TypeToken.getParameterized(
                             ArrayList::class.java,
@@ -150,25 +162,26 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
                         val biblioteka = ArrayList<ArrayList<String>>()
                         if (fileNadaunia.exists()) {
                             biblioteka.addAll(gson.fromJson(fileNadaunia.readText(), type))
-                            for (i in biblioteka.indices) {
-                                viewModel.addItemList(biblioteka[i])
-                            }
+                        }
+                        viewModel.addAllItemsList(biblioteka)
+                        for (e in 1 .. 4) {
+                            val newList = list.filter { it[4].toInt() == e } as ArrayList<ArrayList<String>>
+                            viewModel.addAllItemsList(newList)
                         }
                     },
                     progressVisable = { progress ->
                         isProgressVisable = progress
                     })
-                viewModel.filterItem(rubrika)
             }
         }
     }
     val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
     if (isDialogBiblijatekaVisable) {
-        fileName = filteredItems[fileListPosition][2]
-        var opisanie = filteredItems[fileListPosition][1]
+        fileName = filteredItems[pagerState.currentPage][fileListPosition][2]
+        var opisanie = filteredItems[pagerState.currentPage][fileListPosition][1]
         val t1 = opisanie.indexOf("</span><br>")
         if (t1 != -1) opisanie = opisanie.substring(t1 + 11)
-        val dirCount = filteredItems[fileListPosition][3].toInt()
+        val dirCount = filteredItems[pagerState.currentPage][fileListPosition][3].toInt()
         val izm = if (dirCount / 1024 > 1000) {
             formatFigureTwoPlaces(
                 BigDecimal
@@ -200,10 +213,10 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
 
                     else -> {
                         writeFile(context, fileName, loadComplete = {
-                            addNiadaunia(context, filteredItems, fileListPosition, viewModel)
+                            addNiadaunia(context, filteredItems[pagerState.currentPage], fileListPosition, viewModel)
                             navigationActions.navigateToBiblijateka(
-                                filteredItems[fileListPosition][0],
-                                filteredItems[fileListPosition][2]
+                                filteredItems[pagerState.currentPage][fileListPosition][0],
+                                filteredItems[pagerState.currentPage][fileListPosition][2]
                             )
                         },
                             inProcess = {
@@ -222,10 +235,10 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
             },
             onConfirmation = {
                 writeFile(context, fileName, loadComplete = {
-                    addNiadaunia(context, filteredItems, fileListPosition, viewModel)
+                    addNiadaunia(context, filteredItems[pagerState.currentPage], fileListPosition, viewModel)
                     navigationActions.navigateToBiblijateka(
-                        filteredItems[fileListPosition][0],
-                        filteredItems[fileListPosition][2]
+                        filteredItems[pagerState.currentPage][fileListPosition][0],
+                        filteredItems[pagerState.currentPage][fileListPosition][2]
                     )
                 },
                     inProcess = {
@@ -240,16 +253,6 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
             isDialogNoIntent = false
         }
     }
-    val list = listOf(
-        stringResource(R.string.bibliateka_niadaunia),
-        stringResource(R.string.bibliateka_gistoryia_carkvy),
-        stringResource(R.string.bibliateka_malitouniki),
-        stringResource(R.string.bibliateka_speuniki),
-        stringResource(R.string.bibliateka_rel_litaratura)
-    )
-    val pagerState = rememberPagerState(pageCount = {
-        list.size
-    }, initialPage = rubrika)
     val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { page ->
@@ -303,22 +306,22 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
         HorizontalPager(
             state = pagerState,
             verticalAlignment = Alignment.Top
-        ) {
-            viewModel.filterItem(pagerState.currentPage)
+        ) { page ->
             LazyColumn {
                 items(
-                    filteredItems.size,
-                    key = { index -> filteredItems[index][2] + filteredItems[index][4] }) { index ->
+                    if (filteredItems.isNotEmpty()) filteredItems[page].size else 0,
+                    key = { index -> filteredItems[page][index] + page + index }) { index ->
                     Column {
                         Row(
                             modifier = Modifier
                                 .padding(start = 10.dp)
                                 .clickable {
-                                    if (fileExistsBiblijateka(context, filteredItems[index][2])) {
-                                        addNiadaunia(context, filteredItems, index, viewModel)
+                                    if (fileExistsBiblijateka(context, filteredItems[page][index][2])) {
+                                        addNiadaunia(context, filteredItems[page], index, viewModel)
+                                        Log.d("Oleg", filteredItems[page][index][2])
                                         navigationActions.navigateToBiblijateka(
-                                            filteredItems[index][0],
-                                            filteredItems[index][2]
+                                            filteredItems[page][index][0],
+                                            filteredItems[page][index][2]
                                         )
                                     } else {
                                         fileListPosition = index
@@ -334,19 +337,19 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
                                 contentDescription = null
                             )
                             Text(
-                                text = if (filteredItems[index][0] != "") filteredItems[index][0]
-                                else filteredItems[index][2],
+                                text = if (filteredItems[page][index][0] != "") filteredItems[page][index][0]
+                                else filteredItems[page][index][2],
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(10.dp),
                                 color = MaterialTheme.colorScheme.secondary
                             )
                         }
-                        if (filteredItems[index][5] != "") {
+                        if (filteredItems[page][index][5] != "") {
                             val options = BitmapFactory.Options()
                             options.inPreferredConfig = Bitmap.Config.ARGB_8888
                             val bitmap = BitmapFactory.decodeFile(
-                                "${context.filesDir}/bibliatekaImage/${filteredItems[index][5]}",
+                                "${context.filesDir}/bibliatekaImage/${filteredItems[page][index][5]}",
                                 options
                             )
                             val aspectRatio = bitmap.width.toFloat() / bitmap.height.toFloat()
@@ -363,13 +366,14 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
                                     .clickable {
                                         if (fileExistsBiblijateka(
                                                 context,
-                                                filteredItems[index][2]
+                                                filteredItems[page][index][2]
                                             )
                                         ) {
-                                            addNiadaunia(context, filteredItems, index, viewModel)
+                                            addNiadaunia(context, filteredItems[page], index, viewModel)
+                                            Log.d("Oleg", filteredItems[page][index][2])
                                             navigationActions.navigateToBiblijateka(
-                                                filteredItems[index][0],
-                                                filteredItems[index][2]
+                                                filteredItems[page][index][0],
+                                                filteredItems[page][index][2]
                                             )
                                         } else {
                                             fileListPosition = index
