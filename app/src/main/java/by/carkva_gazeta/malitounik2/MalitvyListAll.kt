@@ -599,28 +599,10 @@ fun getTtyedzBialikagaTydnia(menuItem: Int): ArrayList<MineiaList> {
         else -> ArrayList()
     }
     var dayOfYear: Int
-    var day: Int
     val mineiaList = ArrayList<MineiaList>()
     val cal = Calendar.getInstance()
     for (i in mineia.indices) {
-        day = mineia[i].day
-        when {
-            day >= 1000 -> {
-                dayOfYear = slugbovyiaTextu.getRealDay(
-                    day,
-                    Calendar.getInstance()[Calendar.DAY_OF_YEAR],
-                    Calendar.getInstance()[Calendar.YEAR]
-                )
-            }
-
-            mineia[i].pasxa -> {
-                dayOfYear = pasha(day)
-            }
-
-            else -> {
-                dayOfYear = day
-            }
-        }
+        dayOfYear = slugbovyiaTextu.getRealDay(mineia[i].day, Calendar.getInstance()[Calendar.DAY_OF_YEAR], Calendar.getInstance()[Calendar.YEAR], mineia[i].pasxa)
         cal.set(Calendar.DAY_OF_YEAR, dayOfYear)
         val opisanie = if (menuItem == Settings.MENU_TRYEDZ_POSNAIA_1 || menuItem == Settings.MENU_TRYEDZ_POSNAIA_2 || menuItem == Settings.MENU_TRYEDZ_POSNAIA_3 || menuItem == Settings.MENU_TRYEDZ_POSNAIA_4 || menuItem == Settings.MENU_TRYEDZ_POSNAIA_5 || menuItem == Settings.MENU_TRYEDZ_POSNAIA_6) ""
         else ". " + slugbovyiaTextu.getNazouSluzby(mineia[i].sluzba)
@@ -674,29 +656,10 @@ fun getMineiaMesiachnaia(subTitle: String): ArrayList<MineiaList> {
     }
     val mineia = slugbovyiaTextu.getMineiaMesiachnaia()
     var dayOfYear: Int
-    var day: Int
     val mineiaList = ArrayList<MineiaList>()
     val cal = Calendar.getInstance() as GregorianCalendar
     for (i in mineia.indices) {
-        day = mineia[i].day
-        when {
-            day >= 1000 -> {
-                dayOfYear = slugbovyiaTextu.getRealDay(
-                    day,
-                    Calendar.getInstance()[Calendar.DAY_OF_YEAR],
-                    Calendar.getInstance()[Calendar.YEAR]
-                )
-            }
-
-            mineia[i].pasxa -> {
-                dayOfYear = pasha(day)
-            }
-
-            else -> {
-                if (!cal.isLeapYear(cal[Calendar.YEAR]) && day > 59) day -= 1
-                dayOfYear = day
-            }
-        }
+        dayOfYear = slugbovyiaTextu.getRealDay(mineia[i].day, Calendar.getInstance()[Calendar.DAY_OF_YEAR], Calendar.getInstance()[Calendar.YEAR], mineia[i].pasxa)
         cal.set(Calendar.DAY_OF_YEAR, dayOfYear)
         val opisanie = ". " + slugbovyiaTextu.getNazouSluzby(mineia[i].sluzba)
         if (cal[Calendar.MONTH] == mounth) {

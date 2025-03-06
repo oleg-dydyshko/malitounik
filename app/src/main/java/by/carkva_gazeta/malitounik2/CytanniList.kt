@@ -544,8 +544,8 @@ fun CytanniList(
             if (!fullscreen) {
                 TopAppBar(
                     title = {
-                        Column {
-                            if (!isSelectMode) {
+                        if (!isSelectMode) {
+                            Column {
                                 if (!isParallelVisable) {
                                     Text(
                                         modifier = Modifier.clickable {

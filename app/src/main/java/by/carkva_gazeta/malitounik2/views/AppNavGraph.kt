@@ -14,12 +14,14 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
@@ -32,6 +34,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
@@ -48,13 +53,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
@@ -79,6 +89,7 @@ import by.carkva_gazeta.malitounik2.Dialog
 import by.carkva_gazeta.malitounik2.KaliandarScreen
 import by.carkva_gazeta.malitounik2.KaliandarScreenMounth
 import by.carkva_gazeta.malitounik2.KaliandarScreenYear
+import by.carkva_gazeta.malitounik2.LogView
 import by.carkva_gazeta.malitounik2.MaeNatatki
 import by.carkva_gazeta.malitounik2.MainActivity
 import by.carkva_gazeta.malitounik2.MalitvyListAll
@@ -90,6 +101,7 @@ import by.carkva_gazeta.malitounik2.SearchBible
 import by.carkva_gazeta.malitounik2.Settings
 import by.carkva_gazeta.malitounik2.SviatyList
 import by.carkva_gazeta.malitounik2.VybranaeList
+import by.carkva_gazeta.malitounik2.result
 import by.carkva_gazeta.malitounik2.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik2.ui.theme.Divider
 import by.carkva_gazeta.malitounik2.ui.theme.Post
@@ -100,6 +112,8 @@ import by.carkva_gazeta.malitounik2.ui.theme.StrogiPost
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
 import java.io.File
@@ -490,6 +504,15 @@ fun MainConteiner(
     var removeAllNatatkiDialog by remember { mutableStateOf(false) }
     var removeAllVybranae by remember { mutableStateOf(false) }
     var removeAllNatatki by remember { mutableStateOf(false) }
+    var logView by remember { mutableStateOf(false) }
+    var searchText by remember { mutableStateOf(false) }
+    var search by rememberSaveable { mutableStateOf("") }
+    val focusRequester = remember { FocusRequester() }
+    if (logView) {
+        DialogLogProgramy {
+            logView = false
+        }
+    }
     if (removeAllVybranaeDialog || removeAllNatatkiDialog) {
         Dialog(
             title = if (removeAllVybranaeDialog) stringResource(R.string.del_all_vybranoe)
@@ -576,162 +599,248 @@ fun MainConteiner(
             topBar = {
                 TopAppBar(
                     title = {
-                        Text(
-                            title,
-                            color = textTollBarColor,
-                            fontWeight = FontWeight.Bold
-                        )
+                        if (!searchText) {
+                            Text(
+                                title,
+                                color = textTollBarColor,
+                                fontWeight = FontWeight.Bold
+                            )
+                        } else {
+                            TextField(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .focusRequester(focusRequester),
+                                value = TextFieldValue(search, selection = TextRange(search.length)),
+                                onValueChange = { newText ->
+                                    result.clear()
+                                    var edit = newText.text
+                                    edit = edit.replace("и", "і")
+                                    edit = edit.replace("щ", "ў")
+                                    edit = edit.replace("И", "І")
+                                    edit = edit.replace("Щ", "Ў")
+                                    edit = edit.replace("ъ", "'")
+                                    search = edit
+                                },
+                                singleLine = true,
+                                leadingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.search),
+                                        tint = MaterialTheme.colorScheme.onSecondary,
+                                        contentDescription = ""
+                                    )
+                                },
+                                trailingIcon = {
+                                    if (search.isNotEmpty()) {
+                                        IconButton(onClick = { search = "" }) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.close),
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.onSecondary
+                                            )
+                                        }
+                                    }
+                                },
+                                colors = TextFieldDefaults.colors(
+                                    focusedContainerColor = MaterialTheme.colorScheme.onTertiary,
+                                    unfocusedContainerColor = MaterialTheme.colorScheme.onTertiary,
+                                    focusedTextColor = PrimaryTextBlack,
+                                    focusedIndicatorColor = PrimaryTextBlack,
+                                    unfocusedIndicatorColor = PrimaryTextBlack,
+                                    cursorColor = PrimaryTextBlack
+                                )
+                            )
+                        }
                     },
                     navigationIcon = {
-                        IconButton(onClick = { coroutineScope.launch { drawerState.open() } },
-                            content = {
-                                Icon(
-                                    painter = painterResource(R.drawable.menu),
-                                    tint = textTollBarColor,
-                                    contentDescription = ""
-                                )
-                            })
+                        if (searchText) {
+                            IconButton(onClick = {
+                                searchText = false
+                            },
+                                content = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.close),
+                                        tint = MaterialTheme.colorScheme.onSecondary,
+                                        contentDescription = ""
+                                    )
+                                })
+                        } else {
+                            IconButton(onClick = { coroutineScope.launch { drawerState.open() } },
+                                content = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.menu),
+                                        tint = textTollBarColor,
+                                        contentDescription = ""
+                                    )
+                                })
+                        }
                     },
                     actions = {
-                        if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
+                        if (!searchText) {
                             IconButton({
-                                val edit = k.edit()
-                                if (k.getBoolean("caliandarList", false)) {
-                                    navigationActions.navigateToKaliandar()
-                                    edit.putBoolean("caliandarList", false)
-                                } else {
-                                    edit.putBoolean("caliandarList", true)
-                                    navigationActions.navigateToKaliandarYear()
-                                }
-                                edit.apply()
-                            }) {
-                                val icon = if (k.getBoolean(
-                                        "caliandarList",
-                                        false
-                                    )
-                                ) painterResource(R.drawable.calendar_today)
-                                else painterResource(R.drawable.list)
-                                Icon(
-                                    painter = icon,
-                                    tint = textTollBarColor,
-                                    contentDescription = ""
-                                )
-                            }
-                            IconButton({ showDropdown = !showDropdown }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.event_upcoming),
-                                    tint = textTollBarColor,
-                                    contentDescription = ""
-                                )
-                            }
-                        }
-                        if (currentRoute == AllDestinations.MAE_NATATKI_MENU) {
-                            IconButton({
-                                addFileNatatki = true
+                                searchText = true
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.add),
+                                    painter = painterResource(R.drawable.search),
                                     tint = textTollBarColor,
                                     contentDescription = ""
                                 )
                             }
-                        }
-                        if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.MAE_NATATKI_MENU) {
-                            IconButton({
-                                if (currentRoute == AllDestinations.VYBRANAE_LIST) removeAllVybranaeDialog =
-                                    !removeAllVybranaeDialog
-                                else removeAllNatatkiDialog = !removeAllNatatkiDialog
-                            }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.delete),
-                                    tint = textTollBarColor,
-                                    contentDescription = ""
-                                )
-                            }
-                        }
-                        var expanded by remember { mutableStateOf(false) }
-                        Box {
-                            IconButton(onClick = { expanded = true }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.more_vert),
-                                    contentDescription = "",
-                                    tint = textTollBarColor
-                                )
-                            }
-                            DropdownMenu(
-                                expanded = expanded,
-                                onDismissRequest = { expanded = false }
-                            ) {
-                                DropdownMenuItem(
-                                    onClick = { },
-                                    text = { Text(stringResource(R.string.tools_item)) }
-                                )
-                                if (currentRoute.contains(AllDestinations.KALIANDAR)) {
-                                    DropdownMenuItem(
-                                        onClick = { },
-                                        text = { Text(stringResource(R.string.munu_symbols)) }
-                                    )
-                                    DropdownMenuItem(
-                                        onClick = { },
-                                        text = { Text(stringResource(R.string.sabytie)) }
-                                    )
-                                    DropdownMenuItem(
-                                        onClick = { },
-                                        text = { Text(stringResource(R.string.search_svityia)) }
+                            if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
+                                IconButton({
+                                    val edit = k.edit()
+                                    if (k.getBoolean("caliandarList", false)) {
+                                        navigationActions.navigateToKaliandar()
+                                        edit.putBoolean("caliandarList", false)
+                                    } else {
+                                        edit.putBoolean("caliandarList", true)
+                                        navigationActions.navigateToKaliandarYear()
+                                    }
+                                    edit.apply()
+                                }) {
+                                    val icon = if (k.getBoolean(
+                                            "caliandarList",
+                                            false
+                                        )
+                                    ) painterResource(R.drawable.calendar_today)
+                                    else painterResource(R.drawable.list)
+                                    Icon(
+                                        painter = icon,
+                                        tint = textTollBarColor,
+                                        contentDescription = ""
                                     )
                                 }
-                                if (currentRoute.contains(AllDestinations.VYBRANAE_LIST) || currentRoute.contains(
-                                        AllDestinations.MAE_NATATKI_MENU
+                                IconButton({ showDropdown = !showDropdown }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.event_upcoming),
+                                        tint = textTollBarColor,
+                                        contentDescription = ""
                                     )
+                                }
+                            }
+                            if (currentRoute == AllDestinations.MAE_NATATKI_MENU) {
+                                IconButton({
+                                    addFileNatatki = true
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.add),
+                                        tint = textTollBarColor,
+                                        contentDescription = ""
+                                    )
+                                }
+                            }
+                            if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.MAE_NATATKI_MENU) {
+                                IconButton({
+                                    if (currentRoute == AllDestinations.VYBRANAE_LIST) removeAllVybranaeDialog =
+                                        !removeAllVybranaeDialog
+                                    else removeAllNatatkiDialog = !removeAllNatatkiDialog
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.delete),
+                                        tint = textTollBarColor,
+                                        contentDescription = ""
+                                    )
+                                }
+                            }
+                            var expanded by remember { mutableStateOf(false) }
+                            Box {
+                                IconButton(onClick = { expanded = true }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.more_vert),
+                                        contentDescription = "",
+                                        tint = textTollBarColor
+                                    )
+                                }
+                                DropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false }
                                 ) {
+                                    DropdownMenuItem(
+                                        onClick = { },
+                                        text = { Text(stringResource(R.string.tools_item)) }
+                                    )
+                                    if (currentRoute.contains(AllDestinations.KALIANDAR)) {
+                                        DropdownMenuItem(
+                                            onClick = { },
+                                            text = { Text(stringResource(R.string.munu_symbols)) }
+                                        )
+                                        DropdownMenuItem(
+                                            onClick = { },
+                                            text = { Text(stringResource(R.string.sabytie)) }
+                                        )
+                                        DropdownMenuItem(
+                                            onClick = { },
+                                            text = { Text(stringResource(R.string.search_svityia)) }
+                                        )
+                                    }
+                                    if (currentRoute.contains(AllDestinations.VYBRANAE_LIST) || currentRoute.contains(
+                                            AllDestinations.MAE_NATATKI_MENU
+                                        )
+                                    ) {
+                                        DropdownMenuItem(
+                                            onClick = {
+                                                expanded = false
+                                                sorted =
+                                                    if (sorted == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
+                                                    else Settings.SORT_BY_ABC
+                                                val edit = k.edit()
+                                                if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) edit.putInt(
+                                                    "sortedVybranae",
+                                                    sorted
+                                                )
+                                                else edit.putInt("natatki_sort", sorted)
+                                                edit.apply()
+                                            },
+                                            text = {
+                                                if (sorted == Settings.SORT_BY_TIME) Text(
+                                                    stringResource(
+                                                        R.string.sort_alf
+                                                    )
+                                                )
+                                                else Text(stringResource(R.string.sort_add))
+                                            }
+                                        )
+                                    }
+                                    /*if (currentRoute.contains(AllDestinations.BOGASLUJBOVYIA)) {
+                                        DropdownMenuItem(
+                                            onClick = {
+                                                expanded = false
+                                                searchText = true
+                                            },
+                                            text = { Text(stringResource(R.string.searche_text)) }
+                                        )
+                                    }*/
                                     DropdownMenuItem(
                                         onClick = {
                                             expanded = false
-                                            sorted =
-                                                if (sorted == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
-                                                else Settings.SORT_BY_ABC
-                                            val edit = k.edit()
-                                            if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) edit.putInt(
-                                                "sortedVybranae",
-                                                sorted
-                                            )
-                                            else edit.putInt("natatki_sort", sorted)
-                                            edit.apply()
+                                            navigationActions.navigateToPraNas()
                                         },
-                                        text = {
-                                            if (sorted == Settings.SORT_BY_TIME) Text(
-                                                stringResource(
-                                                    R.string.sort_alf
-                                                )
-                                            )
-                                            else Text(stringResource(R.string.sort_add))
-                                        }
-                                    )
-                                }
-                                DropdownMenuItem(
-                                    onClick = {
-                                        expanded = false
-                                        navigationActions.navigateToPraNas()
-                                    },
-                                    text = { Text(stringResource(R.string.pra_nas)) }
-                                )
-                                DropdownMenuItem(
-                                    onClick = {
-                                        expanded = false
-                                        navigationActions.navigateToHelp()
-                                    },
-                                    text = { Text(stringResource(R.string.help)) }
-                                )
-                                if (k.getBoolean("admin", false)) {
-                                    HorizontalDivider()
-                                    DropdownMenuItem(
-                                        onClick = { },
-                                        text = { Text(stringResource(R.string.redagaktirovat)) }
+                                        text = { Text(stringResource(R.string.pra_nas)) }
                                     )
                                     DropdownMenuItem(
-                                        onClick = { },
+                                        onClick = {
+                                            expanded = false
+                                            navigationActions.navigateToHelp()
+                                        },
+                                        text = { Text(stringResource(R.string.help)) }
+                                    )
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            expanded = false
+                                            logView = true
+                                        },
                                         text = { Text(stringResource(R.string.log_m)) }
                                     )
+                                    if (k.getBoolean("admin", false)) {
+                                        HorizontalDivider()
+                                        DropdownMenuItem(
+                                            onClick = { },
+                                            text = { Text(stringResource(R.string.redagaktirovat)) }
+                                        )
+                                        DropdownMenuItem(
+                                            onClick = { },
+                                            text = { Text(stringResource(R.string.log_m)) }
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -930,4 +1039,57 @@ fun MainConteiner(
             }
         }
     }
+}
+
+@Composable
+fun DialogLogProgramy(
+    onDismissRequest: () -> Unit,
+) {
+    val context = LocalActivity.current as MainActivity
+    val log = remember { ArrayList<String>() }
+    var item by remember { mutableStateOf("") }
+    var logJob: Job? = null
+    val logView = LogView(context)
+    LaunchedEffect(Unit) {
+        if (logJob?.isActive != true) {
+            logJob = CoroutineScope(Dispatchers.Main).launch {
+                log.addAll(logView.getLogFile())
+                item = if (log.size > 0) logView.log[log.size - 1]
+                else context.getString(R.string.admin_upload_contine)
+            }
+        }
+    }
+    AlertDialog(
+        icon = {
+            Icon(painter = painterResource(R.drawable.description), contentDescription = "")
+        },
+        title = {
+            Text(text = stringResource(R.string.log))
+        },
+        text = {
+            Text(item, fontSize = 18.sp)
+        },
+        onDismissRequest = {
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    logView.createAndSentFile()
+                    onDismissRequest()
+                }
+            ) {
+                Text(stringResource(R.string.set_log), fontSize = 18.sp)
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    logJob?.cancel()
+                    onDismissRequest()
+                }
+            ) {
+                Text(stringResource(R.string.close), fontSize = 18.sp)
+            }
+        }
+    )
 }
