@@ -33,7 +33,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -50,25 +55,33 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class FilterPiesnyListModel : ViewModel() {
-    private val items = ArrayList<ArrayList<PiesnyListItem>>()
+    private val items = ArrayList<PiesnyListItem>()
 
     private val _filteredItems = MutableStateFlow(items)
-    var filteredItems: StateFlow<ArrayList<ArrayList<PiesnyListItem>>> = _filteredItems
+    var filteredItems: StateFlow<ArrayList<PiesnyListItem>> = _filteredItems
 
-    fun addAllItemList(item: ArrayList<PiesnyListItem>) {
-        items.add(item)
+    fun clear() {
+        items.clear()
     }
 
-    /*fun filterItem(rubrika: Int) {
-        _filteredItems.value = items.filter { it.rubrika == rubrika } as ArrayList<PiesnyListItem>
-        _filteredItems.value.sortBy {
+    fun sortBy() {
+        items.sortBy {
             it.title
         }
-    }*/
+    }
+
+    fun addAllItemList(item: ArrayList<PiesnyListItem>) {
+        items.addAll(item)
+    }
+
+    fun filterItem(search: String) {
+        _filteredItems.value = items.filter {
+            it.title.contains(search, ignoreCase = true) } as ArrayList<PiesnyListItem>
+    }
 }
 
 @Composable
-fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues) {
+fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues, searchText: Boolean, search: String) {
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
@@ -77,16 +90,24 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues) {
     var isInit by remember { mutableStateOf(true) }
     val rubrika by remember {
         mutableIntStateOf(
-            k.getInt(
-                "pubrikaPesnyMenu",
+            if (searchText) {
                 0
-            )
+            } else {
+                k.getInt(
+                    "pubrikaPesnyMenu",
+                    0
+                )
+            }
         )
     }
+    val piesnyBagarList = remember { ArrayList<PiesnyListItem>() }
+    val piesnyBelarusList = remember { ArrayList<PiesnyListItem>() }
+    val piesnyKaliadyList = remember { ArrayList<PiesnyListItem>() }
+    val piesnyPraslList = remember { ArrayList<PiesnyListItem>() }
+    val piesnyTaizeList = remember { ArrayList<PiesnyListItem>() }
     if (isInit) {
         LaunchedEffect(Unit) {
             isInit = false
-            val piesnyBagarList = ArrayList<PiesnyListItem>()
             piesnyBagarList.add(
                 PiesnyListItem(
                     2,
@@ -242,7 +263,6 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues) {
                     "Каралева супакою"
                 )
             )
-            val piesnyBelarusList = ArrayList<PiesnyListItem>()
             piesnyBelarusList.add(
                 PiesnyListItem(
                     1,
@@ -321,7 +341,6 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues) {
                     "Вяршыня Беларусі – крыж"
                 )
             )
-            val piesnyKaliadyList = ArrayList<PiesnyListItem>()
             piesnyKaliadyList.add(
                 PiesnyListItem(
                     3,
@@ -577,7 +596,6 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues) {
                     "Што гэта за дзіва"
                 )
             )
-            val piesnyPraslList = ArrayList<PiesnyListItem>()
             piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_0, "Ён паўсюль"))
             piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_1, "Ісус вызваліў мяне"))
             piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_2, "Ісус нам дае збаўленьне"))
@@ -879,7 +897,6 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues) {
                     "Дзень за днём"
                 )
             )
-            val piesnyTaizeList = ArrayList<PiesnyListItem>()
             piesnyTaizeList.add(PiesnyListItem(4, R.raw.pesny_taize_0, "Magnifikat"))
             piesnyTaizeList.add(PiesnyListItem(4, R.raw.pesny_taize_1, "Ostende nobis"))
             piesnyTaizeList.add(PiesnyListItem(4, R.raw.pesny_taize_2, "Ubi caritas"))
@@ -932,12 +949,16 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues) {
             piesnyBagarList.sortBy { it.title }
             piesnyKaliadyList.sortBy { it.title }
             piesnyTaizeList.sortBy { it.title }
-            viewModel.addAllItemList(piesnyPraslList)
-            viewModel.addAllItemList(piesnyBelarusList)
-            viewModel.addAllItemList(piesnyBagarList)
-            viewModel.addAllItemList(piesnyKaliadyList)
-            viewModel.addAllItemList(piesnyTaizeList)
         }
+    }
+    if (searchText) {
+        viewModel.clear()
+        viewModel.addAllItemList(piesnyPraslList)
+        viewModel.addAllItemList(piesnyBelarusList)
+        viewModel.addAllItemList(piesnyBagarList)
+        viewModel.addAllItemList(piesnyKaliadyList)
+        viewModel.addAllItemList(piesnyTaizeList)
+        viewModel.sortBy()
     }
     val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
     val list = listOf(
@@ -947,100 +968,134 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues) {
         stringResource(R.string.pesny4),
         stringResource(R.string.pesny5)
     )
+    viewModel.filterItem(search)
     val pagerState = rememberPagerState(pageCount = {
         list.size
     }, initialPage = rubrika)
     val coroutineScope = rememberCoroutineScope()
-    LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }.collect { page ->
-            val edit = k.edit()
-            edit.putInt("pubrikaPesnyMenu", page)
-            edit.apply()
+    if (!searchText) {
+        LaunchedEffect(pagerState) {
+            snapshotFlow { pagerState.currentPage }.collect { page ->
+                val edit = k.edit()
+                edit.putInt("pubrikaPesnyMenu", page)
+                edit.apply()
+            }
         }
     }
     Column {
-        ScrollableTabRow(
-            modifier = Modifier.background(MaterialTheme.colorScheme.onPrimary),
-            selectedTabIndex = pagerState.currentPage,
-            indicator = { tabPositions ->
-                TabRowDefaults.PrimaryIndicator(
-                    modifier = Modifier
-                        .tabIndicatorOffset(tabPositions[pagerState.currentPage]),
-                    width = Dp.Unspecified,
-                    shape = RoundedCornerShape(
-                        topStart = 5.dp,
-                        topEnd = 5.dp,
-                        bottomEnd = 0.dp,
-                        bottomStart = 0.dp,
-                    )
-                )
-            }
-        ) {
-            list.forEachIndexed { index, title ->
-                Tab(
-                    selected = pagerState.currentPage == index,
-                    onClick = {
-                        val edit = k.edit()
-                        edit.putInt("pubrikaPesnyMenu", index)
-                        edit.apply()
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(index)
-                        }
-                    },
-                    text = {
-                        Text(
-                            text = title,
-                            fontSize = 18.sp,
-                            lineHeight = 18.sp * 1.15f,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            color = MaterialTheme.colorScheme.secondary,
+        if (!searchText) {
+            ScrollableTabRow(
+                modifier = Modifier.background(MaterialTheme.colorScheme.onPrimary),
+                selectedTabIndex = pagerState.currentPage,
+                indicator = { tabPositions ->
+                    TabRowDefaults.PrimaryIndicator(
+                        modifier = Modifier
+                            .tabIndicatorOffset(tabPositions[pagerState.currentPage]),
+                        width = Dp.Unspecified,
+                        shape = RoundedCornerShape(
+                            topStart = 5.dp,
+                            topEnd = 5.dp,
+                            bottomEnd = 0.dp,
+                            bottomStart = 0.dp,
                         )
-                    }
-                )
+                    )
+                }
+            ) {
+                list.forEachIndexed { index, title ->
+                    Tab(
+                        selected = pagerState.currentPage == index,
+                        onClick = {
+                            val edit = k.edit()
+                            edit.putInt("pubrikaPesnyMenu", index)
+                            edit.apply()
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(index)
+                            }
+                        },
+                        text = {
+                            Text(
+                                text = title,
+                                fontSize = 18.sp,
+                                lineHeight = 18.sp * 1.15f,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                color = MaterialTheme.colorScheme.secondary,
+                            )
+                        }
+                    )
+                }
             }
         }
-        HorizontalPager(
-            state = pagerState,
-            verticalAlignment = Alignment.Top
-        ) { page ->
-            LazyColumn {
-                items(
-                    if (filteredItems.isNotEmpty()) filteredItems[page].size else 0,
-                    key = { index -> filteredItems[page][index].title + page + index }) { index ->
-                    Column {
-                        Row(
-                            modifier = Modifier
-                                .padding(start = 10.dp)
-                                .clickable {
-                                    navigationActions.navigateToBogaslujbovyia(
-                                        filteredItems[page][index].title,
-                                        filteredItems[page][index].resurs
-                                    )
-                                },
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                modifier = Modifier.size(12.dp, 12.dp),
-                                painter = painterResource(R.drawable.krest),
-                                tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
-                            )
-                            Text(
-                                text = filteredItems[page][index].title,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(10.dp),
-                                color = MaterialTheme.colorScheme.secondary
-                            )
-                        }
-                    }
-                    HorizontalDivider()
+        if (searchText) {
+            PiesnyList(filteredItems, navigationActions, innerPadding)
+        } else {
+            HorizontalPager(
+                state = pagerState,
+                verticalAlignment = Alignment.Top
+            ) { page ->
+                val piesnyList = when (page) {
+                    0 -> piesnyPraslList
+                    1 -> piesnyBelarusList
+                    2 -> piesnyBagarList
+                    3 -> piesnyKaliadyList
+                    4 -> piesnyTaizeList
+                    else -> piesnyPraslList
                 }
-                item {
-                    Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
+                PiesnyList(piesnyList, navigationActions, innerPadding)
+            }
+        }
+    }
+}
+
+@Composable
+fun PiesnyList(piesnyList: ArrayList<PiesnyListItem>, navigationActions: AppNavigationActions, innerPadding: PaddingValues) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(
+                available: Offset,
+                source: NestedScrollSource
+            ): Offset {
+                keyboardController?.hide()
+                return super.onPreScroll(available, source)
+            }
+        }
+    }
+    LazyColumn(Modifier.nestedScroll(nestedScrollConnection)) {
+        items(
+            piesnyList.size,
+            key = { index -> piesnyList[index].title + index }) { index ->
+            Column {
+                Row(
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .clickable {
+                            navigationActions.navigateToBogaslujbovyia(
+                                piesnyList[index].title,
+                                piesnyList[index].resurs
+                            )
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        modifier = Modifier.size(12.dp, 12.dp),
+                        painter = painterResource(R.drawable.krest),
+                        tint = MaterialTheme.colorScheme.primary,
+                        contentDescription = null
+                    )
+                    Text(
+                        text = piesnyList[index].title,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(10.dp),
+                        color = MaterialTheme.colorScheme.secondary
+                    )
                 }
             }
+            HorizontalDivider()
+        }
+        item {
+            Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
         }
     }
 }

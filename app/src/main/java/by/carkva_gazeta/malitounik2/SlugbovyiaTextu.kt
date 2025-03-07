@@ -3832,7 +3832,7 @@ class SlugbovyiaTextu {
             SlugbovyiaTextuData(
                 45,
                 "Сьвятога і роўнага апосталам Кірылы Філосафа, настаўніка славянаў",
-                R.raw.mm_14_02_kirylu_filosafa_viaczernia,
+                R.raw.mm_14_02_kiryly_filosafa_viaczernia,
                 VIACZERNIA
             )
         )
@@ -3862,6 +3862,8 @@ class SlugbovyiaTextu {
             else -> ""
         }
     }
+
+    fun getAllSlugbovyiaTextu() = datMinALL
 
     fun getTydzen1(): List<SlugbovyiaTextuData> {
         val list = datMinALL.filter {

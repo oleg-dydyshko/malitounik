@@ -14,34 +14,102 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik2.views.AppNavigationActions
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+
+class FilterBogaslujbovyiaListModel : ViewModel() {
+    private val items = ArrayList<BogaslujbovyiaListData>()
+
+    private val _filteredItems = MutableStateFlow(items)
+    var filteredItems: StateFlow<ArrayList<BogaslujbovyiaListData>> = _filteredItems
+
+    fun addAllItemList(item: ArrayList<BogaslujbovyiaListData>) {
+        items.addAll(item)
+    }
+
+    fun filterItem(search: String) {
+        _filteredItems.value = items.filter { it.title.contains(search, ignoreCase = true) } as ArrayList<BogaslujbovyiaListData>
+    }
+}
 
 @Composable
 fun BogaslujbovyiaMenu(
     navController: NavHostController,
     innerPadding: PaddingValues,
-    menuItem: Int
+    menuItem: Int,
+    searchText: Boolean,
+    search: String
 ) {
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(
+                available: Offset,
+                source: NestedScrollSource
+            ): Offset {
+                keyboardController?.hide()
+                return super.onPreScroll(available, source)
+            }
+        }
+    }
     val folderList = stringArrayResource(R.array.bogaslugbovyia_folder_list)
-    val list = when (menuItem) {
-        Settings.MENU_BOGASLUJBOVYIA -> getBogaslujbovyia()
-        Settings.MENU_MALITVY -> getMalitvy()
-        Settings.MENU_AKAFIST -> getAkafist()
-        Settings.MENU_RUJANEC -> getRujanec()
-        else -> ArrayList()
+    val viewModel = FilterBogaslujbovyiaListModel()
+    val list = if (searchText) {
+        val listAll = ArrayList<BogaslujbovyiaListData>()
+        listAll.addAll(getBogaslujbovyia())
+        listAll.addAll(getMalitvy())
+        listAll.addAll(getAkafist())
+        listAll.addAll(getRujanec())
+        listAll.addAll(getAktoix())
+        listAll.addAll(getViachernia())
+        listAll.addAll(getTraparyKandakiShtodzennyia())
+        listAll.addAll(getTraparyKandakiNiadzelnyia())
+        listAll.addAll(getMalitvyPasliaPrychascia())
+        listAll.addAll(getTrebnik())
+        listAll.addAll(getMineiaAgulnaia())
+        val slugbovyiaTextu = SlugbovyiaTextu()
+        val listPast = slugbovyiaTextu.getAllSlugbovyiaTextu()
+        listPast.forEach { slugbovyiaTextuData ->
+            listAll.add(BogaslujbovyiaListData(slugbovyiaTextuData.title, slugbovyiaTextuData.resource))
+        }
+        listAll.sortBy {
+            it.title
+        }
+        viewModel.addAllItemList(listAll)
+        viewModel.filterItem(search)
+        listAll
+    } else {
+        val listAll = when (menuItem) {
+            Settings.MENU_BOGASLUJBOVYIA -> getBogaslujbovyia()
+            Settings.MENU_MALITVY -> getMalitvy()
+            Settings.MENU_AKAFIST -> getAkafist()
+            Settings.MENU_RUJANEC -> getRujanec()
+            else -> ArrayList()
+        }
+        viewModel.addAllItemList(listAll)
+        listAll
     }
     folderList.sort()
     if (menuItem == Settings.MENU_BOGASLUJBOVYIA) {
@@ -49,8 +117,9 @@ fun BogaslujbovyiaMenu(
             it.title
         }
     }
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-        if (menuItem == Settings.MENU_BOGASLUJBOVYIA) {
+    val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
+    LazyColumn(modifier = Modifier.fillMaxSize().nestedScroll(nestedScrollConnection)) {
+        if (!searchText && menuItem == Settings.MENU_BOGASLUJBOVYIA) {
             items(folderList.size) { index ->
                 Row(
                     modifier = Modifier
@@ -124,15 +193,15 @@ fun BogaslujbovyiaMenu(
                 HorizontalDivider()
             }
         }
-        items(list.size) { index ->
+        items(filteredItems.size) { index ->
             Row(
                 modifier = Modifier
                     .padding(start = 10.dp)
                     .clickable {
                         if (menuItem != Settings.MENU_MAE_NATATKI) {
                             navigationActions.navigateToBogaslujbovyia(
-                                list[index].title,
-                                list[index].resurs
+                                filteredItems[index].title,
+                                filteredItems[index].resurs
                             )
                         }
                     },
@@ -145,7 +214,7 @@ fun BogaslujbovyiaMenu(
                     contentDescription = null
                 )
                 Text(
-                    list[index].title,
+                    filteredItems[index].title,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(10.dp),
@@ -154,7 +223,7 @@ fun BogaslujbovyiaMenu(
             }
             HorizontalDivider()
         }
-        if (menuItem == Settings.MENU_MALITVY) {
+        if (!searchText && menuItem == Settings.MENU_MALITVY) {
             item {
                 val title = stringResource(R.string.prynagodnyia)
                 Row(
@@ -283,6 +352,7 @@ fun getBogaslujbovyia(): ArrayList<BogaslujbovyiaListData> {
         )
     )
     list.add(BogaslujbovyiaListData("Павячэрніца малая", R.raw.paviaczernica_malaja))
+    list.add(BogaslujbovyiaListData("Павячэрніца вялікая", R.raw.paviaczernica_vialikaja))
     list.add(
         BogaslujbovyiaListData(
             "Вялікі пакаянны канон сьвятога Андрэя Крыцкага(у 4-х частках)",

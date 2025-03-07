@@ -109,7 +109,7 @@ class FilterBiblijatekaModel : ViewModel() {
 var biblijatekaJob: Job? = null
 
 @Composable
-fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues) {
+fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues, searchText: Boolean, search: String) {
     val context = LocalContext.current
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {

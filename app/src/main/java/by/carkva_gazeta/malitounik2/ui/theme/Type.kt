@@ -4,6 +4,7 @@ import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import by.carkva_gazeta.malitounik2.R
@@ -16,9 +17,9 @@ import by.carkva_gazeta.malitounik2.R
 )*/
 val displayFontFamily = FontFamily(
     Font(R.font.robotocondensed),
-    Font(R.font.robotocondensedbold),
-    Font(R.font.robotocondenseditalic),
-    Font(R.font.robotocondensedbolditalic)
+    Font(R.font.robotocondensedbold, weight = FontWeight.Bold),
+    Font(R.font.robotocondenseditalic, style = FontStyle.Italic),
+    Font(R.font.robotocondensedbolditalic, weight = FontWeight.Bold, style = FontStyle.Italic)
 )
 val baseline = Typography()
 

@@ -61,7 +61,7 @@ class FilterPasxaModel : ViewModel() {
 }
 
 @Composable
-fun Pashalia(navController: NavHostController, innerPadding: PaddingValues) {
+fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, searchText: Boolean, search: String) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {

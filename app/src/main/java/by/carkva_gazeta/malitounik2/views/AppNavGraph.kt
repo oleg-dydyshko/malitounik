@@ -55,13 +55,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -505,9 +504,10 @@ fun MainConteiner(
     var removeAllVybranae by remember { mutableStateOf(false) }
     var removeAllNatatki by remember { mutableStateOf(false) }
     var logView by remember { mutableStateOf(false) }
-    var searchText by remember { mutableStateOf(false) }
+    var searchText by rememberSaveable { mutableStateOf(false) }
     var search by rememberSaveable { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
+    var textFieldLoaded by remember { mutableStateOf(false) }
     if (logView) {
         DialogLogProgramy {
             logView = false
@@ -609,11 +609,17 @@ fun MainConteiner(
                             TextField(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .focusRequester(focusRequester),
-                                value = TextFieldValue(search, selection = TextRange(search.length)),
+                                    .focusRequester(focusRequester)
+                                    .onGloballyPositioned {
+                                        if (!textFieldLoaded) {
+                                            focusRequester.requestFocus()
+                                            textFieldLoaded = true
+                                        }
+                                    },
+                                value = search,
                                 onValueChange = { newText ->
                                     result.clear()
-                                    var edit = newText.text
+                                    var edit = newText
                                     edit = edit.replace("и", "і")
                                     edit = edit.replace("щ", "ў")
                                     edit = edit.replace("И", "І")
@@ -676,15 +682,17 @@ fun MainConteiner(
                     },
                     actions = {
                         if (!searchText) {
-                            IconButton({
-                                searchText = true
-                            }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.search),
-                                    tint = textTollBarColor,
-                                    contentDescription = ""
-                                )
-                            }
+                            if (currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.RUJANEC_MENU || currentRoute == AllDestinations.MALITVY_MENU ||currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute == AllDestinations.BIBLIJATEKA_LIST || currentRoute == AllDestinations.PIESNY_LIST || currentRoute == AllDestinations.PASHALIA) {
+                                    IconButton({
+                                        searchText = true
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.search),
+                                            tint = textTollBarColor,
+                                            contentDescription = ""
+                                        )
+                                    }
+                                }
                             if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
                                 IconButton({
                                     val edit = k.edit()
@@ -925,29 +933,35 @@ fun MainConteiner(
                     AllDestinations.BOGASLUJBOVYIA_MENU -> BogaslujbovyiaMenu(
                         navController,
                         innerPadding,
-                        Settings.MENU_BOGASLUJBOVYIA
+                        Settings.MENU_BOGASLUJBOVYIA,
+                        searchText,
+                        search
                     )
 
                     AllDestinations.AKAFIST_MENU -> BogaslujbovyiaMenu(
                         navController,
                         innerPadding,
-                        Settings.MENU_AKAFIST
+                        Settings.MENU_AKAFIST,
+                        searchText,
+                        search
                     )
 
-                    AllDestinations.BIBLIJATEKA_LIST -> BiblijtekaList(navController, innerPadding)
+                    AllDestinations.BIBLIJATEKA_LIST -> BiblijtekaList(navController, innerPadding, searchText, search)
 
-                    AllDestinations.PIESNY_LIST -> PiesnyList(navController, innerPadding)
+                    AllDestinations.PIESNY_LIST -> PiesnyList(navController, innerPadding, searchText, search)
 
                     AllDestinations.SVAITY_MUNU -> SviatyList(navController, innerPadding)
 
                     AllDestinations.PARAFII_BGKC -> ParafiiBGKC(navController, innerPadding)
 
-                    AllDestinations.PASHALIA -> Pashalia(navController, innerPadding)
+                    AllDestinations.PASHALIA -> Pashalia(navController, innerPadding, searchText, search)
 
                     AllDestinations.RUJANEC_MENU -> BogaslujbovyiaMenu(
                         navController,
                         innerPadding,
-                        Settings.MENU_RUJANEC
+                        Settings.MENU_RUJANEC,
+                        searchText,
+                        search
                     )
 
                     AllDestinations.MAE_NATATKI_MENU -> {
@@ -964,7 +978,9 @@ fun MainConteiner(
                     AllDestinations.MALITVY_MENU -> BogaslujbovyiaMenu(
                         navController,
                         innerPadding,
-                        Settings.MENU_MALITVY
+                        Settings.MENU_MALITVY,
+                        searchText,
+                        search
                     )
 
                     AllDestinations.BIBLIA -> BibliaMenu(

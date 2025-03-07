@@ -684,38 +684,10 @@ fun getMineiaMesiachnaia(subTitle: String): ArrayList<MineiaList> {
     return mineiaList
 }
 
-fun pasha(day: Int): Int {
-    val year = Calendar.getInstance()[Calendar.YEAR]
-    var dataP: Int
-    val monthP: Int
-    val a = year % 19
-    val b = year % 4
-    val cx = year % 7
-    val k = year / 100
-    val p = (13 + 8 * k) / 25
-    val q = k / 4
-    val m = (15 - p + k - q) % 30
-    val n = (4 + k - q) % 7
-    val d = (19 * a + m) % 30
-    val ex = (2 * b + 4 * cx + 6 * d + n) % 7
-    if (d + ex <= 9) {
-        dataP = d + ex + 22
-        monthP = Calendar.MARCH
-    } else {
-        dataP = d + ex - 9
-        if (d == 29 && ex == 6) dataP = 19
-        if (d == 28 && ex == 6) dataP = 18
-        monthP = Calendar.APRIL
-    }
-    val gCalendar = GregorianCalendar(year, monthP, dataP)
-    gCalendar.add(Calendar.DATE, day)
-    return gCalendar[Calendar.DAY_OF_YEAR]
-}
-
-@Composable
 fun getMineiaMesiachnaiaMounth(): ArrayList<BogaslujbovyiaListData> {
+    val context = MainActivity.applicationContext()
     val list = ArrayList<BogaslujbovyiaListData>()
-    val mounthList = stringArrayResource(R.array.meciac3)
+    val mounthList = context.resources.getStringArray(R.array.meciac3)
     mounthList.forEachIndexed { index, item ->
         list.add(BogaslujbovyiaListData(item, index))
     }
