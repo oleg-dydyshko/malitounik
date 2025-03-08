@@ -60,7 +60,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -111,8 +113,6 @@ import by.carkva_gazeta.malitounik2.ui.theme.StrogiPost
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
 import java.io.File
@@ -505,9 +505,16 @@ fun MainConteiner(
     var removeAllNatatki by remember { mutableStateOf(false) }
     var logView by remember { mutableStateOf(false) }
     var searchText by rememberSaveable { mutableStateOf(false) }
-    var search by rememberSaveable { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
+    var textFieldValueState by remember {
+        mutableStateOf(
+            TextFieldValue(
+                text = "",
+                selection = TextRange("".length)
+            )
+        )
+    }
     if (logView) {
         DialogLogProgramy {
             logView = false
@@ -616,16 +623,17 @@ fun MainConteiner(
                                             textFieldLoaded = true
                                         }
                                     },
-                                value = search,
+                                value = textFieldValueState,
                                 onValueChange = { newText ->
+                                    textFieldValueState = newText
                                     result.clear()
-                                    var edit = newText
+                                    var edit = textFieldValueState.text
                                     edit = edit.replace("и", "і")
                                     edit = edit.replace("щ", "ў")
                                     edit = edit.replace("И", "І")
                                     edit = edit.replace("Щ", "Ў")
                                     edit = edit.replace("ъ", "'")
-                                    search = edit
+                                    textFieldValueState = TextFieldValue(edit, TextRange(edit.length))
                                 },
                                 singleLine = true,
                                 leadingIcon = {
@@ -636,8 +644,8 @@ fun MainConteiner(
                                     )
                                 },
                                 trailingIcon = {
-                                    if (search.isNotEmpty()) {
-                                        IconButton(onClick = { search = "" }) {
+                                    if (textFieldValueState.text.isNotEmpty()) {
+                                        IconButton(onClick = { textFieldValueState = TextFieldValue("", TextRange("".length)) }) {
                                             Icon(
                                                 painter = painterResource(R.drawable.close),
                                                 contentDescription = "",
@@ -935,7 +943,7 @@ fun MainConteiner(
                         innerPadding,
                         Settings.MENU_BOGASLUJBOVYIA,
                         searchText,
-                        search
+                        textFieldValueState.text
                     )
 
                     AllDestinations.AKAFIST_MENU -> BogaslujbovyiaMenu(
@@ -943,25 +951,28 @@ fun MainConteiner(
                         innerPadding,
                         Settings.MENU_AKAFIST,
                         searchText,
-                        search
+                        textFieldValueState.text
                     )
 
-                    AllDestinations.BIBLIJATEKA_LIST -> BiblijtekaList(navController, innerPadding, searchText, search)
+                    AllDestinations.BIBLIJATEKA_LIST -> BiblijtekaList(navController, innerPadding, searchText, textFieldValueState.text)
 
-                    AllDestinations.PIESNY_LIST -> PiesnyList(navController, innerPadding, searchText, search)
+                    AllDestinations.PIESNY_LIST -> PiesnyList(navController, innerPadding, searchText, textFieldValueState.text)
 
                     AllDestinations.SVAITY_MUNU -> SviatyList(navController, innerPadding)
 
                     AllDestinations.PARAFII_BGKC -> ParafiiBGKC(navController, innerPadding)
 
-                    AllDestinations.PASHALIA -> Pashalia(navController, innerPadding, searchText, search)
+                    AllDestinations.PASHALIA -> {
+                        if (!searchText) textFieldValueState = TextFieldValue("", TextRange("".length))
+                        Pashalia(navController, innerPadding, searchText, textFieldValueState.text)
+                    }
 
                     AllDestinations.RUJANEC_MENU -> BogaslujbovyiaMenu(
                         navController,
                         innerPadding,
                         Settings.MENU_RUJANEC,
                         searchText,
-                        search
+                        textFieldValueState.text
                     )
 
                     AllDestinations.MAE_NATATKI_MENU -> {
@@ -980,7 +991,7 @@ fun MainConteiner(
                         innerPadding,
                         Settings.MENU_MALITVY,
                         searchText,
-                        search
+                        textFieldValueState.text
                     )
 
                     AllDestinations.BIBLIA -> BibliaMenu(
@@ -1062,18 +1073,15 @@ fun DialogLogProgramy(
     onDismissRequest: () -> Unit,
 ) {
     val context = LocalActivity.current as MainActivity
-    val log = remember { ArrayList<String>() }
     var item by remember { mutableStateOf("") }
-    var logJob: Job? = null
     val logView = LogView(context)
-    LaunchedEffect(Unit) {
-        if (logJob?.isActive != true) {
-            logJob = CoroutineScope(Dispatchers.Main).launch {
-                log.addAll(logView.getLogFile())
-                item = if (log.size > 0) logView.log[log.size - 1]
-                else context.getString(R.string.admin_upload_contine)
-            }
+    logView.setLogViewListinner(object : LogView.LogViewListinner {
+        override fun logView(log: String) {
+            item = log
         }
+    })
+    LaunchedEffect(Unit) {
+        logView.upDateLog()
     }
     AlertDialog(
         icon = {
@@ -1100,7 +1108,6 @@ fun DialogLogProgramy(
         dismissButton = {
             TextButton(
                 onClick = {
-                    logJob?.cancel()
                     onDismissRequest()
                 }
             ) {

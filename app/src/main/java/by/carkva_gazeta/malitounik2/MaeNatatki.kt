@@ -28,6 +28,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -198,7 +201,16 @@ fun DialogMyNatatli(
 ) {
     var editMode by rememberSaveable { mutableStateOf(isEditMode) }
     var editTitle by rememberSaveable { mutableStateOf(title) }
-    var editContent by rememberSaveable { mutableStateOf(content) }
+    val focusRequester = remember { FocusRequester() }
+    var textFieldLoaded by remember { mutableStateOf(false) }
+    var textFieldValueState by remember {
+        mutableStateOf(
+            TextFieldValue(
+                text = content,
+                selection = TextRange(content.length)
+            )
+        )
+    }
     AlertDialog(
         icon = {
             Icon(painter = painterResource(R.drawable.description), contentDescription = "")
@@ -219,19 +231,27 @@ fun DialogMyNatatli(
         text = {
             if (editMode) {
                 TextField(
+                    modifier = Modifier
+                        .focusRequester(focusRequester)
+                        .onGloballyPositioned {
+                            if (!textFieldLoaded) {
+                                focusRequester.requestFocus()
+                                textFieldLoaded = true
+                            }
+                        },
                     placeholder = { Text(stringResource(R.string.natatka), fontSize = 18.sp) },
-                    value = editContent,
+                    value = textFieldValueState,
                     onValueChange = {
-                        editContent = it
+                        textFieldValueState = it
                     },
                     textStyle = TextStyle(fontSize = 18.sp)
                 )
             } else {
-                Text(editContent, fontSize = 18.sp)
+                Text(textFieldValueState.text, fontSize = 18.sp)
             }
         },
         onDismissRequest = {
-            if (editMode) onConfirmation(editTitle, editContent)
+            if (editMode) onConfirmation(editTitle, textFieldValueState.text)
             else onDismissRequest()
         },
         dismissButton = {
@@ -241,19 +261,19 @@ fun DialogMyNatatli(
                     else editMode = true
                 }
             ) {
-                if (editMode) Text(stringResource(R.string.close), fontSize = 18.sp)
+                if (editMode) Text(stringResource(R.string.cansel), fontSize = 18.sp)
                 else Text(stringResource(R.string.redagaktirovat), fontSize = 18.sp)
             }
         },
         confirmButton = {
             TextButton(
                 onClick = {
-                    if (editMode) onConfirmation(editTitle, editContent)
+                    if (editMode) onConfirmation(editTitle, textFieldValueState.text)
                     else onDismissRequest()
                 }
             ) {
                 if (editMode) Text(stringResource(R.string.save_sabytie), fontSize = 18.sp)
-                else Text(stringResource(R.string.cansel), fontSize = 18.sp)
+                else Text(stringResource(R.string.close), fontSize = 18.sp)
             }
         }
     )

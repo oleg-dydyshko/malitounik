@@ -25,8 +25,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -56,7 +61,7 @@ class FilterPasxaModel : ViewModel() {
 
     fun filterItem(search: String) {
         _filteredItems.value =
-            items.filter { it.katolic.contains(search) } as ArrayList<Pashalii>
+            items.filter { it.katolic.contains(search, ignoreCase = true) } as ArrayList<Pashalii>
     }
 }
 
@@ -86,48 +91,63 @@ fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, sear
             lazyListState.scrollToItem(findIndex - 1582)
         }
     }
-    val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
-    Column {
-        Row(
-            modifier = Modifier
-                .padding(start = 10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = stringResource(R.string.hryharyjan),
-                    modifier = Modifier,
-                    color = MaterialTheme.colorScheme.secondary
-                )
-                Text(
-                    text = stringResource(R.string.juljan),
-                    modifier = Modifier,
-                    color = SecondaryText
-                )
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(
+                available: Offset,
+                source: NestedScrollSource
+            ): Offset {
+                keyboardController?.hide()
+                return super.onPreScroll(available, source)
             }
-            TextButton(
+        }
+    }
+    val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
+    viewModel.filterItem(search)
+    Column(modifier = Modifier.nestedScroll(nestedScrollConnection)) {
+        if (!searchText) {
+            Row(
                 modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(5.dp),
-                colors = ButtonColors(
-                    Divider,
-                    Color.Unspecified,
-                    Color.Unspecified,
-                    Color.Unspecified
-                ),
-                shape = MaterialTheme.shapes.medium,
-                onClick = {
-                    navigationActions.navigateToBogaslujbovyia(
-                        context.getString(R.string.pascha_kaliandar_bel),
-                        R.raw.pasxa
+                    .padding(start = 10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(R.string.hryharyjan),
+                        modifier = Modifier,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                    Text(
+                        text = stringResource(R.string.juljan),
+                        modifier = Modifier,
+                        color = SecondaryText
                     )
                 }
-            ) {
-                Text(
-                    stringResource(R.string.paschalia),
-                    fontSize = 18.sp,
-                    lineHeight = 18.sp * 1.15f
-                )
+                TextButton(
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(5.dp),
+                    colors = ButtonColors(
+                        Divider,
+                        Color.Unspecified,
+                        Color.Unspecified,
+                        Color.Unspecified
+                    ),
+                    shape = MaterialTheme.shapes.medium,
+                    onClick = {
+                        navigationActions.navigateToBogaslujbovyia(
+                            context.getString(R.string.pascha_kaliandar_bel),
+                            R.raw.pasxa
+                        )
+                    }
+                ) {
+                    Text(
+                        stringResource(R.string.paschalia),
+                        fontSize = 18.sp,
+                        lineHeight = 18.sp * 1.15f
+                    )
+                }
             }
         }
         LazyColumn(state = lazyListState) {

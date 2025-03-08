@@ -20,13 +20,43 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 class LogView(val context: MainActivity) {
-    var log = ArrayList<String>()
+    private var log = ArrayList<String>()
     private var logJob: Job? = null
     private val sb = StringBuilder()
     private val checkSB = StringBuilder()
     private var oldCheckSB = ""
+    private var logViewListinner: LogViewListinner? = null
 
-    suspend fun getLogFile(count: Int = 0): ArrayList<String> {
+    interface LogViewListinner {
+        fun logView(log: String)
+    }
+
+    fun setLogViewListinner(listinner: LogViewListinner) {
+        logViewListinner = listinner
+    }
+
+    fun onDistroy() {
+        logJob?.cancel()
+    }
+
+    fun upDateLog() {
+        log.clear()
+        sb.clear()
+        logJob?.cancel()
+        logJob = CoroutineScope(Dispatchers.Main).launch {
+            val localFile = File("${context.filesDir}/cache/cache.txt")
+            MainActivity.referens.child("/admin/log.txt").getFile(localFile).await()
+            var log = ""
+            if (localFile.exists()) log = localFile.readText()
+            if (log.isNotEmpty()) {
+                getLogFile()
+            } else {
+                logViewListinner?.logView(context.getString(R.string.admin_upload_log_contine))
+            }
+        }
+    }
+
+    private suspend fun getLogFile(count: Int = 0): ArrayList<String> {
         val localFile = File("${context.filesDir}/cache/log.txt")
         var error = false
         MainActivity.referens.child("/admin/adminListFile.txt").getFile(localFile).addOnFailureListener {
@@ -52,17 +82,17 @@ class LogView(val context: MainActivity) {
         }
         checkResources()
         if (log.isEmpty()) {
-            //binding.textView.text = getString(by.carkva_gazeta.malitounik.R.string.admin_upload_contine)
+            logViewListinner?.logView(context.getString(R.string.admin_upload_contine))
             val zip = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "MainActivityResource.zip")
             if (zip.exists()) sendAndClearLogFile(zip, isSendLogFile = false)
-        } /*else {
+        } else {
             val strB = StringBuilder()
             log.forEach {
                 strB.append(it)
                 strB.append("\n")
             }
-            //binding.textView.text = strB.toString()
-        }*/
+            logViewListinner?.logView(strB.toString())
+        }
         return log
     }
 
@@ -97,7 +127,7 @@ class LogView(val context: MainActivity) {
                 }
             }
         }
-        //binding.textView2.text = checkSB.toString()
+        logViewListinner?.logView(checkSB.toString())
     }
 
     private suspend fun runPrefixes(list: ListResult, checkList: String) {
@@ -146,6 +176,7 @@ class LogView(val context: MainActivity) {
         } else {
             log.add(path)
         }
+        logViewListinner?.logView(path)
     }
 
     fun createAndSentFile() {

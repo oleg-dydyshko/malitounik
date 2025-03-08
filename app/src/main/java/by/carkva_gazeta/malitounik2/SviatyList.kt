@@ -151,7 +151,7 @@ fun SviatyList(navController: NavHostController, innerPadding: PaddingValues) {
 
 fun getPrazdnik(
     context: Context,
-    razdez: Int,
+    razdel: Int,
     yearG: Int = Calendar.getInstance().get(Calendar.YEAR)
 ): ArrayList<Prazdniki> {
     val a = yearG % 19
@@ -179,7 +179,7 @@ fun getPrazdnik(
     val nedelName = context.resources.getStringArray(R.array.dni_nedeli)
     val prazdnikiAll = ArrayList<Prazdniki>()
     val c = GregorianCalendar(yearG, monthP - 1, dataP)
-    when (razdez) {
+    when (razdel) {
         1 -> {
             prazdnikiAll.add(
                 Prazdniki(

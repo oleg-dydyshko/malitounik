@@ -49,7 +49,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,6 +60,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
@@ -69,8 +69,10 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -104,7 +106,6 @@ fun SearchBible(
     perevod: String,
     navigateToCytanniList: (String, Int, String) -> Unit = { _, _, _ -> }
 ) {
-    var search by rememberSaveable { mutableStateOf("") }
     var searchSettings by remember { mutableStateOf(false) }
     var isProgressVisable by remember { mutableStateOf(false) }
     val lazyRowState = rememberLazyListState()
@@ -112,15 +113,21 @@ fun SearchBible(
     val context = LocalContext.current
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
+    var textFieldLoaded by remember { mutableStateOf(false) }
+    var textFieldValueState by remember {
+        mutableStateOf(
+            TextFieldValue(
+                text = "",
+                selection = TextRange("".length)
+            )
+        )
     }
-    LaunchedEffect(search, searchSettings) {
+    LaunchedEffect(textFieldValueState.text, searchSettings) {
         if (searchSettings) {
             result.clear()
             searchSettings = false
         }
-        if (search.trim().length >= 3 && result.isEmpty()) {
+        if (textFieldValueState.text.trim().length >= 3 && result.isEmpty()) {
             if (searchJob?.isActive == true) {
                 searchJob?.cancel()
             }
@@ -128,7 +135,7 @@ fun SearchBible(
                 isProgressVisable = true
                 result.clear()
                 val list = withContext(Dispatchers.IO) {
-                    return@withContext doInBackground(context, search.trim(), perevod)
+                    return@withContext doInBackground(context, textFieldValueState.text.trim(), perevod)
                 }
                 result.addAll(list)
                 isProgressVisable = false
@@ -165,11 +172,18 @@ fun SearchBible(
                     TextField(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .focusRequester(focusRequester),
-                        value = search,
+                            .focusRequester(focusRequester)
+                            .onGloballyPositioned {
+                                if (!textFieldLoaded) {
+                                    focusRequester.requestFocus()
+                                    textFieldLoaded = true
+                                }
+                            },
+                        value = textFieldValueState,
                         onValueChange = { newText ->
+                            textFieldValueState = newText
                             result.clear()
-                            var edit = newText
+                            var edit = textFieldValueState.text
                             if (perevod == Settings.PEREVODSINOIDAL) {
                                 edit = edit.replace("і", "и")
                                 edit = edit.replace("ў", "щ")
@@ -183,7 +197,7 @@ fun SearchBible(
                                 edit = edit.replace("Щ", "Ў")
                                 edit = edit.replace("ъ", "'")
                             }
-                            search = edit
+                            textFieldValueState = TextFieldValue(edit, TextRange(edit.length))
                         },
                         singleLine = true,
                         leadingIcon = {
@@ -194,8 +208,8 @@ fun SearchBible(
                             )
                         },
                         trailingIcon = {
-                            if (search.isNotEmpty()) {
-                                IconButton(onClick = { search = "" }) {
+                            if (textFieldValueState.text.isNotEmpty()) {
+                                IconButton(onClick = { textFieldValueState = TextFieldValue("", TextRange("".length)) }) {
                                     Icon(
                                         painter = painterResource(R.drawable.close),
                                         contentDescription = "",

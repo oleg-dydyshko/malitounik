@@ -1457,9 +1457,9 @@ fun CytanniList(
                     LaunchedEffect(positionRemember) {
                         coroutineScope.launch {
                             listState[selectedIndex].scrollToItem(positionRemember)
+                            positionRemember = -1
                         }
                     }
-                    positionRemember = -1
                 }
                 HorizontalPager(
                     pageSpacing = 10.dp,

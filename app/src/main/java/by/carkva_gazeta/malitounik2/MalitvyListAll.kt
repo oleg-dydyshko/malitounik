@@ -6,6 +6,7 @@ import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -22,31 +23,79 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik2.ui.theme.Divider
+import by.carkva_gazeta.malitounik2.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik2.views.AppNavigationActions
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.GregorianCalendar
+
+class FilterMalitvyPrynagodnyiaModel : ViewModel() {
+    private val items = ArrayList<BogaslujbovyiaListData>()
+
+    private val _filteredItems = MutableStateFlow(items)
+    var filteredItems: StateFlow<ArrayList<BogaslujbovyiaListData>> = _filteredItems
+
+    fun addItemList(item: ArrayList<BogaslujbovyiaListData>) {
+        items.addAll(item)
+    }
+
+    fun clear() {
+        items.clear()
+    }
+
+    fun sortBy() {
+        items.sortBy {
+            it.title
+        }
+    }
+
+    fun filterItem(search: String) {
+        _filteredItems.value =
+            items.filter { it.title.contains(search, ignoreCase = true) } as ArrayList<BogaslujbovyiaListData>
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -165,28 +214,25 @@ fun MalitvyListAll(
         Settings.MENU_TRYEDZ_POSNAIA_6 -> getTtyedzPosnaia(Settings.MENU_TRYEDZ_POSNAIA_6)
         else -> ArrayList()
     }
+    var searchText by rememberSaveable { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
+    var textFieldLoaded by remember { mutableStateOf(false) }
+    var textFieldValueState by remember {
+        mutableStateOf(
+            TextFieldValue(
+                text = "",
+                selection = TextRange("".length)
+            )
+        )
+    }
     val collapsedState =
         remember(listPrynagodnyia) { listPrynagodnyia.map { true }.toMutableStateList() }
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Column {
-                        Text(
-                            modifier = Modifier.clickable {
-                                maxLine.intValue = Int.MAX_VALUE
-                                coroutineScope.launch {
-                                    delay(5000L)
-                                    maxLine.intValue = 1
-                                }
-                            },
-                            text = title,
-                            color = MaterialTheme.colorScheme.onSecondary,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = maxLine.intValue,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        if (subTitle != "") {
+                    if (!searchText) {
+                        Column {
                             Text(
                                 modifier = Modifier.clickable {
                                     maxLine.intValue = Int.MAX_VALUE
@@ -195,364 +241,535 @@ fun MalitvyListAll(
                                         maxLine.intValue = 1
                                     }
                                 },
-                                text = subTitle,
+                                text = title,
                                 color = MaterialTheme.colorScheme.onSecondary,
                                 fontWeight = FontWeight.Bold,
                                 maxLines = maxLine.intValue,
                                 overflow = TextOverflow.Ellipsis
                             )
+                            if (subTitle != "") {
+                                Text(
+                                    modifier = Modifier.clickable {
+                                        maxLine.intValue = Int.MAX_VALUE
+                                        coroutineScope.launch {
+                                            delay(5000L)
+                                            maxLine.intValue = 1
+                                        }
+                                    },
+                                    text = subTitle,
+                                    color = MaterialTheme.colorScheme.onSecondary,
+                                    fontWeight = FontWeight.Bold,
+                                    maxLines = maxLine.intValue,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
                         }
+                    } else {
+                        TextField(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .focusRequester(focusRequester)
+                                .onGloballyPositioned {
+                                    if (!textFieldLoaded) {
+                                        focusRequester.requestFocus()
+                                        textFieldLoaded = true
+                                    }
+                                },
+                            value = textFieldValueState,
+                            onValueChange = { newText ->
+                                textFieldValueState = newText
+                                result.clear()
+                                var edit = textFieldValueState.text
+                                edit = edit.replace("и", "і")
+                                edit = edit.replace("щ", "ў")
+                                edit = edit.replace("И", "І")
+                                edit = edit.replace("Щ", "Ў")
+                                edit = edit.replace("ъ", "'")
+                                textFieldValueState = TextFieldValue(edit, TextRange(edit.length))
+                            },
+                            singleLine = true,
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.search),
+                                    tint = MaterialTheme.colorScheme.onSecondary,
+                                    contentDescription = ""
+                                )
+                            },
+                            trailingIcon = {
+                                if (textFieldValueState.text.isNotEmpty()) {
+                                    IconButton(onClick = { textFieldValueState = TextFieldValue("", TextRange("".length)) }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.close),
+                                            contentDescription = "",
+                                            tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
+                                }
+                            },
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = MaterialTheme.colorScheme.onTertiary,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.onTertiary,
+                                focusedTextColor = PrimaryTextBlack,
+                                focusedIndicatorColor = PrimaryTextBlack,
+                                unfocusedIndicatorColor = PrimaryTextBlack,
+                                cursorColor = PrimaryTextBlack
+                            )
+                        )
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    },
-                        content = {
+                    if (searchText) {
+                        IconButton(onClick = {
+                            searchText = false
+                        },
+                            content = {
+                                Icon(
+                                    painter = painterResource(R.drawable.close),
+                                    tint = MaterialTheme.colorScheme.onSecondary,
+                                    contentDescription = ""
+                                )
+                            })
+                    } else {
+                        IconButton(onClick = {
+                            navController.popBackStack()
+                        },
+                            content = {
+                                Icon(
+                                    painter = painterResource(R.drawable.arrow_back),
+                                    tint = MaterialTheme.colorScheme.onSecondary,
+                                    contentDescription = ""
+                                )
+                            })
+                    }
+                },
+                actions = {
+                    if (!searchText && menuItem == Settings.MENU_MALITVY_PRYNAGODNYIA) {
+                        IconButton({
+                            searchText = true
+                        }) {
                             Icon(
-                                painter = painterResource(R.drawable.arrow_back),
-                                tint = MaterialTheme.colorScheme.onSecondary,
+                                painter = painterResource(R.drawable.search),
+                                tint = PrimaryTextBlack,
                                 contentDescription = ""
                             )
-                        })
+                        }
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
             )
         }
     ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(
-                    innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                    innerPadding.calculateTopPadding(),
-                    innerPadding.calculateEndPadding(LayoutDirection.Rtl),
-                    0.dp
-                )
-                .fillMaxSize()
-        ) {
-            if (menuItem == Settings.MENU_MALITVY_PRYNAGODNYIA || menuItem == Settings.MENU_MINEIA_MESIACHNAIA || menuItem == Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA || menuItem == Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA || menuItem == Settings.MENU_TRYEDZ_KVETNAIA) {
-                listPrynagodnyia.forEachIndexed { i, dataItem ->
-                    val collapsed = collapsedState[i]
-                    item(key = "header_$i") {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    collapsedState[i] = !collapsed
-                                }
-                        ) {
-                            Icon(
-                                painter = if (collapsed)
-                                    painterResource(R.drawable.keyboard_arrow_down)
-                                else
-                                    painterResource(R.drawable.keyboard_arrow_up),
-                                contentDescription = "",
-                                tint = Divider,
-                            )
-                            Text(
-                                dataItem.title,
-                                modifier = Modifier
-                                    .animateItem(
-                                        fadeInSpec = null,
-                                        fadeOutSpec = null,
-                                        placementSpec = spring(
-                                            stiffness = Spring.StiffnessMediumLow,
-                                            visibilityThreshold = IntOffset.VisibilityThreshold
-                                        )
-                                    )
-                                    .padding(10.dp)
-                                    .weight(1f),
-                                color = MaterialTheme.colorScheme.secondary
-                            )
-                        }
-                        HorizontalDivider()
-                    }
-                    if (!collapsed) {
-                        val subList = when (menuItem) {
-                            Settings.MENU_MALITVY_PRYNAGODNYIA -> when (i) {
-                                0 -> getPrynagodnyia1()
-                                1 -> getPrynagodnyia2()
-                                2 -> getPrynagodnyia3()
-                                3 -> getPrynagodnyia4()
-                                4 -> getPrynagodnyia5()
-                                5 -> getPrynagodnyia6()
-                                else -> getPrynagodnyia1()
-                            }
-
-                            Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA -> {
-                                val listMineiaList =
-                                    getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA)
-                                val arrayList = ArrayList<BogaslujbovyiaListData>()
-                                listMineiaList.forEach {
-                                    if (dataItem.day == it.dayOfMonth) {
-                                        arrayList.add(
-                                            BogaslujbovyiaListData(
-                                                it.title,
-                                                it.resource
-                                            )
-                                        )
-                                    }
-                                }
-                                arrayList
-                            }
-
-                            Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA -> {
-                                val listMineiaList =
-                                    getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA)
-                                val arrayList = ArrayList<BogaslujbovyiaListData>()
-                                listMineiaList.forEach {
-                                    if (dataItem.day == it.dayOfMonth) {
-                                        arrayList.add(
-                                            BogaslujbovyiaListData(
-                                                it.title,
-                                                it.resource
-                                            )
-                                        )
-                                    }
-                                }
-                                arrayList
-                            }
-
-                            Settings.MENU_TRYEDZ_KVETNAIA -> {
-                                val listMineiaList =
-                                    getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_KVETNAIA)
-                                val arrayList = ArrayList<BogaslujbovyiaListData>()
-                                listMineiaList.forEach {
-                                    if (dataItem.day == it.dayOfMonth) {
-                                        arrayList.add(
-                                            BogaslujbovyiaListData(
-                                                it.title,
-                                                it.resource
-                                            )
-                                        )
-                                    }
-                                }
-                                arrayList
-                            }
-
-                            Settings.MENU_MINEIA_MESIACHNAIA -> {
-                                val listMineiaList = getMineiaMesiachnaia(subTitle)
-                                val arrayList = ArrayList<BogaslujbovyiaListData>()
-                                listMineiaList.forEach {
-                                    if (dataItem.day == it.dayOfMonth) {
-                                        arrayList.add(
-                                            BogaslujbovyiaListData(
-                                                it.title,
-                                                it.resource
-                                            )
-                                        )
-                                    }
-                                }
-                                arrayList
-                            }
-
-                            else -> {
-                                ArrayList()
-                            }
-                        }
-                        items(subList.size) { index ->
+        if (searchText) {
+            val viewModel: FilterMalitvyPrynagodnyiaModel = viewModel()
+            viewModel.clear()
+            viewModel.addItemList(getPrynagodnyia1())
+            viewModel.addItemList(getPrynagodnyia2())
+            viewModel.addItemList(getPrynagodnyia3())
+            viewModel.addItemList(getPrynagodnyia4())
+            viewModel.addItemList(getPrynagodnyia5())
+            viewModel.addItemList(getPrynagodnyia6())
+            viewModel.sortBy()
+            val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
+            viewModel.filterItem(textFieldValueState.text)
+            PynagodnyiaList(filteredItems, navigationActions, innerPadding)
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .padding(
+                        innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+                        innerPadding.calculateTopPadding(),
+                        innerPadding.calculateEndPadding(LayoutDirection.Rtl),
+                        0.dp
+                    )
+                    .fillMaxSize()
+            ) {
+                if (menuItem == Settings.MENU_MALITVY_PRYNAGODNYIA || menuItem == Settings.MENU_MINEIA_MESIACHNAIA || menuItem == Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA || menuItem == Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA || menuItem == Settings.MENU_TRYEDZ_KVETNAIA) {
+                    listPrynagodnyia.forEachIndexed { i, dataItem ->
+                        val collapsed = collapsedState[i]
+                        item(key = "header_$i") {
                             Row(
+                                verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier
-                                    .padding(start = 30.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        collapsedState[i] = !collapsed
+                                    }
                             ) {
                                 Icon(
-                                    modifier = Modifier.size(12.dp, 12.dp),
-                                    painter = painterResource(R.drawable.krest),
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    contentDescription = null
+                                    painter = if (collapsed)
+                                        painterResource(R.drawable.keyboard_arrow_down)
+                                    else
+                                        painterResource(R.drawable.keyboard_arrow_up),
+                                    contentDescription = "",
+                                    tint = Divider,
                                 )
                                 Text(
-                                    subList[index].title,
+                                    dataItem.title,
                                     modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(10.dp)
-                                        .clickable {
-                                            navigationActions.navigateToBogaslujbovyia(
-                                                subList[index].title,
-                                                subList[index].resurs
+                                        .animateItem(
+                                            fadeInSpec = null,
+                                            fadeOutSpec = null,
+                                            placementSpec = spring(
+                                                stiffness = Spring.StiffnessMediumLow,
+                                                visibilityThreshold = IntOffset.VisibilityThreshold
                                             )
-                                        },
+                                        )
+                                        .padding(10.dp)
+                                        .weight(1f),
                                     color = MaterialTheme.colorScheme.secondary
                                 )
                             }
                             HorizontalDivider()
                         }
-                    }
-                }
-            } else {
-                items(list.size) { index ->
-                    Row(
-                        modifier = Modifier
-                            .padding(start = 10.dp)
-                            .clickable {
-                                when (menuItem) {
-                                    Settings.MENU_TRYEDZ_POSNAIA -> {
-                                        when (list[index].resurs) {
-                                            1 -> {
-                                                navigationActions.navigateToMalitvyListAll(
-                                                    title,
-                                                    Settings.MENU_TRYEDZ_POSNAIA_1,
-                                                    list[index].title
-                                                )
-                                            }
-
-                                            2 -> {
-                                                navigationActions.navigateToMalitvyListAll(
-                                                    title,
-                                                    Settings.MENU_TRYEDZ_POSNAIA_2,
-                                                    list[index].title
-                                                )
-                                            }
-
-                                            3 -> {
-                                                navigationActions.navigateToMalitvyListAll(
-                                                    title,
-                                                    Settings.MENU_TRYEDZ_POSNAIA_3,
-                                                    list[index].title
-                                                )
-                                            }
-
-                                            4 -> {
-                                                navigationActions.navigateToMalitvyListAll(
-                                                    title,
-                                                    Settings.MENU_TRYEDZ_POSNAIA_4,
-                                                    list[index].title
-                                                )
-                                            }
-
-                                            5 -> {
-                                                navigationActions.navigateToMalitvyListAll(
-                                                    title,
-                                                    Settings.MENU_TRYEDZ_POSNAIA_5,
-                                                    list[index].title
-                                                )
-                                            }
-
-                                            6 -> {
-                                                navigationActions.navigateToMalitvyListAll(
-                                                    title,
-                                                    Settings.MENU_TRYEDZ_POSNAIA_6,
-                                                    list[index].title
-                                                )
-                                            }
-                                        }
-                                    }
-
-                                    Settings.MENU_TRYEDZ -> {
-                                        when (list[index].resurs) {
-                                            10 -> {
-                                                navigationActions.navigateToMalitvyListAll(
-                                                    title,
-                                                    Settings.MENU_TRYEDZ_POSNAIA,
-                                                    list[index].title
-                                                )
-                                            }
-
-                                            11 -> {
-                                                navigationActions.navigateToMalitvyListAll(
-                                                    title,
-                                                    Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA,
-                                                    list[index].title
-                                                )
-                                            }
-
-                                            12 -> {
-                                                navigationActions.navigateToMalitvyListAll(
-                                                    title,
-                                                    Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA,
-                                                    list[index].title
-                                                )
-                                            }
-
-                                            13 -> {
-                                                navigationActions.navigateToMalitvyListAll(
-                                                    title,
-                                                    Settings.MENU_TRYEDZ_KVETNAIA,
-                                                    list[index].title
-                                                )
-                                            }
-                                        }
-                                    }
-
-                                    Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH -> {
-                                        navigationActions.navigateToMalitvyListAll(
-                                            title,
-                                            Settings.MENU_MINEIA_MESIACHNAIA,
-                                            list[index].title
-                                        )
-                                    }
-
-                                    else -> {
-                                        navigationActions.navigateToBogaslujbovyia(
-                                            list[index].title,
-                                            list[index].resurs
-                                        )
-                                    }
+                        if (!collapsed) {
+                            val subList = when (menuItem) {
+                                Settings.MENU_MALITVY_PRYNAGODNYIA -> when (i) {
+                                    0 -> getPrynagodnyia1()
+                                    1 -> getPrynagodnyia2()
+                                    2 -> getPrynagodnyia3()
+                                    3 -> getPrynagodnyia4()
+                                    4 -> getPrynagodnyia5()
+                                    5 -> getPrynagodnyia6()
+                                    else -> getPrynagodnyia1()
                                 }
-                            },
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(12.dp, 12.dp),
-                            painter = painterResource(R.drawable.krest),
-                            tint = MaterialTheme.colorScheme.primary,
-                            contentDescription = null
-                        )
-                        Text(
-                            list[index].title,
+
+                                Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA -> {
+                                    val listMineiaList =
+                                        getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA)
+                                    val arrayList = ArrayList<BogaslujbovyiaListData>()
+                                    listMineiaList.forEach {
+                                        if (dataItem.day == it.dayOfMonth) {
+                                            arrayList.add(
+                                                BogaslujbovyiaListData(
+                                                    it.title,
+                                                    it.resource
+                                                )
+                                            )
+                                        }
+                                    }
+                                    arrayList
+                                }
+
+                                Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA -> {
+                                    val listMineiaList =
+                                        getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA)
+                                    val arrayList = ArrayList<BogaslujbovyiaListData>()
+                                    listMineiaList.forEach {
+                                        if (dataItem.day == it.dayOfMonth) {
+                                            arrayList.add(
+                                                BogaslujbovyiaListData(
+                                                    it.title,
+                                                    it.resource
+                                                )
+                                            )
+                                        }
+                                    }
+                                    arrayList
+                                }
+
+                                Settings.MENU_TRYEDZ_KVETNAIA -> {
+                                    val listMineiaList =
+                                        getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_KVETNAIA)
+                                    val arrayList = ArrayList<BogaslujbovyiaListData>()
+                                    listMineiaList.forEach {
+                                        if (dataItem.day == it.dayOfMonth) {
+                                            arrayList.add(
+                                                BogaslujbovyiaListData(
+                                                    it.title,
+                                                    it.resource
+                                                )
+                                            )
+                                        }
+                                    }
+                                    arrayList
+                                }
+
+                                Settings.MENU_MINEIA_MESIACHNAIA -> {
+                                    val listMineiaList = getMineiaMesiachnaia(subTitle)
+                                    val arrayList = ArrayList<BogaslujbovyiaListData>()
+                                    listMineiaList.forEach {
+                                        if (dataItem.day == it.dayOfMonth) {
+                                            arrayList.add(
+                                                BogaslujbovyiaListData(
+                                                    it.title,
+                                                    it.resource
+                                                )
+                                            )
+                                        }
+                                    }
+                                    arrayList
+                                }
+
+                                else -> {
+                                    ArrayList()
+                                }
+                            }
+                            items(subList.size) { index ->
+                                Row(
+                                    modifier = Modifier
+                                        .padding(start = 30.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        modifier = Modifier.size(12.dp, 12.dp),
+                                        painter = painterResource(R.drawable.krest),
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        contentDescription = null
+                                    )
+                                    Text(
+                                        subList[index].title,
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(10.dp)
+                                            .clickable {
+                                                navigationActions.navigateToBogaslujbovyia(
+                                                    subList[index].title,
+                                                    subList[index].resurs
+                                                )
+                                            },
+                                        color = MaterialTheme.colorScheme.secondary
+                                    )
+                                }
+                                HorizontalDivider()
+                            }
+                        }
+                    }
+                } else {
+                    items(list.size) { index ->
+                        Row(
                             modifier = Modifier
-                                .fillMaxSize()
-                                .padding(10.dp),
-                            color = MaterialTheme.colorScheme.secondary,
-                            fontWeight = if (menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH) {
-                                if (Calendar.getInstance()[Calendar.MONTH] == index) {
-                                    FontWeight.Bold
+                                .padding(start = 10.dp)
+                                .clickable {
+                                    when (menuItem) {
+                                        Settings.MENU_TRYEDZ_POSNAIA -> {
+                                            when (list[index].resurs) {
+                                                1 -> {
+                                                    navigationActions.navigateToMalitvyListAll(
+                                                        title,
+                                                        Settings.MENU_TRYEDZ_POSNAIA_1,
+                                                        list[index].title
+                                                    )
+                                                }
+
+                                                2 -> {
+                                                    navigationActions.navigateToMalitvyListAll(
+                                                        title,
+                                                        Settings.MENU_TRYEDZ_POSNAIA_2,
+                                                        list[index].title
+                                                    )
+                                                }
+
+                                                3 -> {
+                                                    navigationActions.navigateToMalitvyListAll(
+                                                        title,
+                                                        Settings.MENU_TRYEDZ_POSNAIA_3,
+                                                        list[index].title
+                                                    )
+                                                }
+
+                                                4 -> {
+                                                    navigationActions.navigateToMalitvyListAll(
+                                                        title,
+                                                        Settings.MENU_TRYEDZ_POSNAIA_4,
+                                                        list[index].title
+                                                    )
+                                                }
+
+                                                5 -> {
+                                                    navigationActions.navigateToMalitvyListAll(
+                                                        title,
+                                                        Settings.MENU_TRYEDZ_POSNAIA_5,
+                                                        list[index].title
+                                                    )
+                                                }
+
+                                                6 -> {
+                                                    navigationActions.navigateToMalitvyListAll(
+                                                        title,
+                                                        Settings.MENU_TRYEDZ_POSNAIA_6,
+                                                        list[index].title
+                                                    )
+                                                }
+                                            }
+                                        }
+
+                                        Settings.MENU_TRYEDZ -> {
+                                            when (list[index].resurs) {
+                                                10 -> {
+                                                    navigationActions.navigateToMalitvyListAll(
+                                                        title,
+                                                        Settings.MENU_TRYEDZ_POSNAIA,
+                                                        list[index].title
+                                                    )
+                                                }
+
+                                                11 -> {
+                                                    navigationActions.navigateToMalitvyListAll(
+                                                        title,
+                                                        Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA,
+                                                        list[index].title
+                                                    )
+                                                }
+
+                                                12 -> {
+                                                    navigationActions.navigateToMalitvyListAll(
+                                                        title,
+                                                        Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA,
+                                                        list[index].title
+                                                    )
+                                                }
+
+                                                13 -> {
+                                                    navigationActions.navigateToMalitvyListAll(
+                                                        title,
+                                                        Settings.MENU_TRYEDZ_KVETNAIA,
+                                                        list[index].title
+                                                    )
+                                                }
+                                            }
+                                        }
+
+                                        Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH -> {
+                                            navigationActions.navigateToMalitvyListAll(
+                                                title,
+                                                Settings.MENU_MINEIA_MESIACHNAIA,
+                                                list[index].title
+                                            )
+                                        }
+
+                                        else -> {
+                                            navigationActions.navigateToBogaslujbovyia(
+                                                list[index].title,
+                                                list[index].resurs
+                                            )
+                                        }
+                                    }
+                                },
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(12.dp, 12.dp),
+                                painter = painterResource(R.drawable.krest),
+                                tint = MaterialTheme.colorScheme.primary,
+                                contentDescription = null
+                            )
+                            Text(
+                                list[index].title,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(10.dp),
+                                color = MaterialTheme.colorScheme.secondary,
+                                fontWeight = if (menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH) {
+                                    if (Calendar.getInstance()[Calendar.MONTH] == index) {
+                                        FontWeight.Bold
+                                    } else {
+                                        FontWeight.Normal
+                                    }
                                 } else {
                                     FontWeight.Normal
                                 }
-                            } else {
-                                FontWeight.Normal
-                            }
-                        )
+                            )
+                        }
+                        HorizontalDivider()
                     }
-                    HorizontalDivider()
                 }
-            }
-            if (menuItem == Settings.MENU_MINEIA_AGULNAIA) {
-                item {
-                    Row(
-                        modifier = Modifier
-                            .padding(start = 10.dp)
-                            .clickable {
-                                navigationActions.navigateToMalitvyListAll(
-                                    "ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ",
-                                    Settings.MENU_TRAPARY_KANDAKI_SHTODZENNYIA
-                                )
-                            },
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(12.dp, 12.dp),
-                            painter = painterResource(R.drawable.folder),
-                            tint = MaterialTheme.colorScheme.primary,
-                            contentDescription = null
-                        )
-                        Text(
-                            "ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ",
+                if (menuItem == Settings.MENU_MINEIA_AGULNAIA) {
+                    item {
+                        Row(
                             modifier = Modifier
-                                .fillMaxSize()
-                                .padding(10.dp),
-                            color = MaterialTheme.colorScheme.secondary
-                        )
+                                .padding(start = 10.dp)
+                                .clickable {
+                                    navigationActions.navigateToMalitvyListAll(
+                                        "ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ",
+                                        Settings.MENU_TRAPARY_KANDAKI_SHTODZENNYIA
+                                    )
+                                },
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(12.dp, 12.dp),
+                                painter = painterResource(R.drawable.folder),
+                                tint = MaterialTheme.colorScheme.primary,
+                                contentDescription = null
+                            )
+                            Text(
+                                "ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ",
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(10.dp),
+                                color = MaterialTheme.colorScheme.secondary
+                            )
+                        }
+                        HorizontalDivider()
                     }
-                    HorizontalDivider()
+                }
+                item {
+                    Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
                 }
             }
-            item {
-                Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
+        }
+    }
+}
+
+@Composable
+fun PynagodnyiaList(prynagodnyaList: ArrayList<BogaslujbovyiaListData>, navigationActions: AppNavigationActions, innerPadding: PaddingValues) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(
+                available: Offset,
+                source: NestedScrollSource
+            ): Offset {
+                keyboardController?.hide()
+                return super.onPreScroll(available, source)
             }
+        }
+    }
+    LazyColumn(
+        modifier = Modifier
+            .padding(
+                innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+                innerPadding.calculateTopPadding(),
+                innerPadding.calculateEndPadding(LayoutDirection.Rtl),
+                0.dp
+            )
+            .fillMaxSize()
+            .nestedScroll(nestedScrollConnection)
+    ) {
+        items(
+            prynagodnyaList.size,
+            key = { index -> prynagodnyaList[index].title + index }) { index ->
+            Column {
+                Row(
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .clickable {
+                            navigationActions.navigateToBogaslujbovyia(
+                                prynagodnyaList[index].title,
+                                prynagodnyaList[index].resurs
+                            )
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        modifier = Modifier.size(12.dp, 12.dp),
+                        painter = painterResource(R.drawable.krest),
+                        tint = MaterialTheme.colorScheme.primary,
+                        contentDescription = null
+                    )
+                    Text(
+                        text = prynagodnyaList[index].title,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(10.dp),
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                }
+            }
+            HorizontalDivider()
+        }
+        item {
+            Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
         }
     }
 }

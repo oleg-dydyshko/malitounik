@@ -92,7 +92,7 @@ fun BogaslujbovyiaMenu(
         val slugbovyiaTextu = SlugbovyiaTextu()
         val listPast = slugbovyiaTextu.getAllSlugbovyiaTextu()
         listPast.forEach { slugbovyiaTextuData ->
-            listAll.add(BogaslujbovyiaListData(slugbovyiaTextuData.title, slugbovyiaTextuData.resource))
+            listAll.add(BogaslujbovyiaListData(slugbovyiaTextuData.title + ". " + slugbovyiaTextu.getNazouSluzby(slugbovyiaTextuData.sluzba), slugbovyiaTextuData.resource))
         }
         listAll.sortBy {
             it.title
