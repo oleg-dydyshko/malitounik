@@ -99,6 +99,7 @@ import by.carkva_gazeta.malitounik2.Pashalia
 import by.carkva_gazeta.malitounik2.PiesnyList
 import by.carkva_gazeta.malitounik2.R
 import by.carkva_gazeta.malitounik2.SearchBible
+import by.carkva_gazeta.malitounik2.SearchSviatyia
 import by.carkva_gazeta.malitounik2.Settings
 import by.carkva_gazeta.malitounik2.SviatyList
 import by.carkva_gazeta.malitounik2.VybranaeList
@@ -277,6 +278,10 @@ fun AppNavGraph(
 
         composable(AllDestinations.PADRYXTOUKA) {
             Bogaslujbovyia(navController, stringResource(R.string.spovedz), R.raw.padryxtouka_da_spovedzi)
+        }
+
+        composable(AllDestinations.SEARCH_SVITYIA) {
+            SearchSviatyia(navController)
         }
 
         composable(AllDestinations.PAMIATKA) {
@@ -784,7 +789,9 @@ fun MainConteiner(
                                             text = { Text(stringResource(R.string.sabytie)) }
                                         )
                                         DropdownMenuItem(
-                                            onClick = { },
+                                            onClick = {
+                                                navigationActions.navigateToSearchSvityia()
+                                            },
                                             text = { Text(stringResource(R.string.search_svityia)) }
                                         )
                                     }

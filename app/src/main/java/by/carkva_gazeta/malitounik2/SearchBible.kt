@@ -32,6 +32,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -397,6 +398,7 @@ fun SearchBible(
                             text = res[index].text.toAnnotatedString(),
                             color = MaterialTheme.colorScheme.secondary
                         )
+                        HorizontalDivider()
                     }
                     item {
                         Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))

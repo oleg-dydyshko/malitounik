@@ -25,6 +25,7 @@ import by.carkva_gazeta.malitounik2.views.AllDestinations.PIESNY_LIST
 import by.carkva_gazeta.malitounik2.views.AllDestinations.PRANAS
 import by.carkva_gazeta.malitounik2.views.AllDestinations.RUJANEC_MENU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.SEARCH_BIBLIA
+import by.carkva_gazeta.malitounik2.views.AllDestinations.SEARCH_SVITYIA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.SVAITY_MUNU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.VYBRANAE_LIST
 
@@ -53,13 +54,16 @@ object AllDestinations {
     const val PASHALIA = "Pashalia"
     const val PRANAS = "PraNas"
     const val HELP = "Help"
+    const val SEARCH_SVITYIA = "Search_Svityia"
 }
 
 class AppNavigationActions(private val navController: NavHostController, k: SharedPreferences) {
     private val edit = k.edit()
     fun navigateToKaliandar() {
         navController.navigate(KALIANDAR) {
-            popUpTo(navController.currentBackStackEntry?.destination?.route ?: KALIANDAR) {
+            val navigate = if (navController.currentBackStackEntry?.destination?.route == "Search_Svityia") KALIANDAR
+            else navController.currentBackStackEntry?.destination?.route
+            popUpTo(navigate ?: KALIANDAR) {
                 inclusive = true
             }
         }
@@ -119,7 +123,9 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
 
     fun navigateToKaliandarYear() {
         navController.navigate(KALIANDAR_YEAR) {
-            popUpTo(navController.currentBackStackEntry?.destination?.route ?: KALIANDAR_YEAR) {
+            val navigate = if (navController.currentBackStackEntry?.destination?.route == "Search_Svityia") KALIANDAR_YEAR
+            else navController.currentBackStackEntry?.destination?.route
+            popUpTo(navigate ?: KALIANDAR_YEAR) {
                 inclusive = true
             }
         }
@@ -178,6 +184,12 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
     fun navigateToHelp() {
         navController.navigate(HELP) {
             HELP
+        }
+    }
+
+    fun navigateToSearchSvityia() {
+        navController.navigate(SEARCH_SVITYIA) {
+            SEARCH_SVITYIA
         }
     }
 

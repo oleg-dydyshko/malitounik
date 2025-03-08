@@ -1158,5 +1158,6 @@
     <string name="zmest_smoll">Зьмест</string>
     <string name="admin_cyrylic_no_support">Кірыліца не падтрымліваецца</string>
     <string name="searh_bibile_result">Знойдзена %1$d стыхоў</string>
+    <string name="searh_sviatyia_result">Знойдзена %1$d</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>
