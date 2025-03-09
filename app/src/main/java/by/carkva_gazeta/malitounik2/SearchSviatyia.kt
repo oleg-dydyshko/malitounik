@@ -48,8 +48,12 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -58,6 +62,7 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik2.views.AppNavigationActions
+import by.carkva_gazeta.malitounik2.views.HtmlText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -250,12 +255,62 @@ fun SearchSviatyia(navController: NavHostController) {
                                 fontStyle = FontStyle.Italic,
                                 color = MaterialTheme.colorScheme.secondary
                             )
-                            Text(
-                                modifier = Modifier
-                                    .padding(10.dp),
-                                text = res[index].opisanie,
-                                color = MaterialTheme.colorScheme.secondary
-                            )
+                            when (res[index].typeSviat) {
+                                0 -> {
+                                    HtmlText(
+                                        modifier = Modifier
+                                            .padding(10.dp),
+                                        text = res[index].opisanie
+                                    )
+                                }
+
+                                1 -> {
+                                    Text(
+                                        modifier = Modifier
+                                            .padding(10.dp),
+                                        text = res[index].opisanie,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+
+                                2 -> {
+                                    Text(
+                                        modifier = Modifier
+                                            .padding(10.dp),
+                                        text = res[index].opisanie,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+
+                                3 -> {
+                                    Text(
+                                        modifier = Modifier
+                                            .padding(10.dp),
+                                        text = res[index].opisanie,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+
+                                else -> {
+                                    val t1 = res[index].opisanie.indexOf(":")
+                                    val annotatedString = if (t1 != -1) {
+                                        buildAnnotatedString {
+                                            append(res[index].opisanie)
+                                            addStyle(SpanStyle(fontWeight = FontWeight.Bold), 0, t1 + 1)
+                                        }
+                                    } else {
+                                        AnnotatedString(res[index].opisanie)
+                                    }
+                                    Text(
+                                        modifier = Modifier
+                                            .padding(10.dp),
+                                        text = annotatedString,
+                                        color = MaterialTheme.colorScheme.secondary
+                                    )
+                                }
+                            }
                         }
                     }
                     HorizontalDivider()
@@ -307,13 +362,8 @@ private fun rawAsset(context: Context, poshukString: String, secondRun: Boolean 
         val sviatyia = arrayLists[e][4].split("<br>")
         for (aSviatyia in sviatyia) {
             if (aSviatyia.replace("ё", "е", true).contains(poshuk, true)) {
-                var bSviatyia = aSviatyia
-                bSviatyia = bSviatyia.replace("<font color=#d00505>", "")
-                bSviatyia = bSviatyia.replace("</font>", "")
-                bSviatyia = bSviatyia.replace("<strong>", "")
-                bSviatyia = bSviatyia.replace("</strong>", "")
                 val g = GregorianCalendar(arrayLists[e][3].toInt(), arrayLists[e][2].toInt(), arrayLists[e][1].toInt())
-                result.add(Prazdniki(g[Calendar.DAY_OF_YEAR], bSviatyia, g[Calendar.DATE].toString() + " " +  munName[g[Calendar.MONTH]] + ", " + nedelName[g[Calendar.DAY_OF_WEEK]]))
+                result.add(Prazdniki(g[Calendar.DAY_OF_YEAR], aSviatyia, g[Calendar.DATE].toString() + " " + munName[g[Calendar.MONTH]] + ", " + nedelName[g[Calendar.DAY_OF_WEEK]], 0))
             }
         }
     }

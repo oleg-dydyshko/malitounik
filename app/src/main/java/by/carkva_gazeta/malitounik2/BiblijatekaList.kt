@@ -114,7 +114,6 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
     var fileName by remember { mutableStateOf("") }
     var fileListPosition by remember { mutableIntStateOf(0) }
     val viewModel: FilterBiblijatekaModel = viewModel()
-    var isInit by remember { mutableStateOf(true) }
     var isProgressVisable by remember { mutableStateOf(false) }
     var isDialogBiblijatekaVisable by rememberSaveable { mutableStateOf(false) }
     var isDialogNoWIFIVisable by rememberSaveable { mutableStateOf(false) }
@@ -132,7 +131,8 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
         stringResource(R.string.bibliateka_gistoryia_carkvy),
         stringResource(R.string.bibliateka_malitouniki),
         stringResource(R.string.bibliateka_speuniki),
-        stringResource(R.string.bibliateka_rel_litaratura)
+        stringResource(R.string.bibliateka_rel_litaratura),
+        stringResource(R.string.arx_num_gaz)
     )
     val pagerState = rememberPagerState(pageCount = {
         list.size
@@ -142,39 +142,39 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
     val bibliatekaList2 = remember { ArrayList<ArrayList<String>>() }
     val bibliatekaList3 = remember { ArrayList<ArrayList<String>>() }
     val bibliatekaList4 = remember { ArrayList<ArrayList<String>>() }
-    if (isInit) {
-        LaunchedEffect(Unit) {
-            isInit = false
-            biblijatekaJob?.cancel()
-            biblijatekaJob = CoroutineScope(Dispatchers.IO).launch {
-                getBibliateka(context,
-                    bibliatekaList = { list ->
-                        val gson = Gson()
-                        val type = TypeToken.getParameterized(
+    val bibliatekaList5 = remember { ArrayList<ArrayList<String>>() }
+    LaunchedEffect(Unit) {
+        biblijatekaJob?.cancel()
+        biblijatekaJob = CoroutineScope(Dispatchers.IO).launch {
+            getBibliateka(context,
+                bibliatekaList = { list ->
+                    val gson = Gson()
+                    val type = TypeToken.getParameterized(
+                        ArrayList::class.java,
+                        TypeToken.getParameterized(
                             ArrayList::class.java,
-                            TypeToken.getParameterized(
-                                ArrayList::class.java,
-                                String::class.java
-                            ).type
+                            String::class.java
                         ).type
-                        val fileNadaunia =
-                            File("${context.filesDir}/biblijateka_latest.json")
-                        if (fileNadaunia.exists()) {
-                            bibliatekaList0.addAll(gson.fromJson(fileNadaunia.readText(), type))
-                        }
-                        var newList = list.filter { it[4].toInt() == 1 } as ArrayList<ArrayList<String>>
-                        bibliatekaList1.addAll(newList)
-                        newList = list.filter { it[4].toInt() == 2 } as ArrayList<ArrayList<String>>
-                        bibliatekaList2.addAll(newList)
-                        newList = list.filter { it[4].toInt() == 3 } as ArrayList<ArrayList<String>>
-                        bibliatekaList3.addAll(newList)
-                        newList = list.filter { it[4].toInt() == 4 } as ArrayList<ArrayList<String>>
-                        bibliatekaList4.addAll(newList)
-                    },
-                    progressVisable = { progress ->
-                        isProgressVisable = progress
-                    })
-            }
+                    ).type
+                    val fileNadaunia =
+                        File("${context.filesDir}/biblijateka_latest.json")
+                    if (fileNadaunia.exists()) {
+                        bibliatekaList0.addAll(gson.fromJson(fileNadaunia.readText(), type))
+                    }
+                    var newList = list.filter { it[4].toInt() == 1 } as ArrayList<ArrayList<String>>
+                    bibliatekaList1.addAll(newList)
+                    newList = list.filter { it[4].toInt() == 2 } as ArrayList<ArrayList<String>>
+                    bibliatekaList2.addAll(newList)
+                    newList = list.filter { it[4].toInt() == 3 } as ArrayList<ArrayList<String>>
+                    bibliatekaList3.addAll(newList)
+                    newList = list.filter { it[4].toInt() == 4 } as ArrayList<ArrayList<String>>
+                    bibliatekaList4.addAll(newList)
+                    newList = list.filter { it[4].toInt() == 5 } as ArrayList<ArrayList<String>>
+                    bibliatekaList5.addAll(newList)
+                },
+                progressVisable = { progress ->
+                    isProgressVisable = progress
+                })
         }
     }
     if (searchText) {
@@ -183,8 +183,9 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
         viewModel.addAllItemList(bibliatekaList2)
         viewModel.addAllItemList(bibliatekaList3)
         viewModel.addAllItemList(bibliatekaList4)
+        viewModel.addAllItemList(bibliatekaList5)
+        viewModel.filterItem(search)
     }
-    viewModel.filterItem(search)
     val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
     if (isDialogBiblijatekaVisable) {
         fileName = if (searchText) filteredItems[fileListPosition][2]
@@ -195,6 +196,7 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
                 2 -> bibliatekaList2[fileListPosition][2]
                 3 -> bibliatekaList3[fileListPosition][2]
                 4 -> bibliatekaList4[fileListPosition][2]
+                5 -> bibliatekaList5[fileListPosition][2]
                 else -> bibliatekaList2[fileListPosition][2]
             }
         }
@@ -206,6 +208,7 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
                 2 -> bibliatekaList2[fileListPosition][1]
                 3 -> bibliatekaList3[fileListPosition][1]
                 4 -> bibliatekaList4[fileListPosition][1]
+                5 -> bibliatekaList5[fileListPosition][1]
                 else -> bibliatekaList2[fileListPosition][1]
             }
         }
@@ -235,6 +238,7 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
                 2 -> bibliatekaList2[fileListPosition]
                 3 -> bibliatekaList3[fileListPosition]
                 4 -> bibliatekaList4[fileListPosition]
+                5 -> bibliatekaList5[fileListPosition]
                 else -> bibliatekaList2[fileListPosition]
             }
         }
@@ -278,6 +282,7 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
                 2 -> bibliatekaList2[fileListPosition]
                 3 -> bibliatekaList3[fileListPosition]
                 4 -> bibliatekaList4[fileListPosition]
+                5 -> bibliatekaList5[fileListPosition]
                 else -> bibliatekaList2[fileListPosition]
             }
         }
@@ -375,6 +380,7 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
                         2 -> bibliatekaList2
                         3 -> bibliatekaList3
                         4 -> bibliatekaList4
+                        5 -> bibliatekaList5
                         else -> bibliatekaList2
                     }
                 BiblijatekaListItems(

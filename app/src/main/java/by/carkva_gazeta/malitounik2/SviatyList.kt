@@ -115,7 +115,7 @@ fun SviatyList(navController: NavHostController, innerPadding: PaddingValues) {
                                 val annotatedString = if (t1 != -1) {
                                     buildAnnotatedString {
                                         append(listSviat[index].opisanie)
-                                        addStyle(SpanStyle(fontWeight = FontWeight.Bold), 0, t1)
+                                        addStyle(SpanStyle(fontWeight = FontWeight.Bold), 0, t1 + 1)
                                     }
                                 } else {
                                     AnnotatedString(listSviat[index].opisanie)
@@ -185,7 +185,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     context.resources.getString(R.string.S1),
-                    c[Calendar.DATE].toString() + " " + monthName[c[Calendar.MONTH]] + " " + yearG + " году, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    c[Calendar.DATE].toString() + " " + monthName[c[Calendar.MONTH]] + " " + yearG + " году, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    1,
                 )
             )
         }
@@ -196,7 +197,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     context.resources.getString(R.string.S2),
-                    "6 студзеня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "6 студзеня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    2,
                 )
             )
             c.set(yearG, 1, 2)
@@ -204,7 +206,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     context.resources.getString(R.string.S3),
-                    "2 лютага, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "2 лютага, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    2,
                 )
             )
             c.set(yearG, Calendar.MARCH, 25)
@@ -212,7 +215,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     context.resources.getString(R.string.S4),
-                    "25 сакавіка, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "25 сакавіка, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    2,
                 )
             )
             c.set(c[Calendar.YEAR], monthP - 1, dataP)
@@ -221,7 +225,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     context.resources.getString(R.string.S5),
-                    c[Calendar.DAY_OF_MONTH].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    c[Calendar.DAY_OF_MONTH].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    2,
                 )
             )
             c.add(Calendar.DATE, 46)
@@ -229,7 +234,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     context.resources.getString(R.string.S6),
-                    c[Calendar.DAY_OF_MONTH].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    c[Calendar.DAY_OF_MONTH].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    2,
                 )
             )
             c.add(Calendar.DATE, 10)
@@ -237,7 +243,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     context.resources.getString(R.string.S7),
-                    c[Calendar.DAY_OF_MONTH].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    c[Calendar.DAY_OF_MONTH].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    2,
                 )
             )
             c.set(yearG, Calendar.AUGUST, 6)
@@ -245,7 +252,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     context.resources.getString(R.string.S8),
-                    "6 жніўня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "6 жніўня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    2,
                 )
             )
             c.set(yearG, Calendar.AUGUST, 15)
@@ -253,7 +261,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     context.resources.getString(R.string.S9),
-                    "15 жніўня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "15 жніўня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    2,
                 )
             )
             c.set(yearG, Calendar.SEPTEMBER, 8)
@@ -261,7 +270,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     context.resources.getString(R.string.S10),
-                    "8 верасьня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "8 верасьня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    2,
                 )
             )
             c.set(yearG, Calendar.SEPTEMBER, 14)
@@ -269,7 +279,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     context.resources.getString(R.string.S11),
-                    "14 верасьня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "14 верасьня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    2,
                 )
             )
             c.set(yearG, Calendar.NOVEMBER, 21)
@@ -277,7 +288,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     context.resources.getString(R.string.S12),
-                    "21 лістапада, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "21 лістапада, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    2,
                 )
             )
             c.set(yearG, Calendar.DECEMBER, 25)
@@ -285,7 +297,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     context.resources.getString(R.string.S13),
-                    "25 сьнежня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "25 сьнежня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    2,
                 )
             )
         }
@@ -296,7 +309,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     context.resources.getString(R.string.S14),
-                    "1 студзеня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "1 студзеня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    3,
                 )
             )
             c.set(yearG, Calendar.JUNE, 24)
@@ -304,7 +318,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     context.resources.getString(R.string.S15),
-                    "24 чэрвеня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "24 чэрвеня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    3,
                 )
             )
             c.set(yearG, Calendar.JUNE, 29)
@@ -312,7 +327,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     context.resources.getString(R.string.S16),
-                    "29 чэрвеня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "29 чэрвеня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    3,
                 )
             )
             c.set(yearG, Calendar.AUGUST, 29)
@@ -320,7 +336,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     context.resources.getString(R.string.S17),
-                    "29 жніўня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "29 жніўня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    3,
                 )
             )
             c.set(yearG, Calendar.OCTOBER, 1)
@@ -328,7 +345,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     context.resources.getString(R.string.S18),
-                    "1 кастрычніка, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "1 кастрычніка, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    3,
                 )
             )
         }
@@ -339,7 +357,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Мясапусная задушная субота",
-                    c[Calendar.DATE].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    c[Calendar.DATE].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    4,
                 )
             )
             c.set(yearG, monthP - 1, dataP)
@@ -348,7 +367,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Успамін усіх сьвятых айцоў, манахаў і посьнікаў",
-                    c[Calendar.DATE].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    c[Calendar.DATE].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    4,
                 )
             )
             c.set(yearG, monthP - 1, dataP)
@@ -357,7 +377,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Субота 3-га тыдня Вялікага посту",
-                    c[Calendar.DATE].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    c[Calendar.DATE].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    4,
                 )
             )
             c.set(yearG, monthP - 1, dataP)
@@ -366,7 +387,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Субота 4-га тыдня Вялікага посту",
-                    c[Calendar.DATE].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    c[Calendar.DATE].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    4,
                 )
             )
             c.set(yearG, monthP - 1, dataP)
@@ -375,7 +397,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Радаўніца",
-                    c[Calendar.DATE].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    c[Calendar.DATE].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    4,
                 )
             )
             c.set(yearG, monthP - 1, dataP)
@@ -384,7 +407,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Траецкая бацькоўская субота",
-                    c[Calendar.DATE].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    c[Calendar.DATE].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    4,
                 )
             )
             for (i in 19..25) {
@@ -395,7 +419,8 @@ fun getPrazdnik(
                         Prazdniki(
                             c[Calendar.DAY_OF_YEAR],
                             "Зьмітраўская бацькоўская субота",
-                            c[Calendar.DATE].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                            c[Calendar.DATE].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    4,
                         )
                     )
                 }
@@ -405,7 +430,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Дзяды, дзень успаміну памёрлых",
-                    "2 лістапада, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "2 лістапада, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    4,
                 )
             )
         }
@@ -416,7 +442,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Успамін мучаніцкай сьмерці ў катэдры сьв. Сафіі ў Полацку 5 манахаў-базыльянаў",
-                    "11 ліпеня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "11 ліпеня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    5,
                 )
             )
             c.set(yearG, Calendar.SEPTEMBER, 15)
@@ -424,7 +451,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Успамін Бабровіцкай трагедыі (зьнішчэньне ў 1942 г. жыхароў уніяцкай парафіі в. Бабровічы Івацэвіцкага р-ну)",
-                    "15 верасьня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "15 верасьня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    5,
                 )
             )
             c.set(yearG, Calendar.OCTOBER, 18)
@@ -432,7 +460,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Успамін Берасьцейскай царкоўнай Уніі 1596 году",
-                    "18(8) кастрычніка, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "18(8) кастрычніка, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    5,
                 )
             )
         }
@@ -443,7 +472,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Гомель: Трох Сьвяціцеляў",
-                    "30 студзеня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "30 студзеня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
             c.set(c[Calendar.YEAR], monthP - 1, dataP)
@@ -451,14 +481,16 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Антвэрпан: Уваскрасеньня Хрыстовага",
-                    c[Calendar.DAY_OF_MONTH].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    c[Calendar.DAY_OF_MONTH].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
             prazdnikiAll.add(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Віцебск: Уваскрасеньня Хрыстовага",
-                    c[Calendar.DAY_OF_MONTH].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    c[Calendar.DAY_OF_MONTH].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
             c.set(yearG, Calendar.MARCH, 28)
@@ -466,7 +498,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Пінск: сьвятога Кірылы Тураўскага",
-                    "28 красавіка, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "28 красавіка, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
             c.set(yearG, Calendar.MAY, 1)
@@ -474,7 +507,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Маладэчна: Хрыста Чалавекалюбцы",
-                    "1 траўня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "1 траўня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
             c.set(yearG, Calendar.MAY, 7)
@@ -482,7 +516,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Івацэвічы: Маці Божай Жыровіцкай",
-                    "7 траўня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "7 траўня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
             c.set(yearG, Calendar.MAY, 11)
@@ -490,7 +525,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Баранавічы: сьвятых роўнаапостальных Кірылы і Мятода",
-                    "11 траўня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "11 траўня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
             c.set(yearG, Calendar.MAY, 13)
@@ -498,7 +534,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Горадня: Маці Божай Фацімскай",
-                    "13 траўня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "13 траўня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
             c.set(c[Calendar.YEAR], monthP - 1, dataP)
@@ -507,7 +544,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Слонім: Сьвятой Тройцы",
-                    c[Calendar.DAY_OF_MONTH].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    c[Calendar.DAY_OF_MONTH].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
             c.add(Calendar.DATE, 1)
@@ -515,7 +553,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Менск: Сьвятога Духа",
-                    c[Calendar.DAY_OF_MONTH].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    c[Calendar.DAY_OF_MONTH].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
             c.set(yearG, Calendar.JUNE, 27)
@@ -523,7 +562,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Менск: Маці Божай Нястомнай Дапамогі",
-                    "27 чэрвеня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "27 чэрвеня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
             c.set(yearG, Calendar.JUNE, 29)
@@ -531,14 +571,16 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Лондан: сьвятых апосталаў Пятра і Паўла",
-                    "29 чэрвеня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "29 чэрвеня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
             prazdnikiAll.add(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Жодзіна: сьвятых апосталаў Пятра і Паўла",
-                    "29 чэрвеня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "29 чэрвеня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
             val chisla = intArrayOf(24, 25, 26, 27, 28, 29, 30)
@@ -553,7 +595,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Берасьце: сьвятых братоў-апосталаў Пятра і Андрэя",
-                    c[Calendar.DAY_OF_MONTH].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    c[Calendar.DAY_OF_MONTH].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
             c.set(yearG, Calendar.JULY, 24)
@@ -561,14 +604,16 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Наваградак: сьв. Барыса і Глеба",
-                    "24 ліпеня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "24 ліпеня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
             prazdnikiAll.add(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Полацак: манастыр сьв. Барыса і Глеба",
-                    "24 ліпеня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "24 ліпеня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
             c.set(yearG, Calendar.AUGUST, 6)
@@ -576,7 +621,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Заслаўе: Перамяненьня Гасподняга",
-                    "6 жніўня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "6 жніўня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
             c.set(yearG, Calendar.SEPTEMBER, 8)
@@ -584,7 +630,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Магілёў: Бялыніцкай іконы Маці Божай",
-                    "8 верасьня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "8 верасьня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
             c.set(yearG, Calendar.SEPTEMBER, 16)
@@ -592,7 +639,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Ліда: сьвятамучаніка Язафата Полацкага",
-                    "16 верасьня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "16 верасьня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
             c.set(yearG, Calendar.OCTOBER, 1)
@@ -600,14 +648,16 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Ворша: Покрыва Найсьвяцейшай Багародзіцы",
-                    "1 кастрычніка, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "1 кастрычніка, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
             prazdnikiAll.add(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Мар’іна Горка: Покрыва Найсьвяцейшай Багародзіцы",
-                    "1 кастрычніка, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "1 кастрычніка, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
             c.set(yearG, Calendar.NOVEMBER, 8)
@@ -615,7 +665,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Барысаў: сьвятога Арханёла Міхаіла",
-                    "8 лістапада, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "8 лістапада, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
             c.set(yearG, Calendar.NOVEMBER, 12)
@@ -623,7 +674,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Полацак: сьвятамучаніка Язафата",
-                    "12 лістапада, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "12 лістапада, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
             c.set(yearG, Calendar.DECEMBER, 6)
@@ -631,7 +683,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Менск: сьвятога Мікалая Цудатворцы",
-                    "6 сьнежня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    "6 сьнежня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
             val dayofweekrastvo =
@@ -652,7 +705,8 @@ fun getPrazdnik(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Менск: праведнага Язэпа",
-                    c[Calendar.DATE].toString() + " сьнежня, " + nedelName[c[Calendar.DAY_OF_WEEK]]
+                    c[Calendar.DATE].toString() + " сьнежня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
+                    6,
                 )
             )
         }
@@ -664,5 +718,6 @@ fun getPrazdnik(
 data class Prazdniki(
     val dayOfYear: Int,
     val opisanie: String,
-    val opisanieData: String
+    val opisanieData: String,
+    val typeSviat: Int
 )

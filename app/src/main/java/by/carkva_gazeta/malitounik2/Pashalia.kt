@@ -20,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -59,6 +58,10 @@ class FilterPasxaModel : ViewModel() {
         items.add(item)
     }
 
+    fun clear() {
+        items.clear()
+    }
+
     fun filterItem(search: String) {
         _filteredItems.value =
             items.filter { it.katolic.contains(search, ignoreCase = true) } as ArrayList<Pashalii>
@@ -73,17 +76,14 @@ fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, sear
         AppNavigationActions(navController, k)
     }
     val viewModel: FilterPasxaModel = viewModel()
-    var isInit by remember { mutableStateOf(true) }
     val lazyListState = rememberLazyListState()
     var findIndex by remember { mutableIntStateOf(0) }
     val cal = Calendar.getInstance()
-    if (isInit) {
-        isInit = false
-        LaunchedEffect(Unit) {
-            for (year in 1582..2099) {
-                viewModel.addItemList(pasxa(context, year))
-                if (year == cal[Calendar.YEAR] - 3) findIndex = year
-            }
+    LaunchedEffect(Unit) {
+        viewModel.clear()
+        for (year in 1582..2099) {
+            viewModel.addItemList(pasxa(context, year))
+            if (year == cal[Calendar.YEAR] - 3) findIndex = year
         }
     }
     LaunchedEffect(findIndex) {

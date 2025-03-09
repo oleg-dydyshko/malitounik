@@ -12,15 +12,20 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -60,7 +65,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.LayoutDirection
@@ -512,6 +519,12 @@ fun MainConteiner(
     var searchText by rememberSaveable { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
+    var dialogUmounyiaZnachenni by remember { mutableStateOf(false) }
+    if (dialogUmounyiaZnachenni) {
+        DialogUmounyiaZnachenni {
+            dialogUmounyiaZnachenni = false
+        }
+    }
     var textFieldValueState by remember {
         mutableStateOf(
             TextFieldValue(
@@ -695,17 +708,17 @@ fun MainConteiner(
                     },
                     actions = {
                         if (!searchText) {
-                            if (currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.RUJANEC_MENU || currentRoute == AllDestinations.MALITVY_MENU ||currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute == AllDestinations.BIBLIJATEKA_LIST || currentRoute == AllDestinations.PIESNY_LIST || currentRoute == AllDestinations.PASHALIA) {
-                                    IconButton({
-                                        searchText = true
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.search),
-                                            tint = textTollBarColor,
-                                            contentDescription = ""
-                                        )
-                                    }
+                            if (currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.RUJANEC_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute == AllDestinations.BIBLIJATEKA_LIST || currentRoute == AllDestinations.PIESNY_LIST || currentRoute == AllDestinations.PASHALIA) {
+                                IconButton({
+                                    searchText = true
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.search),
+                                        tint = textTollBarColor,
+                                        contentDescription = ""
+                                    )
                                 }
+                            }
                             if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
                                 IconButton({
                                     val edit = k.edit()
@@ -781,7 +794,9 @@ fun MainConteiner(
                                     )
                                     if (currentRoute.contains(AllDestinations.KALIANDAR)) {
                                         DropdownMenuItem(
-                                            onClick = { },
+                                            onClick = {
+                                                dialogUmounyiaZnachenni = true
+                                            },
                                             text = { Text(stringResource(R.string.munu_symbols)) }
                                         )
                                         DropdownMenuItem(
@@ -1113,6 +1128,59 @@ fun DialogLogProgramy(
             }
         },
         dismissButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text(stringResource(R.string.close), fontSize = 18.sp)
+            }
+        }
+    )
+}
+
+@Composable
+fun DialogUmounyiaZnachenni(
+    onDismissRequest: () -> Unit
+) {
+    AlertDialog(
+        icon = {
+            Icon(painter = painterResource(R.drawable.description), contentDescription = "")
+        },
+        title = {
+            Text(text = stringResource(R.string.munu_symbols))
+        },
+        text = {
+            Column {
+                Text(
+                    modifier = Modifier.verticalScroll(rememberScrollState()),
+                    text = stringResource(R.string.Znaki_cviat),
+                    fontSize = 18.sp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.primary)
+                Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(modifier = Modifier.size(24.dp, 24.dp), painter = painterResource(R.drawable.znaki_krest_v_kruge), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                    val text = stringResource(R.string.dvuna_i_vial)
+                    val t1 = text.indexOf("\n")
+                    val annotatedString =
+                        buildAnnotatedString {
+                            append(text)
+                            addStyle(SpanStyle(fontWeight = FontWeight.Bold), 0, t1)
+                        }
+                    Text(
+                        modifier = Modifier.padding(start = 10.dp),
+                        text = annotatedString,
+                        fontSize = 18.sp,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+        },
+        onDismissRequest = {
+            onDismissRequest()
+        },
+        confirmButton = {
             TextButton(
                 onClick = {
                     onDismissRequest()
