@@ -118,7 +118,6 @@ import by.carkva_gazeta.malitounik2.ui.theme.Post
 import by.carkva_gazeta.malitounik2.ui.theme.Primary
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryTextBlack
-import by.carkva_gazeta.malitounik2.ui.theme.SecondaryText
 import by.carkva_gazeta.malitounik2.ui.theme.StrogiPost
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -1246,7 +1245,7 @@ fun DialogUmounyiaZnachenni(
                 Text(
                         modifier = Modifier
                             .padding(top = 10.dp)
-                            .background(MaterialTheme.colorScheme.primary)
+                            .background(Primary)
                             .padding(10.dp),
                         text = stringResource(R.string.niadzeli_i_sviaty),
                         fontSize = 18.sp,
@@ -1255,7 +1254,7 @@ fun DialogUmounyiaZnachenni(
                 Text(
                         modifier = Modifier
                             .padding(top = 10.dp)
-                            .background(SecondaryText)
+                            .background(Divider)
                             .padding(10.dp),
                         text = stringResource(R.string.zvychaynye_dny),
                         fontSize = 18.sp,
