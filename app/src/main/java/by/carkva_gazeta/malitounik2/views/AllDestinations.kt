@@ -26,6 +26,7 @@ import by.carkva_gazeta.malitounik2.views.AllDestinations.PRANAS
 import by.carkva_gazeta.malitounik2.views.AllDestinations.RUJANEC_MENU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.SEARCH_BIBLIA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.SEARCH_SVITYIA
+import by.carkva_gazeta.malitounik2.views.AllDestinations.SETTINGS_VIEW
 import by.carkva_gazeta.malitounik2.views.AllDestinations.SVAITY_MUNU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.VYBRANAE_LIST
 
@@ -55,19 +56,32 @@ object AllDestinations {
     const val PRANAS = "PraNas"
     const val HELP = "Help"
     const val SEARCH_SVITYIA = "Search_Svityia"
+    const val SETTINGS_VIEW = "Settings_View"
 }
 
 class AppNavigationActions(private val navController: NavHostController, k: SharedPreferences) {
     private val edit = k.edit()
     fun navigateToKaliandar() {
         navController.navigate(KALIANDAR) {
-            val navigate = if (navController.currentBackStackEntry?.destination?.route == "Search_Svityia") KALIANDAR
+            val navigate = if (navController.currentBackStackEntry?.destination?.route == "Search_Svityia" || navController.currentBackStackEntry?.destination?.route == "Settings_View") KALIANDAR
             else navController.currentBackStackEntry?.destination?.route
             popUpTo(navigate ?: KALIANDAR) {
                 inclusive = true
             }
         }
         edit.putString("navigate", KALIANDAR)
+        edit.apply()
+    }
+
+    fun navigateToKaliandarYear() {
+        navController.navigate(KALIANDAR_YEAR) {
+            val navigate = if (navController.currentBackStackEntry?.destination?.route == "Search_Svityia" || navController.currentBackStackEntry?.destination?.route == "Settings_View") KALIANDAR
+            else navController.currentBackStackEntry?.destination?.route
+            popUpTo(navigate ?: KALIANDAR_YEAR) {
+                inclusive = true
+            }
+        }
+        edit.putString("navigate", KALIANDAR_YEAR)
         edit.apply()
     }
 
@@ -118,18 +132,6 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
             }
         }
         edit.putString("navigate", MALITVY_MENU)
-        edit.apply()
-    }
-
-    fun navigateToKaliandarYear() {
-        navController.navigate(KALIANDAR_YEAR) {
-            val navigate = if (navController.currentBackStackEntry?.destination?.route == "Search_Svityia") KALIANDAR_YEAR
-            else navController.currentBackStackEntry?.destination?.route
-            popUpTo(navigate ?: KALIANDAR_YEAR) {
-                inclusive = true
-            }
-        }
-        edit.putString("navigate", KALIANDAR_YEAR)
         edit.apply()
     }
 
@@ -196,6 +198,12 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
     fun navigateToPadryxtouka() {
         navController.navigate(PADRYXTOUKA) {
             PADRYXTOUKA
+        }
+    }
+
+    fun navigateToSettingsView() {
+        navController.navigate(SETTINGS_VIEW) {
+            SETTINGS_VIEW
         }
     }
 

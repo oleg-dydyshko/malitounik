@@ -11,6 +11,7 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -108,15 +109,16 @@ import by.carkva_gazeta.malitounik2.R
 import by.carkva_gazeta.malitounik2.SearchBible
 import by.carkva_gazeta.malitounik2.SearchSviatyia
 import by.carkva_gazeta.malitounik2.Settings
+import by.carkva_gazeta.malitounik2.SettingsView
 import by.carkva_gazeta.malitounik2.SviatyList
 import by.carkva_gazeta.malitounik2.VybranaeList
-import by.carkva_gazeta.malitounik2.result
 import by.carkva_gazeta.malitounik2.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik2.ui.theme.Divider
 import by.carkva_gazeta.malitounik2.ui.theme.Post
 import by.carkva_gazeta.malitounik2.ui.theme.Primary
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik2.ui.theme.SecondaryText
 import by.carkva_gazeta.malitounik2.ui.theme.StrogiPost
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -289,6 +291,10 @@ fun AppNavGraph(
 
         composable(AllDestinations.SEARCH_SVITYIA) {
             SearchSviatyia(navController)
+        }
+
+        composable(AllDestinations.SETTINGS_VIEW) {
+            SettingsView(navController)
         }
 
         composable(AllDestinations.PAMIATKA) {
@@ -501,13 +507,17 @@ fun MainConteiner(
             view
         ).isAppearanceLightStatusBars = isAppearanceLight
     }
-    var sorted by remember {
+    var sortedVybranae by remember {
         mutableIntStateOf(
-            if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) k.getInt(
+            k.getInt(
                 "sortedVybranae",
                 Settings.SORT_BY_ABC
             )
-            else k.getInt("natatki_sort", Settings.SORT_BY_ABC)
+        )
+    }
+    var sortedNatatki by remember {
+        mutableIntStateOf(
+            k.getInt("natatki_sort", Settings.SORT_BY_ABC)
         )
     }
     var addFileNatatki by remember { mutableStateOf(false) }
@@ -644,7 +654,6 @@ fun MainConteiner(
                                 value = textFieldValueState,
                                 onValueChange = { newText ->
                                     textFieldValueState = newText
-                                    result.clear()
                                     var edit = textFieldValueState.text
                                     edit = edit.replace("и", "і")
                                     edit = edit.replace("щ", "ў")
@@ -789,12 +798,16 @@ fun MainConteiner(
                                     onDismissRequest = { expanded = false }
                                 ) {
                                     DropdownMenuItem(
-                                        onClick = { },
+                                        onClick = {
+                                            expanded = false
+                                            navigationActions.navigateToSettingsView()
+                                        },
                                         text = { Text(stringResource(R.string.tools_item)) }
                                     )
                                     if (currentRoute.contains(AllDestinations.KALIANDAR)) {
                                         DropdownMenuItem(
                                             onClick = {
+                                                expanded = false
                                                 dialogUmounyiaZnachenni = true
                                             },
                                             text = { Text(stringResource(R.string.munu_symbols)) }
@@ -805,6 +818,7 @@ fun MainConteiner(
                                         )
                                         DropdownMenuItem(
                                             onClick = {
+                                                expanded = false
                                                 navigationActions.navigateToSearchSvityia()
                                             },
                                             text = { Text(stringResource(R.string.search_svityia)) }
@@ -817,24 +831,36 @@ fun MainConteiner(
                                         DropdownMenuItem(
                                             onClick = {
                                                 expanded = false
-                                                sorted =
-                                                    if (sorted == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
+                                                sortedVybranae =
+                                                    if (sortedVybranae == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
+                                                    else Settings.SORT_BY_ABC
+                                                sortedNatatki =
+                                                    if (sortedVybranae == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
                                                     else Settings.SORT_BY_ABC
                                                 val edit = k.edit()
                                                 if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) edit.putInt(
                                                     "sortedVybranae",
-                                                    sorted
+                                                    sortedVybranae
                                                 )
-                                                else edit.putInt("natatki_sort", sorted)
+                                                else edit.putInt("natatki_sort", sortedNatatki)
                                                 edit.apply()
                                             },
                                             text = {
-                                                if (sorted == Settings.SORT_BY_TIME) Text(
-                                                    stringResource(
-                                                        R.string.sort_alf
+                                                if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) {
+                                                    if (sortedVybranae == Settings.SORT_BY_TIME) Text(
+                                                        stringResource(
+                                                            R.string.sort_alf
+                                                        )
                                                     )
-                                                )
-                                                else Text(stringResource(R.string.sort_add))
+                                                    else Text(stringResource(R.string.sort_add))
+                                                } else {
+                                                    if (sortedNatatki == Settings.SORT_BY_TIME) Text(
+                                                        stringResource(
+                                                            R.string.sort_alf
+                                                        )
+                                                    )
+                                                    else Text(stringResource(R.string.sort_add))
+                                                }
                                             }
                                         )
                                     }
@@ -1000,7 +1026,7 @@ fun MainConteiner(
                     AllDestinations.MAE_NATATKI_MENU -> {
                         MaeNatatki(
                             innerPadding,
-                            sorted,
+                            sortedNatatki,
                             addFileNatatki,
                             removeAllNatatki,
                             onDismissAddFile = {
@@ -1051,7 +1077,7 @@ fun MainConteiner(
                         navigateToBogaslujbovyia = { title, resourse ->
                             navigationActions.navigateToBogaslujbovyia(title, resourse)
                         },
-                        sorted,
+                        sortedVybranae,
                         removeAllVybranae,
                         innerPadding
                     )
@@ -1145,15 +1171,14 @@ fun DialogUmounyiaZnachenni(
 ) {
     AlertDialog(
         icon = {
-            Icon(painter = painterResource(R.drawable.description), contentDescription = "")
+            Icon(painter = painterResource(R.drawable.info), contentDescription = "")
         },
         title = {
             Text(text = stringResource(R.string.munu_symbols))
         },
         text = {
-            Column {
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 Text(
-                    modifier = Modifier.verticalScroll(rememberScrollState()),
                     text = stringResource(R.string.Znaki_cviat),
                     fontSize = 18.sp,
                     color = MaterialTheme.colorScheme.primary
@@ -1175,6 +1200,94 @@ fun DialogUmounyiaZnachenni(
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
+                Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(modifier = Modifier.size(24.dp, 24.dp), painter = painterResource(R.drawable.znaki_krest_v_polukruge), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                    Text(
+                        modifier = Modifier.padding(start = 10.dp),
+                        text = stringResource(R.string.Z_Lic_na_ve),
+                        fontSize = 18.sp,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                }
+                Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(modifier = Modifier.size(24.dp, 24.dp), painter = painterResource(R.drawable.znaki_krest), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                    Text(
+                        modifier = Modifier.padding(start = 10.dp),
+                        text = stringResource(R.string.Z_v_v_v_u_n_u),
+                        fontSize = 18.sp,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                }
+                Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(modifier = Modifier.size(24.dp, 24.dp), painter = painterResource(R.drawable.znaki_ttk), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                    Text(
+                        modifier = Modifier.padding(start = 10.dp),
+                        text = stringResource(R.string.Z_sh_v_v_u_u),
+                        fontSize = 18.sp,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                }
+                Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(modifier = Modifier.size(24.dp, 24.dp), painter = painterResource(R.drawable.znaki_ttk_black), contentDescription = "", tint = MaterialTheme.colorScheme.secondary)
+                    Text(
+                        modifier = Modifier.padding(start = 10.dp),
+                        text = stringResource(R.string.Z_sh_v_m_u_u),
+                        fontSize = 18.sp,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                }
+                Text(
+                    modifier = Modifier.padding(top = 10.dp),
+                    text = stringResource(R.string.tipicon_fon),
+                    fontSize = 18.sp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.primary)
+                Text(
+                        modifier = Modifier
+                            .padding(top = 10.dp)
+                            .background(MaterialTheme.colorScheme.primary)
+                            .padding(10.dp),
+                        text = stringResource(R.string.niadzeli_i_sviaty),
+                        fontSize = 18.sp,
+                        color = PrimaryTextBlack
+                    )
+                Text(
+                        modifier = Modifier
+                            .padding(top = 10.dp)
+                            .background(SecondaryText)
+                            .padding(10.dp),
+                        text = stringResource(R.string.zvychaynye_dny),
+                        fontSize = 18.sp,
+                        color = PrimaryText
+                    )
+                Text(
+                        modifier = Modifier
+                            .padding(top = 10.dp)
+                            .background(BezPosta)
+                            .padding(10.dp),
+                        text = stringResource(R.string.No_post_n),
+                        fontSize = 18.sp,
+                        color = PrimaryText
+                    )
+                Text(
+                        modifier = Modifier
+                            .padding(top = 10.dp)
+                            .background(Post)
+                            .padding(10.dp),
+                        text = stringResource(R.string.Post),
+                        fontSize = 18.sp,
+                        color = PrimaryText
+                    )
+                Text(
+                        modifier = Modifier
+                            .padding(top = 10.dp)
+                            .background(StrogiPost)
+                            .padding(10.dp),
+                        text = stringResource(R.string.Strogi_post_n),
+                        fontSize = 18.sp,
+                        color = PrimaryTextBlack
+                    )
             }
         },
         onDismissRequest = {

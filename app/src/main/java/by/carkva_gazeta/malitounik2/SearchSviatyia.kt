@@ -3,7 +3,6 @@ package by.carkva_gazeta.malitounik2
 import android.app.Activity
 import android.content.Context
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -31,8 +29,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -70,13 +70,11 @@ import kotlinx.coroutines.withContext
 import java.util.Calendar
 import java.util.GregorianCalendar
 
-val resultSviatyia = ArrayList<Prazdniki>()
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchSviatyia(navController: NavHostController) {
     val lazyRowState = rememberLazyListState()
-    val res = remember { resultSviatyia }
+    val res = remember { mutableStateListOf<Prazdniki>() }
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
@@ -85,28 +83,26 @@ fun SearchSviatyia(navController: NavHostController) {
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     var textFieldLoaded by remember { mutableStateOf(false) }
-    var isProgressVisable by remember { mutableStateOf(false) }
+    var searshString by rememberSaveable { mutableStateOf("") }
     var textFieldValueState by remember {
         mutableStateOf(
             TextFieldValue(
-                text = "",
+                text = searshString,
                 selection = TextRange("".length)
             )
         )
     }
-    LaunchedEffect(textFieldValueState.text) {
-        if (textFieldValueState.text.trim().length >= 3 && resultSviatyia.isEmpty()) {
+    LaunchedEffect(textFieldValueState.text, searshString) {
+        if (textFieldValueState.text.trim().length >= 3 && res.isEmpty()) {
             if (searchJob?.isActive == true) {
                 searchJob?.cancel()
             }
             searchJob = CoroutineScope(Dispatchers.Main).launch {
-                isProgressVisable = true
-                resultSviatyia.clear()
+                res.clear()
                 val list = withContext(Dispatchers.IO) {
                     return@withContext rawAsset(context, textFieldValueState.text.trim())
                 }
-                resultSviatyia.addAll(list)
-                isProgressVisable = false
+                res.addAll(list)
             }
         }
     }
@@ -146,7 +142,7 @@ fun SearchSviatyia(navController: NavHostController) {
                         value = textFieldValueState,
                         onValueChange = { newText ->
                             textFieldValueState = newText
-                            resultSviatyia.clear()
+                            res.clear()
                             var edit = textFieldValueState.text
                             edit = edit.replace("и", "і")
                             edit = edit.replace("щ", "ў")
@@ -154,6 +150,7 @@ fun SearchSviatyia(navController: NavHostController) {
                             edit = edit.replace("Щ", "Ў")
                             edit = edit.replace("ъ", "'")
                             textFieldValueState = TextFieldValue(edit, TextRange(edit.length))
+                            searshString = textFieldValueState.text
                         },
                         singleLine = true,
                         leadingIcon = {
@@ -165,7 +162,10 @@ fun SearchSviatyia(navController: NavHostController) {
                         },
                         trailingIcon = {
                             if (textFieldValueState.text.isNotEmpty()) {
-                                IconButton(onClick = { textFieldValueState = TextFieldValue("", TextRange("".length)) }) {
+                                IconButton(onClick = {
+                                    textFieldValueState = TextFieldValue("", TextRange("".length))
+                                    searshString = ""
+                                }) {
                                     Icon(
                                         painter = painterResource(R.drawable.close),
                                         contentDescription = "",
@@ -196,7 +196,7 @@ fun SearchSviatyia(navController: NavHostController) {
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
             )
-        }, modifier = Modifier
+        }
     ) { innerPadding ->
         Column(
             Modifier
@@ -318,15 +318,6 @@ fun SearchSviatyia(navController: NavHostController) {
                 item {
                     Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
                 }
-            }
-        }
-        if (isProgressVisable) {
-            Box(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-            ) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
     }

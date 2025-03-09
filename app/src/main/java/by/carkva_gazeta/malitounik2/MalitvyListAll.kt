@@ -278,7 +278,6 @@ fun MalitvyListAll(
                             value = textFieldValueState,
                             onValueChange = { newText ->
                                 textFieldValueState = newText
-                                result.clear()
                                 var edit = textFieldValueState.text
                                 edit = edit.replace("и", "і")
                                 edit = edit.replace("щ", "ў")
@@ -649,7 +648,8 @@ fun MalitvyListAll(
                         ) {
                             Icon(
                                 modifier = Modifier.size(12.dp, 12.dp),
-                                painter = painterResource(R.drawable.krest),
+                                painter = if (menuItem == Settings.MENU_TRYEDZ || menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH || menuItem == Settings.MENU_TRYEDZ_POSNAIA) painterResource(R.drawable.folder)
+                                else painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = null
                             )

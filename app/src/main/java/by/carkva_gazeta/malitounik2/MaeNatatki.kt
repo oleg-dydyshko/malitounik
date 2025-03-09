@@ -23,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -65,7 +66,7 @@ fun MaeNatatki(
         ).isAppearanceLightStatusBars = false
     }
     val context = LocalContext.current
-    val fileList = remember { ArrayList<MaeNatatkiItem>() }
+    val fileList = remember { mutableStateListOf<MaeNatatkiItem>() }
     LaunchedEffect(Unit) {
         File(context.filesDir.toString().plus("/Malitva")).walk().forEach {
             if (it.isFile) {
