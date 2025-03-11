@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu  xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_open_file"
+        android:icon="@drawable/directory_icon_menu"
+        android:orderInCategory="100"
+        android:title="@string/bibliateka_file"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_open_net_file"
+        android:icon="@drawable/www_icon"
+        android:orderInCategory="100"
+        android:title="@string/bibliateka_file"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_plus"
+        android:icon="@drawable/plus"
+        android:orderInCategory="100"
+        android:title="@string/add_file"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_delite_all"
+        android:orderInCategory="100"
+        android:title="@string/del_all_copy"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_delite_all_pasochnica"
+        android:orderInCategory="100"
+        android:title="@string/del_pasochnica"
+        app:showAsAction="never" />
+</menu>
