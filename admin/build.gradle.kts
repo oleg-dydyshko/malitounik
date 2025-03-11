@@ -38,6 +38,7 @@ dependencies {
     implementation(libs.google.firebase.appcheck.playintegrity)
     implementation(libs.play.services.instantapps)
     implementation (libs.gson)
+    implementation (platform(libs.firebase.bom))
     implementation (libs.firebase.storage.ktx)
     testImplementation (libs.junit)
     androidTestImplementation (libs.androidx.junit)
