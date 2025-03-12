@@ -115,6 +115,7 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.kaliandar2),
+                    fontSize = Settings.fontInterface.sp
                 )
             },
             selected = route.contains(AllDestinations.KALIANDAR),
@@ -136,6 +137,7 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.liturgikon),
+                    fontSize = Settings.fontInterface.sp
                 )
             },
             selected = route == AllDestinations.BOGASLUJBOVYIA_MENU,
@@ -157,6 +159,7 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.malitvy),
+                    fontSize = Settings.fontInterface.sp
                 )
             },
             selected = route == AllDestinations.MALITVY_MENU,
@@ -178,6 +181,7 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.akafisty),
+                    fontSize = Settings.fontInterface.sp
                 )
             },
             selected = route == AllDestinations.AKAFIST_MENU,
@@ -199,6 +203,7 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.ruzanec),
+                    fontSize = Settings.fontInterface.sp
                 )
             },
             selected = route == AllDestinations.RUJANEC_MENU,
@@ -220,6 +225,7 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.maje_natatki),
+                    fontSize = Settings.fontInterface.sp
                 )
             },
             selected = route == AllDestinations.MAE_NATATKI_MENU,
@@ -241,6 +247,7 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.MenuVybranoe),
+                    fontSize = Settings.fontInterface.sp
                 )
             },
             selected = route == AllDestinations.VYBRANAE_LIST,
@@ -266,6 +273,7 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.bibliaAll),
+                    fontSize = Settings.fontInterface.sp
                 )
             },
             selected = route == AllDestinations.BIBLIA,
@@ -300,6 +308,7 @@ fun DrawView(
                     .padding(10.dp)
                     .weight(1f),
                 text = stringResource(id = R.string.padie_maryia),
+                fontSize = Settings.fontInterface.sp
             )
             if (Settings.isProgressVisableRadyjoMaryia.value) {
                 CircularProgressIndicator(modifier = Modifier.padding(horizontal = 10.dp).size(24.dp, 24.dp))
@@ -387,7 +396,8 @@ fun DrawView(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(10.dp),
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontSize = Settings.fontInterface.sp
                 )
             }
         }
@@ -395,6 +405,7 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.bibliateka_carkvy),
+                    fontSize = Settings.fontInterface.sp
                 )
             },
             selected = route == AllDestinations.BIBLIJATEKA_LIST,
@@ -416,6 +427,7 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.song),
+                    fontSize = Settings.fontInterface.sp
                 )
             },
             selected = route == AllDestinations.PIESNY_LIST,
@@ -441,6 +453,7 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.spovedz),
+                    fontSize = Settings.fontInterface.sp
                 )
             },
             selected = route == AllDestinations.PADRYXTOUKA,
@@ -462,6 +475,7 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.pamiatka),
+                    fontSize = Settings.fontInterface.sp
                 )
             },
             selected = route == AllDestinations.PAMIATKA,
@@ -483,6 +497,7 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.sviaty),
+                    fontSize = Settings.fontInterface.sp
                 )
             },
             selected = route == AllDestinations.SVAITY_MUNU,
@@ -504,6 +519,7 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.parafii),
+                    fontSize = Settings.fontInterface.sp
                 )
             },
             selected = route == AllDestinations.PARAFII_BGKC,
@@ -525,6 +541,7 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.paschalia),
+                    fontSize = Settings.fontInterface.sp
                 )
             },
             selected = route == AllDestinations.PASHALIA,
@@ -584,7 +601,7 @@ fun DrawerHeader(modifier: Modifier) {
         Text(
             modifier = modifier.fillMaxWidth(),
             text = annotated,
-            fontSize = 14.sp,
+            fontSize = 18.sp,
             textAlign = TextAlign.End,
             fontStyle = FontStyle.Italic,
             color = MaterialTheme.colorScheme.secondary,

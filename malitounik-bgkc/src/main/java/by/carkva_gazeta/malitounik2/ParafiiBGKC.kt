@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik2.views.AppNavigationActions
 
@@ -81,7 +82,8 @@ fun ParafiiBGKC(navController: NavHostController, innerPadding: PaddingValues) {
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(10.dp),
-                        color = MaterialTheme.colorScheme.secondary
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = Settings.fontInterface.sp
                     )
                 }
             }

@@ -28,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -187,7 +188,8 @@ fun BogaslujbovyiaMenu(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(10.dp),
-                        color = MaterialTheme.colorScheme.secondary
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = Settings.fontInterface.sp
                     )
                 }
                 HorizontalDivider()
@@ -218,7 +220,8 @@ fun BogaslujbovyiaMenu(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(10.dp),
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontSize = Settings.fontInterface.sp
                 )
             }
             HorizontalDivider()
@@ -248,7 +251,8 @@ fun BogaslujbovyiaMenu(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(10.dp),
-                        color = MaterialTheme.colorScheme.secondary
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = Settings.fontInterface.sp
                     )
                 }
                 HorizontalDivider()
@@ -359,6 +363,9 @@ fun getBogaslujbovyia(): ArrayList<BogaslujbovyiaListData> {
             R.raw.kanon_andreja_kryckaha_4_czastki
         )
     )
+    list.sortBy {
+        it.title
+    }
     return list
 }
 

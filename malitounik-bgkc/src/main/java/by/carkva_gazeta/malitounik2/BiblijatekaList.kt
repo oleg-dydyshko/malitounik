@@ -351,11 +351,11 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
                         text = {
                             Text(
                                 text = title,
-                                fontSize = 18.sp,
+                                fontSize = Settings.fontInterface.sp,
                                 lineHeight = 18.sp * 1.15f,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
-                                color = MaterialTheme.colorScheme.secondary,
+                                color = MaterialTheme.colorScheme.secondary
                             )
                         }
                     )
@@ -455,7 +455,8 @@ fun BiblijatekaListItems(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(10.dp),
-                        color = MaterialTheme.colorScheme.secondary
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = Settings.fontInterface.sp
                     )
                 }
                 if (listItem[index][5] != "") {
@@ -710,7 +711,7 @@ fun DialogBiblijateka(
             HtmlText(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
                 text = content,
-                fontSize = 18.sp
+                fontSize = Settings.fontInterface.sp
             )
         },
         onDismissRequest = {
@@ -722,7 +723,7 @@ fun DialogBiblijateka(
                     onDismissRequest()
                 }
             ) {
-                Text(stringResource(R.string.close), fontSize = 18.sp)
+                Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
             }
         },
         confirmButton = {
@@ -733,7 +734,7 @@ fun DialogBiblijateka(
             ) {
                 Text(
                     stringResource(R.string.download_bibliateka_file, pdfFileSize),
-                    fontSize = 18.sp
+                    fontSize = Settings.fontInterface.sp
                 )
             }
         }
@@ -753,7 +754,7 @@ fun DialogNoWiFI(
             Text(stringResource(R.string.wifi_error))
         },
         text = {
-            Text(stringResource(R.string.download_bibliateka), fontSize = 18.sp)
+            Text(stringResource(R.string.download_bibliateka), fontSize = Settings.fontInterface.sp)
         },
         onDismissRequest = {
             onDismissRequest()
@@ -764,7 +765,7 @@ fun DialogNoWiFI(
                     onDismissRequest()
                 }
             ) {
-                Text(stringResource(R.string.cansel), fontSize = 18.sp)
+                Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
             }
         },
         confirmButton = {
@@ -773,7 +774,7 @@ fun DialogNoWiFI(
                     onConfirmation()
                 }
             ) {
-                Text(stringResource(R.string.ok), fontSize = 18.sp)
+                Text(stringResource(R.string.ok), fontSize = Settings.fontInterface.sp)
             }
         }
     )

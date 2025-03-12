@@ -322,7 +322,7 @@ fun SearchBible(
                                 )
                                 Text(
                                     stringResource(R.string.registr),
-                                    fontSize = 18.sp,
+                                    fontSize = Settings.fontInterface.sp,
                                     color = MaterialTheme.colorScheme.secondary
                                 )
                             }
@@ -349,7 +349,7 @@ fun SearchBible(
                                 )
                                 Text(
                                     stringResource(R.string.dakladnae_supadzenne),
-                                    fontSize = 18.sp,
+                                    fontSize = Settings.fontInterface.sp,
                                     color = MaterialTheme.colorScheme.secondary
                                 )
                             }
@@ -370,7 +370,7 @@ fun SearchBible(
                             ) {
                                 Text(
                                     stringResource(R.string.ok),
-                                    fontSize = 18.sp,
+                                    fontSize = Settings.fontInterface.sp,
                                     color = PrimaryText
                                 )
                             }
@@ -383,7 +383,7 @@ fun SearchBible(
                     modifier = Modifier.padding(start = 10.dp),
                     text = stringResource(R.string.searh_bibile_result, res.size),
                     fontStyle = FontStyle.Italic,
-                    fontSize = 18.sp,
+                    fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
                 LazyColumn(
@@ -402,7 +402,8 @@ fun SearchBible(
                                     )
                                 },
                             text = res[index].text.toAnnotatedString(),
-                            color = MaterialTheme.colorScheme.secondary
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontSize = Settings.fontInterface.sp
                         )
                         HorizontalDivider()
                     }
@@ -453,7 +454,7 @@ fun DropdownMenuBox(
         ) {
             options.forEachIndexed { index, option ->
                 DropdownMenuItem(
-                    text = { Text(option, style = MaterialTheme.typography.bodyLarge) },
+                    text = { Text(option, style = MaterialTheme.typography.bodyLarge, fontSize = Settings.fontInterface.sp) },
                     onClick = {
                         textFieldState.setTextAndPlaceCursorAtEnd(option)
                         expanded = false

@@ -15,26 +15,17 @@ import android.text.style.AbsoluteSizeSpan
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
 import by.carkva_gazeta.malitounik2.Settings
 import com.google.android.play.core.splitcompat.SplitCompat
-import com.google.android.play.core.splitinstall.SplitInstallException
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
-import com.google.android.play.core.splitinstall.SplitInstallRequest
-import com.google.android.play.core.splitinstall.SplitInstallStateUpdatedListener
-import com.google.android.play.core.splitinstall.model.SplitInstallErrorCode
-import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
 import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.ktx.appCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import java.io.File
 
 abstract class BaseActivity : AppCompatActivity(), MenuProvider {
@@ -159,19 +150,6 @@ abstract class BaseActivity : AppCompatActivity(), MenuProvider {
             overrideActivityTransition(Activity.OVERRIDE_TRANSITION_CLOSE, R.anim.alphain, R.anim.alphaout)
         } else {
             @Suppress("DEPRECATION") overridePendingTransition(R.anim.alphain, R.anim.alphaout)
-        }
-    }
-
-    private fun timeJob(isDzenNoch: Boolean) {
-        if (startTimeJob?.isActive != true) {
-            startTimeJob = CoroutineScope(Dispatchers.Main).launch {
-                dzenNoch = isDzenNoch
-                val prefEditors = k.edit()
-                prefEditors.putBoolean("dzen_noch", isDzenNoch)
-                prefEditors.apply()
-                recreate()
-                mLastClickTime = SystemClock.elapsedRealtime()
-            }
         }
     }
 

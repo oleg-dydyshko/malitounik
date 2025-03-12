@@ -116,12 +116,14 @@ fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, sear
                     Text(
                         text = stringResource(R.string.hryharyjan),
                         modifier = Modifier,
-                        color = MaterialTheme.colorScheme.secondary
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = Settings.fontInterface.sp
                     )
                     Text(
                         text = stringResource(R.string.juljan),
                         modifier = Modifier,
-                        color = SecondaryText
+                        color = SecondaryText,
+                        fontSize = Settings.fontInterface.sp
                     )
                 }
                 TextButton(
@@ -144,7 +146,7 @@ fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, sear
                 ) {
                     Text(
                         stringResource(R.string.paschalia),
-                        fontSize = 18.sp,
+                        fontSize = Settings.fontInterface.sp,
                         lineHeight = 18.sp * 1.15f
                     )
                 }
@@ -173,14 +175,16 @@ fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, sear
                                 modifier = Modifier
                                     .fillMaxWidth(),
                                 color = if (filteredItems[index].year == cal[Calendar.YEAR]) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.secondary
+                                else MaterialTheme.colorScheme.secondary,
+                                fontSize = Settings.fontInterface.sp
                             )
                             if (!filteredItems[index].sovpadenie) {
                                 Text(
                                     text = filteredItems[index].pravas,
                                     modifier = Modifier
                                         .fillMaxWidth(),
-                                    color = SecondaryText
+                                    color = SecondaryText,
+                                    fontSize = Settings.fontInterface.sp
                                 )
                             }
                         }

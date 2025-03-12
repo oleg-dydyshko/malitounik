@@ -37,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -127,6 +128,7 @@ object Settings {
     var caliandarPosition = -1
     var initCaliandarPosition = 0
     var data = ArrayList<ArrayList<String>>()
+    var fontInterface by mutableFloatStateOf(22F)
     val vibrate = longArrayOf(0, 1000, 700, 1000)
     var titleRadioMaryia = mutableStateOf("")
     var isPlayRadyjoMaryia = mutableStateOf(false)
@@ -353,7 +355,7 @@ object Settings {
         var year = c[Calendar.YEAR]
         var dataP: Int
         var monthP: Int
-        val timeNotification = chin.getInt("timeNotification", 8)
+        val timeNotification = chin.getInt("timeNotification", 2) + 6
         for (i in 0..1) {
             year += i
             val a = year % 19
@@ -1569,7 +1571,7 @@ fun DialogSztoHovaha(
             Text(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
                 text = content,
-                fontSize = 18.sp
+                fontSize = Settings.fontInterface.sp
             )
         },
         onDismissRequest = {
@@ -1580,10 +1582,22 @@ fun DialogSztoHovaha(
                     onDismissRequest()
                 }
             ) {
-                Text(stringResource(R.string.close), fontSize = 18.sp)
+                Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
             }
         }
     )
+}
+
+fun getFontInterface(context: Context): Float {
+    var sp = 18f
+    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+    when (k.getInt("fontInterface", 1)) {
+        1 -> sp += 2
+        2 -> sp += 4
+        3 -> sp += 6
+        4 -> sp += 8
+    }
+    return sp
 }
 
 class MainActivity : ComponentActivity(), SensorEventListener,

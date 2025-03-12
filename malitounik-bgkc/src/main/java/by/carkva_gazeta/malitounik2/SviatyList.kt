@@ -26,6 +26,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik2.views.AppNavigationActions
 import java.util.Calendar
@@ -107,7 +108,8 @@ fun SviatyList(navController: NavHostController, innerPadding: PaddingValues) {
                                         .fillMaxSize()
                                         .padding(10.dp),
                                     fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.primary
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontSize = Settings.fontInterface.sp
                                 )
                             }
                             if (!(index == 0 && i == 1)) {
@@ -126,7 +128,8 @@ fun SviatyList(navController: NavHostController, innerPadding: PaddingValues) {
                                         .fillMaxSize()
                                         .padding(start = 10.dp, end = 10.dp, top = 10.dp),
                                     fontWeight = if (i < 3) FontWeight.Bold else FontWeight.Normal,
-                                    color = if (i < 4) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
+                                    color = if (i < 4) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
+                                    fontSize = Settings.fontInterface.sp
                                 )
                             }
                             Text(
@@ -135,7 +138,8 @@ fun SviatyList(navController: NavHostController, innerPadding: PaddingValues) {
                                     .fillMaxSize()
                                     .padding(10.dp),
                                 fontStyle = FontStyle.Italic,
-                                color = MaterialTheme.colorScheme.secondary
+                                color = MaterialTheme.colorScheme.secondary,
+                                fontSize = Settings.fontInterface.sp
                             )
                         }
                     }

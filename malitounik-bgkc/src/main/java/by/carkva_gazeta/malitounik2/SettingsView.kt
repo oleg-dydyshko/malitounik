@@ -82,15 +82,12 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
-import by.carkva_gazeta.malitounik2.Settings.MODE_NIGHT_SYSTEM
 import by.carkva_gazeta.malitounik2.Settings.NOTIFICATION_CHANNEL_ID_SVIATY
-import by.carkva_gazeta.malitounik2.Settings.NOTIFICATION_SVIATY_FULL
 import by.carkva_gazeta.malitounik2.Settings.setNotifications
 import by.carkva_gazeta.malitounik2.ui.theme.Divider
 import by.carkva_gazeta.malitounik2.ui.theme.Primary
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryTextBlack
-import by.carkva_gazeta.malitounik2.views.AppNavigationActions
 import com.google.android.play.core.splitinstall.SplitInstallException
 import com.google.android.play.core.splitinstall.SplitInstallHelper
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
@@ -108,9 +105,6 @@ import kotlinx.coroutines.launch
 fun SettingsView(navController: NavHostController) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-    val navigationActions = remember(navController) {
-        AppNavigationActions(navController, k)
-    }
     val view = LocalView.current
     SideEffect {
         val window = (view.context as Activity).window
@@ -125,6 +119,7 @@ fun SettingsView(navController: NavHostController) {
     var dialodLogin by rememberSaveable { mutableStateOf(false) }
     var dialodNotificatin by rememberSaveable { mutableStateOf(false) }
     var admin by remember { mutableStateOf(k.getBoolean("admin", false)) }
+    Settings.fontInterface = remember { getFontInterface(context) }
     if (dialodLogin) {
         DialogLogin { isLogin ->
             if (isLogin) {
@@ -178,6 +173,7 @@ fun SettingsView(navController: NavHostController) {
                         text = stringResource(R.string.tools_item),
                         color = MaterialTheme.colorScheme.onSecondary,
                         fontWeight = FontWeight.Bold,
+                        fontSize = Settings.fontInterface.sp,
                         maxLines = maxLine.intValue,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -229,7 +225,7 @@ fun SettingsView(navController: NavHostController) {
                         }
                     },
                 text = stringResource(R.string.vygliad),
-                fontSize = 18.sp,
+                fontSize = Settings.fontInterface.sp,
                 color = MaterialTheme.colorScheme.primary
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
@@ -249,8 +245,7 @@ fun SettingsView(navController: NavHostController) {
                             )
                             edit.apply()
                             actyvity.dzenNoch = isSystemInDarkTheme
-                            if (actyvity.dzenNoch != actyvity.checkDzenNoch)
-                                actyvity.recreate()
+                            if ((context as MainActivity).checkDzenNoch != context.dzenNoch) actyvity.recreate()
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -264,14 +259,14 @@ fun SettingsView(navController: NavHostController) {
                             )
                             edit.apply()
                             actyvity.dzenNoch = isSystemInDarkTheme
-                            if (actyvity.dzenNoch != actyvity.checkDzenNoch)
-                                actyvity.recreate()
+                            if ((context as MainActivity).checkDzenNoch != context.dzenNoch) actyvity.recreate()
                         }
                     )
                     Text(
                         stringResource(R.string.system),
                         textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.secondary
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = Settings.fontInterface.sp
                     )
                 }
                 Row(
@@ -282,8 +277,7 @@ fun SettingsView(navController: NavHostController) {
                             edit.putInt("mode_night", Settings.MODE_NIGHT_NO)
                             edit.apply()
                             actyvity.dzenNoch = false
-                            if (actyvity.checkDzenNoch)
-                                actyvity.recreate()
+                            if ((context as MainActivity).checkDzenNoch != context.dzenNoch) actyvity.recreate()
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -294,14 +288,14 @@ fun SettingsView(navController: NavHostController) {
                             edit.putInt("mode_night", Settings.MODE_NIGHT_NO)
                             edit.apply()
                             actyvity.dzenNoch = false
-                            if (actyvity.checkDzenNoch)
-                                actyvity.recreate()
+                            if ((context as MainActivity).checkDzenNoch != context.dzenNoch) actyvity.recreate()
                         }
                     )
                     Text(
                         stringResource(R.string.day),
                         textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.secondary
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = Settings.fontInterface.sp
                     )
                 }
                 Row(
@@ -315,8 +309,7 @@ fun SettingsView(navController: NavHostController) {
                             )
                             edit.apply()
                             actyvity.dzenNoch = true
-                            if (!actyvity.checkDzenNoch)
-                                actyvity.recreate()
+                            if ((context as MainActivity).checkDzenNoch != context.dzenNoch) actyvity.recreate()
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -330,14 +323,14 @@ fun SettingsView(navController: NavHostController) {
                             )
                             edit.apply()
                             actyvity.dzenNoch = true
-                            if (!actyvity.checkDzenNoch)
-                                actyvity.recreate()
+                            if ((context as MainActivity).checkDzenNoch != context.dzenNoch) actyvity.recreate()
                         }
                     )
                     Text(
                         stringResource(R.string.widget_day_d_n),
                         textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.secondary
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = Settings.fontInterface.sp
                     )
                 }
                 Row(
@@ -350,7 +343,7 @@ fun SettingsView(navController: NavHostController) {
                                 Settings.MODE_NIGHT_AUTO
                             )
                             edit.apply()
-                            actyvity.recreate()
+                            if ((context as MainActivity).checkDzenNoch != context.dzenNoch) actyvity.recreate()
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -363,13 +356,14 @@ fun SettingsView(navController: NavHostController) {
                                 Settings.MODE_NIGHT_AUTO
                             )
                             edit.apply()
-                            actyvity.recreate()
+                            if ((context as MainActivity).checkDzenNoch != context.dzenNoch) actyvity.recreate()
                         }
                     )
                     Text(
                         stringResource(R.string.auto_widget_day_d_n),
                         textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.secondary
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = Settings.fontInterface.sp
                     )
                 }
             }
@@ -379,7 +373,7 @@ fun SettingsView(navController: NavHostController) {
             Text(
                 stringResource(R.string.settengs_font_size_app),
                 fontStyle = FontStyle.Italic,
-                fontSize = 18.sp,
+                fontSize = Settings.fontInterface.sp,
                 color = MaterialTheme.colorScheme.secondary
             )
             ExposedDropdownMenuBox(
@@ -392,6 +386,7 @@ fun SettingsView(navController: NavHostController) {
                     state = textFieldState,
                     readOnly = true,
                     lineLimits = TextFieldLineLimits.SingleLine,
+                    textStyle = TextStyle(fontSize = Settings.fontInterface.sp),
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(),
                 )
@@ -401,13 +396,14 @@ fun SettingsView(navController: NavHostController) {
                 ) {
                     options.forEachIndexed { index, option ->
                         DropdownMenuItem(
-                            text = { Text(option, style = MaterialTheme.typography.bodyLarge) },
+                            text = { Text(option, style = MaterialTheme.typography.bodyLarge, fontSize = Settings.fontInterface.sp) },
                             onClick = {
                                 textFieldState.setTextAndPlaceCursorAtEnd(option)
                                 expanded = false
                                 val prefEditors = k.edit()
                                 prefEditors.putInt("fontInterface", index)
                                 prefEditors.apply()
+                                Settings.fontInterface = getFontInterface(context)
                             },
                             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                         )
@@ -435,7 +431,7 @@ fun SettingsView(navController: NavHostController) {
                         modifier = Modifier
                             .weight(1f)
                             .padding(start = 10.dp),
-                        fontSize = 18.sp,
+                        fontSize = Settings.fontInterface.sp,
                         color = MaterialTheme.colorScheme.secondary
                     )
                     Switch(
@@ -482,13 +478,13 @@ fun SettingsView(navController: NavHostController) {
                     ),
                     shape = MaterialTheme.shapes.medium
                 ) {
-                    Text(stringResource(R.string.site_admin), fontSize = 18.sp, color = PrimaryText)
+                    Text(stringResource(R.string.site_admin), fontSize = Settings.fontInterface.sp, color = PrimaryText)
                 }
             }
             Text(
                 modifier = Modifier.padding(top = 10.dp),
                 text = stringResource(R.string.biblia),
-                fontSize = 18.sp,
+                fontSize = Settings.fontInterface.sp,
                 color = MaterialTheme.colorScheme.primary
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
@@ -515,7 +511,7 @@ fun SettingsView(navController: NavHostController) {
                     modifier = Modifier
                         .weight(1f)
                         .padding(start = 10.dp),
-                    fontSize = 18.sp,
+                    fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
@@ -551,7 +547,7 @@ fun SettingsView(navController: NavHostController) {
                     modifier = Modifier
                         .weight(1f)
                         .padding(start = 10.dp),
-                    fontSize = 18.sp,
+                    fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
@@ -567,7 +563,7 @@ fun SettingsView(navController: NavHostController) {
             Text(
                 modifier = Modifier.padding(top = 10.dp),
                 text = stringResource(R.string.sviaty_notifi),
-                fontSize = 18.sp,
+                fontSize = Settings.fontInterface.sp,
                 color = MaterialTheme.colorScheme.primary
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
@@ -604,7 +600,8 @@ fun SettingsView(navController: NavHostController) {
                     Text(
                         stringResource(R.string.apav_only),
                         textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.secondary
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = Settings.fontInterface.sp
                     )
                 }
                 Row(
@@ -637,7 +634,8 @@ fun SettingsView(navController: NavHostController) {
                     Text(
                         stringResource(R.string.apav_all),
                         textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.secondary
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = Settings.fontInterface.sp
                     )
                 }
                 Row(
@@ -660,7 +658,8 @@ fun SettingsView(navController: NavHostController) {
                     Text(
                         stringResource(R.string.apav_no),
                         textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.secondary
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = Settings.fontInterface.sp
                     )
                 }
             }
@@ -668,7 +667,7 @@ fun SettingsView(navController: NavHostController) {
             for (i in 6..17) {
                 dataTimes.add(DataTime(stringResource(R.string.pavedamic, i), i))
             }
-            val textFieldNotificstionState = rememberTextFieldState(dataTimes[k.getInt("timeNotification", 8) - 6].string)
+            val textFieldNotificstionState = rememberTextFieldState(dataTimes[k.getInt("timeNotification", 2)].string)
             var expandedSviaty by remember { mutableStateOf(false) }
             ExposedDropdownMenuBox(
                 modifier = Modifier.padding(vertical = 10.dp),
@@ -680,6 +679,7 @@ fun SettingsView(navController: NavHostController) {
                     state = textFieldNotificstionState,
                     readOnly = true,
                     lineLimits = TextFieldLineLimits.SingleLine,
+                    textStyle = TextStyle(fontSize = Settings.fontInterface.sp),
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSviaty) },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(),
                 )
@@ -689,12 +689,12 @@ fun SettingsView(navController: NavHostController) {
                 ) {
                     dataTimes.forEachIndexed { index, option ->
                         DropdownMenuItem(
-                            text = { Text(option.string, style = MaterialTheme.typography.bodyLarge) },
+                            text = { Text(text = option.string, style = MaterialTheme.typography.bodyLarge, fontSize = Settings.fontInterface.sp) },
                             onClick = {
                                 textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option.string)
                                 expandedSviaty = false
                                 val prefEditors = k.edit()
-                                prefEditors.putInt("fontInterface", index)
+                                prefEditors.putInt("timeNotification", index)
                                 prefEditors.apply()
                             },
                             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
@@ -732,13 +732,13 @@ fun SettingsView(navController: NavHostController) {
                     ),
                     shape = MaterialTheme.shapes.medium
                 ) {
-                    Text(stringResource(R.string.settings_notifi_sviata), fontSize = 18.sp, color = PrimaryText)
+                    Text(stringResource(R.string.settings_notifi_sviata), fontSize = Settings.fontInterface.sp, color = PrimaryText)
                 }
             }
             Text(
                 modifier = Modifier.padding(top = 10.dp),
                 text = stringResource(R.string.sviaty_under),
-                fontSize = 18.sp,
+                fontSize = Settings.fontInterface.sp,
                 color = MaterialTheme.colorScheme.primary
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
@@ -765,7 +765,7 @@ fun SettingsView(navController: NavHostController) {
                     modifier = Modifier
                         .weight(1f)
                         .padding(start = 10.dp),
-                    fontSize = 18.sp,
+                    fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
@@ -801,7 +801,7 @@ fun SettingsView(navController: NavHostController) {
                     modifier = Modifier
                         .weight(1f)
                         .padding(start = 10.dp),
-                    fontSize = 18.sp,
+                    fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
@@ -837,7 +837,7 @@ fun SettingsView(navController: NavHostController) {
                     modifier = Modifier
                         .weight(1f)
                         .padding(start = 10.dp),
-                    fontSize = 18.sp,
+                    fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
@@ -873,7 +873,7 @@ fun SettingsView(navController: NavHostController) {
                     modifier = Modifier
                         .weight(1f)
                         .padding(start = 10.dp),
-                    fontSize = 18.sp,
+                    fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
@@ -906,13 +906,13 @@ fun SettingsView(navController: NavHostController) {
                     }
                     Toast.makeText(context, context.getString(R.string.save), Toast.LENGTH_SHORT).show()
                     prefEditor.putFloat("font_biblia", 22f)
-                    prefEditor.putInt("fontInterface", 1)
-                    prefEditor.putInt("mode_night", MODE_NIGHT_SYSTEM)
+                    prefEditor.putInt("Settings.fontInterface", 1)
+                    prefEditor.putInt("mode_night", Settings.MODE_NIGHT_SYSTEM)
                     prefEditor.putBoolean("s_pravas", false)
                     prefEditor.putBoolean("s_pkc", false)
                     prefEditor.putBoolean("s_gosud", false)
                     prefEditor.putBoolean("s_pafesii", false)
-                    prefEditor.putInt("notification", NOTIFICATION_SVIATY_FULL)
+                    prefEditor.putInt("notification", Settings.NOTIFICATION_SVIATY_FULL)
                     prefEditor.putInt("sinoidal", 0)
                     prefEditor.putInt("maranata", 0)
                     prefEditor.putString("perevod", Settings.PEREVODSEMUXI)
@@ -923,6 +923,28 @@ fun SettingsView(navController: NavHostController) {
                     prefEditor.putBoolean("adminDayInYear", false)
                     prefEditor.putBoolean("paralel_biblia", true)
                     prefEditor.apply()
+                    modeNotification = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                        if (PackageManager.PERMISSION_DENIED == permissionCheck) {
+                            Settings.NOTIFICATION_SVIATY_NONE
+                        } else {
+                            Settings.NOTIFICATION_SVIATY_FULL
+                        }
+                    } else {
+                        Settings.NOTIFICATION_SVIATY_FULL
+                    }
+                    modeNight = Settings.MODE_NIGHT_SYSTEM
+                    admin = false
+                    Settings.fontInterface = 22f
+                    adminDayInYearState = false
+                    sinoidalState = false
+                    maranafaState = false
+                    modePkcSvaity = false
+                    modePravasSvaity = false
+                    modeGosudSvaity = false
+                    modePafesiiSvaity = false
+                    textFieldNotificstionState.setTextAndPlaceCursorAtEnd(dataTimes[k.getInt("timeNotification", 2)].string)
+                    textFieldState.setTextAndPlaceCursorAtEnd(options[k.getInt("Settings.fontInterface", 1)])
                     if ((context as MainActivity).checkDzenNoch != context.dzenNoch) context.recreate()
                     else setNotificationFull(context)
                 },
@@ -937,7 +959,7 @@ fun SettingsView(navController: NavHostController) {
                 ),
                 shape = MaterialTheme.shapes.medium
             ) {
-                Text(stringResource(R.string.settings_default), fontSize = 18.sp, color = PrimaryTextBlack)
+                Text(stringResource(R.string.settings_default), fontSize = Settings.fontInterface.sp, color = PrimaryTextBlack)
             }
             Spacer(modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
         }
@@ -968,7 +990,7 @@ fun DialogLogin(
                         login = newText
                     },
                     singleLine = true,
-                    textStyle = TextStyle(fontSize = 18.sp),
+                    textStyle = TextStyle(fontSize = Settings.fontInterface.sp),
                     trailingIcon = {
                         if (login.isNotEmpty()) {
                             IconButton(onClick = {
@@ -992,7 +1014,7 @@ fun DialogLogin(
                         password = newText
                     },
                     singleLine = true,
-                    textStyle = TextStyle(fontSize = 18.sp),
+                    textStyle = TextStyle(fontSize = Settings.fontInterface.sp),
                     trailingIcon = {
                         if (showPassword) {
                             IconButton(onClick = { showPassword = false }) {
@@ -1028,7 +1050,7 @@ fun DialogLogin(
                     onLogin(login.trim() == "Царква" && password.trim() == "Дворнікава63")
                 }
             ) {
-                Text(stringResource(R.string.ok), fontSize = 18.sp)
+                Text(stringResource(R.string.ok), fontSize = Settings.fontInterface.sp)
             }
         }
     )
@@ -1047,7 +1069,7 @@ fun DialogNotification(
             Text(text = stringResource(R.string.notifi))
         },
         text = {
-            Text(stringResource(R.string.help_notifications_api33), fontSize = 18.sp)
+            Text(stringResource(R.string.help_notifications_api33), fontSize = Settings.fontInterface.sp)
         },
         onDismissRequest = {
             onDismiss()
@@ -1058,7 +1080,7 @@ fun DialogNotification(
                     onConfirm()
                 }
             ) {
-                Text(stringResource(R.string.dazvolic), fontSize = 18.sp)
+                Text(stringResource(R.string.dazvolic), fontSize = Settings.fontInterface.sp)
             }
         },
         dismissButton = {
@@ -1067,7 +1089,7 @@ fun DialogNotification(
                     onDismiss()
                 }
             ) {
-                Text(stringResource(R.string.cansel), fontSize = 18.sp)
+                Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
             }
         }
     )

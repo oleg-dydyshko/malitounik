@@ -18,6 +18,7 @@ import by.carkva_gazeta.malitounik2.views.AllDestinations.MAE_NATATKI_MENU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.MALITVY_LIST_ALL
 import by.carkva_gazeta.malitounik2.views.AllDestinations.MALITVY_MENU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.PADRYXTOUKA
+import by.carkva_gazeta.malitounik2.views.AllDestinations.PADZEI_VIEW
 import by.carkva_gazeta.malitounik2.views.AllDestinations.PAMIATKA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.PARAFII_BGKC
 import by.carkva_gazeta.malitounik2.views.AllDestinations.PASHALIA
@@ -57,6 +58,7 @@ object AllDestinations {
     const val HELP = "Help"
     const val SEARCH_SVITYIA = "Search_Svityia"
     const val SETTINGS_VIEW = "Settings_View"
+    const val PADZEI_VIEW = "Padzei_View"
 }
 
 class AppNavigationActions(private val navController: NavHostController, k: SharedPreferences) {
@@ -204,6 +206,12 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
     fun navigateToSettingsView() {
         navController.navigate(SETTINGS_VIEW) {
             SETTINGS_VIEW
+        }
+    }
+
+    fun navigateToPadzeiView() {
+        navController.navigate(PADZEI_VIEW) {
+            PADZEI_VIEW
         }
     }
 

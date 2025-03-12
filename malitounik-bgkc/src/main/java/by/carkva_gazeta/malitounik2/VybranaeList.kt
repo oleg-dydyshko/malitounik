@@ -237,7 +237,8 @@ fun VybranaeList(
                                 )
                                 .padding(10.dp)
                                 .weight(1f),
-                            color = MaterialTheme.colorScheme.secondary
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontSize = Settings.fontInterface.sp
                         )
                     }
                     HorizontalDivider()
@@ -290,7 +291,8 @@ fun VybranaeList(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(10.dp),
-                                color = MaterialTheme.colorScheme.secondary
+                                color = MaterialTheme.colorScheme.secondary,
+                                fontSize = Settings.fontInterface.sp
                             )
                         }
                         HorizontalDivider()
@@ -341,7 +343,8 @@ fun VybranaeList(
                                 )
                                 .fillMaxSize()
                                 .padding(10.dp),
-                            color = MaterialTheme.colorScheme.secondary
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontSize = Settings.fontInterface.sp
                         )
                     }
                     HorizontalDivider()
@@ -368,7 +371,7 @@ fun Dialog(
             Text(text = stringResource(R.string.remove))
         },
         text = {
-            Text(text = title, fontSize = 18.sp)
+            Text(text = title, fontSize = Settings.fontInterface.sp)
         },
         onDismissRequest = {
             onDismissRequest()
@@ -379,7 +382,7 @@ fun Dialog(
                     onConfirmation()
                 }
             ) {
-                Text(stringResource(R.string.ok), fontSize = 18.sp)
+                Text(stringResource(R.string.ok), fontSize = Settings.fontInterface.sp)
             }
         },
         dismissButton = {
@@ -388,7 +391,7 @@ fun Dialog(
                     onDismissRequest()
                 }
             ) {
-                Text(stringResource(R.string.cansel), fontSize = 18.sp)
+                Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
             }
         }
     )

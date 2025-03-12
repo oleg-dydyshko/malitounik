@@ -8,6 +8,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import by.carkva_gazeta.malitounik2.R
+import by.carkva_gazeta.malitounik2.Settings
 
 // Set of Material typography styles to start with
 /*val provider = GoogleFont.Provider(
@@ -72,7 +73,7 @@ val Typography = Typography(
     bodyLarge = TextStyle(
         fontFamily = displayFontFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 18.sp,
+        fontSize = Settings.fontInterface.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     ),

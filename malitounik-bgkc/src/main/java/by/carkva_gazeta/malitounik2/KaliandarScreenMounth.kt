@@ -111,7 +111,7 @@ fun KaliandarScreenMounth(colorBlackboard: Color = Primary, setPageCaliandar: (I
                     ) {
                         Text(
                             stringResource(R.string.vybor_mun),
-                            fontSize = 18.sp,
+                            fontSize = Settings.fontInterface.sp,
                             color = PrimaryText
                         )
                     }
@@ -127,7 +127,7 @@ fun KaliandarScreenMounth(colorBlackboard: Color = Primary, setPageCaliandar: (I
                                 text = {
                                     Text(
                                         list[i],
-                                        fontSize = 18.sp,
+                                        fontSize = Settings.fontInterface.sp,
                                         modifier = Modifier.padding(10.dp)
                                     )
                                 }
@@ -152,7 +152,7 @@ fun KaliandarScreenMounth(colorBlackboard: Color = Primary, setPageCaliandar: (I
                     ) {
                         Text(
                             stringResource(R.string.vybor_year),
-                            fontSize = 18.sp,
+                            fontSize = Settings.fontInterface.sp,
                             color = PrimaryText
                         )
                     }
@@ -168,7 +168,7 @@ fun KaliandarScreenMounth(colorBlackboard: Color = Primary, setPageCaliandar: (I
                                 text = {
                                     Text(
                                         i.toString(),
-                                        fontSize = 18.sp,
+                                        fontSize = Settings.fontInterface.sp,
                                         modifier = Modifier
                                             .padding(10.dp)
                                     )
@@ -181,7 +181,8 @@ fun KaliandarScreenMounth(colorBlackboard: Color = Primary, setPageCaliandar: (I
             Text(
                 textMounthYear, modifier = Modifier
                     .align(Alignment.CenterHorizontally),
-                color = MaterialTheme.colorScheme.secondary
+                color = MaterialTheme.colorScheme.secondary,
+                fontSize = Settings.fontInterface.sp
             )
             LaunchedEffect(pagerState) {
                 snapshotFlow { pagerState.currentPage }.collect { page ->
@@ -237,7 +238,7 @@ fun KaliandarScreenMounth(colorBlackboard: Color = Primary, setPageCaliandar: (I
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Text(
                             stringResource(R.string.ndz),
-                            fontSize = 18.sp,
+                            fontSize = Settings.fontInterface.sp,
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(1.dp)
@@ -248,7 +249,7 @@ fun KaliandarScreenMounth(colorBlackboard: Color = Primary, setPageCaliandar: (I
                         )
                         Text(
                             stringResource(R.string.pn),
-                            fontSize = 18.sp,
+                            fontSize = Settings.fontInterface.sp,
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(1.dp)
@@ -259,7 +260,7 @@ fun KaliandarScreenMounth(colorBlackboard: Color = Primary, setPageCaliandar: (I
                         )
                         Text(
                             stringResource(R.string.au),
-                            fontSize = 18.sp,
+                            fontSize = Settings.fontInterface.sp,
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(1.dp)
@@ -270,7 +271,7 @@ fun KaliandarScreenMounth(colorBlackboard: Color = Primary, setPageCaliandar: (I
                         )
                         Text(
                             stringResource(R.string.sp),
-                            fontSize = 18.sp,
+                            fontSize = Settings.fontInterface.sp,
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(1.dp)
@@ -281,7 +282,7 @@ fun KaliandarScreenMounth(colorBlackboard: Color = Primary, setPageCaliandar: (I
                         )
                         Text(
                             stringResource(R.string.ch),
-                            fontSize = 18.sp,
+                            fontSize = Settings.fontInterface.sp,
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(1.dp)
@@ -292,7 +293,7 @@ fun KaliandarScreenMounth(colorBlackboard: Color = Primary, setPageCaliandar: (I
                         )
                         Text(
                             stringResource(R.string.pt),
-                            fontSize = 18.sp,
+                            fontSize = Settings.fontInterface.sp,
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(1.dp)
@@ -303,7 +304,7 @@ fun KaliandarScreenMounth(colorBlackboard: Color = Primary, setPageCaliandar: (I
                         )
                         Text(
                             stringResource(R.string.sb),
-                            fontSize = 18.sp,
+                            fontSize = Settings.fontInterface.sp,
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(1.dp)
@@ -333,28 +334,28 @@ fun KaliandarScreenMounth(colorBlackboard: Color = Primary, setPageCaliandar: (I
                                         else Divider
                                         Text(
                                             oldDay.toString(),
-                                            fontSize = 22.sp,
                                             modifier = Modifier
                                                 .weight(1f)
                                                 .padding(1.dp)
                                                 .background(fon)
                                                 .padding(5.dp),
                                             textAlign = TextAlign.Center,
-                                            color = SecondaryText
+                                            color = SecondaryText,
+                                            fontSize = Settings.fontInterface.sp
                                         )
                                     }
 
                                     "end" -> {
                                         Text(
                                             newDay.toString(),
-                                            fontSize = 22.sp,
                                             modifier = Modifier
                                                 .weight(1f)
                                                 .padding(1.dp)
                                                 .background(Divider)
                                                 .padding(5.dp),
                                             textAlign = TextAlign.Center,
-                                            color = SecondaryText
+                                            color = SecondaryText,
+                                            fontSize = Settings.fontInterface.sp
                                         )
                                     }
 
@@ -375,7 +376,6 @@ fun KaliandarScreenMounth(colorBlackboard: Color = Primary, setPageCaliandar: (I
                                             val clickPos = calPas + i - 1
                                             Text(
                                                 day,
-                                                fontSize = 22.sp,
                                                 modifier = Modifier
                                                     .weight(1f)
                                                     .clickable {
@@ -388,7 +388,8 @@ fun KaliandarScreenMounth(colorBlackboard: Color = Primary, setPageCaliandar: (I
                                                     .background(color),
                                                 textAlign = TextAlign.Center,
                                                 fontWeight = bold,
-                                                color = color2
+                                                color = color2,
+                                                fontSize = Settings.fontInterface.sp
                                             )
                                         } else {
                                             val color =
@@ -403,7 +404,6 @@ fun KaliandarScreenMounth(colorBlackboard: Color = Primary, setPageCaliandar: (I
                                             val clickPos = calPas + i - 1
                                             Text(
                                                 day,
-                                                fontSize = 22.sp,
                                                 modifier = Modifier
                                                     .weight(1f)
                                                     .clickable {
@@ -415,7 +415,8 @@ fun KaliandarScreenMounth(colorBlackboard: Color = Primary, setPageCaliandar: (I
                                                     .padding(5.dp),
                                                 textAlign = TextAlign.Center,
                                                 fontWeight = bold,
-                                                color = color2
+                                                color = color2,
+                                                fontSize = Settings.fontInterface.sp
                                             )
                                         }
                                     }
@@ -448,7 +449,7 @@ fun KaliandarScreenMounth(colorBlackboard: Color = Primary, setPageCaliandar: (I
                 ),
                 shape = MaterialTheme.shapes.medium
             ) {
-                Text(stringResource(R.string.search_call), fontSize = 18.sp, color = PrimaryText)
+                Text(stringResource(R.string.search_call), fontSize = Settings.fontInterface.sp, color = PrimaryText)
             }
         }
     }

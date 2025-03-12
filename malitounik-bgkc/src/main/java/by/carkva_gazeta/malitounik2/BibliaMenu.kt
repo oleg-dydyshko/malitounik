@@ -176,7 +176,7 @@ fun BibliaMenu(
                     text = {
                         Text(
                             text = title,
-                            fontSize = 18.sp,
+                            fontSize = Settings.fontInterface.sp,
                             lineHeight = 18.sp * 1.15f,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
@@ -218,7 +218,7 @@ fun BibliaMenu(
                     Text(
                         if (savePerevod == Settings.PEREVODNADSAN) stringResource(R.string.psalter)
                         else stringResource(R.string.stary_zapaviet),
-                        fontSize = 18.sp,
+                        fontSize = Settings.fontInterface.sp,
                         color = PrimaryTextBlack
                     )
                 }
@@ -241,7 +241,7 @@ fun BibliaMenu(
                     ) {
                         Text(
                             stringResource(R.string.novy_zapaviet),
-                            fontSize = 18.sp,
+                            fontSize = Settings.fontInterface.sp,
                             color = PrimaryTextBlack
                         )
                     }
@@ -262,7 +262,7 @@ fun BibliaMenu(
                     ),
                     shape = MaterialTheme.shapes.medium
                 ) {
-                    Text(stringResource(R.string.bible_time), fontSize = 18.sp, color = PrimaryText)
+                    Text(stringResource(R.string.bible_time), fontSize = Settings.fontInterface.sp, color = PrimaryText)
                 }
                 /*TextButton(
             onClick = {
@@ -280,7 +280,7 @@ fun BibliaMenu(
             ),
             shape = MaterialTheme.shapes.medium
         ) {
-            Text(stringResource(R.string.str_short_label1), fontSize = 18.sp, color = PrimaryText)
+            Text(stringResource(R.string.str_short_label1), fontSize = Settings.fontInterface.sp, color = PrimaryText)
         }*/
                 TextButton(
                     onClick = {
@@ -298,7 +298,7 @@ fun BibliaMenu(
                     ),
                     shape = MaterialTheme.shapes.medium
                 ) {
-                    Text(stringResource(R.string.poshuk), fontSize = 18.sp, color = PrimaryText)
+                    Text(stringResource(R.string.poshuk), fontSize = Settings.fontInterface.sp, color = PrimaryText)
                 }
                 if (savePerevod == Settings.PEREVODNADSAN) {
                     Column(
@@ -323,9 +323,9 @@ fun BibliaMenu(
                                     .background(TitleCalendarMounth)
                                     .padding(10.dp),
                                 text = stringResource(R.string.kafizma),
-                                fontSize = 18.sp,
+                                fontSize = Settings.fontInterface.sp,
                                 textAlign = TextAlign.Center,
-                                color = PrimaryTextBlack,
+                                color = PrimaryTextBlack
                             )
                         }
                         Row(
@@ -355,7 +355,7 @@ fun BibliaMenu(
                                             )
                                         },
                                     text = i.toString(),
-                                    fontSize = 18.sp,
+                                    fontSize = Settings.fontInterface.sp,
                                     textAlign = TextAlign.Center,
                                     color = PrimaryText
                                 )
@@ -388,7 +388,7 @@ fun BibliaMenu(
                                             )
                                         },
                                     text = i.toString(),
-                                    fontSize = 18.sp,
+                                    fontSize = Settings.fontInterface.sp,
                                     textAlign = TextAlign.Center,
                                     color = PrimaryText
                                 )
@@ -421,7 +421,7 @@ fun BibliaMenu(
                                             )
                                         },
                                     text = i.toString(),
-                                    fontSize = 18.sp,
+                                    fontSize = Settings.fontInterface.sp,
                                     textAlign = TextAlign.Center,
                                     color = PrimaryText
                                 )
@@ -454,7 +454,7 @@ fun BibliaMenu(
                                             )
                                         },
                                     text = i.toString(),
-                                    fontSize = 18.sp,
+                                    fontSize = Settings.fontInterface.sp,
                                     textAlign = TextAlign.Center,
                                     color = PrimaryText
                                 )
@@ -477,7 +477,7 @@ fun BibliaMenu(
             ),
             shape = MaterialTheme.shapes.medium
         ) {
-            Text(stringResource(R.string.zakladki_bible), fontSize = 18.sp, color = PrimaryText)
+            Text(stringResource(R.string.zakladki_bible), fontSize = Settings.fontInterface.sp, color = PrimaryText)
         }
         TextButton(
             onClick = {
@@ -494,7 +494,7 @@ fun BibliaMenu(
             ),
             shape = MaterialTheme.shapes.medium
         ) {
-            Text(stringResource(R.string.natatki_biblii), fontSize = 18.sp, color = PrimaryText)
+            Text(stringResource(R.string.natatki_biblii), fontSize = Settings.fontInterface.sp, color = PrimaryText)
         }*/
                 if (savePerevod == Settings.PEREVODSEMUXI || savePerevod == Settings.PEREVODBOKUNA) {
                     TextButton(
@@ -515,7 +515,7 @@ fun BibliaMenu(
                     ) {
                         Text(
                             stringResource(R.string.alesyaSemukha2),
-                            fontSize = 18.sp,
+                            fontSize = Settings.fontInterface.sp,
                             color = PrimaryText
                         )
                     }
@@ -545,7 +545,7 @@ fun DialogSemuxa(
             val isr = InputStreamReader(inputStream)
             val reader = BufferedReader(isr)
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                HtmlText(text = reader.readText(), fontSize = 18.sp)
+                HtmlText(text = reader.readText(), fontSize = Settings.fontInterface.sp)
             }
         },
         onDismissRequest = {
@@ -557,7 +557,7 @@ fun DialogSemuxa(
                     onDismissRequest()
                 }
             ) {
-                Text(stringResource(R.string.close), fontSize = 18.sp)
+                Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
             }
         }
     )

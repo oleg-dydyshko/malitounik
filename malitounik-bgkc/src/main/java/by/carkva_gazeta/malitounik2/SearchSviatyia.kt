@@ -211,7 +211,7 @@ fun SearchSviatyia(navController: NavHostController) {
                 modifier = Modifier.padding(start = 10.dp),
                 text = stringResource(R.string.searh_sviatyia_result, res.size),
                 fontStyle = FontStyle.Italic,
-                fontSize = 18.sp,
+                fontSize = Settings.fontInterface.sp,
                 color = MaterialTheme.colorScheme.secondary
             )
             LazyColumn(
@@ -253,7 +253,8 @@ fun SearchSviatyia(navController: NavHostController) {
                                     .fillMaxSize()
                                     .padding(10.dp),
                                 fontStyle = FontStyle.Italic,
-                                color = MaterialTheme.colorScheme.secondary
+                                color = MaterialTheme.colorScheme.secondary,
+                                fontSize = Settings.fontInterface.sp
                             )
                             when (res[index].typeSviat) {
                                 0 -> {
@@ -270,7 +271,8 @@ fun SearchSviatyia(navController: NavHostController) {
                                             .padding(10.dp),
                                         text = res[index].opisanie,
                                         color = MaterialTheme.colorScheme.primary,
-                                        fontWeight = FontWeight.Bold
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = Settings.fontInterface.sp
                                     )
                                 }
 
@@ -280,7 +282,8 @@ fun SearchSviatyia(navController: NavHostController) {
                                             .padding(10.dp),
                                         text = res[index].opisanie,
                                         color = MaterialTheme.colorScheme.primary,
-                                        fontWeight = FontWeight.Bold
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = Settings.fontInterface.sp
                                     )
                                 }
 
@@ -289,7 +292,8 @@ fun SearchSviatyia(navController: NavHostController) {
                                         modifier = Modifier
                                             .padding(10.dp),
                                         text = res[index].opisanie,
-                                        color = MaterialTheme.colorScheme.primary
+                                        color = MaterialTheme.colorScheme.primary,
+                                        fontSize = Settings.fontInterface.sp
                                     )
                                 }
 
@@ -307,7 +311,8 @@ fun SearchSviatyia(navController: NavHostController) {
                                         modifier = Modifier
                                             .padding(10.dp),
                                         text = annotatedString,
-                                        color = MaterialTheme.colorScheme.secondary
+                                        color = MaterialTheme.colorScheme.secondary,
+                                        fontSize = Settings.fontInterface.sp
                                     )
                                 }
                             }

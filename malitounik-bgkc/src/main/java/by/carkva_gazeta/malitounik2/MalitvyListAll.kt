@@ -57,6 +57,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -245,7 +246,8 @@ fun MalitvyListAll(
                                 color = MaterialTheme.colorScheme.onSecondary,
                                 fontWeight = FontWeight.Bold,
                                 maxLines = maxLine.intValue,
-                                overflow = TextOverflow.Ellipsis
+                                overflow = TextOverflow.Ellipsis,
+                                fontSize = Settings.fontInterface.sp
                             )
                             if (subTitle != "") {
                                 Text(
@@ -260,7 +262,8 @@ fun MalitvyListAll(
                                     color = MaterialTheme.colorScheme.onSecondary,
                                     fontWeight = FontWeight.Bold,
                                     maxLines = maxLine.intValue,
-                                    overflow = TextOverflow.Ellipsis
+                                    overflow = TextOverflow.Ellipsis,
+                                    fontSize = Settings.fontInterface.sp
                                 )
                             }
                         }
@@ -415,7 +418,8 @@ fun MalitvyListAll(
                                         )
                                         .padding(10.dp)
                                         .weight(1f),
-                                    color = MaterialTheme.colorScheme.secondary
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    fontSize = Settings.fontInterface.sp
                                 )
                             }
                             HorizontalDivider()
@@ -526,7 +530,8 @@ fun MalitvyListAll(
                                                     subList[index].resurs
                                                 )
                                             },
-                                        color = MaterialTheme.colorScheme.secondary
+                                        color = MaterialTheme.colorScheme.secondary,
+                                        fontSize = Settings.fontInterface.sp
                                     )
                                 }
                                 HorizontalDivider()
@@ -667,7 +672,8 @@ fun MalitvyListAll(
                                     }
                                 } else {
                                     FontWeight.Normal
-                                }
+                                },
+                                fontSize = Settings.fontInterface.sp
                             )
                         }
                         HorizontalDivider()
@@ -697,7 +703,8 @@ fun MalitvyListAll(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(10.dp),
-                                color = MaterialTheme.colorScheme.secondary
+                                color = MaterialTheme.colorScheme.secondary,
+                                fontSize = Settings.fontInterface.sp
                             )
                         }
                         HorizontalDivider()
@@ -762,7 +769,8 @@ fun PynagodnyiaList(prynagodnyaList: ArrayList<BogaslujbovyiaListData>, navigati
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(10.dp),
-                        color = MaterialTheme.colorScheme.secondary
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = Settings.fontInterface.sp
                     )
                 }
             }

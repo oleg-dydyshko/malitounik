@@ -105,7 +105,7 @@ fun KaliandarScreenYear(
                         .background(colorBlackboard)
                         .padding(5.dp),
                     text = title,
-                    fontSize = 18.sp,
+                    fontSize = Settings.fontInterface.sp,
                     color = colorText,
                     textAlign = TextAlign.Center
                 )
@@ -157,7 +157,8 @@ fun KaliandarScreenYear(
                                     fontWeight = weight,
                                     text = data[index][6],
                                     color = color,
-                                    textAlign = TextAlign.Center
+                                    textAlign = TextAlign.Center,
+                                    fontSize = Settings.fontInterface.sp
                                 )
                             }
                         }
@@ -169,7 +170,7 @@ fun KaliandarScreenYear(
                             .fillMaxWidth()
                             .padding(top = 10.dp, start = 10.dp, end = 10.dp),
                         text = data[index][8],
-                        fontSize = 18.sp,
+                        fontSize = Settings.fontInterface.sp,
                         color = MaterialTheme.colorScheme.secondary,
                         textAlign = TextAlign.Center
                     )
@@ -223,7 +224,8 @@ fun KaliandarScreenYear(
                             .padding(vertical = 5.dp),
                         textAlign = TextAlign.Center,
                         text = text,
-                        color = colorText
+                        color = colorText,
+                        fontSize = Settings.fontInterface.sp
                     )
                 }
             }

@@ -265,7 +265,8 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                             color = MaterialTheme.colorScheme.onSecondary,
                             fontWeight = FontWeight.Bold,
                             maxLines = maxLine.intValue,
-                            overflow = TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis,
+                            fontSize = Settings.fontInterface.sp
                         )
                     },
                     navigationIcon = {
@@ -339,8 +340,8 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                                     saveVybranoe = true
                                 },
                                 text = {
-                                    if (isVybranoe) Text(stringResource(R.string.vybranoe_del))
-                                    else Text(stringResource(R.string.vybranoe))
+                                    if (isVybranoe) Text(stringResource(R.string.vybranoe_del), fontSize = Settings.fontInterface.sp)
+                                    else Text(stringResource(R.string.vybranoe), fontSize = Settings.fontInterface.sp)
                                 },
                                 trailingIcon = {
                                     val icon = if (isVybranoe) painterResource(R.drawable.stars)
@@ -357,7 +358,7 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                                     if (autoScrollSensor) autoScroll = true
                                     fullscreen = true
                                 },
-                                text = { Text(stringResource(R.string.fullscreen)) },
+                                text = { Text(stringResource(R.string.fullscreen), fontSize = Settings.fontInterface.sp) },
                                 trailingIcon = {
                                     Icon(
                                         painter = painterResource(R.drawable.fullscreen),
@@ -372,7 +373,7 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                                     expanded = false
                                     menuPosition = 1
                                 },
-                                text = { Text(stringResource(R.string.menu_font_size_app)) }
+                                text = { Text(stringResource(R.string.menu_font_size_app), fontSize = Settings.fontInterface.sp) }
                             )
                             DropdownMenuItem(
                                 onClick = {
@@ -381,7 +382,7 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                                     expanded = false
                                     menuPosition = 3
                                 },
-                                text = { Text(stringResource(R.string.dzen_noch)) }
+                                text = { Text(stringResource(R.string.dzen_noch), fontSize = Settings.fontInterface.sp) }
                             )
                         }
                     },
@@ -441,7 +442,8 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                                         modifier = Modifier.padding(start = 10.dp, top = 10.dp),
                                         textAlign = TextAlign.Center,
                                         fontStyle = FontStyle.Italic,
-                                        color = MaterialTheme.colorScheme.secondary
+                                        color = MaterialTheme.colorScheme.secondary,
+                                        fontSize = Settings.fontInterface.sp
                                     )
                                     val edit = k.edit()
                                     Row(
@@ -477,7 +479,8 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                                         Text(
                                             stringResource(R.string.system),
                                             textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.secondary
+                                            color = MaterialTheme.colorScheme.secondary,
+                                            fontSize = Settings.fontInterface.sp
                                         )
                                     }
                                     Row(
@@ -507,7 +510,8 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                                         Text(
                                             stringResource(R.string.day),
                                             textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.secondary
+                                            color = MaterialTheme.colorScheme.secondary,
+                                            fontSize = Settings.fontInterface.sp
                                         )
                                     }
                                     Row(
@@ -543,7 +547,8 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                                         Text(
                                             stringResource(R.string.widget_day_d_n),
                                             textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.secondary
+                                            color = MaterialTheme.colorScheme.secondary,
+                                            fontSize = Settings.fontInterface.sp
                                         )
                                     }
                                     Row(
@@ -575,7 +580,8 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                                         Text(
                                             stringResource(R.string.auto_widget_day_d_n),
                                             textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.secondary
+                                            color = MaterialTheme.colorScheme.secondary,
+                                            fontSize = Settings.fontInterface.sp
                                         )
                                     }
                                 }
@@ -586,7 +592,8 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                                     modifier = Modifier.padding(start = 10.dp, top = 10.dp),
                                     fontStyle = FontStyle.Italic,
                                     textAlign = TextAlign.Center,
-                                    color = MaterialTheme.colorScheme.secondary
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    fontSize = Settings.fontInterface.sp
                                 )
                                 Slider(
                                     modifier = Modifier.padding(horizontal = 10.dp),
@@ -620,7 +627,7 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                                 ) {
                                     Text(
                                         stringResource(R.string.close),
-                                        fontSize = 18.sp,
+                                        fontSize = Settings.fontInterface.sp,
                                         color = PrimaryText
                                     )
                                 }
@@ -711,7 +718,8 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                                 .background(autoScrollTextColor)
                                 .padding(5.dp)
                                 .align(Alignment.CenterVertically),
-                            color = autoScrollTextColor2
+                            color = autoScrollTextColor2,
+                            fontSize = Settings.fontInterface.sp
                         )
                     }
                 }

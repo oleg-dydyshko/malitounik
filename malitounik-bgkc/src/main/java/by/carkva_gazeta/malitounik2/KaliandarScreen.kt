@@ -111,7 +111,8 @@ fun KaliandarScreen(
                                     .align(Alignment.CenterHorizontally),
                                 text = text,
                                 textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.secondary
+                                color = MaterialTheme.colorScheme.secondary,
+                                fontSize = Settings.fontInterface.sp
                             )
                         }
                         if (data[7].toInt() > 1) {
@@ -144,7 +145,8 @@ fun KaliandarScreen(
                         .align(Alignment.CenterHorizontally),
                     fontWeight = FontWeight.Bold,
                     color = colorText,
-                    text = stringArrayResource(R.array.dni_nedeli)[data[0].toInt()]
+                    text = stringArrayResource(R.array.dni_nedeli)[data[0].toInt()],
+                    fontSize = Settings.fontInterface.sp
                 )
                 Text(
                     modifier = Modifier
@@ -166,6 +168,7 @@ fun KaliandarScreen(
                     text = mounth,
                     fontWeight = FontWeight.Bold,
                     color = colorText,
+                    fontSize = Settings.fontInterface.sp
                 )
             }
             Box(
@@ -230,7 +233,8 @@ fun KaliandarScreen(
                             fontWeight = weight,
                             text = data[6],
                             color = color,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            fontSize = Settings.fontInterface.sp
                         )
                     }
                 }
@@ -248,7 +252,8 @@ fun KaliandarScreen(
                         .align(Alignment.CenterVertically),
                     text = data[8],
                     color = MaterialTheme.colorScheme.secondary,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    fontSize = Settings.fontInterface.sp
                 )
             }
         }
@@ -299,7 +304,8 @@ fun KaliandarScreen(
                         modifier = Modifier
                             .padding(horizontal = 10.dp)
                             .align(Alignment.CenterVertically),
-                        text = list[i]
+                        text = list[i],
+                        fontSize = Settings.fontInterface.sp
                     )
                 }
             }
@@ -331,7 +337,8 @@ fun KaliandarScreen(
                         .padding(horizontal = 10.dp),
                     text = stringResource(R.string.chytanne),
                     fontStyle = FontStyle.Italic,
-                    color = colorText
+                    color = colorText,
+                    fontSize = Settings.fontInterface.sp
                 )
                 if (data[9].isNotEmpty()) {
                     val title = stringResource(
@@ -344,7 +351,8 @@ fun KaliandarScreen(
                             .padding(top = 10.dp, start = 10.dp, end = 10.dp)
                             .clickable { navigateToCytanneList(title, removeZnakiAndSlovy(data[9]), Settings.CHYTANNI_LITURGICHNYIA) },
                         text = data[9],
-                        color = colorText
+                        color = colorText,
+                        fontSize = Settings.fontInterface.sp
                     )
                 }
                 if (data[10].isNotEmpty()) {
@@ -359,7 +367,8 @@ fun KaliandarScreen(
                             .clickable { navigateToCytanneList(title, removeZnakiAndSlovy(data[10]), Settings.CHYTANNI_LITURGICHNYIA) },
                         text = data[10],
                         fontStyle = FontStyle.Italic,
-                        color = colorText
+                        color = colorText,
+                        fontSize = Settings.fontInterface.sp
                     )
                 }
                 if (data[11].isNotEmpty()) {
@@ -374,7 +383,8 @@ fun KaliandarScreen(
                             .clickable { navigateToCytanneList(title, removeZnakiAndSlovy(data[11]), Settings.CHYTANNI_LITURGICHNYIA) },
                         text = data[11],
                         fontStyle = FontStyle.Italic,
-                        color = colorText
+                        color = colorText,
+                        fontSize = Settings.fontInterface.sp
                     )
                 }
                 if (data[18].toInt() == 1 || data[21].isNotEmpty()) {
@@ -385,43 +395,46 @@ fun KaliandarScreen(
                             .padding(top = 10.dp, start = 10.dp),
                         text = textPamAndBlas,
                         color = colorText,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        fontSize = Settings.fontInterface.sp
                     )
                 }
             }
         }
-        //if (k.getInt("maranata", 0) == 1) {
-        Spacer(Modifier.size(10.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(colorBlackboard)
-                .padding(vertical = 10.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
-                Text(
-                    modifier = Modifier
-                        .padding(start = 10.dp, bottom = 10.dp),
-                    text = stringResource(id = R.string.maranata),
-                    fontStyle = FontStyle.Italic,
-                    color = colorText
-                )
-                val title = stringResource(
-                    R.string.maranata2,
-                    data[1].toInt(),
-                    stringArrayResource(R.array.meciac_smoll)[2]
-                )
-                Text(
-                    modifier = Modifier
-                        .padding(start = 10.dp)
-                        .clickable { navigateToCytanneList(title, data[13], Settings.CHYTANNI_MARANATA) },
-                    text = data[13],
-                    color = colorText
-                )
+        if (k.getInt("maranata", 0) == 1) {
+            Spacer(Modifier.size(10.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(colorBlackboard)
+                    .padding(vertical = 10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    Text(
+                        modifier = Modifier
+                            .padding(start = 10.dp, bottom = 10.dp),
+                        text = stringResource(id = R.string.maranata),
+                        fontStyle = FontStyle.Italic,
+                        color = colorText,
+                        fontSize = Settings.fontInterface.sp
+                    )
+                    val title = stringResource(
+                        R.string.maranata2,
+                        data[1].toInt(),
+                        stringArrayResource(R.array.meciac_smoll)[2]
+                    )
+                    Text(
+                        modifier = Modifier
+                            .padding(start = 10.dp)
+                            .clickable { navigateToCytanneList(title, data[13], Settings.CHYTANNI_MARANATA) },
+                        text = data[13],
+                        color = colorText,
+                        fontSize = Settings.fontInterface.sp
+                    )
+                }
             }
         }
-        //}
         val padzeia = setListPadzeia(context)
         if (padzeia.isNotEmpty()) {
             val gc = Calendar.getInstance() as GregorianCalendar
@@ -502,19 +515,19 @@ fun KaliandarScreen(
             }
         }
         val svityDrugasnuia = AnnotatedString.Builder("").apply {
-            if (k.getInt("pkc", 0) == 1 && data[19] != "") {
+            if (k.getBoolean("s_pkc", false) && data[19] != "") {
                 if (data[19].isNotEmpty()) {
                     append(data[19])
                     append("\n\n")
                 }
             }
-            if (k.getInt("pravas", 0) == 1 && data[14].isNotEmpty()) {
+            if (k.getBoolean("s_pravas", false) && data[14].isNotEmpty()) {
                 if (data[14].isNotEmpty()) {
                     append(data[14])
                     append("\n\n")
                 }
             }
-            if (k.getInt("gosud", 0) == 1) {
+            if (k.getBoolean("s_gosud", false)) {
                 if (data[16].isNotEmpty()) {
                     append(data[16])
                     append("\n\n")
@@ -531,7 +544,7 @@ fun KaliandarScreen(
                     append("\n\n")
                 }
             }
-            if (k.getInt("pafesii", 0) == 1 && data[17].isNotEmpty()) {
+            if (k.getBoolean("s_pafesii", false) && data[17].isNotEmpty()) {
                 if (data[17].isNotEmpty()) {
                     append(data[17])
                     append("\n\n")
@@ -551,7 +564,8 @@ fun KaliandarScreen(
                         .align(Alignment.CenterVertically),
                     text = svityDrugasnuia,
                     textAlign = TextAlign.End,
-                    fontStyle = FontStyle.Italic
+                    fontStyle = FontStyle.Italic,
+                    fontSize = Settings.fontInterface.sp
                 )
             }
         }
@@ -671,7 +685,8 @@ fun SetPadzeia(title: String, apisanne: String, color: Int, raznica: Boolean, re
                         .padding(horizontal = 10.dp, vertical = 5.dp),
                     text = title,
                     fontWeight = FontWeight.Bold,
-                    color = PrimaryTextBlack
+                    color = PrimaryTextBlack,
+                    fontSize = Settings.fontInterface.sp
                 )
             }
             if (message) {
@@ -689,7 +704,8 @@ fun SetPadzeia(title: String, apisanne: String, color: Int, raznica: Boolean, re
                     modifier = Modifier
                         .padding(start = 10.dp),
                     text = newApisanne,
-                    color = PrimaryText
+                    color = PrimaryText,
+                    fontSize = Settings.fontInterface.sp
                 )
             }
         }

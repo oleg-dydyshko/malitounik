@@ -169,7 +169,8 @@ fun Biblijateka(
                         color = MaterialTheme.colorScheme.onSecondary,
                         fontWeight = FontWeight.Bold,
                         maxLines = maxLine.intValue,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        fontSize = Settings.fontInterface.sp
                     )
                 },
                 navigationIcon = {
@@ -188,7 +189,7 @@ fun Biblijateka(
                     var expanded by remember { mutableStateOf(false) }
                     Text(
                         text = pageState,
-                        fontSize = 18.sp,
+                        fontSize = Settings.fontInterface.sp,
                         color = PrimaryTextBlack
                     )
                     IconButton(onClick = { expanded = true }) {
@@ -208,7 +209,7 @@ fun Biblijateka(
                                 showDropdown = true
                             },
                             text = {
-                                Text(stringResource(R.string.set_page_bibliateka))
+                                Text(stringResource(R.string.set_page_bibliateka), fontSize = Settings.fontInterface.sp)
                             },
                             trailingIcon = {
                             }
@@ -219,7 +220,7 @@ fun Biblijateka(
                                 isShare = true
                             },
                             text = {
-                                Text(stringResource(R.string.share))
+                                Text(stringResource(R.string.share), fontSize = Settings.fontInterface.sp)
                             },
                             trailingIcon = {
                             }
@@ -239,7 +240,7 @@ fun Biblijateka(
                                 context.startActivity(intent)
                             },
                             text = {
-                                Text(stringResource(R.string.open_in))
+                                Text(stringResource(R.string.open_in), fontSize = Settings.fontInterface.sp)
                             },
                             trailingIcon = {
                             }
@@ -256,7 +257,7 @@ fun Biblijateka(
                                 printManager.print(fileName, printAdapter, printAttributes)
                             },
                             text = {
-                                Text(stringResource(R.string.print))
+                                Text(stringResource(R.string.print), fontSize = Settings.fontInterface.sp)
                             },
                             trailingIcon = {
                             }
@@ -325,7 +326,7 @@ fun Biblijateka(
                         ) {
                             Text(
                                 stringResource(R.string.ok),
-                                fontSize = 18.sp,
+                                fontSize = Settings.fontInterface.sp,
                                 color = PrimaryText
                             )
                         }
@@ -370,7 +371,7 @@ fun DropdownMenuPdf(
         ) {
             options.forEach { option ->
                 DropdownMenuItem(
-                    text = { Text(option.toString(), style = MaterialTheme.typography.bodyLarge) },
+                    text = { Text(option.toString(), style = MaterialTheme.typography.bodyLarge, fontSize = Settings.fontInterface.sp) },
                     onClick = {
                         textFieldState.setTextAndPlaceCursorAtEnd(option.toString())
                         expanded = false

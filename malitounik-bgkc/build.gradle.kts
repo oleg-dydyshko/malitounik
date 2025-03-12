@@ -53,6 +53,7 @@ android {
 }
 
 dependencies {
+    api(libs.androidx.fragment.ktx)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -64,11 +65,11 @@ dependencies {
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.ui.text.google.fonts)
-    implementation (platform(libs.firebase.bom))
-    implementation (libs.play.services.instantapps)
-    implementation (libs.gson)
-    implementation (libs.firebase.storage.ktx)
-    implementation (libs.firebase.appcheck.playintegrity)
+    api(platform(libs.firebase.bom))
+    api (libs.play.services.instantapps)
+    api(libs.gson)
+    api(libs.firebase.storage.ktx)
+    api (libs.firebase.appcheck.playintegrity)
     implementation(libs.feature.delivery.ktx)
     implementation(libs.app.update.ktx)
     implementation (libs.androidx.media3.exoplayer)

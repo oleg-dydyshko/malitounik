@@ -68,10 +68,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
@@ -102,6 +105,7 @@ import by.carkva_gazeta.malitounik2.LogView
 import by.carkva_gazeta.malitounik2.MaeNatatki
 import by.carkva_gazeta.malitounik2.MainActivity
 import by.carkva_gazeta.malitounik2.MalitvyListAll
+import by.carkva_gazeta.malitounik2.PadzeiaView
 import by.carkva_gazeta.malitounik2.ParafiiBGKC
 import by.carkva_gazeta.malitounik2.Pashalia
 import by.carkva_gazeta.malitounik2.PiesnyList
@@ -112,6 +116,7 @@ import by.carkva_gazeta.malitounik2.Settings
 import by.carkva_gazeta.malitounik2.SettingsView
 import by.carkva_gazeta.malitounik2.SviatyList
 import by.carkva_gazeta.malitounik2.VybranaeList
+import by.carkva_gazeta.malitounik2.getFontInterface
 import by.carkva_gazeta.malitounik2.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik2.ui.theme.Divider
 import by.carkva_gazeta.malitounik2.ui.theme.Post
@@ -296,6 +301,10 @@ fun AppNavGraph(
             SettingsView(navController)
         }
 
+        composable(AllDestinations.PADZEI_VIEW) {
+            PadzeiaView(navController)
+        }
+
         composable(AllDestinations.PAMIATKA) {
             Bogaslujbovyia(navController, stringResource(R.string.pamiatka), R.raw.pamiatka)
         }
@@ -473,6 +482,9 @@ fun MainConteiner(
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
+    LaunchedEffect(Unit) {
+        Settings.fontInterface = getFontInterface(context)
+    }
     val initPage = if (Settings.caliandarPosition == -1) {
         findCaliandarPosition(-1)
         Settings.initCaliandarPosition
@@ -637,7 +649,8 @@ fun MainConteiner(
                             Text(
                                 title,
                                 color = textTollBarColor,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                fontSize = Settings.fontInterface.sp
                             )
                         } else {
                             TextField(
@@ -687,7 +700,8 @@ fun MainConteiner(
                                     focusedIndicatorColor = PrimaryTextBlack,
                                     unfocusedIndicatorColor = PrimaryTextBlack,
                                     cursorColor = PrimaryTextBlack
-                                )
+                                ),
+                                textStyle = TextStyle(fontSize = TextUnit(Settings.fontInterface, TextUnitType.Sp))
                             )
                         }
                     },
@@ -801,7 +815,7 @@ fun MainConteiner(
                                             expanded = false
                                             navigationActions.navigateToSettingsView()
                                         },
-                                        text = { Text(stringResource(R.string.tools_item)) }
+                                        text = { Text(stringResource(R.string.tools_item), fontSize = Settings.fontInterface.sp) }
                                     )
                                     if (currentRoute.contains(AllDestinations.KALIANDAR)) {
                                         DropdownMenuItem(
@@ -809,18 +823,21 @@ fun MainConteiner(
                                                 expanded = false
                                                 dialogUmounyiaZnachenni = true
                                             },
-                                            text = { Text(stringResource(R.string.munu_symbols)) }
+                                            text = { Text(stringResource(R.string.munu_symbols), fontSize = Settings.fontInterface.sp) }
                                         )
                                         DropdownMenuItem(
-                                            onClick = { },
-                                            text = { Text(stringResource(R.string.sabytie)) }
+                                            onClick = {
+                                                expanded = false
+                                                navigationActions.navigateToPadzeiView()
+                                            },
+                                            text = { Text(stringResource(R.string.sabytie), fontSize = Settings.fontInterface.sp) }
                                         )
                                         DropdownMenuItem(
                                             onClick = {
                                                 expanded = false
                                                 navigationActions.navigateToSearchSvityia()
                                             },
-                                            text = { Text(stringResource(R.string.search_svityia)) }
+                                            text = { Text(stringResource(R.string.search_svityia), fontSize = Settings.fontInterface.sp) }
                                         )
                                     }
                                     if (currentRoute.contains(AllDestinations.VYBRANAE_LIST) || currentRoute.contains(
@@ -851,14 +868,14 @@ fun MainConteiner(
                                                             R.string.sort_alf
                                                         )
                                                     )
-                                                    else Text(stringResource(R.string.sort_add))
+                                                    else Text(stringResource(R.string.sort_add), fontSize = Settings.fontInterface.sp)
                                                 } else {
                                                     if (sortedNatatki == Settings.SORT_BY_TIME) Text(
                                                         stringResource(
                                                             R.string.sort_alf
-                                                        )
+                                                        ), fontSize = Settings.fontInterface.sp
                                                     )
-                                                    else Text(stringResource(R.string.sort_add))
+                                                    else Text(stringResource(R.string.sort_add), fontSize = Settings.fontInterface.sp)
                                                 }
                                             }
                                         )
@@ -877,31 +894,27 @@ fun MainConteiner(
                                             expanded = false
                                             navigationActions.navigateToPraNas()
                                         },
-                                        text = { Text(stringResource(R.string.pra_nas)) }
+                                        text = { Text(stringResource(R.string.pra_nas), fontSize = Settings.fontInterface.sp) }
                                     )
                                     DropdownMenuItem(
                                         onClick = {
                                             expanded = false
                                             navigationActions.navigateToHelp()
                                         },
-                                        text = { Text(stringResource(R.string.help)) }
-                                    )
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            expanded = false
-                                            logView = true
-                                        },
-                                        text = { Text(stringResource(R.string.log_m)) }
+                                        text = { Text(stringResource(R.string.help), fontSize = Settings.fontInterface.sp) }
                                     )
                                     if (k.getBoolean("admin", false)) {
                                         HorizontalDivider()
                                         DropdownMenuItem(
                                             onClick = { },
-                                            text = { Text(stringResource(R.string.redagaktirovat)) }
+                                            text = { Text(stringResource(R.string.redagaktirovat), fontSize = Settings.fontInterface.sp) }
                                         )
                                         DropdownMenuItem(
-                                            onClick = { },
-                                            text = { Text(stringResource(R.string.log_m)) }
+                                            onClick = {
+                                                expanded = false
+                                                logView = true
+                                            },
+                                            text = { Text(stringResource(R.string.log_m), fontSize = Settings.fontInterface.sp) }
                                         )
                                     }
                                 }
@@ -1138,7 +1151,7 @@ fun DialogLogProgramy(
             Text(text = stringResource(R.string.log))
         },
         text = {
-            Text(item, fontSize = 18.sp)
+            Text(item, fontSize = Settings.fontInterface.sp)
         },
         onDismissRequest = {
         },
@@ -1149,7 +1162,7 @@ fun DialogLogProgramy(
                     onDismissRequest()
                 }
             ) {
-                Text(stringResource(R.string.set_log), fontSize = 18.sp)
+                Text(stringResource(R.string.set_log), fontSize = Settings.fontInterface.sp)
             }
         },
         dismissButton = {
@@ -1158,7 +1171,7 @@ fun DialogLogProgramy(
                     onDismissRequest()
                 }
             ) {
-                Text(stringResource(R.string.close), fontSize = 18.sp)
+                Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
             }
         }
     )
@@ -1179,7 +1192,7 @@ fun DialogUmounyiaZnachenni(
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 Text(
                     text = stringResource(R.string.Znaki_cviat),
-                    fontSize = 18.sp,
+                    fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.primary
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.primary)
@@ -1195,7 +1208,7 @@ fun DialogUmounyiaZnachenni(
                     Text(
                         modifier = Modifier.padding(start = 10.dp),
                         text = annotatedString,
-                        fontSize = 18.sp,
+                        fontSize = Settings.fontInterface.sp,
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -1204,7 +1217,7 @@ fun DialogUmounyiaZnachenni(
                     Text(
                         modifier = Modifier.padding(start = 10.dp),
                         text = stringResource(R.string.Z_Lic_na_ve),
-                        fontSize = 18.sp,
+                        fontSize = Settings.fontInterface.sp,
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }
@@ -1213,7 +1226,7 @@ fun DialogUmounyiaZnachenni(
                     Text(
                         modifier = Modifier.padding(start = 10.dp),
                         text = stringResource(R.string.Z_v_v_v_u_n_u),
-                        fontSize = 18.sp,
+                        fontSize = Settings.fontInterface.sp,
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }
@@ -1222,7 +1235,7 @@ fun DialogUmounyiaZnachenni(
                     Text(
                         modifier = Modifier.padding(start = 10.dp),
                         text = stringResource(R.string.Z_sh_v_v_u_u),
-                        fontSize = 18.sp,
+                        fontSize = Settings.fontInterface.sp,
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }
@@ -1231,14 +1244,14 @@ fun DialogUmounyiaZnachenni(
                     Text(
                         modifier = Modifier.padding(start = 10.dp),
                         text = stringResource(R.string.Z_sh_v_m_u_u),
-                        fontSize = 18.sp,
+                        fontSize = Settings.fontInterface.sp,
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }
                 Text(
                     modifier = Modifier.padding(top = 10.dp),
                     text = stringResource(R.string.tipicon_fon),
-                    fontSize = 18.sp,
+                    fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.primary
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.primary)
@@ -1248,7 +1261,7 @@ fun DialogUmounyiaZnachenni(
                             .background(Primary)
                             .padding(10.dp),
                         text = stringResource(R.string.niadzeli_i_sviaty),
-                        fontSize = 18.sp,
+                        fontSize = Settings.fontInterface.sp,
                         color = PrimaryTextBlack
                     )
                 Text(
@@ -1257,7 +1270,7 @@ fun DialogUmounyiaZnachenni(
                             .background(Divider)
                             .padding(10.dp),
                         text = stringResource(R.string.zvychaynye_dny),
-                        fontSize = 18.sp,
+                        fontSize = Settings.fontInterface.sp,
                         color = PrimaryText
                     )
                 Text(
@@ -1266,7 +1279,7 @@ fun DialogUmounyiaZnachenni(
                             .background(BezPosta)
                             .padding(10.dp),
                         text = stringResource(R.string.No_post_n),
-                        fontSize = 18.sp,
+                        fontSize = Settings.fontInterface.sp,
                         color = PrimaryText
                     )
                 Text(
@@ -1275,7 +1288,7 @@ fun DialogUmounyiaZnachenni(
                             .background(Post)
                             .padding(10.dp),
                         text = stringResource(R.string.Post),
-                        fontSize = 18.sp,
+                        fontSize = Settings.fontInterface.sp,
                         color = PrimaryText
                     )
                 Text(
@@ -1284,7 +1297,7 @@ fun DialogUmounyiaZnachenni(
                             .background(StrogiPost)
                             .padding(10.dp),
                         text = stringResource(R.string.Strogi_post_n),
-                        fontSize = 18.sp,
+                        fontSize = Settings.fontInterface.sp,
                         color = PrimaryTextBlack
                     )
             }
@@ -1298,7 +1311,7 @@ fun DialogUmounyiaZnachenni(
                     onDismissRequest()
                 }
             ) {
-                Text(stringResource(R.string.close), fontSize = 18.sp)
+                Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
             }
         }
     )

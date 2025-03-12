@@ -171,7 +171,7 @@ fun DialogProgramRadoiMaryia(
                 Text(
                     modifier = Modifier.verticalScroll(rememberScrollState()),
                     text = program,
-                    fontSize = 18.sp
+                    fontSize = Settings.fontInterface.sp
                 )
             }
         },
@@ -186,7 +186,7 @@ fun DialogProgramRadoiMaryia(
                     sendTitlePadioMaryiaJob = null
                 }
             ) {
-                Text(stringResource(R.string.close), fontSize = 18.sp)
+                Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
             }
         }
     )
@@ -204,7 +204,7 @@ fun DialogNoInternet(
             Text(text = stringResource(R.string.no_internet))
         },
         text = {
-            Text(text = stringResource(R.string.check_internet), fontSize = 18.sp)
+            Text(text = stringResource(R.string.check_internet), fontSize = Settings.fontInterface.sp)
         },
         onDismissRequest = {
             onDismissRequest()
@@ -215,7 +215,7 @@ fun DialogNoInternet(
                     onDismissRequest()
                 }
             ) {
-                Text(stringResource(R.string.ok), fontSize = 18.sp)
+                Text(stringResource(R.string.ok), fontSize = Settings.fontInterface.sp)
             }
         }
     )

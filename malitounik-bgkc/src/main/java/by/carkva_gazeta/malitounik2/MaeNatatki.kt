@@ -180,7 +180,8 @@ fun MaeNatatki(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(10.dp),
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontSize = Settings.fontInterface.sp
                 )
             }
             HorizontalDivider()
@@ -218,14 +219,14 @@ fun DialogMyNatatli(
         title = {
             if (editMode) {
                 TextField(
-                    placeholder = { Text(stringResource(R.string.natatka_name), fontSize = 18.sp) },
+                    placeholder = { Text(stringResource(R.string.natatka_name), fontSize = Settings.fontInterface.sp) },
                     value = TextFieldValue(editTitle, selection = TextRange(editTitle.length)),
                     onValueChange = {
                         editTitle = it.text
                     }
                 )
             } else {
-                Text(editTitle)
+                Text(editTitle, fontSize = Settings.fontInterface.sp)
             }
         },
         text = {
@@ -239,15 +240,15 @@ fun DialogMyNatatli(
                                 textFieldLoaded = true
                             }
                         },
-                    placeholder = { Text(stringResource(R.string.natatka), fontSize = 18.sp) },
+                    placeholder = { Text(stringResource(R.string.natatka), fontSize = Settings.fontInterface.sp) },
                     value = textFieldValueState,
                     onValueChange = {
                         textFieldValueState = it
                     },
-                    textStyle = TextStyle(fontSize = 18.sp)
+                    textStyle = TextStyle(fontSize = Settings.fontInterface.sp)
                 )
             } else {
-                Text(textFieldValueState.text, fontSize = 18.sp)
+                Text(textFieldValueState.text, fontSize = Settings.fontInterface.sp)
             }
         },
         onDismissRequest = {
@@ -261,8 +262,8 @@ fun DialogMyNatatli(
                     else editMode = true
                 }
             ) {
-                if (editMode) Text(stringResource(R.string.cansel), fontSize = 18.sp)
-                else Text(stringResource(R.string.redagaktirovat), fontSize = 18.sp)
+                if (editMode) Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
+                else Text(stringResource(R.string.redagaktirovat), fontSize = Settings.fontInterface.sp)
             }
         },
         confirmButton = {
@@ -272,8 +273,8 @@ fun DialogMyNatatli(
                     else onDismissRequest()
                 }
             ) {
-                if (editMode) Text(stringResource(R.string.save_sabytie), fontSize = 18.sp)
-                else Text(stringResource(R.string.close), fontSize = 18.sp)
+                if (editMode) Text(stringResource(R.string.save_sabytie), fontSize = Settings.fontInterface.sp)
+                else Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
             }
         }
     )

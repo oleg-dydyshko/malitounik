@@ -1010,11 +1010,11 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues, se
                         text = {
                             Text(
                                 text = title,
-                                fontSize = 18.sp,
+                                fontSize = Settings.fontInterface.sp,
                                 lineHeight = 18.sp * 1.15f,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
-                                color = MaterialTheme.colorScheme.secondary,
+                                color = MaterialTheme.colorScheme.secondary
                             )
                         }
                     )
@@ -1083,7 +1083,8 @@ fun PiesnyList(piesnyList: ArrayList<PiesnyListItem>, navigationActions: AppNavi
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(10.dp),
-                        color = MaterialTheme.colorScheme.secondary
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = Settings.fontInterface.sp
                     )
                 }
             }

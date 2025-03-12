@@ -559,7 +559,8 @@ fun CytanniList(
                                         color = MaterialTheme.colorScheme.onSecondary,
                                         fontWeight = FontWeight.Bold,
                                         maxLines = maxLine.intValue,
-                                        overflow = TextOverflow.Ellipsis
+                                        overflow = TextOverflow.Ellipsis,
+                                        fontSize = Settings.fontInterface.sp
                                     )
                                     Text(
                                         modifier = Modifier.clickable {
@@ -573,7 +574,8 @@ fun CytanniList(
                                         color = MaterialTheme.colorScheme.onSecondary,
                                         fontWeight = FontWeight.Bold,
                                         maxLines = maxLine.intValue,
-                                        overflow = TextOverflow.Ellipsis
+                                        overflow = TextOverflow.Ellipsis,
+                                        fontSize = Settings.fontInterface.sp
                                     )
                                 } else {
                                     Text(
@@ -591,7 +593,8 @@ fun CytanniList(
                                         color = MaterialTheme.colorScheme.onSecondary,
                                         fontWeight = FontWeight.Bold,
                                         maxLines = maxLine.intValue,
-                                        overflow = TextOverflow.Ellipsis
+                                        overflow = TextOverflow.Ellipsis,
+                                        fontSize = Settings.fontInterface.sp
                                     )
                                 }
                             }
@@ -741,8 +744,14 @@ fun CytanniList(
                                         saveVybranoe = true
                                     },
                                     text = {
-                                        if (isVybranoe) Text(stringResource(R.string.vybranoe_del))
-                                        else Text(stringResource(R.string.vybranoe))
+                                        if (isVybranoe) Text(
+                                            stringResource(R.string.vybranoe_del),
+                                            fontSize = Settings.fontInterface.sp
+                                        )
+                                        else Text(
+                                            stringResource(R.string.vybranoe),
+                                            fontSize = Settings.fontInterface.sp
+                                        )
                                     },
                                     trailingIcon = {
                                         val icon = if (isVybranoe) painterResource(R.drawable.stars)
@@ -762,7 +771,12 @@ fun CytanniList(
                                         expanded = false
                                         menuPosition = 4
                                     },
-                                    text = { Text(stringResource(R.string.razdzel)) }
+                                    text = {
+                                        Text(
+                                            stringResource(R.string.razdzel),
+                                            fontSize = Settings.fontInterface.sp
+                                        )
+                                    }
                                 )
                             }
                             DropdownMenuItem(
@@ -772,7 +786,12 @@ fun CytanniList(
                                     expanded = false
                                     menuPosition = 2
                                 },
-                                text = { Text(stringResource(R.string.perevody)) }
+                                text = {
+                                    Text(
+                                        stringResource(R.string.perevody),
+                                        fontSize = Settings.fontInterface.sp
+                                    )
+                                }
                             )
                             DropdownMenuItem(
                                 onClick = {
@@ -780,7 +799,12 @@ fun CytanniList(
                                     if (autoScrollSensor) autoScroll = true
                                     fullscreen = true
                                 },
-                                text = { Text(stringResource(R.string.fullscreen)) },
+                                text = {
+                                    Text(
+                                        stringResource(R.string.fullscreen),
+                                        fontSize = Settings.fontInterface.sp
+                                    )
+                                },
                                 trailingIcon = {
                                     Icon(
                                         painter = painterResource(R.drawable.fullscreen),
@@ -803,7 +827,10 @@ fun CytanniList(
                                         edit.apply()
                                     },
                                     text = {
-                                        Text(stringResource(R.string.paralel))
+                                        Text(
+                                            stringResource(R.string.paralel),
+                                            fontSize = Settings.fontInterface.sp
+                                        )
                                     },
                                     trailingIcon = {
                                         Checkbox(
@@ -834,7 +861,12 @@ fun CytanniList(
                                     expanded = false
                                     menuPosition = 1
                                 },
-                                text = { Text(stringResource(R.string.menu_font_size_app)) }
+                                text = {
+                                    Text(
+                                        stringResource(R.string.menu_font_size_app),
+                                        fontSize = Settings.fontInterface.sp
+                                    )
+                                }
                             )
                             DropdownMenuItem(
                                 onClick = {
@@ -843,7 +875,12 @@ fun CytanniList(
                                     expanded = false
                                     menuPosition = 3
                                 },
-                                text = { Text(stringResource(R.string.dzen_noch)) }
+                                text = {
+                                    Text(
+                                        stringResource(R.string.dzen_noch),
+                                        fontSize = Settings.fontInterface.sp
+                                    )
+                                }
                             )
                         }
                     },
@@ -920,7 +957,8 @@ fun CytanniList(
                                                     .fillMaxSize()
                                                     .padding(5.dp),
                                                 textAlign = TextAlign.Center,
-                                                color = PrimaryText
+                                                color = PrimaryText,
+                                                fontSize = Settings.fontInterface.sp
                                             )
                                         }
                                     }
@@ -936,7 +974,8 @@ fun CytanniList(
                                         modifier = Modifier.padding(start = 10.dp, top = 10.dp),
                                         textAlign = TextAlign.Center,
                                         fontStyle = FontStyle.Italic,
-                                        color = MaterialTheme.colorScheme.secondary
+                                        color = MaterialTheme.colorScheme.secondary,
+                                        fontSize = Settings.fontInterface.sp
                                     )
                                     val edit = k.edit()
                                     Row(
@@ -972,7 +1011,8 @@ fun CytanniList(
                                         Text(
                                             stringResource(R.string.system),
                                             textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.secondary
+                                            color = MaterialTheme.colorScheme.secondary,
+                                            fontSize = Settings.fontInterface.sp
                                         )
                                     }
                                     Row(
@@ -1002,7 +1042,8 @@ fun CytanniList(
                                         Text(
                                             stringResource(R.string.day),
                                             textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.secondary
+                                            color = MaterialTheme.colorScheme.secondary,
+                                            fontSize = Settings.fontInterface.sp
                                         )
                                     }
                                     Row(
@@ -1038,7 +1079,8 @@ fun CytanniList(
                                         Text(
                                             stringResource(R.string.widget_day_d_n),
                                             textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.secondary
+                                            color = MaterialTheme.colorScheme.secondary,
+                                            fontSize = Settings.fontInterface.sp
                                         )
                                     }
                                     Row(
@@ -1070,7 +1112,8 @@ fun CytanniList(
                                         Text(
                                             stringResource(R.string.auto_widget_day_d_n),
                                             textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.secondary
+                                            color = MaterialTheme.colorScheme.secondary,
+                                            fontSize = Settings.fontInterface.sp
                                         )
                                     }
                                 }
@@ -1083,7 +1126,8 @@ fun CytanniList(
                                             stringResource(R.string.biblia_error),
                                             modifier = Modifier.padding(start = 10.dp, top = 10.dp),
                                             textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.primary
+                                            color = MaterialTheme.colorScheme.primary,
+                                            fontSize = Settings.fontInterface.sp
                                         )
                                     }
                                     Text(
@@ -1091,7 +1135,8 @@ fun CytanniList(
                                         modifier = Modifier.padding(start = 10.dp, top = 10.dp),
                                         textAlign = TextAlign.Center,
                                         fontStyle = FontStyle.Italic,
-                                        color = MaterialTheme.colorScheme.secondary
+                                        color = MaterialTheme.colorScheme.secondary,
+                                        fontSize = Settings.fontInterface.sp
                                     )
                                     val edit = k.edit()
                                     Row(
@@ -1137,7 +1182,8 @@ fun CytanniList(
                                         Text(
                                             stringResource(R.string.title_biblia2),
                                             textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.secondary
+                                            color = MaterialTheme.colorScheme.secondary,
+                                            fontSize = Settings.fontInterface.sp
                                         )
                                     }
                                     Row(
@@ -1183,7 +1229,8 @@ fun CytanniList(
                                         Text(
                                             stringResource(R.string.title_biblia_bokun2),
                                             textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.secondary
+                                            color = MaterialTheme.colorScheme.secondary,
+                                            fontSize = Settings.fontInterface.sp
                                         )
                                     }
                                     Row(
@@ -1229,7 +1276,8 @@ fun CytanniList(
                                         Text(
                                             stringResource(R.string.title_biblia_charniauski2),
                                             textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.secondary
+                                            color = MaterialTheme.colorScheme.secondary,
+                                            fontSize = Settings.fontInterface.sp
                                         )
                                     }
                                     if (biblia == Settings.CHYTANNI_BIBLIA || biblia == Settings.CHYTANNI_VYBRANAE) {
@@ -1260,7 +1308,8 @@ fun CytanniList(
                                                 Text(
                                                     stringResource(R.string.title_psalter),
                                                     textAlign = TextAlign.Center,
-                                                    color = MaterialTheme.colorScheme.secondary
+                                                    color = MaterialTheme.colorScheme.secondary,
+                                                    fontSize = Settings.fontInterface.sp
                                                 )
                                             }
                                         }
@@ -1305,7 +1354,8 @@ fun CytanniList(
                                             Text(
                                                 stringResource(R.string.bsinaidal2),
                                                 textAlign = TextAlign.Center,
-                                                color = MaterialTheme.colorScheme.secondary
+                                                color = MaterialTheme.colorScheme.secondary,
+                                                fontSize = Settings.fontInterface.sp
                                             )
                                         }
                                     }
@@ -1317,7 +1367,8 @@ fun CytanniList(
                                     modifier = Modifier.padding(start = 10.dp, top = 10.dp),
                                     fontStyle = FontStyle.Italic,
                                     textAlign = TextAlign.Center,
-                                    color = MaterialTheme.colorScheme.secondary
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    fontSize = Settings.fontInterface.sp
                                 )
                                 Slider(
                                     modifier = Modifier.padding(horizontal = 10.dp),
@@ -1351,7 +1402,7 @@ fun CytanniList(
                                 ) {
                                     Text(
                                         stringResource(R.string.close),
-                                        fontSize = 18.sp,
+                                        fontSize = Settings.fontInterface.sp,
                                         color = PrimaryText
                                     )
                                 }
@@ -1637,8 +1688,8 @@ fun CytanniList(
                                     text = resultPage[index].parallel,
                                     modifier = Modifier
                                         .padding(horizontal = 10.dp),
-                                    fontSize = (fontSize - 4).sp,
-                                    lineHeight = (fontSize - 4).sp * 1.15,
+                                    fontSize = (Settings.fontInterface - 4).sp,
+                                    lineHeight = (Settings.fontInterface - 4).sp * 1.15,
                                     color = SecondaryText
                                 )
                             }
@@ -1678,7 +1729,8 @@ fun CytanniList(
                                 .background(autoScrollTextColor)
                                 .padding(5.dp)
                                 .align(Alignment.CenterVertically),
-                            color = autoScrollTextColor2
+                            color = autoScrollTextColor2,
+                            fontSize = Settings.fontInterface.sp
                         )
                     }
                 }
