@@ -1478,7 +1478,8 @@ fun CytanniList(
                                 )
                                 .background(color)
                                 .padding(5.dp),
-                                color = PrimaryText
+                                color = PrimaryText,
+                                fontSize = Settings.fontInterface.sp
                             )
                         }
                     }
@@ -1846,6 +1847,7 @@ fun getBible(
     try {
         val list = cytanne.split(";")
         var knigaText = ""
+        var knigaStyxi = ""
         var id = 0
         for (i in list.indices) {
             val itemList = list[i].trim()
@@ -1853,6 +1855,14 @@ fun getBible(
                 val list2 = itemList.split(",")
                 var glavaStart = 0
                 var glavaEnd = 0
+                var t7 = itemList.indexOf(" ")
+                if (t7 != -1) {
+                    val check = itemList.substring(t7 + 1, t7 + 2)
+                    if (check.isNotEmpty() && !check.isDigitsOnly()) {
+                        t7 = itemList.indexOf(" ", t7 + 1)
+                    }
+                    knigaStyxi = itemList.substring(t7 + 1)
+                }
                 for (e in list2.indices) {
                     val itemList2 = list2[e].trim()
                     var t1 = itemList2.indexOf(" ")
@@ -1936,60 +1946,45 @@ fun getBible(
                                 kniga = getRealBook(knigiBiblii, perevodNew)
                             }
                         }
-                        val textBible = if (styxStart == 0 && styxEnd == 0) {
-                            biblia(
-                                context,
-                                knigiBiblii,
-                                glava,
-                                glava,
-                                styxStart,
-                                styxEnd,
-                                perevodNew
-                            )
-                        } else {
-                            biblia(
-                                context,
-                                knigiBiblii,
-                                glavaStart,
-                                glavaEnd,
-                                styxStart,
-                                styxEnd,
-                                perevodNew
-                            )
-                        }
-                        if (run) {
-                            if (!(styxStart == 0 && styxEnd == 0)) run = false
-                            for (w in textBible.indices) {
-                                var t5 = textBible[w].styx.indexOf("<br>")
-                                if (t5 == -1) t5 = 0
-                                else t5 += 4
-                                val t6 = textBible[w].styx.indexOf(" ", t5)
-                                val isInt =
-                                    if (t6 != -1) {
-                                        val item = textBible[w].styx.substring(t5, t6)
-                                        item.isNotEmpty() && item.isDigitsOnly()
-                                    } else false
-                                if (w == 0) {
-                                    if (e > 0) {
-                                        result.add(
-                                            CytanniListData(
-                                                id,
-                                                "${
-                                                    getNameBook(
-                                                        context,
-                                                        kniga,
-                                                        perevodNew,
-                                                        knigiBiblii >= 50
-                                                    )
-                                                } $glava",
-                                                "[&#8230;]"
-                                            )
-                                        )
-                                    } else {
-                                        result.add(
-                                            CytanniListData(
-                                                id,
-                                                if (biblia != Settings.CHYTANNI_VYBRANAE) {
+                        try {
+                            val textBible = if (styxStart == 0 && styxEnd == 0) {
+                                biblia(
+                                    context,
+                                    knigiBiblii,
+                                    glava,
+                                    glava,
+                                    styxStart,
+                                    styxEnd,
+                                    perevodNew
+                                )
+                            } else {
+                                biblia(
+                                    context,
+                                    knigiBiblii,
+                                    glavaStart,
+                                    glavaEnd,
+                                    styxStart,
+                                    styxEnd,
+                                    perevodNew
+                                )
+                            }
+                            if (run) {
+                                if (!(styxStart == 0 && styxEnd == 0)) run = false
+                                for (w in textBible.indices) {
+                                    var t5 = textBible[w].styx.indexOf("<br>")
+                                    if (t5 == -1) t5 = 0
+                                    else t5 += 4
+                                    val t6 = textBible[w].styx.indexOf(" ", t5)
+                                    val isInt =
+                                        if (t6 != -1) {
+                                            val item = textBible[w].styx.substring(t5, t6)
+                                            item.isNotEmpty() && item.isDigitsOnly()
+                                        } else false
+                                    if (w == 0) {
+                                        if (e > 0) {
+                                            result.add(
+                                                CytanniListData(
+                                                    id,
                                                     "${
                                                         getNameBook(
                                                             context,
@@ -1997,69 +1992,95 @@ fun getBible(
                                                             perevodNew,
                                                             knigiBiblii >= 50
                                                         )
-                                                    } $glava"
-                                                } else {
-                                                    val tg =
-                                                        if (knigiBiblii == 21) context.getString(R.string.psalom2)
-                                                        else context.getString(R.string.razdzel)
-                                                    "$tg $glava"
-                                                },
-                                                if (isTitle) {
+                                                    } $glava",
+                                                    "[&#8230;]"
+                                                )
+                                            )
+                                        } else {
+                                            result.add(
+                                                CytanniListData(
+                                                    id,
                                                     if (biblia != Settings.CHYTANNI_VYBRANAE) {
-                                                        "<strong><br>" + getNameBook(
-                                                            context,
-                                                            kniga,
-                                                            perevodNew,
-                                                            knigiBiblii >= 50
-                                                        ) + " " + "$glava<strong><br>"
+                                                        "${
+                                                            getNameBook(
+                                                                context,
+                                                                kniga,
+                                                                perevodNew,
+                                                                knigiBiblii >= 50
+                                                            )
+                                                        } $glava"
                                                     } else {
                                                         val tg =
-                                                            if (knigiBiblii == 21) context.getString(
-                                                                R.string.psalom2
-                                                            )
+                                                            if (knigiBiblii == 21) context.getString(R.string.psalom2)
                                                             else context.getString(R.string.razdzel)
-                                                        "<strong><br>$tg $glava<strong><br>"
-                                                    }
-                                                } else ""
+                                                        "$tg $glava"
+                                                    },
+                                                    if (isTitle) {
+                                                        if (!(biblia == Settings.CHYTANNI_VYBRANAE || biblia == Settings.CHYTANNI_MARANATA)) {
+                                                            val eGlavy = knigaStyxi.ifEmpty { glava.toString() }
+                                                            "<strong><br>" + getNameBook(
+                                                                context,
+                                                                kniga,
+                                                                perevodNew,
+                                                                knigiBiblii >= 50
+                                                            ) + " " + "$eGlavy<strong><br>"
+                                                        } else {
+                                                            val tg =
+                                                                if (knigiBiblii == 21) context.getString(
+                                                                    R.string.psalom2
+                                                                )
+                                                                else context.getString(R.string.razdzel)
+                                                            "<strong><br>$tg $glava<strong><br>"
+                                                        }
+                                                    } else ""
+                                                )
                                             )
-                                        )
+                                        }
+                                        id++
                                     }
+                                    var text = textBible[w].styx
+                                    if (isInt) {
+                                        text = textBible[w].styx.substring(
+                                            0,
+                                            t5
+                                        ) + "<font color=#D00505>" + textBible[w].styx.substring(
+                                            t5,
+                                            t6
+                                        ) + ". </font>" + textBible[w].styx.substring(t6)
+                                    }
+                                    result.add(
+                                        CytanniListData(
+                                            id,
+                                            if (biblia != Settings.CHYTANNI_VYBRANAE) {
+                                                "${
+                                                    getNameBook(
+                                                        context,
+                                                        kniga,
+                                                        perevodNew,
+                                                        knigiBiblii >= 50
+                                                    )
+                                                } $glava"
+                                            } else {
+                                                val tg =
+                                                    if (knigiBiblii == 21) context.getString(R.string.psalom2)
+                                                    else context.getString(R.string.razdzel)
+                                                "$tg $glava"
+                                            },
+                                            text,
+                                            textBible[w].paralelStyx
+                                        )
+                                    )
                                     id++
                                 }
-                                var text = textBible[w].styx
-                                if (isInt) {
-                                    text = textBible[w].styx.substring(
-                                        0,
-                                        t5
-                                    ) + "<font color=#D00505>" + textBible[w].styx.substring(
-                                        t5,
-                                        t6
-                                    ) + ". </font>" + textBible[w].styx.substring(t6)
-                                }
-                                result.add(
-                                    CytanniListData(
-                                        id,
-                                        if (biblia != Settings.CHYTANNI_VYBRANAE) {
-                                            "${
-                                                getNameBook(
-                                                    context,
-                                                    kniga,
-                                                    perevodNew,
-                                                    knigiBiblii >= 50
-                                                )
-                                            } $glava"
-                                        } else {
-                                            val tg =
-                                                if (knigiBiblii == 21) context.getString(R.string.psalom2)
-                                                else context.getString(R.string.razdzel)
-                                            "$tg $glava"
-                                        },
-                                        text,
-                                        textBible[w].paralelStyx
-                                    )
-                                )
-                                id++
                             }
+                        } catch (e: Throwable) {
+                            e.printStackTrace()
+                            val inputStream =
+                                context.resources.openRawResource(R.raw.biblia_error)
+                            val isr = InputStreamReader(inputStream)
+                            val reader = BufferedReader(isr)
+                            result.add(CytanniListData(id, title = "", text = reader.readText()))
+                            id++
                         }
                     }
                 }
@@ -2101,9 +2122,9 @@ fun knigaBiblii(kniga: String): Int {
     if (kniga == "Мдр") bible = 25
     if (kniga == "Сір") bible = 26
     if (kniga == "Іс") bible = 27
-    if (kniga == "Ер") bible = 28
+    if (kniga == "Ер" || kniga == "Ярэм") bible = 28
     if (kniga == "Плач") bible = 29
-    if (kniga == "Пасл Ер" || kniga == "Ярэм") bible = 30
+    if (kniga == "Пасл Ер") bible = 30
     if (kniga == "Бар") bible = 31
     if (kniga == "Езк") bible = 32
     if (kniga == "Дан") bible = 33

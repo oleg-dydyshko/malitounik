@@ -104,6 +104,8 @@ import by.carkva_gazeta.malitounik2.ui.theme.Divider
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryTextBlack
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.FileWriter
@@ -117,6 +119,7 @@ fun PadzeiaView(navController: NavHostController) {
     val coroutineScope = rememberCoroutineScope()
     val maxLine = remember { mutableIntStateOf(1) }
     var addPadzeia by remember { mutableStateOf(false) }
+    var editPadzeia by remember { mutableStateOf(false) }
     var deliteAll by remember { mutableStateOf(false) }
     val listPadzeia = remember { mutableStateListOf<Padzeia>() }
     LaunchedEffect(Unit) {
@@ -154,8 +157,10 @@ fun PadzeiaView(navController: NavHostController) {
     }
     var showDropdown by rememberSaveable { mutableStateOf(false) }
     BackHandler(showDropdown || addPadzeia) {
-        if (addPadzeia) addPadzeia = false
-        else showDropdown = !showDropdown
+        if (addPadzeia || editPadzeia) {
+            addPadzeia = false
+            editPadzeia = false
+        } else showDropdown = !showDropdown
     }
     var kalendarMun by remember { mutableStateOf(false) }
     var kalendarMun2 by remember { mutableStateOf(false) }
@@ -235,11 +240,87 @@ fun PadzeiaView(navController: NavHostController) {
             textR,
             paznicia,
             onEdit = {
+                editPadzeia = true
+                showPadzia = false
             },
             onDismiss = {
                 showPadzia = false
             }
         )
+    }
+    var delitePadzia by remember { mutableStateOf(false) }
+    if (delitePadzia) {
+        DialogDelite(listPadzeia[showPadziaPosition].padz, onConfirmation = {
+            val sab = listPadzeia[showPadziaPosition]
+            val filen = sab.padz
+            val del = ArrayList<Padzeia>()
+            for (p in listPadzeia) {
+                if (p.padz == filen) {
+                    del.add(p)
+                }
+            }
+            listPadzeia.removeAll(del.toSet())
+            val outputStream = FileWriter("${context.filesDir}/Sabytie.json")
+            val gson = Gson()
+            val type = TypeToken.getParameterized(java.util.ArrayList::class.java, Padzeia::class.java).type
+            outputStream.write(gson.toJson(listPadzeia, type))
+            outputStream.close()
+            CoroutineScope(Dispatchers.IO).launch {
+                val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                if (sab.count == "0") {
+                    if (sab.repit == 1 || sab.repit == 4 || sab.repit == 5 || sab.repit == 6) {
+                        if (sab.sec != "-1") {
+                            val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                PendingIntent.FLAG_IMMUTABLE or 0
+                            } else {
+                                0
+                            }
+                            val intent = Settings.createIntentSabytie(context, sab.padz, sab.dat, sab.tim)
+                            val londs3 = sab.paznic / 100000L
+                            val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, flags)
+                            alarmManager.cancel(pIntent)
+                            pIntent.cancel()
+                        }
+                    } else {
+                        for (p in del) {
+                            if (p.padz.contains(filen)) {
+                                if (p.sec != "-1") {
+                                    val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                        PendingIntent.FLAG_IMMUTABLE or 0
+                                    } else {
+                                        0
+                                    }
+                                    val intent = Settings.createIntentSabytie(context, p.padz, p.dat, p.tim)
+                                    val londs3 = p.paznic / 100000L
+                                    val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, flags)
+                                    alarmManager.cancel(pIntent)
+                                    pIntent.cancel()
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    for (p in del) {
+                        if (p.sec != "-1") {
+                            val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                PendingIntent.FLAG_IMMUTABLE or 0
+                            } else {
+                                0
+                            }
+                            val intent = Settings.createIntentSabytie(context, p.padz, p.dat, p.tim)
+                            val londs3 = p.paznic / 100000L
+                            val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, flags)
+                            alarmManager.cancel(pIntent)
+                            pIntent.cancel()
+                        }
+                    }
+                }
+            }
+            Toast.makeText(context, context.getString(R.string.remove_padzea), Toast.LENGTH_SHORT).show()
+            delitePadzia = false
+        }, onDismissRequest = {
+            delitePadzia = false
+        })
     }
     Scaffold(
         topBar = {
@@ -264,9 +345,10 @@ fun PadzeiaView(navController: NavHostController) {
                     }
                 },
                 navigationIcon = {
-                    if (addPadzeia) {
+                    if (addPadzeia || editPadzeia) {
                         IconButton(onClick = {
                             addPadzeia = false
+                            editPadzeia = false
                         },
                             content = {
                                 Icon(
@@ -289,7 +371,7 @@ fun PadzeiaView(navController: NavHostController) {
                     }
                 },
                 actions = {
-                    if (addPadzeia) {
+                    if (addPadzeia || editPadzeia) {
                         IconButton({
                             savePadzia = true
                         }) {
@@ -350,7 +432,8 @@ fun PadzeiaView(navController: NavHostController) {
                                     showPadzia = true
                                 },
                                 onLongClick = {
-
+                                    showPadziaPosition = index
+                                    delitePadzia = true
                                 }
                             ),
                         verticalAlignment = Alignment.CenterVertically
@@ -414,27 +497,47 @@ fun PadzeiaView(navController: NavHostController) {
                     }
                 }
             }
-            if (addPadzeia) {
+            if (addPadzeia || editPadzeia) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
                         .verticalScroll(rememberScrollState())
                 ) {
-                    AddPadzeia(listPadzeia, savePadzia, data, data2, data3, time, time2, setShowTimePicker = {
-                        if (it == 1) dialogTimePickerDialog = true
-                        else dialogTimePickerDialog2 = true
-                    }, setShowKalendar = {
-                        showDropdown = true
-                        when (it) {
-                            1 -> kalendarMun = true
-                            2 -> kalendarMun2 = true
-                            else -> kalendarMun3 = true
-                        }
-                    }, isSave = {
-                        addPadzeia = false
-                        savePadzia = false
-                    })
+                    if (editPadzeia) {
+                        val p = listPadzeia[showPadziaPosition]
+                        AddPadzeia(listPadzeia, showPadziaPosition, savePadzia, p.dat, p.datK, p.count, p.tim, p.timK, setShowTimePicker = {
+                            if (it == 1) dialogTimePickerDialog = true
+                            else dialogTimePickerDialog2 = true
+                        }, setShowKalendar = {
+                            showDropdown = true
+                            when (it) {
+                                1 -> kalendarMun = true
+                                2 -> kalendarMun2 = true
+                                else -> kalendarMun3 = true
+                            }
+                        }, isSave = {
+                            addPadzeia = false
+                            editPadzeia = false
+                            savePadzia = false
+                        })
+                    } else {
+                        AddPadzeia(listPadzeia, -1, savePadzia, data, data2, data3, time, time2, setShowTimePicker = {
+                            if (it == 1) dialogTimePickerDialog = true
+                            else dialogTimePickerDialog2 = true
+                        }, setShowKalendar = {
+                            showDropdown = true
+                            when (it) {
+                                1 -> kalendarMun = true
+                                2 -> kalendarMun2 = true
+                                else -> kalendarMun3 = true
+                            }
+                        }, isSave = {
+                            addPadzeia = false
+                            editPadzeia = false
+                            savePadzia = false
+                        })
+                    }
                     Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
                 }
             }
@@ -446,6 +549,7 @@ fun PadzeiaView(navController: NavHostController) {
 @Composable
 fun AddPadzeia(
     listPadzeia: SnapshotStateList<Padzeia>,
+    position: Int,
     save: Boolean,
     data: String,
     data2: String,
@@ -456,27 +560,48 @@ fun AddPadzeia(
     setShowKalendar: (Int) -> Unit,
     isSave: () -> Unit
 ) {
+    val p = if (position != -1) listPadzeia[position]
+    else Padzeia("", data, time, 0, 0, "-1", data2, time2, 0, data3, 0, false)
     val context = LocalContext.current
     val padzeiaText = stringResource(R.string.sabytie_name)
-    var padzeia by remember { mutableStateOf("") }
-    var setTimeZa by remember { mutableStateOf("") }
+    var padzeia by remember { mutableStateOf(p.padz) }
+    var setTimeZa by remember { mutableStateOf(if (p.sec == "-1") "" else p.sec) }
     var setPautorRaz by remember { mutableStateOf("5") }
-    var modeRepit by remember { mutableIntStateOf(1) }
-    var textFieldStatePosition by remember { mutableIntStateOf(0) }
-    var textFieldState2Position by remember { mutableIntStateOf(0) }
+    var modeRepit by remember { mutableIntStateOf(p.repit) }
+    var textFieldStatePosition by remember { mutableIntStateOf(p.vybtime) }
+    var textFieldState2Position by remember { mutableIntStateOf(p.repit) }
     val optionsColors = stringArrayResource(R.array.colors)
-    var color by remember { mutableStateOf(optionsColors[0]) }
-    var colorPosition by remember { mutableIntStateOf(0) }
-    var dialodNotificatin by rememberSaveable { mutableStateOf(false) }
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        var permissionCheck2 = PackageManager.PERMISSION_GRANTED
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val permissionCheck = alarmManager.canScheduleExactAlarms()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permissionCheck2 = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+    var countText by remember { mutableStateOf(p.datK) }
+    val count = p.count.split(".")
+    when {
+        p.count == "0" -> modeRepit = 1
+        count.size == 1 -> {
+            modeRepit = 2
+            setPautorRaz = p.count
+            countText = p.datK
         }
-        if (setTimeZa.isNotEmpty() && (!permissionCheck || permissionCheck2 == PackageManager.PERMISSION_DENIED)) {
-            dialodNotificatin = true
+
+        else -> {
+            modeRepit = 3
+            setPautorRaz = "5"
+            countText = p.count
+        }
+    }
+
+    var color by remember { mutableStateOf(optionsColors[p.color]) }
+    var colorPosition by remember { mutableIntStateOf(p.color) }
+    var dialodNotificatin by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(setTimeZa) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            var permissionCheck2 = PackageManager.PERMISSION_GRANTED
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val permissionCheck = alarmManager.canScheduleExactAlarms()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                permissionCheck2 = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+            }
+            if (setTimeZa.isNotEmpty() && (!permissionCheck || permissionCheck2 == PackageManager.PERMISSION_DENIED)) {
+                dialodNotificatin = true
+            }
         }
     }
     if (dialodNotificatin) {
@@ -812,7 +937,7 @@ fun AddPadzeia(
                     }
                     if (modeRepit == 3) {
                         Text(
-                            data3,
+                            countText,
                             modifier = Modifier
                                 .padding(start = 10.dp)
                                 .clickable {
@@ -878,6 +1003,7 @@ fun AddPadzeia(
         savePadzeia(
             LocalContext.current,
             listPadzeia,
+            position,
             padzeia,
             setTimeZa,
             data,
@@ -943,6 +1069,7 @@ fun TimePickerDialog(
 fun savePadzeia(
     context: Context,
     padzeiaList: SnapshotStateList<Padzeia>,
+    position: Int,
     padzeiaNazva: String,
     pavedamicZaText: String,
     data: String,
@@ -985,6 +1112,23 @@ fun savePadzeia(
             }
         } else {
             edit2 = "-1"
+        }
+        if (position != -1) {
+            val p = padzeiaList[position]
+            val del = ArrayList<Padzeia>()
+            padzeiaList.forEach {
+                if (p.padz == it.padz) {
+                    del.add(it)
+                    if (it.sec != "-1") {
+                        val intent = Settings.createIntentSabytie(context, it.padz, it.dat, it.tim)
+                        val londs3 = it.paznic / 100000L
+                        val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, flags)
+                        am.cancel(pIntent)
+                        pIntent.cancel()
+                    }
+                }
+            }
+            padzeiaList.removeAll(del.toSet())
         }
         when (repit) {
             0 -> {
@@ -1542,5 +1686,5 @@ fun DialogSabytieShow(
 @Preview
 @Composable
 fun Test() {
-    AddPadzeia(SnapshotStateList(), false, "15.02.2025", "15.02.2025", "15.02.2025", "15:00", "15:00", setShowKalendar = {}, setShowTimePicker = {}, isSave = {})
+    AddPadzeia(SnapshotStateList(), -1, false, "15.02.2025", "15.02.2025", "15.02.2025", "15:00", "15:00", setShowKalendar = {}, setShowTimePicker = {}, isSave = {})
 }
