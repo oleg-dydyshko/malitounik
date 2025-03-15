@@ -611,7 +611,7 @@ fun DrawerHeader(modifier: Modifier) {
             modifier = modifier.fillMaxWidth(),
             text = stringResource(R.string.malitounik_name),
             textAlign = TextAlign.Center,
-            fontSize = 30.sp,
+            fontSize = 40.sp,
             lineHeight = 30.sp * 1.15,
             color = MaterialTheme.colorScheme.primary,
         )
@@ -624,6 +624,7 @@ fun DrawerHeader(modifier: Modifier) {
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.secondary,
+            fontSize = 18.sp
         )
     }
 }

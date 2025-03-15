@@ -76,29 +76,22 @@ fun BibliaMenu(
             ) ?: Settings.PEREVODSEMUXI
         )
     }
-    var bibleTime by remember { mutableStateOf(false) }
-    if (bibleTime) {
-        val prevodName = when (perevod) {
-            Settings.PEREVODSEMUXI -> "biblia"
-            Settings.PEREVODBOKUNA -> "bokuna"
-            Settings.PEREVODCARNIAUSKI -> "carniauski"
-            Settings.PEREVODNADSAN -> "nadsan"
-            Settings.PEREVODSINOIDAL -> "sinaidal"
-            else -> "biblia"
-        }
-        val knigaText = k.getString("bible_time_${prevodName}_kniga", "Быц") ?: "Быц"
-        val kniga = knigaBiblii(knigaText)
-        Settings.bibleTime = true
-        bibleTime = false
-        navigationActions.navigateToBibliaList(kniga >= 50, perevod)
+    val list = if (k.getBoolean("sinoidal_bible", false)) {
+        listOf(
+            stringResource(R.string.title_biblia2),
+            stringResource(R.string.title_biblia_bokun2),
+            stringResource(R.string.title_psalter),
+            stringResource(R.string.title_biblia_charniauski2),
+            stringResource(R.string.bsinaidal2)
+        )
+    } else {
+        listOf(
+            stringResource(R.string.title_biblia2),
+            stringResource(R.string.title_biblia_bokun2),
+            stringResource(R.string.title_psalter),
+            stringResource(R.string.title_biblia_charniauski2)
+        )
     }
-    val list = listOf(
-        stringResource(R.string.title_biblia2),
-        stringResource(R.string.title_biblia_bokun2),
-        stringResource(R.string.title_psalter),
-        stringResource(R.string.title_biblia_charniauski2),
-        stringResource(R.string.bsinaidal2)
-    )
     val getPerevod = when (perevod) {
         Settings.PEREVODSEMUXI -> 0
         Settings.PEREVODBOKUNA -> 1
@@ -107,10 +100,46 @@ fun BibliaMenu(
         Settings.PEREVODSINOIDAL -> 4
         else -> 0
     }
+    val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = {
         list.size
     }, initialPage = getPerevod)
-    val coroutineScope = rememberCoroutineScope()
+    var bibleTime by remember { mutableStateOf(false) }
+    LaunchedEffect(bibleTime) {
+        if (bibleTime) {
+            snapshotFlow { pagerState.currentPage }.collect { page ->
+                var newPerevod = Settings.PEREVODSEMUXI
+                val prevodName = when (page) {
+                    0 -> {
+                        newPerevod = Settings.PEREVODSEMUXI
+                        "biblia"
+                    }
+                    1 -> {
+                        newPerevod = Settings.PEREVODBOKUNA
+                        "bokuna"
+                    }
+                    2 -> {
+                        newPerevod = Settings.PEREVODNADSAN
+                        "nadsan"
+                    }
+                    3 -> {
+                        newPerevod = Settings.PEREVODCARNIAUSKI
+                        "carniauski"
+                    }
+                    4 -> {
+                        newPerevod = Settings.PEREVODSINOIDAL
+                        "sinaidal"
+                    }
+                    else -> "biblia"
+                }
+                val knigaText = k.getString("bible_time_${prevodName}_kniga", "Быц") ?: "Быц"
+                val kniga = knigaBiblii(knigaText)
+                Settings.bibleTime = true
+                bibleTime = false
+                navigationActions.navigateToBibliaList(kniga >= 50, newPerevod)
+            }
+        }
+    }
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { page ->
             val savePerevod = when (page) {

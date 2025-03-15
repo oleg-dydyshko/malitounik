@@ -94,7 +94,7 @@ fun MaeNatatki(
     var natatkaPosition by remember { mutableIntStateOf(0) }
     var removeNatatka by remember { mutableStateOf(false) }
     if (removeNatatka) {
-        Dialog(
+        DialogDelite(
             stringResource(R.string.vybranoe_biblia_delite, fileList[natatkaPosition].title),
             onConfirmation = {
                 val filedel = File(

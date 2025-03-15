@@ -123,7 +123,7 @@ fun VybranaeList(
             if (removeItemBible != -1) list[removeItem].listBible[removeItemBible].title + " " + (list[removeItem].listBible[removeItemBible].glava + 1)
             else list[removeItem].title
         )
-        Dialog(
+        DialogDelite(
             title = titleVybrenae,
             onDismissRequest = {
                 removeItem = -1
@@ -358,7 +358,7 @@ fun VybranaeList(
 }
 
 @Composable
-fun Dialog(
+fun DialogDelite(
     title: String,
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit

@@ -401,7 +401,7 @@ fun KaliandarScreen(
                 }
             }
         }
-        if (k.getInt("maranata", 0) == 1) {
+        if (k.getBoolean("maranafa", false)) {
             Spacer(Modifier.size(10.dp))
             Row(
                 modifier = Modifier

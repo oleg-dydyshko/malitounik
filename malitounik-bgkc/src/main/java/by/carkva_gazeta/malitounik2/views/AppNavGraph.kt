@@ -97,7 +97,7 @@ import by.carkva_gazeta.malitounik2.BiblijtekaList
 import by.carkva_gazeta.malitounik2.Bogaslujbovyia
 import by.carkva_gazeta.malitounik2.BogaslujbovyiaMenu
 import by.carkva_gazeta.malitounik2.CytanniList
-import by.carkva_gazeta.malitounik2.Dialog
+import by.carkva_gazeta.malitounik2.DialogDelite
 import by.carkva_gazeta.malitounik2.KaliandarScreen
 import by.carkva_gazeta.malitounik2.KaliandarScreenMounth
 import by.carkva_gazeta.malitounik2.KaliandarScreenYear
@@ -560,7 +560,7 @@ fun MainConteiner(
         }
     }
     if (removeAllVybranaeDialog || removeAllNatatkiDialog) {
-        Dialog(
+        DialogDelite(
             title = if (removeAllVybranaeDialog) stringResource(R.string.del_all_vybranoe)
             else stringResource(R.string.delite_all_natatki),
             onDismissRequest = {

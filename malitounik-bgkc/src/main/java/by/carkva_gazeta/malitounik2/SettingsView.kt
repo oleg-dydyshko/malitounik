@@ -2,10 +2,12 @@ package by.carkva_gazeta.malitounik2
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlarmManager
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.SystemClock
 import android.widget.Toast
@@ -135,6 +137,7 @@ fun SettingsView(navController: NavHostController) {
             dialodLogin = false
         }
     }
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     if (dialodNotificatin) {
         val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
             if (it) {
@@ -148,10 +151,22 @@ fun SettingsView(navController: NavHostController) {
                 prefEditor.apply()
                 setNotificationNon(context)
             }
+            dialodNotificatin = false
         }
         DialogNotification(onConfirm = {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (!alarmManager.canScheduleExactAlarms()) {
+                    val intent = Intent()
+                    intent.action = android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                    intent.setData(Uri.parse("package:" + context.packageName))
+                    context.startActivity(intent)
+                }
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                val permissionCheck2 = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                if (permissionCheck2 == PackageManager.PERMISSION_DENIED) {
+                    launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
             }
             dialodNotificatin = false
         }, onDismiss = {
@@ -580,7 +595,7 @@ fun SettingsView(navController: NavHostController) {
                             prefEditor.apply()
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
-                                if (PackageManager.PERMISSION_DENIED == permissionCheck) {
+                                if (PackageManager.PERMISSION_DENIED == permissionCheck || !alarmManager.canScheduleExactAlarms()) {
                                     dialodNotificatin = true
                                 } else {
                                     setNotificationOnly(context)
@@ -621,7 +636,7 @@ fun SettingsView(navController: NavHostController) {
                             prefEditor.apply()
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
-                                if (PackageManager.PERMISSION_DENIED == permissionCheck) {
+                                if (PackageManager.PERMISSION_DENIED == permissionCheck || !alarmManager.canScheduleExactAlarms()) {
                                     dialodNotificatin = true
                                 } else {
                                     setNotificationFull(context)
@@ -1003,7 +1018,7 @@ fun DialogLogin(
                                 )
                             }
                         }
-                    },
+                    }
                 )
                 TextField(
                     modifier = Modifier

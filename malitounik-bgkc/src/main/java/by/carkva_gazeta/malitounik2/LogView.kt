@@ -35,10 +35,6 @@ class LogView(val context: MainActivity) {
         logViewListinner = listinner
     }
 
-    fun onDistroy() {
-        logJob?.cancel()
-    }
-
     fun upDateLog() {
         log.clear()
         sb.clear()
@@ -84,7 +80,7 @@ class LogView(val context: MainActivity) {
         if (log.isEmpty()) {
             logViewListinner?.logView(context.getString(R.string.admin_upload_contine))
             val zip = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "MainActivityResource.zip")
-            if (zip.exists()) sendAndClearLogFile(zip, isSendLogFile = false)
+            sendAndClearLogFile(zip, isSendLogFile = false, isClearLogFile = true)
         } else {
             val strB = StringBuilder()
             log.forEach {
