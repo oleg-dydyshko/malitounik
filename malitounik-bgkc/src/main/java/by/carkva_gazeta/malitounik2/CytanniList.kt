@@ -1872,6 +1872,8 @@ fun getBible(
                             t1 = itemList2.indexOf(" ", t1 + 1)
                         }
                         knigaText = itemList2.substring(0, t1)
+                    } else {
+                        if (list.size > 1) glavaStart = glavaEnd
                     }
                     var styxStart = 0
                     var styxEnd = 0

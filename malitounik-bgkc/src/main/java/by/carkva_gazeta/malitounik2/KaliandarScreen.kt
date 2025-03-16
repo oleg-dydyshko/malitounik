@@ -61,8 +61,9 @@ import java.util.GregorianCalendar
 @Composable
 fun KaliandarScreen(
     data: ArrayList<String>,
-    navigateToCytanneList: (String, String, Int) -> Unit = { _, _, _ -> },
-    innerPadding: PaddingValues
+    innerPadding: PaddingValues,
+    navigateToCytanneList: (String, String, Int) -> Unit,
+    navigateToSvityiaView: (svity: Boolean, year: Int, mun: Int, day: Int) -> Unit
 ) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
@@ -191,7 +192,10 @@ fun KaliandarScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = padding1),
+                    .padding(top = 10.dp, bottom = padding1)
+                    .clickable {
+                        navigateToSvityiaView(true, data[3].toInt(), data[2].toInt(), data[1].toInt())
+                    },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 var padding = 0.dp
@@ -275,7 +279,10 @@ fun KaliandarScreen(
             for (i in list.indices) {
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .clickable {
+                            navigateToSvityiaView(false, data[3].toInt(), data[2].toInt(), data[1].toInt())
+                        },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     var icon: Painter? = null

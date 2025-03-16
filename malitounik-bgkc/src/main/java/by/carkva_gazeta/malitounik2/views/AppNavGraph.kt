@@ -115,6 +115,7 @@ import by.carkva_gazeta.malitounik2.SearchSviatyia
 import by.carkva_gazeta.malitounik2.Settings
 import by.carkva_gazeta.malitounik2.SettingsView
 import by.carkva_gazeta.malitounik2.SviatyList
+import by.carkva_gazeta.malitounik2.SviatyiaView
 import by.carkva_gazeta.malitounik2.VybranaeList
 import by.carkva_gazeta.malitounik2.getFontInterface
 import by.carkva_gazeta.malitounik2.ui.theme.BezPosta
@@ -303,6 +304,22 @@ fun AppNavGraph(
 
         composable(AllDestinations.PADZEI_VIEW) {
             PadzeiaView(navController)
+        }
+        composable(
+            AllDestinations.SVITYIA_VIEW + "/{svity}/{year}/{mun}/{day}",
+            arguments = listOf(
+                navArgument("svity") { type = NavType.BoolType },
+                navArgument("year") { type = NavType.IntType },
+                navArgument("mun") { type = NavType.IntType },
+                navArgument("day") { type = NavType.IntType }
+            )
+        ) { stackEntry ->
+            val c = Calendar.getInstance()
+            val svity = stackEntry.arguments?.getBoolean("svity") ?: false
+            val year = stackEntry.arguments?.getInt("year") ?: c[Calendar.YEAR]
+            val mun = stackEntry.arguments?.getInt("mun") ?: (c[Calendar.MONTH] + 1)
+            val day = stackEntry.arguments?.getInt("day") ?: c[Calendar.DATE]
+            SviatyiaView(navController, svity, year, mun, day)
         }
 
         composable(AllDestinations.PAMIATKA) {
@@ -984,6 +1001,7 @@ fun MainConteiner(
                         ) { page ->
                             KaliandarScreen(
                                 data = Settings.data[page],
+                                innerPadding,
                                 navigateToCytanneList = { title, chytanne, biblia ->
                                     navigationActions.navigateToCytanniList(
                                         title,
@@ -993,7 +1011,9 @@ fun MainConteiner(
                                         -1
                                     )
                                 },
-                                innerPadding
+                                navigateToSvityiaView = { svity, year, mun, day ->
+                                    navigationActions.navigateToSvityiaView(svity, year, mun, day)
+                                }
                             )
                         }
                     }

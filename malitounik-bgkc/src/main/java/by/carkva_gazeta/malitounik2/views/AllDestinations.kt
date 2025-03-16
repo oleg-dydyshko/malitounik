@@ -29,6 +29,7 @@ import by.carkva_gazeta.malitounik2.views.AllDestinations.SEARCH_BIBLIA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.SEARCH_SVITYIA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.SETTINGS_VIEW
 import by.carkva_gazeta.malitounik2.views.AllDestinations.SVAITY_MUNU
+import by.carkva_gazeta.malitounik2.views.AllDestinations.SVITYIA_VIEW
 import by.carkva_gazeta.malitounik2.views.AllDestinations.VYBRANAE_LIST
 
 object AllDestinations {
@@ -59,6 +60,7 @@ object AllDestinations {
     const val SEARCH_SVITYIA = "Search_Svityia"
     const val SETTINGS_VIEW = "Settings_View"
     const val PADZEI_VIEW = "Padzei_View"
+    const val SVITYIA_VIEW = "Svityia_View"
 }
 
 class AppNavigationActions(private val navController: NavHostController, k: SharedPreferences) {
@@ -212,6 +214,11 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
     fun navigateToPadzeiView() {
         navController.navigate(PADZEI_VIEW) {
             PADZEI_VIEW
+        }
+    }
+    fun navigateToSvityiaView(svity: Boolean, year: Int, mun: Int, day: Int) {
+        navController.navigate("$SVITYIA_VIEW/$svity/$year/$mun/$day") {
+            SVITYIA_VIEW
         }
     }
 
