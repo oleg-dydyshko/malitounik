@@ -2000,23 +2000,24 @@ fun getBible(
                                             result.add(
                                                 CytanniListData(
                                                     id,
-                                                    if (biblia != Settings.CHYTANNI_VYBRANAE) {
-                                                        "${
-                                                            getNameBook(
-                                                                context,
-                                                                kniga,
-                                                                perevodNew,
-                                                                knigiBiblii >= 50
-                                                            )
-                                                        } $glava"
+                                                    "${
+                                                        getNameBook(
+                                                            context,
+                                                            kniga,
+                                                            perevodNew,
+                                                            knigiBiblii >= 50
+                                                        )
+                                                    } $glava"
+                                                    /*if (biblia != Settings.CHYTANNI_VYBRANAE) {
+
                                                     } else {
                                                         val tg =
                                                             if (knigiBiblii == 21) context.getString(R.string.psalom2)
                                                             else context.getString(R.string.razdzel)
                                                         "$tg $glava"
-                                                    },
+                                                    }*/,
                                                     if (isTitle) {
-                                                        if (!(biblia == Settings.CHYTANNI_VYBRANAE || biblia == Settings.CHYTANNI_MARANATA)) {
+                                                        if (biblia == Settings.CHYTANNI_LITURGICHNYIA) {
                                                             val eGlavy = knigaStyxi.ifEmpty { glava.toString() }
                                                             "<strong><br>" + getNameBook(
                                                                 context,
@@ -2025,12 +2026,12 @@ fun getBible(
                                                                 knigiBiblii >= 50
                                                             ) + " " + "$eGlavy<strong><br>"
                                                         } else {
-                                                            val tg =
-                                                                if (knigiBiblii == 21) context.getString(
-                                                                    R.string.psalom2
-                                                                )
-                                                                else context.getString(R.string.razdzel)
-                                                            "<strong><br>$tg $glava<strong><br>"
+                                                            "<strong><br>" + getNameBook(
+                                                                context,
+                                                                kniga,
+                                                                perevodNew,
+                                                                knigiBiblii >= 50
+                                                            ) + " " + "$glava<strong><br>"
                                                         }
                                                     } else ""
                                                 )
@@ -2051,7 +2052,15 @@ fun getBible(
                                     result.add(
                                         CytanniListData(
                                             id,
-                                            if (biblia != Settings.CHYTANNI_VYBRANAE) {
+                                            "${
+                                                getNameBook(
+                                                    context,
+                                                    kniga,
+                                                    perevodNew,
+                                                    knigiBiblii >= 50
+                                                )
+                                            } $glava"
+                                            /*if (biblia != Settings.CHYTANNI_VYBRANAE) {
                                                 "${
                                                     getNameBook(
                                                         context,
@@ -2065,7 +2074,7 @@ fun getBible(
                                                     if (knigiBiblii == 21) context.getString(R.string.psalom2)
                                                     else context.getString(R.string.razdzel)
                                                 "$tg $glava"
-                                            },
+                                            }*/,
                                             text,
                                             textBible[w].paralelStyx
                                         )

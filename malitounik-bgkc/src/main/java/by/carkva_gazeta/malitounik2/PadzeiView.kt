@@ -42,6 +42,7 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
@@ -568,26 +569,28 @@ fun AddPadzeia(
     var setTimeZa by remember { mutableStateOf(if (p.sec == "-1") "" else p.sec) }
     var setPautorRaz by remember { mutableStateOf("5") }
     var modeRepit by remember { mutableIntStateOf(p.repit) }
-    var textFieldStatePosition by remember { mutableIntStateOf(p.vybtime) }
-    var textFieldState2Position by remember { mutableIntStateOf(p.repit) }
+    var textFieldState2Position by remember { mutableIntStateOf(p.vybtime) }
+    var textFieldStatePosition by remember { mutableIntStateOf(p.repit) }
     val optionsColors = stringArrayResource(R.array.colors)
     var countText by remember { mutableStateOf(p.datK) }
     val count = p.count.split(".")
-    when {
-        p.count == "0" -> modeRepit = 1
-        count.size == 1 -> {
-            modeRepit = 2
-            setPautorRaz = p.count
-            countText = p.datK
-        }
+    var konecSabytie by remember { mutableStateOf(p.konecSabytie) }
+    LaunchedEffect(Unit) {
+        when {
+            p.count == "0" -> modeRepit = 1
+            count.size == 1 -> {
+                modeRepit = 2
+                setPautorRaz = p.count
+                countText = p.datK
+            }
 
-        else -> {
-            modeRepit = 3
-            setPautorRaz = "5"
-            countText = p.count
+            else -> {
+                modeRepit = 3
+                setPautorRaz = "5"
+                countText = p.count
+            }
         }
     }
-
     var color by remember { mutableStateOf(optionsColors[p.color]) }
     var colorPosition by remember { mutableIntStateOf(p.color) }
     var dialodNotificatin by rememberSaveable { mutableStateOf(false) }
@@ -663,63 +666,89 @@ fun AddPadzeia(
                         Icon(
                             painter = painterResource(R.drawable.close),
                             contentDescription = "",
-                            tint = MaterialTheme.colorScheme.onSecondary
+                            tint = MaterialTheme.colorScheme.secondary
                         )
                     }
                 }
             }
         )
         Row(modifier = Modifier.padding(start = 10.dp, top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.sabytie_pachatak), fontSize = Settings.fontInterface.sp)
+            Text(
+                stringResource(R.string.sabytie_pachatak), fontSize = Settings.fontInterface.sp,
+                color = MaterialTheme.colorScheme.secondary
+            )
             Text(
                 modifier = Modifier
-                    .padding(horizontal = 10.dp)
+                    .padding(start = 10.dp)
                     .clickable {
                         setShowKalendar(1)
-                    }, text = data, fontSize = Settings.fontInterface.sp
+                    }, text = data, fontSize = Settings.fontInterface.sp,
+                color = MaterialTheme.colorScheme.secondary
             )
             Icon(modifier = Modifier.clickable {
                 setShowKalendar(1)
             }, painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = "", tint = Divider)
             Text(
                 modifier = Modifier
-                    .padding(horizontal = 10.dp)
+                    .padding(start = 10.dp)
                     .clickable {
                         setShowTimePicker(1)
-                    }, text = time, fontSize = Settings.fontInterface.sp
+                    }, text = time, fontSize = Settings.fontInterface.sp,
+                color = MaterialTheme.colorScheme.secondary
             )
             Icon(modifier = Modifier.clickable {
                 setShowTimePicker(1)
             }, painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = "", tint = Divider)
+            Checkbox(
+                checked = !konecSabytie,
+                onCheckedChange = {
+                    konecSabytie = !konecSabytie
+                }
+            )
+            Text(
+                stringResource(R.string.sabytie_bez_kanca),
+                fontSize = Settings.fontInterface.sp,
+                color = MaterialTheme.colorScheme.secondary
+            )
         }
-        Row(modifier = Modifier.padding(start = 10.dp, top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.Sabytie_end), fontSize = Settings.fontInterface.sp)
-            Text(
-                modifier = Modifier
-                    .padding(horizontal = 10.dp)
-                    .clickable {
-                        setShowKalendar(2)
-                    }, text = data2, fontSize = Settings.fontInterface.sp
-            )
-            Icon(modifier = Modifier.clickable {
-                setShowKalendar(2)
-            }, painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = "", tint = Divider)
-            Text(
-                modifier = Modifier
-                    .padding(horizontal = 10.dp)
-                    .clickable {
-                        setShowTimePicker(2)
-                    }, text = time2, fontSize = Settings.fontInterface.sp
-            )
-            Icon(modifier = Modifier.clickable {
-                setShowTimePicker(2)
-            }, painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = "", tint = Divider)
+        if (konecSabytie) {
+            Row(modifier = Modifier.padding(start = 10.dp, top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    stringResource(R.string.Sabytie_end), fontSize = Settings.fontInterface.sp,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+                Text(
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .clickable {
+                            setShowKalendar(2)
+                        }, text = data2, fontSize = Settings.fontInterface.sp,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+                Icon(modifier = Modifier.clickable {
+                    setShowKalendar(2)
+                }, painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = "", tint = Divider)
+                Text(
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .clickable {
+                            setShowTimePicker(2)
+                        }, text = time2, fontSize = Settings.fontInterface.sp,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+                Icon(modifier = Modifier.clickable {
+                    setShowTimePicker(2)
+                }, painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = "", tint = Divider)
+            }
         }
         val options = stringArrayResource(R.array.sabytie_izmerenie)
         var expanded2 by remember { mutableStateOf(false) }
-        val textFieldState2 = rememberTextFieldState(options[0])
+        val textFieldState2 = rememberTextFieldState(options[textFieldState2Position])
         Row(modifier = Modifier.padding(start = 10.dp, top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.Sabytie_uved), fontSize = Settings.fontInterface.sp)
+            Text(
+                stringResource(R.string.Sabytie_uved), fontSize = Settings.fontInterface.sp,
+                color = MaterialTheme.colorScheme.secondary
+            )
             TextField(
                 modifier = Modifier
                     .size(width = 90.dp, height = Dp.Unspecified)
@@ -757,7 +786,12 @@ fun AddPadzeia(
                 ) {
                     options.forEachIndexed { position, option ->
                         DropdownMenuItem(
-                            text = { Text(option, style = MaterialTheme.typography.bodyLarge, fontSize = Settings.fontInterface.sp) },
+                            text = {
+                                Text(
+                                    option, style = MaterialTheme.typography.bodyLarge, fontSize = Settings.fontInterface.sp,
+                                    color = MaterialTheme.colorScheme.secondary
+                                )
+                            },
                             onClick = {
                                 textFieldState2Position = position
                                 textFieldState2.setTextAndPlaceCursorAtEnd(option)
@@ -771,7 +805,7 @@ fun AddPadzeia(
         }
         Row(modifier = Modifier.padding(start = 10.dp, top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
             var textPavedamic2 = stringResource(R.string.sabytie_no_pavedam)
-            var colorText = Color.Unspecified
+            var colorText = MaterialTheme.colorScheme.secondary
             if (setTimeZa.isNotEmpty()) {
                 val days = data.split(".")
                 val times = time.split(":")
@@ -802,9 +836,12 @@ fun AddPadzeia(
         }
         val sabytieRepit = stringArrayResource(R.array.sabytie_repit)
         var expanded by remember { mutableStateOf(false) }
-        val textFieldState = rememberTextFieldState(sabytieRepit[0])
+        val textFieldState = rememberTextFieldState(sabytieRepit[textFieldStatePosition])
         Row(modifier = Modifier.padding(start = 10.dp, top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.Sabytie_repit), fontSize = Settings.fontInterface.sp)
+            Text(
+                stringResource(R.string.Sabytie_repit), fontSize = Settings.fontInterface.sp,
+                color = MaterialTheme.colorScheme.secondary
+            )
             ExposedDropdownMenuBox(
                 modifier = Modifier.padding(10.dp),
                 expanded = expanded,
@@ -825,7 +862,12 @@ fun AddPadzeia(
                 ) {
                     sabytieRepit.forEachIndexed { position, option ->
                         DropdownMenuItem(
-                            text = { Text(option, style = MaterialTheme.typography.bodyLarge, fontSize = Settings.fontInterface.sp) },
+                            text = {
+                                Text(
+                                    option, style = MaterialTheme.typography.bodyLarge, fontSize = Settings.fontInterface.sp,
+                                    color = MaterialTheme.colorScheme.secondary
+                                )
+                            },
                             onClick = {
                                 textFieldStatePosition = position
                                 textFieldState.setTextAndPlaceCursorAtEnd(option)
@@ -952,7 +994,10 @@ fun AddPadzeia(
             }
         }
         Row(modifier = Modifier.padding(start = 10.dp, top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.color_padzei), fontSize = Settings.fontInterface.sp)
+            Text(
+                stringResource(R.string.color_padzei), fontSize = Settings.fontInterface.sp,
+                color = MaterialTheme.colorScheme.secondary
+            )
             var expanded1 by remember { mutableStateOf(false) }
             val textFieldState1 = rememberTextFieldState(padzeia)
             LaunchedEffect(padzeia) {
@@ -972,6 +1017,7 @@ fun AddPadzeia(
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color(color.toColorInt()),
                         unfocusedContainerColor = Color(color.toColorInt()),
+                        unfocusedTextColor = PrimaryTextBlack,
                         focusedTextColor = PrimaryTextBlack,
                         focusedIndicatorColor = PrimaryTextBlack,
                         unfocusedIndicatorColor = PrimaryTextBlack,
@@ -986,7 +1032,12 @@ fun AddPadzeia(
                     optionsColors.forEachIndexed { position, option ->
                         DropdownMenuItem(
                             modifier = Modifier.background(Color(option.toColorInt())),
-                            text = { Text(padzeia, style = MaterialTheme.typography.bodyLarge, fontSize = Settings.fontInterface.sp) },
+                            text = {
+                                Text(
+                                    padzeia, style = MaterialTheme.typography.bodyLarge, fontSize = Settings.fontInterface.sp,
+                                    color = MaterialTheme.colorScheme.secondary
+                                )
+                            },
                             onClick = {
                                 colorPosition = position
                                 color = option
