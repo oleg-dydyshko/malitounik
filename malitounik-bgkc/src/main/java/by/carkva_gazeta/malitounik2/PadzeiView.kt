@@ -22,6 +22,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,18 +31,21 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -90,11 +94,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Popup
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.toColorInt
@@ -109,6 +113,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 import java.io.FileWriter
 import java.util.Calendar
 import java.util.GregorianCalendar
@@ -149,6 +155,91 @@ fun PadzeiaView(navController: NavHostController) {
             lazyListState.scrollToItem(initPosition)
         }
     }
+    if (deliteAll) {
+        DialogDelitePadsei(
+            onDismiss = { deliteAll = false },
+            onDelOld = {
+                val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    PendingIntent.FLAG_IMMUTABLE or 0
+                } else {
+                    0
+                }
+                val c2 = Calendar.getInstance()
+                c2.set(Calendar.SECOND, 0)
+                val del = ArrayList<Padzeia>()
+                for (p in listPadzeia) {
+                    if (p.repit == 0) {
+                        val days = p.datK.split(".")
+                        val time = p.timK.split(":")
+                        val gc = GregorianCalendar(days[2].toInt(), days[1].toInt() - 1, days[0].toInt(), time[0].toInt(), time[1].toInt(), 0)
+                        if (c2.timeInMillis >= gc.timeInMillis) {
+                            if (p.sec != "-1") {
+                                val intent = Settings.createIntentSabytie(context, p.padz, p.dat, p.tim)
+                                val londs3 = p.paznic / 100000L
+                                val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, flags)
+                                alarmManager.cancel(pIntent)
+                                pIntent.cancel()
+                            }
+                            del.add(p)
+                        }
+                    } else {
+                        val days = p.dat.split(".")
+                        val time = p.timK.split(":")
+                        val gc = GregorianCalendar(days[2].toInt(), days[1].toInt() - 1, days[0].toInt(), time[0].toInt(), time[1].toInt(), 0)
+                        if (c2.timeInMillis >= gc.timeInMillis) {
+                            if (p.sec != "-1") {
+                                val intent = Settings.createIntentSabytie(context, p.padz, p.dat, p.tim)
+                                val londs3 = p.paznic / 100000L
+                                val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, flags)
+                                alarmManager.cancel(pIntent)
+                                pIntent.cancel()
+                            }
+                            del.add(p)
+                        }
+                    }
+                }
+                if (del.size != 0) {
+                    listPadzeia.removeAll(del.toSet())
+                    val outputStream = FileWriter("${context.filesDir}/Sabytie.json")
+                    val gson = Gson()
+                    val type = TypeToken.getParameterized(java.util.ArrayList::class.java, Padzeia::class.java).type
+                    outputStream.write(gson.toJson(listPadzeia, type))
+                    outputStream.close()
+                    coroutineScope.launch {
+                        lazyListState.scrollToItem(0)
+                    }
+                }
+                deliteAll = false
+            },
+            onDelAll = {
+                CoroutineScope(Dispatchers.Main).launch {
+                    withContext(Dispatchers.IO) {
+                        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            PendingIntent.FLAG_IMMUTABLE or 0
+                        } else {
+                            0
+                        }
+                        for (p in listPadzeia) {
+                            if (p.sec != "-1") {
+                                val intent = Settings.createIntentSabytie(context, p.padz, p.dat, p.tim)
+                                val londs3 = p.paznic / 100000L
+                                val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, flags)
+                                alarmManager.cancel(pIntent)
+                                pIntent.cancel()
+                            }
+                        }
+                        val file = File("${context.filesDir}/Sabytie.json")
+                        if (file.exists()) file.delete()
+                    }
+                    listPadzeia.clear()
+                    Toast.makeText(context, context.getString(R.string.remove_padzea), Toast.LENGTH_SHORT).show()
+                }
+                deliteAll = false
+            }
+        )
+    }
     SideEffect {
         val window = (view.context as Activity).window
         WindowCompat.getInsetsController(
@@ -157,7 +248,7 @@ fun PadzeiaView(navController: NavHostController) {
         ).isAppearanceLightStatusBars = false
     }
     var showDropdown by rememberSaveable { mutableStateOf(false) }
-    BackHandler(showDropdown || addPadzeia) {
+    BackHandler(showDropdown || addPadzeia || editPadzeia) {
         if (addPadzeia || editPadzeia) {
             addPadzeia = false
             editPadzeia = false
@@ -564,7 +655,6 @@ fun AddPadzeia(
     val p = if (position != -1) listPadzeia[position]
     else Padzeia("", data, time, 0, 0, "-1", data2, time2, 0, data3, 0, false)
     val context = LocalContext.current
-    val padzeiaText = stringResource(R.string.sabytie_name)
     var padzeia by remember { mutableStateOf(p.padz) }
     var setTimeZa by remember { mutableStateOf(if (p.sec == "-1") "" else p.sec) }
     var setPautorRaz by remember { mutableStateOf("5") }
@@ -572,24 +662,31 @@ fun AddPadzeia(
     var textFieldState2Position by remember { mutableIntStateOf(p.vybtime) }
     var textFieldStatePosition by remember { mutableIntStateOf(p.repit) }
     val optionsColors = stringArrayResource(R.array.colors)
-    var countText by remember { mutableStateOf(p.datK) }
+    var countText = data3
     val count = p.count.split(".")
     var konecSabytie by remember { mutableStateOf(p.konecSabytie) }
     LaunchedEffect(Unit) {
-        when {
-            p.count == "0" -> modeRepit = 1
-            count.size == 1 -> {
-                modeRepit = 2
-                setPautorRaz = p.count
-                countText = p.datK
-            }
+        if (position != -1) {
+            when {
+                p.count == "0" -> modeRepit = 1
+                count.size == 1 -> {
+                    modeRepit = 2
+                    setPautorRaz = p.count
+                    countText = p.datK
+                }
 
-            else -> {
-                modeRepit = 3
-                setPautorRaz = "5"
-                countText = p.count
+                else -> {
+                    modeRepit = 3
+                    setPautorRaz = "5"
+                    countText = p.count
+                }
             }
+        } else {
+            modeRepit = 1
+            setPautorRaz = "5"
+            countText = p.datK
         }
+        countText = if (position != -1) p.datK else data3
     }
     var color by remember { mutableStateOf(optionsColors[p.color]) }
     var colorPosition by remember { mutableIntStateOf(p.color) }
@@ -993,6 +1090,7 @@ fun AddPadzeia(
                 }
             }
         }
+
         Row(modifier = Modifier.padding(start = 10.dp, top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(
                 stringResource(R.string.color_padzei), fontSize = Settings.fontInterface.sp,
@@ -1001,7 +1099,7 @@ fun AddPadzeia(
             var expanded1 by remember { mutableStateOf(false) }
             val textFieldState1 = rememberTextFieldState(padzeia)
             LaunchedEffect(padzeia) {
-                textFieldState1.setTextAndPlaceCursorAtEnd(padzeia.ifEmpty { padzeiaText })
+                textFieldState1.setTextAndPlaceCursorAtEnd(padzeia.ifEmpty { context.getString(R.string.sabytie_name) })
             }
             ExposedDropdownMenuBox(
                 modifier = Modifier.padding(10.dp),
@@ -1013,7 +1111,11 @@ fun AddPadzeia(
                     state = textFieldState1,
                     readOnly = true,
                     lineLimits = TextFieldLineLimits.SingleLine,
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded1) },
+                    trailingIcon = {
+                        val image = if (expanded1) painterResource(R.drawable.keyboard_arrow_up)
+                        else painterResource(R.drawable.keyboard_arrow_down)
+                        Icon(painter = image, contentDescription = "", tint = PrimaryTextBlack)
+                    },
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color(color.toColorInt()),
                         unfocusedContainerColor = Color(color.toColorInt()),
@@ -1034,8 +1136,8 @@ fun AddPadzeia(
                             modifier = Modifier.background(Color(option.toColorInt())),
                             text = {
                                 Text(
-                                    padzeia, style = MaterialTheme.typography.bodyLarge, fontSize = Settings.fontInterface.sp,
-                                    color = MaterialTheme.colorScheme.secondary
+                                    textFieldState1.text.toString(), style = MaterialTheme.typography.bodyLarge, fontSize = Settings.fontInterface.sp,
+                                    color = PrimaryTextBlack
                                 )
                             },
                             onClick = {
@@ -1065,7 +1167,8 @@ fun AddPadzeia(
             textFieldStatePosition,
             modeRepit,
             setPautorRaz,
-            data3,
+            countText,
+            konecSabytie,
             colorPosition,
             isSave = { isSave() }
         )
@@ -1132,6 +1235,7 @@ fun savePadzeia(
     repitSettings: Int,
     repitSettingsCountText: String,
     repitSettingsDataText: String,
+    konecSabytie: Boolean,
     color: Int,
     isSave: () -> Unit
 ) {
@@ -1145,6 +1249,8 @@ fun savePadzeia(
     } else {
         0
     }
+    var dataK = data2
+    var timeK = time2
     val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     if (edit != "") {
         var londs: Long = 0
@@ -1153,6 +1259,10 @@ fun savePadzeia(
         val times = time.split(":")
         val gc = GregorianCalendar(days[2].toInt(), days[1].toInt() - 1, days[0].toInt(), times[0].toInt(), times[1].toInt(), 0)
         result = gc.timeInMillis
+        if (!konecSabytie) {
+            dataK = data
+            timeK = time
+        }
         if (edit2 != "") {
             londs = edit2.toLong()
             when (pavedamicZaPosit) {
@@ -1200,14 +1310,14 @@ fun savePadzeia(
                         }
                     }
                 }
-                padzeiaList.add(Padzeia(edit, data, time, londs2, pavedamicZaPosit, edit2, data2, time2, repit, timeRepit, color, false))
+                padzeiaList.add(Padzeia(edit, data, time, londs2, pavedamicZaPosit, edit2, dataK, timeK, repit, timeRepit, color, false))
             }
 
             1 -> {
                 timeRepit = "0"
                 val rdat = data.split(".")
                 gc[rdat[2].toInt(), rdat[1].toInt() - 1, rdat[0].toInt(), times[0].toInt(), times[1].toInt()] = 0
-                val rdat2 = data2.split(".")
+                val rdat2 = dataK.split(".")
                 val gc2 = GregorianCalendar(rdat2[2].toInt(), rdat2[1].toInt() - 1, rdat2[0].toInt(), times[0].toInt(), times[1].toInt(), 0)
                 val dayof = gc[Calendar.DAY_OF_YEAR]
                 var leapYear = 365 - dayof + 365 + 1
@@ -1256,7 +1366,7 @@ fun savePadzeia(
                     if (gc[Calendar.MONTH] < 9) nol2 = "0"
                     if (gc2[Calendar.DAY_OF_MONTH] < 10) nol3 = "0"
                     if (gc2[Calendar.MONTH] < 9) nol4 = "0"
-                    padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2[Calendar.DAY_OF_MONTH] + "." + nol4 + (gc2[Calendar.MONTH] + 1) + "." + gc2[Calendar.YEAR], time2, repit, timeRepit, color, false))
+                    padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2[Calendar.DAY_OF_MONTH] + "." + nol4 + (gc2[Calendar.MONTH] + 1) + "." + gc2[Calendar.YEAR], timeK, repit, timeRepit, color, false))
                     gc.add(Calendar.DATE, 1)
                     gc2.add(Calendar.DATE, 1)
                     i++
@@ -1267,7 +1377,7 @@ fun savePadzeia(
                 timeRepit = "0"
                 val rdat = data.split(".")
                 gc[rdat[2].toInt(), rdat[1].toInt() - 1, rdat[0].toInt(), times[0].toInt(), times[1].toInt()] = 0
-                val rdat2 = data2.split(".")
+                val rdat2 = dataK.split(".")
                 val gc2 = GregorianCalendar(rdat2[2].toInt(), rdat2[1].toInt() - 1, rdat2[0].toInt(), times[0].toInt(), times[1].toInt(), 0)
                 val dayof = gc[Calendar.DAY_OF_YEAR]
                 var leapYear = 365 - dayof + 365 + 1
@@ -1317,7 +1427,7 @@ fun savePadzeia(
                         if (gc[Calendar.MONTH] < 9) nol2 = "0"
                         if (gc2.get(Calendar.DAY_OF_MONTH) < 10) nol3 = "0"
                         if (gc2.get(Calendar.MONTH) < 9) nol4 = "0"
-                        padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), time2, repit, timeRepit, color, false))
+                        padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), timeK, repit, timeRepit, color, false))
                     }
                     gc.add(Calendar.DATE, 1)
                     gc2.add(Calendar.DATE, 1)
@@ -1329,7 +1439,7 @@ fun savePadzeia(
                 timeRepit = "0"
                 val rdat = data.split(".")
                 gc[rdat[2].toInt(), rdat[1].toInt() - 1, rdat[0].toInt(), times[0].toInt(), times[1].toInt()] = 0
-                val rdat2 = data2.split(".")
+                val rdat2 = dataK.split(".")
                 val gc2 = GregorianCalendar(rdat2[2].toInt(), rdat2[1].toInt() - 1, rdat2[0].toInt(), times[0].toInt(), times[1].toInt(), 0)
                 val dayof = gc[Calendar.DAY_OF_YEAR]
                 var leapYear = 365 - dayof + 365 + 1
@@ -1380,7 +1490,7 @@ fun savePadzeia(
                         if (gc[Calendar.MONTH] < 9) nol2 = "0"
                         if (gc2.get(Calendar.DAY_OF_MONTH) < 10) nol3 = "0"
                         if (gc2.get(Calendar.MONTH) < 9) nol4 = "0"
-                        padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), time2, repit, timeRepit, color, false))
+                        padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), timeK, repit, timeRepit, color, false))
                     }
                     schet++
                     gc.add(Calendar.DATE, 1)
@@ -1394,7 +1504,7 @@ fun savePadzeia(
                 timeRepit = "0"
                 val rdat = data.split(".")
                 gc[rdat[2].toInt(), rdat[1].toInt() - 1, rdat[0].toInt(), times[0].toInt(), times[1].toInt()] = 0
-                val rdat2 = data2.split(".")
+                val rdat2 = dataK.split(".")
                 val gc2 = GregorianCalendar(rdat2[2].toInt(), rdat2[1].toInt() - 1, rdat2[0].toInt(), times[0].toInt(), times[1].toInt(), 0)
                 val dayof = gc[Calendar.WEEK_OF_YEAR]
                 var leapYear = 52 - dayof + 52 + 1
@@ -1442,7 +1552,7 @@ fun savePadzeia(
                     if (gc[Calendar.MONTH] < 9) nol2 = "0"
                     if (gc2.get(Calendar.DAY_OF_MONTH) < 10) nol3 = "0"
                     if (gc2.get(Calendar.MONTH) < 9) nol4 = "0"
-                    padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), time2, repit, timeRepit, color, false))
+                    padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), timeK, repit, timeRepit, color, false))
                     gc.add(Calendar.DATE, 7)
                     gc2.add(Calendar.DATE, 7)
                     i++
@@ -1453,7 +1563,7 @@ fun savePadzeia(
                 timeRepit = "0"
                 val rdat = data.split(".")
                 gc[rdat[2].toInt(), rdat[1].toInt() - 1, rdat[0].toInt(), times[0].toInt(), times[1].toInt()] = 0
-                val rdat2 = data2.split(".")
+                val rdat2 = dataK.split(".")
                 val gc2 = GregorianCalendar(rdat2[2].toInt(), rdat2[1].toInt() - 1, rdat2[0].toInt(), times[0].toInt(), times[1].toInt(), 0)
 
                 val dayof = gc[Calendar.WEEK_OF_YEAR]
@@ -1502,7 +1612,7 @@ fun savePadzeia(
                     if (gc[Calendar.MONTH] < 9) nol2 = "0"
                     if (gc2.get(Calendar.DAY_OF_MONTH) < 10) nol3 = "0"
                     if (gc2.get(Calendar.MONTH) < 9) nol4 = "0"
-                    padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), time2, repit, timeRepit, color, false))
+                    padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), timeK, repit, timeRepit, color, false))
                     gc.add(Calendar.DATE, 14)
                     gc2.add(Calendar.DATE, 14)
                     i++
@@ -1513,7 +1623,7 @@ fun savePadzeia(
                 timeRepit = "0"
                 val rdat = data.split(".")
                 gc[rdat[2].toInt(), rdat[1].toInt() - 1, rdat[0].toInt(), times[0].toInt(), times[1].toInt()] = 0
-                val rdat2 = data2.split(".")
+                val rdat2 = dataK.split(".")
                 val gc2 = GregorianCalendar(rdat2[2].toInt(), rdat2[1].toInt() - 1, rdat2[0].toInt(), times[0].toInt(), times[1].toInt(), 0)
 
                 val dayof = gc[Calendar.WEEK_OF_YEAR]
@@ -1562,7 +1672,7 @@ fun savePadzeia(
                     if (gc[Calendar.MONTH] < 9) nol2 = "0"
                     if (gc2.get(Calendar.DAY_OF_MONTH) < 10) nol3 = "0"
                     if (gc2.get(Calendar.MONTH) < 9) nol4 = "0"
-                    padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), time2, repit, timeRepit, color, false))
+                    padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), timeK, repit, timeRepit, color, false))
                     gc.add(Calendar.DATE, 28)
                     gc2.add(Calendar.DATE, 28)
                     i++
@@ -1573,7 +1683,7 @@ fun savePadzeia(
                 timeRepit = "0"
                 val rdat = data.split(".")
                 gc[rdat[2].toInt(), rdat[1].toInt() - 1, rdat[0].toInt(), times[0].toInt(), times[1].toInt()] = 0
-                val rdat2 = data2.split(".")
+                val rdat2 = dataK.split(".")
                 val gc2 = GregorianCalendar(rdat2[2].toInt(), rdat2[1].toInt() - 1, rdat2[0].toInt(), times[0].toInt(), times[1].toInt(), 0)
                 val dayof = gc[Calendar.MONTH] + 1
                 var leapYear = 12 - dayof + 12 + 1
@@ -1621,7 +1731,7 @@ fun savePadzeia(
                     if (gc[Calendar.MONTH] < 9) nol2 = "0"
                     if (gc2.get(Calendar.DAY_OF_MONTH) < 10) nol3 = "0"
                     if (gc2.get(Calendar.MONTH) < 9) nol4 = "0"
-                    padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), time2, repit, timeRepit, color, false))
+                    padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), timeK, repit, timeRepit, color, false))
                     gc.add(Calendar.MONTH, 1)
                     gc2.add(Calendar.MONTH, 1)
                     i++
@@ -1632,7 +1742,7 @@ fun savePadzeia(
                 timeRepit = "0"
                 val rdat = data.split(".")
                 gc[rdat[2].toInt(), rdat[1].toInt() - 1, rdat[0].toInt(), times[0].toInt(), times[1].toInt()] = 0
-                val rdat2 = data2.split(".")
+                val rdat2 = dataK.split(".")
                 val gc2 = GregorianCalendar(rdat2[2].toInt(), rdat2[1].toInt() - 1, rdat2[0].toInt(), times[0].toInt(), times[1].toInt(), 0)
                 var leapYear = 10
                 if (repitSettings == 2) {
@@ -1667,7 +1777,7 @@ fun savePadzeia(
                     if (gc[Calendar.MONTH] < 9) nol2 = "0"
                     if (gc2.get(Calendar.DAY_OF_MONTH) < 10) nol3 = "0"
                     if (gc2.get(Calendar.MONTH) < 9) nol4 = "0"
-                    padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), time2, repit, timeRepit, color, false))
+                    padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), timeK, repit, timeRepit, color, false))
                     gc.add(Calendar.YEAR, 1)
                     gc2.add(Calendar.YEAR, 1)
                     i++
@@ -1734,8 +1844,60 @@ fun DialogSabytieShow(
     )
 }
 
-@Preview
 @Composable
-fun Test() {
-    AddPadzeia(SnapshotStateList(), -1, false, "15.02.2025", "15.02.2025", "15.02.2025", "15:00", "15:00", setShowKalendar = {}, setShowTimePicker = {}, isSave = {})
+fun DialogDelitePadsei(
+    onDismiss: () -> Unit,
+    onDelAll: () -> Unit,
+    onDelOld: () -> Unit
+) {
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(375.dp)
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Icon(painter = painterResource(R.drawable.delete), contentDescription = "")
+                Text(
+                    text = stringResource(R.string.del_sabytie),
+                    modifier = Modifier.padding(16.dp), fontSize = (Settings.fontInterface + 6).sp,
+                )
+                Text(
+                    text = stringResource(R.string.remove_sabytie_iak), fontSize = Settings.fontInterface.sp,
+                    modifier = Modifier.padding(16.dp),
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    TextButton(
+                        onClick = { onDelAll() },
+                        modifier = Modifier.padding(8.dp),
+                    ) {
+                        Text(stringResource(R.string.sabytie_del_all), fontSize = Settings.fontInterface.sp)
+                    }
+                    TextButton(
+                        onClick = { onDelOld() },
+                        modifier = Modifier.padding(8.dp),
+                    ) {
+                        Text(stringResource(R.string.sabytie_del_old), fontSize = Settings.fontInterface.sp)
+                    }
+                }
+                TextButton(
+                    onClick = { onDismiss() },
+                    modifier = Modifier.padding(8.dp),
+                ) {
+                    Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
+                }
+            }
+        }
+    }
 }
