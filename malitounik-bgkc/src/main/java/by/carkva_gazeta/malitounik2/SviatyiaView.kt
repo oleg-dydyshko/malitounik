@@ -1,15 +1,29 @@
 package by.carkva_gazeta.malitounik2
 
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
+import android.content.Context.CLIPBOARD_SERVICE
+import android.content.Intent
+import android.graphics.BitmapFactory
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.calculateZoom
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
@@ -25,6 +39,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +49,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -42,9 +63,11 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.FileProvider
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
@@ -55,6 +78,7 @@ import kotlinx.coroutines.tasks.await
 import java.io.File
 import java.util.Calendar
 import java.util.GregorianCalendar
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,11 +97,6 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
     val context = LocalContext.current
     val sviatyiaList = remember { mutableStateListOf<OpisanieData>() }
     val dirList = remember { mutableStateListOf<DirList>() }
-    if (svity) {
-        loadOpisanieSviat(context, sviatyiaList, mun, day)
-    } else {
-        loadOpisanieSviatyia(context, sviatyiaList, year, mun, day)
-    }
     var dialoNoIntent by remember { mutableStateOf(false) }
     var dialoNoWIFI by remember { mutableStateOf(false) }
     var isProgressVisable by remember { mutableStateOf(false) }
@@ -90,6 +109,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
         DialogNoWiFI(onDismissRequest = {
             dialoNoWIFI = false
         }) {
+            dialoNoWIFI = false
             coroutineScope.launch {
                 if (svity) {
                     getOpisanieSviat(context, sviatyiaList, mun, day)
@@ -99,17 +119,28 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                 getIcons(context, dirList, sviatyiaList, svity)
                 getPiarliny(context)
             }
-            dialoNoWIFI = false
         }
+    }
+    var imageFull by remember { mutableStateOf(false) }
+    var fullImagePathVisable by remember { mutableStateOf("") }
+    BackHandler(imageFull) {
+        imageFull = !imageFull
     }
     LaunchedEffect(Unit) {
         coroutineScope.launch {
             isProgressVisable = true
             val fileOpisanie = File("${context.filesDir}/sviatyja/opisanie$mun.json")
             val fileOpisanie13 = File("${context.filesDir}/sviatyja/opisanie13.json")
+            val fileSvity = File("${context.filesDir}/opisanie_sviat.json")
             if (!Settings.isNetworkAvailable(context)) {
-                if (!svity && (fileOpisanie.exists() || fileOpisanie13.exists())) {
-                    loadOpisanieSviatyia(context, sviatyiaList, year, mun, day)
+                if (fileOpisanie.exists() || fileOpisanie13.exists()) {
+                    if (!svity) {
+                        loadOpisanieSviatyia(context, sviatyiaList, year, mun, day)
+                    }
+                } else if (fileSvity.exists()) {
+                    if (svity) {
+                        loadOpisanieSviat(context, sviatyiaList, mun, day)
+                    }
                 } else {
                     dialoNoIntent = true
                 }
@@ -132,6 +163,14 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
             isProgressVisable = false
         }
     }
+    var width by remember { mutableIntStateOf(0) }
+    var zoomAll by remember { mutableFloatStateOf(1f) }
+    var offsetX by remember { mutableFloatStateOf(0f) }
+    var offsetY by remember { mutableFloatStateOf(0f) }
+    if (zoomAll == 1f) {
+        offsetX = 0f
+        offsetY = 0f
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -145,7 +184,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                                     maxLine.intValue = 1
                                 }
                             },
-                            text = stringResource(R.string.sabytie),
+                            text = stringResource(R.string.zmiest),
                             color = MaterialTheme.colorScheme.onSecondary,
                             fontWeight = FontWeight.Bold,
                             maxLines = maxLine.intValue,
@@ -155,16 +194,29 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    },
-                        content = {
-                            Icon(
-                                painter = painterResource(R.drawable.arrow_back),
-                                tint = MaterialTheme.colorScheme.onSecondary,
-                                contentDescription = ""
-                            )
-                        })
+                    if (imageFull) {
+                        IconButton(onClick = {
+                            imageFull = false
+                        },
+                            content = {
+                                Icon(
+                                    painter = painterResource(R.drawable.close),
+                                    tint = MaterialTheme.colorScheme.onSecondary,
+                                    contentDescription = ""
+                                )
+                            })
+                    } else {
+                        IconButton(onClick = {
+                            navController.popBackStack()
+                        },
+                            content = {
+                                Icon(
+                                    painter = painterResource(R.drawable.arrow_back),
+                                    tint = MaterialTheme.colorScheme.onSecondary,
+                                    contentDescription = ""
+                                )
+                            })
+                    }
                 },
                 actions = {
                     /*IconButton({
@@ -190,22 +242,132 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
             )
         }
     ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(
-                    innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                    innerPadding.calculateTopPadding(),
-                    innerPadding.calculateEndPadding(LayoutDirection.Rtl),
-                    0.dp
+        if (imageFull) {
+            Column(
+                modifier = Modifier
+                    .padding(
+                        innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+                        innerPadding.calculateTopPadding(),
+                        innerPadding.calculateEndPadding(LayoutDirection.Rtl),
+                        innerPadding.calculateBottomPadding()
+                    )
+                    .fillMaxSize()
+            ) {
+                Image(
+                    modifier = Modifier
+                        .onGloballyPositioned { coordinates ->
+                            width = coordinates.size.width
+                        }
+                        .fillMaxSize()
+                        .clipToBounds()
+                        .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+                        .graphicsLayer {
+                            scaleX = zoomAll
+                            scaleY = zoomAll
+                        }
+                        .pointerInput(Unit) {
+                            awaitEachGesture {
+                                awaitFirstDown()
+                                do {
+                                    val event = awaitPointerEvent()
+                                    if (event.changes.size == 2) {
+                                        var zoom = zoomAll
+                                        zoom *= event.calculateZoom()
+                                        zoom = zoom.coerceIn(1f, 5f)
+                                        zoomAll = zoom
+                                        event.changes.forEach { pointerInputChange: PointerInputChange ->
+                                            pointerInputChange.consume()
+                                        }
+                                    }
+                                } while (event.changes.any { it.pressed })
+                            }
+                        }
+                        .pointerInput(Unit) {
+                            detectDragGestures { change, dragAmount ->
+                                change.consume()
+                                offsetX += dragAmount.x * 3
+                                offsetY += dragAmount.y * 3
+                            }
+                        }
+                        .align(Alignment.CenterHorizontally), bitmap = BitmapFactory.decodeFile(fullImagePathVisable).asImageBitmap(), contentDescription = ""
                 )
-                .fillMaxSize(),
-            state = lazyListState
-        ) {
-            items(sviatyiaList.size) { index ->
             }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .padding(
+                        innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+                        innerPadding.calculateTopPadding(),
+                        innerPadding.calculateEndPadding(LayoutDirection.Rtl),
+                        0.dp
+                    )
+                    .fillMaxSize(),
+                state = lazyListState
+            ) {
+                items(sviatyiaList.size) { index ->
+                    val file = File(sviatyiaList[index].image)
+                    Column {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .weight(1f), text = sviatyiaList[index].title, fontSize = Settings.fontInterface.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary
+                            )
+                            Icon(
+                                modifier = Modifier
+                                    .padding(end = 10.dp)
+                                    .clickable {
+                                        val sb = StringBuilder()
+                                        sb.append(sviatyiaList[index].text)
+                                        sb.append(sviatyiaList[index].text.trim())
+                                        val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                                        val clip = ClipData.newPlainText(context.getString(R.string.copy_text), sb.toString())
+                                        clipboard.setPrimaryClip(clip)
+                                        if (file.exists()) {
+                                            val sendIntent = Intent(Intent.ACTION_SEND)
+                                            sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "by.carkva_gazeta.malitounik2.fileprovider", file))
+                                            sendIntent.putExtra(Intent.EXTRA_TEXT, sviatyiaList[index].text.trim())
+                                            sendIntent.putExtra(Intent.EXTRA_SUBJECT, sviatyiaList[index].text.trim())
+                                            sendIntent.type = "image/*"
+                                            context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.zmiest)))
+                                        } else {
+                                            val sendIntent = Intent(Intent.ACTION_SEND)
+                                            sendIntent.putExtra(Intent.EXTRA_TEXT, sb.toString())
+                                            sendIntent.putExtra(Intent.EXTRA_SUBJECT, context.getText(R.string.zmiest))
+                                            sendIntent.type = "text/plain"
+                                            context.startActivity(Intent.createChooser(sendIntent, context.getText(R.string.zmiest)))
+                                        }
+                                    }, painter = painterResource(R.drawable.share), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
+                            )
+                        }
+                        if (file.exists()) {
+                            val image = BitmapFactory.decodeFile(sviatyiaList[index].image).asImageBitmap()
+                            var imW =  image.width.toFloat()
+                            var imH = image.height.toFloat()
+                            val imageScale: Float = imW / imH
+                            if (imW > 150F) {
+                                imW = 150F
+                                imH = 150F / imageScale
+                            }
+                            Image(
+                                modifier = Modifier
+                                    .size(imW.dp, imH.dp)
+                                    .align(Alignment.CenterHorizontally)
+                                    .clickable {
+                                        fullImagePathVisable = file.absolutePath
+                                        imageFull = true
+                                    }, bitmap = image, contentDescription = ""
+                            )
+                        }
+                        if (sviatyiaList[index].text.isNotEmpty()) {
+                            Text(modifier = Modifier.padding(10.dp), text = sviatyiaList[index].text, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
+                        }
+                    }
+                }
 
-            item {
-                Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
+                item {
+                    Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
+                }
             }
         }
         if (isProgressVisable) {

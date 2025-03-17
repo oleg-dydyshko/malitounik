@@ -408,10 +408,10 @@ fun SpisStaronak(
     LazyColumn(
         state = lazyListState,
         modifier = Modifier
+            .fillMaxSize()
             .onGloballyPositioned { coordinates ->
                 width = coordinates.size.width
             }
-            .fillMaxSize()
             .clipToBounds()
             .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
             .graphicsLayer {
@@ -419,11 +419,6 @@ fun SpisStaronak(
                 scaleY = zoomAll
             }
             .pointerInput(Unit) {
-                detectDragGestures { change, dragAmount ->
-                    change.consume()
-                    offsetX += dragAmount.x * 3
-                    offsetY += dragAmount.y * 3
-                }
                 awaitEachGesture {
                     awaitFirstDown()
                     do {
@@ -438,6 +433,13 @@ fun SpisStaronak(
                             }
                         }
                     } while (event.changes.any { it.pressed })
+                }
+            }
+            .pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    offsetX += dragAmount.x * 3
+                    offsetY += dragAmount.y * 3
                 }
             }
     ) {

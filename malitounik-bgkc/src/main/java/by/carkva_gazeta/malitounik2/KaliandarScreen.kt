@@ -194,7 +194,7 @@ fun KaliandarScreen(
                     .fillMaxWidth()
                     .padding(top = 10.dp, bottom = padding1)
                     .clickable {
-                        navigateToSvityiaView(true, data[3].toInt(), data[2].toInt(), data[1].toInt())
+                        navigateToSvityiaView(true, data[3].toInt(), data[2].toInt() + 1, data[1].toInt())
                     },
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -276,44 +276,48 @@ fun KaliandarScreen(
                 )
             }
             val list = data[4].split("<br>")
-            for (i in list.indices) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            navigateToSvityiaView(false, data[3].toInt(), data[2].toInt(), data[1].toInt())
-                        },
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    var icon: Painter? = null
-                    var iconTint = MaterialTheme.colorScheme.primary
-                    when (data[12].toInt()) {
-                        1 -> icon = painterResource(R.drawable.znaki_krest)
-                        3 -> icon = painterResource(R.drawable.znaki_krest_v_polukruge)
-                        4 -> icon = painterResource(R.drawable.znaki_ttk)
-                        5 -> {
-                            icon = painterResource(R.drawable.znaki_ttk_black)
-                            iconTint = MaterialTheme.colorScheme.secondary
-                        }
-                    }
-                    if (icon != null && i == 0) {
-                        Box(modifier = Modifier.padding(start = 10.dp)) {
-                            Icon(
-                                painter = icon,
-                                contentDescription = "",
-                                tint = iconTint,
-                                modifier = Modifier
-                                    .size(25.dp)
-                            )
-                        }
-                    }
-                    HtmlText(
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    navigateToSvityiaView(false, data[3].toInt(), data[2].toInt() + 1, data[1].toInt())
+                }
+            ) {
+                for (i in list.indices) {
+                    Row(
                         modifier = Modifier
-                            .padding(horizontal = 10.dp)
-                            .align(Alignment.CenterVertically),
-                        text = list[i],
-                        fontSize = Settings.fontInterface.sp
-                    )
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        var icon: Painter? = null
+                        var iconTint = MaterialTheme.colorScheme.primary
+                        when (data[12].toInt()) {
+                            1 -> icon = painterResource(R.drawable.znaki_krest)
+                            3 -> icon = painterResource(R.drawable.znaki_krest_v_polukruge)
+                            4 -> icon = painterResource(R.drawable.znaki_ttk)
+                            5 -> {
+                                icon = painterResource(R.drawable.znaki_ttk_black)
+                                iconTint = MaterialTheme.colorScheme.secondary
+                            }
+                        }
+                        if (icon != null && i == 0) {
+                            Box(modifier = Modifier.padding(start = 10.dp)) {
+                                Icon(
+                                    painter = icon,
+                                    contentDescription = "",
+                                    tint = iconTint,
+                                    modifier = Modifier
+                                        .size(25.dp)
+                                )
+                            }
+                        }
+                        HtmlText(
+                            modifier = Modifier
+                                .padding(horizontal = 10.dp)
+                                .align(Alignment.CenterVertically),
+                            text = list[i],
+                            fontSize = Settings.fontInterface.sp
+                        )
+                    }
                 }
             }
 

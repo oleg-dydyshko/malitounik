@@ -19,10 +19,9 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.SecondaryScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -114,22 +113,27 @@ fun BibliaMenu(
                         newPerevod = Settings.PEREVODSEMUXI
                         "biblia"
                     }
+
                     1 -> {
                         newPerevod = Settings.PEREVODBOKUNA
                         "bokuna"
                     }
+
                     2 -> {
                         newPerevod = Settings.PEREVODNADSAN
                         "nadsan"
                     }
+
                     3 -> {
                         newPerevod = Settings.PEREVODCARNIAUSKI
                         "carniauski"
                     }
+
                     4 -> {
                         newPerevod = Settings.PEREVODSINOIDAL
                         "sinaidal"
                     }
+
                     else -> "biblia"
                 }
                 val knigaText = k.getString("bible_time_${prevodName}_kniga", "Быц") ?: "Быц"
@@ -166,13 +170,13 @@ fun BibliaMenu(
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
     ) {
-        ScrollableTabRow(
+        SecondaryScrollableTabRow(
             modifier = Modifier.background(MaterialTheme.colorScheme.onPrimary),
             selectedTabIndex = pagerState.currentPage,
-            indicator = { tabPositions ->
+            indicator = {
                 TabRowDefaults.PrimaryIndicator(
                     modifier = Modifier
-                        .tabIndicatorOffset(tabPositions[pagerState.currentPage]),
+                        .tabIndicatorOffset(pagerState.currentPage),
                     width = Dp.Unspecified,
                     shape = RoundedCornerShape(
                         topStart = 5.dp,

@@ -285,8 +285,8 @@ fun PadzeiaView(navController: NavHostController) {
             val nyl = if (state.minute < 10) "0" else ""
             if (dialogTimePickerDialog) {
                 time = "${state.hour}:$nyl${state.minute}"
-                time2 = "${state.hour}:${state.minute}"
-            } else time2 = "${state.hour}:${state.minute}"
+                time2 = "${state.hour}:$nyl${state.minute}"
+            } else time2 = "${state.hour}:$nyl${state.minute}"
             dialogTimePickerDialog = false
             dialogTimePickerDialog2 = false
         }) {
@@ -585,7 +585,8 @@ fun PadzeiaView(navController: NavHostController) {
                             kalendarMun2 = false
                             kalendarMun3 = false
                             showDropdown = false
-                        })
+                        },
+                            close = {})
                     }
                 }
             }

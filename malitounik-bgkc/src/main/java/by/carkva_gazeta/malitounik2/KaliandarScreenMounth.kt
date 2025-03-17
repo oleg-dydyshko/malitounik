@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -30,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -64,20 +66,21 @@ fun getFindPage(mounth: Int, year: Int): Int {
 }
 
 @Composable
-fun KaliandarScreenMounth(colorBlackboard: Color = Primary, setPageCaliandar: (Int) -> Unit = { }) {
+fun KaliandarScreenMounth(colorBlackboard: Color = Primary,
+                          setPageCaliandar: (Int) -> Unit,
+                          close: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 10.dp)
             .clip(shape = RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp))
             .background(colorBlackboard)
-            .padding(10.dp)
+            .padding(start = 10.dp, end = 10.dp, top = 10.dp)
             .background(MaterialTheme.colorScheme.tertiary)
     ) {
         Column(
             modifier = Modifier
                 .align(Alignment.Top)
-                .padding(bottom = 10.dp)
         ) {
             val initDate = Settings.data[Settings.caliandarPosition]
             var mun1 by remember { mutableIntStateOf(initDate[2].toInt()) }
@@ -450,6 +453,13 @@ fun KaliandarScreenMounth(colorBlackboard: Color = Primary, setPageCaliandar: (I
                 shape = MaterialTheme.shapes.medium
             ) {
                 Text(stringResource(R.string.search_call), fontSize = Settings.fontInterface.sp, color = PrimaryText)
+            }
+            Column(modifier = Modifier.fillMaxWidth().background(colorBlackboard).clickable {
+                close()
+            }) {
+                val tint = if(colorBlackboard == Primary || colorBlackboard == StrogiPost) PrimaryTextBlack
+                else PrimaryText
+                Icon(modifier = Modifier.align(Alignment.End), painter = painterResource(R.drawable.keyboard_arrow_up), contentDescription = "", tint = tint)
             }
         }
     }

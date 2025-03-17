@@ -17,10 +17,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.SecondaryScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -979,13 +978,13 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues, se
     }
     Column {
         if (!searchText) {
-            ScrollableTabRow(
+            SecondaryScrollableTabRow(
                 modifier = Modifier.background(MaterialTheme.colorScheme.onPrimary),
                 selectedTabIndex = pagerState.currentPage,
-                indicator = { tabPositions ->
+                indicator = {
                     TabRowDefaults.PrimaryIndicator(
                         modifier = Modifier
-                            .tabIndicatorOffset(tabPositions[pagerState.currentPage]),
+                            .tabIndicatorOffset(pagerState.currentPage),
                         width = Dp.Unspecified,
                         shape = RoundedCornerShape(
                             topStart = 5.dp,

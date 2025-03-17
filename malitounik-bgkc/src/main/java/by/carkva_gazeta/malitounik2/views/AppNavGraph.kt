@@ -1140,7 +1140,8 @@ fun MainConteiner(
                                     ) lazyColumnState.scrollToItem(date)
                                     else pagerState.scrollToPage(date)
                                 }
-                            })
+                            },
+                            close = { showDropdown = false })
                     }
                 }
             }
