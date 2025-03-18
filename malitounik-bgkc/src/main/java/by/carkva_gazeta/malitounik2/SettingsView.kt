@@ -358,7 +358,7 @@ fun SettingsView(navController: NavHostController) {
                                 Settings.MODE_NIGHT_AUTO
                             )
                             edit.apply()
-                            if ((context as MainActivity).checkDzenNoch != context.dzenNoch) actyvity.recreate()
+                            actyvity.recreate()
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -371,7 +371,7 @@ fun SettingsView(navController: NavHostController) {
                                 Settings.MODE_NIGHT_AUTO
                             )
                             edit.apply()
-                            if ((context as MainActivity).checkDzenNoch != context.dzenNoch) actyvity.recreate()
+                            actyvity.recreate()
                         }
                     )
                     Text(

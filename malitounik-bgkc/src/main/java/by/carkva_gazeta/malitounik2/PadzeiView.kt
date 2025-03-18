@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -63,6 +64,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -106,6 +108,7 @@ import androidx.core.text.isDigitsOnly
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik2.ui.theme.Divider
+import by.carkva_gazeta.malitounik2.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryTextBlack
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -125,7 +128,8 @@ fun PadzeiaView(navController: NavHostController) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val maxLine = remember { mutableIntStateOf(1) }
-    var addPadzeia by remember { mutableStateOf(false) }
+    //var addPadzeia by remember { mutableStateOf(false) }
+    var editMode by remember { mutableStateOf(false) }
     var editPadzeia by remember { mutableStateOf(false) }
     var deliteAll by remember { mutableStateOf(false) }
     val listPadzeia = remember { mutableStateListOf<Padzeia>() }
@@ -248,10 +252,9 @@ fun PadzeiaView(navController: NavHostController) {
         ).isAppearanceLightStatusBars = false
     }
     var showDropdown by rememberSaveable { mutableStateOf(false) }
-    BackHandler(showDropdown || addPadzeia || editPadzeia) {
-        if (addPadzeia || editPadzeia) {
-            addPadzeia = false
-            editPadzeia = false
+    BackHandler(showDropdown || editMode) {
+        if (editMode) {
+            editMode = false
         } else showDropdown = !showDropdown
     }
     var kalendarMun by remember { mutableStateOf(false) }
@@ -305,7 +308,6 @@ fun PadzeiaView(navController: NavHostController) {
         val timeK = p.timK
         val paz = p.paznic
         val konecSabytie = p.konecSabytie
-        //val color = p.color
         var res = stringResource(R.string.sabytie_no_pavedam)
         val gc = Calendar.getInstance()
         val realTime = gc.timeInMillis
@@ -322,9 +324,9 @@ fun PadzeiaView(navController: NavHostController) {
             if (realTime > paz) paznicia = true
         }
         val textR = if (konecSabytie) {
-            stringResource(R.string.sabytie_kali, data1, time1, res)
-        } else {
             stringResource(R.string.sabytie_pachatak_show, data1, time1, dataK, timeK, res)
+        } else {
+            stringResource(R.string.sabytie_kali, data1, time1, res)
         }
         DialogSabytieShow(
             title,
@@ -332,6 +334,7 @@ fun PadzeiaView(navController: NavHostController) {
             textR,
             paznicia,
             onEdit = {
+                editMode = true
                 editPadzeia = true
                 showPadzia = false
             },
@@ -437,10 +440,9 @@ fun PadzeiaView(navController: NavHostController) {
                     }
                 },
                 navigationIcon = {
-                    if (addPadzeia || editPadzeia) {
+                    if (editMode) {
                         IconButton(onClick = {
-                            addPadzeia = false
-                            editPadzeia = false
+                            editMode = false
                         },
                             content = {
                                 Icon(
@@ -463,7 +465,7 @@ fun PadzeiaView(navController: NavHostController) {
                     }
                 },
                 actions = {
-                    if (addPadzeia || editPadzeia) {
+                    if (editMode) {
                         IconButton({
                             savePadzia = true
                         }) {
@@ -475,7 +477,8 @@ fun PadzeiaView(navController: NavHostController) {
                         }
                     } else {
                         IconButton({
-                            addPadzeia = true
+                            editMode = true
+                            editPadzeia = false
                         }) {
                             Icon(
                                 painter = painterResource(R.drawable.add),
@@ -586,51 +589,36 @@ fun PadzeiaView(navController: NavHostController) {
                             kalendarMun3 = false
                             showDropdown = false
                         },
-                            close = {})
+                            close = {
+                                kalendarMun = false
+                                kalendarMun2 = false
+                                kalendarMun3 = false
+                                showDropdown = false
+                            })
                     }
                 }
             }
-            if (addPadzeia || editPadzeia) {
+            if (editMode) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
                         .verticalScroll(rememberScrollState())
                 ) {
-                    if (editPadzeia) {
-                        val p = listPadzeia[showPadziaPosition]
-                        AddPadzeia(listPadzeia, showPadziaPosition, savePadzia, p.dat, p.datK, p.count, p.tim, p.timK, setShowTimePicker = {
-                            if (it == 1) dialogTimePickerDialog = true
-                            else dialogTimePickerDialog2 = true
-                        }, setShowKalendar = {
-                            showDropdown = true
-                            when (it) {
-                                1 -> kalendarMun = true
-                                2 -> kalendarMun2 = true
-                                else -> kalendarMun3 = true
-                            }
-                        }, isSave = {
-                            addPadzeia = false
-                            editPadzeia = false
-                            savePadzia = false
-                        })
-                    } else {
-                        AddPadzeia(listPadzeia, -1, savePadzia, data, data2, data3, time, time2, setShowTimePicker = {
-                            if (it == 1) dialogTimePickerDialog = true
-                            else dialogTimePickerDialog2 = true
-                        }, setShowKalendar = {
-                            showDropdown = true
-                            when (it) {
-                                1 -> kalendarMun = true
-                                2 -> kalendarMun2 = true
-                                else -> kalendarMun3 = true
-                            }
-                        }, isSave = {
-                            addPadzeia = false
-                            editPadzeia = false
-                            savePadzia = false
-                        })
-                    }
+                    AddPadzeia(savePadzia, data, data2, data3, time, time2, editPadzeia, listPadzeia, showPadziaPosition, setShowTimePicker = {
+                        if (it == 1) dialogTimePickerDialog = true
+                        else dialogTimePickerDialog2 = true
+                    }, setShowKalendar = {
+                        showDropdown = true
+                        when (it) {
+                            1 -> kalendarMun = true
+                            2 -> kalendarMun2 = true
+                            else -> kalendarMun3 = true
+                        }
+                    }, isSave = {
+                        editMode = false
+                        savePadzia = false
+                    })
                     Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
                 }
             }
@@ -641,19 +629,20 @@ fun PadzeiaView(navController: NavHostController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddPadzeia(
-    listPadzeia: SnapshotStateList<Padzeia>,
-    position: Int,
     save: Boolean,
     data: String,
     data2: String,
     data3: String,
     time: String,
     time2: String,
+    editPadzeia: Boolean,
+    listPadzeia: SnapshotStateList<Padzeia>,
+    position: Int,
     setShowTimePicker: (Int) -> Unit,
     setShowKalendar: (Int) -> Unit,
     isSave: () -> Unit
 ) {
-    val p = if (position != -1) listPadzeia[position]
+    val p = if (editPadzeia) listPadzeia[position]
     else Padzeia("", data, time, 0, 0, "-1", data2, time2, 0, data3, 0, false)
     val context = LocalContext.current
     var padzeia by remember { mutableStateOf(p.padz) }
@@ -667,9 +656,13 @@ fun AddPadzeia(
     val count = p.count.split(".")
     var konecSabytie by remember { mutableStateOf(p.konecSabytie) }
     LaunchedEffect(Unit) {
-        if (position != -1) {
+        if (editPadzeia) {
             when {
-                p.count == "0" -> modeRepit = 1
+                p.count == "0" -> {
+                    modeRepit = 1
+                    setPautorRaz = "5"
+                    countText = p.datK
+                }
                 count.size == 1 -> {
                     modeRepit = 2
                     setPautorRaz = p.count
@@ -687,7 +680,7 @@ fun AddPadzeia(
             setPautorRaz = "5"
             countText = p.datK
         }
-        countText = if (position != -1) p.datK else data3
+        //countText = if (position != -1) p.datK else data3
     }
     var color by remember { mutableStateOf(optionsColors[p.color]) }
     var colorPosition by remember { mutableIntStateOf(p.color) }
@@ -1193,7 +1186,11 @@ fun MyTimePickerDialog(
         onDismiss = { onDismiss() },
         onConfirm = { onConfirm(timePickerState) }
     ) {
+        val colorText = if ((LocalActivity.current as MainActivity).dzenNoch) PrimaryText
+        else PrimaryTextBlack
+        val color = TimePickerDefaults.colors().copy(timeSelectorSelectedContainerColor = MaterialTheme.colorScheme.primary, timeSelectorSelectedContentColor = colorText)
         TimePicker(
+            colors = color,
             state = timePickerState,
         )
     }
@@ -1311,7 +1308,7 @@ fun savePadzeia(
                         }
                     }
                 }
-                padzeiaList.add(Padzeia(edit, data, time, londs2, pavedamicZaPosit, edit2, dataK, timeK, repit, timeRepit, color, false))
+                padzeiaList.add(Padzeia(edit, data, time, londs2, pavedamicZaPosit, edit2, dataK, timeK, repit, timeRepit, color, konecSabytie))
             }
 
             1 -> {
@@ -1367,7 +1364,7 @@ fun savePadzeia(
                     if (gc[Calendar.MONTH] < 9) nol2 = "0"
                     if (gc2[Calendar.DAY_OF_MONTH] < 10) nol3 = "0"
                     if (gc2[Calendar.MONTH] < 9) nol4 = "0"
-                    padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2[Calendar.DAY_OF_MONTH] + "." + nol4 + (gc2[Calendar.MONTH] + 1) + "." + gc2[Calendar.YEAR], timeK, repit, timeRepit, color, false))
+                    padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2[Calendar.DAY_OF_MONTH] + "." + nol4 + (gc2[Calendar.MONTH] + 1) + "." + gc2[Calendar.YEAR], timeK, repit, timeRepit, color, konecSabytie))
                     gc.add(Calendar.DATE, 1)
                     gc2.add(Calendar.DATE, 1)
                     i++
@@ -1428,7 +1425,7 @@ fun savePadzeia(
                         if (gc[Calendar.MONTH] < 9) nol2 = "0"
                         if (gc2.get(Calendar.DAY_OF_MONTH) < 10) nol3 = "0"
                         if (gc2.get(Calendar.MONTH) < 9) nol4 = "0"
-                        padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), timeK, repit, timeRepit, color, false))
+                        padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), timeK, repit, timeRepit, color, konecSabytie))
                     }
                     gc.add(Calendar.DATE, 1)
                     gc2.add(Calendar.DATE, 1)
@@ -1491,7 +1488,7 @@ fun savePadzeia(
                         if (gc[Calendar.MONTH] < 9) nol2 = "0"
                         if (gc2.get(Calendar.DAY_OF_MONTH) < 10) nol3 = "0"
                         if (gc2.get(Calendar.MONTH) < 9) nol4 = "0"
-                        padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), timeK, repit, timeRepit, color, false))
+                        padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), timeK, repit, timeRepit, color, konecSabytie))
                     }
                     schet++
                     gc.add(Calendar.DATE, 1)
@@ -1553,7 +1550,7 @@ fun savePadzeia(
                     if (gc[Calendar.MONTH] < 9) nol2 = "0"
                     if (gc2.get(Calendar.DAY_OF_MONTH) < 10) nol3 = "0"
                     if (gc2.get(Calendar.MONTH) < 9) nol4 = "0"
-                    padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), timeK, repit, timeRepit, color, false))
+                    padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), timeK, repit, timeRepit, color, konecSabytie))
                     gc.add(Calendar.DATE, 7)
                     gc2.add(Calendar.DATE, 7)
                     i++
@@ -1613,7 +1610,7 @@ fun savePadzeia(
                     if (gc[Calendar.MONTH] < 9) nol2 = "0"
                     if (gc2.get(Calendar.DAY_OF_MONTH) < 10) nol3 = "0"
                     if (gc2.get(Calendar.MONTH) < 9) nol4 = "0"
-                    padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), timeK, repit, timeRepit, color, false))
+                    padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), timeK, repit, timeRepit, color, konecSabytie))
                     gc.add(Calendar.DATE, 14)
                     gc2.add(Calendar.DATE, 14)
                     i++
@@ -1673,7 +1670,7 @@ fun savePadzeia(
                     if (gc[Calendar.MONTH] < 9) nol2 = "0"
                     if (gc2.get(Calendar.DAY_OF_MONTH) < 10) nol3 = "0"
                     if (gc2.get(Calendar.MONTH) < 9) nol4 = "0"
-                    padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), timeK, repit, timeRepit, color, false))
+                    padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), timeK, repit, timeRepit, color, konecSabytie))
                     gc.add(Calendar.DATE, 28)
                     gc2.add(Calendar.DATE, 28)
                     i++
@@ -1732,7 +1729,7 @@ fun savePadzeia(
                     if (gc[Calendar.MONTH] < 9) nol2 = "0"
                     if (gc2.get(Calendar.DAY_OF_MONTH) < 10) nol3 = "0"
                     if (gc2.get(Calendar.MONTH) < 9) nol4 = "0"
-                    padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), timeK, repit, timeRepit, color, false))
+                    padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), timeK, repit, timeRepit, color, konecSabytie))
                     gc.add(Calendar.MONTH, 1)
                     gc2.add(Calendar.MONTH, 1)
                     i++
@@ -1778,7 +1775,7 @@ fun savePadzeia(
                     if (gc[Calendar.MONTH] < 9) nol2 = "0"
                     if (gc2.get(Calendar.DAY_OF_MONTH) < 10) nol3 = "0"
                     if (gc2.get(Calendar.MONTH) < 9) nol4 = "0"
-                    padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), timeK, repit, timeRepit, color, false))
+                    padzeiaList.add(Padzeia(edit, nol1 + gc[Calendar.DAY_OF_MONTH] + "." + nol2 + (gc[Calendar.MONTH] + 1) + "." + gc[Calendar.YEAR], time, londs2, pavedamicZaPosit, edit2, nol3 + gc2.get(Calendar.DAY_OF_MONTH) + "." + nol4 + (gc2.get(Calendar.MONTH) + 1) + "." + gc2.get(Calendar.YEAR), timeK, repit, timeRepit, color, konecSabytie))
                     gc.add(Calendar.YEAR, 1)
                     gc2.add(Calendar.YEAR, 1)
                     i++

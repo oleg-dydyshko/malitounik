@@ -868,7 +868,7 @@ fun MainConteiner(
                                                     if (sortedVybranae == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
                                                     else Settings.SORT_BY_ABC
                                                 sortedNatatki =
-                                                    if (sortedVybranae == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
+                                                    if (sortedNatatki == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
                                                     else Settings.SORT_BY_ABC
                                                 val edit = k.edit()
                                                 if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) edit.putInt(

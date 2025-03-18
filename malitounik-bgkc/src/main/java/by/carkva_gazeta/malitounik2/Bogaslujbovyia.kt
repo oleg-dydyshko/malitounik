@@ -29,7 +29,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,7 +39,6 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -58,7 +56,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -82,7 +79,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik2.ui.theme.Button
-import by.carkva_gazeta.malitounik2.ui.theme.Divider
 import by.carkva_gazeta.malitounik2.ui.theme.Post
 import by.carkva_gazeta.malitounik2.ui.theme.Primary
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryText
@@ -420,7 +416,6 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 10.dp)
                             .clip(
                                 shape = RoundedCornerShape(
                                     bottomStart = 10.dp,
@@ -428,7 +423,7 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                                 )
                             )
                             .background(MaterialTheme.colorScheme.onTertiary)
-                            .padding(10.dp)
+                            .padding(start = 10.dp, end = 10.dp, top = 10.dp)
                             .background(MaterialTheme.colorScheme.tertiary)
                     ) {
                         Column {
@@ -608,29 +603,13 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                                     }
                                 )
                             }
-                            if (menuPosition != 4) {
-                                TextButton(
-                                    onClick = {
-                                        showDropdown = false
-                                        if (autoScrollSensor) autoScroll = true
-                                    },
-                                    modifier = Modifier
-                                        .align(Alignment.End)
-                                        .padding(5.dp),
-                                    colors = ButtonColors(
-                                        Divider,
-                                        Color.Unspecified,
-                                        Color.Unspecified,
-                                        Color.Unspecified
-                                    ),
-                                    shape = MaterialTheme.shapes.medium
-                                ) {
-                                    Text(
-                                        stringResource(R.string.close),
-                                        fontSize = Settings.fontInterface.sp,
-                                        color = PrimaryText
-                                    )
-                                }
+                            Column(modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.onTertiary)
+                                .clickable {
+                                    showDropdown = false
+                                }) {
+                                Icon(modifier = Modifier.align(Alignment.End), painter = painterResource(R.drawable.keyboard_arrow_up), contentDescription = "", tint = PrimaryTextBlack)
                             }
                         }
                     }

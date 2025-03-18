@@ -45,7 +45,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -57,7 +56,6 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -918,7 +916,6 @@ fun CytanniList(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 10.dp)
                             .clip(
                                 shape = RoundedCornerShape(
                                     bottomStart = 10.dp,
@@ -926,7 +923,7 @@ fun CytanniList(
                                 )
                             )
                             .background(colorTollBar)
-                            .padding(10.dp)
+                            .padding(start = 10.dp, end = 10.dp, top = 10.dp)
                             .background(MaterialTheme.colorScheme.tertiary)
                     ) {
                         Column {
@@ -1383,29 +1380,13 @@ fun CytanniList(
                                     }
                                 )
                             }
-                            if (menuPosition != 4) {
-                                TextButton(
-                                    onClick = {
-                                        showDropdown = false
-                                        if (autoScrollSensor) autoScroll = true
-                                    },
-                                    modifier = Modifier
-                                        .align(Alignment.End)
-                                        .padding(5.dp),
-                                    colors = ButtonColors(
-                                        Divider,
-                                        Color.Unspecified,
-                                        Color.Unspecified,
-                                        Color.Unspecified
-                                    ),
-                                    shape = MaterialTheme.shapes.medium
-                                ) {
-                                    Text(
-                                        stringResource(R.string.close),
-                                        fontSize = Settings.fontInterface.sp,
-                                        color = PrimaryText
-                                    )
-                                }
+                            Column(modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.onTertiary)
+                                .clickable {
+                                    showDropdown = false
+                                }) {
+                                Icon(modifier = Modifier.align(Alignment.End), painter = painterResource(R.drawable.keyboard_arrow_up), contentDescription = "", tint = PrimaryTextBlack)
                             }
                         }
                     }

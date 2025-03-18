@@ -213,7 +213,18 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
         }
         val t1 = opisanie.indexOf("</span><br>")
         if (t1 != -1) opisanie = opisanie.substring(t1 + 11)
-        val dirCount = filteredItems[fileListPosition][3].toInt()
+        val dirCount = if (searchText) filteredItems[fileListPosition][3].toInt()
+        else {
+            when (pagerState.currentPage) {
+                0 -> bibliatekaList0[fileListPosition][3].toInt()
+                1 -> bibliatekaList1[fileListPosition][3].toInt()
+                2 -> bibliatekaList2[fileListPosition][3].toInt()
+                3 -> bibliatekaList3[fileListPosition][3].toInt()
+                4 -> bibliatekaList4[fileListPosition][3].toInt()
+                5 -> bibliatekaList5[fileListPosition][3].toInt()
+                else -> bibliatekaList2[fileListPosition][3].toInt()
+            }
+        }
         val izm = if (dirCount / 1024 > 1000) {
             formatFigureTwoPlaces(
                 BigDecimal

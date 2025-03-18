@@ -296,7 +296,6 @@ fun Biblijateka(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 10.dp)
                             .clip(
                                 shape = RoundedCornerShape(
                                     bottomStart = 10.dp,
@@ -304,7 +303,7 @@ fun Biblijateka(
                                 )
                             )
                             .background(MaterialTheme.colorScheme.onTertiary)
-                            .padding(10.dp)
+                            .padding(start = 10.dp, end = 10.dp, top = 10.dp)
                             .background(MaterialTheme.colorScheme.tertiary)
                     ) {
                         DropdownMenuPdf(lazyPagingItems.itemCount, selectPage = { selectPage = it })
@@ -329,6 +328,11 @@ fun Biblijateka(
                                 fontSize = Settings.fontInterface.sp,
                                 color = PrimaryText
                             )
+                        }
+                        Column(modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.onTertiary).clickable {
+                            showDropdown = false
+                        }) {
+                            Icon(modifier = Modifier.align(Alignment.End), painter = painterResource(R.drawable.keyboard_arrow_up), contentDescription = "", tint = PrimaryTextBlack)
                         }
                     }
                 }

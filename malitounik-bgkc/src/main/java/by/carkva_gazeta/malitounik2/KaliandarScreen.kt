@@ -48,6 +48,7 @@ import by.carkva_gazeta.malitounik2.ui.theme.Post
 import by.carkva_gazeta.malitounik2.ui.theme.Primary
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik2.ui.theme.SecondaryText
 import by.carkva_gazeta.malitounik2.ui.theme.StrogiPost
 import by.carkva_gazeta.malitounik2.views.HtmlText
 import com.google.gson.Gson
@@ -454,19 +455,19 @@ fun KaliandarScreen(
                 val r1 = p.dat.split(".")
                 val r2 = p.datK.split(".")
                 gc[r1[2].toInt(), r1[1].toInt() - 1] = r1[0].toInt()
-                val naY = gc[Calendar.YEAR]
-                val na = gc[Calendar.DAY_OF_YEAR]
+                //val naY = gc[Calendar.YEAR]
+                //val na = gc[Calendar.DAY_OF_YEAR]
                 gc[r2[2].toInt(), r2[1].toInt() - 1] = r2[0].toInt()
                 val yaerw = gc[Calendar.YEAR]
-                val kon = gc[Calendar.DAY_OF_YEAR]
-                var rezkK = kon - na + 1
-                if (yaerw > naY) {
+                //val kon = gc[Calendar.DAY_OF_YEAR]
+                //var rezkK = kon - na + 1
+                /*if (yaerw > naY) {
                     var leapYear = 365
                     if (gc.isLeapYear(naY)) leapYear = 366
-                    rezkK = leapYear - na + kon
-                }
+                    //rezkK = leapYear - na + kon
+                }*/
                 gc[r1[2].toInt(), r1[1].toInt() - 1] = r1[0].toInt()
-                for (i in 0 until rezkK) {
+                //for (i in 0 until rezkK) {
                     var dayofyear = gc[Calendar.DAY_OF_YEAR]
                     if (!gc.isLeapYear(yaerw) && dayofyear > 59) {
                         dayofyear++
@@ -522,7 +523,7 @@ fun KaliandarScreen(
                         }
                         SetPadzeia(title, spannable, p.color, paznicia, res)
                     }
-                }
+                //}
             }
         }
         val svityDrugasnuia = AnnotatedString.Builder("").apply {
@@ -576,7 +577,8 @@ fun KaliandarScreen(
                     text = svityDrugasnuia,
                     textAlign = TextAlign.End,
                     fontStyle = FontStyle.Italic,
-                    fontSize = Settings.fontInterface.sp
+                    fontSize = Settings.fontInterface.sp,
+                    color = SecondaryText
                 )
             }
         }

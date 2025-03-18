@@ -8,12 +8,20 @@ import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
 import android.graphics.BitmapFactory
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,18 +29,29 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -45,10 +64,12 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
@@ -58,18 +79,26 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import androidx.core.content.FileProvider
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavHostController
+import by.carkva_gazeta.malitounik2.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik2.views.HtmlText
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.delay
@@ -111,20 +140,39 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
         }) {
             dialoNoWIFI = false
             coroutineScope.launch {
-                if (svity) {
-                    getOpisanieSviat(context, sviatyiaList, mun, day)
-                } else {
-                    getSviatyia(context, sviatyiaList, year, mun, day)
-                }
                 getIcons(context, dirList, sviatyiaList, svity)
-                getPiarliny(context)
             }
         }
     }
+    var showDropdown by remember { mutableStateOf(false) }
+    var fullscreen by rememberSaveable { mutableStateOf(false) }
+    var backPressHandled by remember { mutableStateOf(false) }
+    var menuPosition by remember { mutableIntStateOf(0) }
+    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+    var fontSize by remember { mutableFloatStateOf(k.getFloat("font_biblia", 22F)) }
+    var modeNight by remember { mutableIntStateOf(k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM)) }
     var imageFull by remember { mutableStateOf(false) }
+    var checkPiarliny by remember { mutableStateOf(false) }
+    var viewPiarliny by remember { mutableStateOf(false) }
     var fullImagePathVisable by remember { mutableStateOf("") }
-    BackHandler(imageFull) {
-        imageFull = !imageFull
+    BackHandler(imageFull || showDropdown || fullscreen) {
+        when {
+            imageFull -> imageFull = false
+            fullscreen -> fullscreen = false
+            showDropdown -> {
+                showDropdown = false
+            }
+
+            !backPressHandled -> {
+                backPressHandled = true
+                navController.popBackStack()
+            }
+        }
+    }
+    if (viewPiarliny) {
+        DialogPairlinyView(day, mun) {
+            viewPiarliny = false
+        }
     }
     LaunchedEffect(Unit) {
         coroutineScope.launch {
@@ -146,16 +194,21 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                 }
             } else {
                 try {
-                    if (Settings.isNetworkAvailable(context, Settings.TRANSPORT_WIFI)) {
+                    if (Settings.isNetworkAvailable(context)) {
                         if (svity) {
                             getOpisanieSviat(context, sviatyiaList, mun, day)
                         } else {
                             getSviatyia(context, sviatyiaList, year, mun, day)
                         }
-                        getIcons(context, dirList, sviatyiaList, svity)
                         getPiarliny(context)
+                        checkPiarliny = checkParliny(context, mun, day)
+                        if (Settings.isNetworkAvailable(context, Settings.TRANSPORT_WIFI)) {
+                            getIcons(context, dirList, sviatyiaList, svity)
+                        } else {
+                            dialoNoWIFI = true
+                        }
                     } else {
-                        dialoNoWIFI = true
+                        dialoNoIntent = true
                     }
                 } catch (_: Throwable) {
                 }
@@ -171,202 +224,476 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
         offsetX = 0f
         offsetY = 0f
     }
+    LaunchedEffect(fullscreen) {
+        val controller =
+            WindowCompat.getInsetsController((view.context as Activity).window, view)
+        if (fullscreen) {
+            controller.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            controller.hide(WindowInsetsCompat.Type.systemBars())
+            controller.hide(WindowInsetsCompat.Type.navigationBars())
+        } else {
+            controller.show(WindowInsetsCompat.Type.systemBars())
+            controller.show(WindowInsetsCompat.Type.navigationBars())
+        }
+    }
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            modifier = Modifier.clickable {
-                                maxLine.intValue = Int.MAX_VALUE
-                                coroutineScope.launch {
-                                    delay(5000L)
-                                    maxLine.intValue = 1
+            if (!fullscreen) {
+                TopAppBar(
+                    title = {
+                        Column {
+                            Text(
+                                modifier = Modifier.clickable {
+                                    maxLine.intValue = Int.MAX_VALUE
+                                    coroutineScope.launch {
+                                        delay(5000L)
+                                        maxLine.intValue = 1
+                                    }
+                                },
+                                text = stringResource(R.string.zmiest),
+                                color = MaterialTheme.colorScheme.onSecondary,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = maxLine.intValue,
+                                overflow = TextOverflow.Ellipsis,
+                                fontSize = Settings.fontInterface.sp
+                            )
+                        }
+                    },
+                    navigationIcon = {
+                        if (imageFull) {
+                            IconButton(onClick = {
+                                imageFull = false
+                            },
+                                content = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.close),
+                                        tint = MaterialTheme.colorScheme.onSecondary,
+                                        contentDescription = ""
+                                    )
+                                })
+                        } else {
+                            IconButton(onClick = {
+                                when {
+                                    fullscreen -> fullscreen = false
+                                    showDropdown -> {
+                                        showDropdown = false
+                                    }
+
+                                    else -> {
+                                        navController.popBackStack()
+                                    }
                                 }
                             },
-                            text = stringResource(R.string.zmiest),
-                            color = MaterialTheme.colorScheme.onSecondary,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = maxLine.intValue,
-                            overflow = TextOverflow.Ellipsis,
-                            fontSize = Settings.fontInterface.sp
-                        )
-                    }
-                },
-                navigationIcon = {
-                    if (imageFull) {
-                        IconButton(onClick = {
-                            imageFull = false
-                        },
-                            content = {
+                                content = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.arrow_back),
+                                        tint = MaterialTheme.colorScheme.onSecondary,
+                                        contentDescription = ""
+                                    )
+                                })
+                        }
+                    },
+                    actions = {
+                        if (checkPiarliny) {
+                            IconButton({
+                                viewPiarliny = true
+                            }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.close),
-                                    tint = MaterialTheme.colorScheme.onSecondary,
+                                    painter = painterResource(R.drawable.description),
+                                    tint = PrimaryTextBlack,
                                     contentDescription = ""
                                 )
-                            })
-                    } else {
-                        IconButton(onClick = {
-                            navController.popBackStack()
-                        },
-                            content = {
-                                Icon(
-                                    painter = painterResource(R.drawable.arrow_back),
-                                    tint = MaterialTheme.colorScheme.onSecondary,
-                                    contentDescription = ""
-                                )
-                            })
-                    }
-                },
-                actions = {
-                    /*IconButton({
-                        addPadzeia = true
-                    }) {
-                        Icon(
-                            painter = painterResource(R.drawable.add),
-                            tint = PrimaryTextBlack,
-                            contentDescription = ""
-                        )
-                    }
-                    IconButton({
-                        deliteAll = true
-                    }) {
-                        Icon(
-                            painter = painterResource(R.drawable.delete),
-                            tint = PrimaryTextBlack,
-                            contentDescription = ""
-                        )
-                    }*/
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
-            )
-        }
-    ) { innerPadding ->
-        if (imageFull) {
-            Column(
-                modifier = Modifier
-                    .padding(
-                        innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                        innerPadding.calculateTopPadding(),
-                        innerPadding.calculateEndPadding(LayoutDirection.Rtl),
-                        innerPadding.calculateBottomPadding()
-                    )
-                    .fillMaxSize()
-            ) {
-                Image(
-                    modifier = Modifier
-                        .onGloballyPositioned { coordinates ->
-                            width = coordinates.size.width
-                        }
-                        .fillMaxSize()
-                        .clipToBounds()
-                        .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
-                        .graphicsLayer {
-                            scaleX = zoomAll
-                            scaleY = zoomAll
-                        }
-                        .pointerInput(Unit) {
-                            awaitEachGesture {
-                                awaitFirstDown()
-                                do {
-                                    val event = awaitPointerEvent()
-                                    if (event.changes.size == 2) {
-                                        var zoom = zoomAll
-                                        zoom *= event.calculateZoom()
-                                        zoom = zoom.coerceIn(1f, 5f)
-                                        zoomAll = zoom
-                                        event.changes.forEach { pointerInputChange: PointerInputChange ->
-                                            pointerInputChange.consume()
-                                        }
-                                    }
-                                } while (event.changes.any { it.pressed })
                             }
                         }
-                        .pointerInput(Unit) {
-                            detectDragGestures { change, dragAmount ->
-                                change.consume()
-                                offsetX += dragAmount.x * 3
-                                offsetY += dragAmount.y * 3
-                            }
+                        var expanded by remember { mutableStateOf(false) }
+                        IconButton(onClick = { expanded = true }) {
+                            Icon(
+                                painter = painterResource(R.drawable.more_vert),
+                                contentDescription = "",
+                                tint = MaterialTheme.colorScheme.onSecondary
+                            )
                         }
-                        .align(Alignment.CenterHorizontally), bitmap = BitmapFactory.decodeFile(fullImagePathVisable).asImageBitmap(), contentDescription = ""
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            DropdownMenuItem(
+                                onClick = {
+                                    expanded = false
+                                    fullscreen = true
+                                },
+                                text = { Text(stringResource(R.string.fullscreen), fontSize = Settings.fontInterface.sp) },
+                                trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.fullscreen),
+                                        contentDescription = ""
+                                    )
+                                }
+                            )
+                            DropdownMenuItem(
+                                onClick = {
+                                    showDropdown = !showDropdown
+                                    expanded = false
+                                    menuPosition = 1
+                                },
+                                text = { Text(stringResource(R.string.menu_font_size_app), fontSize = Settings.fontInterface.sp) }
+                            )
+                            DropdownMenuItem(
+                                onClick = {
+                                    showDropdown = !showDropdown
+                                    expanded = false
+                                    menuPosition = 3
+                                },
+                                text = { Text(stringResource(R.string.dzen_noch), fontSize = Settings.fontInterface.sp) }
+                            )
+                        }
+
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
                 )
             }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .padding(
-                        innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                        innerPadding.calculateTopPadding(),
-                        innerPadding.calculateEndPadding(LayoutDirection.Rtl),
-                        0.dp
-                    )
-                    .fillMaxSize(),
-                state = lazyListState
+        }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .padding(
+                    innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+                    innerPadding.calculateTopPadding(),
+                    innerPadding.calculateEndPadding(LayoutDirection.Rtl),
+                    0.dp
+                )
+        ) {
+            Popup(
+                alignment = Alignment.TopCenter,
+                onDismissRequest = {
+                    showDropdown = false
+                }
             ) {
-                items(sviatyiaList.size) { index ->
-                    val file = File(sviatyiaList[index].image)
-                    Column {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                modifier = Modifier
-                                    .padding(10.dp)
-                                    .weight(1f), text = sviatyiaList[index].title, fontSize = Settings.fontInterface.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary
+                AnimatedVisibility(
+                    showDropdown,
+                    enter = slideInVertically(
+                        tween(
+                            durationMillis = 500,
+                            easing = LinearOutSlowInEasing
+                        )
+                    ),
+                    exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(
+                                shape = RoundedCornerShape(
+                                    bottomStart = 10.dp,
+                                    bottomEnd = 10.dp
+                                )
                             )
-                            Icon(
-                                modifier = Modifier
-                                    .padding(end = 10.dp)
-                                    .clickable {
-                                        val sb = StringBuilder()
-                                        sb.append(sviatyiaList[index].text)
-                                        sb.append(sviatyiaList[index].text.trim())
-                                        val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-                                        val clip = ClipData.newPlainText(context.getString(R.string.copy_text), sb.toString())
-                                        clipboard.setPrimaryClip(clip)
-                                        if (file.exists()) {
-                                            val sendIntent = Intent(Intent.ACTION_SEND)
-                                            sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "by.carkva_gazeta.malitounik2.fileprovider", file))
-                                            sendIntent.putExtra(Intent.EXTRA_TEXT, sviatyiaList[index].text.trim())
-                                            sendIntent.putExtra(Intent.EXTRA_SUBJECT, sviatyiaList[index].text.trim())
-                                            sendIntent.type = "image/*"
-                                            context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.zmiest)))
-                                        } else {
-                                            val sendIntent = Intent(Intent.ACTION_SEND)
-                                            sendIntent.putExtra(Intent.EXTRA_TEXT, sb.toString())
-                                            sendIntent.putExtra(Intent.EXTRA_SUBJECT, context.getText(R.string.zmiest))
-                                            sendIntent.type = "text/plain"
-                                            context.startActivity(Intent.createChooser(sendIntent, context.getText(R.string.zmiest)))
-                                        }
-                                    }, painter = painterResource(R.drawable.share), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
-                            )
-                        }
-                        if (file.exists()) {
-                            val image = BitmapFactory.decodeFile(sviatyiaList[index].image).asImageBitmap()
-                            var imW =  image.width.toFloat()
-                            var imH = image.height.toFloat()
-                            val imageScale: Float = imW / imH
-                            if (imW > 150F) {
-                                imW = 150F
-                                imH = 150F / imageScale
+                            .background(MaterialTheme.colorScheme.onTertiary)
+                            .padding(start = 10.dp, end = 10.dp, top = 10.dp)
+                            .background(MaterialTheme.colorScheme.tertiary)
+                    ) {
+                        Column {
+                            if (menuPosition == 3) {
+                                Column(Modifier.selectableGroup())
+                                {
+                                    val actyvity = LocalActivity.current as MainActivity
+                                    val isSystemInDarkTheme = isSystemInDarkTheme()
+                                    Text(
+                                        stringResource(R.string.dzen_noch),
+                                        modifier = Modifier.padding(start = 10.dp, top = 10.dp),
+                                        textAlign = TextAlign.Center,
+                                        fontStyle = FontStyle.Italic,
+                                        color = MaterialTheme.colorScheme.secondary,
+                                        fontSize = Settings.fontInterface.sp
+                                    )
+                                    val edit = k.edit()
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                modeNight = Settings.MODE_NIGHT_SYSTEM
+                                                edit.putInt(
+                                                    "mode_night",
+                                                    Settings.MODE_NIGHT_SYSTEM
+                                                )
+                                                edit.apply()
+                                                actyvity.dzenNoch = isSystemInDarkTheme
+                                                if (actyvity.dzenNoch != actyvity.checkDzenNoch)
+                                                    actyvity.recreate()
+                                            },
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        RadioButton(
+                                            selected = modeNight == Settings.MODE_NIGHT_SYSTEM,
+                                            onClick = {
+                                                modeNight = Settings.MODE_NIGHT_SYSTEM
+                                                edit.putInt(
+                                                    "mode_night",
+                                                    Settings.MODE_NIGHT_SYSTEM
+                                                )
+                                                edit.apply()
+                                                actyvity.dzenNoch = isSystemInDarkTheme
+                                                if (actyvity.dzenNoch != actyvity.checkDzenNoch)
+                                                    actyvity.recreate()
+                                            }
+                                        )
+                                        Text(
+                                            stringResource(R.string.system),
+                                            textAlign = TextAlign.Center,
+                                            color = MaterialTheme.colorScheme.secondary,
+                                            fontSize = Settings.fontInterface.sp
+                                        )
+                                    }
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                modeNight = Settings.MODE_NIGHT_NO
+                                                edit.putInt("mode_night", Settings.MODE_NIGHT_NO)
+                                                edit.apply()
+                                                actyvity.dzenNoch = false
+                                                if (actyvity.checkDzenNoch)
+                                                    actyvity.recreate()
+                                            },
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        RadioButton(
+                                            selected = modeNight == Settings.MODE_NIGHT_NO,
+                                            onClick = {
+                                                modeNight = Settings.MODE_NIGHT_NO
+                                                edit.putInt("mode_night", Settings.MODE_NIGHT_NO)
+                                                edit.apply()
+                                                actyvity.dzenNoch = false
+                                                if (actyvity.checkDzenNoch)
+                                                    actyvity.recreate()
+                                            }
+                                        )
+                                        Text(
+                                            stringResource(R.string.day),
+                                            textAlign = TextAlign.Center,
+                                            color = MaterialTheme.colorScheme.secondary,
+                                            fontSize = Settings.fontInterface.sp
+                                        )
+                                    }
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                modeNight = Settings.MODE_NIGHT_YES
+                                                edit.putInt(
+                                                    "mode_night",
+                                                    Settings.MODE_NIGHT_YES
+                                                )
+                                                edit.apply()
+                                                actyvity.dzenNoch = true
+                                                if (!actyvity.checkDzenNoch)
+                                                    actyvity.recreate()
+                                            },
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        RadioButton(
+                                            selected = modeNight == Settings.MODE_NIGHT_YES,
+                                            onClick = {
+                                                modeNight = Settings.MODE_NIGHT_YES
+                                                edit.putInt(
+                                                    "mode_night",
+                                                    Settings.MODE_NIGHT_YES
+                                                )
+                                                edit.apply()
+                                                actyvity.dzenNoch = true
+                                                if (!actyvity.checkDzenNoch)
+                                                    actyvity.recreate()
+                                            }
+                                        )
+                                        Text(
+                                            stringResource(R.string.widget_day_d_n),
+                                            textAlign = TextAlign.Center,
+                                            color = MaterialTheme.colorScheme.secondary,
+                                            fontSize = Settings.fontInterface.sp
+                                        )
+                                    }
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                modeNight = Settings.MODE_NIGHT_AUTO
+                                                edit.putInt(
+                                                    "mode_night",
+                                                    Settings.MODE_NIGHT_AUTO
+                                                )
+                                                edit.apply()
+                                                actyvity.recreate()
+                                            },
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        RadioButton(
+                                            selected = modeNight == Settings.MODE_NIGHT_AUTO,
+                                            onClick = {
+                                                modeNight = Settings.MODE_NIGHT_AUTO
+                                                edit.putInt(
+                                                    "mode_night",
+                                                    Settings.MODE_NIGHT_AUTO
+                                                )
+                                                edit.apply()
+                                                actyvity.recreate()
+                                            }
+                                        )
+                                        Text(
+                                            stringResource(R.string.auto_widget_day_d_n),
+                                            textAlign = TextAlign.Center,
+                                            color = MaterialTheme.colorScheme.secondary,
+                                            fontSize = Settings.fontInterface.sp
+                                        )
+                                    }
+                                }
                             }
-                            Image(
-                                modifier = Modifier
-                                    .size(imW.dp, imH.dp)
-                                    .align(Alignment.CenterHorizontally)
-                                    .clickable {
-                                        fullImagePathVisable = file.absolutePath
-                                        imageFull = true
-                                    }, bitmap = image, contentDescription = ""
-                            )
-                        }
-                        if (sviatyiaList[index].text.isNotEmpty()) {
-                            Text(modifier = Modifier.padding(10.dp), text = sviatyiaList[index].text, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
+                            if (menuPosition == 1) {
+                                Text(
+                                    stringResource(R.string.menu_font_size_app),
+                                    modifier = Modifier.padding(start = 10.dp, top = 10.dp),
+                                    fontStyle = FontStyle.Italic,
+                                    textAlign = TextAlign.Center,
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    fontSize = Settings.fontInterface.sp
+                                )
+                                Slider(
+                                    modifier = Modifier.padding(horizontal = 10.dp),
+                                    valueRange = 18f..58f,
+                                    steps = 10,
+                                    value = fontSize,
+                                    onValueChange = {
+                                        val edit = k.edit()
+                                        edit.putFloat("font_biblia", it)
+                                        edit.apply()
+                                        fontSize = it
+                                    }
+                                )
+                            }
+                            Column(modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.onTertiary)
+                                .clickable {
+                                    showDropdown = false
+                                }) {
+                                Icon(modifier = Modifier.align(Alignment.End), painter = painterResource(R.drawable.keyboard_arrow_up), contentDescription = "", tint = PrimaryTextBlack)
+                            }
                         }
                     }
                 }
+            }
+            if (imageFull) {
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Image(
+                        modifier = Modifier
+                            .onGloballyPositioned { coordinates ->
+                                width = coordinates.size.width
+                            }
+                            .fillMaxSize()
+                            .clipToBounds()
+                            .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+                            .graphicsLayer {
+                                scaleX = zoomAll
+                                scaleY = zoomAll
+                            }
+                            .pointerInput(Unit) {
+                                awaitEachGesture {
+                                    awaitFirstDown()
+                                    do {
+                                        val event = awaitPointerEvent()
+                                        if (event.changes.size == 2) {
+                                            var zoom = zoomAll
+                                            zoom *= event.calculateZoom()
+                                            zoom = zoom.coerceIn(1f, 5f)
+                                            zoomAll = zoom
+                                            event.changes.forEach { pointerInputChange: PointerInputChange ->
+                                                pointerInputChange.consume()
+                                            }
+                                        }
+                                    } while (event.changes.any { it.pressed })
+                                }
+                            }
+                            .pointerInput(Unit) {
+                                detectDragGestures { change, dragAmount ->
+                                    change.consume()
+                                    offsetX += dragAmount.x * 3
+                                    offsetY += dragAmount.y * 3
+                                }
+                            }
+                            .align(Alignment.CenterHorizontally), bitmap = BitmapFactory.decodeFile(fullImagePathVisable).asImageBitmap(), contentDescription = ""
+                    )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    state = lazyListState
+                ) {
+                    items(sviatyiaList.size) { index ->
+                        val file = File(sviatyiaList[index].image)
+                        Column {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    modifier = Modifier
+                                        .padding(10.dp)
+                                        .weight(1f), text = sviatyiaList[index].title, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary
+                                )
+                                Icon(
+                                    modifier = Modifier
+                                        .padding(end = 10.dp)
+                                        .clickable {
+                                            val sb = StringBuilder()
+                                            sb.append(sviatyiaList[index].text)
+                                            sb.append(sviatyiaList[index].text.trim())
+                                            val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                                            val clip = ClipData.newPlainText(context.getString(R.string.copy_text), sb.toString())
+                                            clipboard.setPrimaryClip(clip)
+                                            if (file.exists()) {
+                                                val sendIntent = Intent(Intent.ACTION_SEND)
+                                                sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "by.carkva_gazeta.malitounik2.fileprovider", file))
+                                                sendIntent.putExtra(Intent.EXTRA_TEXT, sviatyiaList[index].text.trim())
+                                                sendIntent.putExtra(Intent.EXTRA_SUBJECT, sviatyiaList[index].text.trim())
+                                                sendIntent.type = "image/*"
+                                                context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.zmiest)))
+                                            } else {
+                                                val sendIntent = Intent(Intent.ACTION_SEND)
+                                                sendIntent.putExtra(Intent.EXTRA_TEXT, sb.toString())
+                                                sendIntent.putExtra(Intent.EXTRA_SUBJECT, context.getText(R.string.zmiest))
+                                                sendIntent.type = "text/plain"
+                                                context.startActivity(Intent.createChooser(sendIntent, context.getText(R.string.zmiest)))
+                                            }
+                                        }, painter = painterResource(R.drawable.share), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
+                                )
+                            }
+                            if (file.exists()) {
+                                val image = BitmapFactory.decodeFile(sviatyiaList[index].image).asImageBitmap()
+                                var imW = image.width.toFloat()
+                                var imH = image.height.toFloat()
+                                val imageScale: Float = imW / imH
+                                if (imW > 150F) {
+                                    imW = 150F
+                                    imH = 150F / imageScale
+                                }
+                                Image(
+                                    modifier = Modifier
+                                        .size(imW.dp, imH.dp)
+                                        .align(Alignment.CenterHorizontally)
+                                        .clickable {
+                                            fullImagePathVisable = file.absolutePath
+                                            imageFull = true
+                                        }, bitmap = image, contentDescription = ""
+                                )
+                            }
+                            if (sviatyiaList[index].text.isNotEmpty()) {
+                                Text(modifier = Modifier.padding(10.dp), text = sviatyiaList[index].text, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary)
+                            }
+                        }
+                    }
 
-                item {
-                    Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
+                    item {
+                        Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
+                    }
                 }
             }
         }
@@ -767,6 +1094,58 @@ fun checkParliny(context: Context, mun: Int, day: Int): Boolean {
         }
     }
     return false
+}
+
+@Composable
+fun DialogPairlinyView(
+    day: Int,
+    mun: Int,
+    onDismissRequest: () -> Unit,
+) {
+    val context = LocalActivity.current as MainActivity
+    var result by remember { mutableStateOf("") }
+    val piarlin = ArrayList<ArrayList<String>>()
+    val localFile = File("${context.filesDir}/piarliny.json")
+    if (localFile.exists()) {
+        try {
+            val builder = localFile.readText()
+            val gson = Gson()
+            val type = TypeToken.getParameterized(java.util.ArrayList::class.java, TypeToken.getParameterized(java.util.ArrayList::class.java, String::class.java).type).type
+            piarlin.addAll(gson.fromJson(builder, type))
+        } catch (_: Throwable) {
+        }
+    }
+    val cal = GregorianCalendar()
+    piarlin.forEach { piarliny ->
+        cal.timeInMillis = piarliny[0].toLong() * 1000
+        if (day == cal.get(Calendar.DATE) && mun - 1 == cal.get(Calendar.MONTH)) {
+            result = piarliny[1]
+        }
+    }
+    AlertDialog(
+        icon = {
+            Icon(painter = painterResource(R.drawable.description), contentDescription = "")
+        },
+        title = {
+            Text(text = stringResource(R.string.piarliny2, day, stringArrayResource(R.array.meciac_smoll)[mun - 1]))
+        },
+        text = {
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                HtmlText(text = result, fontSize = Settings.fontInterface.sp)
+            }
+        },
+        onDismissRequest = {
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
+            }
+        }
+    )
 }
 
 data class DirList(val name: String?, val sizeBytes: Long)

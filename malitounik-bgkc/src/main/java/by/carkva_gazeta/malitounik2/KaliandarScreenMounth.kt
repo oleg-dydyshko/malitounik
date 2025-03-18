@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import by.carkva_gazeta.malitounik2.ui.theme.BackgroundTolBarDark
 import by.carkva_gazeta.malitounik2.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik2.ui.theme.Divider
 import by.carkva_gazeta.malitounik2.ui.theme.Post
@@ -72,7 +73,6 @@ fun KaliandarScreenMounth(colorBlackboard: Color = Primary,
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 10.dp)
             .clip(shape = RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp))
             .background(colorBlackboard)
             .padding(start = 10.dp, end = 10.dp, top = 10.dp)
@@ -457,7 +457,7 @@ fun KaliandarScreenMounth(colorBlackboard: Color = Primary,
             Column(modifier = Modifier.fillMaxWidth().background(colorBlackboard).clickable {
                 close()
             }) {
-                val tint = if(colorBlackboard == Primary || colorBlackboard == StrogiPost) PrimaryTextBlack
+                val tint = if(colorBlackboard == Primary || colorBlackboard == StrogiPost || colorBlackboard == BackgroundTolBarDark) PrimaryTextBlack
                 else PrimaryText
                 Icon(modifier = Modifier.align(Alignment.End), painter = painterResource(R.drawable.keyboard_arrow_up), contentDescription = "", tint = tint)
             }
