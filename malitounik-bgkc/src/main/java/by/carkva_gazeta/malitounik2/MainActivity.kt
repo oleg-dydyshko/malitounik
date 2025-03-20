@@ -1680,12 +1680,10 @@ class MainActivity : ComponentActivity(), SensorEventListener,
                         onBack()
                     }
                 })
-                if (checkASztoNovagaMD5Sum()) {
-                    var dialogSztoHovahaVisable by rememberSaveable { mutableStateOf(false) }
-                    if (dialogSztoHovahaVisable) {
-                        DialogSztoHovaha {
-                            dialogSztoHovahaVisable = false
-                        }
+                var dialogSztoHovahaVisable by rememberSaveable { mutableStateOf(checkASztoNovagaMD5Sum()) }
+                if (dialogSztoHovahaVisable) {
+                    DialogSztoHovaha {
+                        dialogSztoHovahaVisable = false
                         val prefEditors = k.edit()
                         prefEditors.putInt("chtoNavaha", BuildConfig.VERSION_CODE)
                         prefEditors.apply()
@@ -1757,7 +1755,6 @@ class MainActivity : ComponentActivity(), SensorEventListener,
         val checkMD5 = k.getString("chtoNavahaMD5", "0")
         val edit = k.edit()
         edit.putString("chtoNavahaMD5", md5Hex.toString())
-        edit.remove("chtoNavaha")
         edit.apply()
         return checkMD5 != md5Hex.toString()
     }

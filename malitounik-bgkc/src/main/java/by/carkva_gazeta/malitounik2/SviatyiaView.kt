@@ -102,6 +102,7 @@ import by.carkva_gazeta.malitounik2.views.HtmlText
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.File
@@ -124,10 +125,11 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
         ).isAppearanceLightStatusBars = false
     }
     val context = LocalContext.current
-    val sviatyiaList = remember { mutableStateListOf<OpisanieData>() }
+    val sviatyiaList = remember { MutableStateFlow<ArrayList<OpisanieData>>(ArrayList()) }
     val dirList = remember { mutableStateListOf<DirList>() }
     var dialoNoIntent by remember { mutableStateOf(false) }
     var dialoNoWIFI by remember { mutableStateOf(false) }
+    var isloadIcons by remember { mutableStateOf(false) }
     var isProgressVisable by remember { mutableStateOf(false) }
     if (dialoNoIntent) {
         DialogNoInternet {
@@ -139,8 +141,9 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
             dialoNoWIFI = false
         }) {
             dialoNoWIFI = false
+            isloadIcons = true
             coroutineScope.launch {
-                getIcons(context, dirList, sviatyiaList, svity)
+                getIcons(context, dirList, sviatyiaList.value, svity, isloadIcons, wiFiExists = {})
             }
         }
     }
@@ -178,35 +181,32 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
         coroutineScope.launch {
             isProgressVisable = true
             val fileOpisanie = File("${context.filesDir}/sviatyja/opisanie$mun.json")
-            val fileOpisanie13 = File("${context.filesDir}/sviatyja/opisanie13.json")
             val fileSvity = File("${context.filesDir}/opisanie_sviat.json")
             if (!Settings.isNetworkAvailable(context)) {
-                if (fileOpisanie.exists() || fileOpisanie13.exists()) {
-                    if (!svity) {
-                        loadOpisanieSviatyia(context, sviatyiaList, year, mun, day)
-                    }
-                } else if (fileSvity.exists()) {
-                    if (svity) {
-                        loadOpisanieSviat(context, sviatyiaList, mun, day)
+                if (svity) {
+                    if (fileSvity.exists()) {
+                        loadOpisanieSviat(context, sviatyiaList.value, mun, day)
+                    } else {
+                        dialoNoIntent = true
                     }
                 } else {
-                    dialoNoIntent = true
+                    if (fileOpisanie.exists()) {
+                        loadOpisanieSviatyia(context, sviatyiaList.value, year, mun, day)
+                    } else {
+                        dialoNoIntent = true
+                    }
                 }
             } else {
                 try {
                     if (Settings.isNetworkAvailable(context)) {
                         if (svity) {
-                            getOpisanieSviat(context, sviatyiaList, mun, day)
+                            getOpisanieSviat(context, sviatyiaList.value, mun, day)
                         } else {
-                            getSviatyia(context, sviatyiaList, year, mun, day)
+                            getSviatyia(context, sviatyiaList.value, year, mun, day)
                         }
                         getPiarliny(context)
                         checkPiarliny = checkParliny(context, mun, day)
-                        if (Settings.isNetworkAvailable(context, Settings.TRANSPORT_WIFI)) {
-                            getIcons(context, dirList, sviatyiaList, svity)
-                        } else {
-                            dialoNoWIFI = true
-                        }
+                        getIcons(context, dirList, sviatyiaList.value, svity, isloadIcons, wiFiExists = { dialoNoWIFI = true })
                     } else {
                         dialoNoIntent = true
                     }
@@ -630,30 +630,31 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                     modifier = Modifier.fillMaxSize(),
                     state = lazyListState
                 ) {
-                    items(sviatyiaList.size) { index ->
-                        val file = File(sviatyiaList[index].image)
+                    val sviatyiaListItem = sviatyiaList.value
+                    items(sviatyiaList.value.size) { index ->
+                        val file = File(sviatyiaListItem[index].image)
                         Column {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     modifier = Modifier
                                         .padding(10.dp)
-                                        .weight(1f), text = sviatyiaList[index].title, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary
+                                        .weight(1f), text = sviatyiaListItem[index].title, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary
                                 )
                                 Icon(
                                     modifier = Modifier
                                         .padding(end = 10.dp)
                                         .clickable {
                                             val sb = StringBuilder()
-                                            sb.append(sviatyiaList[index].text)
-                                            sb.append(sviatyiaList[index].text.trim())
+                                            sb.append(sviatyiaListItem[index].text)
+                                            sb.append(sviatyiaListItem[index].text.trim())
                                             val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                                             val clip = ClipData.newPlainText(context.getString(R.string.copy_text), sb.toString())
                                             clipboard.setPrimaryClip(clip)
                                             if (file.exists()) {
                                                 val sendIntent = Intent(Intent.ACTION_SEND)
                                                 sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "by.carkva_gazeta.malitounik2.fileprovider", file))
-                                                sendIntent.putExtra(Intent.EXTRA_TEXT, sviatyiaList[index].text.trim())
-                                                sendIntent.putExtra(Intent.EXTRA_SUBJECT, sviatyiaList[index].text.trim())
+                                                sendIntent.putExtra(Intent.EXTRA_TEXT, sviatyiaListItem[index].text.trim())
+                                                sendIntent.putExtra(Intent.EXTRA_SUBJECT, sviatyiaListItem[index].text.trim())
                                                 sendIntent.type = "image/*"
                                                 context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.zmiest)))
                                             } else {
@@ -667,7 +668,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                                 )
                             }
                             if (file.exists()) {
-                                val image = BitmapFactory.decodeFile(sviatyiaList[index].image).asImageBitmap()
+                                val image = BitmapFactory.decodeFile(sviatyiaListItem[index].image).asImageBitmap()
                                 var imW = image.width.toFloat()
                                 var imH = image.height.toFloat()
                                 val imageScale: Float = imW / imH
@@ -685,8 +686,8 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                                         }, bitmap = image, contentDescription = ""
                                 )
                             }
-                            if (sviatyiaList[index].text.isNotEmpty()) {
-                                Text(modifier = Modifier.padding(10.dp), text = sviatyiaList[index].text, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary)
+                            if (sviatyiaListItem[index].text.isNotEmpty()) {
+                                Text(modifier = Modifier.padding(10.dp), text = sviatyiaListItem[index].text, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary)
                             }
                         }
                     }
@@ -709,7 +710,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
     }
 }
 
-suspend fun getOpisanieSviat(context: Context, sviatyiaList: SnapshotStateList<OpisanieData>, mun: Int, day: Int, count: Int = 0) {
+suspend fun getOpisanieSviat(context: Context, sviatyiaList: ArrayList<OpisanieData>, mun: Int, day: Int, count: Int = 0) {
     val pathReference = MainActivity.referens.child("/opisanie_sviat.json")
     var update = 0L
     var error = false
@@ -728,7 +729,7 @@ suspend fun getOpisanieSviat(context: Context, sviatyiaList: SnapshotStateList<O
     saveOpisanieSviat(context, sviatyiaList, mun, day, update)
 }
 
-suspend fun saveOpisanieSviat(context: Context, sviatyiaList: SnapshotStateList<OpisanieData>, mun: Int, day: Int, update: Long, count: Int = 0) {
+suspend fun saveOpisanieSviat(context: Context, sviatyiaList: ArrayList<OpisanieData>, mun: Int, day: Int, update: Long, count: Int = 0) {
     val pathReference = MainActivity.referens.child("/opisanie_sviat.json")
     val file = File("${context.filesDir}/opisanie_sviat.json")
     var error = false
@@ -750,7 +751,7 @@ suspend fun saveOpisanieSviat(context: Context, sviatyiaList: SnapshotStateList<
     loadOpisanieSviat(context, sviatyiaList, mun, day)
 }
 
-suspend fun getSviatyia(context: Context, sviatyiaList: SnapshotStateList<OpisanieData>, year: Int, mun: Int, day: Int, count: Int = 0) {
+suspend fun getSviatyia(context: Context, sviatyiaList: ArrayList<OpisanieData>, year: Int, mun: Int, day: Int, count: Int = 0) {
     val dir = File("${context.filesDir}/sviatyja/")
     if (!dir.exists()) dir.mkdir()
     var error = false
@@ -785,7 +786,7 @@ suspend fun getSviatyia(context: Context, sviatyiaList: SnapshotStateList<Opisan
     saveOpisanieSviatyia(context, sviatyiaList, update, update13, year, mun, day)
 }
 
-suspend fun saveOpisanieSviatyia(context: Context, sviatyiaList: SnapshotStateList<OpisanieData>, update: Long, update13: Long, year: Int, mun: Int, day: Int, count: Int = 0) {
+suspend fun saveOpisanieSviatyia(context: Context, sviatyiaList: ArrayList<OpisanieData>, update: Long, update13: Long, year: Int, mun: Int, day: Int, count: Int = 0) {
     val pathReference = MainActivity.referens.child("/chytanne/sviatyja/opisanie$mun.json")
     val fileOpisanie = File("${context.filesDir}/sviatyja/opisanie$mun.json")
     val time = fileOpisanie.lastModified()
@@ -820,7 +821,7 @@ suspend fun saveOpisanieSviatyia(context: Context, sviatyiaList: SnapshotStateLi
     loadOpisanieSviatyia(context, sviatyiaList, year, mun, day)
 }
 
-fun loadOpisanieSviatyia(context: Context, sviatyiaList: SnapshotStateList<OpisanieData>, year: Int, mun: Int, day: Int) {
+fun loadOpisanieSviatyia(context: Context, sviatyiaList: ArrayList<OpisanieData>, year: Int, mun: Int, day: Int) {
     val fileOpisanie = File("${context.filesDir}/sviatyja/opisanie$mun.json")
     if (fileOpisanie.exists()) {
         val builder = fileOpisanie.readText()
@@ -927,7 +928,7 @@ fun loadOpisanieSviatyia(context: Context, sviatyiaList: SnapshotStateList<Opisa
     loadIconsOnImageView(context, sviatyiaList, false)
 }
 
-fun loadOpisanieSviat(context: Context, sviatyiaList: SnapshotStateList<OpisanieData>, mun: Int, day: Int) {
+fun loadOpisanieSviat(context: Context, sviatyiaList: ArrayList<OpisanieData>, mun: Int, day: Int) {
     val fileOpisanieSviat = File("${context.filesDir}/opisanie_sviat.json")
     if (fileOpisanieSviat.exists()) {
         val builder = fileOpisanieSviat.readText()
@@ -954,13 +955,18 @@ fun loadOpisanieSviat(context: Context, sviatyiaList: SnapshotStateList<Opisanie
     }
 }
 
-suspend fun getIcons(context: Context, dirList: SnapshotStateList<DirList>, sviatyiaList: SnapshotStateList<OpisanieData>, svity: Boolean, count: Int = 0) {
+suspend fun getIcons(
+    context: Context, dirList: SnapshotStateList<DirList>, sviatyiaList: ArrayList<OpisanieData>, svity: Boolean,
+    isLoadIcon: Boolean,
+    wiFiExists: () -> Unit,
+    count: Int = 0
+) {
     val dir = File("${context.filesDir}/icons/")
     if (!dir.exists()) dir.mkdir()
     val dir2 = File("${context.filesDir}/iconsApisanne")
     if (!dir2.exists()) dir2.mkdir()
     if (count < 3) {
-        getIcons(context, dirList, sviatyiaList, svity, count + 1)
+        getIcons(context, dirList, sviatyiaList, svity, isLoadIcon, wiFiExists, count + 1)
         return
     }
     dirList.clear()
@@ -1013,33 +1019,30 @@ suspend fun getIcons(context: Context, dirList: SnapshotStateList<DirList>, svia
         }
 
     }
-    //if (!loadIcons && Settings.isNetworkAvailable(context, Settings.TRANSPORT_CELLULAR)) {
-    /*if (dirList.isNotEmpty()) {
-        val dialog = DialogOpisanieWIFI.getInstance(size.toFloat())
-        dialog.show(supportFragmentManager, "dialogOpisanieWIFI")
-    } else {
-        binding.progressBar2.visibility = View.INVISIBLE
-    }*/
-    //} else {
-    /*binding.progressBar2.isIndeterminate = false
-    binding.progressBar2.progress = 0
-    binding.progressBar2.max = size.toInt()*/
-    //var progress = 0
-    for (i in 0 until dirList.size) {
-        try {
-            val fileIcon = File("${context.filesDir}/icons/" + dirList[i].name)
-            val pathReference = MainActivity.referens.child("/chytanne/icons/" + dirList[i].name)
-            pathReference.getFile(fileIcon).await()
-            //progress += dirList[i].sizeBytes.toInt()
-            //binding.progressBar2.progress = progress
-        } catch (_: Throwable) {
+    if (!isLoadIcon && Settings.isNetworkAvailable(context, Settings.TRANSPORT_CELLULAR)) {
+        if (dirList.isNotEmpty()) {
+            wiFiExists()
         }
+    } else {
+        /*binding.progressBar2.isIndeterminate = false
+        binding.progressBar2.progress = 0
+        binding.progressBar2.max = size.toInt()*/
+        //var progress = 0
+        for (i in 0 until dirList.size) {
+            try {
+                val fileIcon = File("${context.filesDir}/icons/" + dirList[i].name)
+                val pathReference = MainActivity.referens.child("/chytanne/icons/" + dirList[i].name)
+                pathReference.getFile(fileIcon).await()
+                //progress += dirList[i].sizeBytes.toInt()
+                //binding.progressBar2.progress = progress
+            } catch (_: Throwable) {
+            }
+        }
+        loadIconsOnImageView(context, sviatyiaList, svity)
     }
-    loadIconsOnImageView(context, sviatyiaList, svity)
-    //}
 }
 
-fun loadIconsOnImageView(context: Context, sviatyiaList: SnapshotStateList<OpisanieData>, svity: Boolean) {
+fun loadIconsOnImageView(context: Context, sviatyiaList: ArrayList<OpisanieData>, svity: Boolean) {
     val pref = if (svity) "v"
     else "s"
     val fileList = File("${context.filesDir}/icons").list()

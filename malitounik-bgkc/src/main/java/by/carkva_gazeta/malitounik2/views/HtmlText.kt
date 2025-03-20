@@ -94,28 +94,36 @@ fun HtmlText(
             dialogSztoHovahaVisable = false
         }
     }
+    val annotatedString = AnnotatedString.fromHtml(
+        newText,
+        TextLinkStyles(
+            SpanStyle(
+                color = MaterialTheme.colorScheme.primary,
+                textDecoration = TextDecoration.Underline
+            )
+        )
+    ) { link ->
+        val url = (link as LinkAnnotation.Url).url
+        if (url == "https://localhost/shto.novaga/") {
+            dialogSztoHovahaVisable = true
+        } else {
+            uriHandler.openUri(url)
+        }
+    }
     Text(
         fontWeight = fontWeight,
         color = color,
         modifier = modifier,
-        text = AnnotatedString.fromHtml(
-            newText,
-            TextLinkStyles(
-                SpanStyle(
-                    color = MaterialTheme.colorScheme.primary,
-                    textDecoration = TextDecoration.Underline
-                )
-            )
-        ) { link ->
-            val url = (link as LinkAnnotation.Url).url
-            if (url == "https://localhost/shto.novaga/") {
-                dialogSztoHovahaVisable = true
-            } else {
-                uriHandler.openUri(url)
-            }
-        },
+        text = annotatedString,
         fontSize = fontSize,
         lineHeight = fontSize * 1.15f,
-        textAlign = textAlign
+        textAlign = textAlign/*,
+        onTextLayout = { layout ->
+            val line = layout.getLineForOffset(t1)
+            y = layout.getLineTop(line)
+            //val lineForVertical = layout.getLineForVerticalPosition(scrollStateValue.toFloat() + innerPadding.calculateTopPadding().value)
+            //val lineForOffset = layout.getLineForOffset(t1)
+            //Log.d("Oleg", "$lineForVertical $y $line")
+        }*/
     )
 }

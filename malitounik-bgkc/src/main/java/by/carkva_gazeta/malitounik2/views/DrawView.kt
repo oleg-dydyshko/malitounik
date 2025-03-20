@@ -49,30 +49,10 @@ import by.carkva_gazeta.malitounik2.R
 import by.carkva_gazeta.malitounik2.ServiceRadyjoMaryia
 import by.carkva_gazeta.malitounik2.Settings
 import by.carkva_gazeta.malitounik2.WidgetRadyjoMaryia
+import by.carkva_gazeta.malitounik2.ui.theme.SecondaryText
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import kotlin.random.Random
-
-/*val LocalInterface = staticCompositionLocalOf<ServiceRadyjoMaryia.ServiceRadyjoMaryiaListener> { error("Not provided") }
-var icon = true
-
-class InterfaceImpl: ServiceRadyjoMaryia.ServiceRadyjoMaryiaListener {
-    override fun errorRadioMaria() {
-    }
-
-    override fun setTitleRadioMaryia(title: String) {
-    }
-
-    override fun unBinding() {
-    }
-
-    override fun playingRadioMaria(isPlayingRadioMaria: Boolean) {
-        icon = isPlayingRadioMaria
-    }
-
-    override fun playingRadioMariaStateReady() {
-    }
-}*/
 
 @Composable
 fun DrawView(
@@ -80,13 +60,6 @@ fun DrawView(
     route: String,
     navigateToRazdel: (String) -> Unit = { }
 ) {
-    /*val inter = remember { InterfaceImpl() }
-    CompositionLocalProvider(
-        LocalInterface provides inter
-    ) {
-        val inner = LocalInterface.current
-        inner.unBinding()
-    }*/
     val context = LocalActivity.current as MainActivity
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var dialogNoInternet by remember { mutableStateOf(false) }
@@ -115,7 +88,8 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.kaliandar2),
-                    fontSize = Settings.fontInterface.sp
+                    fontSize = Settings.fontInterface.sp,
+                    color = MaterialTheme.colorScheme.secondary
                 )
             },
             selected = route.contains(AllDestinations.KALIANDAR),
@@ -137,7 +111,8 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.liturgikon),
-                    fontSize = Settings.fontInterface.sp
+                    fontSize = Settings.fontInterface.sp,
+                    color = MaterialTheme.colorScheme.secondary
                 )
             },
             selected = route == AllDestinations.BOGASLUJBOVYIA_MENU,
@@ -159,7 +134,8 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.malitvy),
-                    fontSize = Settings.fontInterface.sp
+                    fontSize = Settings.fontInterface.sp,
+                    color = MaterialTheme.colorScheme.secondary
                 )
             },
             selected = route == AllDestinations.MALITVY_MENU,
@@ -181,7 +157,8 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.akafisty),
-                    fontSize = Settings.fontInterface.sp
+                    fontSize = Settings.fontInterface.sp,
+                    color = MaterialTheme.colorScheme.secondary
                 )
             },
             selected = route == AllDestinations.AKAFIST_MENU,
@@ -203,7 +180,8 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.ruzanec),
-                    fontSize = Settings.fontInterface.sp
+                    fontSize = Settings.fontInterface.sp,
+                    color = MaterialTheme.colorScheme.secondary
                 )
             },
             selected = route == AllDestinations.RUJANEC_MENU,
@@ -225,7 +203,8 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.maje_natatki),
-                    fontSize = Settings.fontInterface.sp
+                    fontSize = Settings.fontInterface.sp,
+                    color = MaterialTheme.colorScheme.secondary
                 )
             },
             selected = route == AllDestinations.MAE_NATATKI_MENU,
@@ -247,7 +226,8 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.MenuVybranoe),
-                    fontSize = Settings.fontInterface.sp
+                    fontSize = Settings.fontInterface.sp,
+                    color = MaterialTheme.colorScheme.secondary
                 )
             },
             selected = route == AllDestinations.VYBRANAE_LIST,
@@ -273,7 +253,8 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.bibliaAll),
-                    fontSize = Settings.fontInterface.sp
+                    fontSize = Settings.fontInterface.sp,
+                    color = MaterialTheme.colorScheme.secondary
                 )
             },
             selected = route == AllDestinations.BIBLIA,
@@ -297,7 +278,7 @@ fun DrawView(
         ) {
             Icon(
                 modifier = Modifier
-                    .padding(start = 22.dp)
+                    .padding(start = 21.dp, end = 2.dp)
                     .size(24.dp, 24.dp),
                 painter = painterResource(R.drawable.krest),
                 tint = MaterialTheme.colorScheme.primary,
@@ -308,7 +289,8 @@ fun DrawView(
                     .padding(10.dp)
                     .weight(1f),
                 text = stringResource(id = R.string.padie_maryia),
-                fontSize = Settings.fontInterface.sp
+                fontSize = Settings.fontInterface.sp,
+                color = MaterialTheme.colorScheme.secondary
             )
             if (Settings.isProgressVisableRadyjoMaryia.value) {
                 CircularProgressIndicator(modifier = Modifier.padding(horizontal = 10.dp).size(24.dp, 24.dp))
@@ -405,7 +387,8 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.bibliateka_carkvy),
-                    fontSize = Settings.fontInterface.sp
+                    fontSize = Settings.fontInterface.sp,
+                    color = MaterialTheme.colorScheme.secondary
                 )
             },
             selected = route == AllDestinations.BIBLIJATEKA_LIST,
@@ -427,7 +410,8 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.song),
-                    fontSize = Settings.fontInterface.sp
+                    fontSize = Settings.fontInterface.sp,
+                    color = MaterialTheme.colorScheme.secondary
                 )
             },
             selected = route == AllDestinations.PIESNY_LIST,
@@ -453,7 +437,8 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.spovedz),
-                    fontSize = Settings.fontInterface.sp
+                    fontSize = Settings.fontInterface.sp,
+                    color = MaterialTheme.colorScheme.secondary
                 )
             },
             selected = route == AllDestinations.PADRYXTOUKA,
@@ -475,7 +460,8 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.pamiatka),
-                    fontSize = Settings.fontInterface.sp
+                    fontSize = Settings.fontInterface.sp,
+                    color = MaterialTheme.colorScheme.secondary
                 )
             },
             selected = route == AllDestinations.PAMIATKA,
@@ -497,7 +483,8 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.sviaty),
-                    fontSize = Settings.fontInterface.sp
+                    fontSize = Settings.fontInterface.sp,
+                    color = MaterialTheme.colorScheme.secondary
                 )
             },
             selected = route == AllDestinations.SVAITY_MUNU,
@@ -519,7 +506,8 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.parafii),
-                    fontSize = Settings.fontInterface.sp
+                    fontSize = Settings.fontInterface.sp,
+                    color = MaterialTheme.colorScheme.secondary
                 )
             },
             selected = route == AllDestinations.PARAFII_BGKC,
@@ -541,7 +529,8 @@ fun DrawView(
             label = {
                 Text(
                     text = stringResource(id = R.string.paschalia),
-                    fontSize = Settings.fontInterface.sp
+                    fontSize = Settings.fontInterface.sp,
+                    color = MaterialTheme.colorScheme.secondary
                 )
             },
             selected = route == AllDestinations.PASHALIA,
@@ -592,7 +581,7 @@ fun DrawerHeader(modifier: Modifier) {
                     fontWeight = FontWeight.Bold,
                     fontStyle = FontStyle.Italic,
                     color = MaterialTheme.colorScheme.primary,
-                    fontSize = 30.sp
+                    fontSize = (Settings.fontInterface + 4).sp
                 ), 0, 1
             )
             addStyle(SpanStyle(fontFamily = FontFamily(Font(R.font.comici))), 1, this.length)
@@ -601,18 +590,18 @@ fun DrawerHeader(modifier: Modifier) {
         Text(
             modifier = modifier.fillMaxWidth(),
             text = annotated,
-            fontSize = 18.sp,
+            fontSize = (Settings.fontInterface - 2).sp,
             textAlign = TextAlign.End,
             fontStyle = FontStyle.Italic,
-            color = MaterialTheme.colorScheme.secondary,
+            color = SecondaryText,
         )
 
         Text(
             modifier = modifier.fillMaxWidth(),
             text = stringResource(R.string.malitounik_name),
             textAlign = TextAlign.Center,
-            fontSize = 40.sp,
-            lineHeight = 30.sp * 1.15,
+            fontSize = (Settings.fontInterface + 8).sp,
+            lineHeight = ((Settings.fontInterface + 8) * 1.15).sp,
             color = MaterialTheme.colorScheme.primary,
         )
 
@@ -624,7 +613,7 @@ fun DrawerHeader(modifier: Modifier) {
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.secondary,
-            fontSize = 18.sp
+            fontSize = (Settings.fontInterface - 2).sp
         )
     }
 }
