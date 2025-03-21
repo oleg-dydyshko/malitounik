@@ -68,16 +68,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextLinkStyles
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.Velocity
@@ -255,31 +248,27 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
         ).isAppearanceLightStatusBars = false
     }
     val maxLine = remember { mutableIntStateOf(1) }
-    var anotatedString by remember { mutableStateOf(AnnotatedString("")) }
-    var anotatedStringLoad by remember { mutableStateOf(true) }
-    val linkStyles = TextLinkStyles(
+    var htmlText by rememberSaveable { mutableStateOf("") }
+    //var anotatedStringLoad by remember { mutableStateOf(true) }
+    /*val linkStyles = TextLinkStyles(
         SpanStyle(
             color = MaterialTheme.colorScheme.primary,
             textDecoration = TextDecoration.Underline
         )
-    )
+    )*/
     LaunchedEffect(Unit) {
         val inputStream = context.resources.openRawResource(resurs)
         val isr = InputStreamReader(inputStream)
         val reader = BufferedReader(isr)
-        val text = reader.readText()
-        val dzenHoch = (context as MainActivity).dzenNoch
-        val newText = if (dzenHoch) text.replace("#d00505", "#ff6666", true)
-        else text
-        anotatedString = AnnotatedString.fromHtml(newText)
+        htmlText = reader.readText()
     }
-    var dialogLiturgia by remember { mutableStateOf(false) }
-    var chast by remember { mutableIntStateOf(0) }
-    if (dialogLiturgia) {
+    //var dialogLiturgia by remember { mutableStateOf(false) }
+    //var chast by remember { mutableIntStateOf(0) }
+    /*if (dialogLiturgia) {
         DialogLiturgia(chast) {
             dialogLiturgia = false
         }
-    }
+    }*/
     Scaffold(
         topBar = {
             if (!fullscreen) {
@@ -674,7 +663,7 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
             }
             Column(
                 modifier = Modifier
-                    .padding(start = 10.dp, end = 10.dp, top = 10.dp)
+                    .padding(horizontal = 10.dp)
                     .pointerInput(PointerEventType.Press) {
                         awaitPointerEventScope {
                             while (true) {
@@ -692,7 +681,13 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                     .verticalScroll(scrollState),
                 verticalArrangement = Arrangement.Top
             ) {
-                Text(
+                Spacer(Modifier.padding(top = 10.dp))
+                HtmlText(
+                    text = htmlText,
+                    fontSize = fontSize.sp,
+                    scrollState = scrollState
+                )
+                /*Text(
                     text = anotatedString,
                     fontSize = fontSize.sp,
                     lineHeight = (fontSize * 1.15).sp,
@@ -1215,7 +1210,7 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                             }
                         }
                     }
-                )
+                )*/
                 Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
                 if (scrollState.lastScrolledForward && !scrollState.canScrollForward) {
                     autoScroll = false
@@ -1430,7 +1425,9 @@ fun DialogLiturgia(
             Text(text = title)
         },
         text = {
-            HtmlText(text = item, fontSize = Settings.fontInterface.sp)
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                HtmlText(text = item, fontSize = Settings.fontInterface.sp)
+            }
         },
         onDismissRequest = {
             onDismissRequest()
