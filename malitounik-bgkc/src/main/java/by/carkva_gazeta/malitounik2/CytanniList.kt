@@ -100,7 +100,6 @@ import androidx.core.text.isDigitsOnly
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik2.ui.theme.Button
@@ -137,7 +136,7 @@ class CytanniListItems(
     private val page: Int,
     cytanne: String,
     perevod: String
-) : ViewModel() {
+) {
     private val t1 = cytanne.indexOf(";")
     private val knigaText = if (t1 == -1) cytanne.substringBeforeLast(" ")
     else {
@@ -2108,7 +2107,7 @@ fun knigaBiblii(kniga: String): Int {
     if (kniga == "Эст") bible = 19
     if (kniga == "Ёва") bible = 20
     if (kniga == "Пс") bible = 21
-    if (kniga == "Высл") bible = 22
+    if (kniga == "Высл" || kniga == "Прып") bible = 22
     if (kniga == "Экл") bible = 23
     if (kniga == "Псн") bible = 24
     if (kniga == "Мдр") bible = 25

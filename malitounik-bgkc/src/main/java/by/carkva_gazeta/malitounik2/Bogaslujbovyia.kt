@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
@@ -87,6 +86,7 @@ import by.carkva_gazeta.malitounik2.ui.theme.Primary
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik2.views.HtmlText
+import by.carkva_gazeta.malitounik2.views.findCaliandarToDay
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
@@ -101,7 +101,10 @@ import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int) {
+fun Bogaslujbovyia(
+    navController: NavHostController, title: String, resurs: Int,
+    navigateTo: (String) -> Unit = {}
+) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var fontSize by remember { mutableFloatStateOf(k.getFloat("font_biblia", 22F)) }
@@ -128,8 +131,8 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
             )
         )
     }
-    //val listState = rememberLazyListState()
     val scrollState = rememberScrollState()
+    val scrollStateDop = rememberScrollState()
     val gson = Gson()
     val type =
         TypeToken.getParameterized(ArrayList::class.java, VybranaeDataAll::class.java).type
@@ -203,9 +206,14 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
         }
     }
     var backPressHandled by remember { mutableStateOf(false) }
-    BackHandler(!backPressHandled || fullscreen || showDropdown) {
+    var iskniga by remember { mutableStateOf(false) }
+    BackHandler(!backPressHandled || fullscreen || showDropdown || iskniga) {
         when {
             fullscreen -> fullscreen = false
+            iskniga -> {
+                showDropdown = true
+                iskniga = false
+            }
             showDropdown -> {
                 showDropdown = false
                 if (autoScrollSensor) autoScroll = true
@@ -249,26 +257,14 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
     }
     val maxLine = remember { mutableIntStateOf(1) }
     var htmlText by rememberSaveable { mutableStateOf("") }
-    //var anotatedStringLoad by remember { mutableStateOf(true) }
-    /*val linkStyles = TextLinkStyles(
-        SpanStyle(
-            color = MaterialTheme.colorScheme.primary,
-            textDecoration = TextDecoration.Underline
-        )
-    )*/
     LaunchedEffect(Unit) {
         val inputStream = context.resources.openRawResource(resurs)
         val isr = InputStreamReader(inputStream)
         val reader = BufferedReader(isr)
         htmlText = reader.readText()
     }
-    //var dialogLiturgia by remember { mutableStateOf(false) }
-    //var chast by remember { mutableIntStateOf(0) }
-    /*if (dialogLiturgia) {
-        DialogLiturgia(chast) {
-            dialogLiturgia = false
-        }
-    }*/
+    var subTitle by remember { mutableStateOf("") }
+    var subText by remember { mutableStateOf("") }
     Scaffold(
         topBar = {
             if (!fullscreen) {
@@ -282,7 +278,7 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                                     maxLine.intValue = 1
                                 }
                             },
-                            text = title,
+                            text = if (iskniga) subTitle else title,
                             color = MaterialTheme.colorScheme.onSecondary,
                             fontWeight = FontWeight.Bold,
                             maxLines = maxLine.intValue,
@@ -291,120 +287,153 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                         )
                     },
                     navigationIcon = {
-                        IconButton(onClick = {
-                            when {
-                                fullscreen -> fullscreen = false
-                                showDropdown -> {
-                                    showDropdown = false
-                                    if (autoScrollSensor) autoScroll = true
-                                }
+                        if (iskniga) {
+                            IconButton(onClick = {
+                                iskniga = false
+                                showDropdown = true
+                                if (autoScrollSensor) autoScroll = true
+                            },
+                                content = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.close),
+                                        tint = MaterialTheme.colorScheme.onSecondary,
+                                        contentDescription = ""
+                                    )
+                                })
+                        } else {
+                            IconButton(onClick = {
+                                when {
+                                    fullscreen -> fullscreen = false
+                                    iskniga -> {
+                                        showDropdown = true
+                                        iskniga = false
+                                    }
+                                    showDropdown -> {
+                                        showDropdown = false
+                                        if (autoScrollSensor) autoScroll = true
+                                    }
 
-                                else -> {
-                                    navController.popBackStack()
+                                    else -> {
+                                        navController.popBackStack()
+                                    }
                                 }
-                            }
-                        },
-                            content = {
-                                Icon(
-                                    painter = painterResource(R.drawable.arrow_back),
-                                    tint = MaterialTheme.colorScheme.onSecondary,
-                                    contentDescription = ""
-                                )
-                            })
+                            },
+                                content = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.arrow_back),
+                                        tint = MaterialTheme.colorScheme.onSecondary,
+                                        contentDescription = ""
+                                    )
+                                })
+                        }
                     },
                     actions = {
-                        var expanded by remember { mutableStateOf(false) }
-                        if (scrollState.canScrollForward) {
-                            val iconAutoScroll =
-                                if (autoScrollSensor) painterResource(R.drawable.stop_circle)
-                                else painterResource(R.drawable.play_circle)
-                            val actyvity = LocalActivity.current
-                            IconButton(onClick = {
-                                autoScroll = !autoScroll
-                                autoScrollSensor = !autoScrollSensor
-                                if (autoScrollSensor) actyvity?.window?.addFlags(
-                                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                                )
-                                else actyvity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                            }) {
+                        if (!iskniga) {
+                            var expanded by remember { mutableStateOf(false) }
+                            if (resurs == R.raw.lit_jana_zalatavusnaha || resurs == R.raw.lit_jan_zalat_vielikodn || resurs == R.raw.lit_vasila_vialikaha || resurs == R.raw.abiednica || resurs == R.raw.vialikdzien_liturhija) {
+                                IconButton(onClick = {
+                                    showDropdown = true
+                                    menuPosition = 2
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.book_red),
+                                        contentDescription = "",
+                                        tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
+                            }
+                            if (scrollState.canScrollForward) {
+                                val iconAutoScroll =
+                                    if (autoScrollSensor) painterResource(R.drawable.stop_circle)
+                                    else painterResource(R.drawable.play_circle)
+                                val actyvity = LocalActivity.current
+                                IconButton(onClick = {
+                                    autoScroll = !autoScroll
+                                    autoScrollSensor = !autoScrollSensor
+                                    if (autoScrollSensor) actyvity?.window?.addFlags(
+                                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                    )
+                                    else actyvity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                }) {
+                                    Icon(
+                                        iconAutoScroll,
+                                        contentDescription = "",
+                                        tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
+                            } else if (scrollState.canScrollBackward) {
+                                IconButton(onClick = {
+                                    isUpList = true
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.arrow_upward),
+                                        contentDescription = "",
+                                        tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
+                            }
+                            IconButton(onClick = { expanded = true }) {
                                 Icon(
-                                    iconAutoScroll,
+                                    painter = painterResource(R.drawable.more_vert),
                                     contentDescription = "",
                                     tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
-                        } else if (scrollState.canScrollBackward) {
-                            IconButton(onClick = {
-                                isUpList = true
-                            }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.arrow_upward),
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.onSecondary
+                            DropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false }
+                            ) {
+                                DropdownMenuItem(
+                                    onClick = {
+                                        expanded = false
+                                        saveVybranoe = true
+                                    },
+                                    text = {
+                                        if (isVybranoe) Text(stringResource(R.string.vybranoe_del), fontSize = Settings.fontInterface.sp)
+                                        else Text(stringResource(R.string.vybranoe), fontSize = Settings.fontInterface.sp)
+                                    },
+                                    trailingIcon = {
+                                        val icon = if (isVybranoe) painterResource(R.drawable.stars)
+                                        else painterResource(R.drawable.star)
+                                        Icon(
+                                            painter = icon,
+                                            contentDescription = ""
+                                        )
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    onClick = {
+                                        expanded = false
+                                        if (autoScrollSensor) autoScroll = true
+                                        fullscreen = true
+                                    },
+                                    text = { Text(stringResource(R.string.fullscreen), fontSize = Settings.fontInterface.sp) },
+                                    trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.fullscreen),
+                                            contentDescription = ""
+                                        )
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    onClick = {
+                                        showDropdown = !showDropdown
+                                        autoScroll = false
+                                        expanded = false
+                                        menuPosition = 1
+                                    },
+                                    text = { Text(stringResource(R.string.menu_font_size_app), fontSize = Settings.fontInterface.sp) }
+                                )
+                                DropdownMenuItem(
+                                    onClick = {
+                                        showDropdown = !showDropdown
+                                        autoScroll = false
+                                        expanded = false
+                                        menuPosition = 3
+                                    },
+                                    text = { Text(stringResource(R.string.dzen_noch), fontSize = Settings.fontInterface.sp) }
                                 )
                             }
-                        }
-                        IconButton(onClick = { expanded = true }) {
-                            Icon(
-                                painter = painterResource(R.drawable.more_vert),
-                                contentDescription = "",
-                                tint = MaterialTheme.colorScheme.onSecondary
-                            )
-                        }
-                        DropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false }
-                        ) {
-                            DropdownMenuItem(
-                                onClick = {
-                                    expanded = false
-                                    saveVybranoe = true
-                                },
-                                text = {
-                                    if (isVybranoe) Text(stringResource(R.string.vybranoe_del), fontSize = Settings.fontInterface.sp)
-                                    else Text(stringResource(R.string.vybranoe), fontSize = Settings.fontInterface.sp)
-                                },
-                                trailingIcon = {
-                                    val icon = if (isVybranoe) painterResource(R.drawable.stars)
-                                    else painterResource(R.drawable.star)
-                                    Icon(
-                                        painter = icon,
-                                        contentDescription = ""
-                                    )
-                                }
-                            )
-                            DropdownMenuItem(
-                                onClick = {
-                                    expanded = false
-                                    if (autoScrollSensor) autoScroll = true
-                                    fullscreen = true
-                                },
-                                text = { Text(stringResource(R.string.fullscreen), fontSize = Settings.fontInterface.sp) },
-                                trailingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.fullscreen),
-                                        contentDescription = ""
-                                    )
-                                }
-                            )
-                            DropdownMenuItem(
-                                onClick = {
-                                    showDropdown = !showDropdown
-                                    autoScroll = false
-                                    expanded = false
-                                    menuPosition = 1
-                                },
-                                text = { Text(stringResource(R.string.menu_font_size_app), fontSize = Settings.fontInterface.sp) }
-                            )
-                            DropdownMenuItem(
-                                onClick = {
-                                    showDropdown = !showDropdown
-                                    autoScroll = false
-                                    expanded = false
-                                    menuPosition = 3
-                                },
-                                text = { Text(stringResource(R.string.dzen_noch), fontSize = Settings.fontInterface.sp) }
-                            )
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
@@ -424,8 +453,10 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
             Popup(
                 alignment = Alignment.TopCenter,
                 onDismissRequest = {
-                    showDropdown = false
-                    if (autoScrollSensor) autoScroll = true
+                    if (iskniga) {
+                        showDropdown = false
+                        if (autoScrollSensor) autoScroll = true
+                    }
                 }
             ) {
                 AnimatedVisibility(
@@ -452,6 +483,42 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                             .background(MaterialTheme.colorScheme.tertiary)
                     ) {
                         Column {
+                            if (menuPosition == 2) {
+                                Column {
+                                    val data = findCaliandarToDay(context)
+                                    val listResource = ArrayList<SlugbovyiaTextuData>()
+                                    listResource.addAll(SlugbovyiaTextu().loadSluzbaDayList(SlugbovyiaTextu.LITURHIJA, data[24].toInt(), data[3].toInt()))
+                                    if (data[0].toInt() == Calendar.SUNDAY) {
+                                        if (data[20] != "0") {
+                                            val trapary = getTraparyKandakiNiadzelnyia()
+                                            listResource.add(0, SlugbovyiaTextuData(0, trapary[data[20].toInt() - 1].title, trapary[data[20].toInt() - 1].resurs, SlugbovyiaTextu.LITURHIJA))
+                                        }
+                                    } else {
+                                        val trapary = getTraparyKandakiShtodzennyia()
+                                        listResource.add(0, SlugbovyiaTextuData(0, trapary[data[0].toInt() - 2].title.replace("\n", ": "), trapary[data[0].toInt() - 2].resurs, SlugbovyiaTextu.LITURHIJA))
+                                    }
+                                    for (i in listResource.indices) {
+                                        Text(
+                                            text = listResource[i].title,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(10.dp)
+                                                .clickable {
+                                                    subTitle = listResource[i].title
+                                                    val inputStream = context.resources.openRawResource(listResource[i].resource)
+                                                    val isr = InputStreamReader(inputStream)
+                                                    val reader = BufferedReader(isr)
+                                                    subText = reader.readText()
+                                                    iskniga = true
+                                                    showDropdown = false
+                                                    autoScroll = false
+                                                },
+                                            fontSize = Settings.fontInterface.sp,
+                                            color = MaterialTheme.colorScheme.secondary
+                                        )
+                                    }
+                                }
+                            }
                             if (menuPosition == 3) {
                                 Column(Modifier.selectableGroup())
                                 {
@@ -681,537 +748,15 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                     .verticalScroll(scrollState),
                 verticalArrangement = Arrangement.Top
             ) {
-                Spacer(Modifier.padding(top = 10.dp))
                 HtmlText(
+                    modifier = Modifier.padding(top = 10.dp, bottom = innerPadding.calculateBottomPadding().plus(10.dp)),
                     text = htmlText,
                     fontSize = fontSize.sp,
-                    scrollState = scrollState
-                )
-                /*Text(
-                    text = anotatedString,
-                    fontSize = fontSize.sp,
-                    lineHeight = (fontSize * 1.15).sp,
-                    color = MaterialTheme.colorScheme.secondary,
-                    onTextLayout = { layout ->
-                        if (anotatedStringLoad && anotatedString.isNotEmpty()) {
-                            anotatedStringLoad = false
-                            anotatedString = buildAnnotatedString {
-                                val spanned = anotatedString
-                                append(spanned)
-                                var string = "Пасьля чытаецца ікас 1 і кандак 1."
-                                var strLig = string.length
-                                var t1 = spanned.indexOf(string)
-                                if (t1 != -1) {
-                                    addLink(
-                                        LinkAnnotation.Clickable(
-                                            string, linkInteractionListener = {
-                                                coroutineScope.launch {
-                                                    scrollState.animateScrollTo(0)
-                                                }
-                                            }, styles = linkStyles
-                                        ), t1, t1 + strLig
-                                    )
-                                }
-                                string = "Малітвы пасьля сьвятога прычасьця"
-                                strLig = string.length
-                                t1 = spanned.indexOf(string)
-                                if (t1 != -1) {
-                                    addLink(
-                                        LinkAnnotation.Clickable(
-                                            string, linkInteractionListener = {
-                                                //val intent = Intent(this@Bogashlugbovya, MalitvyPasliaPrychascia::class.java)
-                                                //startActivity(intent)
-                                            }, styles = linkStyles
-                                        ), t1, t1 + strLig
-                                    )
-                                }
-                                val string11 = "[1]"
-                                val strLig11 = string11.length
-                                val t11 = spanned.indexOf(string11)
-                                if (t11 != -1) {
-                                    addLink(
-                                        LinkAnnotation.Clickable(
-                                            string, linkInteractionListener = {
-                                                coroutineScope.launch {
-                                                    val strPosition = spanned.indexOf("ПЕРШАЯ ГАДЗІНА", t11 + strLig11)
-                                                    val line = layout.getLineForOffset(strPosition)
-                                                    val y = layout.getLineTop(line)
-                                                    scrollState.animateScrollTo(y.toInt())
-                                                }
-                                            }, styles = linkStyles
-                                        ), t11, t11 + strLig11
-                                    )
-                                }
-                                val string3 = "[3]"
-                                val strLig3 = string3.length
-                                val t3 = spanned.indexOf(string3)
-                                if (t3 != -1) {
-                                    addLink(
-                                        LinkAnnotation.Clickable(
-                                            string, linkInteractionListener = {
-                                                coroutineScope.launch {
-                                                    val strPosition = spanned.indexOf("ТРЭЦЯЯ ГАДЗІНА", t3 + strLig3)
-                                                    val line = layout.getLineForOffset(strPosition)
-                                                    val y = layout.getLineTop(line)
-                                                    scrollState.animateScrollTo(y.toInt())
-                                                }
-                                            }, styles = linkStyles
-                                        ), t3, t3 + strLig3
-                                    )
-                                }
-                                val string6 = "[6]"
-                                val strLig6 = string6.length
-                                val t6 = spanned.indexOf(string6)
-                                if (t6 != -1) {
-                                    addLink(
-                                        LinkAnnotation.Clickable(
-                                            string, linkInteractionListener = {
-                                                coroutineScope.launch {
-                                                    val strPosition = spanned.indexOf("ШОСТАЯ ГАДЗІНА", t6 + strLig6)
-                                                    val line = layout.getLineForOffset(strPosition)
-                                                    val y = layout.getLineTop(line)
-                                                    scrollState.animateScrollTo(y.toInt())
-                                                }
-                                            }, styles = linkStyles
-                                        ), t6, t6 + strLig6
-                                    )
-                                }
-                                var string9 = "[9]"
-                                var strLig9 = string9.length
-                                var t9 = spanned.indexOf(string9)
-                                if (t9 != -1) {
-                                    addLink(
-                                        LinkAnnotation.Clickable(
-                                            string, linkInteractionListener = {
-                                                coroutineScope.launch {
-                                                    val strPosition = spanned.indexOf("ДЗЯВЯТАЯ ГАДЗІНА", t9 + strLig9)
-                                                    val line = layout.getLineForOffset(strPosition)
-                                                    val y = layout.getLineTop(line)
-                                                    scrollState.animateScrollTo(y.toInt())
-                                                }
-                                            }, styles = linkStyles
-                                        ), t9, t9 + strLig9
-                                    )
-                                }
-                                if (resurs == R.raw.abiednica) {
-                                    val stringBSA = "Заканчэньне ў час Вялікага посту гл. ніжэй"
-                                    val strLigBSA = stringBSA.length
-                                    val bsat1 = spanned.indexOf(stringBSA)
-                                    if (bsat1 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    coroutineScope.launch {
-                                                        val strPosition = spanned.indexOf("Заканчэньне абедніцы", bsat1 + strLigBSA, true)
-                                                        val line = layout.getLineForOffset(strPosition)
-                                                        val y = layout.getLineTop(line)
-                                                        scrollState.animateScrollTo(y.toInt())
-                                                    }
-                                                }, styles = linkStyles
-                                            ), bsat1, bsat1 + strLigBSA
-                                        )
-                                    }
-                                }
-                                if (resurs == R.raw.viaczernia_niadzelnaja) {
-                                    string = "ліцьця і блаславеньне хлябоў"
-                                    strLig = string.length
-                                    t1 = spanned.indexOf(string)
-                                    if (t1 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    /*val intent = Intent(this@Bogashlugbovya, Bogashlugbovya::class.java)
-                                                intent.putExtra("autoscrollOFF", autoscroll)
-                                                intent.putExtra("title", "Ліцьця і блаславеньне хлябоў")
-                                                intent.putExtra("resurs", "viaczernia_liccia_i_blaslavenne_chliabou")
-                                                startActivity(intent)*/
-                                                }, styles = linkStyles
-                                            ), t1, t1 + strLig
-                                        )
-                                    }
-                                }
-                                if (resurs == R.raw.lit_raniej_asviaczanych_darou) {
-                                    val stringVB = "зусім прапускаюцца"
-                                    val strLigVB = stringVB.length
-                                    val vbt1 = spanned.indexOf(stringVB)
-                                    if (vbt1 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    coroutineScope.launch {
-                                                        val strPosition = spanned.indexOf("Калі ёсьць 10 песьняў", vbt1 + strLigVB, true)
-                                                        val line = layout.getLineForOffset(strPosition)
-                                                        val y = layout.getLineTop(line)
-                                                        scrollState.animateScrollTo(y.toInt())
-                                                    }
-                                                }, styles = linkStyles
-                                            ), vbt1, vbt1 + strLigVB
-                                        )
-                                    }
-                                }
-                                if (resurs == R.raw.viaczerniaja_sluzba_sztodzionnaja_biez_sviatara) {
-                                    var stringVB = "выбраныя вершы з псалмаў 1-3"
-                                    var strLigVB = stringVB.length
-                                    var vbt1 = spanned.indexOf(stringVB)
-                                    if (vbt1 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    chast = 11
-                                                    dialogLiturgia = true
-                                                }, styles = linkStyles
-                                            ), vbt1, vbt1 + strLigVB
-                                        )
-                                    }
-                                    stringVB = "прапускаюцца"
-                                    strLigVB = stringVB.length
-                                    vbt1 = spanned.indexOf(stringVB)
-                                    if (vbt1 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    coroutineScope.launch {
-                                                        val strPosition = spanned.indexOf("Вызваль з вязьніцы душу маю", vbt1 + strLigVB, true)
-                                                        val line = layout.getLineForOffset(strPosition)
-                                                        val y = layout.getLineTop(line)
-                                                        scrollState.animateScrollTo(y.toInt())
-                                                    }
-                                                }, styles = linkStyles
-                                            ), vbt1, vbt1 + strLigVB
-                                        )
-                                    }
-                                    stringVB = "гл. тут."
-                                    strLigVB = stringVB.length
-                                    vbt1 = spanned.indexOf(stringVB)
-                                    if (vbt1 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    chast = 13
-                                                    dialogLiturgia = true
-                                                }, styles = linkStyles
-                                            ), vbt1, vbt1 + strLigVB
-                                        )
-                                    }
-                                    stringVB = "«Госпадзе, Цябе клічу»"
-                                    strLigVB = stringVB.length
-                                    vbt1 = spanned.indexOf(stringVB)
-                                    if (vbt1 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    coroutineScope.launch {
-                                                        val strPosition = spanned.indexOf("Псалом 140", vbt1 + strLigVB, true)
-                                                        val line = layout.getLineForOffset(strPosition)
-                                                        val y = layout.getLineTop(line)
-                                                        scrollState.animateScrollTo(y.toInt())
-                                                    }
-                                                }, styles = linkStyles
-                                            ), vbt1, vbt1 + strLigVB
-                                        )
-                                    }
-                                    val stringVB2 = "гл. ніжэй."
-                                    val strLigVB2 = stringVB2.length
-                                    val vbt2 = spanned.indexOf(stringVB2)
-                                    if (vbt2 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    coroutineScope.launch {
-                                                        val strPosition = spanned.indexOf("ЗАКАНЧЭНЬНЕ ВЯЧЭРНІ Ў ВЯЛІКІ ПОСТ", vbt2 + strLigVB2, true)
-                                                        val line = layout.getLineForOffset(strPosition)
-                                                        val y = layout.getLineTop(line)
-                                                        scrollState.animateScrollTo(y.toInt())
-                                                    }
-                                                }, styles = linkStyles
-                                            ), vbt2, vbt2 + strLigVB2
-                                        )
-                                    }
-                                }
-                                if (resurs == R.raw.lit_jana_zalatavusnaha || resurs == R.raw.lit_jan_zalat_vielikodn || resurs == R.raw.lit_vasila_vialikaha || resurs == R.raw.abiednica || resurs == R.raw.vialikdzien_liturhija) {
-                                    var stringBS = "Пс 102 (гл. тут)."
-                                    var strLigBS = stringBS.length
-                                    var bst1 = spanned.indexOf(stringBS)
-                                    if (bst1 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    chast = 1
-                                                    dialogLiturgia = true
-                                                }, styles = linkStyles
-                                            ), bst1, bst1 + strLigBS
-                                        )
-                                    }
-                                    stringBS = "Пс 91. (Гл. тут)."
-                                    strLigBS = stringBS.length
-                                    bst1 = spanned.indexOf(stringBS)
-                                    if (bst1 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    chast = 2
-                                                    dialogLiturgia = true
-                                                }, styles = linkStyles
-                                            ), bst1, bst1 + strLigBS
-                                        )
-                                    }
-                                    stringBS = "(Пс 145). (Гл. тут)."
-                                    strLigBS = stringBS.length
-                                    bst1 = spanned.indexOf(stringBS)
-                                    if (bst1 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    chast = 3
-                                                    dialogLiturgia = true
-                                                }, styles = linkStyles
-                                            ), bst1, bst1 + strLigBS
-                                        )
-                                    }
-                                    stringBS = "Пс 92. (Гл. тут)."
-                                    strLigBS = stringBS.length
-                                    bst1 = spanned.indexOf(stringBS)
-                                    if (bst1 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    chast = 4
-                                                    dialogLiturgia = true
-                                                }, styles = linkStyles
-                                            ), bst1, bst1 + strLigBS
-                                        )
-                                    }
-                                    stringBS = "Пс 94. (Гл. тут)."
-                                    strLigBS = stringBS.length
-                                    bst1 = spanned.indexOf(stringBS)
-                                    if (bst1 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    chast = 10
-                                                    dialogLiturgia = true
-                                                }, styles = linkStyles
-                                            ), bst1, bst1 + strLigBS
-                                        )
-                                    }
-                                    stringBS = "Іншы антыфон сьвяточны і нядзельны (Мц 5:3-12):"
-                                    strLigBS = stringBS.length
-                                    bst1 = spanned.indexOf(stringBS)
-                                    if (bst1 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    chast = 5
-                                                    dialogLiturgia = true
-                                                }, styles = linkStyles
-                                            ), bst1, bst1 + strLigBS
-                                        )
-                                    }
-                                    stringBS = "Малітва за памерлых"
-                                    strLigBS = stringBS.length
-                                    bst1 = spanned.indexOf(stringBS)
-                                    if (bst1 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    chast = 6
-                                                    dialogLiturgia = true
-                                                }, styles = linkStyles
-                                            ), bst1, bst1 + strLigBS
-                                        )
-                                    }
-                                    stringBS = "Малітва за пакліканых"
-                                    strLigBS = stringBS.length
-                                    bst1 = spanned.indexOf(stringBS)
-                                    if (bst1 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    chast = 7
-                                                    dialogLiturgia = true
-                                                }, styles = linkStyles
-                                            ), bst1, bst1 + strLigBS
-                                        )
-                                    }
-                                    stringBS = "Успамін памерлых і жывых"
-                                    strLigBS = stringBS.length
-                                    bst1 = spanned.indexOf(stringBS)
-                                    if (bst1 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    chast = 14
-                                                    dialogLiturgia = true
-                                                }, styles = linkStyles
-                                            ), bst1, bst1 + strLigBS
-                                        )
-                                    }
-                                    var stringBS2 = "Адзінародны Сыне (гл. тут)"
-                                    var strLigBS2 = stringBS2.length
-                                    var bst2 = spanned.indexOf(stringBS2)
-                                    if (bst2 == -1) {
-                                        stringBS2 = "«Адзінародны Сыне» (↓ гл. тут)"
-                                        strLigBS2 = stringBS2.length
-                                        bst2 = spanned.indexOf(stringBS2)
-                                    }
-                                    if (bst2 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    coroutineScope.launch {
-                                                        val strPosition = spanned.indexOf("Адзінародны Сыне", bst2 + strLigBS2, true)
-                                                        val line = layout.getLineForOffset(strPosition)
-                                                        val y = layout.getLineTop(line)
-                                                        scrollState.animateScrollTo(y.toInt())
-                                                    }
-                                                }, styles = linkStyles
-                                            ), bst2, bst2 + strLigBS2
-                                        )
-                                    }
-                                }
-                                if (resurs == R.raw.lit_jana_zalatavusnaha) {
-                                    var stringBS = "«Блаславі, душа мая, Госпада...»"
-                                    var strLigBS = stringBS.length
-                                    var bst1 = spanned.indexOf(stringBS)
-                                    if (bst1 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    chast = 1
-                                                    dialogLiturgia = true
-                                                }, styles = linkStyles
-                                            ), bst1, bst1 + strLigBS
-                                        )
-                                    }
-                                    stringBS = "«Добра ёсьць славіць Госпада...»"
-                                    strLigBS = stringBS.length
-                                    bst1 = spanned.indexOf(stringBS)
-                                    if (bst1 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    chast = 2
-                                                    dialogLiturgia = true
-                                                }, styles = linkStyles
-                                            ), bst1, bst1 + strLigBS
-                                        )
-                                    }
-                                    stringBS = "«Хвалі, душа мая, Госпада...»"
-                                    strLigBS = stringBS.length
-                                    bst1 = spanned.indexOf(stringBS)
-                                    if (bst1 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    chast = 3
-                                                    dialogLiturgia = true
-                                                }, styles = linkStyles
-                                            ), bst1, bst1 + strLigBS
-                                        )
-                                    }
-                                    stringBS = "«Госпад пануе, Ён апрануўся ў красу...»"
-                                    strLigBS = stringBS.length
-                                    bst1 = spanned.indexOf(stringBS)
-                                    if (bst1 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    chast = 4
-                                                    dialogLiturgia = true
-                                                }, styles = linkStyles
-                                            ), bst1, bst1 + strLigBS
-                                        )
-                                    }
-                                    stringBS = "«У валадарстве Тваім успомні нас, Госпадзе...»"
-                                    strLigBS = stringBS.length
-                                    bst1 = spanned.indexOf(stringBS)
-                                    if (bst1 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    chast = 5
-                                                    dialogLiturgia = true
-                                                }, styles = linkStyles
-                                            ), bst1, bst1 + strLigBS
-                                        )
-                                    }
-                                }
-                                if (resurs == R.raw.mm_25_03_dabravieszczannie_liturhija_subota_niadziela) {
-                                    string9 = "Гл. тут"
-                                    strLig9 = string9.length
-                                    t9 = spanned.indexOf(string9)
-                                    if (t9 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    /*val intent = Intent(this@Bogashlugbovya, Bogashlugbovya::class.java)
-                                                intent.putExtra("autoscrollOFF", autoscroll)
-                                                intent.putExtra("title", "Дабравешчаньне Найсьвяцейшай Багародзіцы")
-                                                intent.putExtra("resurs", "mm_25_03_dabravieszczannie_viaczernia_z_liturhijaj")
-                                                startActivity(intent)*/
-                                                }, styles = linkStyles
-                                            ), t9, t9 + strLig9
-                                        )
-                                    }
-                                }
-                                if (resurs == R.raw.kanon_andreja_kryckaha_4_czastki) {
-                                    string9 = "Аўторак ↓"
-                                    strLig9 = string9.length
-                                    t9 = spanned.indexOf(string9)
-                                    if (t9 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    coroutineScope.launch {
-                                                        val strPosition = spanned.indexOf("АЎТОРАК", t9 + strLig9, true)
-                                                        val line = layout.getLineForOffset(strPosition)
-                                                        val y = layout.getLineTop(line)
-                                                        scrollState.animateScrollTo(y.toInt())
-                                                    }
-                                                }, styles = linkStyles
-                                            ), t9, t9 + strLig9
-                                        )
-                                    }
-                                    string9 = "Серада ↓"
-                                    strLig9 = string9.length
-                                    t9 = spanned.indexOf(string9)
-                                    if (t9 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    coroutineScope.launch {
-                                                        val strPosition = spanned.indexOf("СЕРАДА", t9 + strLig9, true)
-                                                        val line = layout.getLineForOffset(strPosition)
-                                                        val y = layout.getLineTop(line)
-                                                        scrollState.animateScrollTo(y.toInt())
-                                                    }
-                                                }, styles = linkStyles
-                                            ), t9, t9 + strLig9
-                                        )
-                                    }
-                                    string9 = "Чацьвер ↓"
-                                    strLig9 = string9.length
-                                    t9 = spanned.indexOf(string9)
-                                    if (t9 != -1) {
-                                        addLink(
-                                            LinkAnnotation.Clickable(
-                                                string, linkInteractionListener = {
-                                                    coroutineScope.launch {
-                                                        val strPosition = spanned.indexOf("ЧАЦЬВЕР", t9 + strLig9, true)
-                                                        val line = layout.getLineForOffset(strPosition)
-                                                        val y = layout.getLineTop(line)
-                                                        scrollState.animateScrollTo(y.toInt())
-                                                    }
-                                                }, styles = linkStyles
-                                            ), t9, t9 + strLig9
-                                        )
-                                    }
-                                }
-                            }
-                        }
+                    scrollState = scrollState,
+                    navigateTo = { navigate ->
+                        navigateTo(navigate)
                     }
-                )*/
-                Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
+                )
                 if (scrollState.lastScrolledForward && !scrollState.canScrollForward) {
                     autoScroll = false
                     autoScrollSensor = false
@@ -1317,6 +862,25 @@ fun Bogaslujbovyia(navController: NavHostController, title: String, resurs: Int)
                         )
                     }
                 }
+            }
+        }
+        if (iskniga) {
+            Column(
+                modifier = Modifier
+                    .padding(
+                        innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+                        innerPadding.calculateTopPadding(),
+                        innerPadding.calculateEndPadding(LayoutDirection.Rtl),
+                        0.dp
+                    )
+                    .background(MaterialTheme.colorScheme.background)
+                    .verticalScroll(scrollStateDop)
+            ) {
+                HtmlText(
+                    modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 10.dp, bottom = innerPadding.calculateBottomPadding().plus(10.dp)),
+                    text = subText,
+                    fontSize = fontSize.sp
+                )
             }
         }
     }

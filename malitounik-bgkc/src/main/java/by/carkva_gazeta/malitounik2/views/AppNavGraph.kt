@@ -118,6 +118,7 @@ import by.carkva_gazeta.malitounik2.SviatyList
 import by.carkva_gazeta.malitounik2.SviatyiaView
 import by.carkva_gazeta.malitounik2.VybranaeList
 import by.carkva_gazeta.malitounik2.getFontInterface
+import by.carkva_gazeta.malitounik2.removeZnakiAndSlovy
 import by.carkva_gazeta.malitounik2.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik2.ui.theme.Divider
 import by.carkva_gazeta.malitounik2.ui.theme.Post
@@ -170,10 +171,10 @@ class Biblijateka(private val fileName: String) : PagingSource<Int, Int>() {
 
 @Composable
 fun AppNavGraph(
-    navController: NavHostController = rememberNavController(),
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 ) {
+    val navController: NavHostController = rememberNavController()
+    val coroutineScope: CoroutineScope = rememberCoroutineScope()
+    val drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     BackHandler(
         enabled = drawerState.isClosed,
     ) {
@@ -388,7 +389,39 @@ fun AppNavGraph(
         ) { stackEntry ->
             val title = stackEntry.arguments?.getString("title") ?: ""
             val resurs = stackEntry.arguments?.getInt("resurs") ?: R.raw.bogashlugbovya_error
-            Bogaslujbovyia(navController, title, resurs)
+            val context = LocalContext.current
+            Bogaslujbovyia(navController, title, resurs,
+                navigateTo = { navigate ->
+                    when (navigate) {
+                        "malitvypasliaprychastia" -> {
+                            navigationActions.navigateToMalitvyListAll("МАЛІТВЫ ПАСЬЛЯ СЬВЯТОГА ПРЫЧАСЬЦЯ", Settings.MENU_MALITVY_PASLIA_PRYCHASCIA)
+                        }
+
+                        "litciaiblaslavennechl" -> {
+                            navigationActions.navigateToBogaslujbovyia("Ліцьця і блаславеньне хлябоў", R.raw.viaczernia_liccia_i_blaslavenne_chliabou)
+                        }
+
+                        "gliadzitutdabraveshchane" -> {
+                            navigationActions.navigateToBogaslujbovyia("Дабравешчаньне Найсьвяцейшай Багародзіцы", R.raw.mm_25_03_dabravieszczannie_viaczernia_z_liturhijaj)
+                        }
+
+                        "cytanne" -> {
+                            val data = findCaliandarToDay(context)
+                            val titleCh = context.getString(
+                                R.string.czytanne3,
+                                data[1].toInt(),
+                                context.resources.getStringArray(R.array.meciac_smoll)[2]
+                            )
+                            navigationActions.navigateToCytanniList(
+                                titleCh,
+                                removeZnakiAndSlovy(data[9]),
+                                Settings.CHYTANNI_LITURGICHNYIA,
+                                Settings.PEREVODSEMUXI,
+                                -1
+                            )
+                        }
+                    }
+                })
         }
 
         composable(
@@ -453,14 +486,43 @@ fun AppNavGraph(
     }
 }
 
+fun findCaliandarToDay(context: Context): ArrayList<String> {
+    var positionResult = 0
+    if (Settings.data.isEmpty()) {
+        val gson = Gson()
+        val type = TypeToken.getParameterized(
+            ArrayList::class.java,
+            TypeToken.getParameterized(
+                ArrayList::class.java,
+                String::class.java
+            ).type
+        ).type
+        val inputStream = context.resources.openRawResource(R.raw.caliandar)
+        val isr = InputStreamReader(inputStream)
+        val reader = BufferedReader(isr)
+        val builder = reader.use {
+            it.readText()
+        }
+        Settings.data.addAll(gson.fromJson(builder, type))
+    }
+    val calendar = Calendar.getInstance()
+    for (i in Settings.data.indices) {
+        if (calendar[Calendar.DATE] == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
+            positionResult = i
+            break
+        }
+    }
+    return Settings.data[positionResult]
+}
+
 @Composable
 fun findCaliandarPosition(position: Int): ArrayList<ArrayList<String>> {
     if (Settings.data.isEmpty()) {
         val gson = Gson()
         val type = TypeToken.getParameterized(
-            java.util.ArrayList::class.java,
+            ArrayList::class.java,
             TypeToken.getParameterized(
-                java.util.ArrayList::class.java,
+                ArrayList::class.java,
                 String::class.java
             ).type
         ).type
@@ -1277,50 +1339,50 @@ fun DialogUmounyiaZnachenni(
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.primary)
                 Text(
-                        modifier = Modifier
-                            .padding(top = 10.dp)
-                            .background(Primary)
-                            .padding(10.dp),
-                        text = stringResource(R.string.niadzeli_i_sviaty),
-                        fontSize = Settings.fontInterface.sp,
-                        color = PrimaryTextBlack
-                    )
+                    modifier = Modifier
+                        .padding(top = 10.dp)
+                        .background(Primary)
+                        .padding(10.dp),
+                    text = stringResource(R.string.niadzeli_i_sviaty),
+                    fontSize = Settings.fontInterface.sp,
+                    color = PrimaryTextBlack
+                )
                 Text(
-                        modifier = Modifier
-                            .padding(top = 10.dp)
-                            .background(Divider)
-                            .padding(10.dp),
-                        text = stringResource(R.string.zvychaynye_dny),
-                        fontSize = Settings.fontInterface.sp,
-                        color = PrimaryText
-                    )
+                    modifier = Modifier
+                        .padding(top = 10.dp)
+                        .background(Divider)
+                        .padding(10.dp),
+                    text = stringResource(R.string.zvychaynye_dny),
+                    fontSize = Settings.fontInterface.sp,
+                    color = PrimaryText
+                )
                 Text(
-                        modifier = Modifier
-                            .padding(top = 10.dp)
-                            .background(BezPosta)
-                            .padding(10.dp),
-                        text = stringResource(R.string.No_post_n),
-                        fontSize = Settings.fontInterface.sp,
-                        color = PrimaryText
-                    )
+                    modifier = Modifier
+                        .padding(top = 10.dp)
+                        .background(BezPosta)
+                        .padding(10.dp),
+                    text = stringResource(R.string.No_post_n),
+                    fontSize = Settings.fontInterface.sp,
+                    color = PrimaryText
+                )
                 Text(
-                        modifier = Modifier
-                            .padding(top = 10.dp)
-                            .background(Post)
-                            .padding(10.dp),
-                        text = stringResource(R.string.Post),
-                        fontSize = Settings.fontInterface.sp,
-                        color = PrimaryText
-                    )
+                    modifier = Modifier
+                        .padding(top = 10.dp)
+                        .background(Post)
+                        .padding(10.dp),
+                    text = stringResource(R.string.Post),
+                    fontSize = Settings.fontInterface.sp,
+                    color = PrimaryText
+                )
                 Text(
-                        modifier = Modifier
-                            .padding(top = 10.dp)
-                            .background(StrogiPost)
-                            .padding(10.dp),
-                        text = stringResource(R.string.Strogi_post_n),
-                        fontSize = Settings.fontInterface.sp,
-                        color = PrimaryTextBlack
-                    )
+                    modifier = Modifier
+                        .padding(top = 10.dp)
+                        .background(StrogiPost)
+                        .padding(10.dp),
+                    text = stringResource(R.string.Strogi_post_n),
+                    fontSize = Settings.fontInterface.sp,
+                    color = PrimaryTextBlack
+                )
             }
         },
         onDismissRequest = {

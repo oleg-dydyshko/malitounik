@@ -3965,7 +3965,7 @@ class SlugbovyiaTextu {
         return list
     }
 
-    /*fun loadSluzbaDayList(
+    fun loadSluzbaDayList(
         slugbaType: Int,
         dayOfYear: Int,
         year: Int
@@ -3982,24 +3982,7 @@ class SlugbovyiaTextu {
         val resultDay = ArrayList<SlugbovyiaTextuData>()
         for (i in resultSlugba.indices) {
             day = resultSlugba[i].day
-            when {
-                day >= 1000 -> {
-                    dayOfYearReal = getRealDay(day, dayOfYear, year)
-                }
-
-                resultSlugba[i].pasxa -> {
-                    /*MenuCaliandar.getDataCalaindar(year = year).forEach {
-                        if (it[22].toInt() == day) {
-                            dayOfYearReal = it[24].toInt()
-                            return@forEach
-                        }
-                    }*/
-                }
-
-                else -> {
-                    dayOfYearReal = day
-                }
-            }
+            dayOfYearReal = getRealDay(day, dayOfYear, year, resultSlugba[i].pasxa)
             val calendar = GregorianCalendar()
             calendar[Calendar.YEAR] = year
             var addDay = 0
@@ -4010,7 +3993,7 @@ class SlugbovyiaTextu {
             }
         }
         return resultDay
-    }*/
+    }
 
     /*fun loadPiarliny() {
         if (piarliny.size == 0 && loadPiarlinyJob?.isActive != true) {

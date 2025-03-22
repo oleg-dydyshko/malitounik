@@ -455,75 +455,64 @@ fun KaliandarScreen(
                 val r1 = p.dat.split(".")
                 val r2 = p.datK.split(".")
                 gc[r1[2].toInt(), r1[1].toInt() - 1] = r1[0].toInt()
-                //val naY = gc[Calendar.YEAR]
-                //val na = gc[Calendar.DAY_OF_YEAR]
                 gc[r2[2].toInt(), r2[1].toInt() - 1] = r2[0].toInt()
                 val yaerw = gc[Calendar.YEAR]
-                //val kon = gc[Calendar.DAY_OF_YEAR]
-                //var rezkK = kon - na + 1
-                /*if (yaerw > naY) {
-                    var leapYear = 365
-                    if (gc.isLeapYear(naY)) leapYear = 366
-                    //rezkK = leapYear - na + kon
-                }*/
                 gc[r1[2].toInt(), r1[1].toInt() - 1] = r1[0].toInt()
-                //for (i in 0 until rezkK) {
-                    var dayofyear = gc[Calendar.DAY_OF_YEAR]
-                    if (!gc.isLeapYear(yaerw) && dayofyear > 59) {
-                        dayofyear++
+                var dayofyear = gc[Calendar.DAY_OF_YEAR]
+                if (!gc.isLeapYear(yaerw) && dayofyear > 59) {
+                    dayofyear++
+                }
+                if (dayofyear == data[24].toInt() && gc[Calendar.YEAR] == data[3].toInt()) {
+                    val title = p.padz
+                    val data2 = p.dat
+                    val time = p.tim
+                    val dataK = p.datK
+                    val timeK = p.timK
+                    val paz = p.paznic
+                    var res = stringResource(R.string.sabytie_no_pavedam)
+                    val konecSabytie = p.konecSabytie
+                    val realTime = Calendar.getInstance().timeInMillis
+                    var paznicia = false
+                    if (paz != 0L) {
+                        gc.timeInMillis = paz
+                        var nol1 = ""
+                        var nol2 = ""
+                        var nol3 = ""
+                        if (gc[Calendar.DATE] < 10) nol1 = "0"
+                        if (gc[Calendar.MONTH] < 9) nol2 = "0"
+                        if (gc[Calendar.MINUTE] < 10) nol3 = "0"
+                        res = stringResource(
+                            R.string.sabytie_pavedam,
+                            nol1,
+                            gc[Calendar.DAY_OF_MONTH],
+                            nol2,
+                            gc[Calendar.MONTH] + 1,
+                            gc[Calendar.YEAR],
+                            gc[Calendar.HOUR_OF_DAY],
+                            nol3,
+                            gc[Calendar.MINUTE]
+                        )
+                        if (realTime > paz) paznicia = true
                     }
-                    if (dayofyear == data[24].toInt() && gc[Calendar.YEAR] == data[3].toInt()) {
-                        val title = p.padz
-                        val data2 = p.dat
-                        val time = p.tim
-                        val dataK = p.datK
-                        val timeK = p.timK
-                        val paz = p.paznic
-                        var res = stringResource(R.string.sabytie_no_pavedam)
-                        val konecSabytie = p.konecSabytie
-                        val realTime = Calendar.getInstance().timeInMillis
-                        var paznicia = false
-                        if (paz != 0L) {
-                            gc.timeInMillis = paz
-                            var nol1 = ""
-                            var nol2 = ""
-                            var nol3 = ""
-                            if (gc[Calendar.DATE] < 10) nol1 = "0"
-                            if (gc[Calendar.MONTH] < 9) nol2 = "0"
-                            if (gc[Calendar.MINUTE] < 10) nol3 = "0"
-                            res = stringResource(
-                                R.string.sabytie_pavedam,
-                                nol1,
-                                gc[Calendar.DAY_OF_MONTH],
-                                nol2,
-                                gc[Calendar.MONTH] + 1,
-                                gc[Calendar.YEAR],
-                                gc[Calendar.HOUR_OF_DAY],
-                                nol3,
-                                gc[Calendar.MINUTE]
-                            )
-                            if (realTime > paz) paznicia = true
-                        }
-                        val spannable = if (!konecSabytie) {
-                            stringResource(
-                                R.string.sabytieKali,
-                                data2,
-                                time,
-                                res
-                            )
-                        } else {
-                            stringResource(
-                                R.string.sabytieDoKuda,
-                                data2,
-                                time,
-                                dataK,
-                                timeK,
-                                res
-                            )
-                        }
-                        SetPadzeia(title, spannable, p.color, paznicia, res)
+                    val spannable = if (!konecSabytie) {
+                        stringResource(
+                            R.string.sabytieKali,
+                            data2,
+                            time,
+                            res
+                        )
+                    } else {
+                        stringResource(
+                            R.string.sabytieDoKuda,
+                            data2,
+                            time,
+                            dataK,
+                            timeK,
+                            res
+                        )
                     }
-                //}
+                    SetPadzeia(title, spannable, p.color, paznicia, res)
+                }
             }
         }
         val svityDrugasnuia = AnnotatedString.Builder("").apply {
