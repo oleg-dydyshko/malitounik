@@ -7,7 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -81,7 +80,7 @@ fun DrawView(
     ) {
         DrawerHeader(modifier)
         HorizontalDivider(
-            modifier = modifier.padding(vertical = 10.dp),
+            modifier = modifier.padding(bottom = 5.dp),
             color = MaterialTheme.colorScheme.secondary
         )
         NavigationDrawerItem(
@@ -246,7 +245,7 @@ fun DrawView(
             modifier = modifier.padding(horizontal = 5.dp)
         )
         HorizontalDivider(
-            modifier = modifier.padding(vertical = 10.dp),
+            modifier = modifier.padding(vertical = 5.dp),
             color = MaterialTheme.colorScheme.secondary
         )
         NavigationDrawerItem(
@@ -430,7 +429,7 @@ fun DrawView(
             modifier = modifier.padding(horizontal = 5.dp)
         )
         HorizontalDivider(
-            modifier = modifier.padding(vertical = 10.dp),
+            modifier = modifier.padding(vertical = 5.dp),
             color = MaterialTheme.colorScheme.secondary
         )
         NavigationDrawerItem(
@@ -605,13 +604,10 @@ fun DrawerHeader(modifier: Modifier) {
             color = MaterialTheme.colorScheme.primary,
         )
 
-        Spacer(modifier = Modifier.padding(5.dp))
-
         Text(
             modifier = modifier.fillMaxWidth(),
             text = stringResource(R.string.bgkc_resource),
             textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.secondary,
             fontSize = (Settings.fontInterface - 2).sp
         )

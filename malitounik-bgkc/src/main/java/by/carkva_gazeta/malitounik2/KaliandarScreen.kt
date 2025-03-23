@@ -64,7 +64,8 @@ fun KaliandarScreen(
     data: ArrayList<String>,
     innerPadding: PaddingValues,
     navigateToCytanneList: (String, String, Int) -> Unit,
-    navigateToSvityiaView: (svity: Boolean, year: Int, mun: Int, day: Int) -> Unit
+    navigateToSvityiaView: (svity: Boolean, year: Int, mun: Int, day: Int) -> Unit,
+    navigateToBogaslujbovyia: (title: String, resurs: Int) -> Unit
 ) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
@@ -106,7 +107,20 @@ fun KaliandarScreen(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Column(modifier = Modifier.size(50.dp, 100.dp)) {
-                    if (data[7].toInt() > 0) {
+                    if (data[20] != "0" && data[0].toInt() == Calendar.SUNDAY) {
+                        Text(
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .clickable {
+                                    val trapary = getTraparyKandakiNiadzelnyia()
+                                    navigateToBogaslujbovyia(trapary[data[20].toInt() - 1].title, trapary[data[20].toInt() - 1].resurs)
+                                },
+                            text = "Тон ${data[20]}",
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = Settings.fontInterface.sp
+                        )
+                    } else if (data[7].toInt() > 0) {
                         if (text != "") {
                             Text(
                                 modifier = Modifier

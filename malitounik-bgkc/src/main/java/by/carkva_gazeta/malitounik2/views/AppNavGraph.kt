@@ -420,6 +420,36 @@ fun AppNavGraph(
                                 -1
                             )
                         }
+                        "cytannesvityx" -> {
+                            val data = findCaliandarToDay(context)
+                            val titleCh = context.getString(
+                                R.string.czytanne3,
+                                data[1].toInt(),
+                                context.resources.getStringArray(R.array.meciac_smoll)[2]
+                            )
+                            navigationActions.navigateToCytanniList(
+                                titleCh,
+                                removeZnakiAndSlovy(data[10]),
+                                Settings.CHYTANNI_LITURGICHNYIA,
+                                Settings.PEREVODSEMUXI,
+                                -1
+                            )
+                        }
+                        "cytannedop" -> {
+                            val data = findCaliandarToDay(context)
+                            val titleCh = context.getString(
+                                R.string.czytanne3,
+                                data[1].toInt(),
+                                context.resources.getStringArray(R.array.meciac_smoll)[2]
+                            )
+                            navigationActions.navigateToCytanniList(
+                                titleCh,
+                                removeZnakiAndSlovy(data[11]),
+                                Settings.CHYTANNI_LITURGICHNYIA,
+                                Settings.PEREVODSEMUXI,
+                                -1
+                            )
+                        }
                     }
                 })
         }
@@ -1075,6 +1105,9 @@ fun MainConteiner(
                                 },
                                 navigateToSvityiaView = { svity, year, mun, day ->
                                     navigationActions.navigateToSvityiaView(svity, year, mun, day)
+                                },
+                                navigateToBogaslujbovyia = { title, resurs ->
+                                    navigationActions.navigateToBogaslujbovyia(title, resurs)
                                 }
                             )
                         }

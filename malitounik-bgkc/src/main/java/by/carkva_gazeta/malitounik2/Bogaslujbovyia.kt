@@ -33,6 +33,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -214,6 +215,7 @@ fun Bogaslujbovyia(
                 showDropdown = true
                 iskniga = false
             }
+
             showDropdown -> {
                 showDropdown = false
                 if (autoScrollSensor) autoScroll = true
@@ -308,6 +310,7 @@ fun Bogaslujbovyia(
                                         showDropdown = true
                                         iskniga = false
                                     }
+
                                     showDropdown -> {
                                         showDropdown = false
                                         if (autoScrollSensor) autoScroll = true
@@ -330,7 +333,7 @@ fun Bogaslujbovyia(
                     actions = {
                         if (!iskniga) {
                             var expanded by remember { mutableStateOf(false) }
-                            if (resurs == R.raw.lit_jana_zalatavusnaha || resurs == R.raw.lit_jan_zalat_vielikodn || resurs == R.raw.lit_vasila_vialikaha || resurs == R.raw.abiednica || resurs == R.raw.vialikdzien_liturhija) {
+                            if (resurs == R.raw.lit_jana_zalatavusnaha || resurs == R.raw.lit_jan_zalat_vielikodn || resurs == R.raw.lit_vasila_vialikaha || resurs == R.raw.abiednica || resurs == R.raw.vialikdzien_liturhija || resurs == R.raw.viaczernia_niadzelnaja || resurs == R.raw.viaczernia_na_kozny_dzen || resurs == R.raw.viaczernia_u_vialikim_poscie || resurs == R.raw.viaczerniaja_sluzba_sztodzionnaja_biez_sviatara || resurs == R.raw.viaczernia_svietly_tydzien || resurs == R.raw.jutran_niadzelnaja) {
                                 IconButton(onClick = {
                                     showDropdown = true
                                     menuPosition = 2
@@ -453,7 +456,7 @@ fun Bogaslujbovyia(
             Popup(
                 alignment = Alignment.TopCenter,
                 onDismissRequest = {
-                    if (iskniga) {
+                    if (menuPosition != 2) {
                         showDropdown = false
                         if (autoScrollSensor) autoScroll = true
                     }
@@ -487,19 +490,30 @@ fun Bogaslujbovyia(
                                 Column {
                                     val data = findCaliandarToDay(context)
                                     val listResource = ArrayList<SlugbovyiaTextuData>()
-                                    listResource.addAll(SlugbovyiaTextu().loadSluzbaDayList(SlugbovyiaTextu.LITURHIJA, data[24].toInt(), data[3].toInt()))
-                                    if (data[0].toInt() == Calendar.SUNDAY) {
-                                        if (data[20] != "0") {
-                                            val trapary = getTraparyKandakiNiadzelnyia()
-                                            listResource.add(0, SlugbovyiaTextuData(0, trapary[data[20].toInt() - 1].title, trapary[data[20].toInt() - 1].resurs, SlugbovyiaTextu.LITURHIJA))
+                                    when (resurs) {
+                                        R.raw.lit_jana_zalatavusnaha, R.raw.lit_jan_zalat_vielikodn, R.raw.lit_vasila_vialikaha, R.raw.abiednica -> {
+                                            if (data[0].toInt() == Calendar.SUNDAY) {
+                                                if (data[20] != "0") {
+                                                    val trapary = getTraparyKandakiNiadzelnyia()
+                                                    listResource.add(SlugbovyiaTextuData(0, trapary[data[20].toInt() - 1].title, trapary[data[20].toInt() - 1].resurs, SlugbovyiaTextu.LITURHIJA))
+                                                }
+                                            } else {
+                                                val trapary = getTraparyKandakiShtodzennyia()
+                                                listResource.add(SlugbovyiaTextuData(0, trapary[data[0].toInt() - 2].title.replace("\n", ": "), trapary[data[0].toInt() - 2].resurs, SlugbovyiaTextu.LITURHIJA))
+                                            }
+                                            listResource.addAll(SlugbovyiaTextu().loadSluzbaDayList(SlugbovyiaTextu.LITURHIJA, data[24].toInt(), data[3].toInt()))
                                         }
-                                    } else {
-                                        val trapary = getTraparyKandakiShtodzennyia()
-                                        listResource.add(0, SlugbovyiaTextuData(0, trapary[data[0].toInt() - 2].title.replace("\n", ": "), trapary[data[0].toInt() - 2].resurs, SlugbovyiaTextu.LITURHIJA))
+
+                                        R.raw.jutran_niadzelnaja -> {
+                                            listResource.addAll(SlugbovyiaTextu().loadSluzbaDayList(SlugbovyiaTextu.JUTRAN, data[24].toInt(), data[3].toInt()))
+                                        }
+
+                                        else -> {
+                                            listResource.addAll(SlugbovyiaTextu().loadSluzbaDayList(SlugbovyiaTextu.VIACZERNIA, data[24].toInt(), data[3].toInt()))
+                                        }
                                     }
                                     for (i in listResource.indices) {
-                                        Text(
-                                            text = listResource[i].title,
+                                        Row(
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .padding(10.dp)
@@ -513,9 +527,54 @@ fun Bogaslujbovyia(
                                                     showDropdown = false
                                                     autoScroll = false
                                                 },
-                                            fontSize = Settings.fontInterface.sp,
-                                            color = MaterialTheme.colorScheme.secondary
-                                        )
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Icon(
+                                                modifier = Modifier.size(12.dp, 12.dp),
+                                                painter = painterResource(R.drawable.krest),
+                                                tint = MaterialTheme.colorScheme.primary,
+                                                contentDescription = null
+                                            )
+                                            Text(
+                                                modifier = Modifier.padding(start = 10.dp),
+                                                text = listResource[i].title,
+                                                fontSize = Settings.fontInterface.sp,
+                                                maxLines = 2,
+                                                overflow = TextOverflow.Ellipsis,
+                                                color = MaterialTheme.colorScheme.secondary
+                                            )
+                                        }
+                                        HorizontalDivider()
+                                    }
+                                    if (data[10].isNotEmpty() || data[11].isNotEmpty()) {
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(10.dp)
+                                                .clickable {
+                                                    showDropdown = false
+                                                    autoScroll = false
+                                                    if (data[10].isNotEmpty()) navigateTo("cytannesvityx")
+                                                    else navigateTo("cytannedop")
+                                                },
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Icon(
+                                                modifier = Modifier.size(12.dp, 12.dp),
+                                                painter = painterResource(R.drawable.krest),
+                                                tint = MaterialTheme.colorScheme.primary,
+                                                contentDescription = null
+                                            )
+                                            Text(
+                                                modifier = Modifier.padding(start = 10.dp),
+                                                text = data[10].ifEmpty { data[11] },
+                                                fontSize = Settings.fontInterface.sp,
+                                                maxLines = 2,
+                                                overflow = TextOverflow.Ellipsis,
+                                                color = MaterialTheme.colorScheme.secondary
+                                            )
+                                        }
+                                        HorizontalDivider()
                                     }
                                 }
                             }

@@ -1,6 +1,8 @@
 package by.carkva_gazeta.malitounik2
 
+import android.content.Context
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,9 +25,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -36,6 +42,7 @@ import by.carkva_gazeta.malitounik2.ui.theme.Post
 import by.carkva_gazeta.malitounik2.ui.theme.Primary
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik2.ui.theme.SecondaryText
 import by.carkva_gazeta.malitounik2.ui.theme.StrogiPost
 import by.carkva_gazeta.malitounik2.views.HtmlText
 import kotlinx.coroutines.CoroutineScope
@@ -153,7 +160,7 @@ fun KaliandarScreenYear(
                                 contentAlignment = Alignment.TopCenter
                             ) {
                                 Text(
-                                    modifier = Modifier,
+                                    modifier = Modifier.padding(horizontal = 10.dp),
                                     fontWeight = weight,
                                     text = data[index][6],
                                     color = color,
@@ -213,6 +220,64 @@ fun KaliandarScreenYear(
                                 text = list[i]
                             )
                         }
+                    }
+                }
+                val svityDrugasnuia = AnnotatedString.Builder("").apply {
+                    val context = LocalContext.current
+                    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+                    if (k.getBoolean("s_pkc", false) && data[index][19] != "") {
+                        if (data[index][19].isNotEmpty()) {
+                            append(data[index][19])
+                            append("\n\n")
+                        }
+                    }
+                    if (k.getBoolean("s_pravas", false) && data[index][14].isNotEmpty()) {
+                        if (data[index][14].isNotEmpty()) {
+                            append(data[index][14])
+                            append("\n\n")
+                        }
+                    }
+                    if (k.getBoolean("s_gosud", false)) {
+                        if (data[index][16].isNotEmpty()) {
+                            append(data[index][16])
+                            append("\n\n")
+                        }
+                        if (data[index][15].isNotEmpty()) {
+                            val svityDrugasnuiaLength = this.length
+                            val sviata = data[index][15]
+                            append(sviata)
+                            addStyle(
+                                SpanStyle(color = MaterialTheme.colorScheme.primary),
+                                svityDrugasnuiaLength,
+                                this.length
+                            )
+                            append("\n\n")
+                        }
+                    }
+                    if (k.getBoolean("s_pafesii", false) && data[index][17].isNotEmpty()) {
+                        if (data[index][17].isNotEmpty()) {
+                            append(data[index][17])
+                            append("\n\n")
+                        }
+                    }
+                }.toAnnotatedString()
+                if (svityDrugasnuia.isNotEmpty()) {
+                    Spacer(Modifier.size(10.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .padding(horizontal = 10.dp)
+                                .align(Alignment.CenterVertically),
+                            text = svityDrugasnuia.trimEnd().toString(),
+                            textAlign = TextAlign.End,
+                            fontStyle = FontStyle.Italic,
+                            fontSize = Settings.fontInterface.sp,
+                            color = SecondaryText
+                        )
                     }
                 }
                 Box(modifier = Modifier.padding(top = 5.dp)) {

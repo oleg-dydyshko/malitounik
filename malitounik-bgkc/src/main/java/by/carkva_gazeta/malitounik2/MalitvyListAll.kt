@@ -510,7 +510,13 @@ fun MalitvyListAll(
                             items(subList.size) { index ->
                                 Row(
                                     modifier = Modifier
-                                        .padding(start = 30.dp),
+                                        .padding(start = 30.dp)
+                                        .clickable {
+                                            navigationActions.navigateToBogaslujbovyia(
+                                                subList[index].title,
+                                                subList[index].resurs
+                                            )
+                                        },
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(
@@ -523,13 +529,7 @@ fun MalitvyListAll(
                                         subList[index].title,
                                         modifier = Modifier
                                             .fillMaxSize()
-                                            .padding(10.dp)
-                                            .clickable {
-                                                navigationActions.navigateToBogaslujbovyia(
-                                                    subList[index].title,
-                                                    subList[index].resurs
-                                                )
-                                            },
+                                            .padding(10.dp),
                                         color = MaterialTheme.colorScheme.secondary,
                                         fontSize = Settings.fontInterface.sp
                                     )
