@@ -1927,13 +1927,13 @@ class MainActivity : ComponentActivity(), SensorEventListener,
         }*/
     }
 
-    private fun setlightSensor() {
+    fun setlightSensor() {
         val mySensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         val lightSensor = mySensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)
         mySensorManager.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_UI)
     }
 
-    private fun removelightSensor() {
+    fun removelightSensor() {
         val mySensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         val lightSensor = mySensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)
         mySensorManager.unregisterListener(this, lightSensor)

@@ -209,7 +209,7 @@ fun Biblijateka(
                                 showDropdown = true
                             },
                             text = {
-                                Text(stringResource(R.string.set_page_bibliateka), fontSize = Settings.fontInterface.sp)
+                                Text(stringResource(R.string.set_page_bibliateka), fontSize = (Settings.fontInterface - 2).sp)
                             },
                             trailingIcon = {
                             }
@@ -220,7 +220,7 @@ fun Biblijateka(
                                 isShare = true
                             },
                             text = {
-                                Text(stringResource(R.string.share), fontSize = Settings.fontInterface.sp)
+                                Text(stringResource(R.string.share), fontSize = (Settings.fontInterface - 2).sp)
                             },
                             trailingIcon = {
                             }
@@ -240,7 +240,7 @@ fun Biblijateka(
                                 context.startActivity(intent)
                             },
                             text = {
-                                Text(stringResource(R.string.open_in), fontSize = Settings.fontInterface.sp)
+                                Text(stringResource(R.string.open_in), fontSize = (Settings.fontInterface - 2).sp)
                             },
                             trailingIcon = {
                             }
@@ -257,7 +257,7 @@ fun Biblijateka(
                                 printManager.print(fileName, printAdapter, printAttributes)
                             },
                             text = {
-                                Text(stringResource(R.string.print), fontSize = Settings.fontInterface.sp)
+                                Text(stringResource(R.string.print), fontSize = (Settings.fontInterface - 2).sp)
                             },
                             trailingIcon = {
                             }

@@ -115,7 +115,7 @@ fun Bogaslujbovyia(
     var fullscreen by rememberSaveable { mutableStateOf(false) }
     var isVybranoe by remember { mutableStateOf(false) }
     var autoScroll by rememberSaveable { mutableStateOf(false) }
-    var autoScrollSensor by remember { mutableStateOf(false) }
+    var autoScrollSensor by rememberSaveable { mutableStateOf(false) }
     var autoScrollSpeed by remember { mutableIntStateOf(k.getInt("autoscrollSpid", 60)) }
     var autoScrollTextVisable by remember { mutableStateOf(false) }
     var autoScrollText by remember { mutableStateOf("") }
@@ -208,6 +208,10 @@ fun Bogaslujbovyia(
     }
     var backPressHandled by remember { mutableStateOf(false) }
     var iskniga by remember { mutableStateOf(false) }
+    val actyvity = LocalActivity.current as MainActivity
+    if (autoScrollSensor) {
+        actyvity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
     BackHandler(!backPressHandled || fullscreen || showDropdown || iskniga) {
         when {
             fullscreen -> fullscreen = false
@@ -223,6 +227,7 @@ fun Bogaslujbovyia(
 
             !backPressHandled -> {
                 backPressHandled = true
+                actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 navController.popBackStack()
             }
         }
@@ -349,14 +354,13 @@ fun Bogaslujbovyia(
                                 val iconAutoScroll =
                                     if (autoScrollSensor) painterResource(R.drawable.stop_circle)
                                     else painterResource(R.drawable.play_circle)
-                                val actyvity = LocalActivity.current
                                 IconButton(onClick = {
                                     autoScroll = !autoScroll
                                     autoScrollSensor = !autoScrollSensor
-                                    if (autoScrollSensor) actyvity?.window?.addFlags(
+                                    if (autoScrollSensor) actyvity.window.addFlags(
                                         WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                                     )
-                                    else actyvity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                    else actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                                 }) {
                                     Icon(
                                         iconAutoScroll,
@@ -392,8 +396,8 @@ fun Bogaslujbovyia(
                                         saveVybranoe = true
                                     },
                                     text = {
-                                        if (isVybranoe) Text(stringResource(R.string.vybranoe_del), fontSize = Settings.fontInterface.sp)
-                                        else Text(stringResource(R.string.vybranoe), fontSize = Settings.fontInterface.sp)
+                                        if (isVybranoe) Text(stringResource(R.string.vybranoe_del), fontSize = (Settings.fontInterface - 2).sp)
+                                        else Text(stringResource(R.string.vybranoe), fontSize = (Settings.fontInterface - 2).sp)
                                     },
                                     trailingIcon = {
                                         val icon = if (isVybranoe) painterResource(R.drawable.stars)
@@ -410,7 +414,7 @@ fun Bogaslujbovyia(
                                         if (autoScrollSensor) autoScroll = true
                                         fullscreen = true
                                     },
-                                    text = { Text(stringResource(R.string.fullscreen), fontSize = Settings.fontInterface.sp) },
+                                    text = { Text(stringResource(R.string.fullscreen), fontSize = (Settings.fontInterface - 2).sp) },
                                     trailingIcon = {
                                         Icon(
                                             painter = painterResource(R.drawable.fullscreen),
@@ -425,7 +429,7 @@ fun Bogaslujbovyia(
                                         expanded = false
                                         menuPosition = 1
                                     },
-                                    text = { Text(stringResource(R.string.menu_font_size_app), fontSize = Settings.fontInterface.sp) }
+                                    text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) }
                                 )
                                 DropdownMenuItem(
                                     onClick = {
@@ -434,7 +438,7 @@ fun Bogaslujbovyia(
                                         expanded = false
                                         menuPosition = 3
                                     },
-                                    text = { Text(stringResource(R.string.dzen_noch), fontSize = Settings.fontInterface.sp) }
+                                    text = { Text(stringResource(R.string.dzen_noch), fontSize = (Settings.fontInterface - 2).sp) }
                                 )
                             }
                         }
@@ -546,7 +550,22 @@ fun Bogaslujbovyia(
                                         }
                                         HorizontalDivider()
                                     }
-                                    if (data[10].isNotEmpty() || data[11].isNotEmpty()) {
+                                    val chytanneList = ArrayList<BogaslujbovyiaListData>()
+                                    if (data[9].isNotEmpty()) {
+                                        chytanneList.add(BogaslujbovyiaListData(data[9], 9))
+                                    }
+                                    if (data[10].isNotEmpty()) {
+                                        chytanneList.add(BogaslujbovyiaListData(data[10], 10))
+                                    }
+                                    if (data[11].isNotEmpty()) {
+                                        chytanneList.add(BogaslujbovyiaListData(data[11], 11))
+                                    }
+                                    for (i in chytanneList.indices) {
+                                        val navigate = when (chytanneList[i].resurs) {
+                                            10 -> "cytannesvityx"
+                                            11 -> "cytannedop"
+                                            else -> "cytanne"
+                                        }
                                         Row(
                                             modifier = Modifier
                                                 .fillMaxWidth()
@@ -554,8 +573,7 @@ fun Bogaslujbovyia(
                                                 .clickable {
                                                     showDropdown = false
                                                     autoScroll = false
-                                                    if (data[10].isNotEmpty()) navigateTo("cytannesvityx")
-                                                    else navigateTo("cytannedop")
+                                                    navigateTo(navigate)
                                                 },
                                             verticalAlignment = Alignment.CenterVertically
                                         ) {
@@ -567,7 +585,7 @@ fun Bogaslujbovyia(
                                             )
                                             Text(
                                                 modifier = Modifier.padding(start = 10.dp),
-                                                text = data[10].ifEmpty { data[11] },
+                                                text = chytanneList[i].title,
                                                 fontSize = Settings.fontInterface.sp,
                                                 maxLines = 2,
                                                 overflow = TextOverflow.Ellipsis,
@@ -581,7 +599,6 @@ fun Bogaslujbovyia(
                             if (menuPosition == 3) {
                                 Column(Modifier.selectableGroup())
                                 {
-                                    val actyvity = LocalActivity.current as MainActivity
                                     val isSystemInDarkTheme = isSystemInDarkTheme()
                                     Text(
                                         stringResource(R.string.dzen_noch),

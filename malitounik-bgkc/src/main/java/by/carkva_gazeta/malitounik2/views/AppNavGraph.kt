@@ -517,7 +517,6 @@ fun AppNavGraph(
 }
 
 fun findCaliandarToDay(context: Context): ArrayList<String> {
-    var positionResult = 0
     if (Settings.data.isEmpty()) {
         val gson = Gson()
         val type = TypeToken.getParameterized(
@@ -538,11 +537,11 @@ fun findCaliandarToDay(context: Context): ArrayList<String> {
     val calendar = Calendar.getInstance()
     for (i in Settings.data.indices) {
         if (calendar[Calendar.DATE] == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
-            positionResult = i
+            Settings.caliandarPosition = i
             break
         }
     }
-    return Settings.data[positionResult]
+    return Settings.data[Settings.caliandarPosition]
 }
 
 @Composable
@@ -924,7 +923,7 @@ fun MainConteiner(
                                             expanded = false
                                             navigationActions.navigateToSettingsView()
                                         },
-                                        text = { Text(stringResource(R.string.tools_item), fontSize = Settings.fontInterface.sp) }
+                                        text = { Text(stringResource(R.string.tools_item), fontSize = (Settings.fontInterface - 2).sp) }
                                     )
                                     if (currentRoute.contains(AllDestinations.KALIANDAR)) {
                                         DropdownMenuItem(
@@ -932,21 +931,21 @@ fun MainConteiner(
                                                 expanded = false
                                                 dialogUmounyiaZnachenni = true
                                             },
-                                            text = { Text(stringResource(R.string.munu_symbols), fontSize = Settings.fontInterface.sp) }
+                                            text = { Text(stringResource(R.string.munu_symbols), fontSize = (Settings.fontInterface - 2).sp) }
                                         )
                                         DropdownMenuItem(
                                             onClick = {
                                                 expanded = false
                                                 navigationActions.navigateToPadzeiView()
                                             },
-                                            text = { Text(stringResource(R.string.sabytie), fontSize = Settings.fontInterface.sp) }
+                                            text = { Text(stringResource(R.string.sabytie), fontSize = (Settings.fontInterface - 2).sp) }
                                         )
                                         DropdownMenuItem(
                                             onClick = {
                                                 expanded = false
                                                 navigationActions.navigateToSearchSvityia()
                                             },
-                                            text = { Text(stringResource(R.string.search_svityia), fontSize = Settings.fontInterface.sp) }
+                                            text = { Text(stringResource(R.string.search_svityia), fontSize = (Settings.fontInterface - 2).sp) }
                                         )
                                     }
                                     if (currentRoute.contains(AllDestinations.VYBRANAE_LIST) || currentRoute.contains(
@@ -977,14 +976,14 @@ fun MainConteiner(
                                                             R.string.sort_alf
                                                         )
                                                     )
-                                                    else Text(stringResource(R.string.sort_add), fontSize = Settings.fontInterface.sp)
+                                                    else Text(stringResource(R.string.sort_add), fontSize = (Settings.fontInterface - 2).sp)
                                                 } else {
                                                     if (sortedNatatki == Settings.SORT_BY_TIME) Text(
                                                         stringResource(
                                                             R.string.sort_alf
-                                                        ), fontSize = Settings.fontInterface.sp
+                                                        ), fontSize = (Settings.fontInterface - 2).sp
                                                     )
-                                                    else Text(stringResource(R.string.sort_add), fontSize = Settings.fontInterface.sp)
+                                                    else Text(stringResource(R.string.sort_add), fontSize = (Settings.fontInterface - 2).sp)
                                                 }
                                             }
                                         )
@@ -1003,27 +1002,27 @@ fun MainConteiner(
                                             expanded = false
                                             navigationActions.navigateToPraNas()
                                         },
-                                        text = { Text(stringResource(R.string.pra_nas), fontSize = Settings.fontInterface.sp) }
+                                        text = { Text(stringResource(R.string.pra_nas), fontSize = (Settings.fontInterface - 2).sp) }
                                     )
                                     DropdownMenuItem(
                                         onClick = {
                                             expanded = false
                                             navigationActions.navigateToHelp()
                                         },
-                                        text = { Text(stringResource(R.string.help), fontSize = Settings.fontInterface.sp) }
+                                        text = { Text(stringResource(R.string.help), fontSize = (Settings.fontInterface - 2).sp) }
                                     )
                                     if (k.getBoolean("admin", false)) {
                                         HorizontalDivider()
                                         DropdownMenuItem(
                                             onClick = { },
-                                            text = { Text(stringResource(R.string.redagaktirovat), fontSize = Settings.fontInterface.sp) }
+                                            text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) }
                                         )
                                         DropdownMenuItem(
                                             onClick = {
                                                 expanded = false
                                                 logView = true
                                             },
-                                            text = { Text(stringResource(R.string.log_m), fontSize = Settings.fontInterface.sp) }
+                                            text = { Text(stringResource(R.string.log_m), fontSize = (Settings.fontInterface - 2).sp) }
                                         )
                                     }
                                 }

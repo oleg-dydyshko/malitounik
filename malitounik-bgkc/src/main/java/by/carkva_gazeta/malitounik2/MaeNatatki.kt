@@ -93,6 +93,8 @@ fun MaeNatatki(
     var isNatatkaVisable by rememberSaveable { mutableStateOf(false) }
     var natatkaPosition by remember { mutableIntStateOf(0) }
     var removeNatatka by remember { mutableStateOf(false) }
+    var dialogContextMenu by remember { mutableStateOf(false) }
+    var dialogContextMenuEdit by remember { mutableStateOf(false) }
     if (removeNatatka) {
         DialogDelite(
             stringResource(R.string.vybranoe_biblia_delite, fileList[natatkaPosition].title),
@@ -109,7 +111,7 @@ fun MaeNatatki(
         )
     }
     if (addFile) {
-        DialogMyNatatli(
+        DialogMyNatatki(
             "",
             "",
             onDismissRequest = {
@@ -125,11 +127,12 @@ fun MaeNatatki(
         )
     }
     if (isNatatkaVisable) {
-        DialogMyNatatli(
+        DialogMyNatatki(
             fileList[natatkaPosition].title,
             fileList[natatkaPosition].content,
             onDismissRequest = {
                 isNatatkaVisable = false
+                dialogContextMenuEdit = false
             },
             onConfirmation = { title, content ->
                 write(
@@ -142,7 +145,25 @@ fun MaeNatatki(
                         fileList[natatkaPosition] = MaeNatatkiItem(time, title, content, fileName)
                     })
                 isNatatkaVisable = false
-            })
+                dialogContextMenuEdit = false
+            },
+            isEditMode = dialogContextMenuEdit)
+    }
+    if (dialogContextMenu) {
+        DialogContextMenu(
+            fileList[natatkaPosition].title,
+            onEdit = {
+                dialogContextMenu = false
+                isNatatkaVisable = true
+                dialogContextMenuEdit = true
+            },
+            onDelite = {
+                dialogContextMenu = false
+                removeNatatka = true
+            }
+        ) {
+            dialogContextMenu = false
+        }
     }
     if (sort == Settings.SORT_BY_ABC) {
         fileList.sortBy { it.title }
@@ -164,7 +185,7 @@ fun MaeNatatki(
                         },
                         onLongClick = {
                             natatkaPosition = index
-                            removeNatatka = true
+                            dialogContextMenu = true
                         }
                     ),
                 verticalAlignment = Alignment.CenterVertically
@@ -193,7 +214,7 @@ fun MaeNatatki(
 }
 
 @Composable
-fun DialogMyNatatli(
+fun DialogMyNatatki(
     title: String,
     content: String,
     onDismissRequest: () -> Unit,

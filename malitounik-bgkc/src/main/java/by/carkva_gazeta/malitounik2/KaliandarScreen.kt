@@ -186,6 +186,16 @@ fun KaliandarScreen(
                     color = colorText,
                     fontSize = Settings.fontInterface.sp
                 )
+                if (k.getBoolean("adminDayInYear", false)) {
+                    Text(
+                        modifier = Modifier
+                            .padding(bottom = 10.dp)
+                            .align(Alignment.CenterHorizontally),
+                        text = stringResource(R.string.admin_show_day_in_year, data[24], data[22]),
+                        color = colorText,
+                        fontSize = Settings.fontInterface.sp
+                    )
+                }
             }
             Box(
                 modifier = Modifier
@@ -268,7 +278,8 @@ fun KaliandarScreen(
             ) {
                 HtmlText(
                     modifier = Modifier
-                        .align(Alignment.CenterVertically),
+                        .align(Alignment.CenterVertically)
+                        .padding(bottom = if (data[4] == "no_sviatyia") 10.dp else 0.dp),
                     text = data[8],
                     color = MaterialTheme.colorScheme.secondary,
                     textAlign = TextAlign.Center,

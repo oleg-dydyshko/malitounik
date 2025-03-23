@@ -482,6 +482,10 @@ fun CytanniList(
     }
     var isSelectMode by rememberSaveable { mutableStateOf(false) }
     var backPressHandled by remember { mutableStateOf(false) }
+    val actyvity = LocalActivity.current as MainActivity
+    if (autoScrollSensor) {
+        actyvity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
     BackHandler(!backPressHandled || isSelectMode || fullscreen || isParallelVisable || showDropdown) {
         when {
             isSelectMode -> isSelectMode = false
@@ -506,6 +510,7 @@ fun CytanniList(
                 autoScrollJob?.cancel()
                 autoScrollTextVisableJob?.cancel()
                 backPressHandled = true
+                actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 navController.popBackStack()
             }
         }
@@ -599,9 +604,10 @@ fun CytanniList(
                     },
 
                     navigationIcon = {
-                        if (isSelectMode) {
+                        if (isSelectMode || isParallelVisable) {
                             IconButton(onClick = {
-                                isSelectMode = false
+                                if (isSelectMode) isSelectMode = false
+                                else isParallelVisable = false
                             },
                                 content = {
                                     Icon(
@@ -686,14 +692,13 @@ fun CytanniList(
                                     val iconAutoScroll =
                                         if (autoScrollSensor) painterResource(R.drawable.stop_circle)
                                         else painterResource(R.drawable.play_circle)
-                                    val actyvity = LocalActivity.current
                                     IconButton(onClick = {
                                         autoScroll = !autoScroll
                                         autoScrollSensor = !autoScrollSensor
-                                        if (autoScrollSensor) actyvity?.window?.addFlags(
+                                        if (autoScrollSensor) actyvity.window.addFlags(
                                             WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                                         )
-                                        else actyvity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                        else actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                                     }) {
                                         Icon(
                                             iconAutoScroll,
@@ -743,11 +748,11 @@ fun CytanniList(
                                     text = {
                                         if (isVybranoe) Text(
                                             stringResource(R.string.vybranoe_del),
-                                            fontSize = Settings.fontInterface.sp
+                                            fontSize = (Settings.fontInterface - 2).sp
                                         )
                                         else Text(
                                             stringResource(R.string.vybranoe),
-                                            fontSize = Settings.fontInterface.sp
+                                            fontSize = (Settings.fontInterface - 2).sp
                                         )
                                     },
                                     trailingIcon = {
@@ -771,7 +776,7 @@ fun CytanniList(
                                     text = {
                                         Text(
                                             stringResource(R.string.razdzel),
-                                            fontSize = Settings.fontInterface.sp
+                                            fontSize = (Settings.fontInterface - 2).sp
                                         )
                                     }
                                 )
@@ -786,7 +791,7 @@ fun CytanniList(
                                 text = {
                                     Text(
                                         stringResource(R.string.perevody),
-                                        fontSize = Settings.fontInterface.sp
+                                        fontSize = (Settings.fontInterface - 2).sp
                                     )
                                 }
                             )
@@ -799,7 +804,7 @@ fun CytanniList(
                                 text = {
                                     Text(
                                         stringResource(R.string.fullscreen),
-                                        fontSize = Settings.fontInterface.sp
+                                        fontSize = (Settings.fontInterface - 2).sp
                                     )
                                 },
                                 trailingIcon = {
@@ -826,7 +831,7 @@ fun CytanniList(
                                     text = {
                                         Text(
                                             stringResource(R.string.paralel),
-                                            fontSize = Settings.fontInterface.sp
+                                            fontSize = (Settings.fontInterface - 2).sp
                                         )
                                     },
                                     trailingIcon = {
@@ -861,7 +866,7 @@ fun CytanniList(
                                 text = {
                                     Text(
                                         stringResource(R.string.menu_font_size_app),
-                                        fontSize = Settings.fontInterface.sp
+                                        fontSize = (Settings.fontInterface - 2).sp
                                     )
                                 }
                             )
@@ -875,7 +880,7 @@ fun CytanniList(
                                 text = {
                                     Text(
                                         stringResource(R.string.dzen_noch),
-                                        fontSize = Settings.fontInterface.sp
+                                        fontSize = (Settings.fontInterface - 2).sp
                                     )
                                 }
                             )
@@ -963,7 +968,6 @@ fun CytanniList(
                             if (menuPosition == 3) {
                                 Column(Modifier.selectableGroup())
                                 {
-                                    val actyvity = LocalActivity.current as MainActivity
                                     val isSystemInDarkTheme = isSystemInDarkTheme()
                                     Text(
                                         stringResource(R.string.dzen_noch),
@@ -985,6 +989,7 @@ fun CytanniList(
                                                 )
                                                 edit.apply()
                                                 actyvity.dzenNoch = isSystemInDarkTheme
+                                                actyvity.removelightSensor()
                                                 if (actyvity.dzenNoch != actyvity.checkDzenNoch)
                                                     actyvity.recreate()
                                             },
@@ -1000,6 +1005,7 @@ fun CytanniList(
                                                 )
                                                 edit.apply()
                                                 actyvity.dzenNoch = isSystemInDarkTheme
+                                                actyvity.removelightSensor()
                                                 if (actyvity.dzenNoch != actyvity.checkDzenNoch)
                                                     actyvity.recreate()
                                             }
@@ -1019,6 +1025,7 @@ fun CytanniList(
                                                 edit.putInt("mode_night", Settings.MODE_NIGHT_NO)
                                                 edit.apply()
                                                 actyvity.dzenNoch = false
+                                                actyvity.removelightSensor()
                                                 if (actyvity.checkDzenNoch)
                                                     actyvity.recreate()
                                             },
@@ -1031,6 +1038,7 @@ fun CytanniList(
                                                 edit.putInt("mode_night", Settings.MODE_NIGHT_NO)
                                                 edit.apply()
                                                 actyvity.dzenNoch = false
+                                                actyvity.removelightSensor()
                                                 if (actyvity.checkDzenNoch)
                                                     actyvity.recreate()
                                             }
@@ -1053,6 +1061,7 @@ fun CytanniList(
                                                 )
                                                 edit.apply()
                                                 actyvity.dzenNoch = true
+                                                actyvity.removelightSensor()
                                                 if (!actyvity.checkDzenNoch)
                                                     actyvity.recreate()
                                             },
@@ -1068,6 +1077,7 @@ fun CytanniList(
                                                 )
                                                 edit.apply()
                                                 actyvity.dzenNoch = true
+                                                actyvity.removelightSensor()
                                                 if (!actyvity.checkDzenNoch)
                                                     actyvity.recreate()
                                             }
@@ -1089,7 +1099,7 @@ fun CytanniList(
                                                     Settings.MODE_NIGHT_AUTO
                                                 )
                                                 edit.apply()
-                                                actyvity.recreate()
+                                                actyvity.setlightSensor()
                                             },
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
@@ -1102,7 +1112,7 @@ fun CytanniList(
                                                     Settings.MODE_NIGHT_AUTO
                                                 )
                                                 edit.apply()
-                                                actyvity.recreate()
+                                                actyvity.setlightSensor()
                                             }
                                         )
                                         Text(

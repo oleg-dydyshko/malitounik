@@ -32,7 +32,6 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -131,6 +130,7 @@ fun PadzeiaView(navController: NavHostController) {
     //var addPadzeia by remember { mutableStateOf(false) }
     var editMode by remember { mutableStateOf(false) }
     var editPadzeia by remember { mutableStateOf(false) }
+    var editPadzeiaInit by remember { mutableStateOf(true) }
     var deliteAll by remember { mutableStateOf(false) }
     val listPadzeia = remember { mutableStateListOf<Padzeia>() }
     LaunchedEffect(Unit) {
@@ -255,6 +255,7 @@ fun PadzeiaView(navController: NavHostController) {
     BackHandler(showDropdown || editMode) {
         if (editMode) {
             editMode = false
+            editPadzeiaInit = true
         } else showDropdown = !showDropdown
     }
     var kalendarMun by remember { mutableStateOf(false) }
@@ -335,6 +336,7 @@ fun PadzeiaView(navController: NavHostController) {
             paznicia,
             onEdit = {
                 editMode = true
+                editPadzeiaInit = true
                 editPadzeia = true
                 showPadzia = false
             },
@@ -344,6 +346,25 @@ fun PadzeiaView(navController: NavHostController) {
         )
     }
     var delitePadzia by remember { mutableStateOf(false) }
+    var dialogContextMenu by remember { mutableStateOf(false) }
+    if (dialogContextMenu) {
+        val p = listPadzeia[showPadziaPosition]
+        val title = p.padz
+        DialogContextMenu(title,
+            onEdit = {
+                dialogContextMenu = false
+                editMode = true
+                editPadzeiaInit = true
+                editPadzeia = true
+                showPadzia = false
+            },
+            onDelite = {
+                dialogContextMenu = false
+                delitePadzia = true
+            }) {
+            dialogContextMenu = false
+        }
+    }
     if (delitePadzia) {
         DialogDelite(listPadzeia[showPadziaPosition].padz, onConfirmation = {
             val sab = listPadzeia[showPadziaPosition]
@@ -443,6 +464,7 @@ fun PadzeiaView(navController: NavHostController) {
                     if (editMode) {
                         IconButton(onClick = {
                             editMode = false
+                            editPadzeiaInit = true
                         },
                             content = {
                                 Icon(
@@ -528,7 +550,7 @@ fun PadzeiaView(navController: NavHostController) {
                                 },
                                 onLongClick = {
                                     showPadziaPosition = index
-                                    delitePadzia = true
+                                    dialogContextMenu = true
                                 }
                             ),
                         verticalAlignment = Alignment.CenterVertically
@@ -605,6 +627,15 @@ fun PadzeiaView(navController: NavHostController) {
                         .background(MaterialTheme.colorScheme.background)
                         .verticalScroll(rememberScrollState())
                 ) {
+                    if (editPadzeiaInit) {
+                        editPadzeiaInit = false
+                        val p = listPadzeia[showPadziaPosition]
+                        data = p.dat
+                        data2 = p.datK
+                        data3 = p.count
+                        time = p.tim
+                        time2 = p.timK
+                    }
                     AddPadzeia(savePadzia, data, data2, data3, time, time2, editPadzeia, listPadzeia, showPadziaPosition, setShowTimePicker = {
                         if (it == 1) dialogTimePickerDialog = true
                         else dialogTimePickerDialog2 = true
@@ -618,6 +649,7 @@ fun PadzeiaView(navController: NavHostController) {
                     }, isSave = {
                         editMode = false
                         savePadzia = false
+                        editPadzeiaInit = true
                     })
                     Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
                 }
@@ -663,6 +695,7 @@ fun AddPadzeia(
                     setPautorRaz = "5"
                     countText = p.datK
                 }
+
                 count.size == 1 -> {
                     modeRepit = 2
                     setPautorRaz = p.count
@@ -1852,7 +1885,6 @@ fun DialogDelitePadsei(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(375.dp)
                 .padding(16.dp),
             shape = RoundedCornerShape(16.dp),
         ) {
@@ -1892,6 +1924,96 @@ fun DialogDelitePadsei(
                 TextButton(
                     onClick = { onDismiss() },
                     modifier = Modifier.padding(8.dp),
+                ) {
+                    Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DialogContextMenu(
+    title: String,
+    onEdit: () -> Unit,
+    onDelite: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Icon(painter = painterResource(R.drawable.description), contentDescription = "")
+                Text(
+                    text = title,
+                    fontSize = Settings.fontInterface.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(16.dp),
+                )
+                HorizontalDivider()
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp)
+                        .clickable {
+                            onEdit()
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        modifier = Modifier.size(12.dp, 12.dp),
+                        painter = painterResource(R.drawable.krest),
+                        tint = MaterialTheme.colorScheme.primary,
+                        contentDescription = null
+                    )
+                    Text(
+                        text = stringResource(R.string.redagaktirovat),
+                        modifier = Modifier
+                            .padding(10.dp),
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = Settings.fontInterface.sp
+                    )
+                }
+                HorizontalDivider()
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp)
+                        .clickable {
+                            onDelite()
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        modifier = Modifier.size(12.dp, 12.dp),
+                        painter = painterResource(R.drawable.krest),
+                        tint = MaterialTheme.colorScheme.primary,
+                        contentDescription = null
+                    )
+                    Text(
+                        text = stringResource(R.string.delite),
+                        modifier = Modifier
+                            .padding(10.dp),
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = Settings.fontInterface.sp
+                    )
+                }
+                HorizontalDivider()
+                TextButton(
+                    onClick = { onDismiss() },
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .align(Alignment.End),
                 ) {
                     Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
                 }

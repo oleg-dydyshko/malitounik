@@ -260,7 +260,8 @@ fun SettingsView(navController: NavHostController) {
                             )
                             edit.apply()
                             actyvity.dzenNoch = isSystemInDarkTheme
-                            if ((context as MainActivity).checkDzenNoch != context.dzenNoch) actyvity.recreate()
+                            (context as MainActivity).removelightSensor()
+                            if (context.checkDzenNoch != context.dzenNoch) actyvity.recreate()
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -274,7 +275,8 @@ fun SettingsView(navController: NavHostController) {
                             )
                             edit.apply()
                             actyvity.dzenNoch = isSystemInDarkTheme
-                            if ((context as MainActivity).checkDzenNoch != context.dzenNoch) actyvity.recreate()
+                            (context as MainActivity).removelightSensor()
+                            if (context.checkDzenNoch != context.dzenNoch) actyvity.recreate()
                         }
                     )
                     Text(
@@ -292,7 +294,8 @@ fun SettingsView(navController: NavHostController) {
                             edit.putInt("mode_night", Settings.MODE_NIGHT_NO)
                             edit.apply()
                             actyvity.dzenNoch = false
-                            if ((context as MainActivity).checkDzenNoch != context.dzenNoch) actyvity.recreate()
+                            (context as MainActivity).removelightSensor()
+                            if (context.checkDzenNoch != context.dzenNoch) actyvity.recreate()
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -303,7 +306,8 @@ fun SettingsView(navController: NavHostController) {
                             edit.putInt("mode_night", Settings.MODE_NIGHT_NO)
                             edit.apply()
                             actyvity.dzenNoch = false
-                            if ((context as MainActivity).checkDzenNoch != context.dzenNoch) actyvity.recreate()
+                            (context as MainActivity).removelightSensor()
+                            if (context.checkDzenNoch != context.dzenNoch) actyvity.recreate()
                         }
                     )
                     Text(
@@ -324,7 +328,8 @@ fun SettingsView(navController: NavHostController) {
                             )
                             edit.apply()
                             actyvity.dzenNoch = true
-                            if ((context as MainActivity).checkDzenNoch != context.dzenNoch) actyvity.recreate()
+                            (context as MainActivity).removelightSensor()
+                            if (context.checkDzenNoch != context.dzenNoch) actyvity.recreate()
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -338,7 +343,8 @@ fun SettingsView(navController: NavHostController) {
                             )
                             edit.apply()
                             actyvity.dzenNoch = true
-                            if ((context as MainActivity).checkDzenNoch != context.dzenNoch) actyvity.recreate()
+                            (context as MainActivity).removelightSensor()
+                            if (context.checkDzenNoch != context.dzenNoch) actyvity.recreate()
                         }
                     )
                     Text(
@@ -358,7 +364,7 @@ fun SettingsView(navController: NavHostController) {
                                 Settings.MODE_NIGHT_AUTO
                             )
                             edit.apply()
-                            actyvity.recreate()
+                            (context as MainActivity).setlightSensor()
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -371,7 +377,7 @@ fun SettingsView(navController: NavHostController) {
                                 Settings.MODE_NIGHT_AUTO
                             )
                             edit.apply()
-                            actyvity.recreate()
+                            (context as MainActivity).setlightSensor()
                         }
                     )
                     Text(

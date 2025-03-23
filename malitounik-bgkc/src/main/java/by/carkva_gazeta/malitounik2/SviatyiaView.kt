@@ -323,7 +323,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                                     expanded = false
                                     fullscreen = true
                                 },
-                                text = { Text(stringResource(R.string.fullscreen), fontSize = Settings.fontInterface.sp) },
+                                text = { Text(stringResource(R.string.fullscreen), fontSize = (Settings.fontInterface - 2).sp) },
                                 trailingIcon = {
                                     Icon(
                                         painter = painterResource(R.drawable.fullscreen),
@@ -337,7 +337,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                                     expanded = false
                                     menuPosition = 1
                                 },
-                                text = { Text(stringResource(R.string.menu_font_size_app), fontSize = Settings.fontInterface.sp) }
+                                text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) }
                             )
                             DropdownMenuItem(
                                 onClick = {
@@ -345,7 +345,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                                     expanded = false
                                     menuPosition = 3
                                 },
-                                text = { Text(stringResource(R.string.dzen_noch), fontSize = Settings.fontInterface.sp) }
+                                text = { Text(stringResource(R.string.dzen_noch), fontSize = (Settings.fontInterface - 2).sp) }
                             )
                         }
 
@@ -419,6 +419,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                                                 )
                                                 edit.apply()
                                                 actyvity.dzenNoch = isSystemInDarkTheme
+                                                actyvity.removelightSensor()
                                                 if (actyvity.dzenNoch != actyvity.checkDzenNoch)
                                                     actyvity.recreate()
                                             },
@@ -434,6 +435,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                                                 )
                                                 edit.apply()
                                                 actyvity.dzenNoch = isSystemInDarkTheme
+                                                actyvity.removelightSensor()
                                                 if (actyvity.dzenNoch != actyvity.checkDzenNoch)
                                                     actyvity.recreate()
                                             }
@@ -453,6 +455,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                                                 edit.putInt("mode_night", Settings.MODE_NIGHT_NO)
                                                 edit.apply()
                                                 actyvity.dzenNoch = false
+                                                actyvity.removelightSensor()
                                                 if (actyvity.checkDzenNoch)
                                                     actyvity.recreate()
                                             },
@@ -465,6 +468,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                                                 edit.putInt("mode_night", Settings.MODE_NIGHT_NO)
                                                 edit.apply()
                                                 actyvity.dzenNoch = false
+                                                actyvity.removelightSensor()
                                                 if (actyvity.checkDzenNoch)
                                                     actyvity.recreate()
                                             }
@@ -487,6 +491,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                                                 )
                                                 edit.apply()
                                                 actyvity.dzenNoch = true
+                                                actyvity.removelightSensor()
                                                 if (!actyvity.checkDzenNoch)
                                                     actyvity.recreate()
                                             },
@@ -502,6 +507,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                                                 )
                                                 edit.apply()
                                                 actyvity.dzenNoch = true
+                                                actyvity.removelightSensor()
                                                 if (!actyvity.checkDzenNoch)
                                                     actyvity.recreate()
                                             }
@@ -523,7 +529,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                                                     Settings.MODE_NIGHT_AUTO
                                                 )
                                                 edit.apply()
-                                                actyvity.recreate()
+                                                actyvity.setlightSensor()
                                             },
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
@@ -536,7 +542,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                                                     Settings.MODE_NIGHT_AUTO
                                                 )
                                                 edit.apply()
-                                                actyvity.recreate()
+                                                actyvity.setlightSensor()
                                             }
                                         )
                                         Text(
