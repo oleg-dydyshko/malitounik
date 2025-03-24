@@ -67,9 +67,11 @@ fun getFindPage(mounth: Int, year: Int): Int {
 }
 
 @Composable
-fun KaliandarScreenMounth(colorBlackboard: Color = Primary,
-                          setPageCaliandar: (Int) -> Unit,
-                          close: () -> Unit) {
+fun KaliandarScreenMounth(
+    colorBlackboard: Color = Primary,
+    setPageCaliandar: (Int) -> Unit,
+    close: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -454,10 +456,13 @@ fun KaliandarScreenMounth(colorBlackboard: Color = Primary,
             ) {
                 Text(stringResource(R.string.search_call), fontSize = Settings.fontInterface.sp, color = PrimaryText)
             }
-            Column(modifier = Modifier.fillMaxWidth().background(colorBlackboard).clickable {
-                close()
-            }) {
-                val tint = if(colorBlackboard == Primary || colorBlackboard == StrogiPost || colorBlackboard == BackgroundTolBarDark) PrimaryTextBlack
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .background(colorBlackboard)
+                .clickable {
+                    close()
+                }) {
+                val tint = if (colorBlackboard == Primary || colorBlackboard == StrogiPost || colorBlackboard == BackgroundTolBarDark) PrimaryTextBlack
                 else PrimaryText
                 Icon(modifier = Modifier.align(Alignment.End), painter = painterResource(R.drawable.keyboard_arrow_up), contentDescription = "", tint = tint)
             }

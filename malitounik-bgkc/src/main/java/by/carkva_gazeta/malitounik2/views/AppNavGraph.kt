@@ -98,6 +98,7 @@ import by.carkva_gazeta.malitounik2.Bogaslujbovyia
 import by.carkva_gazeta.malitounik2.BogaslujbovyiaMenu
 import by.carkva_gazeta.malitounik2.CytanniList
 import by.carkva_gazeta.malitounik2.DialogDelite
+import by.carkva_gazeta.malitounik2.KaliandarKnigaView
 import by.carkva_gazeta.malitounik2.KaliandarScreen
 import by.carkva_gazeta.malitounik2.KaliandarScreenMounth
 import by.carkva_gazeta.malitounik2.KaliandarScreenYear
@@ -602,6 +603,7 @@ fun MainConteiner(
         Settings.data.size
     }, initialPage = initPage)
     var showDropdown by rememberSaveable { mutableStateOf(false) }
+    var showDropdownMenuPos by rememberSaveable { mutableIntStateOf(1) }
     BackHandler(showDropdown) {
         showDropdown = !showDropdown
     }
@@ -873,7 +875,10 @@ fun MainConteiner(
                                         contentDescription = ""
                                     )
                                 }
-                                IconButton({ showDropdown = !showDropdown }) {
+                                IconButton({
+                                    showDropdownMenuPos = 1
+                                    showDropdown = !showDropdown
+                                }) {
                                     Icon(
                                         painter = painterResource(R.drawable.event_upcoming),
                                         tint = textTollBarColor,
@@ -1107,6 +1112,10 @@ fun MainConteiner(
                                 },
                                 navigateToBogaslujbovyia = { title, resurs ->
                                     navigationActions.navigateToBogaslujbovyia(title, resurs)
+                                },
+                                navigateToKniga = {
+                                    showDropdownMenuPos = 2
+                                    showDropdown = true
                                 }
                             )
                         }
@@ -1222,20 +1231,27 @@ fun MainConteiner(
                         ),
                         exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
                     ) {
-                        KaliandarScreenMounth(
-                            colorBlackboard = colorBlackboard,
-                            setPageCaliandar = { date ->
+                        if (showDropdownMenuPos == 1) {
+                            KaliandarScreenMounth(
+                                colorBlackboard = colorBlackboard,
+                                setPageCaliandar = { date ->
+                                    showDropdown = false
+                                    coroutineScope.launch {
+                                        if (k.getBoolean(
+                                                "caliandarList",
+                                                false
+                                            )
+                                        ) lazyColumnState.scrollToItem(date)
+                                        else pagerState.scrollToPage(date)
+                                    }
+                                },
+                                close = { showDropdown = false })
+                        }
+                        if (showDropdownMenuPos == 2) {
+                            KaliandarKnigaView(colorBlackboard) {
                                 showDropdown = false
-                                coroutineScope.launch {
-                                    if (k.getBoolean(
-                                            "caliandarList",
-                                            false
-                                        )
-                                    ) lazyColumnState.scrollToItem(date)
-                                    else pagerState.scrollToPage(date)
-                                }
-                            },
-                            close = { showDropdown = false })
+                            }
+                        }
                     }
                 }
             }

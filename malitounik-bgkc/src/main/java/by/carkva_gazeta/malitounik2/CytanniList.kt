@@ -717,19 +717,20 @@ fun CytanniList(
                                         )
                                     }
                                 }
+
+                                IconButton(onClick = {
+                                    expanded = true
+                                    autoScroll = false
+                                }
+                                ) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.more_vert),
+                                        contentDescription = "",
+                                        tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
                             } else {
                                 autoScroll = false
-                            }
-                            IconButton(onClick = {
-                                expanded = true
-                                autoScroll = false
-                            }
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.more_vert),
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.onSecondary
-                                )
                             }
                         }
                         DropdownMenu(

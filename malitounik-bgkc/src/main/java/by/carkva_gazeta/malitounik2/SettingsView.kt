@@ -684,6 +684,12 @@ fun SettingsView(navController: NavHostController) {
                     )
                 }
             }
+            Text(
+                stringResource(R.string.pavedamiс_title),
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.secondary,
+                fontSize = Settings.fontInterface.sp
+            )
             val dataTimes = ArrayList<DataTime>()
             for (i in 6..17) {
                 dataTimes.add(DataTime(stringResource(R.string.pavedamic, i), i))

@@ -1,6 +1,13 @@
 package by.carkva_gazeta.malitounik2
 
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import java.io.File
 import java.util.Calendar
 import java.util.GregorianCalendar
 
@@ -3995,11 +4002,11 @@ class SlugbovyiaTextu {
         return resultDay
     }
 
-    /*fun loadPiarliny() {
+    fun loadPiarliny() {
         if (piarliny.size == 0 && loadPiarlinyJob?.isActive != true) {
-            val filePiarliny = File("$filesDir/piarliny.json")
+            val filePiarliny = File("${MainActivity.applicationContext().filesDir}/piarliny.json")
             if (!filePiarliny.exists()) {
-                if (MainActivity.isNetworkAvailable()) {
+                if (Settings.isNetworkAvailable(MainActivity.applicationContext())) {
                     loadPiarlinyJob = CoroutineScope(Dispatchers.Main).launch {
                         try {
                             val builder = getPiarliny()
@@ -4024,28 +4031,28 @@ class SlugbovyiaTextu {
                 }
             }
         }
-    }*/
+    }
 
-    /*private suspend fun getPiarliny(): String {
-        val pathReference = Malitounik.referens.child("/chytanne/piarliny.json")
+    private suspend fun getPiarliny(): String {
+        val pathReference = MainActivity.referens.child("/chytanne/piarliny.json")
         var text = ""
-        val localFile = File("$filesDir/piarliny.json")
+        val localFile = File("${MainActivity.applicationContext().filesDir}/piarliny.json")
         pathReference.getFile(localFile).addOnSuccessListener {
             text = localFile.readText()
         }.await()
         return text
-    }*/
+    }
 
-    /*fun checkParliny(day: Int, mun: Int): Boolean {
-        val cal = GregorianCalendar()
+    fun checkParliny(dayOfYear: Int): Boolean {
+        val cal = Calendar.getInstance()
         piarliny.forEach {
             cal.timeInMillis = it[0].toLong() * 1000
-            if (day == cal.get(Calendar.DATE) && mun - 1 == cal.get(Calendar.MONTH)) {
+            if (dayOfYear == cal.get(Calendar.DAY_OF_YEAR)) {
                 return true
             }
         }
         return false
-    }*/
+    }
 
     fun getRealDay(day: Int, dayOfYear: Int, year: Int, isPasxa: Boolean): Int {
         var realDay = day

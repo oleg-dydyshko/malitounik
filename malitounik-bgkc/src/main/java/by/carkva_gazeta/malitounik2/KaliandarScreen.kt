@@ -50,6 +50,7 @@ import by.carkva_gazeta.malitounik2.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik2.ui.theme.SecondaryText
 import by.carkva_gazeta.malitounik2.ui.theme.StrogiPost
+import by.carkva_gazeta.malitounik2.ui.theme.StrogiPost2
 import by.carkva_gazeta.malitounik2.views.HtmlText
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -65,7 +66,8 @@ fun KaliandarScreen(
     innerPadding: PaddingValues,
     navigateToCytanneList: (String, String, Int) -> Unit,
     navigateToSvityiaView: (svity: Boolean, year: Int, mun: Int, day: Int) -> Unit,
-    navigateToBogaslujbovyia: (title: String, resurs: Int) -> Unit
+    navigateToBogaslujbovyia: (title: String, resurs: Int) -> Unit,
+    navigateToKniga: () -> Unit
 ) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
@@ -91,7 +93,7 @@ fun KaliandarScreen(
         if (data[7].toInt() == 3 && !(data[0].toInt() == Calendar.SUNDAY || data[0].toInt() == Calendar.SATURDAY)) {
             text = stringResource(id = R.string.Strogi_post)
             colorBlackboard = StrogiPost
-            colorBlackboardBook = StrogiPost
+            colorBlackboardBook = StrogiPost2
             colorText = PrimaryTextBlack
         }
         if (data[5].toInt() > 0) {
@@ -106,7 +108,7 @@ fun KaliandarScreen(
             Column(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Column(modifier = Modifier.size(50.dp, 100.dp)) {
+                Column(modifier = Modifier.size(80.dp, 100.dp)) {
                     if (data[20] != "0" && data[0].toInt() == Calendar.SUNDAY) {
                         Text(
                             modifier = Modifier
@@ -199,7 +201,7 @@ fun KaliandarScreen(
             }
             Box(
                 modifier = Modifier
-                    .padding(start = 20.dp)
+                    .padding(start = 50.dp)
                     .align(Alignment.Bottom)
             ) {
                 Icon(
@@ -208,6 +210,9 @@ fun KaliandarScreen(
                     tint = colorBlackboardBook,
                     modifier = Modifier
                         .size(30.dp)
+                        .clickable {
+                            navigateToKniga()
+                        }
                 )
             }
         }

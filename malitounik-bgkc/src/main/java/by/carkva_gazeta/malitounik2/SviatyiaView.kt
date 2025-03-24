@@ -300,7 +300,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                                 viewPiarliny = true
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.description),
+                                    painter = painterResource(R.drawable.book_white),
                                     tint = PrimaryTextBlack,
                                     contentDescription = ""
                                 )
