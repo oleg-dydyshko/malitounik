@@ -421,6 +421,7 @@ fun AppNavGraph(
                                 -1
                             )
                         }
+
                         "cytannesvityx" -> {
                             val data = findCaliandarToDay(context)
                             val titleCh = context.getString(
@@ -436,6 +437,7 @@ fun AppNavGraph(
                                 -1
                             )
                         }
+
                         "cytannedop" -> {
                             val data = findCaliandarToDay(context)
                             val titleCh = context.getString(
@@ -1248,7 +1250,13 @@ fun MainConteiner(
                                 close = { showDropdown = false })
                         }
                         if (showDropdownMenuPos == 2) {
-                            KaliandarKnigaView(colorBlackboard) {
+                            KaliandarKnigaView(colorBlackboard,
+                                navigateToBogaslujbovyia = { title, resourse ->
+                                    navigationActions.navigateToBogaslujbovyia(title, resourse)
+                                },
+                                navigateToSvityiaView = { svity, year, mun, day ->
+                                    navigationActions.navigateToSvityiaView(svity, year, mun, day)
+                                }) {
                                 showDropdown = false
                             }
                         }

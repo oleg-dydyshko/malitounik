@@ -741,7 +741,6 @@ fun SetPadzeia(title: String, apisanne: String, color: Int, raznica: Boolean, re
                 )
             }
         }
-
     }
 }
 

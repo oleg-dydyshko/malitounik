@@ -272,7 +272,7 @@ fun Biblijateka(
             modifier = Modifier
                 .padding(
                     innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                    innerPadding.calculateTopPadding(),
+                    0.dp,
                     innerPadding.calculateEndPadding(LayoutDirection.Rtl),
                     0.dp
                 )
@@ -447,6 +447,9 @@ fun SpisStaronak(
                 }
             }
     ) {
+        item {
+            Spacer(modifier = Modifier.padding(bottom = innerPadding.calculateTopPadding()))
+        }
         items(
             lazyPagingItems.itemCount,
             key = lazyPagingItems.itemKey { it }

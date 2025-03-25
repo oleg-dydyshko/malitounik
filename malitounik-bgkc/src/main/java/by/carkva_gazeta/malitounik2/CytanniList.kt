@@ -896,7 +896,7 @@ fun CytanniList(
             modifier = Modifier
                 .padding(
                     innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                    innerPadding.calculateTopPadding(),
+                    0.dp,
                     innerPadding.calculateEndPadding(LayoutDirection.Rtl),
                     0.dp
                 )
@@ -1624,6 +1624,9 @@ fun CytanniList(
                             .nestedScroll(nestedScrollConnection),
                         state = listState[page]
                     ) {
+                        item {
+                            Spacer(Modifier.padding(bottom = innerPadding.calculateTopPadding()))
+                        }
                         if (biblia != Settings.CHYTANNI_BIBLIA) {
                             if (subTitle != resultPage[listState[selectedIndex].firstVisibleItemIndex].title)
                                 subTitle =
@@ -1697,7 +1700,6 @@ fun CytanniList(
                 }
             }
         }
-
         Box(
             modifier = Modifier
                 .padding(innerPadding)
@@ -1804,7 +1806,7 @@ fun CytanniList(
                 modifier = Modifier
                     .padding(
                         innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                        innerPadding.calculateTopPadding(),
+                        0.dp,
                         innerPadding.calculateEndPadding(LayoutDirection.Rtl),
                         0.dp
                     )
@@ -1813,6 +1815,7 @@ fun CytanniList(
                     .verticalScroll(rememberScrollState())
             ) {
                 val resultParalel = getBible(paralelChtenia, perevod, biblia, true)
+                Spacer(Modifier.padding(bottom = innerPadding.calculateTopPadding()))
                 for (i in resultParalel.indices) {
                     HtmlText(
                         modifier = Modifier

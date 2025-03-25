@@ -359,7 +359,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
             modifier = Modifier
                 .padding(
                     innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                    innerPadding.calculateTopPadding(),
+                    0.dp,
                     innerPadding.calculateEndPadding(LayoutDirection.Rtl),
                     0.dp
                 )
@@ -636,6 +636,9 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                     modifier = Modifier.fillMaxSize(),
                     state = lazyListState
                 ) {
+                    item {
+                        Spacer(Modifier.padding(bottom = innerPadding.calculateTopPadding()))
+                    }
                     val sviatyiaListItem = sviatyiaList.value
                     items(sviatyiaList.value.size) { index ->
                         val file = File(sviatyiaListItem[index].image)
@@ -697,7 +700,6 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                             }
                         }
                     }
-
                     item {
                         Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
                     }

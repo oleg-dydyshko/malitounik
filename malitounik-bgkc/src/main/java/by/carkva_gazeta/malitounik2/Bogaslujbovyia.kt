@@ -452,7 +452,7 @@ fun Bogaslujbovyia(
             modifier = Modifier
                 .padding(
                     innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                    innerPadding.calculateTopPadding(),
+                    0.dp,
                     innerPadding.calculateEndPadding(LayoutDirection.Rtl),
                     0.dp
                 )
@@ -825,7 +825,7 @@ fun Bogaslujbovyia(
                 verticalArrangement = Arrangement.Top
             ) {
                 HtmlText(
-                    modifier = Modifier.padding(top = 10.dp, bottom = innerPadding.calculateBottomPadding().plus(10.dp)),
+                    modifier = Modifier.padding(top = innerPadding.calculateTopPadding().plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(10.dp)),
                     text = htmlText,
                     fontSize = fontSize.sp,
                     scrollState = scrollState,
@@ -945,7 +945,7 @@ fun Bogaslujbovyia(
                 modifier = Modifier
                     .padding(
                         innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                        innerPadding.calculateTopPadding(),
+                        0.dp,
                         innerPadding.calculateEndPadding(LayoutDirection.Rtl),
                         0.dp
                     )
@@ -953,7 +953,7 @@ fun Bogaslujbovyia(
                     .verticalScroll(scrollStateDop)
             ) {
                 HtmlText(
-                    modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 10.dp, bottom = innerPadding.calculateBottomPadding().plus(10.dp)),
+                    modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = innerPadding.calculateTopPadding().plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(10.dp)),
                     text = subText,
                     fontSize = fontSize.sp
                 )

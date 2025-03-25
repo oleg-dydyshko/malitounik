@@ -3977,7 +3977,7 @@ class SlugbovyiaTextu {
         dayOfYear: Int,
         year: Int
     ): ArrayList<SlugbovyiaTextuData> {
-        var dayOfYearReal = 1
+        var dayOfYearReal: Int
         var day: Int
         val resultSlugba = datMinALL.filter {
             when (slugbaType) {
@@ -4194,9 +4194,9 @@ class SlugbovyiaTextu {
         return gCalendar[Calendar.DAY_OF_YEAR]
     }
 
-    fun cancelLoadPiarliny() {
+    /*fun cancelLoadPiarliny() {
         loadPiarlinyJob?.cancel()
-    }
+    }*/
 
     /*fun getBogaslugbovyiaSearchText(isMenu: Boolean = true): ArrayList<MenuListData> {
         val dataSearch = ArrayList<MenuListData>()

@@ -616,6 +616,19 @@ fun SettingsView(navController: NavHostController) {
                         selected = modeNotification == Settings.NOTIFICATION_SVIATY_ONLY,
                         onClick = {
                             modeNotification = Settings.NOTIFICATION_SVIATY_ONLY
+                            val prefEditor = k.edit()
+                            prefEditor.putInt("notification", modeNotification)
+                            prefEditor.apply()
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                                if (PackageManager.PERMISSION_DENIED == permissionCheck || !alarmManager.canScheduleExactAlarms()) {
+                                    dialodNotificatin = true
+                                } else {
+                                    setNotificationOnly(context)
+                                }
+                            } else {
+                                setNotificationOnly(context)
+                            }
                         }
                     )
                     Text(
@@ -630,6 +643,19 @@ fun SettingsView(navController: NavHostController) {
                         .fillMaxWidth()
                         .clickable {
                             modeNotification = Settings.NOTIFICATION_SVIATY_FULL
+                            val prefEditor = k.edit()
+                            prefEditor.putInt("notification", modeNotification)
+                            prefEditor.apply()
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                                if (PackageManager.PERMISSION_DENIED == permissionCheck || !alarmManager.canScheduleExactAlarms()) {
+                                    dialodNotificatin = true
+                                } else {
+                                    setNotificationFull(context)
+                                }
+                            } else {
+                                setNotificationFull(context)
+                            }
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -664,6 +690,9 @@ fun SettingsView(navController: NavHostController) {
                         .fillMaxWidth()
                         .clickable {
                             modeNotification = Settings.NOTIFICATION_SVIATY_NONE
+                            val prefEditor = k.edit()
+                            prefEditor.putInt("notification", modeNotification)
+                            prefEditor.apply()
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
