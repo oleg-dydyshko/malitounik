@@ -106,7 +106,7 @@ fun KaliandarKnigaView(
                         } else {
                             slujbaList.clear()
                             slujbaList.addAll(listSlujbaViach)
-                            slujva = SlugbovyiaTextu.VIACZERNIA
+                            slujva = 1
                             dialogKnigaView = true
                         }
                     }) {
@@ -126,7 +126,7 @@ fun KaliandarKnigaView(
                         } else {
                             slujbaList.clear()
                             slujbaList.addAll(listSlujbaPavia)
-                            slujva = SlugbovyiaTextu.PAVIACHERNICA
+                            slujva = 2
                             dialogKnigaView = true
                         }
                     }) {
@@ -147,7 +147,7 @@ fun KaliandarKnigaView(
                         } else {
                             slujbaList.clear()
                             slujbaList.addAll(listSlujbaPaunoch)
-                            slujva = SlugbovyiaTextu.PAUNOCHNICA
+                            slujva = 3
                             dialogKnigaView = true
                         }
                     }) {
@@ -169,7 +169,7 @@ fun KaliandarKnigaView(
                         } else {
                             slujbaList.clear()
                             slujbaList.addAll(listSlujbaJutran)
-                            slujva = SlugbovyiaTextu.JUTRAN
+                            slujva = 4
                             dialogKnigaView = true
                         }
                     }) {
@@ -190,7 +190,7 @@ fun KaliandarKnigaView(
                         } else {
                             slujbaList.clear()
                             slujbaList.addAll(listSlujbaVilHadz)
-                            slujva = SlugbovyiaTextu.VIALHADZINY
+                            slujva = 5
                             dialogKnigaView = true
                         }
                     }) {
@@ -209,7 +209,7 @@ fun KaliandarKnigaView(
                         } else {
                             slujbaList.clear()
                             slujbaList.addAll(listSlujbaLitur)
-                            slujva = SlugbovyiaTextu.LITURHIJA
+                            slujva = 6
                             dialogKnigaView = true
                         }
                     }) {
@@ -286,9 +286,6 @@ fun DialogKniga(
         4 -> stringResource(R.string.utran)
         5 -> stringResource(R.string.gadziny)
         6 -> stringResource(R.string.liturgia)
-        7 -> stringResource(R.string.jyci)
-        8 -> stringResource(R.string.piarliny)
-        9 -> stringResource(R.string.ustau)
         else -> ""
     }
     Dialog(onDismissRequest = { onDismiss() }) {

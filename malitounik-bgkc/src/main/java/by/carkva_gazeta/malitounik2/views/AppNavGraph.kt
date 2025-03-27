@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -995,15 +996,6 @@ fun MainConteiner(
                                             }
                                         )
                                     }
-                                    /*if (currentRoute.contains(AllDestinations.BOGASLUJBOVYIA)) {
-                                        DropdownMenuItem(
-                                            onClick = {
-                                                expanded = false
-                                                searchText = true
-                                            },
-                                            text = { Text(stringResource(R.string.searche_text)) }
-                                        )
-                                    }*/
                                     DropdownMenuItem(
                                         onClick = {
                                             expanded = false
@@ -1290,7 +1282,7 @@ fun DialogLogProgramy(
             Text(text = stringResource(R.string.log))
         },
         text = {
-            Text(item, fontSize = Settings.fontInterface.sp)
+            Text(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()), text = item, fontSize = Settings.fontInterface.sp)
         },
         onDismissRequest = {
         },

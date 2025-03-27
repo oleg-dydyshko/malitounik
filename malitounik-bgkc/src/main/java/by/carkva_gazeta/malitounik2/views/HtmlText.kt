@@ -45,7 +45,9 @@ fun HtmlText(
     textAlign: TextAlign? = null,
     fontSize: TextUnit = 18.sp,
     scrollState: ScrollState = rememberScrollState(),
-    navigateTo: (String) -> Unit = {}
+    searchText: AnnotatedString = AnnotatedString(""),
+    navigateTo: (String) -> Unit = {},
+    textLayoutResult: (TextLayoutResult?) -> Unit = {}
 ) {
     /*val annotatedString = buildAnnotatedString {
         val spanned = HtmlCompat.fromHtml(text, mode)
@@ -383,12 +385,13 @@ fun HtmlText(
         fontWeight = fontWeight,
         color = color,
         modifier = modifier,
-        text = annotatedString,
+        text = searchText.ifEmpty { annotatedString },
         fontSize = fontSize,
         lineHeight = fontSize * 1.15f,
         textAlign = textAlign,
         onTextLayout = { layout ->
             textLayout.value = layout
+            textLayoutResult(layout)
             //val line = layout.getLineForOffset(t1)
             //y = layout.getLineTop(line)
 

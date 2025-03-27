@@ -739,6 +739,7 @@ fun getInputStream(
 }
 
 data class FindString(val str: String, val position: Int)
+
 data class SearchBibleItem(
     val subTitle: String,
     val glava: Int,

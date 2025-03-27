@@ -489,8 +489,8 @@ fun CytanniList(
     BackHandler(!backPressHandled || isSelectMode || fullscreen || isParallelVisable || showDropdown) {
         when {
             isSelectMode -> isSelectMode = false
-            fullscreen -> fullscreen = false
             isParallelVisable -> isParallelVisable = false
+            fullscreen -> fullscreen = false
             showDropdown -> {
                 showDropdown = false
                 if (autoScrollSensor) autoScroll = true
@@ -619,8 +619,8 @@ fun CytanniList(
                         } else {
                             IconButton(onClick = {
                                 when {
-                                    fullscreen -> fullscreen = false
                                     isParallelVisable -> isParallelVisable = false
+                                    fullscreen -> fullscreen = false
                                     showDropdown -> {
                                         showDropdown = false
                                         if (autoScrollSensor) autoScroll = true
@@ -896,7 +896,7 @@ fun CytanniList(
             modifier = Modifier
                 .padding(
                     innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                    0.dp,
+                    if (biblia == Settings.CHYTANNI_BIBLIA || !fullscreen) innerPadding.calculateTopPadding() else 0.dp,
                     innerPadding.calculateEndPadding(LayoutDirection.Rtl),
                     0.dp
                 )
@@ -1624,10 +1624,10 @@ fun CytanniList(
                             .nestedScroll(nestedScrollConnection),
                         state = listState[page]
                     ) {
-                        item {
-                            Spacer(Modifier.padding(bottom = innerPadding.calculateTopPadding()))
-                        }
                         if (biblia != Settings.CHYTANNI_BIBLIA) {
+                            item {
+                                Spacer(Modifier.padding(top = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp))
+                            }
                             if (subTitle != resultPage[listState[selectedIndex].firstVisibleItemIndex].title)
                                 subTitle =
                                     resultPage[listState[selectedIndex].firstVisibleItemIndex].title

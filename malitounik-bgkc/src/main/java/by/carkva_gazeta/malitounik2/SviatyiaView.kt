@@ -359,7 +359,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
             modifier = Modifier
                 .padding(
                     innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                    0.dp,
+                    if (fullscreen) 0.dp else innerPadding.calculateTopPadding(),
                     innerPadding.calculateEndPadding(LayoutDirection.Rtl),
                     0.dp
                 )
@@ -637,7 +637,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                     state = lazyListState
                 ) {
                     item {
-                        Spacer(Modifier.padding(bottom = innerPadding.calculateTopPadding()))
+                        Spacer(Modifier.padding(top = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp))
                     }
                     val sviatyiaListItem = sviatyiaList.value
                     items(sviatyiaList.value.size) { index ->
