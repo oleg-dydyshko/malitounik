@@ -50,9 +50,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
@@ -218,14 +216,7 @@ fun MalitvyListAll(
     var searchText by rememberSaveable { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
-    var textFieldValueState by remember {
-        mutableStateOf(
-            TextFieldValue(
-                text = "",
-                selection = TextRange("".length)
-            )
-        )
-    }
+    var textFieldValueState by remember { mutableStateOf("") }
     val collapsedState =
         remember(listPrynagodnyia) { listPrynagodnyia.map { true }.toMutableStateList() }
     Scaffold(
@@ -280,14 +271,13 @@ fun MalitvyListAll(
                                 },
                             value = textFieldValueState,
                             onValueChange = { newText ->
-                                textFieldValueState = newText
-                                var edit = textFieldValueState.text
+                                var edit = newText
                                 edit = edit.replace("и", "і")
                                 edit = edit.replace("щ", "ў")
                                 edit = edit.replace("И", "І")
                                 edit = edit.replace("Щ", "Ў")
                                 edit = edit.replace("ъ", "'")
-                                textFieldValueState = TextFieldValue(edit, TextRange(edit.length))
+                                textFieldValueState = edit
                             },
                             singleLine = true,
                             leadingIcon = {
@@ -298,8 +288,8 @@ fun MalitvyListAll(
                                 )
                             },
                             trailingIcon = {
-                                if (textFieldValueState.text.isNotEmpty()) {
-                                    IconButton(onClick = { textFieldValueState = TextFieldValue("", TextRange("".length)) }) {
+                                if (textFieldValueState.isNotEmpty()) {
+                                    IconButton(onClick = { textFieldValueState = "" }) {
                                         Icon(
                                             painter = painterResource(R.drawable.close),
                                             contentDescription = "",
@@ -372,7 +362,7 @@ fun MalitvyListAll(
             viewModel.addItemList(getPrynagodnyia6())
             viewModel.sortBy()
             val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
-            viewModel.filterItem(textFieldValueState.text)
+            viewModel.filterItem(textFieldValueState)
             PynagodnyiaList(filteredItems, navigationActions, innerPadding)
         } else {
             LazyColumn(

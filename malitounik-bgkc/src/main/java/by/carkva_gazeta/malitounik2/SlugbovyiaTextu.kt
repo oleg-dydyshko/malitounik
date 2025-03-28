@@ -4060,7 +4060,7 @@ class SlugbovyiaTextu {
         calendar[Calendar.YEAR] = year
         when {
             day >= 1000 -> {
-                when(day) {
+                when (day) {
                     AICOU_VII_SUSVETNAGA_SABORY -> {
                         //Айцоў VII Сусьветнага Сабору
                         for (i in 11..17) {
@@ -4154,9 +4154,11 @@ class SlugbovyiaTextu {
                     }
                 }
             }
+
             isPasxa -> {
                 realDay = pasha(day)
             }
+
             else -> {
                 var newDay = day
                 if (!calendar.isLeapYear(calendar[Calendar.YEAR]) && day > 59) newDay -= 1
@@ -4193,88 +4195,6 @@ class SlugbovyiaTextu {
         gCalendar.add(Calendar.DATE, day)
         return gCalendar[Calendar.DAY_OF_YEAR]
     }
-
-    /*fun cancelLoadPiarliny() {
-        loadPiarlinyJob?.cancel()
-    }*/
-
-    /*fun getBogaslugbovyiaSearchText(isMenu: Boolean = true): ArrayList<MenuListData> {
-        val dataSearch = ArrayList<MenuListData>()
-        dataSearch.addAll(getTextBogaslugbovyiaList(isMenu))
-        dataSearch.addAll(getTextTrebnikList(isMenu))
-        dataSearch.addAll(getTextPasliaPrychascia(isMenu))
-        dataSearch.addAll(getTextSubBogaslugbovuiaVichernia(isMenu))
-        dataSearch.addAll(getTextAktoixList(isMenu))
-        dataSearch.addAll(getTextMineiaAgulnaiaList(isMenu))
-        dataSearch.addAll(getTextTonNaKoznyDzenList(isMenu))
-        var opisanie = if (isMenu) getString(R.string.ton_na_niadzelu)
-        else ""
-        for (i in 1..8) {
-            dataSearch.add(MenuListData(getString(R.string.ton, i.toString() + opisanie), "ton$i"))
-        }
-        var mesiach = getMineiaMesiachnaia()
-        opisanie = if (isMenu) getString(R.string.mineia_mesiachnaia)
-        else ""
-        for (i in mesiach.indices) {
-            dataSearch.add(MenuListData(mesiach[i].title + ". " + getNazouSluzby(mesiach[i].sluzba) + opisanie, mesiach[i].resource))
-        }
-        mesiach = getVilikiTydzen()
-        opisanie = if (isMenu) getString(R.string.tryedz_1)
-        else ""
-        for (i in mesiach.indices) {
-            dataSearch.add(MenuListData(mesiach[i].title + ". " + getNazouSluzby(mesiach[i].sluzba) + opisanie, mesiach[i].resource))
-        }
-        mesiach = getSvetlyTydzen()
-        opisanie = if (isMenu) getString(R.string.tryedz_2)
-        else ""
-        for (i in mesiach.indices) {
-            dataSearch.add(MenuListData(mesiach[i].title + ". " + getNazouSluzby(mesiach[i].sluzba) + opisanie, mesiach[i].resource))
-        }
-        mesiach = getMineiaSviatochnaia()
-        opisanie = if (isMenu) getString(R.string.tryedz_3)
-        else ""
-        for (i in mesiach.indices) {
-            dataSearch.add(MenuListData(mesiach[i].title + ". " + getNazouSluzby(mesiach[i].sluzba) + opisanie, mesiach[i].resource))
-        }
-        mesiach = getTydzen1()
-        opisanie = if (isMenu) getString(R.string.tryedz_4)
-        else ""
-        for (i in mesiach.indices) {
-            dataSearch.add(MenuListData(mesiach[i].title + ". " + getNazouSluzby(mesiach[i].sluzba) + opisanie, mesiach[i].resource))
-        }
-        mesiach = getTydzen2()
-        opisanie = if (isMenu) getString(R.string.tryedz_5)
-        else ""
-        for (i in mesiach.indices) {
-            dataSearch.add(MenuListData(mesiach[i].title + ". " + getNazouSluzby(mesiach[i].sluzba) + opisanie, mesiach[i].resource))
-        }
-        mesiach = getTydzen3()
-        opisanie = if (isMenu) getString(R.string.tryedz_6)
-        else ""
-        for (i in mesiach.indices) {
-            dataSearch.add(MenuListData(mesiach[i].title + ". " + getNazouSluzby(mesiach[i].sluzba) + opisanie, mesiach[i].resource))
-        }
-        mesiach = getTydzen4()
-        opisanie = if (isMenu) getString(R.string.tryedz_7)
-        else ""
-        for (i in mesiach.indices) {
-            dataSearch.add(MenuListData(mesiach[i].title + ". " + getNazouSluzby(mesiach[i].sluzba) + opisanie, mesiach[i].resource))
-        }
-        mesiach = getTydzen5()
-        opisanie = if (isMenu) getString(R.string.tryedz_8)
-        else ""
-        for (i in mesiach.indices) {
-            dataSearch.add(MenuListData(mesiach[i].title + ". " + getNazouSluzby(mesiach[i].sluzba) + opisanie, mesiach[i].resource))
-        }
-        mesiach = getTydzen6()
-        opisanie = if (isMenu) getString(R.string.tryedz_9)
-        else ""
-        for (i in mesiach.indices) {
-            dataSearch.add(MenuListData(mesiach[i].title + ". " + getNazouSluzby(mesiach[i].sluzba) + opisanie, mesiach[i].resource))
-        }
-        dataSearch.sort()
-        return dataSearch
-    }*/
 }
 
 data class SlugbovyiaTextuData(

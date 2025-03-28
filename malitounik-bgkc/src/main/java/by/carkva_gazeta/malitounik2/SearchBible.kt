@@ -72,10 +72,9 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -106,7 +105,9 @@ var searchJob: Job? = null
 fun SearchBible(
     navController: NavHostController,
     perevod: String,
-    navigateToCytanniList: (String, Int, String) -> Unit = { _, _, _ -> }
+    isBogaslujbovyiaSearch: Boolean,
+    navigateToCytanniList: (String, Int, String) -> Unit,
+    navigateToBogaslujbovyia: (title: String, resurs: Int) -> Unit
 ) {
     var searchSettings by remember { mutableStateOf(false) }
     var isProgressVisable by remember { mutableStateOf(false) }
@@ -117,32 +118,24 @@ fun SearchBible(
     val keyboardController = LocalSoftwareKeyboardController.current
     var textFieldLoaded by remember { mutableStateOf(false) }
     var searshString by rememberSaveable { mutableStateOf("") }
-    var textFieldValueState by remember {
-        mutableStateOf(
-            TextFieldValue(
-                text = searshString,
-                selection = TextRange("".length)
-            )
-        )
-    }
-    LaunchedEffect(textFieldValueState.text, searchSettings, searshString) {
+    LaunchedEffect(searchSettings, searshString) {
         if (searchSettings) {
             res.clear()
             searchSettings = false
         }
-        if (textFieldValueState.text.trim().length >= 3 && res.isEmpty()) {
-            if (searchJob?.isActive == true) {
-                searchJob?.cancel()
-            }
+        if (searshString.trim().length >= 3 && res.isEmpty()) {
+            searchJob?.cancel()
             searchJob = CoroutineScope(Dispatchers.Main).launch {
                 isProgressVisable = true
                 res.clear()
                 val list = withContext(Dispatchers.IO) {
-                    return@withContext doInBackground(context, textFieldValueState.text.trim(), perevod)
+                    return@withContext doInBackground(context, searshString.trim(), perevod, isBogaslujbovyiaSearch)
                 }
                 res.addAll(list)
                 isProgressVisable = false
             }
+        } else {
+            searchJob?.cancel()
         }
     }
     val nestedScrollConnection = remember {
@@ -182,11 +175,10 @@ fun SearchBible(
                                     textFieldLoaded = true
                                 }
                             },
-                        value = textFieldValueState,
+                        value = searshString,
                         onValueChange = { newText ->
-                            textFieldValueState = newText
                             res.clear()
-                            var edit = textFieldValueState.text
+                            var edit = newText
                             if (perevod == Settings.PEREVODSINOIDAL) {
                                 edit = edit.replace("і", "и")
                                 edit = edit.replace("ў", "щ")
@@ -200,8 +192,7 @@ fun SearchBible(
                                 edit = edit.replace("Щ", "Ў")
                                 edit = edit.replace("ъ", "'")
                             }
-                            textFieldValueState = TextFieldValue(edit, TextRange(edit.length))
-                            searshString = textFieldValueState.text
+                            searshString = edit
                         },
                         singleLine = true,
                         leadingIcon = {
@@ -212,9 +203,9 @@ fun SearchBible(
                             )
                         },
                         trailingIcon = {
-                            if (textFieldValueState.text.isNotEmpty()) {
-                                IconButton(onClick = {
-                                    textFieldValueState = TextFieldValue("", TextRange("".length))
+                            if (searshString.isNotEmpty()) {
+                                IconButton(
+                                    onClick = {
                                     searshString = ""
                                 }) {
                                     Icon(
@@ -381,7 +372,7 @@ fun SearchBible(
             Column {
                 Text(
                     modifier = Modifier.padding(start = 10.dp),
-                    text = stringResource(R.string.searh_bibile_result, res.size),
+                    text = stringResource(R.string.searh_sviatyia_result, res.size),
                     fontStyle = FontStyle.Italic,
                     fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary
@@ -395,11 +386,15 @@ fun SearchBible(
                             modifier = Modifier
                                 .padding(10.dp)
                                 .clickable {
-                                    navigateToCytanniList(
-                                        res[index].subTitle + " " + res[index].glava.toString(),
-                                        res[index].styx,
-                                        perevod
-                                    )
+                                    if (isBogaslujbovyiaSearch) {
+                                        navigateToBogaslujbovyia(res[index].subTitle, res[index].resource)
+                                    } else {
+                                        navigateToCytanniList(
+                                            res[index].subTitle + " " + res[index].glava.toString(),
+                                            res[index].styx,
+                                            perevod
+                                        )
+                                    }
                                 },
                             text = res[index].text.toAnnotatedString(),
                             color = MaterialTheme.colorScheme.secondary,
@@ -473,14 +468,77 @@ fun DropdownMenuBox(
 fun doInBackground(
     context: Context,
     searche: String,
-    perevod: String
+    perevod: String,
+    isBogaslujbovyiaSearch: Boolean
 ): ArrayList<SearchBibleItem> {
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-    var list = biblia(context, searche, perevod)
-    if (list.isEmpty() && k.getInt("slovocalkam", 0) == 0) {
-        list = biblia(context, searche, perevod, true)
+    var list = if (isBogaslujbovyiaSearch) {
+        bogashlugbovya(context, searche)
+    } else {
+        biblia(context, searche, perevod)
+    }
+    if (!isBogaslujbovyiaSearch) {
+        if (list.isEmpty() && k.getInt("slovocalkam", 0) == 0) {
+            list = biblia(context, searche, perevod, true)
+        }
     }
     return list
+}
+
+fun bogashlugbovya(context: Context, poshuk: String, secondRun: Boolean = false): ArrayList<SearchBibleItem> {
+    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+    var poshuk1 = poshuk
+    val seashpost = ArrayList<SearchBibleItem>()
+    val registr = k.getBoolean("pegistrbukv", true)
+    poshuk1 = zamena(poshuk1, registr)
+    if (secondRun) {
+        val m = charArrayOf('у', 'е', 'а', 'о', 'э', 'я', 'і', 'ю', 'ь', 'ы')
+        for (aM in m) {
+            val r = poshuk1.length - 1
+            if (poshuk1[r] == aM && r >= 3) {
+                poshuk1 = poshuk1.replace(poshuk1, poshuk1.substring(0, r), registr)
+            }
+        }
+    }
+    val bogaslugbovyiaListAll = ArrayList<BogaslujbovyiaListData>()
+    bogaslugbovyiaListAll.addAll(getBogaslujbovyia())
+    bogaslugbovyiaListAll.addAll(getMalitvy())
+    bogaslugbovyiaListAll.addAll(getAkafist())
+    bogaslugbovyiaListAll.addAll(getRujanec())
+    bogaslugbovyiaListAll.addAll(getAktoix())
+    bogaslugbovyiaListAll.addAll(getViachernia())
+    bogaslugbovyiaListAll.addAll(getTraparyKandakiShtodzennyia())
+    bogaslugbovyiaListAll.addAll(getTraparyKandakiNiadzelnyia())
+    bogaslugbovyiaListAll.addAll(getMalitvyPasliaPrychascia())
+    bogaslugbovyiaListAll.addAll(getTrebnik())
+    bogaslugbovyiaListAll.addAll(getMineiaAgulnaia())
+    val slugbovyiaTextu = SlugbovyiaTextu()
+    val listPast = slugbovyiaTextu.getAllSlugbovyiaTextu()
+    listPast.forEach { slugbovyiaTextuData ->
+        bogaslugbovyiaListAll.add(BogaslujbovyiaListData(slugbovyiaTextuData.title + ". " + slugbovyiaTextu.getNazouSluzby(slugbovyiaTextuData.sluzba), slugbovyiaTextuData.resource))
+    }
+    for (i in 0 until bogaslugbovyiaListAll.size) {
+        if (searchJob?.isActive == false) break
+        var nazva = context.getString(R.string.error_ch)
+        val id = bogaslugbovyiaListAll[i].resurs
+        val inputStream = context.resources.openRawResource(id)
+        val isr = InputStreamReader(inputStream)
+        val reader = BufferedReader(isr)
+        val bibleline = reader.readText()
+        val t1 = bibleline.indexOf("<strong>")
+        if (t1 != -1) {
+            val t2 = bibleline.indexOf("</strong>", t1 + 8)
+            nazva = bibleline.substring(t1 + 8, t2)
+            nazva = AnnotatedString.fromHtml(nazva).text
+        }
+        val prepinanie = AnnotatedString.fromHtml(bibleline).text
+        val poshuk2 = findChars(context, poshuk1, prepinanie)
+        if (poshuk2.isEmpty()) continue
+        val span = AnnotatedString.Builder()
+        span.append(nazva)
+        seashpost.add(SearchBibleItem(nazva, 0, 0, bogaslugbovyiaListAll[i].resurs, span))
+    }
+    return seashpost
 }
 
 fun biblia(
@@ -606,7 +664,7 @@ fun biblia(
                             t1
                         )
                     }
-                    seashpost.add(SearchBibleItem(subTitle, glava, stix, span))
+                    seashpost.add(SearchBibleItem(subTitle, glava, stix, 0, span))
                 }
             }
         }
@@ -744,5 +802,6 @@ data class SearchBibleItem(
     val subTitle: String,
     val glava: Int,
     val styx: Int,
+    val resource: Int,
     val text: AnnotatedString.Builder
 )

@@ -241,9 +241,9 @@ fun DialogMyNatatki(
             if (editMode) {
                 TextField(
                     placeholder = { Text(stringResource(R.string.natatka_name), fontSize = Settings.fontInterface.sp) },
-                    value = TextFieldValue(editTitle, selection = TextRange(editTitle.length)),
+                    value = editTitle,
                     onValueChange = {
-                        editTitle = it.text
+                        editTitle = it
                     }
                 )
             } else {

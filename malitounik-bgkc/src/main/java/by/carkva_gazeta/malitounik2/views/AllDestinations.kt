@@ -275,8 +275,8 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
         edit.apply()
     }
 
-    fun navigateToSearchBiblia(perevod: String) {
-        navController.navigate("$SEARCH_BIBLIA/$perevod") {
+    fun navigateToSearchBiblia(perevod: String, searchBogaslujbovyia: Boolean) {
+        navController.navigate("$SEARCH_BIBLIA/$perevod/$searchBogaslujbovyia") {
             SEARCH_BIBLIA
         }
     }

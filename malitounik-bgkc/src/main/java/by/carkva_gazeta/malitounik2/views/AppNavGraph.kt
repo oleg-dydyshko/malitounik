@@ -68,11 +68,9 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -499,13 +497,16 @@ fun AppNavGraph(
         }
 
         composable(
-            AllDestinations.SEARCH_BIBLIA + "/{perevod}"
+            AllDestinations.SEARCH_BIBLIA + "/{perevod}/{searchBogaslujbovyia}",
+            arguments = listOf(navArgument("searchBogaslujbovyia") { type = NavType.BoolType })
         ) { stackEntry ->
             val perevod = stackEntry.arguments?.getString("perevod", Settings.PEREVODSEMUXI)
                 ?: Settings.PEREVODSEMUXI
+            val searchBogaslujbovyia = stackEntry.arguments?.getBoolean("searchBogaslujbovyia", false) ?: false
             SearchBible(
                 navController,
                 perevod,
+                searchBogaslujbovyia,
                 navigateToCytanniList = { chytanne, position, perevod2 ->
                     navigationActions.navigateToCytanniList(
                         "",
@@ -514,6 +515,9 @@ fun AppNavGraph(
                         perevod2,
                         position
                     )
+                },
+                navigateToBogaslujbovyia = { title, resurs ->
+                    navigationActions.navigateToBogaslujbovyia(title, resurs)
                 }
             )
         }
@@ -659,14 +663,7 @@ fun MainConteiner(
             dialogUmounyiaZnachenni = false
         }
     }
-    var textFieldValueState by remember {
-        mutableStateOf(
-            TextFieldValue(
-                text = "",
-                selection = TextRange("".length)
-            )
-        )
-    }
+    var textFieldValueState by remember { mutableStateOf("") }
     if (logView) {
         DialogLogProgramy {
             logView = false
@@ -778,14 +775,13 @@ fun MainConteiner(
                                     },
                                 value = textFieldValueState,
                                 onValueChange = { newText ->
-                                    textFieldValueState = newText
-                                    var edit = textFieldValueState.text
+                                    var edit = newText
                                     edit = edit.replace("и", "і")
                                     edit = edit.replace("щ", "ў")
                                     edit = edit.replace("И", "І")
                                     edit = edit.replace("Щ", "Ў")
                                     edit = edit.replace("ъ", "'")
-                                    textFieldValueState = TextFieldValue(edit, TextRange(edit.length))
+                                    textFieldValueState = edit
                                 },
                                 singleLine = true,
                                 leadingIcon = {
@@ -796,8 +792,8 @@ fun MainConteiner(
                                     )
                                 },
                                 trailingIcon = {
-                                    if (textFieldValueState.text.isNotEmpty()) {
-                                        IconButton(onClick = { textFieldValueState = TextFieldValue("", TextRange("".length)) }) {
+                                    if (textFieldValueState.isNotEmpty()) {
+                                        IconButton(onClick = { textFieldValueState = "" }) {
                                             Icon(
                                                 painter = painterResource(R.drawable.close),
                                                 contentDescription = "",
@@ -1013,6 +1009,13 @@ fun MainConteiner(
                                     if (k.getBoolean("admin", false)) {
                                         HorizontalDivider()
                                         DropdownMenuItem(
+                                            onClick = {
+                                                expanded = false
+                                                navigationActions.navigateToSearchBiblia(Settings.PEREVODSEMUXI, true)
+                                            },
+                                            text = { Text(stringResource(R.string.searche_bogasluz_text), fontSize = (Settings.fontInterface - 2).sp) }
+                                        )
+                                        DropdownMenuItem(
                                             onClick = { },
                                             text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) }
                                         )
@@ -1120,7 +1123,7 @@ fun MainConteiner(
                         innerPadding,
                         Settings.MENU_BOGASLUJBOVYIA,
                         searchText,
-                        textFieldValueState.text
+                        textFieldValueState
                     )
 
                     AllDestinations.AKAFIST_MENU -> BogaslujbovyiaMenu(
@@ -1128,20 +1131,20 @@ fun MainConteiner(
                         innerPadding,
                         Settings.MENU_AKAFIST,
                         searchText,
-                        textFieldValueState.text
+                        textFieldValueState
                     )
 
-                    AllDestinations.BIBLIJATEKA_LIST -> BiblijtekaList(navController, innerPadding, searchText, textFieldValueState.text)
+                    AllDestinations.BIBLIJATEKA_LIST -> BiblijtekaList(navController, innerPadding, searchText, textFieldValueState)
 
-                    AllDestinations.PIESNY_LIST -> PiesnyList(navController, innerPadding, searchText, textFieldValueState.text)
+                    AllDestinations.PIESNY_LIST -> PiesnyList(navController, innerPadding, searchText, textFieldValueState)
 
                     AllDestinations.SVAITY_MUNU -> SviatyList(navController, innerPadding)
 
                     AllDestinations.PARAFII_BGKC -> ParafiiBGKC(navController, innerPadding)
 
                     AllDestinations.PASHALIA -> {
-                        if (!searchText) textFieldValueState = TextFieldValue("", TextRange("".length))
-                        Pashalia(navController, innerPadding, searchText, textFieldValueState.text)
+                        if (!searchText) textFieldValueState = ""
+                        Pashalia(navController, innerPadding, searchText, textFieldValueState)
                     }
 
                     AllDestinations.RUJANEC_MENU -> BogaslujbovyiaMenu(
@@ -1149,7 +1152,7 @@ fun MainConteiner(
                         innerPadding,
                         Settings.MENU_RUJANEC,
                         searchText,
-                        textFieldValueState.text
+                        textFieldValueState
                     )
 
                     AllDestinations.MAE_NATATKI_MENU -> {
@@ -1168,13 +1171,13 @@ fun MainConteiner(
                         innerPadding,
                         Settings.MENU_MALITVY,
                         searchText,
-                        textFieldValueState.text
+                        textFieldValueState
                     )
 
                     AllDestinations.BIBLIA -> BibliaMenu(
                         navController,
                         navigateToSearchBible = { perevod ->
-                            navigationActions.navigateToSearchBiblia(perevod)
+                            navigationActions.navigateToSearchBiblia(perevod, false)
                         },
                         navigateToCytanniList = { chytanne, perevod2 ->
                             navigationActions.navigateToCytanniList(

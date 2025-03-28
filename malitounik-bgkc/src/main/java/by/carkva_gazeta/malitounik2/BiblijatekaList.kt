@@ -569,7 +569,7 @@ fun fileExistsBiblijateka(context: Context, fileName: String): Boolean {
     return file.exists()
 }
 
-private fun writeFile(
+fun writeFile(
     context: Context,
     url: String,
     loadComplete: () -> Unit,

@@ -50,11 +50,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -84,23 +82,15 @@ fun SearchSviatyia(navController: NavHostController) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var textFieldLoaded by remember { mutableStateOf(false) }
     var searshString by rememberSaveable { mutableStateOf("") }
-    var textFieldValueState by remember {
-        mutableStateOf(
-            TextFieldValue(
-                text = searshString,
-                selection = TextRange("".length)
-            )
-        )
-    }
-    LaunchedEffect(textFieldValueState.text, searshString) {
-        if (textFieldValueState.text.trim().length >= 3 && res.isEmpty()) {
+    LaunchedEffect(searshString, searshString) {
+        if (searshString.trim().length >= 3 && res.isEmpty()) {
             if (searchJob?.isActive == true) {
                 searchJob?.cancel()
             }
             searchJob = CoroutineScope(Dispatchers.Main).launch {
                 res.clear()
                 val list = withContext(Dispatchers.IO) {
-                    return@withContext rawAsset(context, textFieldValueState.text.trim())
+                    return@withContext rawAsset(context, searshString.trim())
                 }
                 res.addAll(list)
             }
@@ -139,18 +129,16 @@ fun SearchSviatyia(navController: NavHostController) {
                                     textFieldLoaded = true
                                 }
                             },
-                        value = textFieldValueState,
+                        value = searshString,
                         onValueChange = { newText ->
-                            textFieldValueState = newText
                             res.clear()
-                            var edit = textFieldValueState.text
+                            var edit = newText
                             edit = edit.replace("и", "і")
                             edit = edit.replace("щ", "ў")
                             edit = edit.replace("И", "І")
                             edit = edit.replace("Щ", "Ў")
                             edit = edit.replace("ъ", "'")
-                            textFieldValueState = TextFieldValue(edit, TextRange(edit.length))
-                            searshString = textFieldValueState.text
+                            searshString = edit
                         },
                         singleLine = true,
                         leadingIcon = {
@@ -161,9 +149,8 @@ fun SearchSviatyia(navController: NavHostController) {
                             )
                         },
                         trailingIcon = {
-                            if (textFieldValueState.text.isNotEmpty()) {
+                            if (searshString.isNotEmpty()) {
                                 IconButton(onClick = {
-                                    textFieldValueState = TextFieldValue("", TextRange("".length))
                                     searshString = ""
                                 }) {
                                     Icon(

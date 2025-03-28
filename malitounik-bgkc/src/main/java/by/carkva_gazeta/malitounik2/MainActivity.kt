@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import by.carkva_gazeta.malitounik2.ui.theme.MalitounikTheme
 import by.carkva_gazeta.malitounik2.views.AllDestinations
 import by.carkva_gazeta.malitounik2.views.AppNavGraph
+import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.google.firebase.FirebaseApp
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -1734,6 +1735,16 @@ class MainActivity : ComponentActivity(), SensorEventListener,
 
     }
 
+    fun checkmodulesAdmin(): Boolean {
+        val muduls = SplitInstallManagerFactory.create(this).installedModules
+        for (mod in muduls) {
+            if (mod == "admin") {
+                return true
+            }
+        }
+        return false
+    }
+
     private fun checkASztoNovagaMD5Sum(): Boolean {
         var st: String
         val inputStream = resources.openRawResource(R.raw.a_szto_novaha)
@@ -1771,40 +1782,10 @@ class MainActivity : ComponentActivity(), SensorEventListener,
         //Firebase.appCheck.installAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.getInstance())
     }
 
-    /*fun getBaseDzenNoch(): Boolean {
-        val k = getSharedPreferences("biblia", Context.MODE_PRIVATE)
-        val modeNight = k.getInt("mode_night", SettingsActivity.MODE_NIGHT_SYSTEM)
-        when (modeNight) {
-            SettingsActivity.MODE_NIGHT_SYSTEM -> {
-                val configuration = Resources.getSystem().configuration
-                dzenNoch = configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-            }
-
-            SettingsActivity.MODE_NIGHT_YES -> {
-                dzenNoch = true
-            }
-
-            SettingsActivity.MODE_NIGHT_NO -> {
-                dzenNoch = false
-            }
-
-            SettingsActivity.MODE_NIGHT_AUTO -> {
-                dzenNoch = k.getBoolean("dzen_noch", false)
-            }
-        }
-        return dzenNoch
-    }
-
-    fun getCheckDzenNoch() = checkDzenNoch*/
-
     private fun timeJob(isDzenNoch: Boolean) {
         if (startTimeJob?.isActive != true) {
             startTimeJob = CoroutineScope(Dispatchers.Main).launch {
                 dzenNoch = isDzenNoch
-                /*val k = getSharedPreferences("biblia", Context.MODE_PRIVATE)
-                val prefEditors = k.edit()
-                prefEditors.putBoolean("dzen_noch", isDzenNoch)
-                prefEditors.apply()*/
                 recreate()
                 mLastClickTime = SystemClock.elapsedRealtime()
             }
@@ -1960,48 +1941,3 @@ class MainActivity : ComponentActivity(), SensorEventListener,
         }
     }
 }
-
-
-/*@Composable
-fun Greeting(name : String, modifier : Modifier = Modifier) {
-val expanded = remember { mutableStateOf(false)
-}
-val extraPadding = if (expanded.value) 48.dp else 0.dp
-Surface(
-color = MaterialTheme.colorScheme.primary,
-modifier = modifier.padding(vertical = 4.dp, horizontal = 8.dp)
-) {
-Row(modifier = Modifier.padding(24.dp)) {
-    Column(
-        modifier = modifier.weight(1f)
-            .fillMaxWidth()
-            .padding(extraPadding)
-    ) {
-        Text(text = "Hello ")
-        Text(text = name)
-    }
-    ElevatedButton(
-        onClick = { expanded.value = !expanded.value }
-    ) {
-        Text(if (expanded.value) "Show less" else "Show more")
-    }
-}
-}
-}
-
-@Composable
-fun MyApp(
-modifier : Modifier = Modifier,
-names : List<String> = listOf("World", "Compose")
-) {
-Surface(
-modifier = modifier,
-color = MaterialTheme.colorScheme.background
-) {
-Column(modifier.padding(vertical = 4.dp)) {
-    for (name in names) {
-        Greeting(name = name)
-    }
-}
-}
-}*/

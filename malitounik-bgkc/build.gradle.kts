@@ -76,6 +76,7 @@ dependencies {
     implementation (libs.androidx.media)
     implementation(libs.androidx.documentfile)
     implementation(libs.androidx.paging.compose)
+    //implementation(libs.jsoup)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -1,5 +1,5 @@
 [versions]
-media3Exoplayer = "1.5.1"
+media3Exoplayer = "1.6.0"
 media = "1.7.0"
 agp = "8.6.1"
 kotlin = "1.9.0"
@@ -9,7 +9,7 @@ junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
-#jsoup = "1.18.3"
+#jsoup = "1.19.1"
 gson = "2.12.1"
 playServicesInstantapps = "18.1.0"
 featureDeliveryKtx = "2.1.0"
@@ -31,7 +31,7 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "j
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version = "1.10.1" }
-androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version = "2025.03.00" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version = "2025.03.01" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
@@ -45,7 +45,7 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 play-services-instantapps = { module = "com.google.android.gms:play-services-instantapps", version.ref = "playServicesInstantapps" }
 #jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 firebase-appcheck-playintegrity = { module = "com.google.firebase:firebase-appcheck-playintegrity" }
-firebase-bom = { module = "com.google.firebase:firebase-bom", version = "33.10.0" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version = "33.11.0" }
 firebase-storage-ktx = { module = "com.google.firebase:firebase-storage-ktx" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 feature-delivery-ktx = { group = "com.google.android.play", name = "feature-delivery-ktx", version.ref = "featureDeliveryKtx" }

@@ -1,8 +1,18 @@
 package by.carkva_gazeta.malitounik2
 
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
+import android.content.Context.CLIPBOARD_SERVICE
+import android.content.Intent
+import android.graphics.Bitmap
+import android.print.PrintAttributes
+import android.print.PrintManager
+import android.view.ViewGroup
 import android.view.WindowManager
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
@@ -77,12 +87,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
@@ -91,6 +99,7 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Popup
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -144,14 +153,6 @@ fun Bogaslujbovyia(
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
     var searshString by rememberSaveable { mutableStateOf("") }
-    var textFieldValueState by remember {
-        mutableStateOf(
-            TextFieldValue(
-                text = searshString,
-                selection = TextRange("".length)
-            )
-        )
-    }
     var modeNight by remember {
         mutableIntStateOf(
             k.getInt(
@@ -237,6 +238,7 @@ fun Bogaslujbovyia(
     var searchTextResult by remember { mutableStateOf(AnnotatedString("")) }
     var backPressHandled by remember { mutableStateOf(false) }
     var iskniga by remember { mutableStateOf(false) }
+    var isWebViewVisible by remember { mutableStateOf(false) }
     val actyvity = LocalActivity.current as MainActivity
     if (autoScrollSensor) {
         actyvity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -248,6 +250,7 @@ fun Bogaslujbovyia(
                 searchText = false
                 searchTextResult = AnnotatedString("")
             }
+
             iskniga -> {
                 showDropdown = true
                 iskniga = false
@@ -310,18 +313,17 @@ fun Bogaslujbovyia(
     val result = remember { mutableStateListOf<ArrayList<Int>>() }
     var resultPosition by remember { mutableIntStateOf(0) }
     val textLayout = remember { mutableStateOf<TextLayoutResult?>(null) }
-    LaunchedEffect(textFieldValueState.text, searshString) {
-        if (textFieldValueState.text.trim().length >= 3) {
+    LaunchedEffect(searshString) {
+        if (searshString.trim().length >= 3) {
             if (searchJob?.isActive == true) {
                 searchJob?.cancel()
             }
             textLayout.value?.let { layout ->
                 searchJob = CoroutineScope(Dispatchers.Main).launch {
                     result.clear()
-                    result.addAll(findAllAsanc(layout.layoutInput.text.text, textFieldValueState.text))
+                    result.addAll(findAllAsanc(layout.layoutInput.text.text, searshString))
                     textLayout.value?.let { layout ->
                         if (result.isNotEmpty()) {
-                            searchTextResult = AnnotatedString("")
                             val opiginalText = layout.layoutInput.text
                             val annotatedString = buildAnnotatedString {
                                 append(opiginalText)
@@ -339,10 +341,14 @@ fun Bogaslujbovyia(
                                     scrollState.animateScrollTo(y.toInt())
                                 }
                             }
+                        } else {
+                            searchTextResult = AnnotatedString("")
                         }
                     }
                 }
             }
+        } else {
+            searchTextResult = AnnotatedString("")
         }
     }
     LaunchedEffect(findForward) {
@@ -385,6 +391,51 @@ fun Bogaslujbovyia(
             }
         }
     }
+    var isDialogNoWIFIVisable by remember { mutableStateOf(false) }
+    var printFile by remember { mutableStateOf("") }
+    if (isDialogNoWIFIVisable) {
+        DialogNoWiFI(
+            onDismissRequest = {
+                isDialogNoWIFIVisable = false
+            },
+            onConfirmation = {
+                writeFile(context, printFile, loadComplete = {
+                    val printAdapter = PdfDocumentAdapter(context, printFile)
+                    val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
+                    val printAttributes = PrintAttributes.Builder().setMediaSize(PrintAttributes.MediaSize.ISO_A4).build()
+                    printManager.print(printFile, printAdapter, printAttributes)
+                },
+                    inProcess = {
+                    })
+                isDialogNoWIFIVisable = false
+            }
+        )
+    }
+    if (isWebViewVisible) {
+        AndroidView(
+            factory = {
+                WebView(it).apply {
+                    this.layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                    this.loadDataWithBaseURL(null, htmlText, "text/HTML", "UTF-8", null)
+                    this.webViewClient = object : WebViewClient() {
+                        override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                        }
+
+                        override fun onPageFinished(view: WebView, url: String) {
+                            val printAdapter = view.createPrintDocumentAdapter(title)
+                            val printAttributes = PrintAttributes.Builder().setMediaSize(PrintAttributes.MediaSize.ISO_A4).build()
+                            val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
+                            printManager.print(htmlText, printAdapter, printAttributes)
+                            isWebViewVisible = false
+                        }
+                    }
+                }
+            }
+        )
+    }
     Scaffold(
         topBar = {
             if (!fullscreen) {
@@ -417,17 +468,16 @@ fun Bogaslujbovyia(
                                             textFieldLoaded = true
                                         }
                                     },
-                                value = textFieldValueState,
+                                value = searshString,
                                 onValueChange = { newText ->
-                                    textFieldValueState = newText
-                                    var edit = textFieldValueState.text
+                                    var edit = newText
                                     edit = edit.replace("и", "і")
                                     edit = edit.replace("щ", "ў")
                                     edit = edit.replace("И", "І")
                                     edit = edit.replace("Щ", "Ў")
                                     edit = edit.replace("ъ", "'")
-                                    textFieldValueState = TextFieldValue(edit, TextRange(edit.length))
-                                    searshString = textFieldValueState.text
+                                    searchTextResult = AnnotatedString("")
+                                    searshString = edit
                                 },
                                 singleLine = true,
                                 leadingIcon = {
@@ -438,9 +488,8 @@ fun Bogaslujbovyia(
                                     )
                                 },
                                 trailingIcon = {
-                                    if (textFieldValueState.text.isNotEmpty()) {
+                                    if (searchTextResult.isNotEmpty()) {
                                         IconButton(onClick = {
-                                            textFieldValueState = TextFieldValue("", TextRange("".length))
                                             searshString = ""
                                         }) {
                                             Icon(
@@ -630,6 +679,120 @@ fun Bogaslujbovyia(
                                         },
                                         text = { Text(stringResource(R.string.dzen_noch), fontSize = (Settings.fontInterface - 2).sp) }
                                     )
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            showDropdown = false
+                                            autoScroll = false
+                                            expanded = false
+                                            val sent = textLayout.value?.layoutInput?.text?.text
+                                            val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                                            sent?.let { shareText ->
+                                                val clip = ClipData.newPlainText(context.getString(R.string.copy_text), shareText)
+                                                clipboard.setPrimaryClip(clip)
+                                                val sendIntent = Intent(Intent.ACTION_SEND)
+                                                sendIntent.putExtra(Intent.EXTRA_TEXT, shareText)
+                                                sendIntent.putExtra(Intent.EXTRA_SUBJECT, title)
+                                                sendIntent.type = "text/plain"
+                                                context.startActivity(Intent.createChooser(sendIntent, title))
+                                            }
+                                        },
+                                        text = { Text(stringResource(R.string.share), fontSize = (Settings.fontInterface - 2).sp) },
+                                        trailingIcon = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.share),
+                                                contentDescription = ""
+                                            )
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            showDropdown = false
+                                            autoScroll = false
+                                            expanded = false
+                                            val slugbovyiaTextu = SlugbovyiaTextu()
+                                            var res = slugbovyiaTextu.getTydzen1()
+                                            res.forEach {
+                                                if (resurs == it.resource) printFile = "Tydzien-1 VP_2012.pdf"
+                                            }
+                                            res = slugbovyiaTextu.getTydzen2()
+                                            res.forEach {
+                                                if (resurs == it.resource) printFile = "Tydzien-2 VP_2012.pdf"
+                                            }
+                                            res = slugbovyiaTextu.getTydzen3()
+                                            res.forEach {
+                                                if (resurs == it.resource) printFile = "Tydzien-3 VP_2014.pdf"
+                                            }
+                                            res = slugbovyiaTextu.getTydzen4()
+                                            res.forEach {
+                                                if (resurs == it.resource) printFile = "Tydzien-4 VP_2014.pdf"
+                                            }
+                                            res = slugbovyiaTextu.getTydzen5()
+                                            res.forEach {
+                                                if (resurs == it.resource) printFile = "Tydzien-5 VP_2015.pdf"
+                                            }
+                                            res = slugbovyiaTextu.getTydzen6()
+                                            res.forEach {
+                                                if (resurs == it.resource) printFile = "Tydzien-6 VP_2015.pdf"
+                                            }
+                                            if (resurs == R.raw.lit_jana_zalatavusnaha) printFile = "LITURGIJA Jana Zlt.pdf"
+                                            if (resurs == R.raw.kanon_andreja_kryckaha) printFile = "Kanon_A-Kryckaha.pdf"
+                                            if (resurs == R.raw.akafist4) printFile = "Akafist-Padl-muczanikam.pdf"
+                                            if (resurs == R.raw.akafist6) printFile = "Akafist da Ducha Sviatoha.pdf"
+                                            if (resurs == R.raw.vialikaja_piatnica_jutran_12jevanhellau) printFile = "Vial-Piatnica-jutran-12-Evang.pdf"
+                                            if (printFile.isNotEmpty()) {
+                                                if (fileExistsBiblijateka(context, printFile)) {
+                                                    val printAdapter = PdfDocumentAdapter(context, printFile)
+                                                    val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
+                                                    val printAttributes = PrintAttributes.Builder().setMediaSize(PrintAttributes.MediaSize.ISO_A4).build()
+                                                    printManager.print(printFile, printAdapter, printAttributes)
+                                                } else {
+                                                    if (Settings.isNetworkAvailable(
+                                                            context,
+                                                            Settings.TRANSPORT_CELLULAR
+                                                        )
+                                                    ) isDialogNoWIFIVisable = true
+                                                    else {
+                                                        writeFile(context, printFile, loadComplete = {
+                                                            val printAdapter = PdfDocumentAdapter(context, printFile)
+                                                            val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
+                                                            val printAttributes = PrintAttributes.Builder().setMediaSize(PrintAttributes.MediaSize.ISO_A4).build()
+                                                            printManager.print(printFile, printAdapter, printAttributes)
+                                                        },
+                                                            inProcess = {
+                                                            })
+                                                    }
+                                                }
+                                            } else {
+                                                isWebViewVisible = true
+                                            }
+                                        },
+                                        text = { Text(stringResource(R.string.print), fontSize = (Settings.fontInterface - 2).sp) },
+                                        trailingIcon = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.print),
+                                                contentDescription = ""
+                                            )
+                                        }
+                                    )
+                                    if (k.getBoolean("admin", false)) {
+                                        HorizontalDivider()
+                                        DropdownMenuItem(
+                                            onClick = {
+                                                showDropdown = false
+                                                autoScroll = false
+                                                expanded = false
+                                                if ((context as MainActivity).checkmodulesAdmin()) {
+                                                    val intent = Intent()
+                                                    intent.setClassName(context, "by.carkva_gazeta.admin.PasochnicaList")
+                                                    intent.putExtra("resours", resurs)
+                                                    intent.putExtra("title", title)
+                                                    intent.putExtra("text", htmlText)
+                                                    context.startActivity(intent)
+                                                }
+                                            },
+                                            text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) }
+                                        )
+                                    }
                                 }
                             }
                         } else {

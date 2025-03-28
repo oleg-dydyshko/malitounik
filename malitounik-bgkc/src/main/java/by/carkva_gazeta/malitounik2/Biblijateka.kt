@@ -223,6 +223,10 @@ fun Biblijateka(
                                 Text(stringResource(R.string.share), fontSize = (Settings.fontInterface - 2).sp)
                             },
                             trailingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.share),
+                                    contentDescription = ""
+                                )
                             }
                         )
                         DropdownMenuItem(
@@ -243,6 +247,10 @@ fun Biblijateka(
                                 Text(stringResource(R.string.open_in), fontSize = (Settings.fontInterface - 2).sp)
                             },
                             trailingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.open_in_new),
+                                    contentDescription = ""
+                                )
                             }
                         )
                         DropdownMenuItem(
@@ -260,6 +268,10 @@ fun Biblijateka(
                                 Text(stringResource(R.string.print), fontSize = (Settings.fontInterface - 2).sp)
                             },
                             trailingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.print),
+                                    contentDescription = ""
+                                )
                             }
                         )
                     }
@@ -329,9 +341,12 @@ fun Biblijateka(
                                 color = PrimaryText
                             )
                         }
-                        Column(modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.onTertiary).clickable {
-                            showDropdown = false
-                        }) {
+                        Column(modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.onTertiary)
+                            .clickable {
+                                showDropdown = false
+                            }) {
                             Icon(modifier = Modifier.align(Alignment.End), painter = painterResource(R.drawable.keyboard_arrow_up), contentDescription = "", tint = PrimaryTextBlack)
                         }
                     }
