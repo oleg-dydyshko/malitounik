@@ -779,6 +779,12 @@ fun CytanniList(
                                             stringResource(R.string.razdzel),
                                             fontSize = (Settings.fontInterface - 2).sp
                                         )
+                                    },
+                                    trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.apps),
+                                            contentDescription = ""
+                                        )
                                     }
                                 )
                             }
@@ -793,6 +799,12 @@ fun CytanniList(
                                     Text(
                                         stringResource(R.string.perevody),
                                         fontSize = (Settings.fontInterface - 2).sp
+                                    )
+                                },
+                                trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.book_red),
+                                        contentDescription = ""
                                     )
                                 }
                             )
@@ -869,6 +881,12 @@ fun CytanniList(
                                         stringResource(R.string.menu_font_size_app),
                                         fontSize = (Settings.fontInterface - 2).sp
                                     )
+                                },
+                                trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.format_size),
+                                        contentDescription = ""
+                                    )
                                 }
                             )
                             DropdownMenuItem(
@@ -882,6 +900,12 @@ fun CytanniList(
                                     Text(
                                         stringResource(R.string.dzen_noch),
                                         fontSize = (Settings.fontInterface - 2).sp
+                                    )
+                                },
+                                trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.contrast),
+                                        contentDescription = ""
                                     )
                                 }
                             )

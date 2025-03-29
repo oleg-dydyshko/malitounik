@@ -2,6 +2,7 @@ package by.carkva_gazeta.malitounik2.views
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
 import androidx.activity.compose.BackHandler
@@ -910,121 +911,192 @@ fun MainConteiner(
                                 }
                             }
                             var expanded by remember { mutableStateOf(false) }
-                            Box {
-                                IconButton(onClick = { expanded = true }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.more_vert),
-                                        contentDescription = "",
-                                        tint = textTollBarColor
+                            IconButton(onClick = { expanded = true }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.more_vert),
+                                    contentDescription = "",
+                                    tint = textTollBarColor
+                                )
+                            }
+                            DropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false }
+                            ) {
+                                DropdownMenuItem(
+                                    onClick = {
+                                        expanded = false
+                                        navigationActions.navigateToSettingsView()
+                                    },
+                                    text = { Text(stringResource(R.string.tools_item), fontSize = (Settings.fontInterface - 2).sp) },
+                                    trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.settings),
+                                            contentDescription = ""
+                                        )
+                                    }
+                                )
+                                if (currentRoute.contains(AllDestinations.KALIANDAR)) {
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            expanded = false
+                                            dialogUmounyiaZnachenni = true
+                                        },
+                                        text = { Text(stringResource(R.string.munu_symbols), fontSize = (Settings.fontInterface - 2).sp) },
+                                        trailingIcon = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.info),
+                                                contentDescription = ""
+                                            )
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            expanded = false
+                                            navigationActions.navigateToPadzeiView()
+                                        },
+                                        text = { Text(stringResource(R.string.sabytie), fontSize = (Settings.fontInterface - 2).sp) },
+                                        trailingIcon = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.event),
+                                                contentDescription = ""
+                                            )
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            expanded = false
+                                            navigationActions.navigateToSearchSvityia()
+                                        },
+                                        text = { Text(stringResource(R.string.search_svityia), fontSize = (Settings.fontInterface - 2).sp) },
+                                        trailingIcon = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.search),
+                                                contentDescription = ""
+                                            )
+                                        }
                                     )
                                 }
-                                DropdownMenu(
-                                    expanded = expanded,
-                                    onDismissRequest = { expanded = false }
+                                if (currentRoute.contains(AllDestinations.VYBRANAE_LIST) || currentRoute.contains(
+                                        AllDestinations.MAE_NATATKI_MENU
+                                    )
                                 ) {
                                     DropdownMenuItem(
                                         onClick = {
                                             expanded = false
-                                            navigationActions.navigateToSettingsView()
+                                            sortedVybranae =
+                                                if (sortedVybranae == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
+                                                else Settings.SORT_BY_ABC
+                                            sortedNatatki =
+                                                if (sortedNatatki == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
+                                                else Settings.SORT_BY_ABC
+                                            val edit = k.edit()
+                                            if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) edit.putInt(
+                                                "sortedVybranae",
+                                                sortedVybranae
+                                            )
+                                            else edit.putInt("natatki_sort", sortedNatatki)
+                                            edit.apply()
                                         },
-                                        text = { Text(stringResource(R.string.tools_item), fontSize = (Settings.fontInterface - 2).sp) }
-                                    )
-                                    if (currentRoute.contains(AllDestinations.KALIANDAR)) {
-                                        DropdownMenuItem(
-                                            onClick = {
-                                                expanded = false
-                                                dialogUmounyiaZnachenni = true
-                                            },
-                                            text = { Text(stringResource(R.string.munu_symbols), fontSize = (Settings.fontInterface - 2).sp) }
-                                        )
-                                        DropdownMenuItem(
-                                            onClick = {
-                                                expanded = false
-                                                navigationActions.navigateToPadzeiView()
-                                            },
-                                            text = { Text(stringResource(R.string.sabytie), fontSize = (Settings.fontInterface - 2).sp) }
-                                        )
-                                        DropdownMenuItem(
-                                            onClick = {
-                                                expanded = false
-                                                navigationActions.navigateToSearchSvityia()
-                                            },
-                                            text = { Text(stringResource(R.string.search_svityia), fontSize = (Settings.fontInterface - 2).sp) }
-                                        )
-                                    }
-                                    if (currentRoute.contains(AllDestinations.VYBRANAE_LIST) || currentRoute.contains(
-                                            AllDestinations.MAE_NATATKI_MENU
-                                        )
-                                    ) {
-                                        DropdownMenuItem(
-                                            onClick = {
-                                                expanded = false
-                                                sortedVybranae =
-                                                    if (sortedVybranae == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
-                                                    else Settings.SORT_BY_ABC
-                                                sortedNatatki =
-                                                    if (sortedNatatki == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
-                                                    else Settings.SORT_BY_ABC
-                                                val edit = k.edit()
-                                                if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) edit.putInt(
-                                                    "sortedVybranae",
-                                                    sortedVybranae
+                                        text = {
+                                            if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) {
+                                                if (sortedVybranae == Settings.SORT_BY_TIME) Text(
+                                                    stringResource(
+                                                        R.string.sort_alf
+                                                    )
                                                 )
-                                                else edit.putInt("natatki_sort", sortedNatatki)
-                                                edit.apply()
-                                            },
-                                            text = {
-                                                if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) {
-                                                    if (sortedVybranae == Settings.SORT_BY_TIME) Text(
-                                                        stringResource(
-                                                            R.string.sort_alf
-                                                        )
-                                                    )
-                                                    else Text(stringResource(R.string.sort_add), fontSize = (Settings.fontInterface - 2).sp)
-                                                } else {
-                                                    if (sortedNatatki == Settings.SORT_BY_TIME) Text(
-                                                        stringResource(
-                                                            R.string.sort_alf
-                                                        ), fontSize = (Settings.fontInterface - 2).sp
-                                                    )
-                                                    else Text(stringResource(R.string.sort_add), fontSize = (Settings.fontInterface - 2).sp)
-                                                }
+                                                else Text(stringResource(R.string.sort_add), fontSize = (Settings.fontInterface - 2).sp)
+                                            } else {
+                                                if (sortedNatatki == Settings.SORT_BY_TIME) Text(
+                                                    stringResource(
+                                                        R.string.sort_alf
+                                                    ), fontSize = (Settings.fontInterface - 2).sp
+                                                )
+                                                else Text(stringResource(R.string.sort_add), fontSize = (Settings.fontInterface - 2).sp)
                                             }
+                                        },
+                                        trailingIcon = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.sort),
+                                                contentDescription = ""
+                                            )
+                                        }
+                                    )
+                                }
+                                DropdownMenuItem(
+                                    onClick = {
+                                        expanded = false
+                                        navigationActions.navigateToPraNas()
+                                    },
+                                    text = { Text(stringResource(R.string.pra_nas), fontSize = (Settings.fontInterface - 2).sp) },
+                                    trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.info),
+                                            contentDescription = ""
                                         )
                                     }
+                                )
+                                DropdownMenuItem(
+                                    onClick = {
+                                        expanded = false
+                                        navigationActions.navigateToHelp()
+                                    },
+                                    text = { Text(stringResource(R.string.help), fontSize = (Settings.fontInterface - 2).sp) },
+                                    trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.favorite),
+                                            contentDescription = ""
+                                        )
+                                    }
+                                )
+                                if (k.getBoolean("admin", false)) {
+                                    HorizontalDivider()
                                     DropdownMenuItem(
                                         onClick = {
                                             expanded = false
-                                            navigationActions.navigateToPraNas()
+                                            navigationActions.navigateToSearchBiblia(Settings.PEREVODSEMUXI, true)
                                         },
-                                        text = { Text(stringResource(R.string.pra_nas), fontSize = (Settings.fontInterface - 2).sp) }
+                                        text = { Text(stringResource(R.string.searche_bogasluz_text), fontSize = (Settings.fontInterface - 2).sp) },
+                                        trailingIcon = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.search),
+                                                contentDescription = ""
+                                            )
+                                        }
                                     )
                                     DropdownMenuItem(
                                         onClick = {
                                             expanded = false
-                                            navigationActions.navigateToHelp()
+                                            logView = true
                                         },
-                                        text = { Text(stringResource(R.string.help), fontSize = (Settings.fontInterface - 2).sp) }
+                                        text = { Text(stringResource(R.string.log_m), fontSize = (Settings.fontInterface - 2).sp) },
+                                        trailingIcon = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.description),
+                                                contentDescription = ""
+                                            )
+                                        }
                                     )
-                                    if (k.getBoolean("admin", false)) {
-                                        HorizontalDivider()
+                                    if (currentRoute.contains(AllDestinations.KALIANDAR) || currentRoute.contains(AllDestinations.BIBLIJATEKA_LIST)) {
                                         DropdownMenuItem(
                                             onClick = {
-                                                expanded = false
-                                                navigationActions.navigateToSearchBiblia(Settings.PEREVODSEMUXI, true)
+                                                if ((context as MainActivity).checkmodulesAdmin()) {
+                                                    val intent = Intent()
+                                                    if (currentRoute.contains(AllDestinations.KALIANDAR)) {
+                                                        intent.setClassName(context, "by.carkva_gazeta.admin.Sviatyia")
+                                                        intent.putExtra("dayOfYear", Settings.data[Settings.caliandarPosition][24].toInt())
+                                                    } else {
+                                                        intent.setClassName(context, "by.carkva_gazeta.admin.BibliatekaList")
+                                                    }
+                                                    context.startActivity(intent)
+                                                }
                                             },
-                                            text = { Text(stringResource(R.string.searche_bogasluz_text), fontSize = (Settings.fontInterface - 2).sp) }
-                                        )
-                                        DropdownMenuItem(
-                                            onClick = { },
-                                            text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) }
-                                        )
-                                        DropdownMenuItem(
-                                            onClick = {
-                                                expanded = false
-                                                logView = true
-                                            },
-                                            text = { Text(stringResource(R.string.log_m), fontSize = (Settings.fontInterface - 2).sp) }
+                                            text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) },
+                                            trailingIcon = {
+                                                Icon(
+                                                    painter = painterResource(R.drawable.edit),
+                                                    contentDescription = ""
+                                                )
+                                            }
                                         )
                                     }
                                 }
@@ -1285,7 +1357,11 @@ fun DialogLogProgramy(
             Text(text = stringResource(R.string.log))
         },
         text = {
-            Text(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()), text = item, fontSize = Settings.fontInterface.sp)
+            Text(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()), text = item, fontSize = Settings.fontInterface.sp
+            )
         },
         onDismissRequest = {
         },

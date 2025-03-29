@@ -38,6 +38,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
@@ -396,6 +397,7 @@ fun Bogaslujbovyia(
     if (isDialogNoWIFIVisable) {
         DialogNoWiFI(
             onDismissRequest = {
+                isWebViewVisible = true
                 isDialogNoWIFIVisable = false
             },
             onConfirmation = {
@@ -668,7 +670,13 @@ fun Bogaslujbovyia(
                                             expanded = false
                                             menuPosition = 1
                                         },
-                                        text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) }
+                                        text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) },
+                                        trailingIcon = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.format_size),
+                                                contentDescription = ""
+                                            )
+                                        }
                                     )
                                     DropdownMenuItem(
                                         onClick = {
@@ -677,7 +685,13 @@ fun Bogaslujbovyia(
                                             expanded = false
                                             menuPosition = 3
                                         },
-                                        text = { Text(stringResource(R.string.dzen_noch), fontSize = (Settings.fontInterface - 2).sp) }
+                                        text = { Text(stringResource(R.string.dzen_noch), fontSize = (Settings.fontInterface - 2).sp) },
+                                        trailingIcon = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.contrast),
+                                                contentDescription = ""
+                                            )
+                                        }
                                     )
                                     DropdownMenuItem(
                                         onClick = {
@@ -790,7 +804,13 @@ fun Bogaslujbovyia(
                                                     context.startActivity(intent)
                                                 }
                                             },
-                                            text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) }
+                                            text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) },
+                                            trailingIcon = {
+                                                Icon(
+                                                    painter = painterResource(R.drawable.edit),
+                                                    contentDescription = ""
+                                                )
+                                            }
                                         )
                                     }
                                 }
@@ -1198,19 +1218,37 @@ fun Bogaslujbovyia(
                 verticalArrangement = Arrangement.Top
             ) {
                 val padding = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp
-                HtmlText(
-                    modifier = Modifier.padding(top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(10.dp)),
-                    text = htmlText,
-                    fontSize = fontSize.sp,
-                    searchText = searchTextResult,
-                    scrollState = scrollState,
-                    navigateTo = { navigate ->
-                        navigateTo(navigate)
-                    },
-                    textLayoutResult = { layout ->
-                        textLayout.value = layout
+                if (autoScrollSensor) {
+                    HtmlText(
+                        modifier = Modifier.padding(top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(10.dp)),
+                        text = htmlText,
+                        fontSize = fontSize.sp,
+                        searchText = searchTextResult,
+                        scrollState = scrollState,
+                        navigateTo = { navigate ->
+                            navigateTo(navigate)
+                        },
+                        textLayoutResult = { layout ->
+                            textLayout.value = layout
+                        }
+                    )
+                } else {
+                    SelectionContainer {
+                        HtmlText(
+                            modifier = Modifier.padding(top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(10.dp)),
+                            text = htmlText,
+                            fontSize = fontSize.sp,
+                            searchText = searchTextResult,
+                            scrollState = scrollState,
+                            navigateTo = { navigate ->
+                                navigateTo(navigate)
+                            },
+                            textLayoutResult = { layout ->
+                                textLayout.value = layout
+                            }
+                        )
                     }
-                )
+                }
                 if (scrollState.lastScrolledForward && !scrollState.canScrollForward) {
                     autoScroll = false
                     autoScrollSensor = false

@@ -392,12 +392,6 @@ fun HtmlText(
         onTextLayout = { layout ->
             textLayout.value = layout
             textLayoutResult(layout)
-            //val line = layout.getLineForOffset(t1)
-            //y = layout.getLineTop(line)
-
-            //val lineForVertical = layout.getLineForVerticalPosition(scrollStateValue.toFloat() + innerPadding.calculateTopPadding().value)
-            //val lineForOffset = layout.getLineForOffset(t1)
-            //Log.d("Oleg", "$lineForVertical $y $line")
         }
     )
 }

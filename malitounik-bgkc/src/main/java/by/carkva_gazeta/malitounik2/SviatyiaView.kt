@@ -38,12 +38,14 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -337,7 +339,13 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                                     expanded = false
                                     menuPosition = 1
                                 },
-                                text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) }
+                                text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) },
+                                trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.format_size),
+                                        contentDescription = ""
+                                    )
+                                }
                             )
                             DropdownMenuItem(
                                 onClick = {
@@ -345,8 +353,34 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                                     expanded = false
                                     menuPosition = 3
                                 },
-                                text = { Text(stringResource(R.string.dzen_noch), fontSize = (Settings.fontInterface - 2).sp) }
+                                text = { Text(stringResource(R.string.dzen_noch), fontSize = (Settings.fontInterface - 2).sp) },
+                                trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.contrast),
+                                        contentDescription = ""
+                                    )
+                                }
                             )
+                            if (k.getBoolean("admin", false)) {
+                                HorizontalDivider()
+                                DropdownMenuItem(
+                                    onClick = {
+                                        if ((context as MainActivity).checkmodulesAdmin()) {
+                                            val intent = Intent()
+                                            intent.setClassName(context, "by.carkva_gazeta.admin.Sviatyia")
+                                            intent.putExtra("dayOfYear", Settings.data[Settings.caliandarPosition][24].toInt())
+                                            context.startActivity(intent)
+                                        }
+                                    },
+                                    text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) },
+                                    trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.edit),
+                                            contentDescription = ""
+                                        )
+                                    }
+                                )
+                            }
                         }
 
                     },
@@ -642,61 +676,63 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                     val sviatyiaListItem = sviatyiaList.value
                     items(sviatyiaList.value.size) { index ->
                         val file = File(sviatyiaListItem[index].image)
-                        Column {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    modifier = Modifier
-                                        .padding(10.dp)
-                                        .weight(1f), text = sviatyiaListItem[index].title, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary
-                                )
-                                Icon(
-                                    modifier = Modifier
-                                        .padding(end = 10.dp)
-                                        .clickable {
-                                            val sb = StringBuilder()
-                                            sb.append(sviatyiaListItem[index].text)
-                                            sb.append(sviatyiaListItem[index].text.trim())
-                                            val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-                                            val clip = ClipData.newPlainText(context.getString(R.string.copy_text), sb.toString())
-                                            clipboard.setPrimaryClip(clip)
-                                            if (file.exists()) {
-                                                val sendIntent = Intent(Intent.ACTION_SEND)
-                                                sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "by.carkva_gazeta.malitounik2.fileprovider", file))
-                                                sendIntent.putExtra(Intent.EXTRA_TEXT, sviatyiaListItem[index].text.trim())
-                                                sendIntent.putExtra(Intent.EXTRA_SUBJECT, sviatyiaListItem[index].text.trim())
-                                                sendIntent.type = "image/*"
-                                                context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.zmiest)))
-                                            } else {
-                                                val sendIntent = Intent(Intent.ACTION_SEND)
-                                                sendIntent.putExtra(Intent.EXTRA_TEXT, sb.toString())
-                                                sendIntent.putExtra(Intent.EXTRA_SUBJECT, context.getText(R.string.zmiest))
-                                                sendIntent.type = "text/plain"
-                                                context.startActivity(Intent.createChooser(sendIntent, context.getText(R.string.zmiest)))
-                                            }
-                                        }, painter = painterResource(R.drawable.share), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
-                                )
-                            }
-                            if (file.exists()) {
-                                val image = BitmapFactory.decodeFile(sviatyiaListItem[index].image).asImageBitmap()
-                                var imW = image.width.toFloat()
-                                var imH = image.height.toFloat()
-                                val imageScale: Float = imW / imH
-                                if (imW > 150F) {
-                                    imW = 150F
-                                    imH = 150F / imageScale
+                        SelectionContainer {
+                            Column {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        modifier = Modifier
+                                            .padding(10.dp)
+                                            .weight(1f), text = sviatyiaListItem[index].title, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary
+                                    )
+                                    Icon(
+                                        modifier = Modifier
+                                            .padding(end = 10.dp)
+                                            .clickable {
+                                                val sb = StringBuilder()
+                                                sb.append(sviatyiaListItem[index].text)
+                                                sb.append(sviatyiaListItem[index].text.trim())
+                                                val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                                                val clip = ClipData.newPlainText(context.getString(R.string.copy_text), sb.toString())
+                                                clipboard.setPrimaryClip(clip)
+                                                if (file.exists()) {
+                                                    val sendIntent = Intent(Intent.ACTION_SEND)
+                                                    sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "by.carkva_gazeta.malitounik2.fileprovider", file))
+                                                    sendIntent.putExtra(Intent.EXTRA_TEXT, sviatyiaListItem[index].text.trim())
+                                                    sendIntent.putExtra(Intent.EXTRA_SUBJECT, sviatyiaListItem[index].text.trim())
+                                                    sendIntent.type = "image/*"
+                                                    context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.zmiest)))
+                                                } else {
+                                                    val sendIntent = Intent(Intent.ACTION_SEND)
+                                                    sendIntent.putExtra(Intent.EXTRA_TEXT, sb.toString())
+                                                    sendIntent.putExtra(Intent.EXTRA_SUBJECT, context.getText(R.string.zmiest))
+                                                    sendIntent.type = "text/plain"
+                                                    context.startActivity(Intent.createChooser(sendIntent, context.getText(R.string.zmiest)))
+                                                }
+                                            }, painter = painterResource(R.drawable.share), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
+                                    )
                                 }
-                                Image(
-                                    modifier = Modifier
-                                        .size(imW.dp, imH.dp)
-                                        .align(Alignment.CenterHorizontally)
-                                        .clickable {
-                                            fullImagePathVisable = file.absolutePath
-                                            imageFull = true
-                                        }, bitmap = image, contentDescription = ""
-                                )
-                            }
-                            if (sviatyiaListItem[index].text.isNotEmpty()) {
-                                Text(modifier = Modifier.padding(10.dp), text = sviatyiaListItem[index].text, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary)
+                                if (file.exists()) {
+                                    val image = BitmapFactory.decodeFile(sviatyiaListItem[index].image).asImageBitmap()
+                                    var imW = image.width.toFloat()
+                                    var imH = image.height.toFloat()
+                                    val imageScale: Float = imW / imH
+                                    if (imW > 150F) {
+                                        imW = 150F
+                                        imH = 150F / imageScale
+                                    }
+                                    Image(
+                                        modifier = Modifier
+                                            .size(imW.dp, imH.dp)
+                                            .align(Alignment.CenterHorizontally)
+                                            .clickable {
+                                                fullImagePathVisable = file.absolutePath
+                                                imageFull = true
+                                            }, bitmap = image, contentDescription = ""
+                                    )
+                                }
+                                if (sviatyiaListItem[index].text.isNotEmpty()) {
+                                    Text(modifier = Modifier.padding(10.dp), text = sviatyiaListItem[index].text, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary)
+                                }
                             }
                         }
                     }

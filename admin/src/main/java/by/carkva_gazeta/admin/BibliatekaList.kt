@@ -71,7 +71,7 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
         if (it.resultCode == Activity.RESULT_OK) {
             val fileUri = it.data?.data
             fileUri?.let { file ->
-                binding.pdfTextView.text = file.toString()
+                binding.pdfTextView.setText(file.toString())
             }
         }
     }
@@ -149,7 +149,7 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
                     }
                 }
             }
-            binding.pdfTextView.text = arrayList[position][2]
+            binding.pdfTextView.setText(arrayList[position][2])
             var edit = arrayList[position][1]
             edit = edit.replace("<div style=\"font-family: Arial,sans-serif; font-size: 15px; text-align: justify;\">", "")
             edit = edit.replace("</div>", "")
@@ -305,7 +305,11 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
                             val str = kniga[1]
                             val pdf = kniga[2]
                             val pdfFileSize = kniga[3]
-                            val image = kniga[5]
+                            var image = kniga[5]
+                            if (image.contains("/")) {
+                                val t1 = image.lastIndexOf("/")
+                                image = image.substring(t1 + 1)
+                            }
                             mySqlList.add(link)
                             mySqlList.add(str)
                             mySqlList.add(pdf)
@@ -393,7 +397,7 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
                 binding.listView.visibility = View.GONE
             }
             position = savedInstanceState.getInt("position")
-            binding.pdfTextView.text = savedInstanceState.getString("pdfTextView")
+            binding.pdfTextView.setText(savedInstanceState.getString("pdfTextView"))
             binding.imagePdf.setImageBitmap(savedInstanceState.getParcelable("BitmapImage"))
             setImageSize(binding.imagePdf)
         }

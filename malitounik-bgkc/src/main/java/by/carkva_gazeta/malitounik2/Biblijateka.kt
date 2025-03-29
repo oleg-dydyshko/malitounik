@@ -212,6 +212,10 @@ fun Biblijateka(
                                 Text(stringResource(R.string.set_page_bibliateka), fontSize = (Settings.fontInterface - 2).sp)
                             },
                             trailingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.apps),
+                                    contentDescription = ""
+                                )
                             }
                         )
                         DropdownMenuItem(
