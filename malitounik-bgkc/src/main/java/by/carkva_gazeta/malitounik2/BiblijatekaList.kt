@@ -493,11 +493,11 @@ fun BiblijatekaListItems(
                                         listItem[index][2]
                                     )
                                 ) {
-                                    addNiadaunia(context, listItem[index], removeNiadaunia = { bibliatekaList0.remove(it) }, addNiadaunia = { bibliatekaList0.add(0, it) })
                                     navigationActions.navigateToBiblijateka(
                                         listItem[index][0],
                                         listItem[index][2]
                                     )
+                                    addNiadaunia(context, listItem[index], removeNiadaunia = { bibliatekaList0.remove(it) }, addNiadaunia = { bibliatekaList0.add(0, it) })
                                 } else {
                                     setFileListPosition(index)
                                     setIsDialogBiblijatekaVisable(true)

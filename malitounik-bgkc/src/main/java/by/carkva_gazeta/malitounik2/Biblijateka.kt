@@ -15,14 +15,15 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -30,9 +31,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldLineLimits
@@ -55,12 +54,15 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -69,18 +71,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -89,44 +91,41 @@ import androidx.compose.ui.window.Popup
 import androidx.core.content.FileProvider
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
-import androidx.paging.Pager
-import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.itemKey
 import by.carkva_gazeta.malitounik2.ui.theme.Divider
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik2.ui.theme.PrimaryTextBlack
+import coil3.compose.rememberAsyncImagePainter
+import coil3.imageLoader
+import coil3.memory.MemoryCache
+import coil3.request.ImageRequest
+import coil3.toBitmap
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.io.File
 import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Biblijateka(
     navController: NavHostController,
     title: String,
-    fileName: String,
-    pager: Pager<Int, Int>
+    fileName: String
 ) {
-    val view = LocalView.current
     val context = LocalContext.current
+    val view = LocalView.current
     val coroutineScope = rememberCoroutineScope()
-    val maxLine = remember { mutableIntStateOf(1) }
-    SideEffect {
-        val window = (view.context as Activity).window
-        WindowCompat.getInsetsController(
-            window,
-            view
-        ).isAppearanceLightStatusBars = false
-    }
     val lazyListState = rememberLazyListState()
-    val lazyPagingItems = pager.flow.collectAsLazyPagingItems()
-    var pageState by remember { mutableStateOf("") }
+    val maxLine = remember { mutableIntStateOf(1) }
     var selectPage by remember { mutableIntStateOf(1) }
-    var isShare by remember { mutableStateOf(false) }
+    var pageState by remember { mutableStateOf("") }
     var showDropdown by remember { mutableStateOf(false) }
     var goToSelectPage by remember { mutableStateOf(false) }
+    var isShare by remember { mutableStateOf(false) }
     if (goToSelectPage) {
         goToSelectPage = false
         LaunchedEffect(Unit) {
@@ -153,6 +152,33 @@ fun Biblijateka(
         )
         isShare = false
     }
+    SideEffect {
+        val window = (view.context as Activity).window
+        WindowCompat.getInsetsController(
+            window,
+            view
+        ).isAppearanceLightStatusBars = false
+    }
+    val file = File("${context.filesDir}/bibliatekaPdf/$fileName")
+    val rendererScope = rememberCoroutineScope()
+    val mutex = remember { Mutex() }
+    val renderer by produceState<PdfRenderer?>(null, file) {
+        rendererScope.launch(Dispatchers.IO) {
+            val input = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
+            value = PdfRenderer(input)
+        }
+        awaitDispose {
+            val currentRenderer = value
+            rendererScope.launch(Dispatchers.IO) {
+                mutex.withLock {
+                    currentRenderer?.close()
+                }
+            }
+        }
+    }
+    val imageLoader = LocalContext.current.imageLoader
+    val imageLoadingScope = rememberCoroutineScope()
+    val pageCount by remember(renderer) { derivedStateOf { renderer?.pageCount ?: 0 } }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -236,7 +262,6 @@ fun Biblijateka(
                         DropdownMenuItem(
                             onClick = {
                                 expanded = false
-                                val file = File("${context.filesDir}/bibliatekaPdf/$fileName")
                                 val uri = FileProvider.getUriForFile(
                                     context,
                                     "by.carkva_gazeta.malitounik2.fileprovider",
@@ -288,7 +313,7 @@ fun Biblijateka(
             modifier = Modifier
                 .padding(
                     innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                    0.dp,
+                    innerPadding.calculateTopPadding(),
                     innerPadding.calculateEndPadding(LayoutDirection.Rtl),
                     0.dp
                 )
@@ -322,7 +347,7 @@ fun Biblijateka(
                             .padding(start = 10.dp, end = 10.dp, top = 10.dp)
                             .background(MaterialTheme.colorScheme.tertiary)
                     ) {
-                        DropdownMenuPdf(lazyPagingItems.itemCount, selectPage = { selectPage = it })
+                        DropdownMenuPdf(pageCount, selectPage = { selectPage = it })
                         TextButton(
                             onClick = {
                                 showDropdown = false
@@ -356,9 +381,125 @@ fun Biblijateka(
                     }
                 }
             }
-            SpisStaronak(innerPadding, lazyListState, fileName, lazyPagingItems, pageState = {
-                pageState = it
-            })
+            BoxWithConstraints(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.onSecondary)
+            ) {
+                val width = with(LocalDensity.current) { maxWidth.toPx() }.toInt()
+                val height = (width * sqrt(2f)).toInt()
+                var widthZoom by remember { mutableIntStateOf(0) }
+                var zoomAll by remember { mutableFloatStateOf(1f) }
+                var offsetX by remember { mutableFloatStateOf(0f) }
+                var offsetY by remember { mutableFloatStateOf(0f) }
+                if (zoomAll == 1f) {
+                    offsetX = 0f
+                    offsetY = 0f
+                }
+                LazyColumn(
+                    state = lazyListState,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .onGloballyPositioned { coordinates ->
+                            widthZoom = coordinates.size.width
+                        }
+                        .clipToBounds()
+                        .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+                        .graphicsLayer {
+                            scaleX = zoomAll
+                            scaleY = zoomAll
+                        }
+                        .pointerInput(Unit) {
+                            awaitEachGesture {
+                                awaitFirstDown()
+                                do {
+                                    val event = awaitPointerEvent()
+                                    if (event.changes.size == 2) {
+                                        var zoom = zoomAll
+                                        zoom *= event.calculateZoom()
+                                        zoom = zoom.coerceIn(1f, 5f)
+                                        zoomAll = zoom
+                                        event.changes.forEach { pointerInputChange: PointerInputChange ->
+                                            pointerInputChange.consume()
+                                        }
+                                    }
+                                } while (event.changes.any { it.pressed })
+                            }
+                        }
+                        .pointerInput(Unit) {
+                            detectDragGestures { change, dragAmount ->
+                                change.consume()
+                                offsetX += dragAmount.x * 3
+                                offsetY += dragAmount.y * 3
+                            }
+                        }
+                ) {
+                    items(
+                        count = pageCount,
+                        key = { index -> "${file.name}-$index" }
+                    ) { index ->
+                        LaunchedEffect(index) {
+                            pageState = (lazyListState.firstVisibleItemIndex + 1).toString() + "/" + pageCount
+                        }
+                        val cacheKey = MemoryCache.Key("${file.name}-$index")
+                        val cacheValue: Bitmap? = imageLoader.memoryCache?.get(cacheKey)?.image?.toBitmap()
+
+                        var bitmap: Bitmap? by remember { mutableStateOf(cacheValue) }
+                        if (bitmap == null) {
+                            DisposableEffect(file, index) {
+                                val job = imageLoadingScope.launch(Dispatchers.IO) {
+                                    val destinationBitmap =
+                                        Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+                                    mutex.withLock {
+                                        if (!coroutineContext.isActive) return@launch
+                                        try {
+                                            renderer?.let {
+                                                it.openPage(index).use { page ->
+                                                    page.render(
+                                                        destinationBitmap,
+                                                        null,
+                                                        null,
+                                                        PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY
+                                                    )
+                                                }
+                                            }
+                                        } catch (_: Exception) {
+                                            return@launch
+                                        }
+                                    }
+                                    bitmap = destinationBitmap
+                                }
+                                onDispose {
+                                    job.cancel()
+                                }
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .background(Color.White)
+                                    .fillMaxWidth()
+                            )
+                        } else {
+                            val request = ImageRequest.Builder(context)
+                                .size(width, height)
+                                .memoryCacheKey(cacheKey)
+                                .data(bitmap)
+                                .build()
+                            Image(
+                                modifier = Modifier
+                                    .background(Color.Transparent)
+                                    .border(1.dp, MaterialTheme.colorScheme.background)
+                                    .fillMaxSize(),
+                                contentScale = ContentScale.Fit,
+                                painter = rememberAsyncImagePainter(request),
+                                contentDescription = "Page ${index + 1} of $pageCount"
+                            )
+                        }
+                    }
+                    item {
+                        Spacer(modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
+                    }
+                }
+            }
         }
     }
 }
@@ -403,111 +544,6 @@ fun DropdownMenuPdf(
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun SpisStaronak(
-    innerPadding: PaddingValues,
-    lazyListState: LazyListState,
-    fileName: String,
-    lazyPagingItems: LazyPagingItems<Int>,
-    pageState: (String) -> Unit
-) {
-    val context = LocalContext.current
-    val file = File("${context.filesDir}/bibliatekaPdf/$fileName")
-    val fileReader = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
-    var width by remember { mutableIntStateOf(0) }
-    val pdfRenderer = PdfRenderer(fileReader)
-    var zoomAll by remember { mutableFloatStateOf(1f) }
-    var offsetX by remember { mutableFloatStateOf(0f) }
-    var offsetY by remember { mutableFloatStateOf(0f) }
-    if (zoomAll == 1f) {
-        offsetX = 0f
-        offsetY = 0f
-    }
-    //flingBehavior = rememberSnapFlingBehavior(lazyListState = pagerState),
-    LazyColumn(
-        state = lazyListState,
-        modifier = Modifier
-            .fillMaxSize()
-            .onGloballyPositioned { coordinates ->
-                width = coordinates.size.width
-            }
-            .clipToBounds()
-            .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
-            .graphicsLayer {
-                scaleX = zoomAll
-                scaleY = zoomAll
-            }
-            .pointerInput(Unit) {
-                awaitEachGesture {
-                    awaitFirstDown()
-                    do {
-                        val event = awaitPointerEvent()
-                        if (event.changes.size == 2) {
-                            var zoom = zoomAll
-                            zoom *= event.calculateZoom()
-                            zoom = zoom.coerceIn(1f, 5f)
-                            zoomAll = zoom
-                            event.changes.forEach { pointerInputChange: PointerInputChange ->
-                                pointerInputChange.consume()
-                            }
-                        }
-                    } while (event.changes.any { it.pressed })
-                }
-            }
-            .pointerInput(Unit) {
-                detectDragGestures { change, dragAmount ->
-                    change.consume()
-                    offsetX += dragAmount.x * 3
-                    offsetY += dragAmount.y * 3
-                }
-            }
-    ) {
-        item {
-            Spacer(modifier = Modifier.padding(bottom = innerPadding.calculateTopPadding()))
-        }
-        items(
-            lazyPagingItems.itemCount,
-            key = lazyPagingItems.itemKey { it }
-        ) { index ->
-            LaunchedEffect(index) {
-                pageState((lazyListState.firstVisibleItemIndex + 1).toString() + "/" + lazyPagingItems.itemCount)
-            }
-            var page: PdfRenderer.Page? = null
-            var bitmap: Bitmap? = null
-            try {
-                page = pdfRenderer.openPage(index)
-                val aspectRatio = page.width.toFloat() / page.height.toFloat()
-                val height = (width / aspectRatio).toInt()
-                bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-                page.render(
-                    bitmap,
-                    null,
-                    null,
-                    PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY
-                )
-            } catch (_: Throwable) {
-            } finally {
-                page?.close()
-            }
-            bitmap?.let { item ->
-                Image(
-                    modifier = Modifier
-                        .size(
-                            width = width.dp,
-                            height = Dp.Unspecified
-                        )
-                        .background(PrimaryTextBlack),
-                    bitmap = item.asImageBitmap(),
-                    contentDescription = ""
-                )
-            }
-        }
-        item {
-            Spacer(modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
         }
     }
 }

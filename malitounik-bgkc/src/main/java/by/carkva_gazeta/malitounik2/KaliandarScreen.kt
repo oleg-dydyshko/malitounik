@@ -108,7 +108,7 @@ fun KaliandarScreen(
             Column(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Column(modifier = Modifier.size(80.dp, 100.dp)) {
+                Column(modifier = Modifier.size(50.dp, 100.dp)) {
                     if (data[20] != "0" && data[0].toInt() == Calendar.SUNDAY) {
                         Text(
                             modifier = Modifier
@@ -201,7 +201,7 @@ fun KaliandarScreen(
             }
             Box(
                 modifier = Modifier
-                    .padding(start = 50.dp)
+                    .padding(start = 20.dp)
                     .align(Alignment.Bottom)
             ) {
                 Icon(

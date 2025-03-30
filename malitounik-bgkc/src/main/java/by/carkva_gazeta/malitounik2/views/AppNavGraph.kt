@@ -3,8 +3,6 @@ package by.carkva_gazeta.malitounik2.views
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.pdf.PdfRenderer
-import android.os.ParcelFileDescriptor
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
@@ -86,10 +84,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingSource
-import androidx.paging.PagingState
 import by.carkva_gazeta.malitounik2.BibliaList
 import by.carkva_gazeta.malitounik2.BibliaMenu
 import by.carkva_gazeta.malitounik2.Biblijateka
@@ -133,42 +127,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
 import java.io.File
-import java.io.IOException
 import java.io.InputStreamReader
 import java.util.Calendar
-
-class Biblijateka(private val fileName: String) : PagingSource<Int, Int>() {
-    override fun getRefreshKey(state: PagingState<Int, Int>): Int? {
-        return state.anchorPosition?.let { state.closestItemToPosition(it) }
-    }
-
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Int> {
-        return try {
-            val list = ArrayList<Int>()
-            var count = 0
-            try {
-                val file = File("${MainActivity.applicationContext().filesDir}/bibliatekaPdf/$fileName")
-                val fileReader = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
-                val pdfRenderer = PdfRenderer(fileReader!!)
-                count = pdfRenderer.pageCount
-                for (i in 0 until count) {
-                    list.add(i)
-                }
-            } catch (_: Throwable) {
-            }
-            val pageNumber = params.key ?: 0
-            val prevKey = if (pageNumber > 0) pageNumber - 1 else null
-            val nextKey = if (count > pageNumber + 1) pageNumber + 1 else null
-            LoadResult.Page(
-                data = list,
-                prevKey = prevKey,
-                nextKey = nextKey
-            )
-        } catch (e: IOException) {
-            LoadResult.Error(e)
-        }
-    }
-}
 
 @Composable
 fun AppNavGraph(
@@ -368,10 +328,7 @@ fun AppNavGraph(
         ) { stackEntry ->
             val title = stackEntry.arguments?.getString("title") ?: ""
             val fileName = stackEntry.arguments?.getString("fileName") ?: ""
-            val page = Pager(PagingConfig(1)) {
-                Biblijateka(fileName)
-            }
-            Biblijateka(navController, title, fileName, page)
+            Biblijateka(navController, title, fileName)
         }
 
         composable(
