@@ -1,7 +1,7 @@
 [versions]
 media3Exoplayer = "1.6.0"
 media = "1.7.0"
-agp = "8.6.1"
+agp = "8.9.1"
 kotlin = "1.9.0"
 services = "4.4.2"
 coreKtx = "1.15.0"
@@ -23,7 +23,7 @@ picasso = "2.71828"
 featureDelivery = "2.1.0"
 #firebaseAppcheckPlayintegrity = "18.0.0"
 fragmentKtx = "1.8.6"
-coil = "3.1.0"
+coil = "3.0.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -63,7 +63,7 @@ picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 feature-delivery = { module = "com.google.android.play:feature-delivery", version.ref = "featureDelivery" }
 #google-firebase-appcheck-playintegrity = { group = "com.google.firebase", name = "firebase-appcheck-playintegrity", version.ref = "firebaseAppcheckPlayintegrity" }
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx" }
-coil3 = { module = "io.coil-kt.coil3:coil-compose", version = "3.0.4" }
+coil3 = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

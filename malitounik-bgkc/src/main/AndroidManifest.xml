@@ -67,6 +67,32 @@
             </intent-filter>
         </receiver>
         <receiver
+            android:name=".Widget"
+            android:exported="false"
+            android:label="@string/widget_title">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_metadata" />
+        </receiver>
+        <receiver
+            android:name=".WidgetMun"
+            android:exported="false"
+            android:label="@string/widget_mun_title">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_mun_metadata" />
+        </receiver>
+        <receiver
             android:name=".WidgetRadyjoMaryia"
             android:exported="false"
             android:label="@string/padie_maryia_s">

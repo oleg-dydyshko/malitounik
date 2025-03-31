@@ -76,6 +76,7 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import androidx.core.content.edit
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -144,7 +145,7 @@ fun AppNavGraph(
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val remove = k.getString("navigate", "Biblia_Cemuxa")
     if (remove == "Biblia_Cemuxa" || remove == "Biblia_Bokuna" || remove == "Biblia_Charniauski" || remove == "Biblia_Nadsan" || remove == "Biblia_Sinodal")
-        k.edit().remove("navigate").apply()
+        k.edit { remove("navigate") }
     val start = k.getString("navigate", AllDestinations.KALIANDAR) ?: AllDestinations.KALIANDAR
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
@@ -810,15 +811,15 @@ fun MainConteiner(
                             }
                             if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
                                 IconButton({
-                                    val edit = k.edit()
-                                    if (k.getBoolean("caliandarList", false)) {
-                                        navigationActions.navigateToKaliandar()
-                                        edit.putBoolean("caliandarList", false)
-                                    } else {
-                                        edit.putBoolean("caliandarList", true)
-                                        navigationActions.navigateToKaliandarYear()
+                                    k.edit {
+                                        if (k.getBoolean("caliandarList", false)) {
+                                            navigationActions.navigateToKaliandar()
+                                            putBoolean("caliandarList", false)
+                                        } else {
+                                            putBoolean("caliandarList", true)
+                                            navigationActions.navigateToKaliandarYear()
+                                        }
                                     }
-                                    edit.apply()
                                 }) {
                                     val icon = if (k.getBoolean(
                                             "caliandarList",
@@ -946,13 +947,13 @@ fun MainConteiner(
                                             sortedNatatki =
                                                 if (sortedNatatki == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
                                                 else Settings.SORT_BY_ABC
-                                            val edit = k.edit()
-                                            if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) edit.putInt(
-                                                "sortedVybranae",
-                                                sortedVybranae
-                                            )
-                                            else edit.putInt("natatki_sort", sortedNatatki)
-                                            edit.apply()
+                                            k.edit {
+                                                if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) putInt(
+                                                    "sortedVybranae",
+                                                    sortedVybranae
+                                                )
+                                                else putInt("natatki_sort", sortedNatatki)
+                                            }
                                         },
                                         text = {
                                             if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) {

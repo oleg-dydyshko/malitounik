@@ -5,6 +5,7 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -46,6 +47,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
+import androidx.core.content.edit
 import by.carkva_gazeta.malitounik2.ui.theme.MalitounikTheme
 import by.carkva_gazeta.malitounik2.views.AllDestinations
 import by.carkva_gazeta.malitounik2.views.AppNavGraph
@@ -82,6 +84,7 @@ object Settings {
     const val NOTIFICATION_SVIATY_NONE = 0
     const val NOTIFICATION_SVIATY_ONLY = 1
     const val NOTIFICATION_SVIATY_FULL = 2
+    const val RESET_WIDGET_MUN = "reset_widget_mun"
     const val PEREVODSEMUXI = "1"
     const val PEREVODSINOIDAL = "2"
     const val PEREVODNADSAN = "3"
@@ -286,7 +289,7 @@ object Settings {
         val chin = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
         var intent: Intent
         var pIntent: PendingIntent?
-        /*if (chin.getBoolean("WIDGET_MUN_ENABLED", false)) {
+        if (chin.getBoolean("WIDGET_MUN_ENABLED", false)) {
             val cw = Calendar.getInstance()
             val munAk = cw[Calendar.MONTH]
             val yearAk = cw[Calendar.YEAR]
@@ -298,7 +301,7 @@ object Settings {
                 cw.add(Calendar.DATE, 1)
             }
             pIntent = PendingIntent.getBroadcast(context, 60, intent, PendingIntent.FLAG_IMMUTABLE or 0)
-            setAlarm(context, mkTime(context, cw[Calendar.YEAR], cw[Calendar.MONTH], cw[Calendar.DAY_OF_MONTH]), pIntent)
+            setAlarm(context, mkTime(cw[Calendar.YEAR], cw[Calendar.MONTH], cw[Calendar.DAY_OF_MONTH]), pIntent)
             val thisAppWidget = ComponentName(context.packageName, context.packageName + ".Widget_mun")
             val appWidgetManager = AppWidgetManager.getInstance(context)
             val ids = appWidgetManager.getAppWidgetIds(thisAppWidget)
@@ -323,8 +326,8 @@ object Settings {
                 cw.add(Calendar.DATE, 1)
             }
             pIntent = PendingIntent.getBroadcast(context, 50, intent, PendingIntent.FLAG_IMMUTABLE or 0)
-            setAlarm(context, mkTime(context, cw[Calendar.YEAR], cw[Calendar.MONTH], cw[Calendar.DAY_OF_MONTH]), pIntent)
-        }*/
+            setAlarm(context, mkTime(cw[Calendar.YEAR], cw[Calendar.MONTH], cw[Calendar.DAY_OF_MONTH]), pIntent)
+        }
         if (chin.getBoolean("WIDGET_RADYJO_MARYIA_ENABLED", false)) {
             val cw = Calendar.getInstance()
             intent = Intent(context, WidgetRadyjoMaryia::class.java)
@@ -1685,9 +1688,9 @@ class MainActivity : ComponentActivity(), SensorEventListener,
                 if (dialogSztoHovahaVisable) {
                     DialogSztoHovaha {
                         dialogSztoHovahaVisable = false
-                        val prefEditors = k.edit()
-                        prefEditors.putInt("chtoNavaha", BuildConfig.VERSION_CODE)
-                        prefEditors.apply()
+                        k.edit {
+                            putInt("chtoNavaha", BuildConfig.VERSION_CODE)
+                        }
                     }
                 }
             }
@@ -1727,9 +1730,9 @@ class MainActivity : ComponentActivity(), SensorEventListener,
                 //checkUpdateMalitounik()
                 val notify = k.getInt("notification", Settings.NOTIFICATION_SVIATY_FULL)
                 Settings.setNotifications(this@MainActivity, notify)
-                val prefEditors = k.edit()
-                prefEditors.putBoolean("setAlarm", false)
-                prefEditors.apply()
+                k.edit {
+                    putBoolean("setAlarm", false)
+                }
             }
         }
 
@@ -1764,9 +1767,9 @@ class MainActivity : ComponentActivity(), SensorEventListener,
         }
         val k = getSharedPreferences("biblia", Context.MODE_PRIVATE)
         val checkMD5 = k.getString("chtoNavahaMD5", "0")
-        val edit = k.edit()
-        edit.putString("chtoNavahaMD5", md5Hex.toString())
-        edit.apply()
+        k.edit {
+            putString("chtoNavahaMD5", md5Hex.toString())
+        }
         return checkMD5 != md5Hex.toString()
     }
 
@@ -1872,9 +1875,9 @@ class MainActivity : ComponentActivity(), SensorEventListener,
         if (backPressed + 2000 > System.currentTimeMillis()) {
             moveTaskToBack(true)
             val k = getSharedPreferences("biblia", Context.MODE_PRIVATE)
-            val prefEditors = k.edit()
-            prefEditors.putBoolean("setAlarm", true)
-            prefEditors.apply()
+            k.edit {
+                putBoolean("setAlarm", true)
+            }
             finish()
             /*for ((key) in k.all) {
                 if (key.contains("Scroll") || key.contains("position")) {

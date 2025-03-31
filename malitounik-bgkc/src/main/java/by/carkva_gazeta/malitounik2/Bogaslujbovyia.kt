@@ -102,6 +102,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Popup
+import androidx.core.content.edit
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -1157,9 +1158,9 @@ fun Bogaslujbovyia(
                                     steps = 10,
                                     value = fontSize,
                                     onValueChange = {
-                                        val edit = k.edit()
-                                        edit.putFloat("font_biblia", it)
-                                        edit.apply()
+                                        k.edit {
+                                            putFloat("font_biblia", it)
+                                        }
                                         fontSize = it
                                     }
                                 )
@@ -1316,9 +1317,9 @@ fun Bogaslujbovyia(
                                                     delay(3000)
                                                     autoScrollTextVisable = false
                                                 }
-                                            val prefEditors = k.edit()
-                                            prefEditors.putInt("autoscrollSpid", autoScrollSpeed)
-                                            prefEditors.apply()
+                                            k.edit {
+                                                putInt("autoscrollSpid", autoScrollSpeed)
+                                            }
                                         }
                                     }
                             )
@@ -1346,9 +1347,9 @@ fun Bogaslujbovyia(
                                                 delay(3000)
                                                 autoScrollTextVisable = false
                                             }
-                                        val prefEditors = k.edit()
-                                        prefEditors.putInt("autoscrollSpid", autoScrollSpeed)
-                                        prefEditors.apply()
+                                        k.edit {
+                                            putInt("autoscrollSpid", autoScrollSpeed)
+                                        }
                                     }
                                 }
                         )
