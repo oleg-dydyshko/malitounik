@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import by.carkva_gazeta.malitounik2.ui.theme.MalitounikTheme
 
 
 class WidgetConfigMun : ComponentActivity() {
@@ -17,18 +18,20 @@ class WidgetConfigMun : ComponentActivity() {
         }
         setResult(RESULT_OK)
         setContent {
-            DialogWidgetConfig(
-                isWidgetMun = true,
-                widgetID = widgetID,
-                onConfirmRequest = {
-                    val resultValue = Intent(this, WidgetMun::class.java)
-                    resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID)
-                    setResult(RESULT_OK, resultValue)
-                    sendBroadcast(resultValue)
+            MalitounikTheme {
+                DialogWidgetConfig(
+                    isWidgetMun = true,
+                    widgetID = widgetID,
+                    onConfirmRequest = {
+                        val resultValue = Intent(this, WidgetMun::class.java)
+                        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID)
+                        setResult(RESULT_OK, resultValue)
+                        sendBroadcast(resultValue)
+                        finish()
+                    }
+                ) {
                     finish()
                 }
-            ) {
-                finish()
             }
         }
     }

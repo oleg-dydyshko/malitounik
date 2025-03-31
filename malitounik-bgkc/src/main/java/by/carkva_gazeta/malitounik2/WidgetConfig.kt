@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.edit
+import by.carkva_gazeta.malitounik2.ui.theme.MalitounikTheme
 
 
 class WidgetConfig : ComponentActivity() {
@@ -45,18 +46,20 @@ class WidgetConfig : ComponentActivity() {
         }
         setResult(RESULT_OK)
         setContent {
-            DialogWidgetConfig(
-                isWidgetMun = false,
-                widgetID = widgetID,
-                onConfirmRequest = {
-                    val resultValue = Intent(this, Widget::class.java)
-                    resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID)
-                    setResult(RESULT_OK, resultValue)
-                    sendBroadcast(resultValue)
+            MalitounikTheme {
+                DialogWidgetConfig(
+                    isWidgetMun = false,
+                    widgetID = widgetID,
+                    onConfirmRequest = {
+                        val resultValue = Intent(this, Widget::class.java)
+                        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID)
+                        setResult(RESULT_OK, resultValue)
+                        sendBroadcast(resultValue)
+                        finish()
+                    }
+                ) {
                     finish()
                 }
-            ) {
-                finish()
             }
         }
     }
