@@ -3992,6 +3992,7 @@ class SlugbovyiaTextu {
             dayOfYearReal = getRealDay(day, dayOfYear, year, resultSlugba[i].pasxa)
             val calendar = GregorianCalendar()
             calendar[Calendar.YEAR] = year
+            calendar[Calendar.DAY_OF_YEAR] = dayOfYearReal
             var addDay = 0
             if (!calendar.isLeapYear(calendar.get(Calendar.YEAR)) && calendar[Calendar.MONTH] > Calendar.FEBRUARY) addDay =
                 1
@@ -4003,7 +4004,7 @@ class SlugbovyiaTextu {
     }
 
     fun loadPiarliny() {
-        if (piarliny.size == 0 && loadPiarlinyJob?.isActive != true) {
+        if (piarliny.isEmpty() && loadPiarlinyJob?.isActive != true) {
             val filePiarliny = File("${MainActivity.applicationContext().filesDir}/piarliny.json")
             if (!filePiarliny.exists()) {
                 if (Settings.isNetworkAvailable(MainActivity.applicationContext())) {
@@ -4015,7 +4016,7 @@ class SlugbovyiaTextu {
                                 val type = TypeToken.getParameterized(java.util.ArrayList::class.java, TypeToken.getParameterized(java.util.ArrayList::class.java, String::class.java).type).type
                                 piarliny.addAll(gson.fromJson(builder, type))
                             }
-                        } catch (t: Throwable) {
+                        } catch (_: Throwable) {
                             filePiarliny.delete()
                         }
                     }
@@ -4026,7 +4027,7 @@ class SlugbovyiaTextu {
                     val gson = Gson()
                     val type = TypeToken.getParameterized(java.util.ArrayList::class.java, TypeToken.getParameterized(java.util.ArrayList::class.java, String::class.java).type).type
                     piarliny.addAll(gson.fromJson(builder, type))
-                } catch (t: Throwable) {
+                } catch (_: Throwable) {
                     filePiarliny.delete()
                 }
             }

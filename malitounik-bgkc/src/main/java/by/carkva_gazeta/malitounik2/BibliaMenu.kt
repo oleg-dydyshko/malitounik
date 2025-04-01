@@ -6,7 +6,10 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SecondaryScrollableTabRow
@@ -44,6 +48,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.edit
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik2.ui.theme.Divider
 import by.carkva_gazeta.malitounik2.ui.theme.Primary
@@ -59,8 +64,10 @@ import java.io.InputStreamReader
 @Composable
 fun BibliaMenu(
     navController: NavHostController,
-    navigateToSearchBible: (String) -> Unit = { },
-    navigateToCytanniList: (String, String) -> Unit = { _, _ -> }
+    innerPadding: PaddingValues,
+    navigateToSearchBible: (String) -> Unit,
+    navigateToCytanniList: (String, String) -> Unit,
+    navigateToBogaslujbovyia: (String, Int) -> Unit
 ) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
@@ -154,9 +161,9 @@ fun BibliaMenu(
                 4 -> Settings.PEREVODSINOIDAL
                 else -> Settings.PEREVODSEMUXI
             }
-            val edit = k.edit()
-            edit.putString("perevodBibileMenu", savePerevod)
-            edit.apply()
+            k.edit {
+                putString("perevodBibileMenu", savePerevod)
+            }
         }
     }
     var dialogVisable by remember { mutableStateOf(false) }
@@ -165,6 +172,7 @@ fun BibliaMenu(
             dialogVisable = false
         }
     }
+    var pesnyView by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -199,9 +207,9 @@ fun BibliaMenu(
                             4 -> Settings.PEREVODSINOIDAL
                             else -> Settings.PEREVODSEMUXI
                         }
-                        val edit = k.edit()
-                        edit.putString("perevodBibileMenu", savePerevod)
-                        edit.apply()
+                        k.edit {
+                            putString("perevodBibileMenu", savePerevod)
+                        }
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(index)
                         }
@@ -297,24 +305,6 @@ fun BibliaMenu(
                 ) {
                     Text(stringResource(R.string.bible_time), fontSize = Settings.fontInterface.sp, color = PrimaryText)
                 }
-                /*TextButton(
-            onClick = {
-                navigationActions.navigateToVybranaeList(savePerevod)
-            },
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(5.dp)
-                .size(width = 200.dp, height = Dp.Unspecified),
-            colors = ButtonColors(
-                Divider,
-                Color.Unspecified,
-                Color.Unspecified,
-                Color.Unspecified
-            ),
-            shape = MaterialTheme.shapes.medium
-        ) {
-            Text(stringResource(R.string.str_short_label1), fontSize = Settings.fontInterface.sp, color = PrimaryText)
-        }*/
                 TextButton(
                     onClick = {
                         navigateToSearchBible(savePerevod)
@@ -494,41 +484,139 @@ fun BibliaMenu(
                             }
                         }
                     }
+                    TextButton(
+                        onClick = {
+                            navigateToBogaslujbovyia(context.getString(R.string.malitva_pered), R.raw.nadsan_pered)
+                        },
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(5.dp)
+                            .size(width = 200.dp, height = Dp.Unspecified),
+                        colors = ButtonColors(
+                            Divider,
+                            Color.Unspecified,
+                            Color.Unspecified,
+                            Color.Unspecified
+                        ),
+                        shape = MaterialTheme.shapes.medium
+                    ) {
+                        Text(stringResource(R.string.malitva_pered), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
+                    }
+                    TextButton(
+                        onClick = {
+                            navigateToBogaslujbovyia(context.getString(R.string.malitva_posle), R.raw.nadsan_posle)
+                        },
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(5.dp)
+                            .size(width = 200.dp, height = Dp.Unspecified),
+                        colors = ButtonColors(
+                            Divider,
+                            Color.Unspecified,
+                            Color.Unspecified,
+                            Color.Unspecified
+                        ),
+                        shape = MaterialTheme.shapes.medium
+                    ) {
+                        Text(stringResource(R.string.malitva_posle), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
+                    }
+                    TextButton(
+                        onClick = {
+                            pesnyView = !pesnyView
+                        },
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(5.dp)
+                            .size(width = 200.dp, height = Dp.Unspecified),
+                        colors = ButtonColors(
+                            Divider,
+                            Color.Unspecified,
+                            Color.Unspecified,
+                            Color.Unspecified
+                        ),
+                        shape = MaterialTheme.shapes.medium
+                    ) {
+                        Text(stringResource(R.string.pesni), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
+                    }
+                    if (pesnyView) {
+                        Column {
+                            for (i in 1..9) {
+                                Row(
+                                    modifier = Modifier
+                                        .padding(start = 10.dp)
+                                        .clickable {
+                                                navigationActions.navigateToBogaslujbovyia(
+                                                    context.getString(R.string.pesnia, i),
+                                                    when(i) {
+                                                        1 -> R.raw.nadsan_pesni_1
+                                                        2 -> R.raw.nadsan_pesni_2
+                                                        3 -> R.raw.nadsan_pesni_3
+                                                        4 -> R.raw.nadsan_pesni_4
+                                                        5 -> R.raw.nadsan_pesni_5
+                                                        6 -> R.raw.nadsan_pesni_6
+                                                        7 -> R.raw.nadsan_pesni_7
+                                                        8 -> R.raw.nadsan_pesni_8
+                                                        9 -> R.raw.nadsan_pesni_9
+                                                        else -> R.raw.nadsan_pesni_1
+                                                    }
+                                                )
+                                        },
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        modifier = Modifier.size(12.dp, 12.dp),
+                                        painter = painterResource(R.drawable.krest),
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        contentDescription = null
+                                    )
+                                    Text(
+                                        stringResource(R.string.pesnia, i),
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(10.dp),
+                                        color = MaterialTheme.colorScheme.secondary,
+                                        fontSize = Settings.fontInterface.sp
+                                    )
+                                }
+                                HorizontalDivider()
+                            }
+                        }
+                    }
+                    TextButton(
+                        onClick = {
+                        },
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(5.dp)
+                            .size(width = 200.dp, height = Dp.Unspecified),
+                        colors = ButtonColors(
+                            Divider,
+                            Color.Unspecified,
+                            Color.Unspecified,
+                            Color.Unspecified
+                        ),
+                        shape = MaterialTheme.shapes.medium
+                    ) {
+                        Text(stringResource(R.string.peryiady), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
+                    }
+                    TextButton(
+                        onClick = {
+                        },
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(5.dp)
+                            .size(width = 200.dp, height = Dp.Unspecified),
+                        colors = ButtonColors(
+                            Divider,
+                            Color.Unspecified,
+                            Color.Unspecified,
+                            Color.Unspecified
+                        ),
+                        shape = MaterialTheme.shapes.medium
+                    ) {
+                        Text(stringResource(R.string.title_psalter_privila), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
+                    }
                 }
-                /*TextButton(
-            onClick = {
-            },
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(5.dp)
-                .size(width = 200.dp, height = Dp.Unspecified),
-            colors = ButtonColors(
-                Divider,
-                Color.Unspecified,
-                Color.Unspecified,
-                Color.Unspecified
-            ),
-            shape = MaterialTheme.shapes.medium
-        ) {
-            Text(stringResource(R.string.zakladki_bible), fontSize = Settings.fontInterface.sp, color = PrimaryText)
-        }
-        TextButton(
-            onClick = {
-            },
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(5.dp)
-                .size(width = 200.dp, height = Dp.Unspecified),
-            colors = ButtonColors(
-                Divider,
-                Color.Unspecified,
-                Color.Unspecified,
-                Color.Unspecified
-            ),
-            shape = MaterialTheme.shapes.medium
-        ) {
-            Text(stringResource(R.string.natatki_biblii), fontSize = Settings.fontInterface.sp, color = PrimaryText)
-        }*/
                 if (savePerevod == Settings.PEREVODSEMUXI || savePerevod == Settings.PEREVODBOKUNA) {
                     TextButton(
                         onClick = {
@@ -549,10 +637,12 @@ fun BibliaMenu(
                         Text(
                             stringResource(R.string.alesyaSemukha2),
                             fontSize = Settings.fontInterface.sp,
-                            color = PrimaryText
+                            color = PrimaryText,
+                            textAlign = TextAlign.Center
                         )
                     }
                 }
+                Spacer(modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
             }
         }
     }

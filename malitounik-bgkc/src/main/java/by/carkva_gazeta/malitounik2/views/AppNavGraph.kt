@@ -1008,19 +1008,21 @@ fun MainConteiner(
                                 )
                                 if (k.getBoolean("admin", false)) {
                                     HorizontalDivider()
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            expanded = false
-                                            navigationActions.navigateToSearchBiblia(Settings.PEREVODSEMUXI, true)
-                                        },
-                                        text = { Text(stringResource(R.string.searche_bogasluz_text), fontSize = (Settings.fontInterface - 2).sp) },
-                                        trailingIcon = {
-                                            Icon(
-                                                painter = painterResource(R.drawable.search),
-                                                contentDescription = ""
-                                            )
-                                        }
-                                    )
+                                    if (currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.RUJANEC_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute == AllDestinations.BIBLIJATEKA_LIST || currentRoute == AllDestinations.PIESNY_LIST || currentRoute == AllDestinations.PASHALIA) {
+                                        DropdownMenuItem(
+                                            onClick = {
+                                                expanded = false
+                                                navigationActions.navigateToSearchBiblia(Settings.PEREVODSEMUXI, true)
+                                            },
+                                            text = { Text(stringResource(R.string.searche_bogasluz_text), fontSize = (Settings.fontInterface - 2).sp) },
+                                            trailingIcon = {
+                                                Icon(
+                                                    painter = painterResource(R.drawable.search),
+                                                    contentDescription = ""
+                                                )
+                                            }
+                                        )
+                                    }
                                     DropdownMenuItem(
                                         onClick = {
                                             expanded = false
@@ -1206,6 +1208,7 @@ fun MainConteiner(
 
                     AllDestinations.BIBLIA -> BibliaMenu(
                         navController,
+                        innerPadding,
                         navigateToSearchBible = { perevod ->
                             navigationActions.navigateToSearchBiblia(perevod, false)
                         },
@@ -1217,6 +1220,9 @@ fun MainConteiner(
                                 perevod2,
                                 -1
                             )
+                        },
+                        navigateToBogaslujbovyia = { title, resurs ->
+                            navigationActions.navigateToBogaslujbovyia(title, resurs)
                         }
                     )
 
