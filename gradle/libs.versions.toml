@@ -2,7 +2,7 @@
 media3Exoplayer = "1.6.0"
 media = "1.7.0"
 agp = "8.9.1"
-kotlin = "1.9.0"
+kotlin = "2.1.20"
 services = "4.4.2"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -23,8 +23,9 @@ picasso = "2.71828"
 featureDelivery = "2.1.0"
 #firebaseAppcheckPlayintegrity = "18.0.0"
 fragmentKtx = "1.8.6"
-coil = "3.0.4"
+coil = "3.1.0"
 glanceAppwidget = "1.1.1"
+navigationComposeAndroid = "2.9.0-alpha09"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -40,14 +41,14 @@ androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-androidx-material3 = { group = "androidx.compose.material3", name = "material3", version = "1.4.0-alpha10" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3", version = "1.4.0-alpha11" }
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version = "2.8.9" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version = "2.8.9" }
 #androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version = "1.7.8" }
 play-services-instantapps = { module = "com.google.android.gms:play-services-instantapps", version.ref = "playServicesInstantapps" }
 #jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 firebase-appcheck-playintegrity = { module = "com.google.firebase:firebase-appcheck-playintegrity" }
-firebase-bom = { module = "com.google.firebase:firebase-bom", version = "33.11.0" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version = "33.12.0" }
 firebase-storage-ktx = { module = "com.google.firebase:firebase-storage-ktx" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 feature-delivery-ktx = { group = "com.google.android.play", name = "feature-delivery-ktx", version.ref = "featureDeliveryKtx" }
@@ -66,8 +67,10 @@ feature-delivery = { module = "com.google.android.play:feature-delivery", versio
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx" }
 coil3 = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glanceAppwidget" }
+androidx-navigation-compose-android = { group = "androidx.navigation", name = "navigation-compose-android", version.ref = "navigationComposeAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "services" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

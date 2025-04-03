@@ -18,6 +18,7 @@ import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
@@ -1284,7 +1285,13 @@ fun Bogaslujbovyia(
                         )
                     }
                 }
-                if (autoScrollSensor) {
+                AnimatedVisibility(
+                    autoScrollSensor, enter = fadeIn(
+                        tween(
+                            durationMillis = 1000, easing = LinearOutSlowInEasing
+                        )
+                    ), exit = fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                ) {
                     Row(
                         modifier = Modifier
                             .align(Alignment.End)

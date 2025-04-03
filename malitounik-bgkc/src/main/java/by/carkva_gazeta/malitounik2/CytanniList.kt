@@ -11,6 +11,7 @@ import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -132,10 +133,7 @@ var autoScrollJob: Job? = null
 var autoScrollTextVisableJob: Job? = null
 
 class CytanniListItems(
-    biblia: Int,
-    private val page: Int,
-    cytanne: String,
-    perevod: String
+    biblia: Int, private val page: Int, cytanne: String, perevod: String
 ) {
     private val t1 = cytanne.indexOf(";")
     private val knigaText = if (t1 == -1) cytanne.substringBeforeLast(" ")
@@ -148,9 +146,7 @@ class CytanniListItems(
     private val _filteredItems = MutableStateFlow(
         if (mChekList.isEmpty()) {
             val resultPage = if (biblia == Settings.CHYTANNI_BIBLIA) getBible(
-                chteniaNewPage,
-                perevod,
-                biblia
+                chteniaNewPage, perevod, biblia
             )
             else getBible(cytanne, perevod, biblia, true)
             cytanniListItemData.value.add(CytanniListItemData(page, resultPage))
@@ -179,12 +175,7 @@ class CytanniListItems(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun CytanniList(
-    navController: NavHostController,
-    title: String,
-    cytanne: String,
-    biblia: Int,
-    perevodRoot: String,
-    position: Int
+    navController: NavHostController, title: String, cytanne: String, biblia: Int, perevodRoot: String, position: Int
 ) {
     val t1 = cytanne.indexOf(";")
     var knigaText by remember {
@@ -200,8 +191,7 @@ fun CytanniList(
     }
     val count = if (biblia == Settings.CHYTANNI_BIBLIA) remember {
         bibleCount(
-            knigaBiblii(knigaText),
-            perevodRoot
+            knigaBiblii(knigaText), perevodRoot
         )
     }
     else 1
@@ -216,8 +206,7 @@ fun CytanniList(
     SideEffect {
         val window = (view.context as Activity).window
         WindowCompat.getInsetsController(
-            window,
-            view
+            window, view
         ).isAppearanceLightStatusBars = false
     }
     val maxLine = remember { mutableIntStateOf(1) }
@@ -230,9 +219,8 @@ fun CytanniList(
         }
     }
     var subTitle by remember { mutableStateOf("") }
-    val colorTollBar =
-        if (isToDay == Settings.caliandarPosition || biblia == Settings.CHYTANNI_BIBLIA || biblia == Settings.CHYTANNI_VYBRANAE) MaterialTheme.colorScheme.onTertiary
-        else StrogiPost
+    val colorTollBar = if (isToDay == Settings.caliandarPosition || biblia == Settings.CHYTANNI_BIBLIA || biblia == Settings.CHYTANNI_VYBRANAE) MaterialTheme.colorScheme.onTertiary
+    else StrogiPost
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var showDropdown by remember { mutableStateOf(false) }
     var fontSize by remember { mutableFloatStateOf(k.getFloat("font_biblia", 22F)) }
@@ -249,8 +237,7 @@ fun CytanniList(
             when (biblia) {
                 Settings.CHYTANNI_MARANATA -> k.getBoolean("paralel_maranata", true)
                 Settings.CHYTANNI_BIBLIA -> if (perevodRoot != Settings.PEREVODNADSAN) k.getBoolean(
-                    "paralel_biblia",
-                    true
+                    "paralel_biblia", true
                 ) else false
 
                 else -> false
@@ -263,19 +250,16 @@ fun CytanniList(
     var modeNight by remember {
         mutableIntStateOf(
             k.getInt(
-                "mode_night",
-                Settings.MODE_NIGHT_SYSTEM
+                "mode_night", Settings.MODE_NIGHT_SYSTEM
             )
         )
     }
     var perevod by remember {
         mutableStateOf(
             when (biblia) {
-                Settings.CHYTANNI_LITURGICHNYIA -> k.getString("perevod", Settings.PEREVODSEMUXI)
-                    ?: Settings.PEREVODSEMUXI
+                Settings.CHYTANNI_LITURGICHNYIA -> k.getString("perevod", Settings.PEREVODSEMUXI) ?: Settings.PEREVODSEMUXI
 
-                Settings.CHYTANNI_MARANATA -> k.getString("perevodMaranata", Settings.PEREVODSEMUXI)
-                    ?: Settings.PEREVODSEMUXI
+                Settings.CHYTANNI_MARANATA -> k.getString("perevodMaranata", Settings.PEREVODSEMUXI) ?: Settings.PEREVODSEMUXI
 
                 else -> perevodRoot
             }
@@ -299,18 +283,16 @@ fun CytanniList(
             else -> stringResource(R.string.title_biblia)
         }
     }
-    val initPage =
-        if (biblia == Settings.CHYTANNI_BIBLIA) {
-            if (Settings.bibleTimeList) k.getInt("bible_time_${prevodName}_glava", 0)
-            else cytanne.substringAfterLast(" ").toInt() - 1
-        } else 0
+    val initPage = if (biblia == Settings.CHYTANNI_BIBLIA) {
+        if (Settings.bibleTimeList) k.getInt("bible_time_${prevodName}_glava", 0)
+        else cytanne.substringAfterLast(" ").toInt() - 1
+    } else 0
     val pagerState = rememberPagerState(pageCount = {
         listState.size
     }, initialPage = initPage)
     val lazyRowState = rememberLazyListState()
     val fling = PagerDefaults.flingBehavior(
-        state = pagerState,
-        pagerSnapDistance = PagerSnapDistance.atMost(1)
+        state = pagerState, pagerSnapDistance = PagerSnapDistance.atMost(1)
     )
     var selectedIndex by remember {
         mutableIntStateOf(if (biblia == Settings.CHYTANNI_BIBLIA) initPage else 0)
@@ -388,8 +370,7 @@ fun CytanniList(
         if (perevod == Settings.PEREVODSINOIDAL) {
             if (knigaBiblii(knigaText) == 31 && listState.size == 6) {
                 if (selectedIndex == 5) {
-                    for (i in 5 downTo 1)
-                        listState.removeAt(i)
+                    for (i in 5 downTo 1) listState.removeAt(i)
                     selectedIndex = 0
                     knigaText = "Пасл Ер"
                 } else {
@@ -399,8 +380,7 @@ fun CytanniList(
         }
         if (perevod == Settings.PEREVODCARNIAUSKI) {
             if (knigaBiblii(knigaText) == 30) {
-                for (i in 1..5)
-                    listState.add(rememberLazyListState())
+                for (i in 1..5) listState.add(rememberLazyListState())
                 selectedIndex = 5
                 knigaText = "Бар"
             }
@@ -412,8 +392,7 @@ fun CytanniList(
     var isVybranoe by remember { mutableStateOf(false) }
     var saveVybranoe by remember { mutableStateOf(false) }
     val gson = Gson()
-    val type =
-        TypeToken.getParameterized(ArrayList::class.java, VybranaeData::class.java).type
+    val type = TypeToken.getParameterized(ArrayList::class.java, VybranaeData::class.java).type
     val file = File("${LocalContext.current.filesDir}/vybranoe_${prevodName}.json")
     if (initVybranoe) {
         vybranoeList.clear()
@@ -444,13 +423,8 @@ fun CytanniList(
                 }
             }
             vybranoeList.add(
-                0,
-                VybranaeData(
-                    Calendar.getInstance().timeInMillis,
-                    titleBibleVybranoe,
-                    knigaText,
-                    selectedIndex,
-                    perevod
+                0, VybranaeData(
+                    Calendar.getInstance().timeInMillis, titleBibleVybranoe, knigaText, selectedIndex, perevod
                 )
             )
         }
@@ -502,8 +476,7 @@ fun CytanniList(
                     prefEditors.putString("bible_time_${prevodName}_kniga", knigaText)
                     prefEditors.putInt("bible_time_${prevodName}_glava", selectedIndex)
                     prefEditors.putInt(
-                        "bible_time_${prevodName}_stix",
-                        listState[selectedIndex].firstVisibleItemIndex
+                        "bible_time_${prevodName}_stix", listState[selectedIndex].firstVisibleItemIndex
                     )
                 }
                 prefEditors.apply()
@@ -525,11 +498,9 @@ fun CytanniList(
         }
     }
     LaunchedEffect(fullscreen) {
-        val controller =
-            WindowCompat.getInsetsController((view.context as Activity).window, view)
+        val controller = WindowCompat.getInsetsController((view.context as Activity).window, view)
         if (fullscreen) {
-            controller.systemBarsBehavior =
-                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             controller.hide(WindowInsetsCompat.Type.systemBars())
             controller.hide(WindowInsetsCompat.Type.navigationBars())
         } else {
@@ -546,76 +517,54 @@ fun CytanniList(
             if (!fullscreen) {
                 TopAppBar(
                     title = {
-                        if (!isSelectMode) {
-                            Column {
-                                if (!isParallelVisable) {
-                                    Text(
-                                        modifier = Modifier.clickable {
-                                            maxLine.intValue = Int.MAX_VALUE
-                                            coroutineScope.launch {
-                                                delay(5000L)
-                                                maxLine.intValue = 1
-                                            }
-                                        },
-                                        text = titleBible,
-                                        color = MaterialTheme.colorScheme.onSecondary,
-                                        fontWeight = FontWeight.Bold,
-                                        maxLines = maxLine.intValue,
-                                        overflow = TextOverflow.Ellipsis,
-                                        fontSize = Settings.fontInterface.sp
-                                    )
-                                    Text(
-                                        modifier = Modifier.clickable {
-                                            maxLine.intValue = Int.MAX_VALUE
-                                            coroutineScope.launch {
-                                                delay(5000L)
-                                                maxLine.intValue = 1
-                                            }
-                                        },
-                                        text = subTitle,
-                                        color = MaterialTheme.colorScheme.onSecondary,
-                                        fontWeight = FontWeight.Bold,
-                                        maxLines = maxLine.intValue,
-                                        overflow = TextOverflow.Ellipsis,
-                                        fontSize = Settings.fontInterface.sp
-                                    )
-                                } else {
-                                    Text(
-                                        modifier = Modifier.clickable {
-                                            maxLine.intValue = Int.MAX_VALUE
-                                            coroutineScope.launch {
-                                                delay(5000L)
-                                                maxLine.intValue = 1
-                                            }
-                                        },
-                                        text = stringResource(
-                                            R.string.paralel_smoll,
-                                            paralelChtenia
-                                        ),
-                                        color = MaterialTheme.colorScheme.onSecondary,
-                                        fontWeight = FontWeight.Bold,
-                                        maxLines = maxLine.intValue,
-                                        overflow = TextOverflow.Ellipsis,
-                                        fontSize = Settings.fontInterface.sp
-                                    )
-                                }
+                    if (!isSelectMode) {
+                        Column {
+                            if (!isParallelVisable) {
+                                Text(
+                                    modifier = Modifier.clickable {
+                                        maxLine.intValue = Int.MAX_VALUE
+                                        coroutineScope.launch {
+                                            delay(5000L)
+                                            maxLine.intValue = 1
+                                        }
+                                    }, text = titleBible, color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
+                                )
+                                Text(
+                                    modifier = Modifier.clickable {
+                                        maxLine.intValue = Int.MAX_VALUE
+                                        coroutineScope.launch {
+                                            delay(5000L)
+                                            maxLine.intValue = 1
+                                        }
+                                    }, text = subTitle, color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
+                                )
+                            } else {
+                                Text(
+                                    modifier = Modifier.clickable {
+                                        maxLine.intValue = Int.MAX_VALUE
+                                        coroutineScope.launch {
+                                            delay(5000L)
+                                            maxLine.intValue = 1
+                                        }
+                                    }, text = stringResource(
+                                        R.string.paralel_smoll, paralelChtenia
+                                    ), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
+                                )
                             }
                         }
-                    },
+                    }
+                },
 
                     navigationIcon = {
                         if (isSelectMode || isParallelVisable) {
                             IconButton(onClick = {
                                 if (isSelectMode) isSelectMode = false
                                 else isParallelVisable = false
-                            },
-                                content = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.close),
-                                        tint = MaterialTheme.colorScheme.onSecondary,
-                                        contentDescription = ""
-                                    )
-                                })
+                            }, content = {
+                                Icon(
+                                    painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                                )
+                            })
                         } else {
                             IconButton(onClick = {
                                 when {
@@ -630,68 +579,54 @@ fun CytanniList(
                                         val prefEditors = k.edit()
                                         if (biblia == Settings.CHYTANNI_BIBLIA) {
                                             prefEditors.putString(
-                                                "bible_time_${prevodName}_kniga",
-                                                knigaText
+                                                "bible_time_${prevodName}_kniga", knigaText
                                             )
                                             prefEditors.putInt(
-                                                "bible_time_${prevodName}_glava",
-                                                selectedIndex
+                                                "bible_time_${prevodName}_glava", selectedIndex
                                             )
                                             prefEditors.putInt(
-                                                "bible_time_${prevodName}_stix",
-                                                listState[selectedIndex].firstVisibleItemIndex
+                                                "bible_time_${prevodName}_stix", listState[selectedIndex].firstVisibleItemIndex
                                             )
                                         }
                                         prefEditors.apply()
                                         navController.popBackStack()
                                     }
                                 }
-                            },
-                                content = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.arrow_back),
-                                        tint = MaterialTheme.colorScheme.onSecondary,
-                                        contentDescription = ""
-                                    )
-                                })
+                            }, content = {
+                                Icon(
+                                    painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                                )
+                            })
                         }
-                    },
-                    actions = {
+                    }, actions = {
                         var expanded by remember { mutableStateOf(false) }
                         if (isSelectMode) {
                             IconButton(onClick = {
                                 isSelectAll = true
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.select_all),
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.onSecondary
+                                    painter = painterResource(R.drawable.select_all), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
                             IconButton(onClick = {
                                 isCopyMode = true
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.content_copy),
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.onSecondary
+                                    painter = painterResource(R.drawable.content_copy), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
                             IconButton(onClick = {
                                 isShareMode = true
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.share),
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.onSecondary
+                                    painter = painterResource(R.drawable.share), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
                         } else {
                             if (!isParallelVisable) {
                                 if (listState[selectedIndex].canScrollForward) {
-                                    val iconAutoScroll =
-                                        if (autoScrollSensor) painterResource(R.drawable.stop_circle)
-                                        else painterResource(R.drawable.play_circle)
+                                    val iconAutoScroll = if (autoScrollSensor) painterResource(R.drawable.stop_circle)
+                                    else painterResource(R.drawable.play_circle)
                                     IconButton(onClick = {
                                         autoScroll = !autoScroll
                                         autoScrollSensor = !autoScrollSensor
@@ -701,9 +636,7 @@ fun CytanniList(
                                         else actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                                     }) {
                                         Icon(
-                                            iconAutoScroll,
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.onSecondary
+                                            iconAutoScroll, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                         )
                                     }
                                 } else if (listState[selectedIndex].canScrollBackward) {
@@ -711,9 +644,7 @@ fun CytanniList(
                                         isUpList = true
                                     }) {
                                         Icon(
-                                            painter = painterResource(R.drawable.arrow_upward),
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.onSecondary
+                                            painter = painterResource(R.drawable.arrow_upward), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                         )
                                     }
                                 }
@@ -721,12 +652,9 @@ fun CytanniList(
                                 IconButton(onClick = {
                                     expanded = true
                                     autoScroll = false
-                                }
-                                ) {
+                                }) {
                                     Icon(
-                                        painter = painterResource(R.drawable.more_vert),
-                                        contentDescription = "",
-                                        tint = MaterialTheme.colorScheme.onSecondary
+                                        painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
                             } else {
@@ -734,221 +662,161 @@ fun CytanniList(
                             }
                         }
                         DropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = {
+                            expanded = expanded, onDismissRequest = {
                                 expanded = false
                                 if (autoScrollSensor) autoScroll = true
-                            }
-                        ) {
+                            }) {
                             if (biblia == Settings.CHYTANNI_BIBLIA) {
-                                DropdownMenuItem(
-                                    onClick = {
-                                        expanded = false
-                                        saveVybranoe = true
-                                    },
-                                    text = {
-                                        if (isVybranoe) Text(
-                                            stringResource(R.string.vybranoe_del),
-                                            fontSize = (Settings.fontInterface - 2).sp
-                                        )
-                                        else Text(
-                                            stringResource(R.string.vybranoe),
-                                            fontSize = (Settings.fontInterface - 2).sp
-                                        )
-                                    },
-                                    trailingIcon = {
-                                        val icon = if (isVybranoe) painterResource(R.drawable.stars)
-                                        else painterResource(R.drawable.star)
-                                        Icon(
-                                            painter = icon,
-                                            contentDescription = ""
-                                        )
-                                    }
-                                )
+                                DropdownMenuItem(onClick = {
+                                    expanded = false
+                                    saveVybranoe = true
+                                }, text = {
+                                    if (isVybranoe) Text(
+                                        stringResource(R.string.vybranoe_del), fontSize = (Settings.fontInterface - 2).sp
+                                    )
+                                    else Text(
+                                        stringResource(R.string.vybranoe), fontSize = (Settings.fontInterface - 2).sp
+                                    )
+                                }, trailingIcon = {
+                                    val icon = if (isVybranoe) painterResource(R.drawable.stars)
+                                    else painterResource(R.drawable.star)
+                                    Icon(
+                                        painter = icon, contentDescription = ""
+                                    )
+                                })
                             }
                             if (biblia == Settings.CHYTANNI_BIBLIA && listState.size - 1 > 1) {
-                                DropdownMenuItem(
-                                    onClick = {
-                                        showDropdown = !showDropdown
-                                        autoScroll = false
-                                        expanded = false
-                                        menuPosition = 4
-                                    },
-                                    text = {
-                                        Text(
-                                            stringResource(R.string.razdzel),
-                                            fontSize = (Settings.fontInterface - 2).sp
-                                        )
-                                    },
-                                    trailingIcon = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.apps),
-                                            contentDescription = ""
-                                        )
-                                    }
-                                )
-                            }
-                            DropdownMenuItem(
-                                onClick = {
+                                DropdownMenuItem(onClick = {
                                     showDropdown = !showDropdown
                                     autoScroll = false
                                     expanded = false
-                                    menuPosition = 2
-                                },
-                                text = {
+                                    menuPosition = 4
+                                }, text = {
                                     Text(
-                                        stringResource(R.string.perevody),
-                                        fontSize = (Settings.fontInterface - 2).sp
+                                        stringResource(R.string.razdzel), fontSize = (Settings.fontInterface - 2).sp
                                     )
-                                },
-                                trailingIcon = {
+                                }, trailingIcon = {
                                     Icon(
-                                        painter = painterResource(R.drawable.book_red),
-                                        contentDescription = ""
+                                        painter = painterResource(R.drawable.apps), contentDescription = ""
                                     )
-                                }
-                            )
-                            DropdownMenuItem(
-                                onClick = {
+                                })
+                            }
+                            DropdownMenuItem(onClick = {
+                                showDropdown = !showDropdown
+                                autoScroll = false
+                                expanded = false
+                                menuPosition = 2
+                            }, text = {
+                                Text(
+                                    stringResource(R.string.perevody), fontSize = (Settings.fontInterface - 2).sp
+                                )
+                            }, trailingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.book_red), contentDescription = ""
+                                )
+                            })
+                            DropdownMenuItem(onClick = {
+                                expanded = false
+                                if (autoScrollSensor) autoScroll = true
+                                fullscreen = true
+                            }, text = {
+                                Text(
+                                    stringResource(R.string.fullscreen), fontSize = (Settings.fontInterface - 2).sp
+                                )
+                            }, trailingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.fullscreen), contentDescription = ""
+                                )
+                            })
+                            if (!(biblia == Settings.CHYTANNI_LITURGICHNYIA || perevodRoot == Settings.PEREVODNADSAN || biblia == Settings.CHYTANNI_VYBRANAE)) {
+                                DropdownMenuItem(onClick = {
+                                    isParallel = !isParallel
                                     expanded = false
                                     if (autoScrollSensor) autoScroll = true
-                                    fullscreen = true
-                                },
-                                text = {
-                                    Text(
-                                        stringResource(R.string.fullscreen),
-                                        fontSize = (Settings.fontInterface - 2).sp
-                                    )
-                                },
-                                trailingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.fullscreen),
-                                        contentDescription = ""
-                                    )
-                                }
-                            )
-                            if (!(biblia == Settings.CHYTANNI_LITURGICHNYIA || perevodRoot == Settings.PEREVODNADSAN || biblia == Settings.CHYTANNI_VYBRANAE)) {
-                                DropdownMenuItem(
-                                    onClick = {
-                                        isParallel = !isParallel
-                                        expanded = false
-                                        if (autoScrollSensor) autoScroll = true
-                                        k.edit {
-                                            if (biblia == Settings.CHYTANNI_BIBLIA) putBoolean(
-                                                "paralel_biblia",
-                                                isParallel
-                                            )
-                                            else putBoolean("paralel_maranata", isParallel)
-                                        }
-                                    },
-                                    text = {
-                                        Text(
-                                            stringResource(R.string.paralel),
-                                            fontSize = (Settings.fontInterface - 2).sp
+                                    k.edit {
+                                        if (biblia == Settings.CHYTANNI_BIBLIA) putBoolean(
+                                            "paralel_biblia", isParallel
                                         )
-                                    },
-                                    trailingIcon = {
-                                        Checkbox(
-                                            checked = isParallel,
-                                            onCheckedChange = {
-                                                expanded = false
-                                                if (autoScrollSensor) autoScroll = true
-                                                isParallel = !isParallel
-                                                k.edit {
-                                                    if (biblia == Settings.CHYTANNI_BIBLIA) putBoolean(
-                                                        "paralel_biblia",
-                                                        isParallel
-                                                    )
-                                                    else putBoolean(
-                                                        "paralel_maranata",
-                                                        isParallel
-                                                    )
-                                                }
-                                            }
-                                        )
+                                        else putBoolean("paralel_maranata", isParallel)
                                     }
-                                )
+                                }, text = {
+                                    Text(
+                                        stringResource(R.string.paralel), fontSize = (Settings.fontInterface - 2).sp
+                                    )
+                                }, trailingIcon = {
+                                    Checkbox(
+                                        checked = isParallel, onCheckedChange = {
+                                            expanded = false
+                                            if (autoScrollSensor) autoScroll = true
+                                            isParallel = !isParallel
+                                            k.edit {
+                                                if (biblia == Settings.CHYTANNI_BIBLIA) putBoolean(
+                                                    "paralel_biblia", isParallel
+                                                )
+                                                else putBoolean(
+                                                    "paralel_maranata", isParallel
+                                                )
+                                            }
+                                        })
+                                })
                             }
-                            DropdownMenuItem(
-                                onClick = {
-                                    showDropdown = !showDropdown
-                                    autoScroll = false
-                                    expanded = false
-                                    menuPosition = 1
-                                },
-                                text = {
-                                    Text(
-                                        stringResource(R.string.menu_font_size_app),
-                                        fontSize = (Settings.fontInterface - 2).sp
-                                    )
-                                },
-                                trailingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.format_size),
-                                        contentDescription = ""
-                                    )
-                                }
-                            )
-                            DropdownMenuItem(
-                                onClick = {
-                                    showDropdown = !showDropdown
-                                    autoScroll = false
-                                    expanded = false
-                                    menuPosition = 3
-                                },
-                                text = {
-                                    Text(
-                                        stringResource(R.string.dzen_noch),
-                                        fontSize = (Settings.fontInterface - 2).sp
-                                    )
-                                },
-                                trailingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.contrast),
-                                        contentDescription = ""
-                                    )
-                                }
-                            )
+                            DropdownMenuItem(onClick = {
+                                showDropdown = !showDropdown
+                                autoScroll = false
+                                expanded = false
+                                menuPosition = 1
+                            }, text = {
+                                Text(
+                                    stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp
+                                )
+                            }, trailingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.format_size), contentDescription = ""
+                                )
+                            })
+                            DropdownMenuItem(onClick = {
+                                showDropdown = !showDropdown
+                                autoScroll = false
+                                expanded = false
+                                menuPosition = 3
+                            }, text = {
+                                Text(
+                                    stringResource(R.string.dzen_noch), fontSize = (Settings.fontInterface - 2).sp
+                                )
+                            }, trailingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.contrast), contentDescription = ""
+                                )
+                            })
                         }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(containerColor = colorTollBar)
+                    }, colors = TopAppBarDefaults.topAppBarColors(containerColor = colorTollBar)
                 )
             }
         }, modifier = Modifier
     ) { innerPadding ->
         Box(
-            modifier = Modifier
-                .padding(
-                    innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                    if (biblia == Settings.CHYTANNI_BIBLIA || !fullscreen) innerPadding.calculateTopPadding() else 0.dp,
-                    innerPadding.calculateEndPadding(LayoutDirection.Rtl),
-                    0.dp
+            modifier = Modifier.padding(
+                    innerPadding.calculateStartPadding(LayoutDirection.Ltr), if (biblia == Settings.CHYTANNI_BIBLIA || !fullscreen) innerPadding.calculateTopPadding() else 0.dp, innerPadding.calculateEndPadding(LayoutDirection.Rtl), 0.dp
                 )
         ) {
             Popup(
-                alignment = Alignment.TopCenter,
-                onDismissRequest = {
+                alignment = Alignment.TopCenter, onDismissRequest = {
                     showDropdown = false
                     if (autoScrollSensor) autoScroll = true
-                }
-            ) {
+                }) {
                 AnimatedVisibility(
-                    showDropdown,
-                    enter = slideInVertically(
+                    showDropdown, enter = slideInVertically(
                         tween(
-                            durationMillis = 500,
-                            easing = LinearOutSlowInEasing
+                            durationMillis = 500, easing = LinearOutSlowInEasing
                         )
-                    ),
-                    exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
+                    ), exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
                 ) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(
                                 shape = RoundedCornerShape(
-                                    bottomStart = 10.dp,
-                                    bottomEnd = 10.dp
+                                    bottomStart = 10.dp, bottomEnd = 10.dp
                                 )
                             )
                             .background(colorTollBar)
@@ -966,41 +834,28 @@ fun CytanniList(
                                                 .padding(10.dp)
                                                 .clip(shape = RoundedCornerShape(10.dp))
                                                 .border(
-                                                    width = 1.dp,
-                                                    color = MaterialTheme.colorScheme.secondary,
-                                                    shape = RoundedCornerShape(10.dp)
+                                                    width = 1.dp, color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(10.dp)
                                                 )
                                                 .background(Divider)
                                                 .clickable {
                                                     selectedIndex = item
                                                     showDropdown = false
                                                     if (autoScrollSensor) autoScroll = true
-                                                }
-                                        ) {
+                                                }) {
                                             Text(
-                                                (item + 1).toString(),
-                                                modifier = Modifier
+                                                (item + 1).toString(), modifier = Modifier
                                                     .fillMaxSize()
-                                                    .padding(5.dp),
-                                                textAlign = TextAlign.Center,
-                                                color = PrimaryText,
-                                                fontSize = Settings.fontInterface.sp
+                                                    .padding(5.dp), textAlign = TextAlign.Center, color = PrimaryText, fontSize = Settings.fontInterface.sp
                                             )
                                         }
                                     }
                                 }
                             }
                             if (menuPosition == 3) {
-                                Column(Modifier.selectableGroup())
-                                {
+                                Column(Modifier.selectableGroup()) {
                                     val isSystemInDarkTheme = isSystemInDarkTheme()
                                     Text(
-                                        stringResource(R.string.dzen_noch),
-                                        modifier = Modifier.padding(start = 10.dp, top = 10.dp),
-                                        textAlign = TextAlign.Center,
-                                        fontStyle = FontStyle.Italic,
-                                        color = MaterialTheme.colorScheme.secondary,
-                                        fontSize = Settings.fontInterface.sp
+                                        stringResource(R.string.dzen_noch), modifier = Modifier.padding(start = 10.dp, top = 10.dp), textAlign = TextAlign.Center, fontStyle = FontStyle.Italic, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                                     )
                                     val edit = k.edit()
                                     Row(
@@ -1009,37 +864,27 @@ fun CytanniList(
                                             .clickable {
                                                 modeNight = Settings.MODE_NIGHT_SYSTEM
                                                 edit.putInt(
-                                                    "mode_night",
-                                                    Settings.MODE_NIGHT_SYSTEM
+                                                    "mode_night", Settings.MODE_NIGHT_SYSTEM
                                                 )
                                                 edit.apply()
                                                 actyvity.dzenNoch = isSystemInDarkTheme
                                                 actyvity.removelightSensor()
-                                                if (actyvity.dzenNoch != actyvity.checkDzenNoch)
-                                                    actyvity.recreate()
-                                            },
-                                        verticalAlignment = Alignment.CenterVertically
+                                                if (actyvity.dzenNoch != actyvity.checkDzenNoch) actyvity.recreate()
+                                            }, verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         RadioButton(
-                                            selected = modeNight == Settings.MODE_NIGHT_SYSTEM,
-                                            onClick = {
+                                            selected = modeNight == Settings.MODE_NIGHT_SYSTEM, onClick = {
                                                 modeNight = Settings.MODE_NIGHT_SYSTEM
                                                 edit.putInt(
-                                                    "mode_night",
-                                                    Settings.MODE_NIGHT_SYSTEM
+                                                    "mode_night", Settings.MODE_NIGHT_SYSTEM
                                                 )
                                                 edit.apply()
                                                 actyvity.dzenNoch = isSystemInDarkTheme
                                                 actyvity.removelightSensor()
-                                                if (actyvity.dzenNoch != actyvity.checkDzenNoch)
-                                                    actyvity.recreate()
-                                            }
-                                        )
+                                                if (actyvity.dzenNoch != actyvity.checkDzenNoch) actyvity.recreate()
+                                            })
                                         Text(
-                                            stringResource(R.string.system),
-                                            textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.secondary,
-                                            fontSize = Settings.fontInterface.sp
+                                            stringResource(R.string.system), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                                         )
                                     }
                                     Row(
@@ -1051,28 +896,20 @@ fun CytanniList(
                                                 edit.apply()
                                                 actyvity.dzenNoch = false
                                                 actyvity.removelightSensor()
-                                                if (actyvity.checkDzenNoch)
-                                                    actyvity.recreate()
-                                            },
-                                        verticalAlignment = Alignment.CenterVertically
+                                                if (actyvity.checkDzenNoch) actyvity.recreate()
+                                            }, verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         RadioButton(
-                                            selected = modeNight == Settings.MODE_NIGHT_NO,
-                                            onClick = {
+                                            selected = modeNight == Settings.MODE_NIGHT_NO, onClick = {
                                                 modeNight = Settings.MODE_NIGHT_NO
                                                 edit.putInt("mode_night", Settings.MODE_NIGHT_NO)
                                                 edit.apply()
                                                 actyvity.dzenNoch = false
                                                 actyvity.removelightSensor()
-                                                if (actyvity.checkDzenNoch)
-                                                    actyvity.recreate()
-                                            }
-                                        )
+                                                if (actyvity.checkDzenNoch) actyvity.recreate()
+                                            })
                                         Text(
-                                            stringResource(R.string.day),
-                                            textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.secondary,
-                                            fontSize = Settings.fontInterface.sp
+                                            stringResource(R.string.day), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                                         )
                                     }
                                     Row(
@@ -1081,37 +918,27 @@ fun CytanniList(
                                             .clickable {
                                                 modeNight = Settings.MODE_NIGHT_YES
                                                 edit.putInt(
-                                                    "mode_night",
-                                                    Settings.MODE_NIGHT_YES
+                                                    "mode_night", Settings.MODE_NIGHT_YES
                                                 )
                                                 edit.apply()
                                                 actyvity.dzenNoch = true
                                                 actyvity.removelightSensor()
-                                                if (!actyvity.checkDzenNoch)
-                                                    actyvity.recreate()
-                                            },
-                                        verticalAlignment = Alignment.CenterVertically
+                                                if (!actyvity.checkDzenNoch) actyvity.recreate()
+                                            }, verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         RadioButton(
-                                            selected = modeNight == Settings.MODE_NIGHT_YES,
-                                            onClick = {
+                                            selected = modeNight == Settings.MODE_NIGHT_YES, onClick = {
                                                 modeNight = Settings.MODE_NIGHT_YES
                                                 edit.putInt(
-                                                    "mode_night",
-                                                    Settings.MODE_NIGHT_YES
+                                                    "mode_night", Settings.MODE_NIGHT_YES
                                                 )
                                                 edit.apply()
                                                 actyvity.dzenNoch = true
                                                 actyvity.removelightSensor()
-                                                if (!actyvity.checkDzenNoch)
-                                                    actyvity.recreate()
-                                            }
-                                        )
+                                                if (!actyvity.checkDzenNoch) actyvity.recreate()
+                                            })
                                         Text(
-                                            stringResource(R.string.widget_day_d_n),
-                                            textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.secondary,
-                                            fontSize = Settings.fontInterface.sp
+                                            stringResource(R.string.widget_day_d_n), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                                         )
                                     }
                                     Row(
@@ -1120,54 +947,36 @@ fun CytanniList(
                                             .clickable {
                                                 modeNight = Settings.MODE_NIGHT_AUTO
                                                 edit.putInt(
-                                                    "mode_night",
-                                                    Settings.MODE_NIGHT_AUTO
+                                                    "mode_night", Settings.MODE_NIGHT_AUTO
                                                 )
                                                 edit.apply()
                                                 actyvity.setlightSensor()
-                                            },
-                                        verticalAlignment = Alignment.CenterVertically
+                                            }, verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         RadioButton(
-                                            selected = modeNight == Settings.MODE_NIGHT_AUTO,
-                                            onClick = {
+                                            selected = modeNight == Settings.MODE_NIGHT_AUTO, onClick = {
                                                 modeNight = Settings.MODE_NIGHT_AUTO
                                                 edit.putInt(
-                                                    "mode_night",
-                                                    Settings.MODE_NIGHT_AUTO
+                                                    "mode_night", Settings.MODE_NIGHT_AUTO
                                                 )
                                                 edit.apply()
                                                 actyvity.setlightSensor()
-                                            }
-                                        )
+                                            })
                                         Text(
-                                            stringResource(R.string.auto_widget_day_d_n),
-                                            textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.secondary,
-                                            fontSize = Settings.fontInterface.sp
+                                            stringResource(R.string.auto_widget_day_d_n), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                                         )
                                     }
                                 }
                             }
                             if (menuPosition == 2) {
-                                Column(Modifier.selectableGroup())
-                                {
+                                Column(Modifier.selectableGroup()) {
                                     if (isPerevodError) {
                                         Text(
-                                            stringResource(R.string.biblia_error),
-                                            modifier = Modifier.padding(start = 10.dp, top = 10.dp),
-                                            textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.primary,
-                                            fontSize = Settings.fontInterface.sp
+                                            stringResource(R.string.biblia_error), modifier = Modifier.padding(start = 10.dp, top = 10.dp), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.primary, fontSize = Settings.fontInterface.sp
                                         )
                                     }
                                     Text(
-                                        stringResource(R.string.perevody),
-                                        modifier = Modifier.padding(start = 10.dp, top = 10.dp),
-                                        textAlign = TextAlign.Center,
-                                        fontStyle = FontStyle.Italic,
-                                        color = MaterialTheme.colorScheme.secondary,
-                                        fontSize = Settings.fontInterface.sp
+                                        stringResource(R.string.perevody), modifier = Modifier.padding(start = 10.dp, top = 10.dp), textAlign = TextAlign.Center, fontStyle = FontStyle.Italic, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                                     )
                                     val edit = k.edit()
                                     Row(
@@ -1180,41 +989,31 @@ fun CytanniList(
                                                 initVybranoe = true
                                                 selectPerevod = true
                                                 if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
-                                                    "perevodMaranata",
-                                                    perevod
+                                                    "perevodMaranata", perevod
                                                 )
                                                 if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
-                                                    "perevod",
-                                                    perevod
+                                                    "perevod", perevod
                                                 )
                                                 edit.apply()
-                                            },
-                                        verticalAlignment = Alignment.CenterVertically
+                                            }, verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         RadioButton(
-                                            selected = perevod == Settings.PEREVODSEMUXI,
-                                            onClick = {
+                                            selected = perevod == Settings.PEREVODSEMUXI, onClick = {
                                                 cytanniListItemData.value.clear()
                                                 selectOldPerevod = perevod
                                                 perevod = Settings.PEREVODSEMUXI
                                                 initVybranoe = true
                                                 selectPerevod = true
                                                 if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
-                                                    "perevodMaranata",
-                                                    perevod
+                                                    "perevodMaranata", perevod
                                                 )
                                                 if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
-                                                    "perevod",
-                                                    perevod
+                                                    "perevod", perevod
                                                 )
                                                 edit.apply()
-                                            }
-                                        )
+                                            })
                                         Text(
-                                            stringResource(R.string.title_biblia2),
-                                            textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.secondary,
-                                            fontSize = Settings.fontInterface.sp
+                                            stringResource(R.string.title_biblia2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                                         )
                                     }
                                     Row(
@@ -1227,41 +1026,31 @@ fun CytanniList(
                                                 initVybranoe = true
                                                 selectPerevod = true
                                                 if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
-                                                    "perevodMaranata",
-                                                    perevod
+                                                    "perevodMaranata", perevod
                                                 )
                                                 if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
-                                                    "perevod",
-                                                    perevod
+                                                    "perevod", perevod
                                                 )
                                                 edit.apply()
-                                            },
-                                        verticalAlignment = Alignment.CenterVertically
+                                            }, verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         RadioButton(
-                                            selected = perevod == Settings.PEREVODBOKUNA,
-                                            onClick = {
+                                            selected = perevod == Settings.PEREVODBOKUNA, onClick = {
                                                 cytanniListItemData.value.clear()
                                                 selectOldPerevod = perevod
                                                 perevod = Settings.PEREVODBOKUNA
                                                 initVybranoe = true
                                                 selectPerevod = true
                                                 if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
-                                                    "perevodMaranata",
-                                                    perevod
+                                                    "perevodMaranata", perevod
                                                 )
                                                 if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
-                                                    "perevod",
-                                                    perevod
+                                                    "perevod", perevod
                                                 )
                                                 edit.apply()
-                                            }
-                                        )
+                                            })
                                         Text(
-                                            stringResource(R.string.title_biblia_bokun2),
-                                            textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.secondary,
-                                            fontSize = Settings.fontInterface.sp
+                                            stringResource(R.string.title_biblia_bokun2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                                         )
                                     }
                                     Row(
@@ -1274,41 +1063,31 @@ fun CytanniList(
                                                 initVybranoe = true
                                                 selectPerevod = true
                                                 if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
-                                                    "perevodMaranata",
-                                                    perevod
+                                                    "perevodMaranata", perevod
                                                 )
                                                 if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
-                                                    "perevod",
-                                                    perevod
+                                                    "perevod", perevod
                                                 )
                                                 edit.apply()
-                                            },
-                                        verticalAlignment = Alignment.CenterVertically
+                                            }, verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         RadioButton(
-                                            selected = perevod == Settings.PEREVODCARNIAUSKI,
-                                            onClick = {
+                                            selected = perevod == Settings.PEREVODCARNIAUSKI, onClick = {
                                                 cytanniListItemData.value.clear()
                                                 selectOldPerevod = perevod
                                                 perevod = Settings.PEREVODCARNIAUSKI
                                                 initVybranoe = true
                                                 selectPerevod = true
                                                 if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
-                                                    "perevodMaranata",
-                                                    perevod
+                                                    "perevodMaranata", perevod
                                                 )
                                                 if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
-                                                    "perevod",
-                                                    perevod
+                                                    "perevod", perevod
                                                 )
                                                 edit.apply()
-                                            }
-                                        )
+                                            })
                                         Text(
-                                            stringResource(R.string.title_biblia_charniauski2),
-                                            textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.secondary,
-                                            fontSize = Settings.fontInterface.sp
+                                            stringResource(R.string.title_biblia_charniauski2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                                         )
                                     }
                                     if (biblia == Settings.CHYTANNI_BIBLIA || biblia == Settings.CHYTANNI_VYBRANAE) {
@@ -1323,24 +1102,18 @@ fun CytanniList(
                                                         perevod = Settings.PEREVODNADSAN
                                                         initVybranoe = true
                                                         selectPerevod = true
-                                                    },
-                                                verticalAlignment = Alignment.CenterVertically
+                                                    }, verticalAlignment = Alignment.CenterVertically
                                             ) {
                                                 RadioButton(
-                                                    selected = perevod == Settings.PEREVODNADSAN,
-                                                    onClick = {
+                                                    selected = perevod == Settings.PEREVODNADSAN, onClick = {
                                                         cytanniListItemData.value.clear()
                                                         selectOldPerevod = perevod
                                                         perevod = Settings.PEREVODNADSAN
                                                         initVybranoe = true
                                                         selectPerevod = true
-                                                    }
-                                                )
+                                                    })
                                                 Text(
-                                                    stringResource(R.string.title_psalter),
-                                                    textAlign = TextAlign.Center,
-                                                    color = MaterialTheme.colorScheme.secondary,
-                                                    fontSize = Settings.fontInterface.sp
+                                                    stringResource(R.string.title_psalter), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                                                 )
                                             }
                                         }
@@ -1357,17 +1130,14 @@ fun CytanniList(
                                                     selectPerevod = true
                                                     if (biblia == Settings.CHYTANNI_MARANATA) {
                                                         edit.putString(
-                                                            "perevodMaranata",
-                                                            perevod
+                                                            "perevodMaranata", perevod
                                                         )
                                                     }
                                                     edit.apply()
-                                                },
-                                            verticalAlignment = Alignment.CenterVertically
+                                                }, verticalAlignment = Alignment.CenterVertically
                                         ) {
                                             RadioButton(
-                                                selected = perevod == Settings.PEREVODSINOIDAL,
-                                                onClick = {
+                                                selected = perevod == Settings.PEREVODSINOIDAL, onClick = {
                                                     cytanniListItemData.value.clear()
                                                     selectOldPerevod = perevod
                                                     perevod = Settings.PEREVODSINOIDAL
@@ -1375,18 +1145,13 @@ fun CytanniList(
                                                     selectPerevod = true
                                                     if (biblia == Settings.CHYTANNI_MARANATA) {
                                                         edit.putString(
-                                                            "perevodMaranata",
-                                                            perevod
+                                                            "perevodMaranata", perevod
                                                         )
                                                     }
                                                     edit.apply()
-                                                }
-                                            )
+                                                })
                                             Text(
-                                                stringResource(R.string.bsinaidal2),
-                                                textAlign = TextAlign.Center,
-                                                color = MaterialTheme.colorScheme.secondary,
-                                                fontSize = Settings.fontInterface.sp
+                                                stringResource(R.string.bsinaidal2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                                             )
                                         }
                                     }
@@ -1394,32 +1159,23 @@ fun CytanniList(
                             }
                             if (menuPosition == 1) {
                                 Text(
-                                    stringResource(R.string.menu_font_size_app),
-                                    modifier = Modifier.padding(start = 10.dp, top = 10.dp),
-                                    fontStyle = FontStyle.Italic,
-                                    textAlign = TextAlign.Center,
-                                    color = MaterialTheme.colorScheme.secondary,
-                                    fontSize = Settings.fontInterface.sp
+                                    stringResource(R.string.menu_font_size_app), modifier = Modifier.padding(start = 10.dp, top = 10.dp), fontStyle = FontStyle.Italic, textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                                 )
                                 Slider(
-                                    modifier = Modifier.padding(horizontal = 10.dp),
-                                    valueRange = 18f..58f,
-                                    steps = 10,
-                                    value = fontSize,
-                                    onValueChange = {
+                                    modifier = Modifier.padding(horizontal = 10.dp), valueRange = 18f..58f, steps = 10, value = fontSize, onValueChange = {
                                         k.edit {
                                             putFloat("font_biblia", it)
                                         }
                                         fontSize = it
-                                    }
-                                )
+                                    })
                             }
-                            Column(modifier = Modifier
-                                .fillMaxWidth()
-                                .background(MaterialTheme.colorScheme.onTertiary)
-                                .clickable {
-                                    showDropdown = false
-                                }) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(MaterialTheme.colorScheme.onTertiary)
+                                    .clickable {
+                                        showDropdown = false
+                                    }) {
                                 Icon(modifier = Modifier.align(Alignment.End), painter = painterResource(R.drawable.keyboard_arrow_up), contentDescription = "", tint = PrimaryTextBlack)
                             }
                         }
@@ -1487,15 +1243,10 @@ fun CytanniList(
                                 .padding(10.dp)
                                 .clip(shape = RoundedCornerShape(10.dp))
                                 .border(
-                                    width = 1.dp,
-                                    color = MaterialTheme.colorScheme.secondary,
-                                    shape = RoundedCornerShape(10.dp)
+                                    width = 1.dp, color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(10.dp)
                                 )
                                 .background(color)
-                                .padding(5.dp),
-                                color = PrimaryText,
-                                fontSize = Settings.fontInterface.sp
-                            )
+                                .padding(5.dp), color = PrimaryText, fontSize = Settings.fontInterface.sp)
                         }
                     }
                 }
@@ -1503,16 +1254,14 @@ fun CytanniList(
                 val nestedScrollConnection = remember {
                     object : NestedScrollConnection {
                         override fun onPreScroll(
-                            available: Offset,
-                            source: NestedScrollSource
+                            available: Offset, source: NestedScrollSource
                         ): Offset {
                             isScrollRun = true
                             return super.onPreScroll(available, source)
                         }
 
                         override suspend fun onPostFling(
-                            consumed: Velocity,
-                            available: Velocity
+                            consumed: Velocity, available: Velocity
                         ): Velocity {
                             isScrollRun = false
                             if (autoScrollSensor) autoScroll = true
@@ -1529,11 +1278,7 @@ fun CytanniList(
                     }
                 }
                 HorizontalPager(
-                    pageSpacing = 10.dp,
-                    state = pagerState,
-                    flingBehavior = fling,
-                    verticalAlignment = Alignment.Top,
-                    userScrollEnabled = biblia == Settings.CHYTANNI_BIBLIA
+                    pageSpacing = 10.dp, state = pagerState, flingBehavior = fling, verticalAlignment = Alignment.Top, userScrollEnabled = biblia == Settings.CHYTANNI_BIBLIA
                 ) { page ->
                     val viewModel = CytanniListItems(biblia, page, cytanne, perevod)
                     val resultPage by viewModel.filteredItems.collectAsStateWithLifecycle()
@@ -1561,8 +1306,7 @@ fun CytanniList(
                         positionRemember = -1
                     }
                     if (resultPage.isEmpty()) {
-                        val inputStream =
-                            context.resources.openRawResource(R.raw.biblia_error)
+                        val inputStream = context.resources.openRawResource(R.raw.biblia_error)
                         val isr = InputStreamReader(inputStream)
                         val reader = BufferedReader(isr)
                         resultPage.add(CytanniListData(0, subTitle, reader.readText()))
@@ -1570,8 +1314,7 @@ fun CytanniList(
                     } else {
                         isPerevodError = false
                     }
-                    val selectState =
-                        remember(resultPage) { resultPage.map { false }.toMutableStateList() }
+                    val selectState = remember(resultPage) { resultPage.map { false }.toMutableStateList() }
                     if (!isPerevodError && perevodRoot != Settings.PEREVODNADSAN) {
                         subTitle = resultPage[0].title.substringBeforeLast(" ")
                     }
@@ -1610,12 +1353,10 @@ fun CytanniList(
                                 )
                             }
                         }
-                        val clipboard =
-                            context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                         if (isCopyMode) {
                             val clip = ClipData.newPlainText(
-                                "",
-                                sb.toString()
+                                "", sb.toString()
                             )
                             clipboard.setPrimaryClip(clip)
                         }
@@ -1630,31 +1371,26 @@ fun CytanniList(
                         isShareMode = false
                         isSelectMode = false
                     }
-                    LazyColumn(
-                        Modifier
-                            .pointerInput(PointerEventType.Press) {
-                                awaitPointerEventScope {
-                                    while (true) {
-                                        val event = awaitPointerEvent()
-                                        if (event.type == PointerEventType.Press) {
-                                            autoScroll = false
-                                        }
-                                        if (autoScrollSensor && event.type == PointerEventType.Release && !isScrollRun) {
-                                            autoScroll = true
-                                        }
+                    LazyColumn(Modifier
+                        .pointerInput(PointerEventType.Press) {
+                            awaitPointerEventScope {
+                                while (true) {
+                                    val event = awaitPointerEvent()
+                                    if (event.type == PointerEventType.Press) {
+                                        autoScroll = false
+                                    }
+                                    if (autoScrollSensor && event.type == PointerEventType.Release && !isScrollRun) {
+                                        autoScroll = true
                                     }
                                 }
                             }
-                            .nestedScroll(nestedScrollConnection),
-                        state = listState[page]
-                    ) {
+                        }
+                        .nestedScroll(nestedScrollConnection), state = listState[page]) {
                         if (biblia != Settings.CHYTANNI_BIBLIA) {
                             item {
                                 Spacer(Modifier.padding(top = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp))
                             }
-                            if (subTitle != resultPage[listState[selectedIndex].firstVisibleItemIndex].title)
-                                subTitle =
-                                    resultPage[listState[selectedIndex].firstVisibleItemIndex].title
+                            if (subTitle != resultPage[listState[selectedIndex].firstVisibleItemIndex].title) subTitle = resultPage[listState[selectedIndex].firstVisibleItemIndex].title
                             item {
                                 val titlePerevod = when (perevod) {
                                     Settings.PEREVODSEMUXI -> stringResource(R.string.title_biblia2)
@@ -1665,51 +1401,32 @@ fun CytanniList(
                                     else -> stringResource(R.string.title_biblia2)
                                 }
                                 Text(
-                                    modifier = Modifier
-                                        .padding(horizontal = 10.dp),
-                                    text = titlePerevod,
-                                    fontSize = fontSize.sp,
-                                    lineHeight = fontSize.sp * 1.15,
-                                    fontStyle = FontStyle.Italic,
-                                    color = MaterialTheme.colorScheme.secondary
+                                    modifier = Modifier.padding(horizontal = 10.dp), text = titlePerevod, fontSize = fontSize.sp, lineHeight = fontSize.sp * 1.15, fontStyle = FontStyle.Italic, color = MaterialTheme.colorScheme.secondary
                                 )
                             }
                         }
                         items(resultPage.size, key = { index -> resultPage[index].id }) { index ->
                             HtmlText(
                                 modifier = if (!autoScrollSensor && !showDropdown) {
-                                    Modifier
-                                        .combinedClickable(
-                                            onClick = {
-                                                if (!isSelectMode && isParallel && resultPage[index].parallel != "+-+") {
-                                                    isParallelVisable = true
-                                                    paralelChtenia = resultPage[index].parallel
-                                                } else {
-                                                    selectState[index] = !selectState[index]
-                                                }
-                                            },
-                                            onLongClick = {
-                                                isSelectMode = true
-                                                selectState[index] = !selectState[index]
-                                            }
-                                        )
-                                } else {
-                                    Modifier
-                                }
+                                Modifier.combinedClickable(onClick = {
+                                        if (!isSelectMode && isParallel && resultPage[index].parallel != "+-+") {
+                                            isParallelVisable = true
+                                            paralelChtenia = resultPage[index].parallel
+                                        } else {
+                                            selectState[index] = !selectState[index]
+                                        }
+                                    }, onLongClick = {
+                                        isSelectMode = true
+                                        selectState[index] = !selectState[index]
+                                    })
+                            } else {
+                                Modifier
+                            }
                                     .padding(horizontal = 10.dp)
-                                    .background(if (selectState[index]) Post else Color.Unspecified),
-                                text = resultPage[index].text,
-                                fontSize = fontSize.sp,
-                                color = if (selectState[index]) PrimaryText else MaterialTheme.colorScheme.secondary
-                            )
+                                    .background(if (selectState[index]) Post else Color.Unspecified), text = resultPage[index].text, fontSize = fontSize.sp, color = if (selectState[index]) PrimaryText else MaterialTheme.colorScheme.secondary)
                             if (isParallel && resultPage[index].parallel != "+-+") {
                                 Text(
-                                    text = resultPage[index].parallel,
-                                    modifier = Modifier
-                                        .padding(horizontal = 10.dp),
-                                    fontSize = (Settings.fontInterface - 4).sp,
-                                    lineHeight = (Settings.fontInterface - 4).sp * 1.15,
-                                    color = SecondaryText
+                                    text = resultPage[index].parallel, modifier = Modifier.padding(horizontal = 10.dp), fontSize = (Settings.fontInterface - 4).sp, lineHeight = (Settings.fontInterface - 4).sp * 1.15, color = SecondaryText
                                 )
                             }
                         }
@@ -1730,8 +1447,7 @@ fun CytanniList(
                 .fillMaxSize()
         ) {
             Column(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
+                modifier = Modifier.align(Alignment.BottomEnd)
             ) {
                 if (autoScrollTextVisable) {
                     Row(
@@ -1740,19 +1456,22 @@ fun CytanniList(
                             .padding(bottom = 10.dp, end = 10.dp)
                     ) {
                         Text(
-                            text = autoScrollText,
-                            modifier = Modifier
+                            text = autoScrollText, modifier = Modifier
                                 .align(Alignment.Bottom)
                                 .clip(shape = RoundedCornerShape(10.dp))
                                 .background(autoScrollTextColor)
                                 .padding(5.dp)
-                                .align(Alignment.CenterVertically),
-                            color = autoScrollTextColor2,
-                            fontSize = Settings.fontInterface.sp
+                                .align(Alignment.CenterVertically), color = autoScrollTextColor2, fontSize = Settings.fontInterface.sp
                         )
                     }
                 }
-                if (autoScrollSensor) {
+                AnimatedVisibility(
+                    autoScrollSensor, enter = fadeIn(
+                        tween(
+                            durationMillis = 1000, easing = LinearOutSlowInEasing
+                        )
+                    ), exit = fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                ) {
                     Row(
                         modifier = Modifier
                             .align(Alignment.End)
@@ -1764,9 +1483,7 @@ fun CytanniList(
                                 .align(Alignment.Bottom)
                         ) {
                             Image(
-                                painter = painterResource(R.drawable.minus_auto_scroll),
-                                contentDescription = "",
-                                modifier = Modifier
+                                painter = painterResource(R.drawable.minus_auto_scroll), contentDescription = "", modifier = Modifier
                                     .clip(shape = RoundedCornerShape(10.dp))
                                     .background(Button)
                                     .size(40.dp)
@@ -1780,22 +1497,18 @@ fun CytanniList(
                                             autoScrollText = "$proc%"
                                             autoScrollTextVisable = true
                                             autoScrollTextVisableJob?.cancel()
-                                            autoScrollTextVisableJob =
-                                                CoroutineScope(Dispatchers.Main).launch {
-                                                    delay(3000)
-                                                    autoScrollTextVisable = false
-                                                }
+                                            autoScrollTextVisableJob = CoroutineScope(Dispatchers.Main).launch {
+                                                delay(3000)
+                                                autoScrollTextVisable = false
+                                            }
                                             k.edit {
                                                 putInt("autoscrollSpid", autoScrollSpeed)
                                             }
                                         }
-                                    }
-                            )
+                                    })
                         }
                         Image(
-                            painter = painterResource(R.drawable.plus_auto_scroll),
-                            contentDescription = "",
-                            modifier = Modifier
+                            painter = painterResource(R.drawable.plus_auto_scroll), contentDescription = "", modifier = Modifier
                                 .align(Alignment.Bottom)
                                 .clip(shape = RoundedCornerShape(10.dp))
                                 .background(Button)
@@ -1810,17 +1523,15 @@ fun CytanniList(
                                         autoScrollText = "$proc%"
                                         autoScrollTextVisable = true
                                         autoScrollTextVisableJob?.cancel()
-                                        autoScrollTextVisableJob =
-                                            CoroutineScope(Dispatchers.Main).launch {
-                                                delay(3000)
-                                                autoScrollTextVisable = false
-                                            }
+                                        autoScrollTextVisableJob = CoroutineScope(Dispatchers.Main).launch {
+                                            delay(3000)
+                                            autoScrollTextVisable = false
+                                        }
                                         k.edit {
                                             putInt("autoscrollSpid", autoScrollSpeed)
                                         }
                                     }
-                                }
-                        )
+                                })
                     }
                 }
             }
@@ -1829,10 +1540,7 @@ fun CytanniList(
             Column(
                 modifier = Modifier
                     .padding(
-                        innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                        0.dp,
-                        innerPadding.calculateEndPadding(LayoutDirection.Rtl),
-                        0.dp
+                        innerPadding.calculateStartPadding(LayoutDirection.Ltr), 0.dp, innerPadding.calculateEndPadding(LayoutDirection.Rtl), 0.dp
                     )
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
@@ -1842,10 +1550,7 @@ fun CytanniList(
                 Spacer(Modifier.padding(bottom = innerPadding.calculateTopPadding()))
                 for (i in resultParalel.indices) {
                     HtmlText(
-                        modifier = Modifier
-                            .padding(horizontal = 10.dp),
-                        text = resultParalel[i].text,
-                        fontSize = fontSize.sp
+                        modifier = Modifier.padding(horizontal = 10.dp), text = resultParalel[i].text, fontSize = fontSize.sp
                     )
                 }
                 Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
@@ -1855,10 +1560,7 @@ fun CytanniList(
 }
 
 fun getBible(
-    cytanne: String,
-    perevod: String,
-    biblia: Int,
-    isTitle: Boolean = false
+    cytanne: String, perevod: String, biblia: Int, isTitle: Boolean = false
 ): ArrayList<CytanniListData> {
     val context = MainActivity.applicationContext()
     val result = ArrayList<CytanniListData>()
@@ -1969,23 +1671,11 @@ fun getBible(
                         try {
                             val textBible = if (styxStart == 0 && styxEnd == 0) {
                                 biblia(
-                                    context,
-                                    knigiBiblii,
-                                    glava,
-                                    glava,
-                                    styxStart,
-                                    styxEnd,
-                                    perevodNew
+                                    context, knigiBiblii, glava, glava, styxStart, styxEnd, perevodNew
                                 )
                             } else {
                                 biblia(
-                                    context,
-                                    knigiBiblii,
-                                    glavaStart,
-                                    glavaEnd,
-                                    styxStart,
-                                    styxEnd,
-                                    perevodNew
+                                    context, knigiBiblii, glavaStart, glavaEnd, styxStart, styxEnd, perevodNew
                                 )
                             }
                             if (run) {
@@ -1995,92 +1685,65 @@ fun getBible(
                                     if (t5 == -1) t5 = 0
                                     else t5 += 4
                                     val t6 = textBible[w].styx.indexOf(" ", t5)
-                                    val isInt =
-                                        if (t6 != -1) {
-                                            val item = textBible[w].styx.substring(t5, t6)
-                                            item.isNotEmpty() && item.isDigitsOnly()
-                                        } else false
+                                    val isInt = if (t6 != -1) {
+                                        val item = textBible[w].styx.substring(t5, t6)
+                                        item.isNotEmpty() && item.isDigitsOnly()
+                                    } else false
                                     if (w == 0) {
                                         if (e > 0) {
                                             result.add(
                                                 CytanniListData(
-                                                    id,
-                                                    "${
+                                                    id, "${
                                                         getNameBook(
-                                                            context,
-                                                            kniga,
-                                                            perevodNew,
-                                                            knigiBiblii >= 50
+                                                            context, kniga, perevodNew, knigiBiblii >= 50
                                                         )
-                                                    } $glava",
-                                                    "[&#8230;]"
+                                                    } $glava", "[&#8230;]"
                                                 )
                                             )
                                         } else {
                                             result.add(
                                                 CytanniListData(
-                                                    id,
-                                                    "${
-                                                        getNameBook(
-                                                            context,
-                                                            kniga,
-                                                            perevodNew,
-                                                            knigiBiblii >= 50
-                                                        )
-                                                    } $glava"
-                                                    /*if (biblia != Settings.CHYTANNI_VYBRANAE) {
+                                                    id, "${
+                                                getNameBook(
+                                                    context, kniga, perevodNew, knigiBiblii >= 50
+                                                )
+                                            } $glava"/*if (biblia != Settings.CHYTANNI_VYBRANAE) {
 
                                                     } else {
                                                         val tg =
                                                             if (knigiBiblii == 21) context.getString(R.string.psalom2)
                                                             else context.getString(R.string.razdzel)
                                                         "$tg $glava"
-                                                    }*/,
-                                                    if (isTitle) {
-                                                        if (biblia == Settings.CHYTANNI_LITURGICHNYIA) {
-                                                            val eGlavy = knigaStyxi.ifEmpty { glava.toString() }
-                                                            "<strong><br>" + getNameBook(
-                                                                context,
-                                                                kniga,
-                                                                perevodNew,
-                                                                knigiBiblii >= 50
-                                                            ) + " " + "$eGlavy<strong><br>"
-                                                        } else {
-                                                            "<strong><br>" + getNameBook(
-                                                                context,
-                                                                kniga,
-                                                                perevodNew,
-                                                                knigiBiblii >= 50
-                                                            ) + " " + "$glava<strong><br>"
-                                                        }
-                                                    } else ""
-                                                )
-                                            )
+                                                    }*/, if (isTitle) {
+                                                if (biblia == Settings.CHYTANNI_LITURGICHNYIA) {
+                                                    val eGlavy = knigaStyxi.ifEmpty { glava.toString() }
+                                                    "<strong><br>" + getNameBook(
+                                                        context, kniga, perevodNew, knigiBiblii >= 50
+                                                    ) + " " + "$eGlavy<strong><br>"
+                                                } else {
+                                                    "<strong><br>" + getNameBook(
+                                                        context, kniga, perevodNew, knigiBiblii >= 50
+                                                    ) + " " + "$glava<strong><br>"
+                                                }
+                                            } else ""))
                                         }
                                         id++
                                     }
                                     var text = textBible[w].styx
                                     if (isInt) {
                                         text = textBible[w].styx.substring(
-                                            0,
-                                            t5
+                                            0, t5
                                         ) + "<font color=#D00505>" + textBible[w].styx.substring(
-                                            t5,
-                                            t6
+                                            t5, t6
                                         ) + ". </font>" + textBible[w].styx.substring(t6)
                                     }
                                     result.add(
                                         CytanniListData(
-                                            id,
-                                            "${
+                                            id, "${
                                                 getNameBook(
-                                                    context,
-                                                    kniga,
-                                                    perevodNew,
-                                                    knigiBiblii >= 50
+                                                    context, kniga, perevodNew, knigiBiblii >= 50
                                                 )
-                                            } $glava"
-                                            /*if (biblia != Settings.CHYTANNI_VYBRANAE) {
+                                            } $glava"/*if (biblia != Settings.CHYTANNI_VYBRANAE) {
                                                 "${
                                                     getNameBook(
                                                         context,
@@ -2094,9 +1757,7 @@ fun getBible(
                                                     if (knigiBiblii == 21) context.getString(R.string.psalom2)
                                                     else context.getString(R.string.razdzel)
                                                 "$tg $glava"
-                                            }*/,
-                                            text,
-                                            textBible[w].paralelStyx
+                                            }*/, text, textBible[w].paralelStyx
                                         )
                                     )
                                     id++
@@ -2104,8 +1765,7 @@ fun getBible(
                             }
                         } catch (e: Throwable) {
                             e.printStackTrace()
-                            val inputStream =
-                                context.resources.openRawResource(R.raw.biblia_error)
+                            val inputStream = context.resources.openRawResource(R.raw.biblia_error)
                             val isr = InputStreamReader(inputStream)
                             val reader = BufferedReader(isr)
                             result.add(CytanniListData(id, title = "", text = reader.readText()))
@@ -2514,16 +2174,9 @@ fun getParalel(kniga: Int, glava: Int, styx: Int, isPsaltyrGreek: Boolean): Stri
 data class CytanniListItemData(val page: Int, val item: ArrayList<CytanniListData>)
 
 data class CytanniListData(
-    val id: Int,
-    val title: String,
-    val text: String = "",
-    val parallel: String = "+-+"
+    val id: Int, val title: String, val text: String = "", val parallel: String = "+-+"
 )
 
 data class VybranaeData(
-    val id: Long,
-    val title: String,
-    val knigaText: String,
-    val glava: Int,
-    val perevod: String
+    val id: Long, val title: String, val knigaText: String, val glava: Int, val perevod: String
 )
