@@ -25,7 +25,6 @@ featureDelivery = "2.1.0"
 fragmentKtx = "1.8.6"
 coil = "3.1.0"
 glanceAppwidget = "1.1.1"
-navigationComposeAndroid = "2.9.0-alpha09"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -67,7 +66,6 @@ feature-delivery = { module = "com.google.android.play:feature-delivery", versio
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx" }
 coil3 = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glanceAppwidget" }
-androidx-navigation-compose-android = { group = "androidx.navigation", name = "navigation-compose-android", version.ref = "navigationComposeAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -203,9 +203,9 @@ fun BibliaList(
                             HorizontalDivider()
                         }
                     } else {
-                        collapsedState[0] = false
+                        collapsedState[i] = false
                     }
-                    if (!collapsed) {
+                    if (!collapsedState[i]) {
                         items(1) {
                             LazyVerticalGrid(
                                 modifier = Modifier

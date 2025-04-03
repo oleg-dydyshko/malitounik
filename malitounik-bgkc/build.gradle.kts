@@ -79,7 +79,6 @@ dependencies {
     implementation(libs.androidx.paging.compose)
     implementation(libs.coil3)
     implementation(libs.androidx.glance.appwidget)
-    implementation(libs.androidx.navigation.compose.android)
     //implementation(libs.jsoup)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

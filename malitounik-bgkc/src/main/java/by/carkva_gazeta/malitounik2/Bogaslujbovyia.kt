@@ -403,12 +403,13 @@ fun Bogaslujbovyia(
                 isDialogNoWIFIVisable = false
             },
             onConfirmation = {
-                writeFile(context, printFile, loadComplete = {
-                    val printAdapter = PdfDocumentAdapter(context, printFile)
-                    val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
-                    val printAttributes = PrintAttributes.Builder().setMediaSize(PrintAttributes.MediaSize.ISO_A4).build()
-                    printManager.print(printFile, printAdapter, printAttributes)
-                },
+                writeFile(
+                    context, printFile, loadComplete = {
+                        val printAdapter = PdfDocumentAdapter(context, printFile)
+                        val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
+                        val printAttributes = PrintAttributes.Builder().setMediaSize(PrintAttributes.MediaSize.ISO_A4).build()
+                        printManager.print(printFile, printAdapter, printAttributes)
+                    },
                     inProcess = {
                     })
                 isDialogNoWIFIVisable = false
@@ -518,16 +519,17 @@ fun Bogaslujbovyia(
                     },
                     navigationIcon = {
                         if (iskniga || searchText) {
-                            IconButton(onClick = {
-                                if (iskniga) {
-                                    iskniga = false
-                                    showDropdown = true
-                                } else {
-                                    searchText = false
-                                    searchTextResult = AnnotatedString("")
-                                }
-                                if (autoScrollSensor) autoScroll = true
-                            },
+                            IconButton(
+                                onClick = {
+                                    if (iskniga) {
+                                        iskniga = false
+                                        showDropdown = true
+                                    } else {
+                                        searchText = false
+                                        searchTextResult = AnnotatedString("")
+                                    }
+                                    if (autoScrollSensor) autoScroll = true
+                                },
                                 content = {
                                     Icon(
                                         painter = painterResource(R.drawable.close),
@@ -536,24 +538,25 @@ fun Bogaslujbovyia(
                                     )
                                 })
                         } else {
-                            IconButton(onClick = {
-                                when {
-                                    fullscreen -> fullscreen = false
-                                    iskniga -> {
-                                        showDropdown = true
-                                        iskniga = false
-                                    }
+                            IconButton(
+                                onClick = {
+                                    when {
+                                        fullscreen -> fullscreen = false
+                                        iskniga -> {
+                                            showDropdown = true
+                                            iskniga = false
+                                        }
 
-                                    showDropdown -> {
-                                        showDropdown = false
-                                        if (autoScrollSensor) autoScroll = true
-                                    }
+                                        showDropdown -> {
+                                            showDropdown = false
+                                            if (autoScrollSensor) autoScroll = true
+                                        }
 
-                                    else -> {
-                                        navController.popBackStack()
+                                        else -> {
+                                            navController.popBackStack()
+                                        }
                                     }
-                                }
-                            },
+                                },
                                 content = {
                                     Icon(
                                         painter = painterResource(R.drawable.arrow_back),
@@ -768,12 +771,13 @@ fun Bogaslujbovyia(
                                                         )
                                                     ) isDialogNoWIFIVisable = true
                                                     else {
-                                                        writeFile(context, printFile, loadComplete = {
-                                                            val printAdapter = PdfDocumentAdapter(context, printFile)
-                                                            val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
-                                                            val printAttributes = PrintAttributes.Builder().setMediaSize(PrintAttributes.MediaSize.ISO_A4).build()
-                                                            printManager.print(printFile, printAdapter, printAttributes)
-                                                        },
+                                                        writeFile(
+                                                            context, printFile, loadComplete = {
+                                                                val printAdapter = PdfDocumentAdapter(context, printFile)
+                                                                val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
+                                                                val printAttributes = PrintAttributes.Builder().setMediaSize(PrintAttributes.MediaSize.ISO_A4).build()
+                                                                printManager.print(printFile, printAdapter, printAttributes)
+                                                            },
                                                             inProcess = {
                                                             })
                                                     }
@@ -1166,12 +1170,13 @@ fun Bogaslujbovyia(
                                     }
                                 )
                             }
-                            Column(modifier = Modifier
-                                .fillMaxWidth()
-                                .background(MaterialTheme.colorScheme.onTertiary)
-                                .clickable {
-                                    showDropdown = false
-                                }) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(MaterialTheme.colorScheme.onTertiary)
+                                    .clickable {
+                                        showDropdown = false
+                                    }) {
                                 Icon(modifier = Modifier.align(Alignment.End), painter = painterResource(R.drawable.keyboard_arrow_up), contentDescription = "", tint = PrimaryTextBlack)
                             }
                         }
