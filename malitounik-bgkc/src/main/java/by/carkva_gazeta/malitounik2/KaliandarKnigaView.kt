@@ -100,7 +100,7 @@ fun KaliandarKnigaView(
             Column {
                 Row(modifier = Modifier.padding(vertical = 10.dp)) {
                     val listSlujbaViach = slujba.loadSluzbaDayList(SlugbovyiaTextu.VIACZERNIA, dayOfYear, year)
-                    Column(modifier = modifier.clickable(listSlujbaViach.size != 0) {
+                    Column(modifier = modifier.clickable(listSlujbaViach.isNotEmpty()) {
                         if (listSlujbaViach.size == 1) {
                             navigateToBogaslujbovyia(listSlujbaViach[0].title, listSlujbaViach[0].resource)
                         } else {
@@ -110,7 +110,7 @@ fun KaliandarKnigaView(
                             dialogKnigaView = true
                         }
                     }) {
-                        val newTint = if (listSlujbaViach.size == 0) SecondaryText else tint
+                        val newTint = if (listSlujbaViach.isEmpty()) SecondaryText else tint
                         Icon(painterResource(R.drawable.moon2_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally), tint = newTint)
                         Text(
                             text = stringResource(R.string.viachernia), modifier = Modifier
@@ -130,7 +130,7 @@ fun KaliandarKnigaView(
                             dialogKnigaView = true
                         }
                     }) {
-                        val newTint = if (listSlujbaPavia.size == 0) SecondaryText else tint
+                        val newTint = if (listSlujbaPavia.isEmpty()) SecondaryText else tint
                         Icon(painterResource(R.drawable.moon_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally), tint = newTint)
                         Text(
                             text = stringResource(R.string.raviachernica), modifier = Modifier
@@ -141,7 +141,7 @@ fun KaliandarKnigaView(
                 }
                 Row(modifier = Modifier.padding(vertical = 10.dp)) {
                     val listSlujbaPaunoch = slujba.loadSluzbaDayList(SlugbovyiaTextu.PAUNOCHNICA, dayOfYear, year)
-                    Column(modifier = modifier.clickable(listSlujbaPaunoch.size != 0) {
+                    Column(modifier = modifier.clickable(listSlujbaPaunoch.isNotEmpty()) {
                         if (listSlujbaPaunoch.size == 1) {
                             navigateToBogaslujbovyia(listSlujbaPaunoch[0].title, listSlujbaPaunoch[0].resource)
                         } else {
@@ -151,7 +151,7 @@ fun KaliandarKnigaView(
                             dialogKnigaView = true
                         }
                     }) {
-                        val newTint = if (listSlujbaPaunoch.size == 0) SecondaryText else tint
+                        val newTint = if (listSlujbaPaunoch.isEmpty()) SecondaryText else tint
                         Icon(painterResource(R.drawable.sun2_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally), tint = newTint)
                         Text(
                             text = stringResource(R.string.paunochnica), modifier = Modifier
@@ -163,7 +163,7 @@ fun KaliandarKnigaView(
                     if (data[0].toInt() == Calendar.SUNDAY) {
                         listSlujbaJutran.add(SlugbovyiaTextuData(0, "Ютрань нядзельная (у скароце)", R.raw.jutran_niadzelnaja, SlugbovyiaTextu.JUTRAN))
                     }
-                    Column(modifier = modifier.clickable(listSlujbaJutran.size != 0) {
+                    Column(modifier = modifier.clickable(listSlujbaJutran.isNotEmpty()) {
                         if (listSlujbaJutran.size == 1) {
                             navigateToBogaslujbovyia(listSlujbaJutran[0].title, listSlujbaJutran[0].resource)
                         } else {
@@ -173,7 +173,7 @@ fun KaliandarKnigaView(
                             dialogKnigaView = true
                         }
                     }) {
-                        val newTint = if (listSlujbaJutran.size == 0) SecondaryText else tint
+                        val newTint = if (listSlujbaJutran.isEmpty()) SecondaryText else tint
                         Icon(painterResource(R.drawable.sun_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally), tint = newTint)
                         Text(
                             text = stringResource(R.string.utran), modifier = Modifier
@@ -184,7 +184,7 @@ fun KaliandarKnigaView(
                 }
                 Row(modifier = Modifier.padding(vertical = 10.dp)) {
                     val listSlujbaVilHadz = slujba.loadSluzbaDayList(SlugbovyiaTextu.VIALHADZINY, dayOfYear, year)
-                    Column(modifier = modifier.clickable(listSlujbaVilHadz.size != 0) {
+                    Column(modifier = modifier.clickable(listSlujbaVilHadz.isNotEmpty()) {
                         if (listSlujbaVilHadz.size == 1) {
                             navigateToBogaslujbovyia(listSlujbaVilHadz[0].title, listSlujbaVilHadz[0].resource)
                         } else {
@@ -194,7 +194,7 @@ fun KaliandarKnigaView(
                             dialogKnigaView = true
                         }
                     }) {
-                        val newTint = if (listSlujbaVilHadz.size == 0) SecondaryText else tint
+                        val newTint = if (listSlujbaVilHadz.isEmpty()) SecondaryText else tint
                         Icon(painterResource(R.drawable.clock_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally), tint = newTint)
                         Text(
                             text = stringResource(R.string.gadziny), modifier = Modifier
@@ -203,7 +203,7 @@ fun KaliandarKnigaView(
                         )
                     }
                     val listSlujbaLitur = slujba.loadSluzbaDayList(SlugbovyiaTextu.LITURHIJA, dayOfYear, year)
-                    Column(modifier = modifier.clickable(listSlujbaLitur.size != 0) {
+                    Column(modifier = modifier.clickable(listSlujbaLitur.isNotEmpty()) {
                         if (listSlujbaLitur.size == 1) {
                             navigateToBogaslujbovyia(listSlujbaLitur[0].title, listSlujbaLitur[0].resource)
                         } else {
@@ -213,7 +213,7 @@ fun KaliandarKnigaView(
                             dialogKnigaView = true
                         }
                     }) {
-                        val newTint = if (listSlujbaLitur.size == 0) SecondaryText else tint
+                        val newTint = if (listSlujbaLitur.isEmpty()) SecondaryText else tint
                         Icon(painterResource(R.drawable.carkva_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally), tint = newTint)
                         Text(
                             text = stringResource(R.string.liturgia), modifier = Modifier

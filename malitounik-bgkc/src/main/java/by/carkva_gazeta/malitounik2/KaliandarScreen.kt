@@ -293,25 +293,20 @@ fun KaliandarScreen(
             }
         }
         if (data[4] != "no_sviatyia") {
-            Row(
+            Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = 10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .size(1.dp)
-                        .background(MaterialTheme.colorScheme.secondary)
-                )
-            }
+                    .padding(top = 10.dp, bottom = 10.dp)
+                    .size(1.dp)
+                    .background(MaterialTheme.colorScheme.secondary)
+            )
             val list = data[4].split("<br>")
-            Column(modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    navigateToSvityiaView(false, data[3].toInt(), data[2].toInt() + 1, data[1].toInt())
-                }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        navigateToSvityiaView(false, data[3].toInt(), data[2].toInt() + 1, data[1].toInt())
+                    }
             ) {
                 for (i in list.indices) {
                     Row(
@@ -351,20 +346,13 @@ fun KaliandarScreen(
                     }
                 }
             }
-
-            Row(
+            Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .size(1.dp)
-                        .background(MaterialTheme.colorScheme.secondary)
-                )
-            }
+                    .padding(vertical = 10.dp)
+                    .size(1.dp)
+                    .background(MaterialTheme.colorScheme.secondary)
+            )
         }
         Row(
             modifier = Modifier
@@ -651,7 +639,7 @@ fun setListPadzeia(context: Context): ArrayList<Padzeia> {
                                     false
                                 )
                             )
-                        } catch (e: Throwable) {
+                        } catch (_: Throwable) {
                             file.delete()
                         }
                     }
@@ -669,7 +657,7 @@ fun setListPadzeia(context: Context): ArrayList<Padzeia> {
         if (file.exists()) {
             try {
                 padzeia.addAll(gson.fromJson(file.readText(), type))
-            } catch (t: Throwable) {
+            } catch (_: Throwable) {
                 file.delete()
             }
         }

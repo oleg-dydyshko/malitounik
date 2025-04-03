@@ -1159,5 +1159,7 @@
     <string name="zmest_smoll">Зьмест</string>
     <string name="admin_cyrylic_no_support">Кірыліца не падтрымліваецца</string>
     <string name="searh_sviatyia_result">Знойдзена %1$d</string>
+    <string name="clear_chash">Ачыстка кэша</string>
+    <string name="clear_chash_opis">Пры неабходнасці, файлы будуць спампаваныя зноў.</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

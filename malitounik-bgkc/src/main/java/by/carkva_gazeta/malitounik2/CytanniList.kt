@@ -96,6 +96,7 @@ import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import androidx.core.content.edit
 import androidx.core.text.isDigitsOnly
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -111,7 +112,6 @@ import by.carkva_gazeta.malitounik2.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik2.ui.theme.SecondaryText
 import by.carkva_gazeta.malitounik2.ui.theme.StrogiPost
 import by.carkva_gazeta.malitounik2.views.HtmlText
-import by.carkva_gazeta.resources.BibliaParallelChtenia
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
@@ -833,13 +833,13 @@ fun CytanniList(
                                         isParallel = !isParallel
                                         expanded = false
                                         if (autoScrollSensor) autoScroll = true
-                                        val edit = k.edit()
-                                        if (biblia == Settings.CHYTANNI_BIBLIA) edit.putBoolean(
-                                            "paralel_biblia",
-                                            isParallel
-                                        )
-                                        else edit.putBoolean("paralel_maranata", isParallel)
-                                        edit.apply()
+                                        k.edit {
+                                            if (biblia == Settings.CHYTANNI_BIBLIA) putBoolean(
+                                                "paralel_biblia",
+                                                isParallel
+                                            )
+                                            else putBoolean("paralel_maranata", isParallel)
+                                        }
                                     },
                                     text = {
                                         Text(
@@ -854,16 +854,16 @@ fun CytanniList(
                                                 expanded = false
                                                 if (autoScrollSensor) autoScroll = true
                                                 isParallel = !isParallel
-                                                val edit = k.edit()
-                                                if (biblia == Settings.CHYTANNI_BIBLIA) edit.putBoolean(
-                                                    "paralel_biblia",
-                                                    isParallel
-                                                )
-                                                else edit.putBoolean(
-                                                    "paralel_maranata",
-                                                    isParallel
-                                                )
-                                                edit.apply()
+                                                k.edit {
+                                                    if (biblia == Settings.CHYTANNI_BIBLIA) putBoolean(
+                                                        "paralel_biblia",
+                                                        isParallel
+                                                    )
+                                                    else putBoolean(
+                                                        "paralel_maranata",
+                                                        isParallel
+                                                    )
+                                                }
                                             }
                                         )
                                     }
@@ -1407,9 +1407,9 @@ fun CytanniList(
                                     steps = 10,
                                     value = fontSize,
                                     onValueChange = {
-                                        val edit = k.edit()
-                                        edit.putFloat("font_biblia", it)
-                                        edit.apply()
+                                        k.edit {
+                                            putFloat("font_biblia", it)
+                                        }
                                         fontSize = it
                                     }
                                 )
@@ -1785,9 +1785,9 @@ fun CytanniList(
                                                     delay(3000)
                                                     autoScrollTextVisable = false
                                                 }
-                                            val prefEditors = k.edit()
-                                            prefEditors.putInt("autoscrollSpid", autoScrollSpeed)
-                                            prefEditors.apply()
+                                            k.edit {
+                                                putInt("autoscrollSpid", autoScrollSpeed)
+                                            }
                                         }
                                     }
                             )
@@ -1815,9 +1815,9 @@ fun CytanniList(
                                                 delay(3000)
                                                 autoScrollTextVisable = false
                                             }
-                                        val prefEditors = k.edit()
-                                        prefEditors.putInt("autoscrollSpid", autoScrollSpeed)
-                                        prefEditors.apply()
+                                        k.edit {
+                                            putInt("autoscrollSpid", autoScrollSpeed)
+                                        }
                                     }
                                 }
                         )

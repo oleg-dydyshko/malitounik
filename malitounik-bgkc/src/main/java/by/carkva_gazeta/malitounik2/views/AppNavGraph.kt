@@ -16,10 +16,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
@@ -278,7 +278,7 @@ fun AppNavGraph(
             )
         ) { stackEntry ->
             val c = Calendar.getInstance()
-            val svity = stackEntry.arguments?.getBoolean("svity") ?: false
+            val svity = stackEntry.arguments?.getBoolean("svity") == true
             val year = stackEntry.arguments?.getInt("year") ?: c[Calendar.YEAR]
             val mun = stackEntry.arguments?.getInt("mun") ?: (c[Calendar.MONTH] + 1)
             val day = stackEntry.arguments?.getInt("day") ?: c[Calendar.DATE]
@@ -349,7 +349,8 @@ fun AppNavGraph(
             val title = stackEntry.arguments?.getString("title") ?: ""
             val resurs = stackEntry.arguments?.getInt("resurs") ?: R.raw.bogashlugbovya_error
             val context = LocalContext.current
-            Bogaslujbovyia(navController, title, resurs,
+            Bogaslujbovyia(
+                navController, title, resurs,
                 navigateTo = { navigate ->
                     when (navigate) {
                         "malitvypasliaprychastia" -> {
@@ -437,7 +438,7 @@ fun AppNavGraph(
             arguments = listOf(
                 navArgument("novyZapavet") { type = NavType.BoolType })
         ) { stackEntry ->
-            val isNovyZapavet = stackEntry.arguments?.getBoolean("novyZapavet", false) ?: false
+            val isNovyZapavet = stackEntry.arguments?.getBoolean("novyZapavet", false) == true
             val perevod = stackEntry.arguments?.getString("perevod", Settings.PEREVODSEMUXI)
                 ?: Settings.PEREVODSEMUXI
             BibliaList(
@@ -461,7 +462,7 @@ fun AppNavGraph(
         ) { stackEntry ->
             val perevod = stackEntry.arguments?.getString("perevod", Settings.PEREVODSEMUXI)
                 ?: Settings.PEREVODSEMUXI
-            val searchBogaslujbovyia = stackEntry.arguments?.getBoolean("searchBogaslujbovyia", false) ?: false
+            val searchBogaslujbovyia = stackEntry.arguments?.getBoolean("searchBogaslujbovyia", false) == true
             SearchBible(
                 navController,
                 perevod,
@@ -667,7 +668,11 @@ fun MainConteiner(
             route = currentRoute,
             navigateToRazdel = { razdzel ->
                 when (razdzel) {
-                    AllDestinations.KALIANDAR -> navigationActions.navigateToKaliandar()
+                    AllDestinations.KALIANDAR -> {
+                        if (k.getBoolean("caliandarList", false)) navigationActions.navigateToKaliandarYear()
+                        else navigationActions.navigateToKaliandar()
+                    }
+
                     AllDestinations.BOGASLUJBOVYIA_MENU -> navigationActions.navigateToBogaslujbovyiaMenu()
                     AllDestinations.MALITVY_MENU -> navigationActions.navigateToMalitvyMenu()
                     AllDestinations.BIBLIA -> navigationActions.navigateToBiblia()
@@ -775,9 +780,10 @@ fun MainConteiner(
                     },
                     navigationIcon = {
                         if (searchText) {
-                            IconButton(onClick = {
-                                searchText = false
-                            },
+                            IconButton(
+                                onClick = {
+                                    searchText = false
+                                },
                                 content = {
                                     Icon(
                                         painter = painterResource(R.drawable.close),
@@ -786,7 +792,8 @@ fun MainConteiner(
                                     )
                                 })
                         } else {
-                            IconButton(onClick = { coroutineScope.launch { drawerState.open() } },
+                            IconButton(
+                                onClick = { coroutineScope.launch { drawerState.open() } },
                                 content = {
                                     Icon(
                                         painter = painterResource(R.drawable.menu),
@@ -1229,7 +1236,10 @@ fun MainConteiner(
                     AllDestinations.KALIANDAR_YEAR -> KaliandarScreenYear(
                         coroutineScope = coroutineScope,
                         lazyColumnState = lazyColumnState,
-                        innerPadding
+                        innerPadding,
+                        navigateToSvityiaView = { svity, year, mun, day ->
+                            navigationActions.navigateToSvityiaView(svity, year, mun, day)
+                        }
                     )
 
                     AllDestinations.VYBRANAE_LIST -> VybranaeList(
@@ -1281,7 +1291,8 @@ fun MainConteiner(
                                 close = { showDropdown = false })
                         }
                         if (showDropdownMenuPos == 2) {
-                            KaliandarKnigaView(colorBlackboard,
+                            KaliandarKnigaView(
+                                colorBlackboard,
                                 navigateToBogaslujbovyia = { title, resourse ->
                                     navigationActions.navigateToBogaslujbovyia(title, resourse)
                                 },
@@ -1303,6 +1314,8 @@ fun DialogLogProgramy(
     onDismissRequest: () -> Unit,
 ) {
     val context = LocalActivity.current as MainActivity
+    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+    context.removelightSensor()
     var item by remember { mutableStateOf("") }
     val logView = LogView(context)
     logView.setLogViewListinner(object : LogView.LogViewListinner {
@@ -1323,7 +1336,8 @@ fun DialogLogProgramy(
         text = {
             Text(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
+                    .sizeIn(minHeight = 300.dp)
                     .verticalScroll(rememberScrollState()), text = item, fontSize = Settings.fontInterface.sp
             )
         },
@@ -1334,6 +1348,7 @@ fun DialogLogProgramy(
                 onClick = {
                     logView.createAndSentFile()
                     onDismissRequest()
+                    if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) context.setlightSensor()
                 }
             ) {
                 Text(stringResource(R.string.set_log), fontSize = Settings.fontInterface.sp)
@@ -1343,6 +1358,7 @@ fun DialogLogProgramy(
             TextButton(
                 onClick = {
                     onDismissRequest()
+                    if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) context.setlightSensor()
                 }
             ) {
                 Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)

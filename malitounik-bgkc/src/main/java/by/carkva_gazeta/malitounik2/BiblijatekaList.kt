@@ -58,6 +58,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -323,9 +324,9 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
     val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { page ->
-            val edit = k.edit()
-            edit.putInt("pubrikaBiblijatekiMenu", page)
-            edit.apply()
+            k.edit {
+                putInt("pubrikaBiblijatekiMenu", page)
+            }
         }
     }
     Column {
@@ -351,9 +352,9 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
                     Tab(
                         selected = pagerState.currentPage == index,
                         onClick = {
-                            val edit = k.edit()
-                            edit.putInt("pubrikaBiblijatekiMenu", index)
-                            edit.apply()
+                            k.edit {
+                                putInt("pubrikaBiblijatekiMenu", index)
+                            }
                             coroutineScope.launch {
                                 pagerState.animateScrollToPage(index)
                             }

@@ -122,8 +122,8 @@ fun MalitvyListAll(
             arrayList
         }
 
-        Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA -> {
-            val list = getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA)
+        Settings.MENU_TRYEDZ_VIALIKAGA_TYDNIA -> {
+            val list = getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_VIALIKAGA_TYDNIA)
             val arrayList = ArrayList<Malitvy>()
             list.forEach { item ->
                 var isAdd = true
@@ -375,7 +375,7 @@ fun MalitvyListAll(
                     )
                     .fillMaxSize()
             ) {
-                if (menuItem == Settings.MENU_MALITVY_PRYNAGODNYIA || menuItem == Settings.MENU_MINEIA_MESIACHNAIA || menuItem == Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA || menuItem == Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA || menuItem == Settings.MENU_TRYEDZ_KVETNAIA) {
+                if (menuItem == Settings.MENU_MALITVY_PRYNAGODNYIA || menuItem == Settings.MENU_MINEIA_MESIACHNAIA || menuItem == Settings.MENU_TRYEDZ_VIALIKAGA_TYDNIA || menuItem == Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA || menuItem == Settings.MENU_TRYEDZ_KVETNAIA) {
                     listPrynagodnyia.forEachIndexed { i, dataItem ->
                         val collapsed = collapsedState[i]
                         item(key = "header_$i") {
@@ -426,9 +426,9 @@ fun MalitvyListAll(
                                     else -> getPrynagodnyia1()
                                 }
 
-                                Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA -> {
+                                Settings.MENU_TRYEDZ_VIALIKAGA_TYDNIA -> {
                                     val listMineiaList =
-                                        getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA)
+                                        getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_VIALIKAGA_TYDNIA)
                                     val arrayList = ArrayList<BogaslujbovyiaListData>()
                                     listMineiaList.forEach {
                                         if (dataItem.day == it.dayOfMonth) {
@@ -600,7 +600,7 @@ fun MalitvyListAll(
                                                 11 -> {
                                                     navigationActions.navigateToMalitvyListAll(
                                                         title,
-                                                        Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA,
+                                                        Settings.MENU_TRYEDZ_VIALIKAGA_TYDNIA,
                                                         list[index].title
                                                     )
                                                 }
@@ -774,6 +774,7 @@ fun PynagodnyiaList(prynagodnyaList: ArrayList<BogaslujbovyiaListData>, navigati
 
 @Composable
 fun getTtyedzPosnaia(menuItem: Int): ArrayList<BogaslujbovyiaListData> {
+    val slugbovyiaTextu = SlugbovyiaTextu()
     val list = ArrayList<BogaslujbovyiaListData>()
     val subList = getTtyedzBialikagaTydnia(menuItem)
     subList.forEach { item ->
@@ -781,7 +782,7 @@ fun getTtyedzPosnaia(menuItem: Int): ArrayList<BogaslujbovyiaListData> {
             BogaslujbovyiaListData(
                 item.dayOfMonth.toString() + " " + stringArrayResource(
                     R.array.meciac_smoll
-                )[item.month] + "\n" + item.title, item.resource
+                )[item.month] + "\n" + item.title + ". " + slugbovyiaTextu.getNazouSluzby(item.sluzba), item.resource
             )
         )
     }
@@ -802,7 +803,7 @@ fun getTtyedzPosnaia(): ArrayList<BogaslujbovyiaListData> {
 fun getTtyedzBialikagaTydnia(menuItem: Int): ArrayList<MineiaList> {
     val slugbovyiaTextu = SlugbovyiaTextu()
     val mineia = when (menuItem) {
-        Settings.MENU_TRYEDZ_BIALIKAGA_TYDNIA -> slugbovyiaTextu.getVilikiTydzen()
+        Settings.MENU_TRYEDZ_VIALIKAGA_TYDNIA -> slugbovyiaTextu.getVilikiTydzen()
         Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA -> slugbovyiaTextu.getSvetlyTydzen()
         Settings.MENU_TRYEDZ_KVETNAIA -> slugbovyiaTextu.getMineiaKvetnaia()
         Settings.MENU_TRYEDZ_POSNAIA_1 -> slugbovyiaTextu.getTydzen1()

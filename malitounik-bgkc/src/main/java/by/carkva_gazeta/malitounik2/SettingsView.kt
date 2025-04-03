@@ -7,7 +7,6 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.SystemClock
 import android.widget.Toast
@@ -82,6 +81,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
+import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik2.Settings.NOTIFICATION_CHANNEL_ID_SVIATY
@@ -101,6 +102,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -126,9 +128,9 @@ fun SettingsView(navController: NavHostController) {
         DialogLogin { isLogin ->
             if (isLogin) {
                 val module = SettingsModules(context as MainActivity)
-                val prefEditor = k.edit()
-                prefEditor.putBoolean("admin", true)
-                prefEditor.apply()
+                k.edit {
+                    putBoolean("admin", true)
+                }
                 if (!module.checkmodulesAdmin()) {
                     module.downloadDynamicModule("admin")
                 }
@@ -146,9 +148,9 @@ fun SettingsView(navController: NavHostController) {
                     2 -> setNotificationFull(context)
                 }
             } else {
-                val prefEditor = k.edit()
-                prefEditor.putInt("notification", Settings.NOTIFICATION_SVIATY_NONE)
-                prefEditor.apply()
+                k.edit {
+                    putInt("notification", Settings.NOTIFICATION_SVIATY_NONE)
+                }
                 setNotificationNon(context)
             }
             dialodNotificatin = false
@@ -158,7 +160,7 @@ fun SettingsView(navController: NavHostController) {
                 if (!alarmManager.canScheduleExactAlarms()) {
                     val intent = Intent()
                     intent.action = android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
-                    intent.setData(Uri.parse("package:" + context.packageName))
+                    intent.data = ("package:" + context.packageName).toUri()
                     context.startActivity(intent)
                 }
             }
@@ -172,6 +174,32 @@ fun SettingsView(navController: NavHostController) {
         }, onDismiss = {
             dialodNotificatin = false
         })
+    }
+    var dialodClearChache by rememberSaveable { mutableStateOf(false) }
+    if (dialodClearChache) {
+        DialogClearChash(onConfirm = {
+            dialodClearChache = false
+            var file = File("${context.filesDir}/bibliatekaImage")
+            if (file.exists()) file.deleteRecursively()
+            file = File("${context.filesDir}/bibliatekaPdf")
+            if (file.exists()) file.deleteRecursively()
+            file = File("${context.filesDir}/icons")
+            if (file.exists()) file.deleteRecursively()
+            file = File("${context.filesDir}/iconsApisanne")
+            if (file.exists()) file.deleteRecursively()
+            file = File("${context.filesDir}/image_temp")
+            if (file.exists()) file.deleteRecursively()
+            file = File("${context.filesDir}/sviatyia")
+            if (file.exists()) file.deleteRecursively()
+            file = File("${context.filesDir}/bibliateka.json")
+            if (file.exists()) file.delete()
+            file = File("${context.filesDir}/opisanie_sviat.json")
+            if (file.exists()) file.delete()
+            file = File("${context.filesDir}/piarliny.json")
+            if (file.exists()) file.delete()
+        }) {
+            dialodClearChache = false
+        }
     }
     Scaffold(
         topBar = {
@@ -194,7 +222,8 @@ fun SettingsView(navController: NavHostController) {
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() },
+                    IconButton(
+                        onClick = { navController.popBackStack() },
                         content = {
                             Icon(
                                 painter = painterResource(R.drawable.arrow_back),
@@ -421,9 +450,9 @@ fun SettingsView(navController: NavHostController) {
                             onClick = {
                                 textFieldState.setTextAndPlaceCursorAtEnd(option)
                                 expanded = false
-                                val prefEditors = k.edit()
-                                prefEditors.putInt("fontInterface", index)
-                                prefEditors.apply()
+                                k.edit {
+                                    putInt("fontInterface", index)
+                                }
                                 Settings.fontInterface = getFontInterface(context)
                             },
                             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
@@ -437,9 +466,9 @@ fun SettingsView(navController: NavHostController) {
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.clickable {
                         adminDayInYearState = !adminDayInYearState
-                        val edit = k.edit()
-                        edit.putBoolean("adminDayInYear", adminDayInYearState)
-                        edit.apply()
+                        k.edit {
+                            putBoolean("adminDayInYear", adminDayInYearState)
+                        }
                     }) {
                     Icon(
                         modifier = Modifier.size(12.dp, 12.dp),
@@ -459,9 +488,9 @@ fun SettingsView(navController: NavHostController) {
                         checked = adminDayInYearState,
                         onCheckedChange = {
                             adminDayInYearState = it
-                            val edit = k.edit()
-                            edit.putBoolean("adminDayInYear", adminDayInYearState)
-                            edit.apply()
+                            k.edit {
+                                putBoolean("adminDayInYear", adminDayInYearState)
+                            }
                         }
                     )
                 }
@@ -515,9 +544,9 @@ fun SettingsView(navController: NavHostController) {
                 modifier = Modifier
                     .clickable {
                         sinoidalState = !sinoidalState
-                        val edit = k.edit()
-                        edit.putBoolean("sinoidal_bible", sinoidalState)
-                        edit.apply()
+                        k.edit {
+                            putBoolean("sinoidal_bible", sinoidalState)
+                        }
                     }
                     .padding(vertical = 10.dp)
             ) {
@@ -539,9 +568,9 @@ fun SettingsView(navController: NavHostController) {
                     checked = sinoidalState,
                     onCheckedChange = {
                         sinoidalState = it
-                        val edit = k.edit()
-                        edit.putBoolean("sinoidal_bible", sinoidalState)
-                        edit.apply()
+                        k.edit {
+                            putBoolean("sinoidal_bible", sinoidalState)
+                        }
                     }
                 )
             }
@@ -551,9 +580,9 @@ fun SettingsView(navController: NavHostController) {
                 modifier = Modifier
                     .clickable {
                         maranafaState = !maranafaState
-                        val edit = k.edit()
-                        edit.putBoolean("maranafa", maranafaState)
-                        edit.apply()
+                        k.edit {
+                            putBoolean("maranafa", maranafaState)
+                        }
                     }
                     .padding(vertical = 10.dp)
             ) {
@@ -575,9 +604,9 @@ fun SettingsView(navController: NavHostController) {
                     checked = maranafaState,
                     onCheckedChange = {
                         maranafaState = it
-                        val edit = k.edit()
-                        edit.putBoolean("maranafa", maranafaState)
-                        edit.apply()
+                        k.edit {
+                            putBoolean("maranafa", maranafaState)
+                        }
                     }
                 )
             }
@@ -596,9 +625,9 @@ fun SettingsView(navController: NavHostController) {
                         .fillMaxWidth()
                         .clickable {
                             modeNotification = Settings.NOTIFICATION_SVIATY_ONLY
-                            val prefEditor = k.edit()
-                            prefEditor.putInt("notification", modeNotification)
-                            prefEditor.apply()
+                            k.edit {
+                                putInt("notification", modeNotification)
+                            }
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
                                 if (PackageManager.PERMISSION_DENIED == permissionCheck || !alarmManager.canScheduleExactAlarms()) {
@@ -616,9 +645,9 @@ fun SettingsView(navController: NavHostController) {
                         selected = modeNotification == Settings.NOTIFICATION_SVIATY_ONLY,
                         onClick = {
                             modeNotification = Settings.NOTIFICATION_SVIATY_ONLY
-                            val prefEditor = k.edit()
-                            prefEditor.putInt("notification", modeNotification)
-                            prefEditor.apply()
+                            k.edit {
+                                putInt("notification", modeNotification)
+                            }
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
                                 if (PackageManager.PERMISSION_DENIED == permissionCheck || !alarmManager.canScheduleExactAlarms()) {
@@ -643,9 +672,9 @@ fun SettingsView(navController: NavHostController) {
                         .fillMaxWidth()
                         .clickable {
                             modeNotification = Settings.NOTIFICATION_SVIATY_FULL
-                            val prefEditor = k.edit()
-                            prefEditor.putInt("notification", modeNotification)
-                            prefEditor.apply()
+                            k.edit {
+                                putInt("notification", modeNotification)
+                            }
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
                                 if (PackageManager.PERMISSION_DENIED == permissionCheck || !alarmManager.canScheduleExactAlarms()) {
@@ -663,9 +692,9 @@ fun SettingsView(navController: NavHostController) {
                         selected = modeNotification == Settings.NOTIFICATION_SVIATY_FULL,
                         onClick = {
                             modeNotification = Settings.NOTIFICATION_SVIATY_FULL
-                            val prefEditor = k.edit()
-                            prefEditor.putInt("notification", modeNotification)
-                            prefEditor.apply()
+                            k.edit {
+                                putInt("notification", modeNotification)
+                            }
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
                                 if (PackageManager.PERMISSION_DENIED == permissionCheck || !alarmManager.canScheduleExactAlarms()) {
@@ -690,9 +719,9 @@ fun SettingsView(navController: NavHostController) {
                         .fillMaxWidth()
                         .clickable {
                             modeNotification = Settings.NOTIFICATION_SVIATY_NONE
-                            val prefEditor = k.edit()
-                            prefEditor.putInt("notification", modeNotification)
-                            prefEditor.apply()
+                            k.edit {
+                                putInt("notification", modeNotification)
+                            }
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -700,9 +729,9 @@ fun SettingsView(navController: NavHostController) {
                         selected = modeNotification == Settings.NOTIFICATION_SVIATY_NONE,
                         onClick = {
                             modeNotification = Settings.NOTIFICATION_SVIATY_NONE
-                            val prefEditor = k.edit()
-                            prefEditor.putInt("notification", modeNotification)
-                            prefEditor.apply()
+                            k.edit {
+                                putInt("notification", modeNotification)
+                            }
                         }
                     )
                     Text(
@@ -749,9 +778,9 @@ fun SettingsView(navController: NavHostController) {
                             onClick = {
                                 textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option.string)
                                 expandedSviaty = false
-                                val prefEditors = k.edit()
-                                prefEditors.putInt("timeNotification", index)
-                                prefEditors.apply()
+                                k.edit {
+                                    putInt("timeNotification", index)
+                                }
                             },
                             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                         )
@@ -766,12 +795,12 @@ fun SettingsView(navController: NavHostController) {
                             intent.putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, context.packageName)
                             intent.putExtra(android.provider.Settings.EXTRA_CHANNEL_ID, NOTIFICATION_CHANNEL_ID_SVIATY)
                             context.startActivity(intent)
-                        } catch (ex: ActivityNotFoundException) {
+                        } catch (_: ActivityNotFoundException) {
                             try {
                                 val intent = Intent(android.provider.Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
                                 intent.putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, context.packageName)
                                 context.startActivity(intent)
-                            } catch (ex: ActivityNotFoundException) {
+                            } catch (_: ActivityNotFoundException) {
                                 val toast = Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT)
                                 toast.show()
                             }
@@ -804,9 +833,9 @@ fun SettingsView(navController: NavHostController) {
                 modifier = Modifier
                     .clickable {
                         modePkcSvaity = !modePkcSvaity
-                        val edit = k.edit()
-                        edit.putBoolean("s_pkc", modePkcSvaity)
-                        edit.apply()
+                        k.edit {
+                            putBoolean("s_pkc", modePkcSvaity)
+                        }
                     }
                     .padding(vertical = 10.dp)
             ) {
@@ -828,9 +857,9 @@ fun SettingsView(navController: NavHostController) {
                     checked = modePkcSvaity,
                     onCheckedChange = {
                         modePkcSvaity = it
-                        val edit = k.edit()
-                        edit.putBoolean("s_pkc", modePkcSvaity)
-                        edit.apply()
+                        k.edit {
+                            putBoolean("s_pkc", modePkcSvaity)
+                        }
                     }
                 )
             }
@@ -840,9 +869,9 @@ fun SettingsView(navController: NavHostController) {
                 modifier = Modifier
                     .clickable {
                         modePravasSvaity = !modePravasSvaity
-                        val edit = k.edit()
-                        edit.putBoolean("s_pravas", modePravasSvaity)
-                        edit.apply()
+                        k.edit {
+                            putBoolean("s_pravas", modePravasSvaity)
+                        }
                     }
                     .padding(vertical = 10.dp)
             ) {
@@ -864,9 +893,9 @@ fun SettingsView(navController: NavHostController) {
                     checked = modePravasSvaity,
                     onCheckedChange = {
                         modePravasSvaity = it
-                        val edit = k.edit()
-                        edit.putBoolean("s_pravas", modePravasSvaity)
-                        edit.apply()
+                        k.edit {
+                            putBoolean("s_pravas", modePravasSvaity)
+                        }
                     }
                 )
             }
@@ -876,9 +905,9 @@ fun SettingsView(navController: NavHostController) {
                 modifier = Modifier
                     .clickable {
                         modeGosudSvaity = !modeGosudSvaity
-                        val edit = k.edit()
-                        edit.putBoolean("s_gosud", modeGosudSvaity)
-                        edit.apply()
+                        k.edit {
+                            putBoolean("s_gosud", modeGosudSvaity)
+                        }
                     }
                     .padding(vertical = 10.dp)
             ) {
@@ -900,9 +929,9 @@ fun SettingsView(navController: NavHostController) {
                     checked = modeGosudSvaity,
                     onCheckedChange = {
                         modeGosudSvaity = it
-                        val edit = k.edit()
-                        edit.putBoolean("s_gosud", modeGosudSvaity)
-                        edit.apply()
+                        k.edit {
+                            putBoolean("s_gosud", modeGosudSvaity)
+                        }
                     }
                 )
             }
@@ -912,9 +941,9 @@ fun SettingsView(navController: NavHostController) {
                 modifier = Modifier
                     .clickable {
                         modePafesiiSvaity = !modePafesiiSvaity
-                        val edit = k.edit()
-                        edit.putBoolean("s_pafesii", modePafesiiSvaity)
-                        edit.apply()
+                        k.edit {
+                            putBoolean("s_pafesii", modePafesiiSvaity)
+                        }
                     }
                     .padding(vertical = 10.dp)
             ) {
@@ -936,49 +965,49 @@ fun SettingsView(navController: NavHostController) {
                     checked = modePafesiiSvaity,
                     onCheckedChange = {
                         modePafesiiSvaity = it
-                        val edit = k.edit()
-                        edit.putBoolean("s_pafesii", modePafesiiSvaity)
-                        edit.apply()
+                        k.edit {
+                            putBoolean("s_pafesii", modePafesiiSvaity)
+                        }
                     }
                 )
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.secondary)
             TextButton(
                 onClick = {
-                    val prefEditor = k.edit()
-                    val noDelite = ArrayList<String>()
-                    noDelite.add("WIDGET")
-                    noDelite.add("bible_time")
-                    noDelite.add("admin")
-                    for ((key) in k.all) {
-                        var del = true
-                        for (i in 0 until noDelite.size) {
-                            if (key.contains(noDelite[i], true)) {
-                                del = false
-                                break
+                    k.edit {
+                        val noDelite = ArrayList<String>()
+                        noDelite.add("WIDGET")
+                        noDelite.add("bible_time")
+                        noDelite.add("admin")
+                        for ((key) in k.all) {
+                            var del = true
+                            for (i in 0 until noDelite.size) {
+                                if (key.contains(noDelite[i], true)) {
+                                    del = false
+                                    break
+                                }
                             }
+                            if (del) remove(key)
                         }
-                        if (del) prefEditor.remove(key)
+                        Toast.makeText(context, context.getString(R.string.save), Toast.LENGTH_SHORT).show()
+                        putFloat("font_biblia", 22f)
+                        putInt("Settings.fontInterface", 1)
+                        putInt("mode_night", Settings.MODE_NIGHT_SYSTEM)
+                        putBoolean("s_pravas", false)
+                        putBoolean("s_pkc", false)
+                        putBoolean("s_gosud", false)
+                        putBoolean("s_pafesii", false)
+                        putInt("notification", Settings.NOTIFICATION_SVIATY_FULL)
+                        putInt("sinoidal", 0)
+                        putInt("maranata", 0)
+                        putString("perevod", Settings.PEREVODSEMUXI)
+                        putString("perevodMaranata", Settings.PEREVODSEMUXI)
+                        putBoolean("pegistrbukv", true)
+                        putInt("slovocalkam", 0)
+                        putBoolean("admin", false)
+                        putBoolean("adminDayInYear", false)
+                        putBoolean("paralel_biblia", true)
                     }
-                    Toast.makeText(context, context.getString(R.string.save), Toast.LENGTH_SHORT).show()
-                    prefEditor.putFloat("font_biblia", 22f)
-                    prefEditor.putInt("Settings.fontInterface", 1)
-                    prefEditor.putInt("mode_night", Settings.MODE_NIGHT_SYSTEM)
-                    prefEditor.putBoolean("s_pravas", false)
-                    prefEditor.putBoolean("s_pkc", false)
-                    prefEditor.putBoolean("s_gosud", false)
-                    prefEditor.putBoolean("s_pafesii", false)
-                    prefEditor.putInt("notification", Settings.NOTIFICATION_SVIATY_FULL)
-                    prefEditor.putInt("sinoidal", 0)
-                    prefEditor.putInt("maranata", 0)
-                    prefEditor.putString("perevod", Settings.PEREVODSEMUXI)
-                    prefEditor.putString("perevodMaranata", Settings.PEREVODSEMUXI)
-                    prefEditor.putBoolean("pegistrbukv", true)
-                    prefEditor.putInt("slovocalkam", 0)
-                    prefEditor.putBoolean("admin", false)
-                    prefEditor.putBoolean("adminDayInYear", false)
-                    prefEditor.putBoolean("paralel_biblia", true)
-                    prefEditor.apply()
                     modeNotification = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
                         if (PackageManager.PERMISSION_DENIED == permissionCheck) {
@@ -1017,9 +1046,65 @@ fun SettingsView(navController: NavHostController) {
             ) {
                 Text(stringResource(R.string.settings_default), fontSize = Settings.fontInterface.sp, color = PrimaryTextBlack)
             }
+            TextButton(
+                onClick = {
+                    dialodClearChache = true
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(5.dp),
+                colors = ButtonColors(
+                    Divider,
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified
+                ),
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Text(stringResource(R.string.clear_chash), fontSize = Settings.fontInterface.sp, color = PrimaryText)
+            }
             Spacer(modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
         }
     }
+}
+
+@Composable
+fun DialogClearChash(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        icon = {
+            Icon(painter = painterResource(R.drawable.warning), contentDescription = "")
+        },
+        title = {
+            Text(text = stringResource(R.string.clear_chash))
+        },
+        text = {
+            Text(text = stringResource(R.string.clear_chash_opis), fontSize = Settings.fontInterface.sp)
+        },
+        onDismissRequest = {
+            onDismiss()
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onConfirm()
+                }
+            ) {
+                Text(stringResource(R.string.delite), fontSize = Settings.fontInterface.sp)
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onDismiss()
+                }
+            ) {
+                Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
+            }
+        }
+    )
 }
 
 @Composable

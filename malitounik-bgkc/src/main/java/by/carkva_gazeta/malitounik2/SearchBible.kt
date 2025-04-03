@@ -79,6 +79,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import androidx.core.content.edit
 import androidx.core.text.HtmlCompat
 import androidx.core.text.isDigitsOnly
 import androidx.core.view.WindowCompat
@@ -296,18 +297,18 @@ fun SearchBible(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.clickable {
                                     isRegistr = !isRegistr
-                                    val edit = k.edit()
-                                    edit.putBoolean("pegistrbukv", isRegistr)
-                                    edit.apply()
+                                    k.edit {
+                                        putBoolean("pegistrbukv", isRegistr)
+                                    }
                                     searchSettings = true
                                 }) {
                                 Checkbox(
                                     checked = !isRegistr,
                                     onCheckedChange = {
                                         isRegistr = !isRegistr
-                                        val edit = k.edit()
-                                        edit.putBoolean("pegistrbukv", isRegistr)
-                                        edit.apply()
+                                        k.edit {
+                                            putBoolean("pegistrbukv", isRegistr)
+                                        }
                                         searchSettings = true
                                     }
                                 )
@@ -322,9 +323,9 @@ fun SearchBible(
                                 modifier = Modifier.clickable {
                                     isDakladnaeSupadzenne = if (isDakladnaeSupadzenne == 0) 1
                                     else 0
-                                    val edit = k.edit()
-                                    edit.putInt("slovocalkam", isDakladnaeSupadzenne)
-                                    edit.apply()
+                                    k.edit {
+                                        putInt("slovocalkam", isDakladnaeSupadzenne)
+                                    }
                                     searchSettings = true
                                 }) {
                                 Checkbox(
@@ -332,9 +333,9 @@ fun SearchBible(
                                     onCheckedChange = {
                                         isDakladnaeSupadzenne = if (isDakladnaeSupadzenne == 0) 1
                                         else 0
-                                        val edit = k.edit()
-                                        edit.putInt("slovocalkam", isDakladnaeSupadzenne)
-                                        edit.apply()
+                                        k.edit {
+                                            putInt("slovocalkam", isDakladnaeSupadzenne)
+                                        }
                                         searchSettings = true
                                     }
                                 )
@@ -453,9 +454,9 @@ fun DropdownMenuBox(
                     onClick = {
                         textFieldState.setTextAndPlaceCursorAtEnd(option)
                         expanded = false
-                        val prefEditors = k.edit()
-                        prefEditors.putInt("biblia_seash", index)
-                        prefEditors.apply()
+                        k.edit {
+                            putInt("biblia_seash", index)
+                        }
                         onSearchStart()
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,

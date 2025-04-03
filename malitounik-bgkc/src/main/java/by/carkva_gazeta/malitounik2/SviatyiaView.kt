@@ -95,6 +95,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.core.content.FileProvider
+import androidx.core.content.edit
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -145,7 +146,9 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
             dialoNoWIFI = false
             isloadIcons = true
             coroutineScope.launch {
+                isProgressVisable = true
                 getIcons(context, dirList, sviatyiaList.value, svity, isloadIcons, wiFiExists = {})
+                isProgressVisable = false
             }
         }
     }
@@ -264,9 +267,10 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                     },
                     navigationIcon = {
                         if (imageFull) {
-                            IconButton(onClick = {
-                                imageFull = false
-                            },
+                            IconButton(
+                                onClick = {
+                                    imageFull = false
+                                },
                                 content = {
                                     Icon(
                                         painter = painterResource(R.drawable.close),
@@ -275,18 +279,19 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                                     )
                                 })
                         } else {
-                            IconButton(onClick = {
-                                when {
-                                    fullscreen -> fullscreen = false
-                                    showDropdown -> {
-                                        showDropdown = false
-                                    }
+                            IconButton(
+                                onClick = {
+                                    when {
+                                        fullscreen -> fullscreen = false
+                                        showDropdown -> {
+                                            showDropdown = false
+                                        }
 
-                                    else -> {
-                                        navController.popBackStack()
+                                        else -> {
+                                            navController.popBackStack()
+                                        }
                                     }
-                                }
-                            },
+                                },
                                 content = {
                                     Icon(
                                         painter = painterResource(R.drawable.arrow_back),
@@ -603,19 +608,20 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, year: Int, mu
                                     steps = 10,
                                     value = fontSize,
                                     onValueChange = {
-                                        val edit = k.edit()
-                                        edit.putFloat("font_biblia", it)
-                                        edit.apply()
+                                        k.edit {
+                                            putFloat("font_biblia", it)
+                                        }
                                         fontSize = it
                                     }
                                 )
                             }
-                            Column(modifier = Modifier
-                                .fillMaxWidth()
-                                .background(MaterialTheme.colorScheme.onTertiary)
-                                .clickable {
-                                    showDropdown = false
-                                }) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(MaterialTheme.colorScheme.onTertiary)
+                                    .clickable {
+                                        showDropdown = false
+                                    }) {
                                 Icon(modifier = Modifier.align(Alignment.End), painter = painterResource(R.drawable.keyboard_arrow_up), contentDescription = "", tint = PrimaryTextBlack)
                             }
                         }
@@ -980,7 +986,30 @@ fun loadOpisanieSviat(context: Context, sviatyiaList: ArrayList<OpisanieData>, m
         val type = TypeToken.getParameterized(java.util.ArrayList::class.java, TypeToken.getParameterized(java.util.ArrayList::class.java, String::class.java).type).type
         val arrayList = gson.fromJson<ArrayList<ArrayList<String>>>(builder, type)
         arrayList?.forEach { strings ->
-            if (day == strings[0].toInt() && mun == strings[1].toInt()) {
+            var puxomuia = false
+            if (strings[0] == "-1" && strings[1] == "0" && Settings.data[Settings.caliandarPosition][22] == "-7") {
+                puxomuia = true
+            }
+            if (strings[0] == "-1" && strings[1] == "1" && Settings.data[Settings.caliandarPosition][22] == "0") {
+                puxomuia = true
+            }
+            if (strings[0] == "-1" && strings[1] == "2" && Settings.data[Settings.caliandarPosition][22] == "39") {
+                puxomuia = true
+            }
+            if (strings[0] == "-1" && strings[1] == "3" && Settings.data[Settings.caliandarPosition][22] == "49") {
+                puxomuia = true
+            }
+            if (strings[0] == "-1" && strings[1] == "4") {
+                val pasha = GregorianCalendar()
+                for (i in 13 .. 19) {
+                    pasha.set(Settings.data[Settings.caliandarPosition][3].toInt(), Calendar.JULY, i)
+                    val wik = pasha[Calendar.DAY_OF_WEEK]
+                    if (wik == Calendar.SUNDAY && day == pasha[Calendar.DATE] && mun - 1 == pasha[Calendar.MONTH]) {
+                        puxomuia = true
+                    }
+                }
+            }
+            if (puxomuia || (day == strings[0].toInt() && mun == strings[1].toInt())) {
                 var res = strings[2]
                 if ((context as MainActivity).dzenNoch) res = res.replace("#d00505", "#ff6666")
                 val t1 = res.indexOf("</strong>")
@@ -1068,17 +1097,11 @@ suspend fun getIcons(
             wiFiExists()
         }
     } else {
-        /*binding.progressBar2.isIndeterminate = false
-        binding.progressBar2.progress = 0
-        binding.progressBar2.max = size.toInt()*/
-        //var progress = 0
         for (i in 0 until dirList.size) {
             try {
                 val fileIcon = File("${context.filesDir}/icons/" + dirList[i].name)
                 val pathReference = MainActivity.referens.child("/chytanne/icons/" + dirList[i].name)
                 pathReference.getFile(fileIcon).await()
-                //progress += dirList[i].sizeBytes.toInt()
-                //binding.progressBar2.progress = progress
             } catch (_: Throwable) {
             }
         }
@@ -1111,7 +1134,6 @@ fun loadIconsOnImageView(context: Context, sviatyiaList: ArrayList<OpisanieData>
             }
         }
     }
-    //binding.progressBar2.visibility = View.INVISIBLE
 }
 
 suspend fun getPiarliny(context: Context) {
@@ -1129,7 +1151,7 @@ fun checkParliny(context: Context, mun: Int, day: Int): Boolean {
             val gson = Gson()
             val type = TypeToken.getParameterized(java.util.ArrayList::class.java, TypeToken.getParameterized(java.util.ArrayList::class.java, String::class.java).type).type
             piarliny.addAll(gson.fromJson(builder, type))
-        } catch (t: Throwable) {
+        } catch (_: Throwable) {
             fileOpisanieSviat.delete()
         }
         val cal = GregorianCalendar()

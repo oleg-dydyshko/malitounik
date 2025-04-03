@@ -2,6 +2,7 @@ package by.carkva_gazeta.malitounik2
 
 import android.content.Context
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,7 +54,8 @@ import java.util.Calendar
 fun KaliandarScreenYear(
     coroutineScope: CoroutineScope,
     lazyColumnState: LazyListState,
-    innerPadding: PaddingValues
+    innerPadding: PaddingValues,
+    navigateToSvityiaView: (svity: Boolean, year: Int, mun: Int, day: Int) -> Unit,
 ) {
     val data = Settings.data
     val state by remember { derivedStateOf { lazyColumnState.firstVisibleItemIndex } }
@@ -122,7 +124,10 @@ fun KaliandarScreenYear(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 10.dp, bottom = padding1),
+                            .padding(top = 10.dp, bottom = padding1)
+                            .clickable {
+                                navigateToSvityiaView(true, data[index][3].toInt(), data[index][2].toInt() + 1, data[index][1].toInt())
+                            },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         var padding = 0.dp
@@ -184,41 +189,49 @@ fun KaliandarScreenYear(
                 }
                 if (data[index][4] != "no_sviatyia") {
                     val list = data[index][4].split("<br>")
-                    for (i in list.indices) {
-                        val toppadding = if (i == 0) 10.dp else 0.dp
-                        val toppaddingEnd = if (i == list.size - 1) 10.dp else 0.dp
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = toppadding, start = 5.dp, bottom = toppaddingEnd),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            var icon: Painter? = null
-                            var iconTint = MaterialTheme.colorScheme.primary
-                            when (data[index][12].toInt()) {
-                                1 -> icon = painterResource(R.drawable.znaki_krest)
-                                3 -> icon = painterResource(R.drawable.znaki_krest_v_polukruge)
-                                4 -> icon = painterResource(R.drawable.znaki_ttk)
-                                5 -> {
-                                    icon = painterResource(R.drawable.znaki_ttk_black)
-                                    iconTint = MaterialTheme.colorScheme.secondary
-                                }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                navigateToSvityiaView(false, data[index][3].toInt(), data[index][2].toInt() + 1, data[index][1].toInt())
                             }
-                            if (icon != null && i == 0) {
-                                Icon(
-                                    painter = icon,
-                                    contentDescription = "",
-                                    tint = iconTint,
+                    ) {
+                        for (i in list.indices) {
+                            val toppadding = if (i == 0) 10.dp else 0.dp
+                            val toppaddingEnd = if (i == list.size - 1) 10.dp else 0.dp
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = toppadding, start = 5.dp, bottom = toppaddingEnd),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                var icon: Painter? = null
+                                var iconTint = MaterialTheme.colorScheme.primary
+                                when (data[index][12].toInt()) {
+                                    1 -> icon = painterResource(R.drawable.znaki_krest)
+                                    3 -> icon = painterResource(R.drawable.znaki_krest_v_polukruge)
+                                    4 -> icon = painterResource(R.drawable.znaki_ttk)
+                                    5 -> {
+                                        icon = painterResource(R.drawable.znaki_ttk_black)
+                                        iconTint = MaterialTheme.colorScheme.secondary
+                                    }
+                                }
+                                if (icon != null && i == 0) {
+                                    Icon(
+                                        painter = icon,
+                                        contentDescription = "",
+                                        tint = iconTint,
+                                        modifier = Modifier
+                                            .size(25.dp)
+                                    )
+                                }
+                                HtmlText(
                                     modifier = Modifier
-                                        .size(25.dp)
+                                        .padding(start = 10.dp, end = 10.dp)
+                                        .align(Alignment.CenterVertically),
+                                    text = list[i]
                                 )
                             }
-                            HtmlText(
-                                modifier = Modifier
-                                    .padding(start = 10.dp, end = 10.dp)
-                                    .align(Alignment.CenterVertically),
-                                text = list[i]
-                            )
                         }
                     }
                 }

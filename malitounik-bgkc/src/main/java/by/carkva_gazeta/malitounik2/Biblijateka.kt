@@ -1,5 +1,6 @@
 package by.carkva_gazeta.malitounik2
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -72,6 +73,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
+import androidx.core.graphics.createBitmap
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -93,6 +95,7 @@ import java.io.File
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Biblijateka(
@@ -389,7 +392,7 @@ fun Biblijateka(
                             DisposableEffect(file, index) {
                                 val job = imageLoadingScope.launch(Dispatchers.IO) {
                                     val destinationBitmap =
-                                        Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+                                        createBitmap(width, height)
                                     mutex.withLock {
                                         if (!coroutineContext.isActive) return@launch
                                         try {

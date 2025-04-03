@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import by.carkva_gazeta.malitounik2.BuildConfig
+import by.carkva_gazeta.malitounik2.DialogImage
 import by.carkva_gazeta.malitounik2.DialogLiturgia
 import by.carkva_gazeta.malitounik2.DialogSztoHovaha
 import by.carkva_gazeta.malitounik2.MainActivity
@@ -125,6 +127,12 @@ fun HtmlText(
             dialogLiturgia = false
         }
     }
+    var dialogQrCode by rememberSaveable { mutableStateOf(false) }
+    if (dialogQrCode) {
+        DialogImage(painter = painterResource(R.drawable.qr_code_google_play)) {
+            dialogQrCode = false
+        }
+    }
     val annotatedString = AnnotatedString.fromHtml(
         newText,
         TextLinkStyles(
@@ -141,6 +149,10 @@ fun HtmlText(
                     coroutineScope.launch {
                         scrollState.animateScrollTo(0)
                     }
+                }
+
+                "https://localhost/qr.code/" -> {
+                    dialogQrCode = true
                 }
 
                 "https://localhost/shto.novaga/" -> {

@@ -12,6 +12,7 @@ import android.os.Build
 import android.view.View
 import android.widget.RemoteViews
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 
 class WidgetRadyjoMaryia : AppWidgetProvider() {
 
@@ -24,19 +25,19 @@ class WidgetRadyjoMaryia : AppWidgetProvider() {
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
         val sp = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-        sp.edit().putBoolean("WIDGET_RADYJO_MARYIA_ENABLED", true).apply()
+        sp.edit { putBoolean("WIDGET_RADYJO_MARYIA_ENABLED", true)}
     }
 
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
         val sp = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-        sp.edit().putBoolean("WIDGET_RADYJO_MARYIA_ENABLED", false).apply()
+        sp.edit { putBoolean("WIDGET_RADYJO_MARYIA_ENABLED", false) }
     }
 
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
         val extra = intent.extras?.getInt("action", 0) ?: 0
-        isError = intent.extras?.getBoolean("isError", false) ?: false
+        isError = intent.extras?.getBoolean("isError", false) == true
         if (ServiceRadyjoMaryia.isServiceRadioMaryiaRun && extra == ServiceRadyjoMaryia.STOP) {
             val intent2 = Intent(context, ServiceRadyjoMaryia::class.java)
             intent2.putExtra("action", ServiceRadyjoMaryia.STOP)

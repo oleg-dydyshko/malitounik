@@ -203,7 +203,7 @@ fun PadzeiaView(navController: NavHostController) {
                         }
                     }
                 }
-                if (del.size != 0) {
+                if (del.isNotEmpty()) {
                     listPadzeia.removeAll(del.toSet())
                     val outputStream = FileWriter("${context.filesDir}/Sabytie.json")
                     val gson = Gson()
@@ -760,7 +760,7 @@ fun AddPadzeia(
                 if (!alarmManager.canScheduleExactAlarms()) {
                     val intent = Intent()
                     intent.action = android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
-                    intent.setData(Uri.parse("package:" + context.packageName))
+                    intent.data = Uri.parse("package:" + context.packageName)
                     context.startActivity(intent)
                 }
             }

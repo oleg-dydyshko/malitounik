@@ -94,7 +94,7 @@ class Widget : AppWidgetProvider() {
         super.onReceive(context, intent)
         val appWidgetManager = AppWidgetManager.getInstance(context)
         val widgetID = intent.extras?.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID) ?: AppWidgetManager.INVALID_APPWIDGET_ID
-        val extSettings = intent.extras?.getBoolean("settings", false) ?: false
+        val extSettings = intent.extras?.getBoolean("settings", false) == true
         if (extSettings) {
             isSettingsCulling = true
             val settings = Intent(context, WidgetConfig::class.java)

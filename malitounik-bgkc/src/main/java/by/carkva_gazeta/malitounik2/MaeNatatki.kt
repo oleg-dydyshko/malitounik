@@ -2,6 +2,7 @@ package by.carkva_gazeta.malitounik2
 
 import android.app.Activity
 import android.content.Context
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.PaddingValues
@@ -90,8 +91,13 @@ fun MaeNatatki(
             }
         }
     }
+    if (sort == Settings.SORT_BY_ABC) {
+        fileList.sortBy { it.title }
+    } else {
+        fileList.sortByDescending { it.lastModified }
+    }
     var isNatatkaVisable by rememberSaveable { mutableStateOf(false) }
-    var natatkaPosition by remember { mutableIntStateOf(0) }
+    var natatkaPosition by rememberSaveable { mutableIntStateOf(0) }
     var removeNatatka by remember { mutableStateOf(false) }
     var dialogContextMenu by remember { mutableStateOf(false) }
     var dialogContextMenuEdit by remember { mutableStateOf(false) }
@@ -126,7 +132,7 @@ fun MaeNatatki(
             isEditMode = true
         )
     }
-    if (isNatatkaVisable) {
+    if (isNatatkaVisable && fileList.isNotEmpty()) {
         DialogMyNatatki(
             fileList[natatkaPosition].title,
             fileList[natatkaPosition].content,
@@ -164,11 +170,6 @@ fun MaeNatatki(
         ) {
             dialogContextMenu = false
         }
-    }
-    if (sort == Settings.SORT_BY_ABC) {
-        fileList.sortBy { it.title }
-    } else {
-        fileList.sortByDescending { it.lastModified }
     }
     if (removeAllNatatki) {
         fileList.clear()
@@ -233,6 +234,9 @@ fun DialogMyNatatki(
             )
         )
     }
+    val actyvity = LocalActivity.current as MainActivity
+    val k = actyvity.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+    if (editMode) actyvity.removelightSensor()
     AlertDialog(
         icon = {
             Icon(painter = painterResource(R.drawable.description), contentDescription = "")
@@ -273,14 +277,18 @@ fun DialogMyNatatki(
             }
         },
         onDismissRequest = {
-            if (editMode) onConfirmation(editTitle, textFieldValueState.text)
-            else onDismissRequest()
+            if (editMode) {
+                onConfirmation(editTitle, textFieldValueState.text)
+                if (k?.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
+            } else onDismissRequest()
         },
         dismissButton = {
             TextButton(
                 onClick = {
-                    if (editMode) onDismissRequest()
-                    else editMode = true
+                    if (editMode) {
+                        onDismissRequest()
+                        if (k?.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
+                    } else editMode = true
                 }
             ) {
                 if (editMode) Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
@@ -290,8 +298,10 @@ fun DialogMyNatatki(
         confirmButton = {
             TextButton(
                 onClick = {
-                    if (editMode) onConfirmation(editTitle, textFieldValueState.text)
-                    else onDismissRequest()
+                    if (editMode) {
+                        onConfirmation(editTitle, textFieldValueState.text)
+                        if (k?.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
+                    } else onDismissRequest()
                 }
             ) {
                 if (editMode) Text(stringResource(R.string.save_sabytie), fontSize = Settings.fontInterface.sp)

@@ -45,7 +45,7 @@ class WidgetRadyjoMaryiaProgram : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MalitounikTheme {
-                val checkInternet = intent.extras?.getBoolean("checkInternet", false) ?: false
+                val checkInternet = intent.extras?.getBoolean("checkInternet", false) == true
                 if (checkInternet) {
                     DialogNoInternet(
                         onDismissRequest = { finish() })

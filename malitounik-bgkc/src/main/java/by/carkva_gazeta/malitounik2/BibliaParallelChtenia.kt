@@ -1,4 +1,4 @@
-package by.carkva_gazeta.resources
+package by.carkva_gazeta.malitounik2
 
 class BibliaParallelChtenia {
     private var res = "+-+"

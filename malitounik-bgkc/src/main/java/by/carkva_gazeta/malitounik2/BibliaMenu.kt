@@ -1,6 +1,7 @@
 package by.carkva_gazeta.malitounik2
 
 import android.content.Context
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -34,12 +36,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -48,6 +53,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.core.content.edit
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik2.ui.theme.Divider
@@ -172,7 +178,14 @@ fun BibliaMenu(
             dialogVisable = false
         }
     }
-    var pesnyView by remember { mutableStateOf(false) }
+    var pesnyView by rememberSaveable { mutableStateOf(false) }
+    var dialogPeryiadyView by rememberSaveable { mutableStateOf(false) }
+    if (dialogPeryiadyView) {
+        DialogPeryaidy {
+            dialogPeryiadyView = false
+        }
+    }
+    var dialogImageView by rememberSaveable { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -545,21 +558,21 @@ fun BibliaMenu(
                                     modifier = Modifier
                                         .padding(start = 10.dp)
                                         .clickable {
-                                                navigationActions.navigateToBogaslujbovyia(
-                                                    context.getString(R.string.pesnia, i),
-                                                    when(i) {
-                                                        1 -> R.raw.nadsan_pesni_1
-                                                        2 -> R.raw.nadsan_pesni_2
-                                                        3 -> R.raw.nadsan_pesni_3
-                                                        4 -> R.raw.nadsan_pesni_4
-                                                        5 -> R.raw.nadsan_pesni_5
-                                                        6 -> R.raw.nadsan_pesni_6
-                                                        7 -> R.raw.nadsan_pesni_7
-                                                        8 -> R.raw.nadsan_pesni_8
-                                                        9 -> R.raw.nadsan_pesni_9
-                                                        else -> R.raw.nadsan_pesni_1
-                                                    }
-                                                )
+                                            navigationActions.navigateToBogaslujbovyia(
+                                                context.getString(R.string.pesnia, i),
+                                                when (i) {
+                                                    1 -> R.raw.nadsan_pesni_1
+                                                    2 -> R.raw.nadsan_pesni_2
+                                                    3 -> R.raw.nadsan_pesni_3
+                                                    4 -> R.raw.nadsan_pesni_4
+                                                    5 -> R.raw.nadsan_pesni_5
+                                                    6 -> R.raw.nadsan_pesni_6
+                                                    7 -> R.raw.nadsan_pesni_7
+                                                    8 -> R.raw.nadsan_pesni_8
+                                                    9 -> R.raw.nadsan_pesni_9
+                                                    else -> R.raw.nadsan_pesni_1
+                                                }
+                                            )
                                         },
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
@@ -584,6 +597,7 @@ fun BibliaMenu(
                     }
                     TextButton(
                         onClick = {
+                            dialogPeryiadyView = true
                         },
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
@@ -601,6 +615,7 @@ fun BibliaMenu(
                     }
                     TextButton(
                         onClick = {
+                            dialogImageView = !dialogImageView
                         },
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
@@ -616,6 +631,9 @@ fun BibliaMenu(
                     ) {
                         Text(stringResource(R.string.title_psalter_privila), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
                     }
+                }
+                if (dialogImageView) {
+                    Image(painter = painterResource(R.drawable.pravily_chytannia_psaltyria), contentDescription = "", modifier = Modifier.padding(top = 10.dp).fillMaxWidth(), contentScale = ContentScale.FillWidth)
                 }
                 if (savePerevod == Settings.PEREVODSEMUXI || savePerevod == Settings.PEREVODBOKUNA) {
                     TextButton(
@@ -668,7 +686,7 @@ fun DialogSemuxa(
             val isr = InputStreamReader(inputStream)
             val reader = BufferedReader(isr)
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                HtmlText(text = reader.readText(), fontSize = Settings.fontInterface.sp)
+                HtmlText(text = reader.readText(), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
             }
         },
         onDismissRequest = {
@@ -684,4 +702,80 @@ fun DialogSemuxa(
             }
         }
     )
+}
+
+@Composable
+fun DialogPeryaidy(
+    onDismissRequest: () -> Unit
+) {
+    AlertDialog(
+        icon = {
+            Icon(painter = painterResource(R.drawable.info), contentDescription = "")
+        },
+        title = {
+            Text(text = stringResource(R.string.peryiady))
+        },
+        text = {
+            val inputStream = LocalContext.current.resources.openRawResource(R.raw.nadsan_periody)
+            val isr = InputStreamReader(inputStream)
+            val reader = BufferedReader(isr)
+            HtmlText(
+                modifier = Modifier.padding(start = 10.dp),
+                text = reader.readText(),
+                fontSize = Settings.fontInterface.sp
+            )
+        },
+        onDismissRequest = {
+            onDismissRequest()
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
+            }
+        }
+    )
+}
+
+@Composable
+fun DialogImage(
+    painter: Painter,
+    onDismissRequest: () -> Unit
+) {
+    Dialog(onDismissRequest = { onDismissRequest() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Image(painter = painter, contentDescription = "", Modifier.fillMaxWidth().verticalScroll(rememberScrollState()), contentScale = ContentScale.FillWidth)
+        }
+    }
+    /*(
+        icon = {
+            Icon(painter = painterResource(R.drawable.info), contentDescription = "")
+        },
+        title = {
+            Text(text = stringResource(R.string.peryiady))
+        },
+        text = {
+            Image(painter = painter, contentDescription = "", Modifier.fillMaxWidth().verticalScroll(rememberScrollState()))
+        },
+        onDismissRequest = {
+            onDismissRequest()
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
+            }
+        }
+    )*/
 }

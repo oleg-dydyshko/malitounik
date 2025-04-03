@@ -42,6 +42,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -91,8 +92,7 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues, se
                 0
             } else {
                 k.getInt(
-                    "pubrikaPesnyMenu",
-                    0
+                    "pubrikaPesnyMenu", 0
                 )
             }
         )
@@ -105,490 +105,352 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues, se
     LaunchedEffect(Unit) {
         piesnyBagarList.add(
             PiesnyListItem(
-                2,
-                R.raw.piesni_bahar_aniol_ad_boha_habryel,
-                "Анёл ад Бога Габрыэль"
+                2, R.raw.piesni_bahar_aniol_ad_boha_habryel, "Анёл ад Бога Габрыэль"
             )
         )
         piesnyBagarList.add(
             PiesnyListItem(
-                2,
-                R.raw.piesni_bahar_z_dalokaj_facimy,
-                "З далёкай Фацімы"
+                2, R.raw.piesni_bahar_z_dalokaj_facimy, "З далёкай Фацімы"
             )
         )
         piesnyBagarList.add(
             PiesnyListItem(
-                2,
-                R.raw.piesni_bahar_lurdauskaja_piesnia,
-                "Люрдаўская песьня"
+                2, R.raw.piesni_bahar_lurdauskaja_piesnia, "Люрдаўская песьня"
             )
         )
         piesnyBagarList.add(
             PiesnyListItem(
-                2,
-                R.raw.piesni_bahar_mataczka_bozaja,
-                "Матачка Божая"
+                2, R.raw.piesni_bahar_mataczka_bozaja, "Матачка Божая"
             )
         )
         piesnyBagarList.add(
             PiesnyListItem(
-                2,
-                R.raw.piesni_bahar_maci_bozaja_budslauskaja,
-                "Маці Божая Будслаўская"
+                2, R.raw.piesni_bahar_maci_bozaja_budslauskaja, "Маці Божая Будслаўская"
             )
         )
         piesnyBagarList.add(
             PiesnyListItem(
-                2,
-                R.raw.piesni_bahar_maci_bozaja_u_zyrovicach,
-                "Маці Божая ў Жыровіцах"
+                2, R.raw.piesni_bahar_maci_bozaja_u_zyrovicach, "Маці Божая ў Жыровіцах"
             )
         )
         piesnyBagarList.add(
             PiesnyListItem(
-                2,
-                R.raw.piesni_bahar_maci_z_facimy,
-                "Маці з Фацімы"
+                2, R.raw.piesni_bahar_maci_z_facimy, "Маці з Фацімы"
             )
         )
         piesnyBagarList.add(
             PiesnyListItem(
-                2,
-                R.raw.piesni_bahar_maci_maja_bozaja,
-                "Маці мая Божая"
+                2, R.raw.piesni_bahar_maci_maja_bozaja, "Маці мая Божая"
             )
         )
         piesnyBagarList.add(
             PiesnyListItem(
-                2,
-                R.raw.piesni_bahar_mnie_adnojczy,
-                "Мне аднойчы"
+                2, R.raw.piesni_bahar_mnie_adnojczy, "Мне аднойчы"
             )
         )
         piesnyBagarList.add(
             PiesnyListItem(
-                2,
-                R.raw.piesni_bahar_o_maryja_maci_boha,
-                "О Марыя, Маці Бога (1)"
+                2, R.raw.piesni_bahar_o_maryja_maci_boha, "О Марыя, Маці Бога (1)"
             )
         )
         piesnyBagarList.add(
             PiesnyListItem(
-                2,
-                R.raw.piesni_bahar_o_maryja_maci_boha_2,
-                "О Марыя, Маці Бога (2)"
+                2, R.raw.piesni_bahar_o_maryja_maci_boha_2, "О Марыя, Маці Бога (2)"
             )
         )
         piesnyBagarList.add(
             PiesnyListItem(
-                2,
-                R.raw.piesni_bahar_pamalisia_maryja,
-                "Памаліся, Марыя"
+                2, R.raw.piesni_bahar_pamalisia_maryja, "Памаліся, Марыя"
             )
         )
         piesnyBagarList.add(
             PiesnyListItem(
-                2,
-                R.raw.piesni_bahar_da_maci_bozaj_niastomnaj_dapamohi,
-                "Песьня да Маці Божай Нястомнай Дапамогі"
+                2, R.raw.piesni_bahar_da_maci_bozaj_niastomnaj_dapamohi, "Песьня да Маці Божай Нястомнай Дапамогі"
             )
         )
         piesnyBagarList.add(
             PiesnyListItem(
-                2,
-                R.raw.piesni_bahar_radujsia_maryja,
-                "Радуйся, Марыя!"
+                2, R.raw.piesni_bahar_radujsia_maryja, "Радуйся, Марыя!"
             )
         )
         piesnyBagarList.add(
             PiesnyListItem(
-                2,
-                R.raw.piesni_bahar_tabie_maryja_daviaraju_ja,
-                "Табе, Марыя, давяраю я"
+                2, R.raw.piesni_bahar_tabie_maryja_daviaraju_ja, "Табе, Марыя, давяраю я"
             )
         )
         piesnyBagarList.add(
             PiesnyListItem(
-                2,
-                R.raw.piesni_bahar_cichaja_pakornaja,
-                "Ціхая, пакорная"
+                2, R.raw.piesni_bahar_cichaja_pakornaja, "Ціхая, пакорная"
             )
         )
         piesnyBagarList.add(
             PiesnyListItem(
-                2,
-                R.raw.piesni_baharodz_zastupnica_duchounaja,
-                "Заступніца духоўная"
+                2, R.raw.piesni_baharodz_zastupnica_duchounaja, "Заступніца духоўная"
             )
         )
         piesnyBagarList.add(
             PiesnyListItem(
-                2,
-                R.raw.piesni_bahar_lubic_maryja_mianie,
-                "Любіць Марыя мяне"
+                2, R.raw.piesni_bahar_lubic_maryja_mianie, "Любіць Марыя мяне"
             )
         )
         piesnyBagarList.add(
             PiesnyListItem(
-                2,
-                R.raw.piesni_bahar_radujsia_dzieva_maci,
-                "Радуйся, Дзева Маці"
+                2, R.raw.piesni_bahar_radujsia_dzieva_maci, "Радуйся, Дзева Маці"
             )
         )
         piesnyBagarList.add(
             PiesnyListItem(
-                2,
-                R.raw.piesni_bahar_maci_bozaja_u_barunach,
-                "Маці Божая ў Барунах"
+                2, R.raw.piesni_bahar_maci_bozaja_u_barunach, "Маці Божая ў Барунах"
             )
         )
         piesnyBagarList.add(PiesnyListItem(2, R.raw.piesni_bahar_maci_bozaja, "Маці Божая"))
         piesnyBagarList.add(
             PiesnyListItem(
-                2,
-                R.raw.piesni_bahar_himn_da_imia_maryi,
-                "Гімн да імя Марыі"
+                2, R.raw.piesni_bahar_himn_da_imia_maryi, "Гімн да імя Марыі"
             )
         )
         piesnyBagarList.add(
             PiesnyListItem(
-                2,
-                R.raw.piesni_bahar_karaleva_supakoju,
-                "Каралева супакою"
+                2, R.raw.piesni_bahar_karaleva_supakoju, "Каралева супакою"
             )
         )
         piesnyBelarusList.add(
             PiesnyListItem(
-                1,
-                R.raw.piesni_belarus_ave_maria_pazniak,
-                "Ave Maria"
+                1, R.raw.piesni_belarus_ave_maria_pazniak, "Ave Maria"
             )
         )
         piesnyBelarusList.add(
             PiesnyListItem(
-                1,
-                R.raw.piesni_belarus_boza_szto_kalis_narody,
-                "Божа, што калісь народы"
+                1, R.raw.piesni_belarus_boza_szto_kalis_narody, "Божа, што калісь народы"
             )
         )
         piesnyBelarusList.add(
             PiesnyListItem(
-                1,
-                R.raw.piesni_belarus_boza_ja_malusia_za_bielarus,
-                "Божа, я малюся за Беларусь"
+                1, R.raw.piesni_belarus_boza_ja_malusia_za_bielarus, "Божа, я малюся за Беларусь"
             )
         )
         piesnyBelarusList.add(
             PiesnyListItem(
-                1,
-                R.raw.piesni_belarus_vieczna_zyvi_maja_bielarus,
-                "Вечна жывi, мая Беларусь"
+                1, R.raw.piesni_belarus_vieczna_zyvi_maja_bielarus, "Вечна жывi, мая Беларусь"
             )
         )
         piesnyBelarusList.add(
             PiesnyListItem(
-                1,
-                R.raw.piesni_belarus_k_tabie_bielarus,
-                "К табе, Беларусь"
+                1, R.raw.piesni_belarus_k_tabie_bielarus, "К табе, Беларусь"
             )
         )
         piesnyBelarusList.add(
             PiesnyListItem(
-                1,
-                R.raw.piesni_belarus_mahutny_boza,
-                "Магутны Божа"
+                1, R.raw.piesni_belarus_mahutny_boza, "Магутны Божа"
             )
         )
         piesnyBelarusList.add(
             PiesnyListItem(
-                1,
-                R.raw.piesni_belarus_malusia_za_ciabie_bielarus,
-                "Малюся за цябе, Беларусь"
+                1, R.raw.piesni_belarus_malusia_za_ciabie_bielarus, "Малюся за цябе, Беларусь"
             )
         )
         piesnyBelarusList.add(
             PiesnyListItem(
-                1,
-                R.raw.piesni_belarus_malitva_piesniary,
-                "Малітва («Песьняры»)"
+                1, R.raw.piesni_belarus_malitva_piesniary, "Малітва («Песьняры»)"
             )
         )
         piesnyBelarusList.add(PiesnyListItem(1, R.raw.piesni_belarus_maja_kraina, "Мая краіна"))
         piesnyBelarusList.add(
             PiesnyListItem(
-                1,
-                R.raw.piesni_belarus_my_choczam_boha,
-                "Мы хочам Бога"
+                1, R.raw.piesni_belarus_my_choczam_boha, "Мы хочам Бога"
             )
         )
         piesnyBelarusList.add(
             PiesnyListItem(
-                1,
-                R.raw.piesni_belarus_malitva_buraukin,
-                "Малітва (Г. Бураўкін)"
+                1, R.raw.piesni_belarus_malitva_buraukin, "Малітва (Г. Бураўкін)"
             )
         )
         piesnyBelarusList.add(
             PiesnyListItem(
-                1,
-                R.raw.piesni_belarus_viarszynia_bielarusi_kryz,
-                "Вяршыня Беларусі – крыж"
+                1, R.raw.piesni_belarus_viarszynia_bielarusi_kryz, "Вяршыня Беларусі – крыж"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_zorka_zazziala_avemaria,
-                "Ave Maria (Зорка зазьзяла)"
+                3, R.raw.piesni_kalady_zorka_zazziala_avemaria, "Ave Maria (Зорка зазьзяла)"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_a_szto_heta_za_spievy,
-                "А што гэта за сьпевы"
+                3, R.raw.piesni_kalady_a_szto_heta_za_spievy, "А што гэта за сьпевы"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_a_u_sviecie_nam_navina_byla,
-                "А ў сьвеце нам навіна была"
+                3, R.raw.piesni_kalady_a_u_sviecie_nam_navina_byla, "А ў сьвеце нам навіна была"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_a_uczora_z_viaczora,
-                "А ўчора з вячора"
+                3, R.raw.piesni_kalady_a_uczora_z_viaczora, "А ўчора з вячора"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_viasiolych_kaladnych_sviatau,
-                "Вясёлых калядных сьвятаў"
+                3, R.raw.piesni_kalady_viasiolych_kaladnych_sviatau, "Вясёлых калядных сьвятаў"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_zazziala_zoraczka_nad_betlejemam,
-                "Зазьзяла зорачка над Бэтлеемам"
+                3, R.raw.piesni_kalady_zazziala_zoraczka_nad_betlejemam, "Зазьзяла зорачка над Бэтлеемам"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_zvon_zvinic,
-                "Звон зьвініць"
+                3, R.raw.piesni_kalady_zvon_zvinic, "Звон зьвініць"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_na_szlachu_u_betlejem,
-                "На шляху ў Бэтлеем"
+                3, R.raw.piesni_kalady_na_szlachu_u_betlejem, "На шляху ў Бэтлеем"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_nieba_i_ziamla,
-                "Неба і зямля"
+                3, R.raw.piesni_kalady_nieba_i_ziamla, "Неба і зямля"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_nova_radasc_stala,
-                "Нова радасьць стала"
+                3, R.raw.piesni_kalady_nova_radasc_stala, "Нова радасьць стала"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_noczka_cichaja_zarysta,
-                "Ночка цiхая, зарыста"
+                3, R.raw.piesni_kalady_noczka_cichaja_zarysta, "Ночка цiхая, зарыста"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_noczczu_sviatoj,
-                "Ноччу сьвятой"
+                3, R.raw.piesni_kalady_noczczu_sviatoj, "Ноччу сьвятой"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_pakazalas_z_nieba_jasnasc,
-                "Паказалась з неба яснасьць"
+                3, R.raw.piesni_kalady_pakazalas_z_nieba_jasnasc, "Паказалась з неба яснасьць"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_pryjdzicie_da_zbaucy,
-                "Прыйдзіце да Збаўцы"
+                3, R.raw.piesni_kalady_pryjdzicie_da_zbaucy, "Прыйдзіце да Збаўцы"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_radasnaja_viestka,
-                "Радасная вестка"
+                3, R.raw.piesni_kalady_radasnaja_viestka, "Радасная вестка"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_u_nacznuju_cisz,
-                "У начную ціш"
+                3, R.raw.piesni_kalady_u_nacznuju_cisz, "У начную ціш"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_uczora_zviaczora_zasviacila_zora,
-                "Учора зьвячора — засьвяціла зора"
+                3, R.raw.piesni_kalady_uczora_zviaczora_zasviacila_zora, "Учора зьвячора — засьвяціла зора"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_cichaja_nocz_arsiennieva,
-                "Ціхая ноч (пер.Н.Арсеньневай)"
+                3, R.raw.piesni_kalady_cichaja_nocz_arsiennieva, "Ціхая ноч (пер.Н.Арсеньневай)"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_cichaja_nocz_dziunaja_nocz,
-                "Ціхая ноч, дзіўная ноч"
+                3, R.raw.piesni_kalady_cichaja_nocz_dziunaja_nocz, "Ціхая ноч, дзіўная ноч"
             )
         )
         piesnyKaliadyList.add(PiesnyListItem(3, R.raw.piesni_kalady_cichaja_nocz, "Ціхая ноч"))
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_pryjdzi_pryjdzi_emanuel_19st,
-                "Прыйдзі, прыйдзі, Эмануэль (ХІХ ст.)"
+                3, R.raw.piesni_kalady_pryjdzi_pryjdzi_emanuel_19st, "Прыйдзі, прыйдзі, Эмануэль (ХІХ ст.)"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_pryjdzi_pryjdzi_emanuel,
-                "Прыйдзі, прыйдзі, Эмануэль (XII–ХVIII стст.)"
+                3, R.raw.piesni_kalady_pryjdzi_pryjdzi_emanuel, "Прыйдзі, прыйдзі, Эмануэль (XII–ХVIII стст.)"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_pierszaje_rastvo,
-                "Першае Раство"
+                3, R.raw.piesni_kalady_pierszaje_rastvo, "Першае Раство"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_zorka_betlejemska,
-                "Зорка Бэтлеемска"
+                3, R.raw.piesni_kalady_zorka_betlejemska, "Зорка Бэтлеемска"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_piesnia_pra_bozaje_naradzennie_boh_prychodzic,
-                "Песьня пра Божае нараджэньне"
+                3, R.raw.piesni_kalady_piesnia_pra_bozaje_naradzennie_boh_prychodzic, "Песьня пра Божае нараджэньне"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_promien_zorki_z_nieba_liusia,
-                "Промень зоркі з неба ліўся"
+                3, R.raw.piesni_kalady_promien_zorki_z_nieba_liusia, "Промень зоркі з неба ліўся"
             )
         )
         piesnyKaliadyList.add(PiesnyListItem(3, R.raw.piesni_kalady_u_betlejem, "У Бэтлеем"))
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_o_zyvatvorny_tvorca_zor,
-                "O, жыватворны Творца зор"
+                3, R.raw.piesni_kalady_o_zyvatvorny_tvorca_zor, "O, жыватворны Творца зор"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_u_horadzie_cara_davida,
-                "У горадзе цара Давіда"
+                3, R.raw.piesni_kalady_u_horadzie_cara_davida, "У горадзе цара Давіда"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_zbauca_svietu,
-                "Збаўца сьвету"
+                3, R.raw.piesni_kalady_zbauca_svietu, "Збаўца сьвету"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_ci_znala_ty_maryja,
-                "Ці знала Ты, Марыя?"
+                3, R.raw.piesni_kalady_ci_znala_ty_maryja, "Ці знала Ты, Марыя?"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_najpiersz_pra_rastvo_first_noel,
-                "Найперш пра Раство"
+                3, R.raw.piesni_kalady_najpiersz_pra_rastvo_first_noel, "Найперш пра Раство"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_maryja_ci_ty_viedala,
-                "Марыя, ці Ты ведала?"
+                3, R.raw.piesni_kalady_maryja_ci_ty_viedala, "Марыя, ці Ты ведала?"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_pryjdzicie_paklanicca_adeste_fideles,
-                "Прыйдзіце пакланіцца"
+                3, R.raw.piesni_kalady_pryjdzicie_paklanicca_adeste_fideles, "Прыйдзіце пакланіцца"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_nam_isus_naradziusia,
-                "Нам Ісус нарадзіўся"
+                3, R.raw.piesni_kalady_nam_isus_naradziusia, "Нам Ісус нарадзіўся"
             )
         )
         piesnyKaliadyList.add(PiesnyListItem(3, R.raw.piesni_kalady_na_rastvo, "На Раство"))
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_dobry_vieczar,
-                "Добры вечар"
+                3, R.raw.piesni_kalady_dobry_vieczar, "Добры вечар"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_dzin_dzilin,
-                "Дзінь-дзілінь"
+                3, R.raw.piesni_kalady_dzin_dzilin, "Дзінь-дзілінь"
             )
         )
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3,
-                R.raw.piesni_kalady_szto_heta_za_dziva,
-                "Што гэта за дзіва"
+                3, R.raw.piesni_kalady_szto_heta_za_dziva, "Што гэта за дзіва"
             )
         )
         piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_0, "Ён паўсюль"))
@@ -597,39 +459,29 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues, se
         piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_3, "Айцец наш і наш Валадар"))
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.piesni_prasl_aliluja_chvalecie_z_nieba,
-                "Алілуя! (Хвалеце з неба...)"
+                0, R.raw.piesni_prasl_aliluja_chvalecie_z_nieba, "Алілуя! (Хвалеце з неба...)"
             )
         )
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.pesny_prasl_5,
-                "Бог блаславіў гэты дзень"
+                0, R.raw.pesny_prasl_5, "Бог блаславіў гэты дзень"
             )
         )
         piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_6, "Бог ёсьць любоў"))
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.pesny_prasl_7,
-                "Богу сьпявай, уся зямля!"
+                0, R.raw.pesny_prasl_7, "Богу сьпявай, уся зямля!"
             )
         )
         piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_8, "Божа мой"))
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.pesny_prasl_9,
-                "Браце мой, мы знайшлі Месію"
+                0, R.raw.pesny_prasl_9, "Браце мой, мы знайшлі Месію"
             )
         )
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.pesny_prasl_10,
-                "Весяліся і пляскай у далоні"
+                0, R.raw.pesny_prasl_10, "Весяліся і пляскай у далоні"
             )
         )
         piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_11, "Вольная воля"))
@@ -638,16 +490,12 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues, se
         piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_14, "Вялікім і цудоўным"))
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.pesny_prasl_15,
-                "Госпад мой заўсёды па маёй правіцы"
+                0, R.raw.pesny_prasl_15, "Госпад мой заўсёды па маёй правіцы"
             )
         )
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.pesny_prasl_16,
-                "Госпаду дзякуйце, бо добры Ён"
+                0, R.raw.pesny_prasl_16, "Госпаду дзякуйце, бо добры Ён"
             )
         )
         piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_17, "Дай Духа любові"))
@@ -655,24 +503,18 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues, se
         piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_19, "Дай, добры Божа"))
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.pesny_prasl_20,
-                "Дакраніся да маіх вачэй"
+                0, R.raw.pesny_prasl_20, "Дакраніся да маіх вачэй"
             )
         )
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.pesny_prasl_21,
-                "Дзякуй за ўсё, што Ты стварыў"
+                0, R.raw.pesny_prasl_21, "Дзякуй за ўсё, што Ты стварыў"
             )
         )
         piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_22, "Дзякуй !"))
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.pesny_prasl_23,
-                "З намі — Пятро і Андрэй"
+                0, R.raw.pesny_prasl_23, "З намі — Пятро і Андрэй"
             )
         )
         piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_24, "Знайдзі мяне"))
@@ -682,16 +524,12 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues, se
         piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_28, "Любоў Твая"))
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.pesny_prasl_29,
-                "Любіць — гэта ахвяраваць"
+                0, R.raw.pesny_prasl_29, "Любіць — гэта ахвяраваць"
             )
         )
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.pesny_prasl_30,
-                "Майго жыцьця — мой Бог крыніца"
+                0, R.raw.pesny_prasl_30, "Майго жыцьця — мой Бог крыніца"
             )
         )
         piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_31, "Маё сэрца"))
@@ -700,16 +538,12 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues, se
         piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_34, "Настане дзень"))
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.pesny_prasl_35,
-                "Невычэрпныя ласкі ў Бога"
+                0, R.raw.pesny_prasl_35, "Невычэрпныя ласкі ў Бога"
             )
         )
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.pesny_prasl_36,
-                "О, калі б ты паслухаў Мяне"
+                0, R.raw.pesny_prasl_36, "О, калі б ты паслухаў Мяне"
             )
         )
         piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_37, "Ойча мой, к Табе іду"))
@@ -717,16 +551,12 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues, se
         piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_39, "Пакліканьне (Човен)"))
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.pesny_prasl_40,
-                "Пачуй мой кліч, чулы Ойча"
+                0, R.raw.pesny_prasl_40, "Пачуй мой кліч, чулы Ойча"
             )
         )
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.pesny_prasl_41,
-                "Песьню славы засьпявайма"
+                0, R.raw.pesny_prasl_41, "Песьню славы засьпявайма"
             )
         )
         piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_42, "Песьня Давіда"))
@@ -750,40 +580,30 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues, se
         piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_60, "Ты — Госпад мой"))
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.piesni_prasl_chvala_tabie_vialiki_boh,
-                "Хвала Табе, вялікі Бог"
+                0, R.raw.piesni_prasl_chvala_tabie_vialiki_boh, "Хвала Табе, вялікі Бог"
             )
         )
         piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_62, "Хвалім Цябе, Божа!"))
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.pesny_prasl_63,
-                "Хрыстос уваскрос! (Resucito)"
+                0, R.raw.pesny_prasl_63, "Хрыстос уваскрос! (Resucito)"
             )
         )
         piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_65, "Шалом алэхем (Мір вам)"))
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.pesny_prasl_66,
-                "Я люблю Цябе, Ойча міласэрны"
+                0, R.raw.pesny_prasl_66, "Я люблю Цябе, Ойча міласэрны"
             )
         )
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.piesni_prasl_ja_ustanu_rana_kab_spiavac,
-                "Я ўстану рана, каб сьпяваць"
+                0, R.raw.piesni_prasl_ja_ustanu_rana_kab_spiavac, "Я ўстану рана, каб сьпяваць"
             )
         )
         piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_68, "Як гэта хораша й міла"))
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.piesni_prasl_jamu_za_usio_slava,
-                "Яму за ўсё слава"
+                0, R.raw.piesni_prasl_jamu_za_usio_slava, "Яму за ўсё слава"
             )
         )
         piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_70, "Цябе, Бога, хвалім"))
@@ -794,102 +614,74 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues, se
         piesnyPraslList.add(PiesnyListItem(0, R.raw.pesny_prasl_75, "Радуйся і слаў Яго"))
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.piesni_prasl_aliluja_leanard_koen_zanna_hauryczenkava,
-                "Алілуя (Я чуў таемны той акорд...)"
+                0, R.raw.piesni_prasl_aliluja_leanard_koen_zanna_hauryczenkava, "Алілуя (Я чуў таемны той акорд...)"
             )
         )
         piesnyPraslList.add(PiesnyListItem(0, R.raw.piesni_prasl_bo_lublu, "Бо люблю"))
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.piesni_prasl_prad_taboju_moj_boh,
-                "Прад табою, мой Бог"
+                0, R.raw.piesni_prasl_prad_taboju_moj_boh, "Прад табою, мой Бог"
             )
         )
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.piesni_prasl_chrystos_uvaskros,
-                "Хрыстос уваскрос"
+                0, R.raw.piesni_prasl_chrystos_uvaskros, "Хрыстос уваскрос"
             )
         )
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.piesni_prasl_aliluja_leanard_koen_maryja_trapaszka,
-                "Алілуя (О Божа, памажы нам жыць...)"
+                0, R.raw.piesni_prasl_aliluja_leanard_koen_maryja_trapaszka, "Алілуя (О Божа, памажы нам жыць...)"
             )
         )
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.piesni_prasl_aliluja_leanard_koen_eduard_akulin,
-                "Алілуя (Сярод нягод і сумных кроз...)"
+                0, R.raw.piesni_prasl_aliluja_leanard_koen_eduard_akulin, "Алілуя (Сярод нягод і сумных кроз...)"
             )
         )
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.piesni_prasl_pachvala_sviatomu_jazafatu,
-                "Пахвала сьвятому Язафату"
+                0, R.raw.piesni_prasl_pachvala_sviatomu_jazafatu, "Пахвала сьвятому Язафату"
             )
         )
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.piesni_prasl_nie_cviki_ciabie_trymali,
-                "Не цьвікі Цябе трымалі, а мой грэх"
+                0, R.raw.piesni_prasl_nie_cviki_ciabie_trymali, "Не цьвікі Цябе трымалі, а мой грэх"
             )
         )
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.piesni_prasl_kryzu_chrystovy,
-                "Крыжу Хрыстовы"
+                0, R.raw.piesni_prasl_kryzu_chrystovy, "Крыжу Хрыстовы"
             )
         )
         piesnyPraslList.add(PiesnyListItem(0, R.raw.piesni_prasl_tvoj_chram, "Твой хpам"))
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.piesni_prasl_za_usio_tabie_ja_dziakuju,
-                "За ўсё Табе я дзякую"
+                0, R.raw.piesni_prasl_za_usio_tabie_ja_dziakuju, "За ўсё Табе я дзякую"
             )
         )
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.piesni_prasl_himn_na_uszanavannie_sviatych,
-                "Гімн на ўшанаваньне сьвятых"
+                0, R.raw.piesni_prasl_himn_na_uszanavannie_sviatych, "Гімн на ўшанаваньне сьвятых"
             )
         )
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.piesni_prasl_addac_z_lubovi_usio,
-                "Аддаць з любові ўсё"
+                0, R.raw.piesni_prasl_addac_z_lubovi_usio, "Аддаць з любові ўсё"
             )
         )
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.piesni_prasl_sionniaszni_dzien,
-                "Сёньняшні дзень"
+                0, R.raw.piesni_prasl_sionniaszni_dzien, "Сёньняшні дзень"
             )
         )
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.piesni_prasl_ci_ty_byu_na_halhofie,
-                "Ці ты быў на Галгофе"
+                0, R.raw.piesni_prasl_ci_ty_byu_na_halhofie, "Ці ты быў на Галгофе"
             )
         )
         piesnyPraslList.add(
             PiesnyListItem(
-                0,
-                R.raw.piesni_prasl_dzien_za_dniom,
-                "Дзень за днём"
+                0, R.raw.piesni_prasl_dzien_za_dniom, "Дзень за днём"
             )
         )
         piesnyTaizeList.add(PiesnyListItem(4, R.raw.pesny_taize_0, "Magnifikat"))
@@ -898,33 +690,25 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues, se
         piesnyTaizeList.add(PiesnyListItem(4, R.raw.pesny_taize_3, "Блаславёны Бог"))
         piesnyTaizeList.add(
             PiesnyListItem(
-                4,
-                R.raw.pesny_taize_4,
-                "Бог мой, Iсус, сьвяцi нам у цемры"
+                4, R.raw.pesny_taize_4, "Бог мой, Iсус, сьвяцi нам у цемры"
             )
         )
         piesnyTaizeList.add(PiesnyListItem(4, R.raw.pesny_taize_5, "Будзь са Мной"))
         piesnyTaizeList.add(
             PiesnyListItem(
-                4,
-                R.raw.pesny_taize_6,
-                "Дай нам, Божа, моц ласкi Сваёй"
+                4, R.raw.pesny_taize_6, "Дай нам, Божа, моц ласкi Сваёй"
             )
         )
         piesnyTaizeList.add(PiesnyListItem(4, R.raw.pesny_taize_7, "Дзякуем Табе, Божа наш"))
         piesnyTaizeList.add(PiesnyListItem(4, R.raw.pesny_taize_8, "Дзякуем Табе, Хрысьце"))
         piesnyTaizeList.add(
             PiesnyListItem(
-                4,
-                R.raw.pesny_taize_9,
-                "Кожны дзень Бог дае мне сiлы"
+                4, R.raw.pesny_taize_9, "Кожны дзень Бог дае мне сiлы"
             )
         )
         piesnyTaizeList.add(
             PiesnyListItem(
-                4,
-                R.raw.pesny_taize_10,
-                "Мая душа ў Богу мае спакой"
+                4, R.raw.pesny_taize_10, "Мая душа ў Богу мае спакой"
             )
         )
         piesnyTaizeList.add(PiesnyListItem(4, R.raw.pesny_taize_11, "О, Iсусе"))
@@ -934,9 +718,7 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues, se
         piesnyTaizeList.add(PiesnyListItem(4, R.raw.pesny_taize_15, "У цемры нашых дзён"))
         piesnyTaizeList.add(
             PiesnyListItem(
-                4,
-                R.raw.pesny_taize_16,
-                "Хай тваё сэрца больш не журыцца"
+                4, R.raw.pesny_taize_16, "Хай тваё сэрца больш не журыцца"
             )
         )
         piesnyPraslList.sortBy { it.title }
@@ -956,11 +738,7 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues, se
     }
     val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
     val list = listOf(
-        stringResource(R.string.pesny1),
-        stringResource(R.string.pesny2),
-        stringResource(R.string.pesny3),
-        stringResource(R.string.pesny4),
-        stringResource(R.string.pesny5)
+        stringResource(R.string.pesny1), stringResource(R.string.pesny2), stringResource(R.string.pesny3), stringResource(R.string.pesny4), stringResource(R.string.pesny5)
     )
     viewModel.filterItem(search)
     val pagerState = rememberPagerState(pageCount = {
@@ -970,53 +748,38 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues, se
     if (!searchText) {
         LaunchedEffect(pagerState) {
             snapshotFlow { pagerState.currentPage }.collect { page ->
-                val edit = k.edit()
-                edit.putInt("pubrikaPesnyMenu", page)
-                edit.apply()
+                k.edit {
+                    putInt("pubrikaPesnyMenu", page)
+                }
             }
         }
     }
     Column {
         if (!searchText) {
             SecondaryScrollableTabRow(
-                modifier = Modifier.background(MaterialTheme.colorScheme.onPrimary),
-                selectedTabIndex = pagerState.currentPage,
-                indicator = {
+                modifier = Modifier.background(MaterialTheme.colorScheme.onPrimary), selectedTabIndex = pagerState.currentPage, indicator = {
                     TabRowDefaults.PrimaryIndicator(
-                        modifier = Modifier
-                            .tabIndicatorOffset(pagerState.currentPage),
-                        width = Dp.Unspecified,
-                        shape = RoundedCornerShape(
+                        modifier = Modifier.tabIndicatorOffset(pagerState.currentPage), width = Dp.Unspecified, shape = RoundedCornerShape(
                             topStart = 5.dp,
                             topEnd = 5.dp,
                             bottomEnd = 0.dp,
                             bottomStart = 0.dp,
                         )
                     )
-                }
-            ) {
+                }) {
                 list.forEachIndexed { index, title ->
-                    Tab(
-                        selected = pagerState.currentPage == index,
-                        onClick = {
-                            val edit = k.edit()
-                            edit.putInt("pubrikaPesnyMenu", index)
-                            edit.apply()
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(index)
-                            }
-                        },
-                        text = {
-                            Text(
-                                text = title,
-                                fontSize = Settings.fontInterface.sp,
-                                lineHeight = 18.sp * 1.15f,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                color = MaterialTheme.colorScheme.secondary
-                            )
+                    Tab(selected = pagerState.currentPage == index, onClick = {
+                        k.edit {
+                            putInt("pubrikaPesnyMenu", index)
                         }
-                    )
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(index)
+                        }
+                    }, text = {
+                        Text(
+                            text = title, fontSize = Settings.fontInterface.sp, lineHeight = 18.sp * 1.15f, maxLines = 1, overflow = TextOverflow.Ellipsis, color = MaterialTheme.colorScheme.secondary
+                        )
+                    })
                 }
             }
         }
@@ -1024,8 +787,7 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues, se
             PiesnyList(filteredItems, navigationActions, innerPadding)
         } else {
             HorizontalPager(
-                state = pagerState,
-                verticalAlignment = Alignment.Top
+                state = pagerState, verticalAlignment = Alignment.Top
             ) { page ->
                 val piesnyList = when (page) {
                     0 -> piesnyPraslList
@@ -1047,8 +809,7 @@ fun PiesnyList(piesnyList: ArrayList<PiesnyListItem>, navigationActions: AppNavi
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
             override fun onPreScroll(
-                available: Offset,
-                source: NestedScrollSource
+                available: Offset, source: NestedScrollSource
             ): Offset {
                 keyboardController?.hide()
                 return super.onPreScroll(available, source)
@@ -1057,33 +818,24 @@ fun PiesnyList(piesnyList: ArrayList<PiesnyListItem>, navigationActions: AppNavi
     }
     LazyColumn(Modifier.nestedScroll(nestedScrollConnection)) {
         items(
-            piesnyList.size,
-            key = { index -> piesnyList[index].title + index }) { index ->
+            piesnyList.size, key = { index -> piesnyList[index].title + index }) { index ->
             Column {
                 Row(
                     modifier = Modifier
                         .padding(start = 10.dp)
                         .clickable {
                             navigationActions.navigateToBogaslujbovyia(
-                                piesnyList[index].title,
-                                piesnyList[index].resurs
+                                piesnyList[index].title, piesnyList[index].resurs
                             )
-                        },
-                    verticalAlignment = Alignment.CenterVertically
+                        }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier.size(12.dp, 12.dp),
-                        painter = painterResource(R.drawable.krest),
-                        tint = MaterialTheme.colorScheme.primary,
-                        contentDescription = null
+                        modifier = Modifier.size(12.dp, 12.dp), painter = painterResource(R.drawable.krest), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                     )
                     Text(
-                        text = piesnyList[index].title,
-                        modifier = Modifier
+                        text = piesnyList[index].title, modifier = Modifier
                             .fillMaxSize()
-                            .padding(10.dp),
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = Settings.fontInterface.sp
+                            .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                     )
                 }
             }

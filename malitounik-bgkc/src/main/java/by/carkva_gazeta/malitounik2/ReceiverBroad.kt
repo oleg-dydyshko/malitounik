@@ -8,12 +8,12 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.media.RingtoneManager
-import android.net.Uri
 import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import java.util.Calendar
 
 class ReceiverBroad : BroadcastReceiver() {
@@ -69,7 +69,7 @@ class ReceiverBroad : BroadcastReceiver() {
             uri = when (sound) {
                 1 -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
                 2 -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
-                3 -> Uri.parse(chin.getString("soundURI", ""))
+                3 -> chin.getString("soundURI", "")?.toUri()
                 else -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
             }
         }

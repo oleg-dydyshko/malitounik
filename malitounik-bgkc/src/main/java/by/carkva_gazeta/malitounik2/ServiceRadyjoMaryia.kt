@@ -6,11 +6,9 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Binder
 import android.os.Build
 import android.support.v4.media.MediaMetadataCompat
@@ -32,6 +30,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.Timer
 import java.util.TimerTask
+import androidx.core.net.toUri
 
 
 class ServiceRadyjoMaryia : Service() {
@@ -54,7 +53,7 @@ class ServiceRadyjoMaryia : Service() {
     private var player: ExoPlayer? = null
     private val isPlaying: Boolean
         get() {
-            val play = player?.isPlaying ?: false
+            val play = player?.isPlaying == true
             isPlayingRadyjoMaryia = play
             return play
         }
@@ -77,14 +76,14 @@ class ServiceRadyjoMaryia : Service() {
 
     private fun initRadioMaria() {
         player = ExoPlayer.Builder(this).build().apply {
-            setMediaItem(MediaItem.fromUri(Uri.parse("https://server.radiorm.by:8443/live")))
+            setMediaItem(MediaItem.fromUri("https://server.radiorm.by:8443/live".toUri()))
             prepare()
             addListener(object : Player.Listener {
 
                 override fun onPlayerError(error: PlaybackException) {
                     stopServiceRadioMaria(true)
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://server.radiorm.by:8443/live"))
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    val intent = Intent(Intent.ACTION_VIEW, "https://server.radiorm.by:8443/live".toUri())
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     startActivity(intent)
                 }
 
@@ -97,7 +96,7 @@ class ServiceRadyjoMaryia : Service() {
                         }
                         ServiceCompat.startForeground(this@ServiceRadyjoMaryia, 300, setRadioNotification(), flag)
                         listener?.playingRadioMariaStateReady()
-                        val sp = getSharedPreferences("biblia", Context.MODE_PRIVATE)
+                        val sp = getSharedPreferences("biblia", MODE_PRIVATE)
                         if (sp.getBoolean("WIDGET_RADYJO_MARYIA_ENABLED", false)) {
                             val intent = Intent(this@ServiceRadyjoMaryia, WidgetRadyjoMaryia::class.java)
                             intent.putExtra("action", PLAYING_RADIO_MARIA_STATE_READY)
@@ -121,7 +120,7 @@ class ServiceRadyjoMaryia : Service() {
         stopPlay()
         stopSelf()
         isServiceRadioMaryiaRun = false
-        val sp = getSharedPreferences("biblia", Context.MODE_PRIVATE)
+        val sp = getSharedPreferences("biblia", MODE_PRIVATE)
         if (sp.getBoolean("WIDGET_RADYJO_MARYIA_ENABLED", false)) {
             val intent = Intent(this@ServiceRadyjoMaryia, WidgetRadyjoMaryia::class.java)
             intent.putExtra("isError", isError)
@@ -151,7 +150,7 @@ class ServiceRadyjoMaryia : Service() {
 
     private fun stopPlay() {
         player?.stop()
-        val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val nm = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         nm.cancel(100)
     }
 
@@ -195,7 +194,7 @@ class ServiceRadyjoMaryia : Service() {
         if (action == PLAY_PAUSE) {
             playOrPause()
             if (isPlaybackStateReady) {
-                val sp = getSharedPreferences("biblia", Context.MODE_PRIVATE)
+                val sp = getSharedPreferences("biblia", MODE_PRIVATE)
                 if (sp.getBoolean("WIDGET_RADYJO_MARYIA_ENABLED", false)) {
                     sendBroadcast(Intent(this, WidgetRadyjoMaryia::class.java))
                 }
@@ -241,7 +240,7 @@ class ServiceRadyjoMaryia : Service() {
                                             0
                                         }
                                         ServiceCompat.startForeground(this@ServiceRadyjoMaryia, 300, setRadioNotification(), flag)
-                                        val sp = getSharedPreferences("biblia", Context.MODE_PRIVATE)
+                                        val sp = getSharedPreferences("biblia", MODE_PRIVATE)
                                         if (sp.getBoolean("WIDGET_RADYJO_MARYIA_ENABLED", false)) {
                                             sendBroadcast(Intent(this@ServiceRadyjoMaryia, WidgetRadyjoMaryia::class.java))
                                         }
