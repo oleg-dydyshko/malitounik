@@ -830,7 +830,7 @@ fun PiesnyList(piesnyList: ArrayList<PiesnyListItem>, navigationActions: AppNavi
                         }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier.size(12.dp, 12.dp), painter = painterResource(R.drawable.krest), tint = MaterialTheme.colorScheme.primary, contentDescription = null
+                        modifier = Modifier.size(12.dp, 12.dp), painter = painterResource(R.drawable.description), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                     )
                     Text(
                         text = piesnyList[index].title, modifier = Modifier

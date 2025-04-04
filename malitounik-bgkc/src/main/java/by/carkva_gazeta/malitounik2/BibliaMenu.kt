@@ -1,6 +1,11 @@
 package by.carkva_gazeta.malitounik2
 
 import android.content.Context
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -551,7 +556,13 @@ fun BibliaMenu(
                     ) {
                         Text(stringResource(R.string.pesni), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
                     }
-                    if (pesnyView) {
+                    AnimatedVisibility(
+                        pesnyView, enter = fadeIn(
+                            tween(
+                                durationMillis = 1000, easing = LinearOutSlowInEasing
+                            )
+                        ), exit = fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                    ) {
                         Column {
                             for (i in 1..9) {
                                 Row(
@@ -578,7 +589,7 @@ fun BibliaMenu(
                                 ) {
                                     Icon(
                                         modifier = Modifier.size(12.dp, 12.dp),
-                                        painter = painterResource(R.drawable.krest),
+                                        painter = painterResource(R.drawable.description),
                                         tint = MaterialTheme.colorScheme.primary,
                                         contentDescription = null
                                     )
@@ -632,8 +643,16 @@ fun BibliaMenu(
                         Text(stringResource(R.string.title_psalter_privila), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
                     }
                 }
-                if (dialogImageView) {
-                    Image(painter = painterResource(R.drawable.pravily_chytannia_psaltyria), contentDescription = "", modifier = Modifier.padding(top = 10.dp).fillMaxWidth(), contentScale = ContentScale.FillWidth)
+                AnimatedVisibility(
+                    dialogImageView, enter = fadeIn(
+                        tween(
+                            durationMillis = 1000, easing = LinearOutSlowInEasing
+                        )
+                    ), exit = fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                ) {
+                    Image(painter = painterResource(R.drawable.pravily_chytannia_psaltyria), contentDescription = "", modifier = Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth(), contentScale = ContentScale.FillWidth)
                 }
                 if (savePerevod == Settings.PEREVODSEMUXI || savePerevod == Settings.PEREVODBOKUNA) {
                     TextButton(
@@ -752,7 +771,9 @@ fun DialogImage(
                 .padding(16.dp),
             shape = RoundedCornerShape(16.dp),
         ) {
-            Image(painter = painter, contentDescription = "", Modifier.fillMaxWidth().verticalScroll(rememberScrollState()), contentScale = ContentScale.FillWidth)
+            Image(painter = painter, contentDescription = "", Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState()), contentScale = ContentScale.FillWidth)
         }
     }
     /*(

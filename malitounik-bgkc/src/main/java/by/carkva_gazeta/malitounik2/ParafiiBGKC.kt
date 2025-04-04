@@ -73,7 +73,7 @@ fun ParafiiBGKC(navController: NavHostController, innerPadding: PaddingValues) {
                 ) {
                     Icon(
                         modifier = Modifier.size(12.dp, 12.dp),
-                        painter = painterResource(R.drawable.krest),
+                        painter = painterResource(R.drawable.description),
                         tint = MaterialTheme.colorScheme.primary,
                         contentDescription = null
                     )

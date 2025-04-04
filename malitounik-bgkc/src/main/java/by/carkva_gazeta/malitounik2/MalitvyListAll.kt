@@ -511,7 +511,7 @@ fun MalitvyListAll(
                                 ) {
                                     Icon(
                                         modifier = Modifier.size(12.dp, 12.dp),
-                                        painter = painterResource(R.drawable.krest),
+                                        painter = painterResource(R.drawable.description),
                                         tint = MaterialTheme.colorScheme.primary,
                                         contentDescription = null
                                     )
@@ -644,7 +644,7 @@ fun MalitvyListAll(
                             Icon(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = if (menuItem == Settings.MENU_TRYEDZ || menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH || menuItem == Settings.MENU_TRYEDZ_POSNAIA) painterResource(R.drawable.folder)
-                                else painterResource(R.drawable.krest),
+                                else painterResource(R.drawable.description),
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = null
                             )
@@ -750,7 +750,7 @@ fun PynagodnyiaList(prynagodnyaList: ArrayList<BogaslujbovyiaListData>, navigati
                 ) {
                     Icon(
                         modifier = Modifier.size(12.dp, 12.dp),
-                        painter = painterResource(R.drawable.krest),
+                        painter = painterResource(R.drawable.description),
                         tint = MaterialTheme.colorScheme.primary,
                         contentDescription = null
                     )

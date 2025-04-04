@@ -57,7 +57,7 @@ import kotlin.random.Random
 fun DrawView(
     modifier: Modifier = Modifier,
     route: String,
-    navigateToRazdel: (String) -> Unit = { }
+    navigateToRazdel: (String) -> Unit
 ) {
     val context = LocalActivity.current as MainActivity
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
@@ -609,7 +609,8 @@ fun DrawerHeader(modifier: Modifier) {
             text = stringResource(R.string.bgkc_resource),
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.secondary,
-            fontSize = (Settings.fontInterface - 2).sp
+            fontSize = (Settings.fontInterface - 2).sp,
+            fontWeight = FontWeight.Bold
         )
     }
 }

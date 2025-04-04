@@ -7,6 +7,8 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
@@ -154,72 +156,192 @@ fun AppNavGraph(
     NavHost(
         navController = navController,
         startDestination = start,
-        enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(1000)) },
-        exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(1000)) },
-        popEnterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(1000)) },
-        popExitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(1000)) }
+        enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(700)) },
+        exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(700)) },
+        popEnterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(700)) },
+        popExitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(700)) }
     ) {
-        composable(AllDestinations.KALIANDAR) {
+        composable(AllDestinations.KALIANDAR,
+            enterTransition = {
+                slideIntoContainer(
+                    animationSpec = tween(700, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    animationSpec = tween(700, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                )
+            }) {
             Settings.destinations = AllDestinations.KALIANDAR
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState
             )
+            LaunchedEffect(Unit) {
+                coroutineScope.launch {
+                    drawerState.close()
+                }
+            }
         }
 
-        composable(AllDestinations.AKAFIST_MENU) {
+        composable(AllDestinations.AKAFIST_MENU,
+            enterTransition = {
+                slideIntoContainer(
+                    animationSpec = tween(700, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    animationSpec = tween(700, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                )
+            }) {
             Settings.destinations = AllDestinations.AKAFIST_MENU
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState
             )
+            LaunchedEffect(Unit) {
+                coroutineScope.launch {
+                    drawerState.close()
+                }
+            }
         }
 
-        composable(AllDestinations.RUJANEC_MENU) {
+        composable(AllDestinations.RUJANEC_MENU,
+            enterTransition = {
+                slideIntoContainer(
+                    animationSpec = tween(700, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    animationSpec = tween(700, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                )
+            }) {
             Settings.destinations = AllDestinations.RUJANEC_MENU
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState
             )
+            LaunchedEffect(Unit) {
+                coroutineScope.launch {
+                    drawerState.close()
+                }
+            }
         }
 
-        composable(AllDestinations.MAE_NATATKI_MENU) {
+        composable(AllDestinations.MAE_NATATKI_MENU,
+            enterTransition = {
+                slideIntoContainer(
+                    animationSpec = tween(700, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    animationSpec = tween(700, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                )
+            }) {
             Settings.destinations = AllDestinations.MAE_NATATKI_MENU
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState
             )
+            LaunchedEffect(Unit) {
+                coroutineScope.launch {
+                    drawerState.close()
+                }
+            }
         }
 
-        composable(AllDestinations.BOGASLUJBOVYIA_MENU) {
+        composable(
+            AllDestinations.BOGASLUJBOVYIA_MENU,
+            enterTransition = {
+                slideIntoContainer(
+                    animationSpec = tween(700, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    animationSpec = tween(700, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                )
+            }) {
             Settings.destinations = AllDestinations.BOGASLUJBOVYIA_MENU
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState
             )
+            LaunchedEffect(Unit) {
+                coroutineScope.launch {
+                    drawerState.close()
+                }
+            }
         }
 
-        composable(AllDestinations.MALITVY_MENU) {
+        composable(AllDestinations.MALITVY_MENU,
+            enterTransition = {
+                slideIntoContainer(
+                    animationSpec = tween(700, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    animationSpec = tween(700, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                )
+            }) {
             Settings.destinations = AllDestinations.MALITVY_MENU
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState
             )
+            LaunchedEffect(Unit) {
+                coroutineScope.launch {
+                    drawerState.close()
+                }
+            }
         }
 
-        composable(AllDestinations.BIBLIA) {
+        composable(AllDestinations.BIBLIA,
+            enterTransition = {
+                slideIntoContainer(
+                    animationSpec = tween(700, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    animationSpec = tween(700, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                )
+            }) {
             Settings.destinations = AllDestinations.BIBLIA
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState
             )
+            LaunchedEffect(Unit) {
+                coroutineScope.launch {
+                    drawerState.close()
+                }
+            }
         }
 
         composable(AllDestinations.KALIANDAR_YEAR) {
@@ -231,35 +353,103 @@ fun AppNavGraph(
             )
         }
 
-        composable(AllDestinations.VYBRANAE_LIST) {
+        composable(AllDestinations.VYBRANAE_LIST,
+            enterTransition = {
+                slideIntoContainer(
+                    animationSpec = tween(700, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    animationSpec = tween(700, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                )
+            }) {
             Settings.destinations = AllDestinations.VYBRANAE_LIST
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState
             )
+            LaunchedEffect(Unit) {
+                coroutineScope.launch {
+                    drawerState.close()
+                }
+            }
         }
 
-        composable(AllDestinations.BIBLIJATEKA_LIST) {
+        composable(AllDestinations.BIBLIJATEKA_LIST,
+            enterTransition = {
+                slideIntoContainer(
+                    animationSpec = tween(700, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    animationSpec = tween(700, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                )
+            }) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_LIST
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState
             )
+            LaunchedEffect(Unit) {
+                coroutineScope.launch {
+                    drawerState.close()
+                }
+            }
         }
 
-        composable(AllDestinations.PIESNY_LIST) {
+        composable(AllDestinations.PIESNY_LIST,
+            enterTransition = {
+                slideIntoContainer(
+                    animationSpec = tween(700, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    animationSpec = tween(700, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                )
+            }) {
             Settings.destinations = AllDestinations.PIESNY_LIST
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState
             )
+            LaunchedEffect(Unit) {
+                coroutineScope.launch {
+                    drawerState.close()
+                }
+            }
         }
 
-        composable(AllDestinations.PADRYXTOUKA) {
+        composable(AllDestinations.PADRYXTOUKA,
+            enterTransition = {
+                slideIntoContainer(
+                    animationSpec = tween(700, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    animationSpec = tween(700, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                )
+            }) {
             Bogaslujbovyia(navController, stringResource(R.string.spovedz), R.raw.padryxtouka_da_spovedzi)
+            LaunchedEffect(Unit) {
+                coroutineScope.launch {
+                    drawerState.close()
+                }
+            }
         }
 
         composable(AllDestinations.SEARCH_SVITYIA) {
@@ -290,8 +480,25 @@ fun AppNavGraph(
             SviatyiaView(navController, svity, year, mun, day)
         }
 
-        composable(AllDestinations.PAMIATKA) {
+        composable(AllDestinations.PAMIATKA,
+            enterTransition = {
+                slideIntoContainer(
+                    animationSpec = tween(700, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    animationSpec = tween(700, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                )
+            }) {
             Bogaslujbovyia(navController, stringResource(R.string.pamiatka), R.raw.pamiatka)
+            LaunchedEffect(Unit) {
+                coroutineScope.launch {
+                    drawerState.close()
+                }
+            }
         }
 
         composable(AllDestinations.PRANAS) {
@@ -302,35 +509,86 @@ fun AppNavGraph(
             Bogaslujbovyia(navController, stringResource(R.string.help), R.raw.help)
         }
 
-        composable(AllDestinations.SVAITY_MUNU) {
+        composable(AllDestinations.SVAITY_MUNU,
+            enterTransition = {
+                slideIntoContainer(
+                    animationSpec = tween(700, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    animationSpec = tween(700, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                )
+            }) {
             Settings.destinations = AllDestinations.SVAITY_MUNU
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState
             )
+            LaunchedEffect(Unit) {
+                coroutineScope.launch {
+                    drawerState.close()
+                }
+            }
         }
 
-        composable(AllDestinations.PARAFII_BGKC) {
+        composable(AllDestinations.PARAFII_BGKC,
+            enterTransition = {
+                slideIntoContainer(
+                    animationSpec = tween(700, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    animationSpec = tween(700, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                )
+            }) {
             Settings.destinations = AllDestinations.PARAFII_BGKC
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState
             )
+            LaunchedEffect(Unit) {
+                coroutineScope.launch {
+                    drawerState.close()
+                }
+            }
         }
 
-        composable(AllDestinations.PASHALIA) {
+        composable(AllDestinations.PASHALIA,
+            enterTransition = {
+                slideIntoContainer(
+                    animationSpec = tween(700, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    animationSpec = tween(700, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                )
+            }) {
             Settings.destinations = AllDestinations.PASHALIA
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState
             )
+            LaunchedEffect(Unit) {
+                coroutineScope.launch {
+                    drawerState.close()
+                }
+            }
         }
 
         composable(
-            AllDestinations.BIBLIJATEKA + "/{title}/{fileName}",
+            AllDestinations.BIBLIJATEKA + "/{title}/{fileName}"
         ) { stackEntry ->
             val title = stackEntry.arguments?.getString("title") ?: ""
             val fileName = stackEntry.arguments?.getString("fileName") ?: ""
@@ -592,7 +850,7 @@ fun MainConteiner(
     }
 
     if (drawerState.isOpen) isAppearanceLight =
-        !(LocalActivity.current as MainActivity).dzenNoch //!isSystemInDarkTheme()
+        !(LocalActivity.current as MainActivity).dzenNoch
     SideEffect {
         val window = (view.context as Activity).window
         WindowCompat.getInsetsController(
@@ -672,28 +930,26 @@ fun MainConteiner(
         DrawView(
             route = currentRoute,
             navigateToRazdel = { razdzel ->
-                when (razdzel) {
-                    AllDestinations.KALIANDAR -> {
-                        if (k.getBoolean("caliandarList", false)) navigationActions.navigateToKaliandarYear()
-                        else navigationActions.navigateToKaliandar()
+                    when (razdzel) {
+                        AllDestinations.KALIANDAR -> {
+                            if (k.getBoolean("caliandarList", false)) navigationActions.navigateToKaliandarYear()
+                            else navigationActions.navigateToKaliandar()
+                        }
+                        AllDestinations.BOGASLUJBOVYIA_MENU -> navigationActions.navigateToBogaslujbovyiaMenu()
+                        AllDestinations.MALITVY_MENU -> navigationActions.navigateToMalitvyMenu()
+                        AllDestinations.BIBLIA -> navigationActions.navigateToBiblia()
+                        AllDestinations.VYBRANAE_LIST -> navigationActions.navigateToVybranaeList()
+                        AllDestinations.AKAFIST_MENU -> navigationActions.navigateToAkafistMenu()
+                        AllDestinations.RUJANEC_MENU -> navigationActions.navigateToRujanecMenu()
+                        AllDestinations.MAE_NATATKI_MENU -> navigationActions.navigateToMaeNatatkiMenu()
+                        AllDestinations.BIBLIJATEKA_LIST -> navigationActions.navigateToBiblijatekaList()
+                        AllDestinations.PIESNY_LIST -> navigationActions.navigateToPiesnyList()
+                        AllDestinations.PADRYXTOUKA -> navigationActions.navigateToPadryxtouka()
+                        AllDestinations.PAMIATKA -> navigationActions.navigateToPamiatka()
+                        AllDestinations.SVAITY_MUNU -> navigationActions.navigateToSviaty()
+                        AllDestinations.PARAFII_BGKC -> navigationActions.navigateToParafiiBgkc()
+                        AllDestinations.PASHALIA -> navigationActions.navigateToPashalia()
                     }
-
-                    AllDestinations.BOGASLUJBOVYIA_MENU -> navigationActions.navigateToBogaslujbovyiaMenu()
-                    AllDestinations.MALITVY_MENU -> navigationActions.navigateToMalitvyMenu()
-                    AllDestinations.BIBLIA -> navigationActions.navigateToBiblia()
-                    AllDestinations.VYBRANAE_LIST -> navigationActions.navigateToVybranaeList()
-                    AllDestinations.AKAFIST_MENU -> navigationActions.navigateToAkafistMenu()
-                    AllDestinations.RUJANEC_MENU -> navigationActions.navigateToRujanecMenu()
-                    AllDestinations.MAE_NATATKI_MENU -> navigationActions.navigateToMaeNatatkiMenu()
-                    AllDestinations.BIBLIJATEKA_LIST -> navigationActions.navigateToBiblijatekaList()
-                    AllDestinations.PIESNY_LIST -> navigationActions.navigateToPiesnyList()
-                    AllDestinations.PADRYXTOUKA -> navigationActions.navigateToPadryxtouka()
-                    AllDestinations.PAMIATKA -> navigationActions.navigateToPamiatka()
-                    AllDestinations.SVAITY_MUNU -> navigationActions.navigateToSviaty()
-                    AllDestinations.PARAFII_BGKC -> navigationActions.navigateToParafiiBgkc()
-                    AllDestinations.PASHALIA -> navigationActions.navigateToPashalia()
-                }
-                coroutineScope.launch { drawerState.close() }
             },
         )
     }, drawerState = drawerState) {
