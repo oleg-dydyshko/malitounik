@@ -324,6 +324,7 @@ fun Bogaslujbovyia(
             textLayout.value?.let { layout ->
                 searchJob = CoroutineScope(Dispatchers.Main).launch {
                     result.clear()
+                    resultPosition = 0
                     result.addAll(findAllAsanc(layout.layoutInput.text.text, searshString))
                     textLayout.value?.let { layout ->
                         if (result.isNotEmpty()) {
