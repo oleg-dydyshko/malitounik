@@ -28,6 +28,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -49,14 +50,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik2.views.AppNavigationActions
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class FilterPiesnyListModel : ViewModel() {
-    private val items = ArrayList<PiesnyListItem>()
+    private val items = SnapshotStateList<PiesnyListItem>()
 
     private val _filteredItems = MutableStateFlow(items)
-    var filteredItems: StateFlow<ArrayList<PiesnyListItem>> = _filteredItems
+    var filteredItems: MutableStateFlow<SnapshotStateList<PiesnyListItem>> = _filteredItems
 
     fun clear() {
         items.clear()
@@ -68,14 +68,16 @@ class FilterPiesnyListModel : ViewModel() {
         }
     }
 
-    fun addAllItemList(item: ArrayList<PiesnyListItem>) {
+    fun addAllItemList(item: SnapshotStateList<PiesnyListItem>) {
         items.addAll(item)
     }
 
     fun filterItem(search: String) {
-        _filteredItems.value = items.filter {
-            it.title.contains(search, ignoreCase = true)
-        } as ArrayList<PiesnyListItem>
+        if (search.isNotEmpty()) {
+            _filteredItems.value = items.filter {
+                it.title.contains(search, ignoreCase = true)
+            } as SnapshotStateList<PiesnyListItem>
+        }
     }
 }
 
@@ -97,11 +99,11 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues, se
             }
         )
     }
-    val piesnyBagarList = remember { ArrayList<PiesnyListItem>() }
-    val piesnyBelarusList = remember { ArrayList<PiesnyListItem>() }
-    val piesnyKaliadyList = remember { ArrayList<PiesnyListItem>() }
-    val piesnyPraslList = remember { ArrayList<PiesnyListItem>() }
-    val piesnyTaizeList = remember { ArrayList<PiesnyListItem>() }
+    val piesnyBagarList = remember { SnapshotStateList<PiesnyListItem>() }
+    val piesnyBelarusList = remember { SnapshotStateList<PiesnyListItem>() }
+    val piesnyKaliadyList = remember { SnapshotStateList<PiesnyListItem>() }
+    val piesnyPraslList = remember { SnapshotStateList<PiesnyListItem>() }
+    val piesnyTaizeList = remember { SnapshotStateList<PiesnyListItem>() }
     LaunchedEffect(Unit) {
         piesnyBagarList.add(
             PiesnyListItem(
@@ -804,7 +806,7 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues, se
 }
 
 @Composable
-fun PiesnyList(piesnyList: ArrayList<PiesnyListItem>, navigationActions: AppNavigationActions, innerPadding: PaddingValues) {
+fun PiesnyList(piesnyList: SnapshotStateList<PiesnyListItem>, navigationActions: AppNavigationActions, innerPadding: PaddingValues) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {

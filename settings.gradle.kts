@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "malitounik"
 include(":malitounik-bgkc")
-//include(":admin")
+include(":admin")

@@ -97,8 +97,10 @@ class FilterBiblijatekaModel : ViewModel() {
     }
 
     fun filterItem(search: String) {
-        _filteredItems.value =
-            items.filter { it[1].contains(search, ignoreCase = true) } as SnapshotStateList<ArrayList<String>>
+        if (search.isNotEmpty()) {
+            _filteredItems.value =
+                items.filter { it[1].contains(search, ignoreCase = true) } as SnapshotStateList<ArrayList<String>>
+        }
     }
 }
 
@@ -456,7 +458,7 @@ fun BiblijatekaListItems(
                 ) {
                     Icon(
                         modifier = Modifier.size(12.dp, 12.dp),
-                        painter = painterResource(R.drawable.description),
+                        painter = painterResource(R.drawable.krest),
                         tint = MaterialTheme.colorScheme.primary,
                         contentDescription = null
                     )
@@ -713,7 +715,7 @@ fun DialogBiblijateka(
 ) {
     AlertDialog(
         icon = {
-            Icon(painter = painterResource(R.drawable.description), contentDescription = "")
+            Icon(painter = painterResource(R.drawable.krest), contentDescription = "")
         },
         title = {
             Text(stringResource(R.string.download_file))
@@ -759,7 +761,7 @@ fun DialogNoWiFI(
 ) {
     AlertDialog(
         icon = {
-            Icon(painter = painterResource(R.drawable.description), contentDescription = "")
+            Icon(painter = painterResource(R.drawable.krest), contentDescription = "")
         },
         title = {
             Text(stringResource(R.string.wifi_error))
