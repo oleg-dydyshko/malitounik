@@ -123,6 +123,7 @@ object Settings {
     const val MENU_TRYEDZ_POSNAIA_4 = 120
     const val MENU_TRYEDZ_POSNAIA_5 = 121
     const val MENU_TRYEDZ_POSNAIA_6 = 122
+    const val MENU_CHASASLOU = 123
     const val MENU_AKAFIST = 123
     const val MENU_RUJANEC = 124
     const val MENU_MAE_NATATKI = 125

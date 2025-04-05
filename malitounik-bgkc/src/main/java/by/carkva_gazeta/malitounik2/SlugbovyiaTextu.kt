@@ -726,7 +726,7 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                -2, "Вячэрня (без сьвятара)", R.raw.vialikaja_piatnica_viaczernia_biez_sviatara, VIACZERNIA, pasxa = true, mineia = MINEIA_VIALIKI_TYDZEN
+                -2, "Вячэрня з вынасам плашчаніцы (без сьвятара)", R.raw.vialikaja_piatnica_viaczernia_biez_sviatara, VIACZERNIA, pasxa = true, mineia = MINEIA_VIALIKI_TYDZEN
             )
         )
         datMinALL.add(

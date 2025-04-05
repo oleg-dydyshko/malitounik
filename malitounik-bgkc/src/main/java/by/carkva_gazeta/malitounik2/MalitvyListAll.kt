@@ -91,18 +91,14 @@ class FilterMalitvyPrynagodnyiaModel : ViewModel() {
     }
 
     fun filterItem(search: String) {
-        _filteredItems.value =
-            items.filter { it.title.contains(search, ignoreCase = true) } as ArrayList<BogaslujbovyiaListData>
+        _filteredItems.value = items.filter { it.title.contains(search, ignoreCase = true) } as ArrayList<BogaslujbovyiaListData>
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MalitvyListAll(
-    navController: NavHostController,
-    title: String,
-    menuItem: Int,
-    subTitle: String = ""
+    navController: NavHostController, title: String, menuItem: Int, subTitle: String = ""
 ) {
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
@@ -204,6 +200,7 @@ fun MalitvyListAll(
         Settings.MENU_MINEIA_AGULNAIA -> getMineiaAgulnaia()
         Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH -> getMineiaMesiachnaiaMounth()
         Settings.MENU_TRYEDZ -> getTtyedz()
+        Settings.MENU_CHASASLOU -> getChasaslou()
         Settings.MENU_TRYEDZ_POSNAIA -> getTtyedzPosnaia()
         Settings.MENU_TRYEDZ_POSNAIA_1 -> getTtyedzPosnaia(Settings.MENU_TRYEDZ_POSNAIA_1)
         Settings.MENU_TRYEDZ_POSNAIA_2 -> getTtyedzPosnaia(Settings.MENU_TRYEDZ_POSNAIA_2)
@@ -217,14 +214,23 @@ fun MalitvyListAll(
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
     var textFieldValueState by remember { mutableStateOf("") }
-    val collapsedState =
-        remember(listPrynagodnyia) { listPrynagodnyia.map { true }.toMutableStateList() }
+    val collapsedState = remember(listPrynagodnyia) { listPrynagodnyia.map { true }.toMutableStateList() }
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    if (!searchText) {
-                        Column {
+                if (!searchText) {
+                    Column {
+                        Text(
+                            modifier = Modifier.clickable {
+                                maxLine.intValue = Int.MAX_VALUE
+                                coroutineScope.launch {
+                                    delay(5000L)
+                                    maxLine.intValue = 1
+                                }
+                            }, text = title, color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
+                        )
+                        if (subTitle != "") {
                             Text(
                                 modifier = Modifier.clickable {
                                     maxLine.intValue = Int.MAX_VALUE
@@ -232,125 +238,76 @@ fun MalitvyListAll(
                                         delay(5000L)
                                         maxLine.intValue = 1
                                     }
-                                },
-                                text = title,
-                                color = MaterialTheme.colorScheme.onSecondary,
-                                fontWeight = FontWeight.Bold,
-                                maxLines = maxLine.intValue,
-                                overflow = TextOverflow.Ellipsis,
-                                fontSize = Settings.fontInterface.sp
+                                }, text = subTitle, color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
                             )
-                            if (subTitle != "") {
-                                Text(
-                                    modifier = Modifier.clickable {
-                                        maxLine.intValue = Int.MAX_VALUE
-                                        coroutineScope.launch {
-                                            delay(5000L)
-                                            maxLine.intValue = 1
-                                        }
-                                    },
-                                    text = subTitle,
-                                    color = MaterialTheme.colorScheme.onSecondary,
-                                    fontWeight = FontWeight.Bold,
-                                    maxLines = maxLine.intValue,
-                                    overflow = TextOverflow.Ellipsis,
-                                    fontSize = Settings.fontInterface.sp
+                        }
+                    }
+                } else {
+                    TextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .focusRequester(focusRequester)
+                            .onGloballyPositioned {
+                                if (!textFieldLoaded) {
+                                    focusRequester.requestFocus()
+                                    textFieldLoaded = true
+                                }
+                            }, value = textFieldValueState, onValueChange = { newText ->
+                        var edit = newText
+                        edit = edit.replace("и", "і")
+                        edit = edit.replace("щ", "ў")
+                        edit = edit.replace("И", "І")
+                        edit = edit.replace("Щ", "Ў")
+                        edit = edit.replace("ъ", "'")
+                        textFieldValueState = edit
+                    }, singleLine = true, leadingIcon = {
+                        Icon(
+                            painter = painterResource(R.drawable.search), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                        )
+                    }, trailingIcon = {
+                        if (textFieldValueState.isNotEmpty()) {
+                            IconButton(onClick = { textFieldValueState = "" }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
                         }
-                    } else {
-                        TextField(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .focusRequester(focusRequester)
-                                .onGloballyPositioned {
-                                    if (!textFieldLoaded) {
-                                        focusRequester.requestFocus()
-                                        textFieldLoaded = true
-                                    }
-                                },
-                            value = textFieldValueState,
-                            onValueChange = { newText ->
-                                var edit = newText
-                                edit = edit.replace("и", "і")
-                                edit = edit.replace("щ", "ў")
-                                edit = edit.replace("И", "І")
-                                edit = edit.replace("Щ", "Ў")
-                                edit = edit.replace("ъ", "'")
-                                textFieldValueState = edit
-                            },
-                            singleLine = true,
-                            leadingIcon = {
-                                Icon(
-                                    painter = painterResource(R.drawable.search),
-                                    tint = MaterialTheme.colorScheme.onSecondary,
-                                    contentDescription = ""
-                                )
-                            },
-                            trailingIcon = {
-                                if (textFieldValueState.isNotEmpty()) {
-                                    IconButton(onClick = { textFieldValueState = "" }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.close),
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.onSecondary
-                                        )
-                                    }
-                                }
-                            },
-                            colors = TextFieldDefaults.colors(
-                                focusedContainerColor = MaterialTheme.colorScheme.onTertiary,
-                                unfocusedContainerColor = MaterialTheme.colorScheme.onTertiary,
-                                focusedTextColor = PrimaryTextBlack,
-                                focusedIndicatorColor = PrimaryTextBlack,
-                                unfocusedIndicatorColor = PrimaryTextBlack,
-                                cursorColor = PrimaryTextBlack
-                            )
+                    }, colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.onTertiary, unfocusedContainerColor = MaterialTheme.colorScheme.onTertiary, focusedTextColor = PrimaryTextBlack, focusedIndicatorColor = PrimaryTextBlack, unfocusedIndicatorColor = PrimaryTextBlack, cursorColor = PrimaryTextBlack
+                    )
+                    )
+                }
+            }, navigationIcon = {
+                if (searchText) {
+                    IconButton(onClick = {
+                        searchText = false
+                    }, content = {
+                        Icon(
+                            painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                        )
+                    })
+                } else {
+                    IconButton(onClick = {
+                        navController.popBackStack()
+                    }, content = {
+                        Icon(
+                            painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                        )
+                    })
+                }
+            }, actions = {
+                if (!searchText && menuItem == Settings.MENU_MALITVY_PRYNAGODNYIA) {
+                    IconButton({
+                        searchText = true
+                    }) {
+                        Icon(
+                            painter = painterResource(R.drawable.search), tint = PrimaryTextBlack, contentDescription = ""
                         )
                     }
-                },
-                navigationIcon = {
-                    if (searchText) {
-                        IconButton(onClick = {
-                            searchText = false
-                        },
-                            content = {
-                                Icon(
-                                    painter = painterResource(R.drawable.close),
-                                    tint = MaterialTheme.colorScheme.onSecondary,
-                                    contentDescription = ""
-                                )
-                            })
-                    } else {
-                        IconButton(onClick = {
-                            navController.popBackStack()
-                        },
-                            content = {
-                                Icon(
-                                    painter = painterResource(R.drawable.arrow_back),
-                                    tint = MaterialTheme.colorScheme.onSecondary,
-                                    contentDescription = ""
-                                )
-                            })
-                    }
-                },
-                actions = {
-                    if (!searchText && menuItem == Settings.MENU_MALITVY_PRYNAGODNYIA) {
-                        IconButton({
-                            searchText = true
-                        }) {
-                            Icon(
-                                painter = painterResource(R.drawable.search),
-                                tint = PrimaryTextBlack,
-                                contentDescription = ""
-                            )
-                        }
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
+                }
+            }, colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
             )
-        }
-    ) { innerPadding ->
+        }) { innerPadding ->
         if (searchText) {
             val viewModel: FilterMalitvyPrynagodnyiaModel = viewModel()
             viewModel.clear()
@@ -368,10 +325,7 @@ fun MalitvyListAll(
             LazyColumn(
                 modifier = Modifier
                     .padding(
-                        innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                        innerPadding.calculateTopPadding(),
-                        innerPadding.calculateEndPadding(LayoutDirection.Rtl),
-                        0.dp
+                        innerPadding.calculateStartPadding(LayoutDirection.Ltr), innerPadding.calculateTopPadding(), innerPadding.calculateEndPadding(LayoutDirection.Rtl), 0.dp
                     )
                     .fillMaxSize()
             ) {
@@ -380,36 +334,26 @@ fun MalitvyListAll(
                         val collapsed = collapsedState[i]
                         item(key = "header_$i") {
                             Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
+                                verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                                     .fillMaxWidth()
                                     .clickable {
                                         collapsedState[i] = !collapsed
-                                    }
-                            ) {
+                                    }) {
                                 Icon(
-                                    painter = if (collapsed)
-                                        painterResource(R.drawable.keyboard_arrow_down)
-                                    else
-                                        painterResource(R.drawable.keyboard_arrow_up),
+                                    painter = if (collapsed) painterResource(R.drawable.keyboard_arrow_down)
+                                    else painterResource(R.drawable.keyboard_arrow_up),
                                     contentDescription = "",
                                     tint = Divider,
                                 )
                                 Text(
-                                    dataItem.title,
-                                    modifier = Modifier
+                                    dataItem.title, modifier = Modifier
                                         .animateItem(
-                                            fadeInSpec = null,
-                                            fadeOutSpec = null,
-                                            placementSpec = spring(
-                                                stiffness = Spring.StiffnessMediumLow,
-                                                visibilityThreshold = IntOffset.VisibilityThreshold
+                                            fadeInSpec = null, fadeOutSpec = null, placementSpec = spring(
+                                                stiffness = Spring.StiffnessMediumLow, visibilityThreshold = IntOffset.VisibilityThreshold
                                             )
                                         )
                                         .padding(10.dp)
-                                        .weight(1f),
-                                    color = MaterialTheme.colorScheme.secondary,
-                                    fontSize = Settings.fontInterface.sp
+                                        .weight(1f), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                                 )
                             }
                             HorizontalDivider()
@@ -427,15 +371,13 @@ fun MalitvyListAll(
                                 }
 
                                 Settings.MENU_TRYEDZ_VIALIKAGA_TYDNIA -> {
-                                    val listMineiaList =
-                                        getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_VIALIKAGA_TYDNIA)
+                                    val listMineiaList = getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_VIALIKAGA_TYDNIA)
                                     val arrayList = ArrayList<BogaslujbovyiaListData>()
                                     listMineiaList.forEach {
                                         if (dataItem.day == it.dayOfMonth) {
                                             arrayList.add(
                                                 BogaslujbovyiaListData(
-                                                    it.title,
-                                                    it.resource
+                                                    it.title, it.resource
                                                 )
                                             )
                                         }
@@ -444,15 +386,13 @@ fun MalitvyListAll(
                                 }
 
                                 Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA -> {
-                                    val listMineiaList =
-                                        getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA)
+                                    val listMineiaList = getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA)
                                     val arrayList = ArrayList<BogaslujbovyiaListData>()
                                     listMineiaList.forEach {
                                         if (dataItem.day == it.dayOfMonth) {
                                             arrayList.add(
                                                 BogaslujbovyiaListData(
-                                                    it.title,
-                                                    it.resource
+                                                    it.title, it.resource
                                                 )
                                             )
                                         }
@@ -461,15 +401,13 @@ fun MalitvyListAll(
                                 }
 
                                 Settings.MENU_TRYEDZ_KVETNAIA -> {
-                                    val listMineiaList =
-                                        getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_KVETNAIA)
+                                    val listMineiaList = getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_KVETNAIA)
                                     val arrayList = ArrayList<BogaslujbovyiaListData>()
                                     listMineiaList.forEach {
                                         if (dataItem.day == it.dayOfMonth) {
                                             arrayList.add(
                                                 BogaslujbovyiaListData(
-                                                    it.title,
-                                                    it.resource
+                                                    it.title, it.resource
                                                 )
                                             )
                                         }
@@ -484,8 +422,7 @@ fun MalitvyListAll(
                                         if (dataItem.day == it.dayOfMonth) {
                                             arrayList.add(
                                                 BogaslujbovyiaListData(
-                                                    it.title,
-                                                    it.resource
+                                                    it.title, it.resource
                                                 )
                                             )
                                         }
@@ -503,25 +440,17 @@ fun MalitvyListAll(
                                         .padding(start = 30.dp)
                                         .clickable {
                                             navigationActions.navigateToBogaslujbovyia(
-                                                subList[index].title,
-                                                subList[index].resurs
+                                                subList[index].title, subList[index].resurs
                                             )
-                                        },
-                                    verticalAlignment = Alignment.CenterVertically
+                                        }, verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(
-                                        modifier = Modifier.size(12.dp, 12.dp),
-                                        painter = painterResource(R.drawable.description),
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        contentDescription = null
+                                        modifier = Modifier.size(12.dp, 12.dp), painter = painterResource(R.drawable.description), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                                     )
                                     Text(
-                                        subList[index].title,
-                                        modifier = Modifier
+                                        subList[index].title, modifier = Modifier
                                             .fillMaxSize()
-                                            .padding(10.dp),
-                                        color = MaterialTheme.colorScheme.secondary,
-                                        fontSize = Settings.fontInterface.sp
+                                            .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                                     )
                                 }
                                 HorizontalDivider()
@@ -529,6 +458,29 @@ fun MalitvyListAll(
                         }
                     }
                 } else {
+                    if (menuItem == Settings.MENU_CHASASLOU) {
+                        item {
+                            Row(
+                                modifier = Modifier
+                                    .padding(start = 10.dp)
+                                    .clickable {
+                                        navigationActions.navigateToMalitvyListAll(
+                                            "ВЯЧЭРНЯ", Settings.MENU_VIACHERNIA
+                                        )
+                                    }, verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(12.dp, 12.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = null
+                                )
+                                Text(
+                                    "ВЯЧЭРНЯ", modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                                )
+                            }
+                            HorizontalDivider()
+                        }
+                    }
                     items(list.size) { index ->
                         Row(
                             modifier = Modifier
@@ -539,49 +491,37 @@ fun MalitvyListAll(
                                             when (list[index].resurs) {
                                                 1 -> {
                                                     navigationActions.navigateToMalitvyListAll(
-                                                        title,
-                                                        Settings.MENU_TRYEDZ_POSNAIA_1,
-                                                        list[index].title
+                                                        title, Settings.MENU_TRYEDZ_POSNAIA_1, list[index].title
                                                     )
                                                 }
 
                                                 2 -> {
                                                     navigationActions.navigateToMalitvyListAll(
-                                                        title,
-                                                        Settings.MENU_TRYEDZ_POSNAIA_2,
-                                                        list[index].title
+                                                        title, Settings.MENU_TRYEDZ_POSNAIA_2, list[index].title
                                                     )
                                                 }
 
                                                 3 -> {
                                                     navigationActions.navigateToMalitvyListAll(
-                                                        title,
-                                                        Settings.MENU_TRYEDZ_POSNAIA_3,
-                                                        list[index].title
+                                                        title, Settings.MENU_TRYEDZ_POSNAIA_3, list[index].title
                                                     )
                                                 }
 
                                                 4 -> {
                                                     navigationActions.navigateToMalitvyListAll(
-                                                        title,
-                                                        Settings.MENU_TRYEDZ_POSNAIA_4,
-                                                        list[index].title
+                                                        title, Settings.MENU_TRYEDZ_POSNAIA_4, list[index].title
                                                     )
                                                 }
 
                                                 5 -> {
                                                     navigationActions.navigateToMalitvyListAll(
-                                                        title,
-                                                        Settings.MENU_TRYEDZ_POSNAIA_5,
-                                                        list[index].title
+                                                        title, Settings.MENU_TRYEDZ_POSNAIA_5, list[index].title
                                                     )
                                                 }
 
                                                 6 -> {
                                                     navigationActions.navigateToMalitvyListAll(
-                                                        title,
-                                                        Settings.MENU_TRYEDZ_POSNAIA_6,
-                                                        list[index].title
+                                                        title, Settings.MENU_TRYEDZ_POSNAIA_6, list[index].title
                                                     )
                                                 }
                                             }
@@ -591,33 +531,25 @@ fun MalitvyListAll(
                                             when (list[index].resurs) {
                                                 10 -> {
                                                     navigationActions.navigateToMalitvyListAll(
-                                                        title,
-                                                        Settings.MENU_TRYEDZ_POSNAIA,
-                                                        list[index].title
+                                                        title, Settings.MENU_TRYEDZ_POSNAIA, list[index].title
                                                     )
                                                 }
 
                                                 11 -> {
                                                     navigationActions.navigateToMalitvyListAll(
-                                                        title,
-                                                        Settings.MENU_TRYEDZ_VIALIKAGA_TYDNIA,
-                                                        list[index].title
+                                                        title, Settings.MENU_TRYEDZ_VIALIKAGA_TYDNIA, list[index].title
                                                     )
                                                 }
 
                                                 12 -> {
                                                     navigationActions.navigateToMalitvyListAll(
-                                                        title,
-                                                        Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA,
-                                                        list[index].title
+                                                        title, Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA, list[index].title
                                                     )
                                                 }
 
                                                 13 -> {
                                                     navigationActions.navigateToMalitvyListAll(
-                                                        title,
-                                                        Settings.MENU_TRYEDZ_KVETNAIA,
-                                                        list[index].title
+                                                        title, Settings.MENU_TRYEDZ_KVETNAIA, list[index].title
                                                     )
                                                 }
                                             }
@@ -625,36 +557,26 @@ fun MalitvyListAll(
 
                                         Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH -> {
                                             navigationActions.navigateToMalitvyListAll(
-                                                title,
-                                                Settings.MENU_MINEIA_MESIACHNAIA,
-                                                list[index].title
+                                                title, Settings.MENU_MINEIA_MESIACHNAIA, list[index].title
                                             )
                                         }
 
                                         else -> {
                                             navigationActions.navigateToBogaslujbovyia(
-                                                list[index].title,
-                                                list[index].resurs
+                                                list[index].title, list[index].resurs
                                             )
                                         }
                                     }
-                                },
-                            verticalAlignment = Alignment.CenterVertically
+                                }, verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                modifier = Modifier.size(12.dp, 12.dp),
-                                painter = if (menuItem == Settings.MENU_TRYEDZ || menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH || menuItem == Settings.MENU_TRYEDZ_POSNAIA) painterResource(R.drawable.folder)
-                                else painterResource(R.drawable.description),
-                                tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                modifier = Modifier.size(12.dp, 12.dp), painter = if (menuItem == Settings.MENU_TRYEDZ || menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH || menuItem == Settings.MENU_TRYEDZ_POSNAIA) painterResource(R.drawable.folder)
+                                else painterResource(R.drawable.description), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                             )
                             Text(
-                                list[index].title,
-                                modifier = Modifier
+                                list[index].title, modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(10.dp),
-                                color = MaterialTheme.colorScheme.secondary,
-                                fontWeight = if (menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH) {
+                                    .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontWeight = if (menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH) {
                                     if (Calendar.getInstance()[Calendar.MONTH] == index) {
                                         FontWeight.Bold
                                     } else {
@@ -662,8 +584,7 @@ fun MalitvyListAll(
                                     }
                                 } else {
                                     FontWeight.Normal
-                                },
-                                fontSize = Settings.fontInterface.sp
+                                }, fontSize = Settings.fontInterface.sp
                             )
                         }
                         HorizontalDivider()
@@ -676,25 +597,17 @@ fun MalitvyListAll(
                                 .padding(start = 10.dp)
                                 .clickable {
                                     navigationActions.navigateToMalitvyListAll(
-                                        "ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ",
-                                        Settings.MENU_TRAPARY_KANDAKI_SHTODZENNYIA
+                                        "ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ", Settings.MENU_TRAPARY_KANDAKI_SHTODZENNYIA
                                     )
-                                },
-                            verticalAlignment = Alignment.CenterVertically
+                                }, verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                modifier = Modifier.size(12.dp, 12.dp),
-                                painter = painterResource(R.drawable.folder),
-                                tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                modifier = Modifier.size(12.dp, 12.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                             )
                             Text(
-                                "ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ",
-                                modifier = Modifier
+                                "ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ", modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(10.dp),
-                                color = MaterialTheme.colorScheme.secondary,
-                                fontSize = Settings.fontInterface.sp
+                                    .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                             )
                         }
                         HorizontalDivider()
@@ -714,8 +627,7 @@ fun PynagodnyiaList(prynagodnyaList: ArrayList<BogaslujbovyiaListData>, navigati
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
             override fun onPreScroll(
-                available: Offset,
-                source: NestedScrollSource
+                available: Offset, source: NestedScrollSource
             ): Offset {
                 keyboardController?.hide()
                 return super.onPreScroll(available, source)
@@ -725,42 +637,30 @@ fun PynagodnyiaList(prynagodnyaList: ArrayList<BogaslujbovyiaListData>, navigati
     LazyColumn(
         modifier = Modifier
             .padding(
-                innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                innerPadding.calculateTopPadding(),
-                innerPadding.calculateEndPadding(LayoutDirection.Rtl),
-                0.dp
+                innerPadding.calculateStartPadding(LayoutDirection.Ltr), innerPadding.calculateTopPadding(), innerPadding.calculateEndPadding(LayoutDirection.Rtl), 0.dp
             )
             .fillMaxSize()
             .nestedScroll(nestedScrollConnection)
     ) {
         items(
-            prynagodnyaList.size,
-            key = { index -> prynagodnyaList[index].title + index }) { index ->
+            prynagodnyaList.size, key = { index -> prynagodnyaList[index].title + index }) { index ->
             Column {
                 Row(
                     modifier = Modifier
                         .padding(start = 10.dp)
                         .clickable {
                             navigationActions.navigateToBogaslujbovyia(
-                                prynagodnyaList[index].title,
-                                prynagodnyaList[index].resurs
+                                prynagodnyaList[index].title, prynagodnyaList[index].resurs
                             )
-                        },
-                    verticalAlignment = Alignment.CenterVertically
+                        }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier.size(12.dp, 12.dp),
-                        painter = painterResource(R.drawable.description),
-                        tint = MaterialTheme.colorScheme.primary,
-                        contentDescription = null
+                        modifier = Modifier.size(12.dp, 12.dp), painter = painterResource(R.drawable.description), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                     )
                     Text(
-                        text = prynagodnyaList[index].title,
-                        modifier = Modifier
+                        text = prynagodnyaList[index].title, modifier = Modifier
                             .fillMaxSize()
-                            .padding(10.dp),
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = Settings.fontInterface.sp
+                            .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                     )
                 }
             }
@@ -824,11 +724,7 @@ fun getTtyedzBialikagaTydnia(menuItem: Int): ArrayList<MineiaList> {
         else ". " + slugbovyiaTextu.getNazouSluzby(mineia[i].sluzba)
         mineiaList.add(
             MineiaList(
-                cal[Calendar.DATE],
-                cal[Calendar.MONTH],
-                mineia[i].title + opisanie,
-                mineia[i].resource,
-                mineia[i].sluzba
+                cal[Calendar.DATE], cal[Calendar.MONTH], mineia[i].title + opisanie, mineia[i].resource, mineia[i].sluzba
             )
         )
     }
@@ -850,6 +746,24 @@ fun getTtyedz(): ArrayList<BogaslujbovyiaListData> {
     list.add(BogaslujbovyiaListData("Службы Вялікага тыдня", 11))
     list.add(BogaslujbovyiaListData("Службы Сьветлага тыдня", 12))
     list.add(BogaslujbovyiaListData("Трыёдзь Кветная", 13))
+    return list
+}
+
+fun getChasaslou(): ArrayList<BogaslujbovyiaListData> {
+    val list = ArrayList<BogaslujbovyiaListData>()
+    list.add(
+        BogaslujbovyiaListData(
+            "Гадзіна 6", R.raw.kan_hadz_hadzina_6
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Гадзіна 6 у вялікі пост", R.raw.kan_hadz_hadzina_6_vialiki_post
+        )
+    )
+    list.add(BogaslujbovyiaListData("Павячэрніца малая", R.raw.paviaczernica_malaja))
+    list.add(BogaslujbovyiaListData("Павячэрніца вялікая", R.raw.paviaczernica_vialikaja))
+    list.add(BogaslujbovyiaListData("Ютрань нядзельная (у скароце)", R.raw.jutran_niadzelnaja))
     return list
 }
 
@@ -881,11 +795,7 @@ fun getMineiaMesiachnaia(subTitle: String): ArrayList<MineiaList> {
         if (cal[Calendar.MONTH] == mounth) {
             mineiaList.add(
                 MineiaList(
-                    cal[Calendar.DATE],
-                    cal[Calendar.MONTH],
-                    mineia[i].title + opisanie,
-                    mineia[i].resource,
-                    mineia[i].sluzba
+                    cal[Calendar.DATE], cal[Calendar.MONTH], mineia[i].title + opisanie, mineia[i].resource, mineia[i].sluzba
                 )
             )
         }
@@ -914,168 +824,141 @@ fun getMineiaAgulnaia(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная Найсьвяцейшай Багародзіцы",
-            R.raw.viachernia_mineia_agulnaia1
+            "Вячэрня агульная Найсьвяцейшай Багародзіцы", R.raw.viachernia_mineia_agulnaia1
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная Яну Хрысьціцелю",
-            R.raw.viachernia_mineia_agulnaia2
+            "Вячэрня агульная Яну Хрысьціцелю", R.raw.viachernia_mineia_agulnaia2
         )
     )
     list.add(BogaslujbovyiaListData("Вячэрня агульная прароку", R.raw.viachernia_mineia_agulnaia3))
     list.add(BogaslujbovyiaListData("Вячэрня агульная апосталу", R.raw.viachernia_mineia_agulnaia4))
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная апосталам",
-            R.raw.viachernia_mineia_agulnaia5
+            "Вячэрня агульная апосталам", R.raw.viachernia_mineia_agulnaia5
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная сьвятаначальніку",
-            R.raw.viachernia_mineia_agulnaia6
+            "Вячэрня агульная сьвятаначальніку", R.raw.viachernia_mineia_agulnaia6
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная сьвятаначальнікам",
-            R.raw.viachernia_mineia_agulnaia7
+            "Вячэрня агульная сьвятаначальнікам", R.raw.viachernia_mineia_agulnaia7
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная посьніку, манаху і пустэльніку",
-            R.raw.viachernia_mineia_agulnaia8
+            "Вячэрня агульная посьніку, манаху і пустэльніку", R.raw.viachernia_mineia_agulnaia8
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная посьнікам, манахам і пустэльнікам",
-            R.raw.viachernia_mineia_agulnaia9
+            "Вячэрня агульная посьнікам, манахам і пустэльнікам", R.raw.viachernia_mineia_agulnaia9
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная вызнаўцу і настаўніку царкоўнаму",
-            R.raw.viachernia_mineia_agulnaia10
+            "Вячэрня агульная вызнаўцу і настаўніку царкоўнаму", R.raw.viachernia_mineia_agulnaia10
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная мучаніку",
-            R.raw.viachernia_mineia_agulnaia11
+            "Вячэрня агульная мучаніку", R.raw.viachernia_mineia_agulnaia11
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная мучаніку (іншая)",
-            R.raw.viachernia_mineia_agulnaia12
+            "Вячэрня агульная мучаніку (іншая)", R.raw.viachernia_mineia_agulnaia12
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная мучанікам",
-            R.raw.viachernia_mineia_agulnaia13
+            "Вячэрня агульная мучанікам", R.raw.viachernia_mineia_agulnaia13
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная сьвятамучаніку",
-            R.raw.viachernia_mineia_agulnaia14
+            "Вячэрня агульная сьвятамучаніку", R.raw.viachernia_mineia_agulnaia14
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная сьвятамучанікам",
-            R.raw.viachernia_mineia_agulnaia15
+            "Вячэрня агульная сьвятамучанікам", R.raw.viachernia_mineia_agulnaia15
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная мучаніку сьвятару або манаху",
-            R.raw.viachernia_mineia_agulnaia16
+            "Вячэрня агульная мучаніку сьвятару або манаху", R.raw.viachernia_mineia_agulnaia16
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная мучанікам сьвятарам або манахам",
-            R.raw.viachernia_mineia_agulnaia17
+            "Вячэрня агульная мучанікам сьвятарам або манахам", R.raw.viachernia_mineia_agulnaia17
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная мучаніцы",
-            R.raw.viachernia_mineia_agulnaia18
+            "Вячэрня агульная мучаніцы", R.raw.viachernia_mineia_agulnaia18
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная мучаніцы (іншая)",
-            R.raw.viachernia_mineia_agulnaia19
+            "Вячэрня агульная мучаніцы (іншая)", R.raw.viachernia_mineia_agulnaia19
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная мучаніцам",
-            R.raw.viachernia_mineia_agulnaia20
+            "Вячэрня агульная мучаніцам", R.raw.viachernia_mineia_agulnaia20
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная мучаніцы манахіні",
-            R.raw.viachernia_mineia_agulnaia21
+            "Вячэрня агульная мучаніцы манахіні", R.raw.viachernia_mineia_agulnaia21
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная сьвятой жанчыне",
-            R.raw.viachernia_mineia_agulnaia22
+            "Вячэрня агульная сьвятой жанчыне", R.raw.viachernia_mineia_agulnaia22
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная сьвятым жанчынам",
-            R.raw.viachernia_mineia_agulnaia23
+            "Вячэрня агульная сьвятым жанчынам", R.raw.viachernia_mineia_agulnaia23
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная бескарысьлівым лекарам і цудатворцам",
-            R.raw.viachernia_mineia_agulnaia24
+            "Вячэрня агульная бескарысьлівым лекарам і цудатворцам", R.raw.viachernia_mineia_agulnaia24
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Служба апосталу або апосталам",
-            R.raw.sluzba_apostalu_apostalam
+            "Служба апосталу або апосталам", R.raw.sluzba_apostalu_apostalam
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Служба настаўніку царкоўнаму і вызнаўцу",
-            R.raw.sluzba_nastauniku_cark_vyznaucu
+            "Служба настаўніку царкоўнаму і вызнаўцу", R.raw.sluzba_nastauniku_cark_vyznaucu
         )
     )
     list.add(BogaslujbovyiaListData("Служба сьвятаначальнікам", R.raw.sluzba_sviatanaczalnikam))
     list.add(BogaslujbovyiaListData("Служба сьвятаначальніку", R.raw.sluzba_sviatanaczalniku))
     list.add(
         BogaslujbovyiaListData(
-            "Служба Найсьвяцейшай Багародзіцы",
-            R.raw.sluzba_najsviaciejszaj_baharodzicy
+            "Служба Найсьвяцейшай Багародзіцы", R.raw.sluzba_najsviaciejszaj_baharodzicy
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Служба за памерлых на кожны дзень тыдня",
-            R.raw.sluzba_za_pamierlych_na_kozny_dzien_tydnia
+            "Служба за памерлых на кожны дзень тыдня", R.raw.sluzba_za_pamierlych_na_kozny_dzien_tydnia
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Служба бескарысьлівым лекарам і цудатворцам",
-            R.raw.sluzba_bieskaryslivym_lekaram_cudatvorcam
+            "Служба бескарысьлівым лекарам і цудатворцам", R.raw.sluzba_bieskaryslivym_lekaram_cudatvorcam
         )
     )
     list.add(BogaslujbovyiaListData("Служба мучаніцам", R.raw.sluzba_muczanicam))
@@ -1083,35 +966,30 @@ fun getMineiaAgulnaia(): ArrayList<BogaslujbovyiaListData> {
     list.add(BogaslujbovyiaListData("Служба мучанікам", R.raw.sluzba_muczanikam))
     list.add(
         BogaslujbovyiaListData(
-            "Служба мучанікам сьвятарам і манахам",
-            R.raw.sluzba_muczanikam_sviataram_i_manacham
+            "Служба мучанікам сьвятарам і манахам", R.raw.sluzba_muczanikam_sviataram_i_manacham
         )
     )
     list.add(BogaslujbovyiaListData("Служба мучаніку", R.raw.sluzba_muczaniku))
     list.add(
         BogaslujbovyiaListData(
-            "Служба мучаніку сьвятару і манаху",
-            R.raw.sluzba_muczaniku_sviataru_i_manachu
+            "Служба мучаніку сьвятару і манаху", R.raw.sluzba_muczaniku_sviataru_i_manachu
         )
     )
     list.add(BogaslujbovyiaListData("Служба сьвятой жанчыне", R.raw.sluzba_sviatoj_zanczynie))
     list.add(BogaslujbovyiaListData("Служба сьвятым жанчынам", R.raw.sluzba_sviatym_zanczynam))
     list.add(
         BogaslujbovyiaListData(
-            "Служба посьнікам, манахам і пустэльнікам",
-            R.raw.sluzba_posnikam_manacham_pustelnikam
+            "Служба посьнікам, манахам і пустэльнікам", R.raw.sluzba_posnikam_manacham_pustelnikam
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Служба посьніку / аскету, манаху і пустэльніку",
-            R.raw.sluzba_posniku_manachu_pustelniku
+            "Служба посьніку / аскету, манаху і пустэльніку", R.raw.sluzba_posniku_manachu_pustelniku
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Служба сьвятому Яну Хрысьціцелю",
-            R.raw.sluzba_janu_chryscicielu
+            "Служба сьвятому Яну Хрысьціцелю", R.raw.sluzba_janu_chryscicielu
         )
     )
     list.add(BogaslujbovyiaListData("Служба прароку", R.raw.sluzba_praroku))
@@ -1126,51 +1004,43 @@ fun getTrebnik(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
-            "Служба аб вызваленьні бязьвінна зьняволеных",
-            R.raw.sluzba_vyzvalen_biazvinna_zniavolenych
+            "Служба аб вызваленьні бязьвінна зьняволеных", R.raw.sluzba_vyzvalen_biazvinna_zniavolenych
         )
     )
     list.add(BogaslujbovyiaListData("Служба за памерлых — Малая паніхіда", R.raw.panichida_malaja))
     list.add(
         BogaslujbovyiaListData(
-            "Чын асьвячэньня транспартнага сродку",
-            R.raw.czyn_asviaczennia_transpartnaha_srodku
+            "Чын асьвячэньня транспартнага сродку", R.raw.czyn_asviaczennia_transpartnaha_srodku
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Асьвячэньне крыжа на сьвятой Літургіі",
-            R.raw.asviaczennie_kryza
+            "Асьвячэньне крыжа на сьвятой Літургіі", R.raw.asviaczennie_kryza
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Блаславеньне ўсялякае рэчы",
-            R.raw.mltv_blaslaviennie_usialakaj_reczy
+            "Блаславеньне ўсялякае рэчы", R.raw.mltv_blaslaviennie_usialakaj_reczy
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітва на асьвячэньне памятнай табліцы Слузе Божаму",
-            R.raw.mltv_asviacz_pamiatnaj_tablicy
+            "Малітва на асьвячэньне памятнай табліцы Слузе Божаму", R.raw.mltv_asviacz_pamiatnaj_tablicy
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітва на асьвячэньне памятнай табліцы Слузе Божаму, які пацярпеў за Беларусь",
-            R.raw.mltv_asviacz_pamiatnaj_tablicy_paciarpieu_za_bielarus1
+            "Малітва на асьвячэньне памятнай табліцы Слузе Божаму, які пацярпеў за Беларусь", R.raw.mltv_asviacz_pamiatnaj_tablicy_paciarpieu_za_bielarus1
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітва на асьвячэньне памятнай табліцы ўсім бязьвінным ахвярам, якія пацярпелі за Беларусь",
-            R.raw.mltv_asviacz_pamiatnaj_tablicy_biazvinnym_achviaram_paciarpieli_za_bielarus
+            "Малітва на асьвячэньне памятнай табліцы ўсім бязьвінным ахвярам, якія пацярпелі за Беларусь", R.raw.mltv_asviacz_pamiatnaj_tablicy_biazvinnym_achviaram_paciarpieli_za_bielarus
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітоўны чын сьвятарскіх адведзінаў парафіянаў",
-            R.raw.malitouny_czyn_sviatarskich_adviedzinau_parafijanau
+            "Малітоўны чын сьвятарскіх адведзінаў парафіянаў", R.raw.malitouny_czyn_sviatarskich_adviedzinau_parafijanau
         )
     )
     return list
@@ -1184,8 +1054,7 @@ fun getMalitvyPasliaPrychascia(): ArrayList<BogaslujbovyiaListData> {
     list.add(BogaslujbovyiaListData("Iншая малітва", R.raw.paslia_prychascia4))
     list.add(
         BogaslujbovyiaListData(
-            "Малітва да Найсьвяцейшай Багародзіцы",
-            R.raw.paslia_prychascia5
+            "Малітва да Найсьвяцейшай Багародзіцы", R.raw.paslia_prychascia5
         )
     )
     return list
@@ -1210,14 +1079,12 @@ fun getTraparyKandakiShtodzennyia(): ArrayList<BogaslujbovyiaListData> {
     list.add(BogaslujbovyiaListData("АЎТОРАК\nСлужба сьвятому Яну Хрысьціцелю", R.raw.ton2_budni))
     list.add(
         BogaslujbovyiaListData(
-            "СЕРАДА\nСлужба Найсьвяцейшай Багародзіцы і Крыжу",
-            R.raw.ton3_budni
+            "СЕРАДА\nСлужба Найсьвяцейшай Багародзіцы і Крыжу", R.raw.ton3_budni
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "ЧАЦЬВЕР\nСлужба апосталам і сьвятому Мікалаю",
-            R.raw.ton4_budni
+            "ЧАЦЬВЕР\nСлужба апосталам і сьвятому Мікалаю", R.raw.ton4_budni
         )
     )
     list.add(BogaslujbovyiaListData("ПЯТНІЦА\nСлужба Крыжу Гасподняму", R.raw.ton5_budni))
@@ -1230,16 +1097,14 @@ fun getViachernia(): ArrayList<BogaslujbovyiaListData> {
     list.add(BogaslujbovyiaListData("Вячэрня ў нядзелі і сьвяты", R.raw.viaczernia_niadzelnaja))
     list.add(
         BogaslujbovyiaListData(
-            "Ліцьця і блаславеньне хлябоў",
-            R.raw.viaczernia_liccia_i_blaslavenne_chliabou
+            "Ліцьця і блаславеньне хлябоў", R.raw.viaczernia_liccia_i_blaslavenne_chliabou
         )
     )
     list.add(BogaslujbovyiaListData("Вячэрня ў звычайныя дні", R.raw.viaczernia_na_kozny_dzen))
     list.add(BogaslujbovyiaListData("Вячэрня ў Вялікім посьце", R.raw.viaczernia_u_vialikim_poscie))
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрняя служба штодзённая (без сьвятара)",
-            R.raw.viaczerniaja_sluzba_sztodzionnaja_biez_sviatara
+            "Вячэрняя служба штодзённая (без сьвятара)", R.raw.viaczerniaja_sluzba_sztodzionnaja_biez_sviatara
         )
     )
     list.add(BogaslujbovyiaListData("Вячэрня на Сьветлым тыдні", R.raw.viaczernia_svietly_tydzien))
@@ -1250,56 +1115,47 @@ fun getAktoix(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня Тон 1",
-            R.raw.viaczernia_ton1
+            "Вячэрня Тон 1", R.raw.viaczernia_ton1
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня Тон 2",
-            R.raw.viaczernia_ton2
+            "Вячэрня Тон 2", R.raw.viaczernia_ton2
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня Тон 3",
-            R.raw.viaczernia_ton3
+            "Вячэрня Тон 3", R.raw.viaczernia_ton3
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня Тон 4",
-            R.raw.viaczernia_ton4
+            "Вячэрня Тон 4", R.raw.viaczernia_ton4
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня Тон 5",
-            R.raw.viaczernia_ton5
+            "Вячэрня Тон 5", R.raw.viaczernia_ton5
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня Тон 6",
-            R.raw.viaczernia_ton6
+            "Вячэрня Тон 6", R.raw.viaczernia_ton6
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня Тон 7",
-            R.raw.viaczernia_ton7
+            "Вячэрня Тон 7", R.raw.viaczernia_ton7
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня Тон 8",
-            R.raw.viaczernia_ton8
+            "Вячэрня Тон 8", R.raw.viaczernia_ton8
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Багародзічныя адпушчальныя",
-            R.raw.viaczernia_baharodzicznyja_adpuszczalnyja
+            "Багародзічныя адпушчальныя", R.raw.viaczernia_baharodzicznyja_adpuszczalnyja
         )
     )
     return list
@@ -1309,46 +1165,39 @@ fun getPrynagodnyia1(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
-            "Малітва да Маці Божай Браслаўскай, Валадаркі Азёраў",
-            R.raw.prynagodnyia_7
+            "Малітва да Маці Божай Браслаўскай, Валадаркі Азёраў", R.raw.prynagodnyia_7
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітва да Маці Божай Будслаўскай, Апякункі Беларусі",
-            R.raw.prynagodnyia_8
+            "Малітва да Маці Божай Будслаўскай, Апякункі Беларусі", R.raw.prynagodnyia_8
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітва да Маці Божай Нястомнай Дапамогі",
-            R.raw.prynagodnyia_9
+            "Малітва да Маці Божай Нястомнай Дапамогі", R.raw.prynagodnyia_9
         )
     )
     list.add(BogaslujbovyiaListData("Малітва да Маці Божай Берасьцейскай", R.raw.prynagodnyia_30))
     list.add(BogaslujbovyiaListData("Малітва да Маці Божай Лагішынскай", R.raw.prynagodnyia_31))
     list.add(
         BogaslujbovyiaListData(
-            "Малітва да Маці Божай Будслаўскай",
-            R.raw.mltv_mb_budslauskaja
+            "Малітва да Маці Божай Будслаўскай", R.raw.mltv_mb_budslauskaja
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітва да Божае Маці перад іконай Ейнай Менскай",
-            R.raw.mltv_mb_mienskaja
+            "Малітва да Божае Маці перад іконай Ейнай Менскай", R.raw.mltv_mb_mienskaja
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітва да Найсьвяцейшай Дзевы Марыі Барунскай",
-            R.raw.mltv_mb_barunskaja
+            "Малітва да Найсьвяцейшай Дзевы Марыі Барунскай", R.raw.mltv_mb_barunskaja
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітва да Багародзіцы, праслаўленай у цудатворнай Жыровіцкай іконе",
-            R.raw.mltv_mb_zyrovickaja
+            "Малітва да Багародзіцы, праслаўленай у цудатворнай Жыровіцкай іконе", R.raw.mltv_mb_zyrovickaja
         )
     )
     list.add(BogaslujbovyiaListData("Малітва да Маці Божай Бялыніцкай", R.raw.mltv_mb_bialynickaja))
@@ -1362,14 +1211,12 @@ fun getPrynagodnyia2(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
-            "Малітва аб дапамозе ў выбары жыцьцёвай дарогі дзіцяці",
-            R.raw.prynagodnyia_1
+            "Малітва аб дапамозе ў выбары жыцьцёвай дарогі дзіцяці", R.raw.prynagodnyia_1
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітва бацькоў за дзяцей («Божа, у Тройцы Адзіны...»)",
-            R.raw.mltv_backou_za_dziaciej_boza_u_trojcy_adziny
+            "Малітва бацькоў за дзяцей («Божа, у Тройцы Адзіны...»)", R.raw.mltv_backou_za_dziaciej_boza_u_trojcy_adziny
         )
     )
     list.add(BogaslujbovyiaListData("Малітва бацькоў за дзяцей", R.raw.prynagodnyia_4))
@@ -1378,8 +1225,7 @@ fun getPrynagodnyia2(): ArrayList<BogaslujbovyiaListData> {
     list.add(BogaslujbovyiaListData("Малітва за хворае дзіця", R.raw.prynagodnyia_15))
     list.add(
         BogaslujbovyiaListData(
-            "Малітва сям’і аб Божым бласлаўленьні на час адпачынку і вакацыяў",
-            R.raw.prynagodnyia_33
+            "Малітва сям’і аб Божым бласлаўленьні на час адпачынку і вакацыяў", R.raw.prynagodnyia_33
         )
     )
     list.add(BogaslujbovyiaListData("Блаславеньне маці (Матчына малітва)", R.raw.prynagodnyia_40))
@@ -1399,8 +1245,7 @@ fun getPrynagodnyia3(): ArrayList<BogaslujbovyiaListData> {
     list.add(BogaslujbovyiaListData("Малітва за Айчыну - Ян Павел II", R.raw.prynagodnyia_36))
     list.add(
         BogaslujbovyiaListData(
-            "Малітва за ўсіх, што пацярпелі за Беларусь",
-            R.raw.mltv_paciarpieli_za_bielarus
+            "Малітва за ўсіх, што пацярпелі за Беларусь", R.raw.mltv_paciarpieli_za_bielarus
         )
     )
     list.sortBy {
@@ -1416,8 +1261,7 @@ fun getPrynagodnyia4(): ArrayList<BogaslujbovyiaListData> {
     list.add(BogaslujbovyiaListData("Малітва за хрысьціянскую еднасьць", R.raw.prynagodnyia_16))
     list.add(
         BogaslujbovyiaListData(
-            "Малітвы за сьвятароў і сьвятарскія пакліканьні",
-            R.raw.prynagodnyia_24
+            "Малітвы за сьвятароў і сьвятарскія пакліканьні", R.raw.prynagodnyia_24
         )
     )
     list.add(BogaslujbovyiaListData("Цябе, Бога, хвалім", R.raw.pesny_prasl_70))
@@ -1425,20 +1269,17 @@ fun getPrynagodnyia4(): ArrayList<BogaslujbovyiaListData> {
     list.add(BogaslujbovyiaListData("Малітва за Царкву 2", R.raw.mltv_za_carkvu_2))
     list.add(
         BogaslujbovyiaListData(
-            "Малітва за царкоўную еднасьць",
-            R.raw.mltv_za_carkounuju_jednasc
+            "Малітва за царкоўную еднасьць", R.raw.mltv_za_carkounuju_jednasc
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітва разам з Падляшскімі мучанікамі аб еднасьці",
-            R.raw.mltv_razam_z_padlaszskimi_muczanikami_ab_jednasci
+            "Малітва разам з Падляшскімі мучанікамі аб еднасьці", R.raw.mltv_razam_z_padlaszskimi_muczanikami_ab_jednasci
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітва аб еднасьці царквы (Экзарха Леаніда Фёдарава)",
-            R.raw.mltv_ab_jednasci_carkvy_leanida_fiodarava
+            "Малітва аб еднасьці царквы (Экзарха Леаніда Фёдарава)", R.raw.mltv_ab_jednasci_carkvy_leanida_fiodarava
         )
     )
     list.add(BogaslujbovyiaListData("Малітва за нашую зямлю", R.raw.mltv_za_naszuju_ziamlu))
@@ -1452,14 +1293,12 @@ fun getPrynagodnyia5(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
-            "Малітва за хворага («Міласэрны Божа»)",
-            R.raw.mltv_za_chvoraha_milaserny_boza
+            "Малітва за хворага («Міласэрны Божа»)", R.raw.mltv_za_chvoraha_milaserny_boza
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітва за хворага («Лекару душ і целаў»)",
-            R.raw.mltv_za_chvoraha_lekaru_dush_cielau
+            "Малітва за хворага («Лекару душ і целаў»)", R.raw.mltv_za_chvoraha_lekaru_dush_cielau
         )
     )
     list.add(BogaslujbovyiaListData("Малітва ў часе хваробы", R.raw.mltv_u_czasie_chvaroby))
@@ -1475,8 +1314,7 @@ fun getPrynagodnyia6(): ArrayList<BogaslujbovyiaListData> {
     list.add(BogaslujbovyiaListData("Малітва перад пачаткам навучаньня", R.raw.prynagodnyia_21))
     list.add(
         BogaslujbovyiaListData(
-            "Малітва за дзяцей перад пачаткам навукі",
-            R.raw.prynagodnyia_12
+            "Малітва за дзяцей перад пачаткам навукі", R.raw.prynagodnyia_12
         )
     )
     list.add(BogaslujbovyiaListData("Малітва вучняў перад навучаньнем", R.raw.prynagodnyia_29))
@@ -1486,8 +1324,7 @@ fun getPrynagodnyia6(): ArrayList<BogaslujbovyiaListData> {
     list.add(BogaslujbovyiaListData("Малітва пілігрыма", R.raw.prynagodnyia_32))
     list.add(
         BogaslujbovyiaListData(
-            "Малітва да ўкрыжаванага Хрыста (Францішак Скарына)",
-            R.raw.mltv_da_ukryzavanaha_chrysta_skaryna
+            "Малітва да ўкрыжаванага Хрыста (Францішак Скарына)", R.raw.mltv_da_ukryzavanaha_chrysta_skaryna
         )
     )
     list.add(BogaslujbovyiaListData("Малітва аб блаславеньні", R.raw.prynagodnyia_0))
@@ -1497,56 +1334,48 @@ fun getPrynagodnyia6(): ArrayList<BogaslujbovyiaListData> {
     list.add(BogaslujbovyiaListData("Малітва на ўсякую патрэбу", R.raw.prynagodnyia_19))
     list.add(
         BogaslujbovyiaListData(
-            "Малітва падзякі за атрыманыя дабрадзействы",
-            R.raw.prynagodnyia_20
+            "Малітва падзякі за атрыманыя дабрадзействы", R.raw.prynagodnyia_20
         )
     )
     list.add(BogaslujbovyiaListData("Малітва перад іспытамі", R.raw.prynagodnyia_22))
     list.add(
         BogaslujbovyiaListData(
-            "Малітва ранішняга намеру (Опціных старцаў)",
-            R.raw.prynagodnyia_23
+            "Малітва ранішняга намеру (Опціных старцаў)", R.raw.prynagodnyia_23
         )
     )
     list.add(BogaslujbovyiaListData("Малітва ў час адпачынку", R.raw.prynagodnyia_34))
     list.add(
         BogaslujbovyiaListData(
-            "Малітва за бязьвінных ахвяраў перасьледу",
-            R.raw.prynagodnyia_35
+            "Малітва за бязьвінных ахвяраў перасьледу", R.raw.prynagodnyia_35
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітвы перад ядою і пасьля яды",
-            R.raw.mltv_pierad_jadoj_i_pasla
+            "Малітвы перад ядою і пасьля яды", R.raw.mltv_pierad_jadoj_i_pasla
         )
     )
     list.add(BogaslujbovyiaListData("Малітва за ўсіх і за ўсё", R.raw.mltv_za_usich_i_za_usio))
     list.add(BogaslujbovyiaListData("Малітва за вязьняў", R.raw.mltv_za_viazniau))
     list.add(
         BogaslujbovyiaListData(
-            "Малітва перад пачаткам і пасьля кожнай справы",
-            R.raw.mltv_pierad_i_pasla_koznaj_spravy
+            "Малітва перад пачаткам і пасьля кожнай справы", R.raw.mltv_pierad_i_pasla_koznaj_spravy
         )
     )
     list.add(BogaslujbovyiaListData("Малітва ў дзень нараджэньня", R.raw.mltv_dzien_naradzennia))
     list.add(
         BogaslujbovyiaListData(
-            "Малітва аб духу любові",
-            R.raw.mltv_ab_duchu_lubovi_sv_franciszak
+            "Малітва аб духу любові", R.raw.mltv_ab_duchu_lubovi_sv_franciszak
         )
     )
     list.add(BogaslujbovyiaListData("Малітва на кожны час", R.raw.mltv_na_kozny_czas))
     list.add(
         BogaslujbovyiaListData(
-            "Малітвы за памерлых («Божа духаў і ўсякага цялеснага стварэньня»)",
-            R.raw.mltv_za_pamierlych_boza_duchau
+            "Малітвы за памерлых («Божа духаў і ўсякага цялеснага стварэньня»)", R.raw.mltv_za_pamierlych_boza_duchau
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Юбілейная малітва",
-            R.raw.mltv_jubilejnaja
+            "Юбілейная малітва", R.raw.mltv_jubilejnaja
         )
     )
     list.sortBy {
@@ -1556,11 +1385,7 @@ fun getPrynagodnyia6(): ArrayList<BogaslujbovyiaListData> {
 }
 
 data class MineiaList(
-    val dayOfMonth: Int,
-    val month: Int,
-    val title: String,
-    val resource: Int,
-    val sluzba: Int
+    val dayOfMonth: Int, val month: Int, val title: String, val resource: Int, val sluzba: Int
 )
 
 data class Malitvy(val title: String, val day: Int = 0)

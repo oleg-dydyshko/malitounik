@@ -42,6 +42,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -71,7 +72,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -83,22 +83,22 @@ import java.math.RoundingMode
 import java.text.DecimalFormat
 
 class FilterBiblijatekaModel : ViewModel() {
-    private val items = ArrayList<ArrayList<String>>()
+    private val items = SnapshotStateList<ArrayList<String>>()
 
     private val _filteredItems = MutableStateFlow(items)
-    var filteredItems: StateFlow<ArrayList<ArrayList<String>>> = _filteredItems
+    var filteredItems: MutableStateFlow<SnapshotStateList<ArrayList<String>>> = _filteredItems
 
     fun clear() {
         items.clear()
     }
 
-    fun addAllItemList(item: ArrayList<ArrayList<String>>) {
+    fun addAllItemList(item: SnapshotStateList<ArrayList<String>>) {
         items.addAll(item)
     }
 
     fun filterItem(search: String) {
         _filteredItems.value =
-            items.filter { it[1].contains(search, ignoreCase = true) } as ArrayList<ArrayList<String>>
+            items.filter { it[1].contains(search, ignoreCase = true) } as SnapshotStateList<ArrayList<String>>
     }
 }
 
@@ -137,12 +137,12 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
     val pagerState = rememberPagerState(pageCount = {
         list.size
     }, initialPage = rubrika)
-    val bibliatekaList0 = remember { ArrayList<ArrayList<String>>() }
-    val bibliatekaList1 = remember { ArrayList<ArrayList<String>>() }
-    val bibliatekaList2 = remember { ArrayList<ArrayList<String>>() }
-    val bibliatekaList3 = remember { ArrayList<ArrayList<String>>() }
-    val bibliatekaList4 = remember { ArrayList<ArrayList<String>>() }
-    val bibliatekaList5 = remember { ArrayList<ArrayList<String>>() }
+    val bibliatekaList0 = remember { SnapshotStateList<ArrayList<String>>() }
+    val bibliatekaList1 = remember { SnapshotStateList<ArrayList<String>>() }
+    val bibliatekaList2 = remember { SnapshotStateList<ArrayList<String>>() }
+    val bibliatekaList3 = remember { SnapshotStateList<ArrayList<String>>() }
+    val bibliatekaList4 = remember { SnapshotStateList<ArrayList<String>>() }
+    val bibliatekaList5 = remember { SnapshotStateList<ArrayList<String>>() }
     LaunchedEffect(Unit) {
         biblijatekaJob?.cancel()
         biblijatekaJob = CoroutineScope(Dispatchers.IO).launch {
@@ -415,7 +415,7 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
 
 @Composable
 fun BiblijatekaListItems(
-    listItem: ArrayList<ArrayList<String>>, bibliatekaList0: ArrayList<ArrayList<String>>, navigationActions: AppNavigationActions, innerPadding: PaddingValues,
+    listItem: SnapshotStateList<ArrayList<String>>, bibliatekaList0: SnapshotStateList<ArrayList<String>>, navigationActions: AppNavigationActions, innerPadding: PaddingValues,
     setFileListPosition: (Int) -> Unit,
     setIsDialogBiblijatekaVisable: (Boolean) -> Unit
 ) {

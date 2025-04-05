@@ -53,11 +53,7 @@ class FilterBogaslujbovyiaListModel : ViewModel() {
 
 @Composable
 fun BogaslujbovyiaMenu(
-    navController: NavHostController,
-    innerPadding: PaddingValues,
-    menuItem: Int,
-    searchText: Boolean,
-    search: String
+    navController: NavHostController, innerPadding: PaddingValues, menuItem: Int, searchText: Boolean, search: String
 ) {
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
@@ -67,8 +63,7 @@ fun BogaslujbovyiaMenu(
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
             override fun onPreScroll(
-                available: Offset,
-                source: NestedScrollSource
+                available: Offset, source: NestedScrollSource
             ): Offset {
                 keyboardController?.hide()
                 return super.onPreScroll(available, source)
@@ -119,7 +114,11 @@ fun BogaslujbovyiaMenu(
         }
     }
     val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
-    LazyColumn(modifier = Modifier.fillMaxSize().nestedScroll(nestedScrollConnection)) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .nestedScroll(nestedScrollConnection)
+    ) {
         if (!searchText && menuItem == Settings.MENU_BOGASLUJBOVYIA) {
             items(folderList.size) { index ->
                 Row(
@@ -128,68 +127,53 @@ fun BogaslujbovyiaMenu(
                         .clickable {
                             if (folderList[index] == "АКТОІХ") {
                                 navigationActions.navigateToMalitvyListAll(
-                                    folderList[index],
-                                    Settings.MENU_AKTOIX
-                                )
-                            }
-                            if (folderList[index] == "ВЯЧЭРНЯ") {
-                                navigationActions.navigateToMalitvyListAll(
-                                    folderList[index],
-                                    Settings.MENU_VIACHERNIA
+                                    folderList[index], Settings.MENU_AKTOIX
                                 )
                             }
                             if (folderList[index] == "ТРАПАРЫ І КАНДАКІ НЯДЗЕЛЬНЫЯ ВАСЬМІ ТОНАЎ") {
                                 navigationActions.navigateToMalitvyListAll(
-                                    folderList[index],
-                                    Settings.MENU_TRAPARY_KANDAKI_NIADZELNYIA
+                                    folderList[index], Settings.MENU_TRAPARY_KANDAKI_NIADZELNYIA
                                 )
                             }
                             if (folderList[index] == "МАЛІТВЫ ПАСЬЛЯ СЬВЯТОГА ПРЫЧАСЬЦЯ") {
                                 navigationActions.navigateToMalitvyListAll(
-                                    folderList[index],
-                                    Settings.MENU_MALITVY_PASLIA_PRYCHASCIA
+                                    folderList[index], Settings.MENU_MALITVY_PASLIA_PRYCHASCIA
                                 )
                             }
                             if (folderList[index] == "ТРЭБНІК") {
                                 navigationActions.navigateToMalitvyListAll(
-                                    folderList[index],
-                                    Settings.MENU_TREBNIK
+                                    folderList[index], Settings.MENU_TREBNIK
                                 )
                             }
                             if (folderList[index] == "МІНЭЯ АГУЛЬНАЯ") {
                                 navigationActions.navigateToMalitvyListAll(
-                                    folderList[index],
-                                    Settings.MENU_MINEIA_AGULNAIA
+                                    folderList[index], Settings.MENU_MINEIA_AGULNAIA
                                 )
                             }
                             if (folderList[index] == "МІНЭЯ МЕСЯЧНАЯ") {
                                 navigationActions.navigateToMalitvyListAll(
-                                    folderList[index],
-                                    Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH
+                                    folderList[index], Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH
                                 )
                             }
                             if (folderList[index] == "ТРЫЁДЗЬ") {
                                 navigationActions.navigateToMalitvyListAll(
-                                    folderList[index],
-                                    Settings.MENU_TRYEDZ
+                                    folderList[index], Settings.MENU_TRYEDZ
                                 )
                             }
-                        },
-                    verticalAlignment = Alignment.CenterVertically
+                            if (folderList[index] == "ЧАСАСЛОЎ") {
+                                navigationActions.navigateToMalitvyListAll(
+                                    folderList[index], Settings.MENU_CHASASLOU
+                                )
+                            }
+                        }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier.size(12.dp, 12.dp),
-                        painter = painterResource(R.drawable.folder),
-                        tint = MaterialTheme.colorScheme.primary,
-                        contentDescription = null
+                        modifier = Modifier.size(12.dp, 12.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                     )
                     Text(
-                        folderList[index],
-                        modifier = Modifier
+                        folderList[index], modifier = Modifier
                             .fillMaxSize()
-                            .padding(10.dp),
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = Settings.fontInterface.sp
+                            .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                     )
                 }
                 HorizontalDivider()
@@ -202,26 +186,18 @@ fun BogaslujbovyiaMenu(
                     .clickable {
                         if (menuItem != Settings.MENU_MAE_NATATKI) {
                             navigationActions.navigateToBogaslujbovyia(
-                                filteredItems[index].title,
-                                filteredItems[index].resurs
+                                filteredItems[index].title, filteredItems[index].resurs
                             )
                         }
-                    },
-                verticalAlignment = Alignment.CenterVertically
+                    }, verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    modifier = Modifier.size(12.dp, 12.dp),
-                    painter = painterResource(R.drawable.description),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
+                    modifier = Modifier.size(12.dp, 12.dp), painter = painterResource(R.drawable.description), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                 )
                 Text(
-                    filteredItems[index].title,
-                    modifier = Modifier
+                    filteredItems[index].title, modifier = Modifier
                         .fillMaxSize()
-                        .padding(10.dp),
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontSize = Settings.fontInterface.sp
+                        .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                 )
             }
             HorizontalDivider()
@@ -234,25 +210,17 @@ fun BogaslujbovyiaMenu(
                         .padding(start = 10.dp)
                         .clickable {
                             navigationActions.navigateToMalitvyListAll(
-                                title,
-                                Settings.MENU_MALITVY_PRYNAGODNYIA
+                                title, Settings.MENU_MALITVY_PRYNAGODNYIA
                             )
-                        },
-                    verticalAlignment = Alignment.CenterVertically
+                        }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier.size(12.dp, 12.dp),
-                        painter = painterResource(R.drawable.folder),
-                        tint = MaterialTheme.colorScheme.primary,
-                        contentDescription = null
+                        modifier = Modifier.size(12.dp, 12.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                     )
                     Text(
-                        title,
-                        modifier = Modifier
+                        title, modifier = Modifier
                             .fillMaxSize()
-                            .padding(10.dp),
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = Settings.fontInterface.sp
+                            .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                     )
                 }
                 HorizontalDivider()
@@ -277,8 +245,7 @@ fun getAkafist(): ArrayList<BogaslujbovyiaListData> {
     list.add(BogaslujbovyiaListData("Акафіст сьв. Язэпу", R.raw.akafist_praviednamu_jazepu))
     list.add(
         BogaslujbovyiaListData(
-            "Акафіст Росіцкім мучанікам",
-            R.raw.akafist_rosickim_muczanikam
+            "Акафіст Росіцкім мучанікам", R.raw.akafist_rosickim_muczanikam
         )
     )
     return list
@@ -307,60 +274,48 @@ fun getBogaslujbovyia(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
-            "Боская Літургія сьв. Яна Залатавуснага",
-            R.raw.lit_jana_zalatavusnaha
+            "Боская Літургія сьв. Яна Залатавуснага", R.raw.lit_jana_zalatavusnaha
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Боская Літургія ў Велікодны перыяд",
-            R.raw.lit_jan_zalat_vielikodn
+            "Боская Літургія ў Велікодны перыяд", R.raw.lit_jan_zalat_vielikodn
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Боская Літургія сьв. Васіля Вялікага",
-            R.raw.lit_vasila_vialikaha
+            "Боская Літургія сьв. Васіля Вялікага", R.raw.lit_vasila_vialikaha
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Літургія раней асьвячаных дароў",
-            R.raw.lit_raniej_asviaczanych_darou
+            "Літургія раней асьвячаных дароў", R.raw.lit_raniej_asviaczanych_darou
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Набажэнства ў гонар Маці Божай Нястомнай Дапамогі",
-            R.raw.nabazenstva_maci_bozaj_niast_dap
+            "Набажэнства ў гонар Маці Божай Нястомнай Дапамогі", R.raw.nabazenstva_maci_bozaj_niast_dap
         )
     )
-    list.add(BogaslujbovyiaListData("Ютрань нядзельная (у скароце)", R.raw.jutran_niadzelnaja))
     list.add(BogaslujbovyiaListData("Абедніца", R.raw.abiednica))
     list.add(
         BogaslujbovyiaListData(
-            "Малебны канон Найсьвяцейшай Багародзіцы",
-            R.raw.kanon_malebny_baharodzicy
+            "Малебны канон Найсьвяцейшай Багародзіцы", R.raw.kanon_malebny_baharodzicy
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вялікі пакаянны канон сьвятога Андрэя Крыцкага",
-            R.raw.kanon_andreja_kryckaha
+            "Вялікі пакаянны канон сьвятога Андрэя Крыцкага", R.raw.kanon_andreja_kryckaha
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малебен сьв. Кірылу і Мятоду, настаўнікам славянскім",
-            R.raw.malebien_kiryla_miatod
+            "Малебен сьв. Кірылу і Мятоду, настаўнікам славянскім", R.raw.malebien_kiryla_miatod
         )
     )
-    list.add(BogaslujbovyiaListData("Павячэрніца малая", R.raw.paviaczernica_malaja))
-    list.add(BogaslujbovyiaListData("Павячэрніца вялікая", R.raw.paviaczernica_vialikaja))
     list.add(
         BogaslujbovyiaListData(
-            "Вялікі пакаянны канон сьвятога Андрэя Крыцкага(у 4-х частках)",
-            R.raw.kanon_andreja_kryckaha_4_czastki
+            "Вялікі пакаянны канон сьвятога Андрэя Крыцкага(у 4-х частках)", R.raw.kanon_andreja_kryckaha_4_czastki
         )
     )
     list.sortBy {

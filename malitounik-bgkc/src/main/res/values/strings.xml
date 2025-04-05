@@ -1,7 +1,7 @@
 <resources>
     <string name="navigation_drawer_open">Адкрыць навігацыйнае меню</string>
     <string name="navigation_drawer_close">Закрыць навігацыйнае меню</string>
-    <string name="app_name">МалітоўнікBeta</string>
+    <string name="app_name">Малітоўнік</string>
     <string name="kaliandar">Каляндар БГКЦ</string>
     <string name="kaliandar2">КАЛЯНДАР БГКЦ</string>
     <string name="stary_zapaviet">Стары Запавет</string>
@@ -1134,13 +1134,13 @@
     </array>
     <array name="bogaslugbovyia_folder_list">
         <item>МАЛІТВЫ ПАСЬЛЯ СЬВЯТОГА ПРЫЧАСЬЦЯ</item>
-        <item>ВЯЧЭРНЯ</item>
         <item>ТРАПАРЫ І КАНДАКІ НЯДЗЕЛЬНЫЯ ВАСЬМІ ТОНАЎ</item>
         <item>МІНЭЯ МЕСЯЧНАЯ</item>
         <item>ТРЫЁДЗЬ</item>
         <item>МІНЭЯ АГУЛЬНАЯ</item>
         <item>АКТОІХ</item>
         <item>ТРЭБНІК</item>
+        <item>ЧАСАСЛОЎ</item>
     </array>
     <string name="ton_na_niadzelu">\nТрапары і кандакі нядзельныя васьмі тонаў</string>
     <string name="mineia_mesiachnaia">\nМінэя месячная</string>
