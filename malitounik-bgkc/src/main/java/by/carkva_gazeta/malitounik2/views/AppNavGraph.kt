@@ -7,10 +7,6 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.EaseIn
-import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -362,20 +358,15 @@ fun AppNavGraph(
             PadzeiaView(navController)
         }
         composable(
-            AllDestinations.SVITYIA_VIEW + "/{svity}/{year}/{mun}/{day}",
+            AllDestinations.SVITYIA_VIEW + "/{svity}/{position}",
             arguments = listOf(
                 navArgument("svity") { type = NavType.BoolType },
-                navArgument("year") { type = NavType.IntType },
-                navArgument("mun") { type = NavType.IntType },
-                navArgument("day") { type = NavType.IntType }
+                navArgument("position") { type = NavType.IntType }
             )
         ) { stackEntry ->
-            val c = Calendar.getInstance()
             val svity = stackEntry.arguments?.getBoolean("svity") == true
-            val year = stackEntry.arguments?.getInt("year") ?: c[Calendar.YEAR]
-            val mun = stackEntry.arguments?.getInt("mun") ?: (c[Calendar.MONTH] + 1)
-            val day = stackEntry.arguments?.getInt("day") ?: c[Calendar.DATE]
-            SviatyiaView(navController, svity, year, mun, day)
+            val position = stackEntry.arguments?.getInt("position") ?: Settings.caliandarPosition
+            SviatyiaView(navController, svity, position)
         }
 
         composable(
@@ -1255,7 +1246,7 @@ fun MainConteiner(
                             modifier = Modifier.padding(10.dp)
                         ) { page ->
                             KaliandarScreen(
-                                data = Settings.data[page],
+                                page,
                                 innerPadding,
                                 navigateToCytanneList = { title, chytanne, biblia ->
                                     navigationActions.navigateToCytanniList(
@@ -1266,8 +1257,8 @@ fun MainConteiner(
                                         -1
                                     )
                                 },
-                                navigateToSvityiaView = { svity, year, mun, day ->
-                                    navigationActions.navigateToSvityiaView(svity, year, mun, day)
+                                navigateToSvityiaView = { svity, position ->
+                                    navigationActions.navigateToSvityiaView(svity, position)
                                 },
                                 navigateToBogaslujbovyia = { title, resurs ->
                                     navigationActions.navigateToBogaslujbovyia(title, resurs)
@@ -1360,8 +1351,8 @@ fun MainConteiner(
                         coroutineScope = coroutineScope,
                         lazyColumnState = lazyColumnState,
                         innerPadding,
-                        navigateToSvityiaView = { svity, year, mun, day ->
-                            navigationActions.navigateToSvityiaView(svity, year, mun, day)
+                        navigateToSvityiaView = { svity, position ->
+                            navigationActions.navigateToSvityiaView(svity, position)
                         }
                     )
 
@@ -1419,8 +1410,8 @@ fun MainConteiner(
                                 navigateToBogaslujbovyia = { title, resourse ->
                                     navigationActions.navigateToBogaslujbovyia(title, resourse)
                                 },
-                                navigateToSvityiaView = { svity, year, mun, day ->
-                                    navigationActions.navigateToSvityiaView(svity, year, mun, day)
+                                navigateToSvityiaView = { svity, position ->
+                                    navigationActions.navigateToSvityiaView(svity, position)
                                 }) {
                                 showDropdown = false
                             }

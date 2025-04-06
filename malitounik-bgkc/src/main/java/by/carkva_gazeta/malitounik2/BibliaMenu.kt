@@ -236,7 +236,7 @@ fun BibliaMenu(
                         Text(
                             text = title,
                             fontSize = Settings.fontInterface.sp,
-                            lineHeight = 18.sp * 1.15f,
+                            lineHeight = Settings.fontInterface.sp * 1.2f,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             color = MaterialTheme.colorScheme.secondary,

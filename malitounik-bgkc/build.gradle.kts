@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "by.carkva_gazeta.malitounik2"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "by.carkva_gazeta.malitounik2"
         minSdk = 21
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 

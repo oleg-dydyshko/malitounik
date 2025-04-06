@@ -120,6 +120,8 @@ import java.io.File
 import java.io.FileWriter
 import java.util.Calendar
 import java.util.GregorianCalendar
+import androidx.core.content.edit
+import androidx.core.net.toUri
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -127,7 +129,6 @@ fun PadzeiaView(navController: NavHostController) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val maxLine = remember { mutableIntStateOf(1) }
-    //var addPadzeia by remember { mutableStateOf(false) }
     var editMode by remember { mutableStateOf(false) }
     var editPadzeia by remember { mutableStateOf(false) }
     var editPadzeiaInit by remember { mutableStateOf(true) }
@@ -501,6 +502,7 @@ fun PadzeiaView(navController: NavHostController) {
                         IconButton({
                             editMode = true
                             editPadzeia = false
+                            editPadzeiaInit = false
                         }) {
                             Icon(
                                 painter = painterResource(R.drawable.add),
@@ -740,9 +742,9 @@ fun AddPadzeia(
                     2 -> setNotificationFull(context)
                 }
             } else {
-                val prefEditor = k.edit()
-                prefEditor.putInt("notification", Settings.NOTIFICATION_SVIATY_NONE)
-                prefEditor.apply()
+                k.edit {
+                    putInt("notification", Settings.NOTIFICATION_SVIATY_NONE)
+                }
                 setNotificationNon(context)
                 setTimeZa = ""
             }
@@ -760,7 +762,7 @@ fun AddPadzeia(
                 if (!alarmManager.canScheduleExactAlarms()) {
                     val intent = Intent()
                     intent.action = android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
-                    intent.data = Uri.parse("package:" + context.packageName)
+                    intent.data = ("package:" + context.packageName).toUri()
                     context.startActivity(intent)
                 }
             }

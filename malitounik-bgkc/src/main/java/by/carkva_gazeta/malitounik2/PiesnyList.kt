@@ -779,7 +779,7 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues, se
                         }
                     }, text = {
                         Text(
-                            text = title, fontSize = Settings.fontInterface.sp, lineHeight = 18.sp * 1.15f, maxLines = 1, overflow = TextOverflow.Ellipsis, color = MaterialTheme.colorScheme.secondary
+                            text = title, fontSize = Settings.fontInterface.sp, lineHeight = Settings.fontInterface.sp * 1.2f, maxLines = 1, overflow = TextOverflow.Ellipsis, color = MaterialTheme.colorScheme.secondary
                         )
                     })
                 }

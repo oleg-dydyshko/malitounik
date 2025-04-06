@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "by.carkva_gazeta.admin"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 21

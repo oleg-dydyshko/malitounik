@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -88,7 +89,9 @@ fun DrawView(
                 Text(
                     text = stringResource(id = R.string.kaliandar2),
                     fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.secondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route.contains(AllDestinations.KALIANDAR),
@@ -111,7 +114,9 @@ fun DrawView(
                 Text(
                     text = stringResource(id = R.string.liturgikon),
                     fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.secondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.BOGASLUJBOVYIA_MENU,
@@ -134,7 +139,9 @@ fun DrawView(
                 Text(
                     text = stringResource(id = R.string.malitvy),
                     fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.secondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.MALITVY_MENU,
@@ -157,7 +164,9 @@ fun DrawView(
                 Text(
                     text = stringResource(id = R.string.akafisty),
                     fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.secondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.AKAFIST_MENU,
@@ -180,7 +189,9 @@ fun DrawView(
                 Text(
                     text = stringResource(id = R.string.ruzanec),
                     fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.secondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.RUJANEC_MENU,
@@ -203,7 +214,9 @@ fun DrawView(
                 Text(
                     text = stringResource(id = R.string.maje_natatki),
                     fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.secondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.MAE_NATATKI_MENU,
@@ -226,7 +239,9 @@ fun DrawView(
                 Text(
                     text = stringResource(id = R.string.MenuVybranoe),
                     fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.secondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.VYBRANAE_LIST,
@@ -253,7 +268,9 @@ fun DrawView(
                 Text(
                     text = stringResource(id = R.string.bibliaAll),
                     fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.secondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.BIBLIA,
@@ -289,10 +306,16 @@ fun DrawView(
                     .weight(1f),
                 text = stringResource(id = R.string.padie_maryia),
                 fontSize = Settings.fontInterface.sp,
-                color = MaterialTheme.colorScheme.secondary
+                color = MaterialTheme.colorScheme.secondary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             if (Settings.isProgressVisableRadyjoMaryia.value) {
-                CircularProgressIndicator(modifier = Modifier.padding(horizontal = 10.dp).size(24.dp, 24.dp))
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .padding(horizontal = 10.dp)
+                        .size(24.dp, 24.dp)
+                )
             }
             Icon(
                 modifier = Modifier
@@ -368,7 +391,7 @@ fun DrawView(
             ) {
                 Icon(
                     modifier = Modifier.size(12.dp, 12.dp),
-                    painter = painterResource(R.drawable.krest),
+                    painter = painterResource(R.drawable.description),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = null
                 )
@@ -387,7 +410,9 @@ fun DrawView(
                 Text(
                     text = stringResource(id = R.string.bibliateka_carkvy),
                     fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.secondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.BIBLIJATEKA_LIST,
@@ -410,7 +435,9 @@ fun DrawView(
                 Text(
                     text = stringResource(id = R.string.song),
                     fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.secondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.PIESNY_LIST,
@@ -437,7 +464,9 @@ fun DrawView(
                 Text(
                     text = stringResource(id = R.string.spovedz),
                     fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.secondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.PADRYXTOUKA,
@@ -460,7 +489,9 @@ fun DrawView(
                 Text(
                     text = stringResource(id = R.string.pamiatka),
                     fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.secondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.PAMIATKA,
@@ -483,7 +514,9 @@ fun DrawView(
                 Text(
                     text = stringResource(id = R.string.sviaty),
                     fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.secondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.SVAITY_MUNU,
@@ -506,7 +539,9 @@ fun DrawView(
                 Text(
                     text = stringResource(id = R.string.parafii),
                     fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.secondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.PARAFII_BGKC,
@@ -529,7 +564,9 @@ fun DrawView(
                 Text(
                     text = stringResource(id = R.string.paschalia),
                     fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.secondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.PASHALIA,
@@ -610,7 +647,9 @@ fun DrawerHeader(modifier: Modifier) {
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.secondary,
             fontSize = (Settings.fontInterface - 2).sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }

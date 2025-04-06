@@ -147,7 +147,7 @@ fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, sear
                     Text(
                         stringResource(R.string.paschalia),
                         fontSize = Settings.fontInterface.sp,
-                        lineHeight = 18.sp * 1.15f
+                        lineHeight = Settings.fontInterface.sp * 1.2f
                     )
                 }
             }

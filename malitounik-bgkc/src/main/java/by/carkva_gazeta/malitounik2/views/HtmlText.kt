@@ -45,7 +45,7 @@ fun HtmlText(
     color: Color = MaterialTheme.colorScheme.secondary,
     fontWeight: FontWeight? = null,
     textAlign: TextAlign? = null,
-    fontSize: TextUnit = 18.sp,
+    fontSize: TextUnit = 22.sp,
     scrollState: ScrollState = rememberScrollState(),
     searchText: AnnotatedString = AnnotatedString(""),
     navigateTo: (String) -> Unit = {},
@@ -399,7 +399,7 @@ fun HtmlText(
         modifier = modifier,
         text = searchText.ifEmpty { annotatedString },
         fontSize = fontSize,
-        lineHeight = fontSize * 1.15f,
+        lineHeight = fontSize * 1.2f,
         textAlign = textAlign,
         onTextLayout = { layout ->
             textLayout.value = layout

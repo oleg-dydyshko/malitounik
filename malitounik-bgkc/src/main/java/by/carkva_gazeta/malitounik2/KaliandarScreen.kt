@@ -62,13 +62,14 @@ import java.util.GregorianCalendar
 
 @Composable
 fun KaliandarScreen(
-    data: ArrayList<String>,
+    position: Int,
     innerPadding: PaddingValues,
     navigateToCytanneList: (String, String, Int) -> Unit,
-    navigateToSvityiaView: (svity: Boolean, year: Int, mun: Int, day: Int) -> Unit,
+    navigateToSvityiaView: (svity: Boolean, position: Int) -> Unit,
     navigateToBogaslujbovyia: (title: String, resurs: Int) -> Unit,
     navigateToKniga: () -> Unit
 ) {
+    val data = Settings.data[position]
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     Column(
@@ -108,7 +109,7 @@ fun KaliandarScreen(
             Column(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Column(modifier = Modifier.size(50.dp, 100.dp)) {
+                Column(modifier = Modifier.size(80.dp, 100.dp)) {
                     if (data[20] != "0" && data[0].toInt() == Calendar.SUNDAY) {
                         Text(
                             modifier = Modifier
@@ -201,7 +202,7 @@ fun KaliandarScreen(
             }
             Box(
                 modifier = Modifier
-                    .padding(start = 20.dp)
+                    .padding(start = 50.dp)
                     .align(Alignment.Bottom)
             ) {
                 Icon(
@@ -224,7 +225,7 @@ fun KaliandarScreen(
                     .fillMaxWidth()
                     .padding(top = 10.dp, bottom = padding1)
                     .clickable {
-                        navigateToSvityiaView(true, data[3].toInt(), data[2].toInt() + 1, data[1].toInt())
+                        navigateToSvityiaView(true, position)
                     },
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -305,7 +306,7 @@ fun KaliandarScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        navigateToSvityiaView(false, data[3].toInt(), data[2].toInt() + 1, data[1].toInt())
+                        navigateToSvityiaView(false, position)
                     }
             ) {
                 for (i in list.indices) {

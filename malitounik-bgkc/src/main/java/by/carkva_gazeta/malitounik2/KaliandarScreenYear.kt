@@ -55,7 +55,7 @@ fun KaliandarScreenYear(
     coroutineScope: CoroutineScope,
     lazyColumnState: LazyListState,
     innerPadding: PaddingValues,
-    navigateToSvityiaView: (svity: Boolean, year: Int, mun: Int, day: Int) -> Unit,
+    navigateToSvityiaView: (svity: Boolean, position: Int) -> Unit,
 ) {
     val data = Settings.data
     val state by remember { derivedStateOf { lazyColumnState.firstVisibleItemIndex } }
@@ -126,7 +126,7 @@ fun KaliandarScreenYear(
                             .fillMaxWidth()
                             .padding(top = 10.dp, bottom = padding1)
                             .clickable {
-                                navigateToSvityiaView(true, data[index][3].toInt(), data[index][2].toInt() + 1, data[index][1].toInt())
+                                navigateToSvityiaView(true, index)
                             },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -193,7 +193,7 @@ fun KaliandarScreenYear(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                navigateToSvityiaView(false, data[index][3].toInt(), data[index][2].toInt() + 1, data[index][1].toInt())
+                                navigateToSvityiaView(false, index)
                             }
                     ) {
                         for (i in list.indices) {

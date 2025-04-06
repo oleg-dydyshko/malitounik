@@ -47,7 +47,7 @@ import java.util.Calendar
 fun KaliandarKnigaView(
     colorBlackboard: Color,
     navigateToBogaslujbovyia: (title: String, resurs: Int) -> Unit,
-    navigateToSvityiaView: (svity: Boolean, year: Int, mun: Int, day: Int) -> Unit,
+    navigateToSvityiaView: (svity: Boolean, position: Int) -> Unit,
     close: () -> Unit
 ) {
     var dialogKnigaView by remember { mutableStateOf(false) }
@@ -225,7 +225,7 @@ fun KaliandarKnigaView(
                 Row(modifier = Modifier.padding(vertical = 10.dp)) {
                     val svityia = data[4]
                     Column(modifier = modifier.clickable(svityia != "no_sviatyia") {
-                        navigateToSvityiaView(false, data[3].toInt(), data[2].toInt() + 1, data[1].toInt())
+                        navigateToSvityiaView(false, Settings.caliandarPosition)
                     }) {
                         val newTint = if (svityia == "no_sviatyia") SecondaryText else tint
                         Icon(painterResource(R.drawable.man_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally), tint = newTint)
