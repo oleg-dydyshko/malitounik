@@ -1,6 +1,5 @@
 package by.carkva_gazeta.malitounik2
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -60,6 +59,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -95,7 +95,6 @@ import java.io.File
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
-@SuppressLint("UnusedBoxWithConstraintsScope")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Biblijateka(
@@ -202,9 +201,10 @@ fun Biblijateka(
                         )
                     },
                     navigationIcon = {
-                        IconButton(onClick = {
-                            navController.popBackStack()
-                        },
+                        IconButton(
+                            onClick = {
+                                navController.popBackStack()
+                            },
                             content = {
                                 Icon(
                                     painter = painterResource(R.drawable.arrow_back),
@@ -336,10 +336,20 @@ fun Biblijateka(
                     offsetX = 0f
                     offsetY = 0f
                 }
+                val parentConstraints = this.constraints
                 LazyColumn(
                     state = lazyListState,
                     modifier = Modifier
                         .fillMaxSize()
+                        .layout { measurable, constraints ->
+                            val placeable = measurable.measure(
+                                constraints.copy(maxHeight = parentConstraints.maxHeight)
+                            )
+
+                            layout(placeable.width, placeable.height) {
+                                placeable.placeRelative(0, 0)
+                            }
+                        }
                         .onGloballyPositioned { coordinates ->
                             widthZoom = coordinates.size.width
                         }

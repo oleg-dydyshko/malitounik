@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
@@ -1272,12 +1273,19 @@ fun Bogaslujbovyia(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
             ) {
-                if (autoScrollTextVisable) {
+                AnimatedVisibility(
+                    autoScrollTextVisable, enter = fadeIn(
+                        tween(
+                            durationMillis = 1000, easing = LinearOutSlowInEasing
+                        )
+                    ), exit = fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                ) {
                     Row(
                         modifier = Modifier
                             .align(Alignment.End)
                             .padding(bottom = 10.dp, end = 10.dp)
                     ) {
+                        Spacer(modifier = Modifier.padding(start = 50.dp))
                         Text(
                             text = autoScrollText,
                             modifier = Modifier

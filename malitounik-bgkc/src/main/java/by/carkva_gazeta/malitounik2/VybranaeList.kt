@@ -26,6 +26,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,20 +54,20 @@ fun VybranaeList(
     val gson = Gson()
     val type =
         TypeToken.getParameterized(
-            ArrayList::class.java,
+            SnapshotStateList::class.java,
             VybranaeData::class.java
         ).type
     val type2 =
         TypeToken.getParameterized(
-            ArrayList::class.java,
+            SnapshotStateList::class.java,
             VybranaeDataAll::class.java
         ).type
-    val list = remember { ArrayList<VybranaeListData>() }
-    val vybranoeList2 = remember { ArrayList<VybranaeDataAll>() }
+    val list = remember { SnapshotStateList<VybranaeListData>() }
+    val vybranoeList2 = remember { SnapshotStateList<VybranaeDataAll>() }
     if (initVybranoe) {
         initVybranoe = false
         for (i in 1..5) {
-            val vybranoeList = ArrayList<VybranaeData>()
+            val vybranoeList = SnapshotStateList<VybranaeData>()
             val prevodName = when (i.toString()) {
                 Settings.PEREVODSEMUXI -> "biblia"
                 Settings.PEREVODBOKUNA -> "bokuna"
@@ -97,7 +98,7 @@ fun VybranaeList(
                     VybranaeListData(
                         vybranoeList2[e].id,
                         vybranoeList2[e].title,
-                        ArrayList(),
+                        SnapshotStateList(),
                         vybranoeList2[e].resource
                     )
                 )
@@ -400,6 +401,6 @@ fun DialogDelite(
 data class VybranaeListData(
     val id: Long,
     val title: String,
-    val listBible: ArrayList<VybranaeData>,
+    val listBible: SnapshotStateList<VybranaeData>,
     val recourse: String
 )

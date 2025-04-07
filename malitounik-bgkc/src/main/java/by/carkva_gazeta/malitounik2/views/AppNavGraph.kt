@@ -134,8 +134,7 @@ import java.io.InputStreamReader
 import java.util.Calendar
 
 @Composable
-fun AppNavGraph(
-) {
+fun AppNavGraph() {
     val navController: NavHostController = rememberNavController()
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
     val drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -272,7 +271,8 @@ fun AppNavGraph(
             )
         }
 
-        composable(AllDestinations.KALIANDAR_YEAR,
+        composable(
+            AllDestinations.KALIANDAR_YEAR,
             enterTransition = {
                 fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
             },
@@ -665,7 +665,7 @@ fun MainConteiner(
 ) {
     val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentNavBackStackEntry?.destination?.route ?: AllDestinations.KALIANDAR
-    val context = LocalContext.current
+    val context = LocalActivity.current as MainActivity
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
@@ -697,7 +697,109 @@ fun MainConteiner(
         }
         isAppearanceLight = !isAppearanceLight
     }
+    LaunchedEffect(Unit) {
+        val data = context.intent
+        if (data?.data != null) {
+            when {
+                data.data.toString().contains("shortcuts=1") -> {
+                    if (Settings.destinations != AllDestinations.VYBRANAE_LIST) {
+                        navigationActions.navigateToVybranaeList()
+                    }
+                }
 
+                data.data.toString().contains("shortcuts=3") -> {
+                    if (Settings.destinations != AllDestinations.MAE_NATATKI_MENU) {
+                        navigationActions.navigateToMaeNatatkiMenu()
+                    }
+                }
+
+                data.data.toString().contains("shortcuts=2") -> {
+                    if (Settings.destinations != AllDestinations.BIBLIJATEKA_LIST) {
+                        navigationActions.navigateToBiblijatekaList()
+                    }
+                }
+            }
+            context.intent?.data = null
+        }
+        val extras = context.intent?.extras
+        if (extras != null) {
+            val widgetday = "widget_day"
+            val widgetmun = "widget_mun"
+            if (extras.getBoolean(widgetmun, false)) {
+                val caliandarPosition = extras.getInt("position", Settings.caliandarPosition)
+                if (Settings.destinations == AllDestinations.KALIANDAR || Settings.destinations == AllDestinations.KALIANDAR_YEAR) {
+                    coroutineScope.launch {
+                        if (k.getBoolean(
+                                "caliandarList",
+                                false
+                            )
+                        ) {
+                            Settings.caliandarPosition = caliandarPosition
+                            lazyColumnState.scrollToItem(caliandarPosition)
+                        } else pagerState.scrollToPage(caliandarPosition)
+                    }
+                } else {
+                    if (k.getBoolean("caliandarList", false)) navigationActions.navigateToKaliandarYear()
+                    else navigationActions.navigateToKaliandar()
+                }
+            }
+            if (extras.getBoolean(widgetday, false)) {
+                val calendar = Calendar.getInstance()
+                var caliandarPosition = Settings.caliandarPosition
+                for (i in Settings.data.indices) {
+                    if (calendar[Calendar.DATE] == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
+                        caliandarPosition = i
+                        break
+                    }
+                }
+                if (k.getBoolean("caliandarList", false)) {
+                    if (Settings.destinations == AllDestinations.KALIANDAR_YEAR) {
+                        coroutineScope.launch {
+                            lazyColumnState.scrollToItem(Settings.caliandarPosition)
+                        }
+                    } else {
+                        navigationActions.navigateToKaliandarYear()
+                    }
+                } else {
+                    if (Settings.destinations == AllDestinations.KALIANDAR) {
+                        coroutineScope.launch {
+                            pagerState.scrollToPage(caliandarPosition)
+                        }
+                    } else {
+                        navigationActions.navigateToKaliandar()
+                    }
+                }
+            }
+
+            if (extras.getBoolean("sabytie", false)) {
+                val calendar = Calendar.getInstance()
+                val chyt = extras.getInt("data")
+                val year = extras.getInt("year")
+                calendar.set(Calendar.DAY_OF_YEAR, chyt)
+                calendar.set(Calendar.YEAR, year)
+                for (i in Settings.data.indices) {
+                    if (calendar[Calendar.DAY_OF_YEAR] == Settings.data[i][24].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
+                        Settings.caliandarPosition = i
+                        break
+                    }
+                }
+                if (Settings.destinations == AllDestinations.KALIANDAR || Settings.destinations == AllDestinations.KALIANDAR_YEAR) {
+                    coroutineScope.launch {
+                        if (k.getBoolean(
+                                "caliandarList",
+                                false
+                            )
+                        ) lazyColumnState.scrollToItem(Settings.caliandarPosition)
+                        else pagerState.scrollToPage(Settings.caliandarPosition)
+                    }
+                } else {
+                    if (k.getBoolean("caliandarList", false)) navigationActions.navigateToKaliandarYear()
+                    else navigationActions.navigateToKaliandar()
+                }
+            }
+        }
+        context.intent = null
+    }
     if (drawerState.isOpen) isAppearanceLight =
         !(LocalActivity.current as MainActivity).dzenNoch
     SideEffect {
@@ -1160,7 +1262,7 @@ fun MainConteiner(
                                     if (currentRoute.contains(AllDestinations.KALIANDAR) || currentRoute.contains(AllDestinations.BIBLIJATEKA_LIST)) {
                                         DropdownMenuItem(
                                             onClick = {
-                                                if ((context as MainActivity).checkmodulesAdmin()) {
+                                                if (context.checkmodulesAdmin()) {
                                                     val intent = Intent()
                                                     if (currentRoute.contains(AllDestinations.KALIANDAR)) {
                                                         intent.setClassName(context, "by.carkva_gazeta.admin.Sviatyia")

@@ -650,9 +650,11 @@ fun BibliaMenu(
                         )
                     ), exit = fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
                 ) {
-                    Image(painter = painterResource(R.drawable.pravily_chytannia_psaltyria), contentDescription = "", modifier = Modifier
-                        .padding(10.dp)
-                        .fillMaxWidth(), contentScale = ContentScale.FillWidth)
+                    Image(
+                        painter = painterResource(R.drawable.pravily_chytannia_psaltyria), contentDescription = "", modifier = Modifier
+                            .padding(10.dp)
+                            .fillMaxWidth(), contentScale = ContentScale.FillWidth
+                    )
                 }
                 if (savePerevod == Settings.PEREVODSEMUXI || savePerevod == Settings.PEREVODBOKUNA) {
                     TextButton(
@@ -771,32 +773,11 @@ fun DialogImage(
                 .padding(16.dp),
             shape = RoundedCornerShape(16.dp),
         ) {
-            Image(painter = painter, contentDescription = "", Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState()), contentScale = ContentScale.FillWidth)
+            Image(
+                painter = painter, contentDescription = "", Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()), contentScale = ContentScale.FillWidth
+            )
         }
     }
-    /*(
-        icon = {
-            Icon(painter = painterResource(R.drawable.info), contentDescription = "")
-        },
-        title = {
-            Text(text = stringResource(R.string.peryiady))
-        },
-        text = {
-            Image(painter = painter, contentDescription = "", Modifier.fillMaxWidth().verticalScroll(rememberScrollState()))
-        },
-        onDismissRequest = {
-            onDismissRequest()
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onDismissRequest()
-                }
-            ) {
-                Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
-            }
-        }
-    )*/
 }

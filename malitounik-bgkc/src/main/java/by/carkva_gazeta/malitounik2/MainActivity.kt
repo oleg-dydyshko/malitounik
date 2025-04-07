@@ -1163,9 +1163,9 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
                 if (!dir.exists()) dir.mkdir()
                 val localFile = File("$filesDir/cache/cache.txt")
                 referens.child("/admin/log.txt").getFile(localFile).addOnFailureListener {
-                        val mes = Toast.makeText(this@MainActivity, getString(R.string.error), Toast.LENGTH_SHORT)
-                        mes.show()
-                    }.await()
+                    val mes = Toast.makeText(this@MainActivity, getString(R.string.error), Toast.LENGTH_SHORT)
+                    mes.show()
+                }.await()
                 val log = localFile.readText()
                 if (log != "") {
                     withContext(Dispatchers.Main) {

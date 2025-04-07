@@ -1,14 +1,11 @@
 package by.carkva_gazeta.malitounik2.ui.theme
 
 import androidx.compose.material3.Typography
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import by.carkva_gazeta.malitounik2.R
-import by.carkva_gazeta.malitounik2.Settings
 
 // Set of Material typography styles to start with
 /*val provider = GoogleFont.Provider(
@@ -69,14 +66,15 @@ val baseline = Typography()
     )
 }*/
 
-val Typography = Typography(
-    bodyLarge = TextStyle(
+/*bodyLarge = TextStyle(
         fontFamily = displayFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = Settings.fontInterface.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
-    ),
+    )*/
+
+val Typography = Typography(
     displayLarge = baseline.displayLarge.copy(fontFamily = displayFontFamily),
     displayMedium = baseline.displayMedium.copy(fontFamily = displayFontFamily),
     displaySmall = baseline.displaySmall.copy(fontFamily = displayFontFamily),
@@ -86,6 +84,7 @@ val Typography = Typography(
     titleLarge = baseline.titleLarge.copy(fontFamily = displayFontFamily),
     titleMedium = baseline.titleMedium.copy(fontFamily = displayFontFamily),
     titleSmall = baseline.titleSmall.copy(fontFamily = displayFontFamily),
+    bodyLarge = baseline.bodyLarge.copy(fontFamily = displayFontFamily),
     bodyMedium = baseline.bodyMedium.copy(fontFamily = displayFontFamily),
     bodySmall = baseline.bodySmall.copy(fontFamily = displayFontFamily),
     labelLarge = baseline.labelLarge.copy(fontFamily = displayFontFamily),
