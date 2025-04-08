@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -37,7 +38,11 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
@@ -59,6 +64,13 @@ import java.io.File
 import java.io.FileReader
 import java.util.Calendar
 import java.util.GregorianCalendar
+
+@Composable
+fun measureTextWidth(text: String, fontSize: TextUnit, fontWeight: FontWeight): Dp {
+    val textMeasurer = rememberTextMeasurer()
+    val widthInPixels = textMeasurer.measure(text, style = androidx.compose.ui.text.TextStyle(fontSize = fontSize, fontWeight = fontWeight)).size.width
+    return with(LocalDensity.current) { widthInPixels.toDp() }
+}
 
 @Composable
 fun KaliandarScreen(
@@ -100,7 +112,7 @@ fun KaliandarScreen(
         Row(
             modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column(modifier = Modifier.size(80.dp, 100.dp), verticalArrangement = Arrangement.SpaceBetween) {
+            Column(modifier = Modifier.size(80.dp, 100.dp), verticalArrangement = Arrangement.Top) {
                 if (data[20] != "0" && data[0].toInt() == Calendar.SUNDAY) {
                     Text(
                         modifier = Modifier
@@ -129,9 +141,15 @@ fun KaliandarScreen(
                     }
                 }
             }
+            val mounth = if (Calendar.getInstance()[Calendar.YEAR] == data[3].toInt()) stringArrayResource(
+                id = R.array.meciac
+            )[data[2].toInt()]
+            else stringArrayResource(id = R.array.meciac)[data[2].toInt()] + ", " + data[3]
+            var dateColumnWidth = measureTextWidth(mounth, fontSize = Settings.fontInterface.sp, fontWeight = FontWeight.Bold)
+            if (dateColumnWidth < 140.dp) dateColumnWidth = 140.dp
             Column(
                 modifier = Modifier
-                    .defaultMinSize(minWidth = 160.dp)
+                    .defaultMinSize(minWidth = dateColumnWidth)
                     .background(colorBlackboard), verticalArrangement = Arrangement.Center
             ) {
                 Text(
@@ -142,10 +160,6 @@ fun KaliandarScreen(
                 Text(
                     modifier = Modifier.align(Alignment.CenterHorizontally), text = data[1], fontSize = 80.sp, fontWeight = FontWeight.Bold, color = colorText
                 )
-                val mounth = if (Calendar.getInstance()[Calendar.YEAR] == data[3].toInt()) stringArrayResource(
-                    id = R.array.meciac
-                )[data[2].toInt()]
-                else stringArrayResource(id = R.array.meciac)[data[2].toInt()] + ", " + data[3]
                 Text(
                     modifier = Modifier
                         .padding(bottom = 10.dp)
@@ -334,7 +348,7 @@ fun KaliandarScreen(
                     .padding(vertical = 10.dp)
             ) {
                 Text(
-                    modifier = Modifier.padding(start = 10.dp, bottom = 10.dp), text = stringResource(id = R.string.maranata), fontStyle = FontStyle.Italic, color = colorText, fontSize = Settings.fontInterface.sp
+                    modifier = Modifier.padding(start = 10.dp, bottom = 10.dp), text = stringResource(id = R.string.maranata), fontStyle = FontStyle.Italic, color = colorText, fontSize = Settings.fontInterface.sp, maxLines = 1, overflow = TextOverflow.Ellipsis
                 )
                 val title = stringResource(
                     R.string.maranata2, data[1].toInt(), stringArrayResource(R.array.meciac_smoll)[2]

@@ -71,6 +71,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -386,13 +387,13 @@ fun CytanniList(
             }
         }
     }
-    val vybranoeList = remember { ArrayList<VybranaeData>() }
+    val vybranoeList = remember { SnapshotStateList<VybranaeData>() }
     var isPerevodError by remember { mutableStateOf(false) }
     var initVybranoe by remember { mutableStateOf(true) }
     var isVybranoe by remember { mutableStateOf(false) }
     var saveVybranoe by remember { mutableStateOf(false) }
     val gson = Gson()
-    val type = TypeToken.getParameterized(ArrayList::class.java, VybranaeData::class.java).type
+    val type = TypeToken.getParameterized(SnapshotStateList::class.java, VybranaeData::class.java).type
     val file = File("${LocalContext.current.filesDir}/vybranoe_${prevodName}.json")
     if (initVybranoe) {
         vybranoeList.clear()
@@ -400,6 +401,15 @@ fun CytanniList(
             vybranoeList.addAll(gson.fromJson(file.readText(), type))
         }
         initVybranoe = false
+        isVybranoe = false
+        if (vybranoeList.isNotEmpty()) {
+            for (i in 0 until vybranoeList.size) {
+                if (knigaText == vybranoeList[i].knigaText && vybranoeList[i].glava == selectedIndex) {
+                    isVybranoe = true
+                    break
+                }
+            }
+        }
     }
     if (saveVybranoe) {
         if (isVybranoe) {
@@ -1172,7 +1182,7 @@ fun CytanniList(
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .background(MaterialTheme.colorScheme.onTertiary)
+                                    .background(colorTollBar)
                                     .clickable {
                                         showDropdown = false
                                     }) {

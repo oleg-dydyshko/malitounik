@@ -132,8 +132,8 @@ fun VybranaeList(
                 removeItemBibleAll = false
             },
             onConfirmation = {
+                val perevod = list[removeItem].listBible[0].perevod
                 if (removeItemBible != -1) {
-                    val perevod = list[removeItem].listBible[0].perevod
                     val prevodName = when (perevod) {
                         Settings.PEREVODSEMUXI -> "biblia"
                         Settings.PEREVODBOKUNA -> "bokuna"
@@ -175,7 +175,6 @@ fun VybranaeList(
                     list.removeAt(removeItem)
                 }
                 if (removeItemBibleAll) {
-                    val perevod = list[removeItem].listBible[0].perevod
                     val prevodName = when (perevod) {
                         Settings.PEREVODSEMUXI -> "biblia"
                         Settings.PEREVODBOKUNA -> "bokuna"

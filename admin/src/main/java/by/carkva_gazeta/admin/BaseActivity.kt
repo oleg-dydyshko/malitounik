@@ -43,7 +43,7 @@ abstract class BaseActivity : AppCompatActivity(), MenuProvider {
             val item = menu.getItem(i)
             val spanString = SpannableString(menu.getItem(i).title.toString())
             val end = spanString.length
-            var itemFontSize = setFontInterface(18f, true)
+            var itemFontSize = setFontInterface()
             if (itemFontSize > 22f) itemFontSize = 18f
             spanString.setSpan(AbsoluteSizeSpan(itemFontSize.toInt(), true), 0, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             item.title = spanString
@@ -120,17 +120,9 @@ abstract class BaseActivity : AppCompatActivity(), MenuProvider {
         return dzenNoch
     }
 
-    fun setFontInterface(textSizePixel: Float, isTextSizeSp: Boolean = false): Float {
-        var sp = if (isTextSizeSp) textSizePixel
-        else textSizePixel / resources.displayMetrics.density
+    fun setFontInterface(): Float {
         val k = getSharedPreferences("biblia", Context.MODE_PRIVATE)
-        when (k.getInt("fontInterface", 1)) {
-            1 -> sp += 2
-            2 -> sp += 4
-            3 -> sp += 6
-            4 -> sp += 8
-        }
-        return sp
+        return k.getFloat("fontSizeInterface", 20f)
     }
 
     override fun onPause() {

@@ -45,6 +45,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -54,6 +55,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -67,7 +69,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
@@ -417,49 +418,21 @@ fun SettingsView(navController: NavHostController) {
                     )
                 }
             }
-            val options = stringArrayResource(R.array.fonts)
-            var expanded by remember { mutableStateOf(false) }
-            val textFieldState = rememberTextFieldState(options[k.getInt("fontInterface", 1)])
+            var fontSizeInterface by remember { mutableFloatStateOf(k.getFloat("fontSizeInterface", 20f)) }
             Text(
                 stringResource(R.string.settengs_font_size_app),
                 fontStyle = FontStyle.Italic,
                 fontSize = Settings.fontInterface.sp,
                 color = MaterialTheme.colorScheme.secondary
             )
-            ExposedDropdownMenuBox(
-                modifier = Modifier.padding(vertical = 10.dp),
-                expanded = expanded,
-                onExpandedChange = { expanded = it },
-            ) {
-                TextField(
-                    modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-                    state = textFieldState,
-                    readOnly = true,
-                    lineLimits = TextFieldLineLimits.SingleLine,
-                    textStyle = TextStyle(fontSize = Settings.fontInterface.sp),
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                )
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                ) {
-                    options.forEachIndexed { index, option ->
-                        DropdownMenuItem(
-                            text = { Text(option, style = MaterialTheme.typography.bodyLarge, fontSize = Settings.fontInterface.sp) },
-                            onClick = {
-                                textFieldState.setTextAndPlaceCursorAtEnd(option)
-                                expanded = false
-                                k.edit {
-                                    putInt("fontInterface", index)
-                                }
-                                Settings.fontInterface = getFontInterface(context)
-                            },
-                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                        )
+            Slider(
+                modifier = Modifier.padding(10.dp), valueRange = 18f..26f, steps = 4, value = fontSizeInterface, onValueChange = {
+                    k.edit {
+                        putFloat("fontSizeInterface", it)
                     }
-                }
-            }
+                    fontSizeInterface = it
+                    Settings.fontInterface = it
+                })
             var adminDayInYearState by remember { mutableStateOf(k.getBoolean("adminDayInYear", false)) }
             if (admin) {
                 Row(
@@ -1029,7 +1002,7 @@ fun SettingsView(navController: NavHostController) {
                     modeGosudSvaity = false
                     modePafesiiSvaity = false
                     textFieldNotificstionState.setTextAndPlaceCursorAtEnd(dataTimes[k.getInt("timeNotification", 2)].string)
-                    textFieldState.setTextAndPlaceCursorAtEnd(options[k.getInt("Settings.fontInterface", 1)])
+                    //textFieldState.setTextAndPlaceCursorAtEnd(options[k.getInt("Settings.fontInterface", 1)])
                     if ((context as MainActivity).checkDzenNoch != context.dzenNoch) context.recreate()
                     else setNotificationFull(context)
                 },

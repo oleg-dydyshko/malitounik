@@ -1058,15 +1058,8 @@ fun DialogSztoHovaha(
 }
 
 fun getFontInterface(context: Context): Float {
-    var sp = 18f
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-    when (k.getInt("fontInterface", 1)) {
-        1 -> sp += 2
-        2 -> sp += 4
-        3 -> sp += 6
-        4 -> sp += 8
-    }
-    return sp
+    return k.getFloat("fontSizeInterface", 20f)
 }
 
 class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMaryia.ServiceRadyjoMaryiaListener {

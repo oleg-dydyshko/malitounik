@@ -19,7 +19,7 @@ abstract class BaseFragment : Fragment(), MenuProvider {
                 val item = menu.getItem(i)
                 val spanString = SpannableString(menu.getItem(i).title.toString())
                 val end = spanString.length
-                var itemFontSize = it.setFontInterface(18f, true)
+                var itemFontSize = it.setFontInterface()
                 if (itemFontSize > 22f) itemFontSize = 18f
                 spanString.setSpan(AbsoluteSizeSpan(itemFontSize.toInt(), true), 0, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 item.title = spanString
