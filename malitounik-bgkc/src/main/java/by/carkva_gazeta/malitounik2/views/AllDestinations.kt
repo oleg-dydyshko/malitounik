@@ -4,8 +4,12 @@ import android.content.SharedPreferences
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik2.cytanniListItemData
 import by.carkva_gazeta.malitounik2.views.AllDestinations.AKAFIST_MENU
-import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA
+import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA_BOKUNA
+import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA_CHARNIAUSKI
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA_LIST
+import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA_NADSAN
+import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA_SEMUXA
+import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA_SINODAL
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIJATEKA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIJATEKA_LIST
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BOGASLUJBOVYIA
@@ -40,7 +44,11 @@ object AllDestinations {
     const val MALITVY_LIST_ALL = "Malitvy_List_All"
     const val KALIANDAR_YEAR = "Kaliandar_Year"
     const val CYTANNI_LIST = "Cytanni_List"
-    const val BIBLIA = "Biblia"
+    const val BIBLIA_SEMUXA = "Biblia_Semuxa"
+    const val BIBLIA_BOKUNA = "Biblia_Bokuna"
+    const val BIBLIA_NADSAN = "Biblia_Nadsan"
+    const val BIBLIA_CHARNIAUSKI = "Biblia_Charniauski"
+    const val BIBLIA_SINODAL = "Biblia_Sinodal"
     const val BIBLIA_LIST = "Biblia_List"
     const val VYBRANAE_LIST = "Bybranae_List"
     const val SEARCH_BIBLIA = "Search_Biblia"
@@ -139,13 +147,53 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
         edit.apply()
     }
 
-    fun navigateToBiblia() {
-        navController.navigate(BIBLIA) {
-            popUpTo(navController.currentBackStackEntry?.destination?.route ?: BIBLIA) {
+    fun navigateToBibliaSemuxa() {
+        navController.navigate(BIBLIA_SEMUXA) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: BIBLIA_SEMUXA) {
                 inclusive = true
             }
         }
-        edit.putString("navigate", BIBLIA)
+        edit.putString("navigate", BIBLIA_SEMUXA)
+        edit.apply()
+    }
+
+    fun navigateToBibliaBokuna() {
+        navController.navigate(BIBLIA_BOKUNA) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: BIBLIA_BOKUNA) {
+                inclusive = true
+            }
+        }
+        edit.putString("navigate", BIBLIA_BOKUNA)
+        edit.apply()
+    }
+
+    fun navigateToBibliaNadsan() {
+        navController.navigate(BIBLIA_NADSAN) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: BIBLIA_NADSAN) {
+                inclusive = true
+            }
+        }
+        edit.putString("navigate", BIBLIA_NADSAN)
+        edit.apply()
+    }
+
+    fun navigateToBibliaCharniauski() {
+        navController.navigate(BIBLIA_CHARNIAUSKI) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: BIBLIA_CHARNIAUSKI) {
+                inclusive = true
+            }
+        }
+        edit.putString("navigate", BIBLIA_CHARNIAUSKI)
+        edit.apply()
+    }
+
+    fun navigateToBibliaSinodal() {
+        navController.navigate(BIBLIA_SINODAL) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: BIBLIA_SINODAL) {
+                inclusive = true
+            }
+        }
+        edit.putString("navigate", BIBLIA_SINODAL)
         edit.apply()
     }
 

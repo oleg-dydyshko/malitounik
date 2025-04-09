@@ -3,6 +3,11 @@ package by.carkva_gazeta.malitounik2.views
 import android.content.Context
 import android.content.Intent
 import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -49,6 +55,8 @@ import by.carkva_gazeta.malitounik2.R
 import by.carkva_gazeta.malitounik2.ServiceRadyjoMaryia
 import by.carkva_gazeta.malitounik2.Settings
 import by.carkva_gazeta.malitounik2.WidgetRadyjoMaryia
+import by.carkva_gazeta.malitounik2.ui.theme.BackgroundDrawelMenu
+import by.carkva_gazeta.malitounik2.ui.theme.Divider
 import by.carkva_gazeta.malitounik2.ui.theme.SecondaryText
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -64,6 +72,8 @@ fun DrawView(
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var dialogNoInternet by remember { mutableStateOf(false) }
     var dialogProgram by remember { mutableStateOf(false) }
+    var bibleItem by remember { mutableStateOf(k.getString("navigate", AllDestinations.BIBLIA_SEMUXA)?.contains("Biblia", ignoreCase = true) == true) }
+    val navigationDrawerItemColors = NavigationDrawerItemDefaults.colors(selectedContainerColor = if (context.dzenNoch) BackgroundDrawelMenu else Divider)
     if (dialogNoInternet) {
         DialogNoInternet {
             dialogNoInternet = false
@@ -90,8 +100,6 @@ fun DrawView(
                     text = stringResource(id = R.string.kaliandar2),
                     fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route.contains(AllDestinations.KALIANDAR),
@@ -107,7 +115,8 @@ fun DrawView(
                 )
             },
             shape = MaterialTheme.shapes.medium,
-            modifier = modifier.padding(horizontal = 5.dp)
+            modifier = modifier.padding(horizontal = 5.dp),
+            colors = navigationDrawerItemColors
         )
         NavigationDrawerItem(
             label = {
@@ -115,8 +124,6 @@ fun DrawView(
                     text = stringResource(id = R.string.liturgikon),
                     fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.BOGASLUJBOVYIA_MENU,
@@ -132,7 +139,8 @@ fun DrawView(
                 )
             },
             shape = MaterialTheme.shapes.medium,
-            modifier = modifier.padding(horizontal = 5.dp)
+            modifier = modifier.padding(horizontal = 5.dp),
+            colors = navigationDrawerItemColors
         )
         NavigationDrawerItem(
             label = {
@@ -140,8 +148,6 @@ fun DrawView(
                     text = stringResource(id = R.string.malitvy),
                     fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.MALITVY_MENU,
@@ -157,7 +163,8 @@ fun DrawView(
                 )
             },
             shape = MaterialTheme.shapes.medium,
-            modifier = modifier.padding(horizontal = 5.dp)
+            modifier = modifier.padding(horizontal = 5.dp),
+            colors = navigationDrawerItemColors
         )
         NavigationDrawerItem(
             label = {
@@ -165,8 +172,6 @@ fun DrawView(
                     text = stringResource(id = R.string.akafisty),
                     fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.AKAFIST_MENU,
@@ -182,7 +187,8 @@ fun DrawView(
                 )
             },
             shape = MaterialTheme.shapes.medium,
-            modifier = modifier.padding(horizontal = 5.dp)
+            modifier = modifier.padding(horizontal = 5.dp),
+            colors = navigationDrawerItemColors
         )
         NavigationDrawerItem(
             label = {
@@ -190,8 +196,6 @@ fun DrawView(
                     text = stringResource(id = R.string.ruzanec),
                     fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.RUJANEC_MENU,
@@ -207,7 +211,8 @@ fun DrawView(
                 )
             },
             shape = MaterialTheme.shapes.medium,
-            modifier = modifier.padding(horizontal = 5.dp)
+            modifier = modifier.padding(horizontal = 5.dp),
+            colors = navigationDrawerItemColors
         )
         NavigationDrawerItem(
             label = {
@@ -215,8 +220,6 @@ fun DrawView(
                     text = stringResource(id = R.string.maje_natatki),
                     fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.MAE_NATATKI_MENU,
@@ -232,7 +235,8 @@ fun DrawView(
                 )
             },
             shape = MaterialTheme.shapes.medium,
-            modifier = modifier.padding(horizontal = 5.dp)
+            modifier = modifier.padding(horizontal = 5.dp),
+            colors = navigationDrawerItemColors
         )
         NavigationDrawerItem(
             label = {
@@ -240,8 +244,6 @@ fun DrawView(
                     text = stringResource(id = R.string.MenuVybranoe),
                     fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.VYBRANAE_LIST,
@@ -257,37 +259,180 @@ fun DrawView(
                 )
             },
             shape = MaterialTheme.shapes.medium,
-            modifier = modifier.padding(horizontal = 5.dp)
+            modifier = modifier.padding(horizontal = 5.dp),
+            colors = navigationDrawerItemColors
         )
         HorizontalDivider(
             modifier = modifier.padding(vertical = 5.dp),
             color = MaterialTheme.colorScheme.secondary
         )
-        NavigationDrawerItem(
-            label = {
-                Text(
-                    text = stringResource(id = R.string.bibliaAll),
-                    fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            },
-            selected = route == AllDestinations.BIBLIA,
-            onClick = {
-                navigateToRazdel(AllDestinations.BIBLIA)
-            },
-            icon = {
+        Column {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        bibleItem = !bibleItem
+                    },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Icon(
-                    modifier = Modifier.size(24.dp, 24.dp),
+                    modifier = Modifier
+                        .padding(start = 21.dp, end = 2.dp)
+                        .size(24.dp, 24.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = null
                 )
-            },
-            shape = MaterialTheme.shapes.medium,
-            modifier = modifier.padding(horizontal = 5.dp)
-        )
+                Text(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .weight(1f),
+                    text = stringResource(id = R.string.bibliaAll),
+                    fontSize = Settings.fontInterface.sp,
+                    color = MaterialTheme.colorScheme.secondary,
+                )
+                Icon(
+                    modifier = Modifier
+                        .padding(start = 21.dp, end = 2.dp)
+                        .size(24.dp, 24.dp),
+                    painter = painterResource(if (bibleItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
+                    tint = MaterialTheme.colorScheme.secondary,
+                    contentDescription = null
+                )
+            }
+            AnimatedVisibility(
+                bibleItem, enter = fadeIn(
+                    tween(
+                        durationMillis = 1000, easing = LinearOutSlowInEasing
+                    )
+                ), exit = fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            ) {
+                Column {
+                    NavigationDrawerItem(
+                        label = {
+                            Text(
+                                text = stringResource(id = R.string.title_biblia),
+                                fontSize = Settings.fontInterface.sp,
+                                color = MaterialTheme.colorScheme.secondary
+                            )
+                        },
+                        selected = route == AllDestinations.BIBLIA_SEMUXA,
+                        onClick = {
+                            navigateToRazdel(AllDestinations.BIBLIA_SEMUXA)
+                        },
+                        icon = {
+                            Icon(
+                                modifier = Modifier.size(12.dp, 12.dp),
+                                painter = painterResource(R.drawable.krest),
+                                tint = MaterialTheme.colorScheme.primary,
+                                contentDescription = null
+                            )
+                        },
+                        shape = MaterialTheme.shapes.medium,
+                        modifier = modifier.padding(horizontal = 5.dp),
+                        colors = navigationDrawerItemColors
+                    )
+                    NavigationDrawerItem(
+                        label = {
+                            Text(
+                                text = stringResource(id = R.string.title_biblia_bokun),
+                                fontSize = Settings.fontInterface.sp,
+                                color = MaterialTheme.colorScheme.secondary
+                            )
+                        },
+                        selected = route == AllDestinations.BIBLIA_BOKUNA,
+                        onClick = {
+                            navigateToRazdel(AllDestinations.BIBLIA_BOKUNA)
+                        },
+                        icon = {
+                            Icon(
+                                modifier = Modifier.size(12.dp, 12.dp),
+                                painter = painterResource(R.drawable.krest),
+                                tint = MaterialTheme.colorScheme.primary,
+                                contentDescription = null
+                            )
+                        },
+                        shape = MaterialTheme.shapes.medium,
+                        modifier = modifier.padding(horizontal = 5.dp),
+                        colors = navigationDrawerItemColors
+                    )
+                    NavigationDrawerItem(
+                        label = {
+                            Text(
+                                text = stringResource(id = R.string.title_psalter),
+                                fontSize = Settings.fontInterface.sp,
+                                color = MaterialTheme.colorScheme.secondary
+                            )
+                        },
+                        selected = route == AllDestinations.BIBLIA_NADSAN,
+                        onClick = {
+                            navigateToRazdel(AllDestinations.BIBLIA_NADSAN)
+                        },
+                        icon = {
+                            Icon(
+                                modifier = Modifier.size(12.dp, 12.dp),
+                                painter = painterResource(R.drawable.krest),
+                                tint = MaterialTheme.colorScheme.primary,
+                                contentDescription = null
+                            )
+                        },
+                        shape = MaterialTheme.shapes.medium,
+                        modifier = modifier.padding(horizontal = 5.dp),
+                        colors = navigationDrawerItemColors
+                    )
+                    NavigationDrawerItem(
+                        label = {
+                            Text(
+                                text = stringResource(id = R.string.title_biblia_charniauski),
+                                fontSize = Settings.fontInterface.sp,
+                                color = MaterialTheme.colorScheme.secondary
+                            )
+                        },
+                        selected = route == AllDestinations.BIBLIA_CHARNIAUSKI,
+                        onClick = {
+                            navigateToRazdel(AllDestinations.BIBLIA_CHARNIAUSKI)
+                        },
+                        icon = {
+                            Icon(
+                                modifier = Modifier.size(12.dp, 12.dp),
+                                painter = painterResource(R.drawable.krest),
+                                tint = MaterialTheme.colorScheme.primary,
+                                contentDescription = null
+                            )
+                        },
+                        shape = MaterialTheme.shapes.medium,
+                        modifier = modifier.padding(horizontal = 5.dp),
+                        colors = navigationDrawerItemColors
+                    )
+                    if (k.getBoolean("sinoidal_bible", false)) {
+                        NavigationDrawerItem(
+                            label = {
+                                Text(
+                                    text = stringResource(id = R.string.bsinaidal),
+                                    fontSize = Settings.fontInterface.sp,
+                                    color = MaterialTheme.colorScheme.secondary
+                                )
+                            },
+                            selected = route == AllDestinations.BIBLIA_SINODAL,
+                            onClick = {
+                                navigateToRazdel(AllDestinations.BIBLIA_SINODAL)
+                            },
+                            icon = {
+                                Icon(
+                                    modifier = Modifier.size(12.dp, 12.dp),
+                                    painter = painterResource(R.drawable.krest),
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    contentDescription = null
+                                )
+                            },
+                            shape = MaterialTheme.shapes.medium,
+                            modifier = modifier.padding(horizontal = 5.dp),
+                            colors = navigationDrawerItemColors
+                        )
+                    }
+                }
+            }
+        }
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -411,8 +556,6 @@ fun DrawView(
                     text = stringResource(id = R.string.bibliateka_carkvy),
                     fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.BIBLIJATEKA_LIST,
@@ -428,7 +571,8 @@ fun DrawView(
                 )
             },
             shape = MaterialTheme.shapes.medium,
-            modifier = modifier.padding(horizontal = 5.dp)
+            modifier = modifier.padding(horizontal = 5.dp),
+            colors = navigationDrawerItemColors
         )
         NavigationDrawerItem(
             label = {
@@ -436,8 +580,6 @@ fun DrawView(
                     text = stringResource(id = R.string.song),
                     fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.PIESNY_LIST,
@@ -453,7 +595,8 @@ fun DrawView(
                 )
             },
             shape = MaterialTheme.shapes.medium,
-            modifier = modifier.padding(horizontal = 5.dp)
+            modifier = modifier.padding(horizontal = 5.dp),
+            colors = navigationDrawerItemColors
         )
         HorizontalDivider(
             modifier = modifier.padding(vertical = 5.dp),
@@ -465,8 +608,6 @@ fun DrawView(
                     text = stringResource(id = R.string.spovedz),
                     fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.PADRYXTOUKA,
@@ -482,7 +623,8 @@ fun DrawView(
                 )
             },
             shape = MaterialTheme.shapes.medium,
-            modifier = modifier.padding(horizontal = 5.dp)
+            modifier = modifier.padding(horizontal = 5.dp),
+            colors = navigationDrawerItemColors
         )
         NavigationDrawerItem(
             label = {
@@ -490,8 +632,6 @@ fun DrawView(
                     text = stringResource(id = R.string.pamiatka),
                     fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.PAMIATKA,
@@ -507,7 +647,8 @@ fun DrawView(
                 )
             },
             shape = MaterialTheme.shapes.medium,
-            modifier = modifier.padding(horizontal = 5.dp)
+            modifier = modifier.padding(horizontal = 5.dp),
+            colors = navigationDrawerItemColors
         )
         NavigationDrawerItem(
             label = {
@@ -515,8 +656,6 @@ fun DrawView(
                     text = stringResource(id = R.string.sviaty),
                     fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.SVAITY_MUNU,
@@ -532,7 +671,8 @@ fun DrawView(
                 )
             },
             shape = MaterialTheme.shapes.medium,
-            modifier = modifier.padding(horizontal = 5.dp)
+            modifier = modifier.padding(horizontal = 5.dp),
+            colors = navigationDrawerItemColors
         )
         NavigationDrawerItem(
             label = {
@@ -540,8 +680,6 @@ fun DrawView(
                     text = stringResource(id = R.string.parafii),
                     fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.PARAFII_BGKC,
@@ -557,7 +695,8 @@ fun DrawView(
                 )
             },
             shape = MaterialTheme.shapes.medium,
-            modifier = modifier.padding(horizontal = 5.dp)
+            modifier = modifier.padding(horizontal = 5.dp),
+            colors = navigationDrawerItemColors
         )
         NavigationDrawerItem(
             label = {
@@ -565,8 +704,6 @@ fun DrawView(
                     text = stringResource(id = R.string.paschalia),
                     fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
                 )
             },
             selected = route == AllDestinations.PASHALIA,
@@ -582,7 +719,8 @@ fun DrawView(
                 )
             },
             shape = MaterialTheme.shapes.medium,
-            modifier = modifier.padding(horizontal = 5.dp)
+            modifier = modifier.padding(horizontal = 5.dp),
+            colors = navigationDrawerItemColors
         )
     }
 }

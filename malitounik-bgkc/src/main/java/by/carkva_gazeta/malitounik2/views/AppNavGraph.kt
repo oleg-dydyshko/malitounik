@@ -144,9 +144,6 @@ fun AppNavGraph() {
         coroutineScope.launch { drawerState.open() }
     }
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-    val remove = k.getString("navigate", "Biblia_Cemuxa")
-    if (remove == "Biblia_Cemuxa" || remove == "Biblia_Bokuna" || remove == "Biblia_Charniauski" || remove == "Biblia_Nadsan" || remove == "Biblia_Sinodal")
-        k.edit { remove("navigate") }
     val start = k.getString("navigate", AllDestinations.KALIANDAR) ?: AllDestinations.KALIANDAR
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
@@ -256,14 +253,78 @@ fun AppNavGraph() {
         }
 
         composable(
-            AllDestinations.BIBLIA,
+            AllDestinations.BIBLIA_SEMUXA,
             enterTransition = {
                 fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
                 fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
             }) {
-            Settings.destinations = AllDestinations.BIBLIA
+            Settings.destinations = AllDestinations.BIBLIA_SEMUXA
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(
+            AllDestinations.BIBLIA_BOKUNA,
+            enterTransition = {
+                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            },
+            exitTransition = {
+                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            }) {
+            Settings.destinations = AllDestinations.BIBLIA_BOKUNA
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(
+            AllDestinations.BIBLIA_NADSAN,
+            enterTransition = {
+                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            },
+            exitTransition = {
+                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            }) {
+            Settings.destinations = AllDestinations.BIBLIA_NADSAN
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(
+            AllDestinations.BIBLIA_CHARNIAUSKI,
+            enterTransition = {
+                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            },
+            exitTransition = {
+                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            }) {
+            Settings.destinations = AllDestinations.BIBLIA_CHARNIAUSKI
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(
+            AllDestinations.BIBLIA_SINODAL,
+            enterTransition = {
+                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            },
+            exitTransition = {
+                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            }) {
+            Settings.destinations = AllDestinations.BIBLIA_SINODAL
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
@@ -886,10 +947,13 @@ fun MainConteiner(
                         if (k.getBoolean("caliandarList", false)) navigationActions.navigateToKaliandarYear()
                         else navigationActions.navigateToKaliandar()
                     }
-
                     AllDestinations.BOGASLUJBOVYIA_MENU -> navigationActions.navigateToBogaslujbovyiaMenu()
                     AllDestinations.MALITVY_MENU -> navigationActions.navigateToMalitvyMenu()
-                    AllDestinations.BIBLIA -> navigationActions.navigateToBiblia()
+                    AllDestinations.BIBLIA_SEMUXA -> navigationActions.navigateToBibliaSemuxa()
+                    AllDestinations.BIBLIA_BOKUNA -> navigationActions.navigateToBibliaBokuna()
+                    AllDestinations.BIBLIA_NADSAN -> navigationActions.navigateToBibliaNadsan()
+                    AllDestinations.BIBLIA_CHARNIAUSKI -> navigationActions.navigateToBibliaCharniauski()
+                    AllDestinations.BIBLIA_SINODAL -> navigationActions.navigateToBibliaSinodal()
                     AllDestinations.VYBRANAE_LIST -> navigationActions.navigateToVybranaeList()
                     AllDestinations.AKAFIST_MENU -> navigationActions.navigateToAkafistMenu()
                     AllDestinations.RUJANEC_MENU -> navigationActions.navigateToRujanecMenu()
@@ -928,7 +992,11 @@ fun MainConteiner(
             AllDestinations.SVAITY_MUNU -> stringResource(R.string.sviaty)
             AllDestinations.PARAFII_BGKC -> stringResource(R.string.parafii)
             AllDestinations.PASHALIA -> stringResource(R.string.paschalia)
-            AllDestinations.BIBLIA -> stringResource(R.string.bibliaAll)
+            AllDestinations.BIBLIA_SEMUXA -> stringResource(R.string.title_biblia)
+            AllDestinations.BIBLIA_BOKUNA -> stringResource(R.string.title_biblia_bokun)
+            AllDestinations.BIBLIA_NADSAN -> stringResource(R.string.title_psalter)
+            AllDestinations.BIBLIA_CHARNIAUSKI -> stringResource(R.string.title_biblia_charniauski)
+            AllDestinations.BIBLIA_SINODAL -> stringResource(R.string.bsinaidal)
             else -> ""
         }
         Scaffold(
@@ -1429,8 +1497,93 @@ fun MainConteiner(
                         textFieldValueState
                     )
 
-                    AllDestinations.BIBLIA -> BibliaMenu(
+                    AllDestinations.BIBLIA_SEMUXA -> BibliaMenu(
                         navController,
+                        Settings.PEREVODSEMUXI,
+                        innerPadding,
+                        navigateToSearchBible = { perevod ->
+                            navigationActions.navigateToSearchBiblia(perevod, false)
+                        },
+                        navigateToCytanniList = { chytanne, perevod2 ->
+                            navigationActions.navigateToCytanniList(
+                                "",
+                                chytanne,
+                                Settings.CHYTANNI_BIBLIA,
+                                perevod2,
+                                -1
+                            )
+                        },
+                        navigateToBogaslujbovyia = { title, resurs ->
+                            navigationActions.navigateToBogaslujbovyia(title, resurs)
+                        }
+                    )
+
+                    AllDestinations.BIBLIA_BOKUNA -> BibliaMenu(
+                        navController,
+                        Settings.PEREVODBOKUNA,
+                        innerPadding,
+                        navigateToSearchBible = { perevod ->
+                            navigationActions.navigateToSearchBiblia(perevod, false)
+                        },
+                        navigateToCytanniList = { chytanne, perevod2 ->
+                            navigationActions.navigateToCytanniList(
+                                "",
+                                chytanne,
+                                Settings.CHYTANNI_BIBLIA,
+                                perevod2,
+                                -1
+                            )
+                        },
+                        navigateToBogaslujbovyia = { title, resurs ->
+                            navigationActions.navigateToBogaslujbovyia(title, resurs)
+                        }
+                    )
+
+                    AllDestinations.BIBLIA_NADSAN -> BibliaMenu(
+                        navController,
+                        Settings.PEREVODNADSAN,
+                        innerPadding,
+                        navigateToSearchBible = { perevod ->
+                            navigationActions.navigateToSearchBiblia(perevod, false)
+                        },
+                        navigateToCytanniList = { chytanne, perevod2 ->
+                            navigationActions.navigateToCytanniList(
+                                "",
+                                chytanne,
+                                Settings.CHYTANNI_BIBLIA,
+                                perevod2,
+                                -1
+                            )
+                        },
+                        navigateToBogaslujbovyia = { title, resurs ->
+                            navigationActions.navigateToBogaslujbovyia(title, resurs)
+                        }
+                    )
+
+                    AllDestinations.BIBLIA_CHARNIAUSKI -> BibliaMenu(
+                        navController,
+                        Settings.PEREVODCARNIAUSKI,
+                        innerPadding,
+                        navigateToSearchBible = { perevod ->
+                            navigationActions.navigateToSearchBiblia(perevod, false)
+                        },
+                        navigateToCytanniList = { chytanne, perevod2 ->
+                            navigationActions.navigateToCytanniList(
+                                "",
+                                chytanne,
+                                Settings.CHYTANNI_BIBLIA,
+                                perevod2,
+                                -1
+                            )
+                        },
+                        navigateToBogaslujbovyia = { title, resurs ->
+                            navigationActions.navigateToBogaslujbovyia(title, resurs)
+                        }
+                    )
+
+                    AllDestinations.BIBLIA_SINODAL -> BibliaMenu(
+                        navController,
+                        Settings.PEREVODSINOIDAL,
                         innerPadding,
                         navigateToSearchBible = { perevod ->
                             navigationActions.navigateToSearchBiblia(perevod, false)

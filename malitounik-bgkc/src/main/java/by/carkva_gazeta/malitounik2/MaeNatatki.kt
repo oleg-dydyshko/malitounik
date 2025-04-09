@@ -322,9 +322,7 @@ private fun write(
     var newNazva = title
     var imiafile = fileName
     val gc = Calendar.getInstance()
-    //val editMd5 = md5Sum("$nazva<MEMA></MEMA>$content")
     var i: Long = 1
-    //if (md5sum != editMd5) {
     if (isAddFile) {
         val dir = File("${context.filesDir}/Malitva")
         if (!dir.exists()) dir.mkdir()
@@ -343,40 +341,13 @@ private fun write(
         newNazva =
             gc[Calendar.DATE].toString() + " " + mun[gc[Calendar.MONTH]] + " " + gc[Calendar.YEAR] + " " + gc[Calendar.HOUR_OF_DAY] + ":" + gc[Calendar.MINUTE]
     }
-    //val fileName = File("${context.filesDir}/Natatki.json")
     val file = File("${context.filesDir}/Malitva/$imiafile")
-    /*fileName.writer().use {
-        val gson = Gson()
-        val type = TypeToken.getParameterized(
-            java.util.ArrayList::class.java,
-            MyNatatkiFiles::class.java
-        ).type
-        it.write(gson.toJson(MenuNatatki.myNatatkiFiles, type))
-    }*/
     val time = gc.timeInMillis
     file.writer().use {
         it.write("$newNazva<MEMA></MEMA>$content<RTE></RTE>$time")
     }
     onFileEdit(imiafile, time)
-    //val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    //imm.hideSoftInputFromWindow(binding.EditText.windowToken, 0)
-    //filename = file.name
-    //redak = 2
-    //}
 }
-
-/*private fun md5Sum(st: String): String {
-    val messageDigest = MessageDigest.getInstance("MD5")
-    messageDigest.reset()
-    messageDigest.update(st.toByteArray())
-    val digest = messageDigest.digest()
-    val bigInt = BigInteger(1, digest)
-    val md5Hex = StringBuilder(bigInt.toString(16))
-    while (md5Hex.length < 32) {
-        md5Hex.insert(0, "0")
-    }
-    return md5Hex.toString()
-}*/
 
 data class MaeNatatkiItem(
     val lastModified: Long,

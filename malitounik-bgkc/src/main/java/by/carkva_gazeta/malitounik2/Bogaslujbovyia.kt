@@ -804,9 +804,18 @@ fun Bogaslujbovyia(
                                                 autoScroll = false
                                                 expanded = false
                                                 if ((context as MainActivity).checkmodulesAdmin()) {
+                                                    val fields = R.raw::class.java.fields
+                                                    var recourse = "bogashlugbovya_error"
+                                                    for (element in fields) {
+                                                        val name = element.getInt(element.name)
+                                                        if (resurs == name) {
+                                                            recourse = element.name
+                                                            break
+                                                        }
+                                                    }
                                                     val intent = Intent()
                                                     intent.setClassName(context, "by.carkva_gazeta.admin.PasochnicaList")
-                                                    intent.putExtra("resours", resurs)
+                                                    intent.putExtra("resours", recourse)
                                                     intent.putExtra("title", title)
                                                     intent.putExtra("text", htmlText)
                                                     context.startActivity(intent)

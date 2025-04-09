@@ -443,17 +443,10 @@ fun SettingsView(navController: NavHostController) {
                             putBoolean("adminDayInYear", adminDayInYearState)
                         }
                     }) {
-                    Icon(
-                        modifier = Modifier.size(12.dp, 12.dp),
-                        painter = painterResource(R.drawable.krest),
-                        tint = MaterialTheme.colorScheme.primary,
-                        contentDescription = null
-                    )
                     Text(
                         stringResource(R.string.admin_day_in_year),
                         modifier = Modifier
-                            .weight(1f)
-                            .padding(start = 10.dp),
+                            .weight(1f),
                         fontSize = Settings.fontInterface.sp,
                         color = MaterialTheme.colorScheme.secondary
                     )
@@ -523,17 +516,10 @@ fun SettingsView(navController: NavHostController) {
                     }
                     .padding(vertical = 10.dp)
             ) {
-                Icon(
-                    modifier = Modifier.size(12.dp, 12.dp),
-                    painter = painterResource(R.drawable.krest),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
-                )
                 Text(
                     stringResource(R.string.bsinaidal),
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 10.dp),
+                        .weight(1f),
                     fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
@@ -559,17 +545,10 @@ fun SettingsView(navController: NavHostController) {
                     }
                     .padding(vertical = 10.dp)
             ) {
-                Icon(
-                    modifier = Modifier.size(12.dp, 12.dp),
-                    painter = painterResource(R.drawable.krest),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
-                )
                 Text(
                     stringResource(R.string.maranata_opis),
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 10.dp),
+                        .weight(1f),
                     fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
@@ -812,17 +791,10 @@ fun SettingsView(navController: NavHostController) {
                     }
                     .padding(vertical = 10.dp)
             ) {
-                Icon(
-                    modifier = Modifier.size(12.dp, 12.dp),
-                    painter = painterResource(R.drawable.krest),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
-                )
                 Text(
                     stringResource(R.string.pkc),
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 10.dp),
+                        .weight(1f),
                     fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
@@ -848,17 +820,10 @@ fun SettingsView(navController: NavHostController) {
                     }
                     .padding(vertical = 10.dp)
             ) {
-                Icon(
-                    modifier = Modifier.size(12.dp, 12.dp),
-                    painter = painterResource(R.drawable.krest),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
-                )
                 Text(
                     stringResource(R.string.sviaty_ulian),
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 10.dp),
+                        .weight(1f),
                     fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
@@ -884,17 +849,10 @@ fun SettingsView(navController: NavHostController) {
                     }
                     .padding(vertical = 10.dp)
             ) {
-                Icon(
-                    modifier = Modifier.size(12.dp, 12.dp),
-                    painter = painterResource(R.drawable.krest),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
-                )
                 Text(
                     stringResource(R.string.sviaty_dziar),
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 10.dp),
+                        .weight(1f),
                     fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
@@ -920,17 +878,10 @@ fun SettingsView(navController: NavHostController) {
                     }
                     .padding(vertical = 10.dp)
             ) {
-                Icon(
-                    modifier = Modifier.size(12.dp, 12.dp),
-                    painter = painterResource(R.drawable.krest),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
-                )
                 Text(
                     stringResource(R.string.sviaty_pfes),
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 10.dp),
+                        .weight(1f),
                     fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
