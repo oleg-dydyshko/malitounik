@@ -1,7 +1,6 @@
 package by.carkva_gazeta.malitounik2
 
 import android.content.Context
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,23 +10,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SecondaryScrollableTabRow
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,18 +30,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import by.carkva_gazeta.malitounik2.views.AllDestinations
 import by.carkva_gazeta.malitounik2.views.AppNavigationActions
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 
 class FilterPiesnyListModel : ViewModel() {
     private val items = SnapshotStateList<PiesnyListItem>()
@@ -82,23 +70,12 @@ class FilterPiesnyListModel : ViewModel() {
 }
 
 @Composable
-fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues, searchText: Boolean, search: String) {
+fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: PaddingValues, searchText: Boolean, search: String) {
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
     val viewModel: FilterPiesnyListModel = viewModel()
-    val rubrika by remember {
-        mutableIntStateOf(
-            if (searchText) {
-                0
-            } else {
-                k.getInt(
-                    "pubrikaPesnyMenu", 0
-                )
-            }
-        )
-    }
     val piesnyBagarList = remember { SnapshotStateList<PiesnyListItem>() }
     val piesnyBelarusList = remember { SnapshotStateList<PiesnyListItem>() }
     val piesnyKaliadyList = remember { SnapshotStateList<PiesnyListItem>() }
@@ -743,64 +720,20 @@ fun PiesnyList(navController: NavHostController, innerPadding: PaddingValues, se
         stringResource(R.string.pesny1), stringResource(R.string.pesny2), stringResource(R.string.pesny3), stringResource(R.string.pesny4), stringResource(R.string.pesny5)
     )
     viewModel.filterItem(search)
-    val pagerState = rememberPagerState(pageCount = {
-        list.size
-    }, initialPage = rubrika)
     val coroutineScope = rememberCoroutineScope()
-    if (!searchText) {
-        LaunchedEffect(pagerState) {
-            snapshotFlow { pagerState.currentPage }.collect { page ->
-                k.edit {
-                    putInt("pubrikaPesnyMenu", page)
-                }
-            }
-        }
-    }
     Column {
-        if (!searchText) {
-            SecondaryScrollableTabRow(
-                modifier = Modifier.background(MaterialTheme.colorScheme.onPrimary), selectedTabIndex = pagerState.currentPage, indicator = {
-                    TabRowDefaults.PrimaryIndicator(
-                        modifier = Modifier.tabIndicatorOffset(pagerState.currentPage), width = Dp.Unspecified, shape = RoundedCornerShape(
-                            topStart = 5.dp,
-                            topEnd = 5.dp,
-                            bottomEnd = 0.dp,
-                            bottomStart = 0.dp,
-                        )
-                    )
-                }) {
-                list.forEachIndexed { index, title ->
-                    Tab(selected = pagerState.currentPage == index, onClick = {
-                        k.edit {
-                            putInt("pubrikaPesnyMenu", index)
-                        }
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(index)
-                        }
-                    }, text = {
-                        Text(
-                            text = title, fontSize = Settings.fontInterface.sp, lineHeight = Settings.fontInterface.sp * 1.2f, maxLines = 1, overflow = TextOverflow.Ellipsis, color = MaterialTheme.colorScheme.secondary
-                        )
-                    })
-                }
-            }
-        }
         if (searchText) {
             PiesnyList(filteredItems, navigationActions, innerPadding)
         } else {
-            HorizontalPager(
-                state = pagerState, verticalAlignment = Alignment.Top
-            ) { page ->
-                val piesnyList = when (page) {
-                    0 -> piesnyPraslList
-                    1 -> piesnyBelarusList
-                    2 -> piesnyBagarList
-                    3 -> piesnyKaliadyList
-                    4 -> piesnyTaizeList
-                    else -> piesnyPraslList
-                }
-                PiesnyList(piesnyList, navigationActions, innerPadding)
+            val piesnyList = when (piesny) {
+                AllDestinations.PIESNY_PRASLAULENNIA -> piesnyPraslList
+                AllDestinations.PIESNY_ZA_BELARUS -> piesnyBelarusList
+                AllDestinations.PIESNY_DA_BAGARODZICY -> piesnyBagarList
+                AllDestinations.PIESNY_KALIADNYIA -> piesnyKaliadyList
+                AllDestinations.PIESNY_TAIZE -> piesnyTaizeList
+                else -> piesnyPraslList
             }
+            PiesnyList(piesnyList, navigationActions, innerPadding)
         }
     }
 }
@@ -832,7 +765,7 @@ fun PiesnyList(piesnyList: SnapshotStateList<PiesnyListItem>, navigationActions:
                         }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier.size(12.dp, 12.dp), painter = painterResource(R.drawable.description), tint = MaterialTheme.colorScheme.primary, contentDescription = null
+                        modifier = Modifier.size(5.dp, 5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                     )
                     Text(
                         text = piesnyList[index].title, modifier = Modifier

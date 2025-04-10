@@ -228,8 +228,8 @@ fun SearchSviatyia(navController: NavHostController) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            modifier = Modifier.size(12.dp, 12.dp),
-                            painter = painterResource(R.drawable.description),
+                            modifier = Modifier.size(5.dp, 5.dp),
+                            painter = painterResource(R.drawable.poiter),
                             tint = MaterialTheme.colorScheme.primary,
                             contentDescription = null
                         )

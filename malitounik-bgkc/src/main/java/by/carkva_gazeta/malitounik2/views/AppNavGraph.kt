@@ -144,7 +144,19 @@ fun AppNavGraph() {
         coroutineScope.launch { drawerState.open() }
     }
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-    val start = k.getString("navigate", AllDestinations.KALIANDAR) ?: AllDestinations.KALIANDAR
+    var start = k.getString("navigate", AllDestinations.KALIANDAR) ?: AllDestinations.KALIANDAR
+    if (start.contains("Biblijateka_List")) {
+        k.edit {
+            remove("navigate")
+        }
+        start = AllDestinations.KALIANDAR
+    }
+    if (start.contains("Piesny_List")) {
+        k.edit {
+            remove("navigate")
+        }
+        start = AllDestinations.KALIANDAR
+    }
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
@@ -365,14 +377,14 @@ fun AppNavGraph() {
         }
 
         composable(
-            AllDestinations.BIBLIJATEKA_LIST,
+            AllDestinations.BIBLIJATEKA_NIADAUNIA,
             enterTransition = {
                 fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
                 fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
             }) {
-            Settings.destinations = AllDestinations.BIBLIJATEKA_LIST
+            Settings.destinations = AllDestinations.BIBLIJATEKA_NIADAUNIA
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
@@ -381,14 +393,158 @@ fun AppNavGraph() {
         }
 
         composable(
-            AllDestinations.PIESNY_LIST,
+            AllDestinations.BIBLIJATEKA_SPEUNIKI,
             enterTransition = {
                 fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
                 fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
             }) {
-            Settings.destinations = AllDestinations.PIESNY_LIST
+            Settings.destinations = AllDestinations.BIBLIJATEKA_SPEUNIKI
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(
+            AllDestinations.BIBLIJATEKA_GISTORYIA,
+            enterTransition = {
+                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            },
+            exitTransition = {
+                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            }) {
+            Settings.destinations = AllDestinations.BIBLIJATEKA_GISTORYIA
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(
+            AllDestinations.BIBLIJATEKA_MALITOUNIKI,
+            enterTransition = {
+                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            },
+            exitTransition = {
+                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            }) {
+            Settings.destinations = AllDestinations.BIBLIJATEKA_MALITOUNIKI
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(
+            AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA,
+            enterTransition = {
+                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            },
+            exitTransition = {
+                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            }) {
+            Settings.destinations = AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(
+            AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU,
+            enterTransition = {
+                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            },
+            exitTransition = {
+                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            }) {
+            Settings.destinations = AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(
+            AllDestinations.PIESNY_PRASLAULENNIA,
+            enterTransition = {
+                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            },
+            exitTransition = {
+                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            }) {
+            Settings.destinations = AllDestinations.PIESNY_PRASLAULENNIA
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(
+            AllDestinations.PIESNY_DA_BAGARODZICY,
+            enterTransition = {
+                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            },
+            exitTransition = {
+                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            }) {
+            Settings.destinations = AllDestinations.PIESNY_DA_BAGARODZICY
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(
+            AllDestinations.PIESNY_ZA_BELARUS,
+            enterTransition = {
+                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            },
+            exitTransition = {
+                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            }) {
+            Settings.destinations = AllDestinations.PIESNY_ZA_BELARUS
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(
+            AllDestinations.PIESNY_KALIADNYIA,
+            enterTransition = {
+                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            },
+            exitTransition = {
+                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            }) {
+            Settings.destinations = AllDestinations.PIESNY_KALIADNYIA
+            MainConteiner(
+                navController = navController,
+                coroutineScope = coroutineScope,
+                drawerState = drawerState
+            )
+        }
+
+        composable(
+            AllDestinations.PIESNY_TAIZE,
+            enterTransition = {
+                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            },
+            exitTransition = {
+                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            }) {
+            Settings.destinations = AllDestinations.PIESNY_TAIZE
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
@@ -775,8 +931,8 @@ fun MainConteiner(
                 }
 
                 data.data.toString().contains("shortcuts=2") -> {
-                    if (Settings.destinations != AllDestinations.BIBLIJATEKA_LIST) {
-                        navigationActions.navigateToBiblijatekaList()
+                    if (Settings.destinations.contains("Biblijateka", ignoreCase = true)) {
+                        navigationActions.navigateToBiblijatekaList(k.getString("navigate", AllDestinations.BIBLIJATEKA_NIADAUNIA) ?: AllDestinations.BIBLIJATEKA_NIADAUNIA)
                     }
                 }
             }
@@ -958,8 +1114,17 @@ fun MainConteiner(
                     AllDestinations.AKAFIST_MENU -> navigationActions.navigateToAkafistMenu()
                     AllDestinations.RUJANEC_MENU -> navigationActions.navigateToRujanecMenu()
                     AllDestinations.MAE_NATATKI_MENU -> navigationActions.navigateToMaeNatatkiMenu()
-                    AllDestinations.BIBLIJATEKA_LIST -> navigationActions.navigateToBiblijatekaList()
-                    AllDestinations.PIESNY_LIST -> navigationActions.navigateToPiesnyList()
+                    AllDestinations.BIBLIJATEKA_NIADAUNIA -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_NIADAUNIA)
+                    AllDestinations.BIBLIJATEKA_MALITOUNIKI -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_MALITOUNIKI)
+                    AllDestinations.BIBLIJATEKA_GISTORYIA -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_GISTORYIA)
+                    AllDestinations.BIBLIJATEKA_SPEUNIKI -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_SPEUNIKI)
+                    AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU)
+                    AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA)
+                    AllDestinations.PIESNY_PRASLAULENNIA -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_PRASLAULENNIA)
+                    AllDestinations.PIESNY_DA_BAGARODZICY -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_DA_BAGARODZICY)
+                    AllDestinations.PIESNY_ZA_BELARUS -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_ZA_BELARUS)
+                    AllDestinations.PIESNY_KALIADNYIA -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_KALIADNYIA)
+                    AllDestinations.PIESNY_TAIZE -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_TAIZE)
                     AllDestinations.PADRYXTOUKA -> navigationActions.navigateToPadryxtouka()
                     AllDestinations.PAMIATKA -> navigationActions.navigateToPamiatka()
                     AllDestinations.SVAITY_MUNU -> navigationActions.navigateToSviaty()
@@ -987,8 +1152,17 @@ fun MainConteiner(
             AllDestinations.MALITVY_MENU -> stringResource(R.string.malitvy)
             AllDestinations.VYBRANAE_LIST -> stringResource(R.string.MenuVybranoe)
             AllDestinations.MAE_NATATKI_MENU -> stringResource(R.string.maje_natatki)
-            AllDestinations.BIBLIJATEKA_LIST -> stringResource(R.string.bibliateka_carkvy)
-            AllDestinations.PIESNY_LIST -> stringResource(R.string.song)
+            AllDestinations.BIBLIJATEKA_NIADAUNIA -> stringResource(R.string.bibliateka_niadaunia)
+            AllDestinations.BIBLIJATEKA_GISTORYIA -> stringResource(R.string.bibliateka_gistoryia_carkvy)
+            AllDestinations.BIBLIJATEKA_MALITOUNIKI -> stringResource(R.string.bibliateka_malitouniki)
+            AllDestinations.BIBLIJATEKA_SPEUNIKI -> stringResource(R.string.bibliateka_speuniki)
+            AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA -> stringResource(R.string.bibliateka_rel_litaratura)
+            AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU -> stringResource(R.string.arx_num_gaz)
+            AllDestinations.PIESNY_PRASLAULENNIA -> stringResource(R.string.pesny1)
+            AllDestinations.PIESNY_ZA_BELARUS -> stringResource(R.string.pesny2)
+            AllDestinations.PIESNY_DA_BAGARODZICY -> stringResource(R.string.pesny3)
+            AllDestinations.PIESNY_KALIADNYIA -> stringResource(R.string.pesny4)
+            AllDestinations.PIESNY_TAIZE -> stringResource(R.string.pesny5)
             AllDestinations.SVAITY_MUNU -> stringResource(R.string.sviaty)
             AllDestinations.PARAFII_BGKC -> stringResource(R.string.parafii)
             AllDestinations.PASHALIA -> stringResource(R.string.paschalia)
@@ -1089,7 +1263,7 @@ fun MainConteiner(
                     },
                     actions = {
                         if (!searchText) {
-                            if (currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.RUJANEC_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute == AllDestinations.BIBLIJATEKA_LIST || currentRoute == AllDestinations.PIESNY_LIST || currentRoute == AllDestinations.PASHALIA) {
+                            if (currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.RUJANEC_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.PASHALIA) {
                                 IconButton({
                                     searchText = true
                                 }) {
@@ -1299,7 +1473,7 @@ fun MainConteiner(
                                 )
                                 if (k.getBoolean("admin", false)) {
                                     HorizontalDivider()
-                                    if (currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.RUJANEC_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute == AllDestinations.BIBLIJATEKA_LIST || currentRoute == AllDestinations.PIESNY_LIST || currentRoute == AllDestinations.PASHALIA) {
+                                    if (currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.RUJANEC_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.PASHALIA) {
                                         DropdownMenuItem(
                                             onClick = {
                                                 expanded = false
@@ -1327,7 +1501,7 @@ fun MainConteiner(
                                             )
                                         }
                                     )
-                                    if (currentRoute.contains(AllDestinations.KALIANDAR) || currentRoute.contains(AllDestinations.BIBLIJATEKA_LIST)) {
+                                    if (currentRoute.contains(AllDestinations.KALIANDAR) || currentRoute.contains("BIBLIJATEKA", ignoreCase = true)) {
                                         DropdownMenuItem(
                                             onClick = {
                                                 if (context.checkmodulesAdmin()) {
@@ -1457,9 +1631,27 @@ fun MainConteiner(
                         textFieldValueState
                     )
 
-                    AllDestinations.BIBLIJATEKA_LIST -> BiblijtekaList(navController, innerPadding, searchText, textFieldValueState)
+                    AllDestinations.BIBLIJATEKA_NIADAUNIA -> BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_NIADAUNIA, innerPadding, searchText, textFieldValueState)
 
-                    AllDestinations.PIESNY_LIST -> PiesnyList(navController, innerPadding, searchText, textFieldValueState)
+                    AllDestinations.BIBLIJATEKA_SPEUNIKI -> BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_SPEUNIKI, innerPadding, searchText, textFieldValueState)
+
+                    AllDestinations.BIBLIJATEKA_MALITOUNIKI -> BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_MALITOUNIKI, innerPadding, searchText, textFieldValueState)
+
+                    AllDestinations.BIBLIJATEKA_GISTORYIA -> BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_GISTORYIA, innerPadding, searchText, textFieldValueState)
+
+                    AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA -> BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA, innerPadding, searchText, textFieldValueState)
+
+                    AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU -> BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU, innerPadding, searchText, textFieldValueState)
+
+                    AllDestinations.PIESNY_PRASLAULENNIA -> PiesnyList(navController, AllDestinations.PIESNY_PRASLAULENNIA, innerPadding, searchText, textFieldValueState)
+
+                    AllDestinations.PIESNY_ZA_BELARUS -> PiesnyList(navController, AllDestinations.PIESNY_ZA_BELARUS, innerPadding, searchText, textFieldValueState)
+
+                    AllDestinations.PIESNY_DA_BAGARODZICY -> PiesnyList(navController, AllDestinations.PIESNY_DA_BAGARODZICY, innerPadding, searchText, textFieldValueState)
+
+                    AllDestinations.PIESNY_KALIADNYIA -> PiesnyList(navController, AllDestinations.PIESNY_KALIADNYIA, innerPadding, searchText, textFieldValueState)
+
+                    AllDestinations.PIESNY_TAIZE -> PiesnyList(navController, AllDestinations.PIESNY_TAIZE, innerPadding, searchText, textFieldValueState)
 
                     AllDestinations.SVAITY_MUNU -> SviatyList(navController, innerPadding)
 

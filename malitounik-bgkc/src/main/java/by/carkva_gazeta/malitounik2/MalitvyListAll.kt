@@ -445,7 +445,7 @@ fun MalitvyListAll(
                                         }, verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(
-                                        modifier = Modifier.size(12.dp, 12.dp), painter = painterResource(R.drawable.description), tint = MaterialTheme.colorScheme.primary, contentDescription = null
+                                        modifier = Modifier.size(5.dp, 5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                                     )
                                     Text(
                                         subList[index].title, modifier = Modifier
@@ -570,8 +570,8 @@ fun MalitvyListAll(
                                 }, verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                modifier = Modifier.size(12.dp, 12.dp), painter = if (menuItem == Settings.MENU_TRYEDZ || menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH || menuItem == Settings.MENU_TRYEDZ_POSNAIA) painterResource(R.drawable.folder)
-                                else painterResource(R.drawable.description), tint = MaterialTheme.colorScheme.primary, contentDescription = null
+                                modifier = if (menuItem == Settings.MENU_TRYEDZ || menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH || menuItem == Settings.MENU_TRYEDZ_POSNAIA) Modifier.size(12.dp, 12.dp) else Modifier.size(5.dp, 5.dp), painter = if (menuItem == Settings.MENU_TRYEDZ || menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH || menuItem == Settings.MENU_TRYEDZ_POSNAIA) painterResource(R.drawable.folder)
+                                else painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                             )
                             Text(
                                 list[index].title, modifier = Modifier
@@ -655,7 +655,7 @@ fun PynagodnyiaList(prynagodnyaList: ArrayList<BogaslujbovyiaListData>, navigati
                         }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier.size(12.dp, 12.dp), painter = painterResource(R.drawable.description), tint = MaterialTheme.colorScheme.primary, contentDescription = null
+                        modifier = Modifier.size(5.dp, 5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                     )
                     Text(
                         text = prynagodnyaList[index].title, modifier = Modifier

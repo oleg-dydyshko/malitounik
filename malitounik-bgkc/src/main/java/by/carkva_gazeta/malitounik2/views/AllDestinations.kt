@@ -11,7 +11,6 @@ import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA_NADSAN
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA_SEMUXA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIA_SINODAL
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIJATEKA
-import by.carkva_gazeta.malitounik2.views.AllDestinations.BIBLIJATEKA_LIST
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BOGASLUJBOVYIA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.BOGASLUJBOVYIA_MENU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.CYTANNI_LIST
@@ -26,7 +25,6 @@ import by.carkva_gazeta.malitounik2.views.AllDestinations.PADZEI_VIEW
 import by.carkva_gazeta.malitounik2.views.AllDestinations.PAMIATKA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.PARAFII_BGKC
 import by.carkva_gazeta.malitounik2.views.AllDestinations.PASHALIA
-import by.carkva_gazeta.malitounik2.views.AllDestinations.PIESNY_LIST
 import by.carkva_gazeta.malitounik2.views.AllDestinations.PRANAS
 import by.carkva_gazeta.malitounik2.views.AllDestinations.RUJANEC_MENU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.SEARCH_BIBLIA
@@ -55,9 +53,18 @@ object AllDestinations {
     const val AKAFIST_MENU = "Akafist_Menu"
     const val RUJANEC_MENU = "Rujanec_Menu"
     const val MAE_NATATKI_MENU = "Mae_Natatki_Menu"
-    const val BIBLIJATEKA_LIST = "Biblijateka_List"
     const val BIBLIJATEKA = "Biblijateka"
-    const val PIESNY_LIST = "Piesny_List"
+    const val BIBLIJATEKA_NIADAUNIA = "Biblijateka_Naidaunia"
+    const val BIBLIJATEKA_GISTORYIA = "Biblijateka_Gistoryia"
+    const val BIBLIJATEKA_MALITOUNIKI = "Biblijateka_Malitouniki"
+    const val BIBLIJATEKA_SPEUNIKI = "Biblijateka_Speuniki"
+    const val BIBLIJATEKA_RELIGIJNAIA_LITARATURA = "Biblijateka_Peligijnaia_Litaratura"
+    const val BIBLIJATEKA_ARXIU_NUMAROU = "Biblijateka_Arxiu_Numarou"
+    const val PIESNY_PRASLAULENNIA = "Piesny_Raslaulennia"
+    const val PIESNY_ZA_BELARUS = "Piesny_Za_Belarus"
+    const val PIESNY_DA_BAGARODZICY = "Piesny_Da_Bagarodzicy"
+    const val PIESNY_KALIADNYIA = "Piesny_Kaliadnyia"
+    const val PIESNY_TAIZE = "Piesny_Taize"
     const val PAMIATKA = "Pamiatka"
     const val PADRYXTOUKA = "Padryxtouka"
     const val SVAITY_MUNU = "Svity_Menu"
@@ -197,23 +204,23 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
         edit.apply()
     }
 
-    fun navigateToBiblijatekaList() {
-        navController.navigate(BIBLIJATEKA_LIST) {
-            popUpTo(navController.currentBackStackEntry?.destination?.route ?: BIBLIJATEKA_LIST) {
+    fun navigateToBiblijatekaList(biblijateka: String) {
+        navController.navigate(biblijateka) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: biblijateka) {
                 inclusive = true
             }
         }
-        edit.putString("navigate", BIBLIJATEKA_LIST)
+        edit.putString("navigate", biblijateka)
         edit.apply()
     }
 
-    fun navigateToPiesnyList() {
-        navController.navigate(PIESNY_LIST) {
-            popUpTo(navController.currentBackStackEntry?.destination?.route ?: PIESNY_LIST) {
+    fun navigateToPiesnyList(piesny: String) {
+        navController.navigate(piesny) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: piesny) {
                 inclusive = true
             }
         }
-        edit.putString("navigate", PIESNY_LIST)
+        edit.putString("navigate", piesny)
         edit.apply()
     }
 

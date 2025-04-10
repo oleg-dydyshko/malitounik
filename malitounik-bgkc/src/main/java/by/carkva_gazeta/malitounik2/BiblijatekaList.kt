@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -17,19 +16,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SecondaryScrollableTabRow
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -38,10 +31,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,15 +46,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import by.carkva_gazeta.malitounik2.views.AllDestinations
 import by.carkva_gazeta.malitounik2.views.AppNavigationActions
 import by.carkva_gazeta.malitounik2.views.HtmlText
 import com.google.gson.Gson
@@ -107,7 +96,7 @@ class FilterBiblijatekaModel : ViewModel() {
 var biblijatekaJob: Job? = null
 
 @Composable
-fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues, searchText: Boolean, search: String) {
+fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerPadding: PaddingValues, searchText: Boolean, search: String) {
     val context = LocalContext.current
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
@@ -120,59 +109,54 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
     var isDialogBiblijatekaVisable by rememberSaveable { mutableStateOf(false) }
     var isDialogNoWIFIVisable by rememberSaveable { mutableStateOf(false) }
     var isDialogNoIntent by rememberSaveable { mutableStateOf(false) }
-    val rubrika by remember {
-        mutableIntStateOf(
-            k.getInt(
-                "pubrikaBiblijatekiMenu",
-                2
-            )
-        )
-    }
-    val list = listOf(
-        stringResource(R.string.bibliateka_niadaunia),
-        stringResource(R.string.bibliateka_gistoryia_carkvy),
-        stringResource(R.string.bibliateka_malitouniki),
-        stringResource(R.string.bibliateka_speuniki),
-        stringResource(R.string.bibliateka_rel_litaratura),
-        stringResource(R.string.arx_num_gaz)
-    )
-    val pagerState = rememberPagerState(pageCount = {
-        list.size
-    }, initialPage = rubrika)
-    val bibliatekaList0 = remember { SnapshotStateList<ArrayList<String>>() }
-    val bibliatekaList1 = remember { SnapshotStateList<ArrayList<String>>() }
-    val bibliatekaList2 = remember { SnapshotStateList<ArrayList<String>>() }
-    val bibliatekaList3 = remember { SnapshotStateList<ArrayList<String>>() }
-    val bibliatekaList4 = remember { SnapshotStateList<ArrayList<String>>() }
-    val bibliatekaList5 = remember { SnapshotStateList<ArrayList<String>>() }
+    val bibliatekaList = remember { SnapshotStateList<ArrayList<String>>() }
     LaunchedEffect(Unit) {
         biblijatekaJob?.cancel()
         biblijatekaJob = CoroutineScope(Dispatchers.IO).launch {
-            getBibliateka(context,
+            getBibliateka(
+                context,
                 bibliatekaList = { list ->
-                    val gson = Gson()
-                    val type = TypeToken.getParameterized(
-                        ArrayList::class.java,
-                        TypeToken.getParameterized(
-                            ArrayList::class.java,
-                            String::class.java
-                        ).type
-                    ).type
-                    val fileNadaunia =
-                        File("${context.filesDir}/biblijateka_latest.json")
-                    if (fileNadaunia.exists()) {
-                        bibliatekaList0.addAll(gson.fromJson(fileNadaunia.readText(), type))
+                    when (biblijateka) {
+                        AllDestinations.BIBLIJATEKA_NIADAUNIA -> {
+                            val gson = Gson()
+                            val type = TypeToken.getParameterized(
+                                ArrayList::class.java,
+                                TypeToken.getParameterized(
+                                    ArrayList::class.java,
+                                    String::class.java
+                                ).type
+                            ).type
+                            val fileNadaunia = File("${context.filesDir}/biblijateka_latest.json")
+                            if (fileNadaunia.exists()) {
+                                bibliatekaList.addAll(gson.fromJson(fileNadaunia.readText(), type))
+                            }
+                        }
+
+                        AllDestinations.BIBLIJATEKA_GISTORYIA -> {
+                            var newList = list.filter { it[4].toInt() == 1 } as ArrayList<ArrayList<String>>
+                            bibliatekaList.addAll(newList)
+                        }
+
+                        AllDestinations.BIBLIJATEKA_MALITOUNIKI -> {
+                            var newList = list.filter { it[4].toInt() == 2 } as ArrayList<ArrayList<String>>
+                            bibliatekaList.addAll(newList)
+                        }
+
+                        AllDestinations.BIBLIJATEKA_SPEUNIKI -> {
+                            var newList = list.filter { it[4].toInt() == 3 } as ArrayList<ArrayList<String>>
+                            bibliatekaList.addAll(newList)
+                        }
+
+                        AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA -> {
+                            var newList = list.filter { it[4].toInt() == 4 } as ArrayList<ArrayList<String>>
+                            bibliatekaList.addAll(newList)
+                        }
+
+                        AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU -> {
+                            var newList = list.filter { it[4].toInt() == 5 } as ArrayList<ArrayList<String>>
+                            bibliatekaList.addAll(newList)
+                        }
                     }
-                    var newList = list.filter { it[4].toInt() == 1 } as ArrayList<ArrayList<String>>
-                    bibliatekaList1.addAll(newList)
-                    newList = list.filter { it[4].toInt() == 2 } as ArrayList<ArrayList<String>>
-                    bibliatekaList2.addAll(newList)
-                    newList = list.filter { it[4].toInt() == 3 } as ArrayList<ArrayList<String>>
-                    bibliatekaList3.addAll(newList)
-                    newList = list.filter { it[4].toInt() == 4 } as ArrayList<ArrayList<String>>
-                    bibliatekaList4.addAll(newList)
-                    newList = list.filter { it[4].toInt() == 5 } as ArrayList<ArrayList<String>>
-                    bibliatekaList5.addAll(newList)
                 },
                 progressVisable = { progress ->
                     isProgressVisable = progress
@@ -181,52 +165,24 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
     }
     if (searchText) {
         viewModel.clear()
-        viewModel.addAllItemList(bibliatekaList1)
-        viewModel.addAllItemList(bibliatekaList2)
-        viewModel.addAllItemList(bibliatekaList3)
-        viewModel.addAllItemList(bibliatekaList4)
-        viewModel.addAllItemList(bibliatekaList5)
+        viewModel.addAllItemList(bibliatekaList)
         viewModel.filterItem(search)
     }
     val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
     if (isDialogBiblijatekaVisable) {
         fileName = if (searchText) filteredItems[fileListPosition][2]
         else {
-            when (pagerState.currentPage) {
-                0 -> bibliatekaList0[fileListPosition][2]
-                1 -> bibliatekaList1[fileListPosition][2]
-                2 -> bibliatekaList2[fileListPosition][2]
-                3 -> bibliatekaList3[fileListPosition][2]
-                4 -> bibliatekaList4[fileListPosition][2]
-                5 -> bibliatekaList5[fileListPosition][2]
-                else -> bibliatekaList2[fileListPosition][2]
-            }
+            bibliatekaList[fileListPosition][2]
         }
         var opisanie = if (searchText) filteredItems[fileListPosition][1]
         else {
-            when (pagerState.currentPage) {
-                0 -> bibliatekaList0[fileListPosition][1]
-                1 -> bibliatekaList1[fileListPosition][1]
-                2 -> bibliatekaList2[fileListPosition][1]
-                3 -> bibliatekaList3[fileListPosition][1]
-                4 -> bibliatekaList4[fileListPosition][1]
-                5 -> bibliatekaList5[fileListPosition][1]
-                else -> bibliatekaList2[fileListPosition][1]
-            }
+            bibliatekaList[fileListPosition][1]
         }
         val t1 = opisanie.indexOf("</span><br>")
         if (t1 != -1) opisanie = opisanie.substring(t1 + 11)
         val dirCount = if (searchText) filteredItems[fileListPosition][3].toInt()
         else {
-            when (pagerState.currentPage) {
-                0 -> bibliatekaList0[fileListPosition][3].toInt()
-                1 -> bibliatekaList1[fileListPosition][3].toInt()
-                2 -> bibliatekaList2[fileListPosition][3].toInt()
-                3 -> bibliatekaList3[fileListPosition][3].toInt()
-                4 -> bibliatekaList4[fileListPosition][3].toInt()
-                5 -> bibliatekaList5[fileListPosition][3].toInt()
-                else -> bibliatekaList2[fileListPosition][3].toInt()
-            }
+            bibliatekaList[fileListPosition][3].toInt()
         }
         val izm = if (dirCount / 1024 > 1000) {
             formatFigureTwoPlaces(
@@ -245,15 +201,7 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
         }
         val listItem = if (searchText) filteredItems[fileListPosition]
         else {
-            when (pagerState.currentPage) {
-                0 -> bibliatekaList0[fileListPosition]
-                1 -> bibliatekaList1[fileListPosition]
-                2 -> bibliatekaList2[fileListPosition]
-                3 -> bibliatekaList3[fileListPosition]
-                4 -> bibliatekaList4[fileListPosition]
-                5 -> bibliatekaList5[fileListPosition]
-                else -> bibliatekaList2[fileListPosition]
-            }
+            bibliatekaList[fileListPosition]
         }
         DialogBiblijateka(
             content = opisanie,
@@ -270,13 +218,14 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
                     ) -> isDialogNoWIFIVisable = true
 
                     else -> {
-                        writeFile(context, fileName, loadComplete = {
-                            addNiadaunia(context, listItem, removeNiadaunia = { bibliatekaList0.remove(it) }, addNiadaunia = { bibliatekaList0.add(0, it) })
-                            navigationActions.navigateToBiblijateka(
-                                listItem[0],
-                                listItem[2]
-                            )
-                        },
+                        writeFile(
+                            context, fileName, loadComplete = {
+                                addNiadaunia(context, listItem)
+                                navigationActions.navigateToBiblijateka(
+                                    listItem[0],
+                                    listItem[2]
+                                )
+                            },
                             inProcess = {
                                 isProgressVisable = it
                             })
@@ -289,28 +238,21 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
     if (isDialogNoWIFIVisable) {
         val listItem = if (searchText) filteredItems[fileListPosition]
         else {
-            when (pagerState.currentPage) {
-                0 -> bibliatekaList0[fileListPosition]
-                1 -> bibliatekaList1[fileListPosition]
-                2 -> bibliatekaList2[fileListPosition]
-                3 -> bibliatekaList3[fileListPosition]
-                4 -> bibliatekaList4[fileListPosition]
-                5 -> bibliatekaList5[fileListPosition]
-                else -> bibliatekaList2[fileListPosition]
-            }
+            bibliatekaList[fileListPosition]
         }
         DialogNoWiFI(
             onDismissRequest = {
                 isDialogNoWIFIVisable = false
             },
             onConfirmation = {
-                writeFile(context, fileName, loadComplete = {
-                    addNiadaunia(context, listItem, removeNiadaunia = { bibliatekaList0.remove(it) }, addNiadaunia = { bibliatekaList0.add(0, it) })
-                    navigationActions.navigateToBiblijateka(
-                        listItem[0],
-                        listItem[2]
-                    )
-                },
+                writeFile(
+                    context, fileName, loadComplete = {
+                        addNiadaunia(context, listItem)
+                        navigationActions.navigateToBiblijateka(
+                            listItem[0],
+                            listItem[2]
+                        )
+                    },
                     inProcess = {
                         isProgressVisable = it
                     })
@@ -323,85 +265,19 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
             isDialogNoIntent = false
         }
     }
-    val coroutineScope = rememberCoroutineScope()
-    LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }.collect { page ->
-            k.edit {
-                putInt("pubrikaBiblijatekiMenu", page)
-            }
-        }
-    }
     Column {
-        if (!searchText) {
-            SecondaryScrollableTabRow(
-                modifier = Modifier.background(MaterialTheme.colorScheme.onPrimary),
-                selectedTabIndex = pagerState.currentPage,
-                indicator = {
-                    TabRowDefaults.PrimaryIndicator(
-                        modifier = Modifier
-                            .tabIndicatorOffset(pagerState.currentPage),
-                        width = Dp.Unspecified,
-                        shape = RoundedCornerShape(
-                            topStart = 5.dp,
-                            topEnd = 5.dp,
-                            bottomEnd = 0.dp,
-                            bottomStart = 0.dp,
-                        )
-                    )
-                }
-            ) {
-                list.forEachIndexed { index, title ->
-                    Tab(
-                        selected = pagerState.currentPage == index,
-                        onClick = {
-                            k.edit {
-                                putInt("pubrikaBiblijatekiMenu", index)
-                            }
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(index)
-                            }
-                        },
-                        text = {
-                            Text(
-                                text = title,
-                                fontSize = Settings.fontInterface.sp,
-                                lineHeight = Settings.fontInterface.sp * 1.2f,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                color = MaterialTheme.colorScheme.secondary
-                            )
-                        }
-                    )
-                }
-            }
-        }
         if (searchText) {
             BiblijatekaListItems(
-                filteredItems, bibliatekaList0, navigationActions, innerPadding,
+                filteredItems, navigationActions, innerPadding,
                 setFileListPosition = { fileListPosition = it },
                 setIsDialogBiblijatekaVisable = { isDialogBiblijatekaVisable = it }
             )
         } else {
-            HorizontalPager(
-                state = pagerState,
-                verticalAlignment = Alignment.Top
-            ) { page ->
-                val listItem =
-                    when (page) {
-                        0 -> bibliatekaList0
-                        1 -> bibliatekaList1
-                        2 -> bibliatekaList2
-                        3 -> bibliatekaList3
-                        4 -> bibliatekaList4
-                        5 -> bibliatekaList5
-                        else -> bibliatekaList2
-                    }
-                BiblijatekaListItems(
-                    listItem, bibliatekaList0, navigationActions, innerPadding,
-                    setFileListPosition = { fileListPosition = it },
-                    setIsDialogBiblijatekaVisable = { isDialogBiblijatekaVisable = it }
-                )
-            }
+            BiblijatekaListItems(
+                bibliatekaList, navigationActions, innerPadding,
+                setFileListPosition = { fileListPosition = it },
+                setIsDialogBiblijatekaVisable = { isDialogBiblijatekaVisable = it }
+            )
         }
     }
     if (isProgressVisable) {
@@ -417,7 +293,7 @@ fun BiblijtekaList(navController: NavHostController, innerPadding: PaddingValues
 
 @Composable
 fun BiblijatekaListItems(
-    listItem: SnapshotStateList<ArrayList<String>>, bibliatekaList0: SnapshotStateList<ArrayList<String>>, navigationActions: AppNavigationActions, innerPadding: PaddingValues,
+    listItem: SnapshotStateList<ArrayList<String>>, navigationActions: AppNavigationActions, innerPadding: PaddingValues,
     setFileListPosition: (Int) -> Unit,
     setIsDialogBiblijatekaVisable: (Boolean) -> Unit
 ) {
@@ -444,7 +320,7 @@ fun BiblijatekaListItems(
                         .padding(start = 10.dp)
                         .clickable {
                             if (fileExistsBiblijateka(context, listItem[index][2])) {
-                                addNiadaunia(context, listItem[index], removeNiadaunia = { bibliatekaList0.remove(it) }, addNiadaunia = { bibliatekaList0.add(0, it) })
+                                addNiadaunia(context, listItem[index])
                                 navigationActions.navigateToBiblijateka(
                                     listItem[index][0],
                                     listItem[index][2]
@@ -457,8 +333,8 @@ fun BiblijatekaListItems(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier.size(12.dp, 12.dp),
-                        painter = painterResource(R.drawable.krest),
+                        modifier = Modifier.size(5.dp, 5.dp),
+                        painter = painterResource(R.drawable.poiter),
                         tint = MaterialTheme.colorScheme.primary,
                         contentDescription = null
                     )
@@ -500,7 +376,7 @@ fun BiblijatekaListItems(
                                         listItem[index][0],
                                         listItem[index][2]
                                     )
-                                    addNiadaunia(context, listItem[index], removeNiadaunia = { bibliatekaList0.remove(it) }, addNiadaunia = { bibliatekaList0.add(0, it) })
+                                    addNiadaunia(context, listItem[index])
                                 } else {
                                     setFileListPosition(index)
                                     setIsDialogBiblijatekaVisable(true)
@@ -521,9 +397,7 @@ fun BiblijatekaListItems(
 
 fun addNiadaunia(
     context: Context,
-    bibliatekaList0: ArrayList<String>,
-    addNiadaunia: (ArrayList<String>) -> Unit,
-    removeNiadaunia: (ArrayList<String>) -> Unit
+    bibliatekaList: ArrayList<String>,
 ) {
     val gson = Gson()
     val type = TypeToken.getParameterized(
@@ -540,26 +414,23 @@ fun addNiadaunia(
         biblioteka.addAll(gson.fromJson(fileNadaunia.readText(), type))
         var inDel = -1
         for (i in biblioteka.indices) {
-            if (bibliatekaList0[2] == biblioteka[i][2]) {
+            if (bibliatekaList[2] == biblioteka[i][2]) {
                 inDel = i
                 break
             }
         }
         if (inDel != -1) {
             biblioteka.removeAt(inDel)
-            removeNiadaunia(bibliatekaList0)
         }
         if (biblioteka.size > 4) {
             biblioteka.removeAt(4)
-            removeNiadaunia(bibliatekaList0)
         }
     }
-    bibliatekaList0[4] = "0"
-    biblioteka.add(0, bibliatekaList0)
+    bibliatekaList[4] = "0"
+    biblioteka.add(0, bibliatekaList)
     fileNadaunia.writer().use {
         it.write(gson.toJson(biblioteka, type))
     }
-    addNiadaunia(bibliatekaList0)
 }
 
 fun formatFigureTwoPlaces(value: Float): String {
@@ -678,7 +549,8 @@ private suspend fun getBibliateka(
                 }
             }
             progressVisable(false)
-        } catch (_: Throwable) {
+        } catch (e: Throwable) {
+            e.printStackTrace()
         }
     }
 }
@@ -761,7 +633,7 @@ fun DialogNoWiFI(
 ) {
     AlertDialog(
         icon = {
-            Icon(painter = painterResource(R.drawable.krest), contentDescription = "")
+            Icon(painter = painterResource(R.drawable.signal_wifi_off), contentDescription = "")
         },
         title = {
             Text(stringResource(R.string.wifi_error))
