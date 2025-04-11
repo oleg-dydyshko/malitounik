@@ -46,6 +46,7 @@ fun HtmlText(
     fontWeight: FontWeight? = null,
     textAlign: TextAlign? = null,
     fontSize: TextUnit = 22.sp,
+    isNoLiturgia: Boolean = true,
     scrollState: ScrollState = rememberScrollState(),
     searchText: AnnotatedString = AnnotatedString(""),
     navigateTo: (String) -> Unit = {},
@@ -384,7 +385,11 @@ fun HtmlText(
                 }
 
                 "https://localhost/cytanne/" -> {
-                    navigateTo("cytanne")
+                    if (isNoLiturgia) {
+                        navigateTo("cytanne")
+                    } else {
+                        navigateTo("error")
+                    }
                 }
 
                 else -> Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()

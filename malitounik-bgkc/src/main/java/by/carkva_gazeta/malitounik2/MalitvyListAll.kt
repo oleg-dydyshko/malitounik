@@ -208,6 +208,57 @@ fun MalitvyListAll(
         Settings.MENU_TRYEDZ_POSNAIA_4 -> getTtyedzPosnaia(Settings.MENU_TRYEDZ_POSNAIA_4)
         Settings.MENU_TRYEDZ_POSNAIA_5 -> getTtyedzPosnaia(Settings.MENU_TRYEDZ_POSNAIA_5)
         Settings.MENU_TRYEDZ_POSNAIA_6 -> getTtyedzPosnaia(Settings.MENU_TRYEDZ_POSNAIA_6)
+        Settings.MENU_TRYEDZ_VIALIKAGA_TYDNIA -> {
+            val listMineiaList = getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_VIALIKAGA_TYDNIA)
+            val arrayList = ArrayList<BogaslujbovyiaListData>()
+            listPrynagodnyia.forEach { dataItem ->
+                listMineiaList.forEach {
+                    if (dataItem.day == it.dayOfMonth) {
+                        arrayList.add(
+                            BogaslujbovyiaListData(
+                                it.title, it.resource
+                            )
+                        )
+                    }
+                }
+            }
+            arrayList
+        }
+
+        Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA -> {
+            val listMineiaList = getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA)
+            val arrayList = ArrayList<BogaslujbovyiaListData>()
+            listPrynagodnyia.forEach { dataItem ->
+                listMineiaList.forEach {
+                    if (dataItem.day == it.dayOfMonth) {
+                        arrayList.add(
+                            BogaslujbovyiaListData(
+                                it.title, it.resource
+                            )
+                        )
+                    }
+                }
+            }
+            arrayList
+        }
+
+        Settings.MENU_TRYEDZ_KVETNAIA -> {
+            val listMineiaList = getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_KVETNAIA)
+            val arrayList = ArrayList<BogaslujbovyiaListData>()
+            listPrynagodnyia.forEach { dataItem ->
+                listMineiaList.forEach {
+                    if (dataItem.day == it.dayOfMonth) {
+                        arrayList.add(
+                            BogaslujbovyiaListData(
+                                it.title, it.resource
+                            )
+                        )
+                    }
+                }
+            }
+            arrayList
+        }
+
         else -> ArrayList()
     }
     var searchText by rememberSaveable { mutableStateOf(false) }
@@ -219,18 +270,8 @@ fun MalitvyListAll(
         topBar = {
             TopAppBar(
                 title = {
-                if (!searchText) {
-                    Column {
-                        Text(
-                            modifier = Modifier.clickable {
-                                maxLine.intValue = Int.MAX_VALUE
-                                coroutineScope.launch {
-                                    delay(5000L)
-                                    maxLine.intValue = 1
-                                }
-                            }, text = title, color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
-                        )
-                        if (subTitle != "") {
+                    if (!searchText) {
+                        Column {
                             Text(
                                 modifier = Modifier.clickable {
                                     maxLine.intValue = Int.MAX_VALUE
@@ -238,74 +279,84 @@ fun MalitvyListAll(
                                         delay(5000L)
                                         maxLine.intValue = 1
                                     }
-                                }, text = subTitle, color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
+                                }, text = title, color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
                             )
-                        }
-                    }
-                } else {
-                    TextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .focusRequester(focusRequester)
-                            .onGloballyPositioned {
-                                if (!textFieldLoaded) {
-                                    focusRequester.requestFocus()
-                                    textFieldLoaded = true
-                                }
-                            }, value = textFieldValueState, onValueChange = { newText ->
-                        var edit = newText
-                        edit = edit.replace("и", "і")
-                        edit = edit.replace("щ", "ў")
-                        edit = edit.replace("И", "І")
-                        edit = edit.replace("Щ", "Ў")
-                        edit = edit.replace("ъ", "'")
-                        textFieldValueState = edit
-                    }, singleLine = true, leadingIcon = {
-                        Icon(
-                            painter = painterResource(R.drawable.search), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
-                        )
-                    }, trailingIcon = {
-                        if (textFieldValueState.isNotEmpty()) {
-                            IconButton(onClick = { textFieldValueState = "" }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                            if (subTitle != "") {
+                                Text(
+                                    modifier = Modifier.clickable {
+                                        maxLine.intValue = Int.MAX_VALUE
+                                        coroutineScope.launch {
+                                            delay(5000L)
+                                            maxLine.intValue = 1
+                                        }
+                                    }, text = subTitle, color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
                                 )
                             }
                         }
-                    }, colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.onTertiary, unfocusedContainerColor = MaterialTheme.colorScheme.onTertiary, focusedTextColor = PrimaryTextBlack, focusedIndicatorColor = PrimaryTextBlack, unfocusedIndicatorColor = PrimaryTextBlack, cursorColor = PrimaryTextBlack
-                    )
-                    )
-                }
-            }, navigationIcon = {
-                if (searchText) {
-                    IconButton(onClick = {
-                        searchText = false
-                    }, content = {
-                        Icon(
-                            painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
-                        )
-                    })
-                } else {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }, content = {
-                        Icon(
-                            painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
-                        )
-                    })
-                }
-            }, actions = {
-                if (!searchText && menuItem == Settings.MENU_MALITVY_PRYNAGODNYIA) {
-                    IconButton({
-                        searchText = true
-                    }) {
-                        Icon(
-                            painter = painterResource(R.drawable.search), tint = PrimaryTextBlack, contentDescription = ""
+                    } else {
+                        TextField(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .focusRequester(focusRequester)
+                                .onGloballyPositioned {
+                                    if (!textFieldLoaded) {
+                                        focusRequester.requestFocus()
+                                        textFieldLoaded = true
+                                    }
+                                }, value = textFieldValueState, onValueChange = { newText ->
+                                var edit = newText
+                                edit = edit.replace("и", "і")
+                                edit = edit.replace("щ", "ў")
+                                edit = edit.replace("И", "І")
+                                edit = edit.replace("Щ", "Ў")
+                                edit = edit.replace("ъ", "'")
+                                textFieldValueState = edit
+                            }, singleLine = true, leadingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.search), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                                )
+                            }, trailingIcon = {
+                                if (textFieldValueState.isNotEmpty()) {
+                                    IconButton(onClick = { textFieldValueState = "" }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
+                                }
+                            }, colors = TextFieldDefaults.colors(
+                                focusedContainerColor = MaterialTheme.colorScheme.onTertiary, unfocusedContainerColor = MaterialTheme.colorScheme.onTertiary, focusedTextColor = PrimaryTextBlack, focusedIndicatorColor = PrimaryTextBlack, unfocusedIndicatorColor = PrimaryTextBlack, cursorColor = PrimaryTextBlack
+                            )
                         )
                     }
-                }
-            }, colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
+                }, navigationIcon = {
+                    if (searchText) {
+                        IconButton(onClick = {
+                            searchText = false
+                        }, content = {
+                            Icon(
+                                painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                            )
+                        })
+                    } else {
+                        IconButton(onClick = {
+                            navController.popBackStack()
+                        }, content = {
+                            Icon(
+                                painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                            )
+                        })
+                    }
+                }, actions = {
+                    if (!searchText && menuItem == Settings.MENU_MALITVY_PRYNAGODNYIA) {
+                        IconButton({
+                            searchText = true
+                        }) {
+                            Icon(
+                                painter = painterResource(R.drawable.search), tint = PrimaryTextBlack, contentDescription = ""
+                            )
+                        }
+                    }
+                }, colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
             )
         }) { innerPadding ->
         if (searchText) {
@@ -329,7 +380,7 @@ fun MalitvyListAll(
                     )
                     .fillMaxSize()
             ) {
-                if (menuItem == Settings.MENU_MALITVY_PRYNAGODNYIA || menuItem == Settings.MENU_MINEIA_MESIACHNAIA || menuItem == Settings.MENU_TRYEDZ_VIALIKAGA_TYDNIA || menuItem == Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA || menuItem == Settings.MENU_TRYEDZ_KVETNAIA) {
+                if (menuItem == Settings.MENU_MALITVY_PRYNAGODNYIA || menuItem == Settings.MENU_MINEIA_MESIACHNAIA) {
                     listPrynagodnyia.forEachIndexed { i, dataItem ->
                         val collapsed = collapsedState[i]
                         item(key = "header_$i") {
@@ -368,51 +419,6 @@ fun MalitvyListAll(
                                     4 -> getPrynagodnyia5()
                                     5 -> getPrynagodnyia6()
                                     else -> getPrynagodnyia1()
-                                }
-
-                                Settings.MENU_TRYEDZ_VIALIKAGA_TYDNIA -> {
-                                    val listMineiaList = getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_VIALIKAGA_TYDNIA)
-                                    val arrayList = ArrayList<BogaslujbovyiaListData>()
-                                    listMineiaList.forEach {
-                                        if (dataItem.day == it.dayOfMonth) {
-                                            arrayList.add(
-                                                BogaslujbovyiaListData(
-                                                    it.title, it.resource
-                                                )
-                                            )
-                                        }
-                                    }
-                                    arrayList
-                                }
-
-                                Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA -> {
-                                    val listMineiaList = getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA)
-                                    val arrayList = ArrayList<BogaslujbovyiaListData>()
-                                    listMineiaList.forEach {
-                                        if (dataItem.day == it.dayOfMonth) {
-                                            arrayList.add(
-                                                BogaslujbovyiaListData(
-                                                    it.title, it.resource
-                                                )
-                                            )
-                                        }
-                                    }
-                                    arrayList
-                                }
-
-                                Settings.MENU_TRYEDZ_KVETNAIA -> {
-                                    val listMineiaList = getTtyedzBialikagaTydnia(Settings.MENU_TRYEDZ_KVETNAIA)
-                                    val arrayList = ArrayList<BogaslujbovyiaListData>()
-                                    listMineiaList.forEach {
-                                        if (dataItem.day == it.dayOfMonth) {
-                                            arrayList.add(
-                                                BogaslujbovyiaListData(
-                                                    it.title, it.resource
-                                                )
-                                            )
-                                        }
-                                    }
-                                    arrayList
                                 }
 
                                 Settings.MENU_MINEIA_MESIACHNAIA -> {
@@ -674,15 +680,12 @@ fun PynagodnyiaList(prynagodnyaList: ArrayList<BogaslujbovyiaListData>, navigati
 
 @Composable
 fun getTtyedzPosnaia(menuItem: Int): ArrayList<BogaslujbovyiaListData> {
-    val slugbovyiaTextu = SlugbovyiaTextu()
     val list = ArrayList<BogaslujbovyiaListData>()
     val subList = getTtyedzBialikagaTydnia(menuItem)
     subList.forEach { item ->
         list.add(
             BogaslujbovyiaListData(
-                item.dayOfMonth.toString() + " " + stringArrayResource(
-                    R.array.meciac_smoll
-                )[item.month] + "\n" + item.title + ". " + slugbovyiaTextu.getNazouSluzby(item.sluzba), item.resource
+                item.title, item.resource
             )
         )
     }

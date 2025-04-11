@@ -682,6 +682,10 @@ fun AppNavGraph() {
                 navController, title, resurs,
                 navigateTo = { navigate ->
                     when (navigate) {
+                        "error" -> {
+                            navigationActions.navigateToBogaslujbovyia(context.getString(R.string.error_ch2), R.raw.bogashlugbovya_error)
+                        }
+
                         "malitvypasliaprychastia" -> {
                             navigationActions.navigateToMalitvyListAll("МАЛІТВЫ ПАСЬЛЯ СЬВЯТОГА ПРЫЧАСЬЦЯ", Settings.MENU_MALITVY_PASLIA_PRYCHASCIA)
                         }

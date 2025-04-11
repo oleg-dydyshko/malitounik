@@ -9,6 +9,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.print.PrintAttributes
 import android.print.PrintManager
+import android.util.Log
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.WebView
@@ -443,6 +444,37 @@ fun Bogaslujbovyia(
             }
         )
     }
+    val isViachernia = resurs == R.raw.viaczernia_niadzelnaja || resurs == R.raw.viaczernia_na_kozny_dzen || resurs == R.raw.viaczernia_u_vialikim_poscie || resurs == R.raw.viaczerniaja_sluzba_sztodzionnaja_biez_sviatara || resurs == R.raw.viaczernia_svietly_tydzien
+    val isLiturgia = resurs == R.raw.lit_jana_zalatavusnaha || resurs == R.raw.lit_jan_zalat_vielikodn || resurs == R.raw.lit_vasila_vialikaha || resurs == R.raw.abiednica || resurs == R.raw.vialikdzien_liturhija
+    val dataCal = findCaliandarToDay(context)
+    val isNoLiturgia = dataCal[22].toInt() == -53 || dataCal[22].toInt() == -51 || (dataCal[22].toInt() in -48..-2 && !(dataCal[0].toInt() == Calendar.SATURDAY || dataCal[0].toInt() == Calendar.SUNDAY))
+    val cytanneVisable = (isLiturgia && !isNoLiturgia) || (isViachernia && isNoLiturgia)
+    val data = findCaliandarToDay(context)
+    val listResource = ArrayList<SlugbovyiaTextuData>()
+    if (isLiturgia || isViachernia) {
+        when (resurs) {
+            R.raw.lit_jana_zalatavusnaha, R.raw.lit_jan_zalat_vielikodn, R.raw.lit_vasila_vialikaha, R.raw.abiednica -> {
+                if (data[0].toInt() == Calendar.SUNDAY) {
+                    if (data[20] != "0") {
+                        val trapary = getTraparyKandakiNiadzelnyia()
+                        listResource.add(SlugbovyiaTextuData(0, trapary[data[20].toInt() - 1].title, trapary[data[20].toInt() - 1].resurs, SlugbovyiaTextu.LITURHIJA))
+                    }
+                } else {
+                    val trapary = getTraparyKandakiShtodzennyia()
+                    listResource.add(SlugbovyiaTextuData(0, trapary[data[0].toInt() - 2].title.replace("\n", ": "), trapary[data[0].toInt() - 2].resurs, SlugbovyiaTextu.LITURHIJA))
+                }
+                listResource.addAll(SlugbovyiaTextu().loadSluzbaDayList(SlugbovyiaTextu.LITURHIJA, data[24].toInt(), data[3].toInt()))
+            }
+
+            R.raw.jutran_niadzelnaja -> {
+                listResource.addAll(SlugbovyiaTextu().loadSluzbaDayList(SlugbovyiaTextu.JUTRAN, data[24].toInt(), data[3].toInt()))
+            }
+
+            else -> {
+                listResource.addAll(SlugbovyiaTextu().loadSluzbaDayList(SlugbovyiaTextu.VIACZERNIA, data[24].toInt(), data[3].toInt()))
+            }
+        }
+    }
     Scaffold(
         topBar = {
             if (!fullscreen) {
@@ -572,7 +604,7 @@ fun Bogaslujbovyia(
                         if (!searchText) {
                             if (!iskniga) {
                                 var expanded by remember { mutableStateOf(false) }
-                                if (resurs == R.raw.lit_jana_zalatavusnaha || resurs == R.raw.lit_jan_zalat_vielikodn || resurs == R.raw.lit_vasila_vialikaha || resurs == R.raw.abiednica || resurs == R.raw.vialikdzien_liturhija || resurs == R.raw.viaczernia_niadzelnaja || resurs == R.raw.viaczernia_na_kozny_dzen || resurs == R.raw.viaczernia_u_vialikim_poscie || resurs == R.raw.viaczerniaja_sluzba_sztodzionnaja_biez_sviatara || resurs == R.raw.viaczernia_svietly_tydzien || resurs == R.raw.jutran_niadzelnaja) {
+                                if ((isLiturgia || isViachernia) && cytanneVisable && listResource.isNotEmpty()) {
                                     IconButton(onClick = {
                                         showDropdown = true
                                         menuPosition = 2
@@ -902,30 +934,6 @@ fun Bogaslujbovyia(
                         Column {
                             if (menuPosition == 2) {
                                 Column {
-                                    val data = findCaliandarToDay(context)
-                                    val listResource = ArrayList<SlugbovyiaTextuData>()
-                                    when (resurs) {
-                                        R.raw.lit_jana_zalatavusnaha, R.raw.lit_jan_zalat_vielikodn, R.raw.lit_vasila_vialikaha, R.raw.abiednica -> {
-                                            if (data[0].toInt() == Calendar.SUNDAY) {
-                                                if (data[20] != "0") {
-                                                    val trapary = getTraparyKandakiNiadzelnyia()
-                                                    listResource.add(SlugbovyiaTextuData(0, trapary[data[20].toInt() - 1].title, trapary[data[20].toInt() - 1].resurs, SlugbovyiaTextu.LITURHIJA))
-                                                }
-                                            } else {
-                                                val trapary = getTraparyKandakiShtodzennyia()
-                                                listResource.add(SlugbovyiaTextuData(0, trapary[data[0].toInt() - 2].title.replace("\n", ": "), trapary[data[0].toInt() - 2].resurs, SlugbovyiaTextu.LITURHIJA))
-                                            }
-                                            listResource.addAll(SlugbovyiaTextu().loadSluzbaDayList(SlugbovyiaTextu.LITURHIJA, data[24].toInt(), data[3].toInt()))
-                                        }
-
-                                        R.raw.jutran_niadzelnaja -> {
-                                            listResource.addAll(SlugbovyiaTextu().loadSluzbaDayList(SlugbovyiaTextu.JUTRAN, data[24].toInt(), data[3].toInt()))
-                                        }
-
-                                        else -> {
-                                            listResource.addAll(SlugbovyiaTextu().loadSluzbaDayList(SlugbovyiaTextu.VIACZERNIA, data[24].toInt(), data[3].toInt()))
-                                        }
-                                    }
                                     for (i in listResource.indices) {
                                         Row(
                                             modifier = Modifier
@@ -960,49 +968,51 @@ fun Bogaslujbovyia(
                                         }
                                         HorizontalDivider()
                                     }
-                                    val chytanneList = ArrayList<BogaslujbovyiaListData>()
-                                    if (data[9].isNotEmpty()) {
-                                        chytanneList.add(BogaslujbovyiaListData(data[9], 9))
-                                    }
-                                    if (data[10].isNotEmpty()) {
-                                        chytanneList.add(BogaslujbovyiaListData(data[10], 10))
-                                    }
-                                    if (data[11].isNotEmpty()) {
-                                        chytanneList.add(BogaslujbovyiaListData(data[11], 11))
-                                    }
-                                    for (i in chytanneList.indices) {
-                                        val navigate = when (chytanneList[i].resurs) {
-                                            10 -> "cytannesvityx"
-                                            11 -> "cytannedop"
-                                            else -> "cytanne"
+                                    if (cytanneVisable) {
+                                        val chytanneList = ArrayList<BogaslujbovyiaListData>()
+                                        if (data[9].isNotEmpty()) {
+                                            chytanneList.add(BogaslujbovyiaListData(data[9], 9))
                                         }
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(10.dp)
-                                                .clickable {
-                                                    showDropdown = false
-                                                    autoScroll = false
-                                                    navigateTo(navigate)
-                                                },
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Icon(
-                                                modifier = Modifier.size(5.dp, 5.dp),
-                                                painter = painterResource(R.drawable.poiter),
-                                                tint = MaterialTheme.colorScheme.primary,
-                                                contentDescription = null
-                                            )
-                                            Text(
-                                                modifier = Modifier.padding(start = 10.dp),
-                                                text = chytanneList[i].title,
-                                                fontSize = Settings.fontInterface.sp,
-                                                maxLines = 2,
-                                                overflow = TextOverflow.Ellipsis,
-                                                color = MaterialTheme.colorScheme.secondary
-                                            )
+                                        if (data[10].isNotEmpty()) {
+                                            chytanneList.add(BogaslujbovyiaListData(data[10], 10))
                                         }
-                                        HorizontalDivider()
+                                        if (data[11].isNotEmpty()) {
+                                            chytanneList.add(BogaslujbovyiaListData(data[11], 11))
+                                        }
+                                        for (i in chytanneList.indices) {
+                                            val navigate = when (chytanneList[i].resurs) {
+                                                10 -> "cytannesvityx"
+                                                11 -> "cytannedop"
+                                                else -> "cytanne"
+                                            }
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(10.dp)
+                                                    .clickable {
+                                                        showDropdown = false
+                                                        autoScroll = false
+                                                        navigateTo(navigate)
+                                                    },
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Icon(
+                                                    modifier = Modifier.size(5.dp, 5.dp),
+                                                    painter = painterResource(R.drawable.poiter),
+                                                    tint = MaterialTheme.colorScheme.primary,
+                                                    contentDescription = null
+                                                )
+                                                Text(
+                                                    modifier = Modifier.padding(start = 10.dp),
+                                                    text = chytanneList[i].title,
+                                                    fontSize = Settings.fontInterface.sp,
+                                                    maxLines = 2,
+                                                    overflow = TextOverflow.Ellipsis,
+                                                    color = MaterialTheme.colorScheme.secondary
+                                                )
+                                            }
+                                            HorizontalDivider()
+                                        }
                                     }
                                 }
                             }
@@ -1237,10 +1247,12 @@ fun Bogaslujbovyia(
             ) {
                 val padding = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp
                 if (autoScrollSensor) {
+                    Log.d("Oleg", (isLiturgia && !isNoLiturgia).toString())
                     HtmlText(
                         modifier = Modifier.padding(top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(10.dp)),
                         text = htmlText,
                         fontSize = fontSize.sp,
+                        isNoLiturgia = isLiturgia && !isNoLiturgia,
                         searchText = searchTextResult,
                         scrollState = scrollState,
                         navigateTo = { navigate ->
@@ -1252,10 +1264,12 @@ fun Bogaslujbovyia(
                     )
                 } else {
                     SelectionContainer {
+                        Log.d("Oleg", (isLiturgia && !isNoLiturgia).toString())
                         HtmlText(
                             modifier = Modifier.padding(top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(10.dp)),
                             text = htmlText,
                             fontSize = fontSize.sp,
+                            isNoLiturgia = isLiturgia && !isNoLiturgia,
                             searchText = searchTextResult,
                             scrollState = scrollState,
                             navigateTo = { navigate ->

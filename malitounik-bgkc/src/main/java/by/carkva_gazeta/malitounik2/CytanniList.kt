@@ -1429,9 +1429,11 @@ fun CytanniList(
                                     }, onLongClick = {
                                         isSelectMode = true
                                         selectState[index] = !selectState[index]
+                                    }, onDoubleClick = {
+                                        fullscreen = !fullscreen
                                     })
                                 } else {
-                                    Modifier
+                                    Modifier.combinedClickable(onClick = {}, onDoubleClick = { fullscreen = !fullscreen })
                                 }
                                     .padding(horizontal = 10.dp)
                                     .background(if (selectState[index]) Post else Color.Unspecified), text = resultPage[index].text, fontSize = fontSize.sp, color = if (selectState[index]) PrimaryText else MaterialTheme.colorScheme.secondary
