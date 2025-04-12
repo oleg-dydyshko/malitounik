@@ -9,7 +9,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.print.PrintAttributes
 import android.print.PrintManager
-import android.util.Log
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.WebView
@@ -22,9 +21,11 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -130,7 +131,7 @@ import java.io.File
 import java.io.InputStreamReader
 import java.util.Calendar
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun Bogaslujbovyia(
     navController: NavHostController, title: String, resurs: Int,
@@ -1241,13 +1242,19 @@ fun Bogaslujbovyia(
                             }
                         }
                     }
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onDoubleTap = {
+                                fullscreen = !fullscreen
+                            }
+                        )
+                    }
                     .nestedScroll(nestedScrollConnection)
                     .verticalScroll(scrollState),
                 verticalArrangement = Arrangement.Top
             ) {
                 val padding = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp
                 if (autoScrollSensor) {
-                    Log.d("Oleg", (isLiturgia && !isNoLiturgia).toString())
                     HtmlText(
                         modifier = Modifier.padding(top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(10.dp)),
                         text = htmlText,
@@ -1264,7 +1271,6 @@ fun Bogaslujbovyia(
                     )
                 } else {
                     SelectionContainer {
-                        Log.d("Oleg", (isLiturgia && !isNoLiturgia).toString())
                         HtmlText(
                             modifier = Modifier.padding(top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(10.dp)),
                             text = htmlText,

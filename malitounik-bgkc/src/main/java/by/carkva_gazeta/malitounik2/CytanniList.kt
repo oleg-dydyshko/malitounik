@@ -20,6 +20,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -1433,7 +1434,13 @@ fun CytanniList(
                                         fullscreen = !fullscreen
                                     })
                                 } else {
-                                    Modifier.combinedClickable(onClick = {}, onDoubleClick = { fullscreen = !fullscreen })
+                                    Modifier.pointerInput(Unit) {
+                                        detectTapGestures(
+                                            onDoubleTap = {
+                                                fullscreen = !fullscreen
+                                            }
+                                        )
+                                    }
                                 }
                                     .padding(horizontal = 10.dp)
                                     .background(if (selectState[index]) Post else Color.Unspecified), text = resultPage[index].text, fontSize = fontSize.sp, color = if (selectState[index]) PrimaryText else MaterialTheme.colorScheme.secondary

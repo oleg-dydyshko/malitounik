@@ -34,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -76,6 +77,7 @@ fun DrawView(
     var biblijatekaItem by remember { mutableStateOf(k.getString("navigate", AllDestinations.BIBLIJATEKA_NIADAUNIA)?.contains("Biblijateka", ignoreCase = true) == true) }
     var piesnyItem by remember { mutableStateOf(k.getString("navigate", AllDestinations.PIESNY_PRASLAULENNIA)?.contains("Piesny", ignoreCase = true) == true) }
     val navigationDrawerItemColors = NavigationDrawerItemDefaults.colors(selectedContainerColor = if (context.dzenNoch) BackgroundDrawelMenu else Divider)
+    var underItem by remember { mutableStateOf(k.getString("navigate", AllDestinations.PIESNY_PRASLAULENNIA)?.contains("Under", ignoreCase = true) == true) }
     if (dialogNoInternet) {
         DialogNoInternet {
             dialogNoInternet = false
@@ -90,6 +92,9 @@ fun DrawView(
         modifier = Modifier
             .fillMaxHeight()
             .verticalScroll(rememberScrollState())
+            .onGloballyPositioned {
+
+            }
     ) {
         DrawerHeader(modifier)
         HorizontalDivider(
@@ -910,126 +915,171 @@ fun DrawView(
             modifier = modifier.padding(vertical = 5.dp),
             color = MaterialTheme.colorScheme.secondary
         )
-        NavigationDrawerItem(
-            label = {
-                Text(
-                    text = stringResource(id = R.string.spovedz),
-                    fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary,
-                )
-            },
-            selected = route == AllDestinations.PADRYXTOUKA,
-            onClick = {
-                navigateToRazdel(AllDestinations.PADRYXTOUKA)
-            },
-            icon = {
+        Column {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        underItem = !underItem
+                    },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Icon(
-                    modifier = Modifier.size(5.dp, 5.dp),
-                    painter = painterResource(R.drawable.poiter),
+                    modifier = Modifier
+                        .padding(start = 21.dp, end = 2.dp)
+                        .size(24.dp, 24.dp),
+                    painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = null
                 )
-            },
-            shape = MaterialTheme.shapes.medium,
-            modifier = modifier.padding(horizontal = 5.dp),
-            colors = navigationDrawerItemColors
-        )
-        NavigationDrawerItem(
-            label = {
                 Text(
-                    text = stringResource(id = R.string.pamiatka),
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .weight(1f),
+                    text = stringResource(R.string.other),
                     fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary,
                 )
-            },
-            selected = route == AllDestinations.PAMIATKA,
-            onClick = {
-                navigateToRazdel(AllDestinations.PAMIATKA)
-            },
-            icon = {
                 Icon(
-                    modifier = Modifier.size(5.dp, 5.dp),
-                    painter = painterResource(R.drawable.poiter),
-                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .padding(start = 21.dp, end = 2.dp)
+                        .size(24.dp, 24.dp),
+                    painter = painterResource(if (underItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
+                    tint = MaterialTheme.colorScheme.secondary,
                     contentDescription = null
                 )
-            },
-            shape = MaterialTheme.shapes.medium,
-            modifier = modifier.padding(horizontal = 5.dp),
-            colors = navigationDrawerItemColors
-        )
-        NavigationDrawerItem(
-            label = {
-                Text(
-                    text = stringResource(id = R.string.sviaty),
-                    fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary,
-                )
-            },
-            selected = route == AllDestinations.SVAITY_MUNU,
-            onClick = {
-                navigateToRazdel(AllDestinations.SVAITY_MUNU)
-            },
-            icon = {
-                Icon(
-                    modifier = Modifier.size(5.dp, 5.dp),
-                    painter = painterResource(R.drawable.poiter),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
-                )
-            },
-            shape = MaterialTheme.shapes.medium,
-            modifier = modifier.padding(horizontal = 5.dp),
-            colors = navigationDrawerItemColors
-        )
-        NavigationDrawerItem(
-            label = {
-                Text(
-                    text = stringResource(id = R.string.parafii),
-                    fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary,
-                )
-            },
-            selected = route == AllDestinations.PARAFII_BGKC,
-            onClick = {
-                navigateToRazdel(AllDestinations.PARAFII_BGKC)
-            },
-            icon = {
-                Icon(
-                    modifier = Modifier.size(5.dp, 5.dp),
-                    painter = painterResource(R.drawable.poiter),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
-                )
-            },
-            shape = MaterialTheme.shapes.medium,
-            modifier = modifier.padding(horizontal = 5.dp),
-            colors = navigationDrawerItemColors
-        )
-        NavigationDrawerItem(
-            label = {
-                Text(
-                    text = stringResource(id = R.string.paschalia),
-                    fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary,
-                )
-            },
-            selected = route == AllDestinations.PASHALIA,
-            onClick = {
-                navigateToRazdel(AllDestinations.PASHALIA)
-            },
-            icon = {
-                Icon(
-                    modifier = Modifier.size(5.dp, 5.dp),
-                    painter = painterResource(R.drawable.poiter),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
-                )
-            },
-            shape = MaterialTheme.shapes.medium,
-            modifier = modifier.padding(horizontal = 5.dp),
-            colors = navigationDrawerItemColors
-        )
+            }
+            AnimatedVisibility(
+                underItem, enter = fadeIn(
+                    tween(
+                        durationMillis = 1000, easing = LinearOutSlowInEasing
+                    )
+                ), exit = fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+            ) {
+                Column {
+                    NavigationDrawerItem(
+                        label = {
+                            Text(
+                                text = stringResource(id = R.string.spovedz),
+                                fontSize = Settings.fontInterface.sp,
+                                color = MaterialTheme.colorScheme.secondary,
+                            )
+                        },
+                        selected = route == AllDestinations.UNDER_PADRYXTOUKA,
+                        onClick = {
+                            navigateToRazdel(AllDestinations.UNDER_PADRYXTOUKA)
+                        },
+                        icon = {
+                            Icon(
+                                modifier = Modifier.size(5.dp, 5.dp),
+                                painter = painterResource(R.drawable.poiter),
+                                tint = MaterialTheme.colorScheme.primary,
+                                contentDescription = null
+                            )
+                        },
+                        shape = MaterialTheme.shapes.medium,
+                        modifier = modifier.padding(horizontal = 5.dp),
+                        colors = navigationDrawerItemColors
+                    )
+                    NavigationDrawerItem(
+                        label = {
+                            Text(
+                                text = stringResource(id = R.string.pamiatka),
+                                fontSize = Settings.fontInterface.sp,
+                                color = MaterialTheme.colorScheme.secondary,
+                            )
+                        },
+                        selected = route == AllDestinations.UNDER_PAMIATKA,
+                        onClick = {
+                            navigateToRazdel(AllDestinations.UNDER_PAMIATKA)
+                        },
+                        icon = {
+                            Icon(
+                                modifier = Modifier.size(5.dp, 5.dp),
+                                painter = painterResource(R.drawable.poiter),
+                                tint = MaterialTheme.colorScheme.primary,
+                                contentDescription = null
+                            )
+                        },
+                        shape = MaterialTheme.shapes.medium,
+                        modifier = modifier.padding(horizontal = 5.dp),
+                        colors = navigationDrawerItemColors
+                    )
+                    NavigationDrawerItem(
+                        label = {
+                            Text(
+                                text = stringResource(id = R.string.sviaty),
+                                fontSize = Settings.fontInterface.sp,
+                                color = MaterialTheme.colorScheme.secondary,
+                            )
+                        },
+                        selected = route == AllDestinations.UNDER_SVAITY_MUNU,
+                        onClick = {
+                            navigateToRazdel(AllDestinations.UNDER_SVAITY_MUNU)
+                        },
+                        icon = {
+                            Icon(
+                                modifier = Modifier.size(5.dp, 5.dp),
+                                painter = painterResource(R.drawable.poiter),
+                                tint = MaterialTheme.colorScheme.primary,
+                                contentDescription = null
+                            )
+                        },
+                        shape = MaterialTheme.shapes.medium,
+                        modifier = modifier.padding(horizontal = 5.dp),
+                        colors = navigationDrawerItemColors
+                    )
+                    NavigationDrawerItem(
+                        label = {
+                            Text(
+                                text = stringResource(id = R.string.parafii),
+                                fontSize = Settings.fontInterface.sp,
+                                color = MaterialTheme.colorScheme.secondary,
+                            )
+                        },
+                        selected = route == AllDestinations.UNDER_PARAFII_BGKC,
+                        onClick = {
+                            navigateToRazdel(AllDestinations.UNDER_PARAFII_BGKC)
+                        },
+                        icon = {
+                            Icon(
+                                modifier = Modifier.size(5.dp, 5.dp),
+                                painter = painterResource(R.drawable.poiter),
+                                tint = MaterialTheme.colorScheme.primary,
+                                contentDescription = null
+                            )
+                        },
+                        shape = MaterialTheme.shapes.medium,
+                        modifier = modifier.padding(horizontal = 5.dp),
+                        colors = navigationDrawerItemColors
+                    )
+                    NavigationDrawerItem(
+                        label = {
+                            Text(
+                                text = stringResource(id = R.string.paschalia),
+                                fontSize = Settings.fontInterface.sp,
+                                color = MaterialTheme.colorScheme.secondary,
+                            )
+                        },
+                        selected = route == AllDestinations.UNDER_PASHALIA,
+                        onClick = {
+                            navigateToRazdel(AllDestinations.UNDER_PASHALIA)
+                        },
+                        icon = {
+                            Icon(
+                                modifier = Modifier.size(5.dp, 5.dp),
+                                painter = painterResource(R.drawable.poiter),
+                                tint = MaterialTheme.colorScheme.primary,
+                                contentDescription = null
+                            )
+                        },
+                        shape = MaterialTheme.shapes.medium,
+                        modifier = modifier.padding(horizontal = 5.dp),
+                        colors = navigationDrawerItemColors
+                    )
+                }
+            }
+        }
     }
 }
 

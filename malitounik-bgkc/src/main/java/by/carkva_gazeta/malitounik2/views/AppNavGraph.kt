@@ -553,7 +553,7 @@ fun AppNavGraph() {
         }
 
         composable(
-            AllDestinations.PADRYXTOUKA,
+            AllDestinations.UNDER_PADRYXTOUKA,
             enterTransition = {
                 fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
             },
@@ -587,7 +587,7 @@ fun AppNavGraph() {
         }
 
         composable(
-            AllDestinations.PAMIATKA,
+            AllDestinations.UNDER_PAMIATKA,
             enterTransition = {
                 fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
             },
@@ -606,14 +606,14 @@ fun AppNavGraph() {
         }
 
         composable(
-            AllDestinations.SVAITY_MUNU,
+            AllDestinations.UNDER_SVAITY_MUNU,
             enterTransition = {
                 fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
                 fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
             }) {
-            Settings.destinations = AllDestinations.SVAITY_MUNU
+            Settings.destinations = AllDestinations.UNDER_SVAITY_MUNU
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
@@ -622,14 +622,14 @@ fun AppNavGraph() {
         }
 
         composable(
-            AllDestinations.PARAFII_BGKC,
+            AllDestinations.UNDER_PARAFII_BGKC,
             enterTransition = {
                 fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
                 fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
             }) {
-            Settings.destinations = AllDestinations.PARAFII_BGKC
+            Settings.destinations = AllDestinations.UNDER_PARAFII_BGKC
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
@@ -638,14 +638,14 @@ fun AppNavGraph() {
         }
 
         composable(
-            AllDestinations.PASHALIA,
+            AllDestinations.UNDER_PASHALIA,
             enterTransition = {
                 fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
                 fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
             }) {
-            Settings.destinations = AllDestinations.PASHALIA
+            Settings.destinations = AllDestinations.UNDER_PASHALIA
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
@@ -1129,11 +1129,11 @@ fun MainConteiner(
                     AllDestinations.PIESNY_ZA_BELARUS -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_ZA_BELARUS)
                     AllDestinations.PIESNY_KALIADNYIA -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_KALIADNYIA)
                     AllDestinations.PIESNY_TAIZE -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_TAIZE)
-                    AllDestinations.PADRYXTOUKA -> navigationActions.navigateToPadryxtouka()
-                    AllDestinations.PAMIATKA -> navigationActions.navigateToPamiatka()
-                    AllDestinations.SVAITY_MUNU -> navigationActions.navigateToSviaty()
-                    AllDestinations.PARAFII_BGKC -> navigationActions.navigateToParafiiBgkc()
-                    AllDestinations.PASHALIA -> navigationActions.navigateToPashalia()
+                    AllDestinations.UNDER_PADRYXTOUKA -> navigationActions.navigateToPadryxtouka()
+                    AllDestinations.UNDER_PAMIATKA -> navigationActions.navigateToPamiatka()
+                    AllDestinations.UNDER_SVAITY_MUNU -> navigationActions.navigateToSviaty()
+                    AllDestinations.UNDER_PARAFII_BGKC -> navigationActions.navigateToParafiiBgkc()
+                    AllDestinations.UNDER_PASHALIA -> navigationActions.navigateToPashalia()
                 }
                 coroutineScope.launch {
                     drawerState.close()
@@ -1167,9 +1167,9 @@ fun MainConteiner(
             AllDestinations.PIESNY_DA_BAGARODZICY -> stringResource(R.string.pesny3)
             AllDestinations.PIESNY_KALIADNYIA -> stringResource(R.string.pesny4)
             AllDestinations.PIESNY_TAIZE -> stringResource(R.string.pesny5)
-            AllDestinations.SVAITY_MUNU -> stringResource(R.string.sviaty)
-            AllDestinations.PARAFII_BGKC -> stringResource(R.string.parafii)
-            AllDestinations.PASHALIA -> stringResource(R.string.paschalia)
+            AllDestinations.UNDER_SVAITY_MUNU -> stringResource(R.string.sviaty)
+            AllDestinations.UNDER_PARAFII_BGKC -> stringResource(R.string.parafii)
+            AllDestinations.UNDER_PASHALIA -> stringResource(R.string.paschalia)
             AllDestinations.BIBLIA_SEMUXA -> stringResource(R.string.title_biblia)
             AllDestinations.BIBLIA_BOKUNA -> stringResource(R.string.title_biblia_bokun)
             AllDestinations.BIBLIA_NADSAN -> stringResource(R.string.title_psalter)
@@ -1267,7 +1267,7 @@ fun MainConteiner(
                     },
                     actions = {
                         if (!searchText) {
-                            if (currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.RUJANEC_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.PASHALIA) {
+                            if (currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.RUJANEC_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA) {
                                 IconButton({
                                     searchText = true
                                 }) {
@@ -1477,7 +1477,7 @@ fun MainConteiner(
                                 )
                                 if (k.getBoolean("admin", false)) {
                                     HorizontalDivider()
-                                    if (currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.RUJANEC_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.PASHALIA) {
+                                    if (currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.RUJANEC_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA) {
                                         DropdownMenuItem(
                                             onClick = {
                                                 expanded = false
@@ -1657,11 +1657,11 @@ fun MainConteiner(
 
                     AllDestinations.PIESNY_TAIZE -> PiesnyList(navController, AllDestinations.PIESNY_TAIZE, innerPadding, searchText, textFieldValueState)
 
-                    AllDestinations.SVAITY_MUNU -> SviatyList(navController, innerPadding)
+                    AllDestinations.UNDER_SVAITY_MUNU -> SviatyList(navController, innerPadding)
 
-                    AllDestinations.PARAFII_BGKC -> ParafiiBGKC(navController, innerPadding)
+                    AllDestinations.UNDER_PARAFII_BGKC -> ParafiiBGKC(navController, innerPadding)
 
-                    AllDestinations.PASHALIA -> {
+                    AllDestinations.UNDER_PASHALIA -> {
                         if (!searchText) textFieldValueState = ""
                         Pashalia(navController, innerPadding, searchText, textFieldValueState)
                     }

@@ -20,18 +20,18 @@ import by.carkva_gazeta.malitounik2.views.AllDestinations.KALIANDAR_YEAR
 import by.carkva_gazeta.malitounik2.views.AllDestinations.MAE_NATATKI_MENU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.MALITVY_LIST_ALL
 import by.carkva_gazeta.malitounik2.views.AllDestinations.MALITVY_MENU
-import by.carkva_gazeta.malitounik2.views.AllDestinations.PADRYXTOUKA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.PADZEI_VIEW
-import by.carkva_gazeta.malitounik2.views.AllDestinations.PAMIATKA
-import by.carkva_gazeta.malitounik2.views.AllDestinations.PARAFII_BGKC
-import by.carkva_gazeta.malitounik2.views.AllDestinations.PASHALIA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.PRANAS
 import by.carkva_gazeta.malitounik2.views.AllDestinations.RUJANEC_MENU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.SEARCH_BIBLIA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.SEARCH_SVITYIA
 import by.carkva_gazeta.malitounik2.views.AllDestinations.SETTINGS_VIEW
-import by.carkva_gazeta.malitounik2.views.AllDestinations.SVAITY_MUNU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.SVITYIA_VIEW
+import by.carkva_gazeta.malitounik2.views.AllDestinations.UNDER_PADRYXTOUKA
+import by.carkva_gazeta.malitounik2.views.AllDestinations.UNDER_PAMIATKA
+import by.carkva_gazeta.malitounik2.views.AllDestinations.UNDER_PARAFII_BGKC
+import by.carkva_gazeta.malitounik2.views.AllDestinations.UNDER_PASHALIA
+import by.carkva_gazeta.malitounik2.views.AllDestinations.UNDER_SVAITY_MUNU
 import by.carkva_gazeta.malitounik2.views.AllDestinations.VYBRANAE_LIST
 
 object AllDestinations {
@@ -65,11 +65,11 @@ object AllDestinations {
     const val PIESNY_DA_BAGARODZICY = "Piesny_Da_Bagarodzicy"
     const val PIESNY_KALIADNYIA = "Piesny_Kaliadnyia"
     const val PIESNY_TAIZE = "Piesny_Taize"
-    const val PAMIATKA = "Pamiatka"
-    const val PADRYXTOUKA = "Padryxtouka"
-    const val SVAITY_MUNU = "Svity_Menu"
-    const val PARAFII_BGKC = "Parafii_Bgkc"
-    const val PASHALIA = "Pashalia"
+    const val UNDER_PAMIATKA = "Under_Pamiatka"
+    const val UNDER_PADRYXTOUKA = "Under_Padryxtouka"
+    const val UNDER_SVAITY_MUNU = "Under_Svity_Menu"
+    const val UNDER_PARAFII_BGKC = "Under_Parafii_Bgkc"
+    const val UNDER_PASHALIA = "Under_Pashalia"
     const val PRANAS = "PraNas"
     const val HELP = "Help"
     const val SEARCH_SVITYIA = "Search_Svityia"
@@ -231,8 +231,8 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
     }
 
     fun navigateToPamiatka() {
-        navController.navigate(PAMIATKA) {
-            PAMIATKA
+        navController.navigate(UNDER_PAMIATKA) {
+            UNDER_PAMIATKA
         }
     }
 
@@ -255,8 +255,8 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
     }
 
     fun navigateToPadryxtouka() {
-        navController.navigate(PADRYXTOUKA) {
-            PADRYXTOUKA
+        navController.navigate(UNDER_PADRYXTOUKA) {
+            UNDER_PADRYXTOUKA
         }
     }
 
@@ -278,32 +278,32 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
     }
 
     fun navigateToSviaty() {
-        navController.navigate(SVAITY_MUNU) {
-            popUpTo(navController.currentBackStackEntry?.destination?.route ?: SVAITY_MUNU) {
+        navController.navigate(UNDER_SVAITY_MUNU) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: UNDER_SVAITY_MUNU) {
                 inclusive = true
             }
         }
-        edit.putString("navigate", SVAITY_MUNU)
+        edit.putString("navigate", UNDER_SVAITY_MUNU)
         edit.apply()
     }
 
     fun navigateToParafiiBgkc() {
-        navController.navigate(PARAFII_BGKC) {
-            popUpTo(navController.currentBackStackEntry?.destination?.route ?: PARAFII_BGKC) {
+        navController.navigate(UNDER_PARAFII_BGKC) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: UNDER_PARAFII_BGKC) {
                 inclusive = true
             }
         }
-        edit.putString("navigate", PARAFII_BGKC)
+        edit.putString("navigate", UNDER_PARAFII_BGKC)
         edit.apply()
     }
 
     fun navigateToPashalia() {
-        navController.navigate(PASHALIA) {
-            popUpTo(navController.currentBackStackEntry?.destination?.route ?: PASHALIA) {
+        navController.navigate(UNDER_PASHALIA) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: UNDER_PASHALIA) {
                 inclusive = true
             }
         }
-        edit.putString("navigate", PASHALIA)
+        edit.putString("navigate", UNDER_PASHALIA)
         edit.apply()
     }
 
