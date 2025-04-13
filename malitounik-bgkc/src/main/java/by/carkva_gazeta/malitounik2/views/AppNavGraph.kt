@@ -1859,9 +1859,11 @@ fun MainConteiner(
                             KaliandarKnigaView(
                                 colorBlackboard,
                                 navigateToBogaslujbovyia = { title, resourse ->
+                                    showDropdown = false
                                     navigationActions.navigateToBogaslujbovyia(title, resourse)
                                 },
                                 navigateToSvityiaView = { svity, position ->
+                                    showDropdown = false
                                     navigationActions.navigateToSvityiaView(svity, position)
                                 }) {
                                 showDropdown = false
