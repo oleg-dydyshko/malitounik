@@ -471,11 +471,10 @@ fun CytanniList(
     if (autoScrollSensor) {
         actyvity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
-    BackHandler(!backPressHandled || isSelectMode || fullscreen || isParallelVisable || showDropdown) {
+    BackHandler(!backPressHandled || isSelectMode || isParallelVisable || showDropdown) {
         when {
             isSelectMode -> isSelectMode = false
             isParallelVisable -> isParallelVisable = false
-            fullscreen -> fullscreen = false
             showDropdown -> {
                 showDropdown = false
                 if (autoScrollSensor) autoScroll = true
@@ -580,7 +579,6 @@ fun CytanniList(
                             IconButton(onClick = {
                                 when {
                                     isParallelVisable -> isParallelVisable = false
-                                    fullscreen -> fullscreen = false
                                     showDropdown -> {
                                         showDropdown = false
                                         if (autoScrollSensor) autoScroll = true

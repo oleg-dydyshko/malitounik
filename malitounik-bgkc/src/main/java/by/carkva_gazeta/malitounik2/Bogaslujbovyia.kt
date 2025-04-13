@@ -249,9 +249,8 @@ fun Bogaslujbovyia(
     if (autoScrollSensor) {
         actyvity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
-    BackHandler(!backPressHandled || fullscreen || showDropdown || iskniga || searchText) {
+    BackHandler(!backPressHandled || showDropdown || iskniga || searchText) {
         when {
-            fullscreen -> fullscreen = false
             searchText -> {
                 searchText = false
                 searchTextResult = AnnotatedString("")
@@ -576,7 +575,6 @@ fun Bogaslujbovyia(
                             IconButton(
                                 onClick = {
                                     when {
-                                        fullscreen -> fullscreen = false
                                         iskniga -> {
                                             showDropdown = true
                                             iskniga = false

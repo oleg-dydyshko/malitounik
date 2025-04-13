@@ -34,7 +34,7 @@ class SlugbovyiaTextu {
         const val SUBOTA_PERAD_RASTVOM = 1004
         const val NIADZELIA_PERAD_BOHAZJAULENNEM = 1005
         const val NIADZELIA_PASLIA_BOHAZJAULENIA = 1006
-        const val MINEIA_SVIATOCHNAIA = 100
+        const val MINEIA_KVETNAIA = 100
         const val MINEIA_VIALIKI_POST_1 = 101
         const val MINEIA_VIALIKI_POST_2 = 102
         const val MINEIA_VIALIKI_POST_3 = 103
@@ -49,272 +49,272 @@ class SlugbovyiaTextu {
     init {
         datMinALL.add(
             SlugbovyiaTextuData(
-                6, "Нядзеля Тамаша (Антыпасха)", R.raw.ndz_tamasza_viaczernia_subota, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                6, "Нядзеля Тамаша (Антыпасха)", R.raw.ndz_tamasza_viaczernia_subota, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                7, "Нядзеля Тамаша (Антыпасха)", R.raw.ndz_tamasza_jutran, JUTRAN, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                7, "Нядзеля Тамаша (Антыпасха)", R.raw.ndz_tamasza_jutran, JUTRAN, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                7, "Нядзеля Тамаша (Антыпасха)", R.raw.ndz_tamasza_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                7, "Нядзеля Тамаша (Антыпасха)", R.raw.ndz_tamasza_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                7, "Нядзеля Тамаша (Антыпасха)", R.raw.ndz_tamasza_viaczernia_uvieczary, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                7, "Нядзеля Тамаша (Антыпасха)", R.raw.ndz_tamasza_viaczernia_uvieczary, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                8, "Панядзелак пасьля нядзелі Тамаша", R.raw.ndz_tamasza_01paniadzielak_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                8, "Панядзелак пасьля нядзелі Тамаша", R.raw.ndz_tamasza_01paniadzielak_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                9, "Аўторак пасьля нядзелі Тамаша", R.raw.ndz_tamasza_02autorak_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                9, "Аўторак пасьля нядзелі Тамаша", R.raw.ndz_tamasza_02autorak_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                10, "Серада пасьля нядзелі Тамаша", R.raw.ndz_tamasza_03sierada_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                10, "Серада пасьля нядзелі Тамаша", R.raw.ndz_tamasza_03sierada_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                11, "Чацьвер пасьля нядзелі Тамаша", R.raw.ndz_tamasza_04czacvier_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                11, "Чацьвер пасьля нядзелі Тамаша", R.raw.ndz_tamasza_04czacvier_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                12, "Пятніца пасьля нядзелі Тамаша", R.raw.ndz_tamasza_05piatnica_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                12, "Пятніца пасьля нядзелі Тамаша", R.raw.ndz_tamasza_05piatnica_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                13, "Нядзеля міраносіцаў", R.raw.ndz_miranosicau_viaczernia_u_subotu, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                13, "Нядзеля міраносіцаў", R.raw.ndz_miranosicau_viaczernia_u_subotu, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                14, "Нядзеля міраносіцаў", R.raw.ndz_miranosicau_jutran, JUTRAN, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                14, "Нядзеля міраносіцаў", R.raw.ndz_miranosicau_jutran, JUTRAN, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                14, "Нядзеля міраносіцаў", R.raw.ndz_miranosic_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                14, "Нядзеля міраносіцаў", R.raw.ndz_miranosic_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                14, "Нядзеля міраносіцаў", R.raw.ndz_miranosicau_viaczernia_u_niadzielu, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                14, "Нядзеля міраносіцаў", R.raw.ndz_miranosicau_viaczernia_u_niadzielu, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                15, "Панядзелак пасьля Нядзелі міраносіцаў увечары", R.raw.ndz_miranosicau_01_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                15, "Панядзелак пасьля Нядзелі міраносіцаў увечары", R.raw.ndz_miranosicau_01_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                16, "Аўторак пасьля Нядзелі міраносіцаў увечары", R.raw.ndz_miranosicau_02_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                16, "Аўторак пасьля Нядзелі міраносіцаў увечары", R.raw.ndz_miranosicau_02_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                17, "Серада пасьля Нядзелі міраносіцаў увечары", R.raw.ndz_miranosicau_03_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                17, "Серада пасьля Нядзелі міраносіцаў увечары", R.raw.ndz_miranosicau_03_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                18, "Чацьвер пасьля Нядзелі міраносіцаў увечары", R.raw.ndz_miranosicau_04_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                18, "Чацьвер пасьля Нядзелі міраносіцаў увечары", R.raw.ndz_miranosicau_04_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                19, "Пятніца пасьля Нядзелі міраносіцаў увечары", R.raw.ndz_miranosicau_05_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                19, "Пятніца пасьля Нядзелі міраносіцаў увечары", R.raw.ndz_miranosicau_05_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                20, "Нядзеля расслабленага", R.raw.ndz_rasslablenaha_viaczernia_u_subotu_vieczaram, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                20, "Нядзеля расслабленага", R.raw.ndz_rasslablenaha_viaczernia_u_subotu_vieczaram, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                21, "Нядзеля расслабленага", R.raw.ndz_rasslablenaha_jutran, JUTRAN, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                21, "Нядзеля расслабленага", R.raw.ndz_rasslablenaha_jutran, JUTRAN, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                21, "Нядзеля расслабленага", R.raw.ndz_rasslablenaha_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                21, "Нядзеля расслабленага", R.raw.ndz_rasslablenaha_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                21, "Нядзеля расслабленага", R.raw.ndz_rasslablenaha_uvieczary_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                21, "Нядзеля расслабленага", R.raw.ndz_rasslablenaha_uvieczary_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                22, "Панядзелак пасьля Нядзелі расслабленага ўвечары", R.raw.ndz_rasslablenaha_01_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                22, "Панядзелак пасьля Нядзелі расслабленага ўвечары", R.raw.ndz_rasslablenaha_01_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                23, "Палова сьвята Пяцідзясятніцы", R.raw.palova_sviata_piacidziasiatnicy_viaczernia_u_autorak, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                23, "Палова сьвята Пяцідзясятніцы", R.raw.palova_sviata_piacidziasiatnicy_viaczernia_u_autorak, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                24, "Палова сьвята Пяцідзясятніцы", R.raw.palova_sviata_piacidziasiatnicy_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                24, "Палова сьвята Пяцідзясятніцы", R.raw.palova_sviata_piacidziasiatnicy_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                24, "Серада Паловы сьвята Пяцідзясятніцы ўвечары", R.raw.palova_sviata_piacidziasiatnicy_viaczernia_u_sieradu, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                24, "Серада Паловы сьвята Пяцідзясятніцы ўвечары", R.raw.palova_sviata_piacidziasiatnicy_viaczernia_u_sieradu, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                25, "Чацьвер Паловы сьвята Пяцідзясятніцы ўвечары", R.raw.palova_sviata_piacidziasiatnicy_viaczernia_u_czacvier, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                25, "Чацьвер Паловы сьвята Пяцідзясятніцы ўвечары", R.raw.palova_sviata_piacidziasiatnicy_viaczernia_u_czacvier, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                28, "Нядзеля самаранкі", R.raw.ndz_samaranki_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                28, "Нядзеля самаранкі", R.raw.ndz_samaranki_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                29, "Панядзелак пасьля Нядзелі самаранкі ўвечары", R.raw.ndz_samaranki_01paniadzielak_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                29, "Панядзелак пасьля Нядзелі самаранкі ўвечары", R.raw.ndz_samaranki_01paniadzielak_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                32, "Чацьвер пасьля Нядзелі самаранкі ўвечары", R.raw.ndz_samaranki_04czacvier_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                32, "Чацьвер пасьля Нядзелі самаранкі ўвечары", R.raw.ndz_samaranki_04czacvier_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                33, "Пятніца пасьля Нядзелі самаранкі ўвечары", R.raw.ndz_samaranki_05piatnica_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                33, "Пятніца пасьля Нядзелі самаранкі ўвечары", R.raw.ndz_samaranki_05piatnica_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                35, "Нядзеля сьлепанароджанага", R.raw.ndz_slepanarodz_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                35, "Нядзеля сьлепанароджанага", R.raw.ndz_slepanarodz_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                38, "Адданьне Вялікадня", R.raw.ndz_slepanarodz_addannie_vialikadnia_viaczernia_autorak_uvieczary, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                38, "Адданьне Вялікадня", R.raw.ndz_slepanarodz_addannie_vialikadnia_viaczernia_autorak_uvieczary, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                38, "Адданьне Вялікадня", R.raw.ndz_slepanarodz_addannie_vialikadnia_jutran, JUTRAN, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                38, "Адданьне Вялікадня", R.raw.ndz_slepanarodz_addannie_vialikadnia_jutran, JUTRAN, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                38, "Адданьне Вялікадня", R.raw.ndz_slepanarodz_addannie_vialikadnia_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                38, "Адданьне Вялікадня", R.raw.ndz_slepanarodz_addannie_vialikadnia_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                39, "Узьнясеньне Госпада нашага Ісуса Хрыста", R.raw.uzniasienne_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                39, "Узьнясеньне Госпада нашага Ісуса Хрыста", R.raw.uzniasienne_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                39, "Узьнясеньне Госпада нашага Ісуса Хрыста", R.raw.uzniasienne_jutran, JUTRAN, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                39, "Узьнясеньне Госпада нашага Ісуса Хрыста", R.raw.uzniasienne_jutran, JUTRAN, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                39, "Узьнясеньне Госпада нашага Ісуса Хрыста", R.raw.uzniasienne_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                39, "Узьнясеньне Госпада нашага Ісуса Хрыста", R.raw.uzniasienne_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                42, "Нядзеля сьвятых айцоў I-га Сусьветнага Сабору", R.raw.ndz_ajcou_1susviet_saboru_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                42, "Нядзеля сьвятых айцоў I-га Сусьветнага Сабору", R.raw.ndz_ajcou_1susviet_saboru_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                42, "Нядзеля сьвятых айцоў I-га Сусьветнага Сабору", R.raw.ndz_ajcou_1susvietnaha_saboru_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                42, "Нядзеля сьвятых айцоў I-га Сусьветнага Сабору", R.raw.ndz_ajcou_1susvietnaha_saboru_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                48, "Зыход Сьвятога Духа (Сёмуха)", R.raw.zychod_sv_ducha_viaczernia_u_subotu, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                48, "Зыход Сьвятога Духа (Сёмуха)", R.raw.zychod_sv_ducha_viaczernia_u_subotu, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                49, "Зыход Сьвятога Духа (Сёмуха)", R.raw.zychod_sv_ducha_jutran, JUTRAN, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                49, "Зыход Сьвятога Духа (Сёмуха)", R.raw.zychod_sv_ducha_jutran, JUTRAN, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                49, "Зыход Сьвятога Духа (Сёмуха)", R.raw.zychod_sv_ducha_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                49, "Зыход Сьвятога Духа (Сёмуха)", R.raw.zychod_sv_ducha_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                49, "Панядзелак Сьвятога Духа", R.raw.paniadzielak_sv_ducha_ndz_viaczaram, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                49, "Панядзелак Сьвятога Духа", R.raw.paniadzielak_sv_ducha_ndz_viaczaram, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                50, "Панядзелак Сьвятога Духа", R.raw.paniadzielak_sv_ducha_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                50, "Панядзелак Сьвятога Духа", R.raw.paniadzielak_sv_ducha_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                50, "Панядзелак Сьвятога Духа", R.raw.paniadzielak_sv_ducha_viaczernia_viaczaram, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                50, "Панядзелак Сьвятога Духа", R.raw.paniadzielak_sv_ducha_viaczernia_viaczaram, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                51, "Аўторак пасьля Сёмухі ўвечары", R.raw.siomucha_02autorak_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                51, "Аўторак пасьля Сёмухі ўвечары", R.raw.siomucha_02autorak_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                52, "Серада пасьля Сёмухі ўвечары", R.raw.siomucha_03sierada_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                52, "Серада пасьля Сёмухі ўвечары", R.raw.siomucha_03sierada_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                53, "Чацьвер пасьля Сёмухі ўвечары", R.raw.siomucha_04czacvier_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                53, "Чацьвер пасьля Сёмухі ўвечары", R.raw.siomucha_04czacvier_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                54, "Пятніца пасьля Сёмухі ўвечары – Адданьне Сёмухі", R.raw.siomucha_05piatnica_addannie_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                54, "Пятніца пасьля Сёмухі ўвечары – Адданьне Сёмухі", R.raw.siomucha_05piatnica_addannie_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                55, "Нядзеля ўсіх сьвятых", R.raw.ndz_usich_sviatych_viaczernia_u_subotu_uvieczary, VIACZERNIA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                55, "Нядзеля ўсіх сьвятых", R.raw.ndz_usich_sviatych_viaczernia_u_subotu_uvieczary, VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                56, "Нядзеля ўсіх сьвятых", R.raw.ndz_usich_sviatych_jutran, JUTRAN, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                56, "Нядзеля ўсіх сьвятых", R.raw.ndz_usich_sviatych_jutran, JUTRAN, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                56, "Нядзеля ўсіх сьвятых", R.raw.ndz_usich_sviatych_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                56, "Нядзеля ўсіх сьвятых", R.raw.ndz_usich_sviatych_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                63, "Нядзеля ўсіх сьвятых беларускага народу", R.raw.ndz_usich_sv_biel_narodu_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_SVIATOCHNAIA
+                63, "Нядзеля ўсіх сьвятых беларускага народу", R.raw.ndz_usich_sv_biel_narodu_liturhija, LITURHIJA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
 
@@ -643,7 +643,16 @@ class SlugbovyiaTextu {
                 -8, "Субота Лазара. Літургія", R.raw.bogashlugbovya17_8, LITURHIJA, pasxa = true, mineia = MINEIA_VIALIKI_POST_6
             )
         )
-
+        datMinALL.add(
+            SlugbovyiaTextuData(
+                -8, "Уваход у Ерусалім Госпада, Бога і Збаўцы нашага Ісуса Хрыста (Вербніца)", R.raw.vierbnica_viaczernia, VIACZERNIA, pasxa = true, mineia = MINEIA_VIALIKI_TYDZEN
+            )
+        )
+        datMinALL.add(
+            SlugbovyiaTextuData(
+                -7, "Уваход у Ерусалім Госпада, Бога і Збаўцы нашага Ісуса Хрыста (Вербніца)", R.raw.vierbnica_viaczernia_niadziela_uvieczary, VIACZERNIA, pasxa = true, mineia = MINEIA_VIALIKI_TYDZEN
+            )
+        )
         datMinALL.add(
             SlugbovyiaTextuData(
                 -7, "Уваход у Ерусалім Госпада, Бога і Збаўцы нашага Ісуса Хрыста (Вербніца)", R.raw.vierbnica_jutran, JUTRAN, pasxa = true, mineia = MINEIA_VIALIKI_TYDZEN
@@ -2365,7 +2374,7 @@ class SlugbovyiaTextu {
 
     fun getMineiaKvetnaia(): List<SlugbovyiaTextuData> {
         val list = datMinALL.filter {
-            it.mineia == MINEIA_SVIATOCHNAIA
+            it.mineia == MINEIA_KVETNAIA
         }
         list.sortedBy {
             it.day

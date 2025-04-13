@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,7 +23,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -84,7 +82,7 @@ fun KaliandarScreenYear(
                 colorBlackboard = BezPosta
             }
             if (data[index][7].toInt() == 3 && !(data[index][0].toInt() == Calendar.SUNDAY || data[index][0].toInt() == Calendar.SATURDAY)) {
-                text = stringResource(id = R.string.Strogi_post_n)
+                text = stringResource(R.string.Strogi_post_n)
                 colorBlackboard = StrogiPost
                 colorText = PrimaryTextBlack
             }
@@ -96,7 +94,6 @@ fun KaliandarScreenYear(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 10.dp)
-                    .clip(shape = RoundedCornerShape(10.dp))
                     .background(colorBlackboard)
                     .padding(2.dp)
                     .background(MaterialTheme.colorScheme.tertiary)
@@ -229,7 +226,8 @@ fun KaliandarScreenYear(
                                     modifier = Modifier
                                         .padding(start = 10.dp, end = 10.dp)
                                         .align(Alignment.CenterVertically),
-                                    text = list[i]
+                                    text = list[i],
+                                    fontSize = Settings.fontInterface.sp
                                 )
                             }
                         }
@@ -278,6 +276,7 @@ fun KaliandarScreenYear(
                     Spacer(Modifier.size(10.dp))
                     Row(
                         modifier = Modifier
+                            .padding(bottom = 10.dp)
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
@@ -293,18 +292,20 @@ fun KaliandarScreenYear(
                         )
                     }
                 }
-                Box(modifier = Modifier.padding(top = 5.dp)) {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.Center)
-                            .background(colorBlackboard)
-                            .padding(vertical = 5.dp),
-                        textAlign = TextAlign.Center,
-                        text = text,
-                        color = colorText,
-                        fontSize = Settings.fontInterface.sp
-                    )
+                if (text.isNotEmpty()) {
+                    Box {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.Center)
+                                .background(colorBlackboard)
+                                .padding(vertical = 5.dp),
+                            textAlign = TextAlign.Center,
+                            text = text,
+                            color = colorText,
+                            fontSize = Settings.fontInterface.sp
+                        )
+                    }
                 }
             }
         }

@@ -21,6 +21,7 @@ import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -168,10 +169,9 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
     var checkPiarliny by remember { mutableStateOf(false) }
     var viewPiarliny by remember { mutableStateOf(false) }
     var fullImagePathVisable by remember { mutableStateOf("") }
-    BackHandler(imageFull || showDropdown || fullscreen) {
+    BackHandler(imageFull || showDropdown) {
         when {
             imageFull -> imageFull = false
-            fullscreen -> fullscreen = false
             showDropdown -> {
                 showDropdown = false
             }
@@ -301,7 +301,6 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                             IconButton(
                                 onClick = {
                                     when {
-                                        fullscreen -> fullscreen = false
                                         showDropdown -> {
                                             showDropdown = false
                                         }
@@ -692,7 +691,15 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                 }
             } else {
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onDoubleTap = {
+                                    fullscreen = !fullscreen
+                                }
+                            )
+                        },
                     state = lazyListState
                 ) {
                     item {

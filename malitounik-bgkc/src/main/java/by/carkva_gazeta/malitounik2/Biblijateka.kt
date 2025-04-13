@@ -17,6 +17,7 @@ import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Spacer
@@ -155,13 +156,9 @@ fun Biblijateka(
         }
     }
     var backPressHandled by remember { mutableStateOf(false) }
-    BackHandler(!backPressHandled || fullscreen) {
-        if (fullscreen) {
-            fullscreen = false
-        } else {
-            backPressHandled = true
-            navController.popBackStack()
-        }
+    BackHandler(!backPressHandled) {
+        backPressHandled = true
+        navController.popBackStack()
     }
     LaunchedEffect(fullscreen) {
         val controller =
@@ -382,6 +379,13 @@ fun Biblijateka(
                                 offsetX += dragAmount.x * 3
                                 offsetY += dragAmount.y * 3
                             }
+                        }
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onDoubleTap = {
+                                    fullscreen = !fullscreen
+                                }
+                            )
                         }
                 ) {
                     item {

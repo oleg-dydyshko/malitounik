@@ -1,6 +1,7 @@
 package by.carkva_gazeta.malitounik2
 
 import android.content.Context
+import android.content.Intent
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
@@ -55,6 +56,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -99,7 +101,8 @@ class FilterMalitvyPrynagodnyiaModel : ViewModel() {
 fun MalitvyListAll(
     navController: NavHostController, title: String, menuItem: Int, subTitle: String = ""
 ) {
-    val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+    val context = LocalContext.current
+    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
@@ -463,6 +466,7 @@ fun MalitvyListAll(
                         Row(
                             modifier = Modifier
                                 .padding(start = 10.dp)
+                                .fillMaxWidth()
                                 .clickable {
                                     when (menuItem) {
                                         Settings.MENU_TRYEDZ_POSNAIA -> {
@@ -553,7 +557,6 @@ fun MalitvyListAll(
                             )
                             Text(
                                 list[index].title, modifier = Modifier
-                                    .fillMaxSize()
                                     .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontWeight = if (menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH) {
                                     if (Calendar.getInstance()[Calendar.MONTH] == index) {
                                         FontWeight.Bold
@@ -564,6 +567,15 @@ fun MalitvyListAll(
                                     FontWeight.Normal
                                 }, fontSize = Settings.fontInterface.sp
                             )
+                            if (menuItem == Settings.MENU_TRAPARY_KANDAKI_NIADZELNYIA) {
+                                Column(modifier = Modifier.fillMaxWidth()) {
+                                    Icon(modifier = Modifier.padding(end = 20.dp).align(Alignment.End).clickable {
+                                        val uri = "https://soundcloud.com/24dwbqqpu9sk/trapar-${index + 1}?in=24dwbqqpu9sk/sets/trapary-bgkts&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing".toUri()
+                                        val intent = Intent(Intent.ACTION_VIEW, uri)
+                                        context.startActivity(intent)
+                                    }, painter = painterResource(R.drawable.play_arrow), contentDescription = "", tint = MaterialTheme.colorScheme.secondary)
+                                }
+                            }
                         }
                         HorizontalDivider()
                     }

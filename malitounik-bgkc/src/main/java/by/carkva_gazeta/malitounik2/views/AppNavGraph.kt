@@ -1902,7 +1902,7 @@ fun DialogLogProgramy(
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .sizeIn(minHeight = 300.dp)
+                    .sizeIn(minHeight = 200.dp)
                     .verticalScroll(rememberScrollState()), text = item, fontSize = Settings.fontInterface.sp
             )
         },

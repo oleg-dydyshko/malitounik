@@ -34,7 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -92,9 +91,6 @@ fun DrawView(
         modifier = Modifier
             .fillMaxHeight()
             .verticalScroll(rememberScrollState())
-            .onGloballyPositioned {
-
-            }
     ) {
         DrawerHeader(modifier)
         HorizontalDivider(
@@ -1120,7 +1116,7 @@ fun DrawerHeader(modifier: Modifier) {
         }.toAnnotatedString()
 
         Text(
-            modifier = modifier.fillMaxWidth(),
+            modifier = modifier.fillMaxWidth().padding(bottom = 10.dp),
             text = annotated,
             fontSize = (Settings.fontInterface - 2).sp,
             textAlign = TextAlign.End,
@@ -1128,14 +1124,18 @@ fun DrawerHeader(modifier: Modifier) {
             color = SecondaryText,
         )
 
-        Text(
-            modifier = modifier.fillMaxWidth(),
-            text = stringResource(R.string.malitounik_name),
-            textAlign = TextAlign.Center,
-            fontSize = (Settings.fontInterface + 8).sp,
-            lineHeight = ((Settings.fontInterface + 8) * 1.15).sp,
-            color = MaterialTheme.colorScheme.primary,
-        )
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+            Icon(painter = painterResource(R.drawable.lahatyp), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+            Text(
+                modifier = modifier.padding(start = 10.dp),
+                text = stringResource(R.string.malitounik_name),
+                textAlign = TextAlign.Start,
+                fontWeight = FontWeight.Bold,
+                fontSize = (Settings.fontInterface + 8).sp,
+                lineHeight = ((Settings.fontInterface + 8) * 1.15).sp,
+                color = MaterialTheme.colorScheme.primary,
+            )
+        }
 
         Text(
             modifier = modifier.fillMaxWidth(),
@@ -1143,7 +1143,6 @@ fun DrawerHeader(modifier: Modifier) {
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.secondary,
             fontSize = (Settings.fontInterface - 2).sp,
-            fontWeight = FontWeight.Bold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
