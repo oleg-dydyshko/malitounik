@@ -1739,14 +1739,8 @@ fun getBible(
                                                         getNameBook(
                                                             context, kniga, perevodNew, knigiBiblii >= 50
                                                         )
-                                                    } $glava"/*if (biblia != Settings.CHYTANNI_VYBRANAE) {
-
-                                                    } else {
-                                                        val tg =
-                                                            if (knigiBiblii == 21) context.getString(R.string.psalom2)
-                                                            else context.getString(R.string.razdzel)
-                                                        "$tg $glava"
-                                                    }*/, if (isTitle) {
+                                                    } $glava",
+                                                    if (isTitle) {
                                                         if (biblia == Settings.CHYTANNI_LITURGICHNYIA) {
                                                             val eGlavy = knigaStyxi.ifEmpty { glava.toString() }
                                                             "<strong><br>" + getNameBook(
