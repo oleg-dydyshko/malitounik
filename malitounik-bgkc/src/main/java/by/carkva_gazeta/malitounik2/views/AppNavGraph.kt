@@ -976,7 +976,7 @@ fun MainConteiner(
                 if (k.getBoolean("caliandarList", false)) {
                     if (Settings.destinations == AllDestinations.KALIANDAR_YEAR) {
                         coroutineScope.launch {
-                            lazyColumnState.scrollToItem(Settings.caliandarPosition)
+                            lazyColumnState.scrollToItem(caliandarPosition)
                         }
                     } else {
                         navigationActions.navigateToKaliandarYear()
@@ -987,11 +987,11 @@ fun MainConteiner(
                             pagerState.scrollToPage(caliandarPosition)
                         }
                     } else {
+                        Settings.caliandarPosition = caliandarPosition
                         navigationActions.navigateToKaliandar()
                     }
                 }
             }
-
             if (extras.getBoolean("sabytie", false)) {
                 val calendar = Calendar.getInstance()
                 val chyt = extras.getInt("data")
