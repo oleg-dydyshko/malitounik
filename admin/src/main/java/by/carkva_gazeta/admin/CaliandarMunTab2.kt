@@ -43,7 +43,7 @@ class CaliandarMunTab2 : BaseFragment() {
         if (context is Activity) {
             tydzenListener = try {
                 context as CaliandarMunTab2Listener
-            } catch (e: ClassCastException) {
+            } catch (_: ClassCastException) {
                 throw ClassCastException("$activity must implement CaliandarMunTab2Listener")
             }
         }

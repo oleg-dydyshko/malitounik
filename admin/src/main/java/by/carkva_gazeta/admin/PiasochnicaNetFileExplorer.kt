@@ -1,7 +1,6 @@
 package by.carkva_gazeta.admin
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -12,11 +11,12 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.transition.TransitionManager
 import by.carkva_gazeta.admin.databinding.AdminSimpleListItemBinding
 import by.carkva_gazeta.admin.databinding.PiasochnicaNetFileExplorerBinding
-import by.carkva_gazeta.malitounik2.MainActivity
-import by.carkva_gazeta.malitounik2.Settings
+import by.carkva_gazeta.malitounik.MainActivity
+import by.carkva_gazeta.malitounik.Settings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -76,10 +76,10 @@ class PiasochnicaNetFileExplorer : BaseActivity(), DialogContextMenu.DialogConte
         } else {
             getFileUnlinkPostRequest(title, isSite)
         }
-        val k = getSharedPreferences("biblia", Context.MODE_PRIVATE)
-        val prefEditor = k.edit()
-        prefEditor.remove("admin" + title + "position")
-        prefEditor.apply()
+        val k = getSharedPreferences("biblia", MODE_PRIVATE)
+        k.edit {
+            remove("admin" + title + "position")
+        }
         invalidateOptionsMenu()
     }
 
@@ -117,13 +117,13 @@ class PiasochnicaNetFileExplorer : BaseActivity(), DialogContextMenu.DialogConte
                 else -> {
                     val intent = Intent()
                     intent.putExtra("dirToFile", dir + "/" + fileList[position].title)
-                    setResult(Activity.RESULT_OK, intent)
+                    setResult(RESULT_OK, intent)
                     onBack()
                 }
             }
         }
         setTollbarTheme()
-        setResult(Activity.RESULT_CANCELED)
+        setResult(RESULT_CANCELED)
     }
 
     private fun setTollbarTheme() {
@@ -132,7 +132,7 @@ class PiasochnicaNetFileExplorer : BaseActivity(), DialogContextMenu.DialogConte
         }
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik2.R.string.vybrac_file)
+        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik.R.string.vybrac_file)
     }
 
     private fun fullTextTollbar() {
@@ -191,13 +191,13 @@ class PiasochnicaNetFileExplorer : BaseActivity(), DialogContextMenu.DialogConte
                     }
                     fileList.addAll(temp)
                     adapter.notifyDataSetChanged()
-                } catch (e: Throwable) {
-                    Toast.makeText(this@PiasochnicaNetFileExplorer, getString(by.carkva_gazeta.malitounik2.R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                } catch (_: Throwable) {
+                    Toast.makeText(this@PiasochnicaNetFileExplorer, getString(by.carkva_gazeta.malitounik.R.string.error_ch2), Toast.LENGTH_SHORT).show()
                 }
                 binding.progressBar2.visibility = View.GONE
             }
         } else {
-            Toast.makeText(this, getString(by.carkva_gazeta.malitounik2.R.string.no_internet), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(by.carkva_gazeta.malitounik.R.string.no_internet), Toast.LENGTH_SHORT).show()
         }
     }
     
@@ -211,15 +211,15 @@ class PiasochnicaNetFileExplorer : BaseActivity(), DialogContextMenu.DialogConte
                     } else {
                         MainActivity.referens.child("/admin/piasochnica/$fileName").delete().await()
                     }
-                } catch (e: Throwable) {
-                    Toast.makeText(this@PiasochnicaNetFileExplorer, getString(by.carkva_gazeta.malitounik2.R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                } catch (_: Throwable) {
+                    Toast.makeText(this@PiasochnicaNetFileExplorer, getString(by.carkva_gazeta.malitounik.R.string.error_ch2), Toast.LENGTH_SHORT).show()
                 }
                 if (isSite) saveLogFile()
                 binding.progressBar2.visibility = View.GONE
                 getDirListRequest(dir)
             }
         } else {
-            Toast.makeText(this, getString(by.carkva_gazeta.malitounik2.R.string.no_internet), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(by.carkva_gazeta.malitounik.R.string.no_internet), Toast.LENGTH_SHORT).show()
         }
     }
     
@@ -227,10 +227,10 @@ class PiasochnicaNetFileExplorer : BaseActivity(), DialogContextMenu.DialogConte
         val logFile = File("$filesDir/cache/log.txt")
         var error = false
         logFile.writer().use {
-            it.write(getString(by.carkva_gazeta.malitounik2.R.string.check_update_resourse))
+            it.write(getString(by.carkva_gazeta.malitounik.R.string.check_update_resourse))
         }
         MainActivity.referens.child("/admin/log.txt").putFile(Uri.fromFile(logFile)).addOnFailureListener {
-            Toast.makeText(this@PiasochnicaNetFileExplorer, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@PiasochnicaNetFileExplorer, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
             error = true
         }.await()
         if (error && count < 3) {
@@ -246,26 +246,26 @@ class PiasochnicaNetFileExplorer : BaseActivity(), DialogContextMenu.DialogConte
                     val localFile = File("$filesDir/cache/cache.txt")
                     if (isSite) {
                         MainActivity.referens.child("/$oldFileName").getFile(localFile).addOnFailureListener {
-                            Toast.makeText(this@PiasochnicaNetFileExplorer, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@PiasochnicaNetFileExplorer, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                         }.await()
                         MainActivity.referens.child("/$oldFileName").delete().await()
                         MainActivity.referens.child("/$fileName").putFile(Uri.fromFile(localFile)).await()
                     } else {
                         MainActivity.referens.child("/admin/piasochnica/$oldFileName").getFile(localFile).addOnFailureListener {
-                            Toast.makeText(this@PiasochnicaNetFileExplorer, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@PiasochnicaNetFileExplorer, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                         }.await()
                         MainActivity.referens.child("/admin/piasochnica/$oldFileName").delete().await()
                         MainActivity.referens.child("/admin/piasochnica/$fileName").putFile(Uri.fromFile(localFile)).await()
                     }
-                } catch (e: Throwable) {
-                    Toast.makeText(this@PiasochnicaNetFileExplorer, getString(by.carkva_gazeta.malitounik2.R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                } catch (_: Throwable) {
+                    Toast.makeText(this@PiasochnicaNetFileExplorer, getString(by.carkva_gazeta.malitounik.R.string.error_ch2), Toast.LENGTH_SHORT).show()
                 }
                 if (isSite) saveLogFile()
                 binding.progressBar2.visibility = View.GONE
                 getDirListRequest(dir)
             }
         } else {
-            Toast.makeText(this, getString(by.carkva_gazeta.malitounik2.R.string.no_internet), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(by.carkva_gazeta.malitounik.R.string.no_internet), Toast.LENGTH_SHORT).show()
         }
     }
 

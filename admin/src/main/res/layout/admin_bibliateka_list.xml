@@ -106,6 +106,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10sp"
                 android:hint="@string/file_name2"
+                android:inputType="text"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/admin"
                 app:layout_constraintStart_toStartOf="parent"

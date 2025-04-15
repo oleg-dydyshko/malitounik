@@ -1,4 +1,4 @@
-package by.carkva_gazeta.malitounik
+package by.carkva_gazeta.admin
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -34,10 +34,6 @@ class InteractiveScrollView : ScrollView {
 
     fun setOnScrollChangedCallback(onInteractiveScrollChangedCallback: OnInteractiveScrollChangedCallback?) {
         mOnInteractiveScrollChangedCallback = onInteractiveScrollChangedCallback
-    }
-
-    fun setOnBottomReachedListener(onBottomReachedListener: OnBottomReachedListener?) {
-        mListener = onBottomReachedListener
     }
 
     override fun computeScrollDeltaToGetChildRectOnScreen(rect: Rect?): Int {

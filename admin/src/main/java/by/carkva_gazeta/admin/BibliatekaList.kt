@@ -23,13 +23,16 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.edit
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.net.toUri
+import androidx.core.view.isVisible
 import androidx.transition.TransitionManager
 import by.carkva_gazeta.admin.databinding.AdminBibliatekaListBinding
 import by.carkva_gazeta.admin.databinding.AdminSimpleListItemBibliotekaBinding
 import by.carkva_gazeta.admin.databinding.SimpleListItem1Binding
-import by.carkva_gazeta.malitounik2.MainActivity
-import by.carkva_gazeta.malitounik2.Settings
+import by.carkva_gazeta.malitounik.MainActivity
+import by.carkva_gazeta.malitounik.Settings
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -54,7 +57,7 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
     private lateinit var rubrikaAdapter: RubrikaAdapter
     private var position = -1
     private val mActivityResultImageFile = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        if (it.resultCode == Activity.RESULT_OK) {
+        if (it.resultCode == RESULT_OK) {
             val imageUri = it.data?.data
             imageUri?.let { image ->
                 val bitmap = if (Build.VERSION.SDK_INT >= 28) {
@@ -68,7 +71,7 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
         }
     }
     private val mActivityResultFile = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        if (it.resultCode == Activity.RESULT_OK) {
+        if (it.resultCode == RESULT_OK) {
             val fileUri = it.data?.data
             fileUri?.let { file ->
                 binding.pdfTextView.setText(file.toString())
@@ -89,14 +92,14 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putBoolean("editVisibility", binding.edit.visibility == View.VISIBLE)
+        outState.putBoolean("editVisibility", binding.edit.isVisible)
         outState.putString("pdfTextView", binding.pdfTextView.text.toString())
         outState.putParcelable("BitmapImage", binding.imagePdf.drawable?.toBitmap())
         outState.putInt("position", position)
     }
 
     override fun onBack() {
-        if (binding.edit.visibility == View.VISIBLE) {
+        if (binding.edit.isVisible) {
             binding.edit.visibility = View.GONE
             binding.listView.visibility = View.VISIBLE
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
@@ -104,7 +107,7 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
         } else {
             val intent = Intent()
             intent.putExtra("rubrika", intent.extras?.getInt("rubrika", 2) ?: 2)
-            setResult(Activity.RESULT_OK, intent)
+            setResult(RESULT_OK, intent)
             super.onBack()
         }
     }
@@ -167,14 +170,14 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
             intent.type = "image/*"
             intent.action = Intent.ACTION_GET_CONTENT
             intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/jpeg", "image/png"))
-            mActivityResultImageFile.launch(Intent.createChooser(intent, getString(by.carkva_gazeta.malitounik2.R.string.vybrac_file)))
+            mActivityResultImageFile.launch(Intent.createChooser(intent, getString(by.carkva_gazeta.malitounik.R.string.vybrac_file)))
         }
         binding.admin.setOnClickListener {
             val intent = Intent()
             intent.type = "application/pdf"
             intent.action = Intent.ACTION_GET_CONTENT
             intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("application/pdf"))
-            mActivityResultFile.launch(Intent.createChooser(intent, getString(by.carkva_gazeta.malitounik2.R.string.vybrac_file)))
+            mActivityResultFile.launch(Intent.createChooser(intent, getString(by.carkva_gazeta.malitounik.R.string.vybrac_file)))
         }
     }
 
@@ -201,13 +204,13 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
                     val rubrika = (binding.rubrika.selectedItemPosition + 1).toString()
                     val link = binding.textViewTitle.text.toString()
                     val str = binding.opisanie.text.toString()
-                    val pdf = Uri.parse(binding.pdfTextView.text.toString())
+                    val pdf = binding.pdfTextView.text.toString().toUri()
                     val t2 = pdf.path?.lastIndexOf("/") ?: 0
                     val pdfName = pdf.path?.substring(t2 + 1) ?: ""
                     val t1 = pdfName.lastIndexOf(".")
                     if (t1 == -1 || link == "" || binding.imagePdf.drawable == null) {
                         withContext(Dispatchers.Main) {
-                            Toast.makeText(this@BibliatekaList, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@BibliatekaList, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                             binding.progressBar2.visibility = View.GONE
                         }
                         return@withContext
@@ -218,7 +221,7 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
                         mySqlList.add(link)
                         mySqlList.add(str)
                         mySqlList.add(pdfName)
-                        mySqlList.add(getPdfFileLength(Uri.parse(binding.pdfTextView.text.toString())))
+                        mySqlList.add(getPdfFileLength(binding.pdfTextView.text.toString().toUri()))
                         mySqlList.add(rubrika)
                         mySqlList.add(imageLocal)
                         arrayList.add(0, mySqlList)
@@ -226,7 +229,7 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
                         arrayList[position][0] = link
                         arrayList[position][1] = str
                         arrayList[position][2] = pdfName
-                        if (binding.pdfTextView.text.toString() != "") arrayList[position][3] = getPdfFileLength(Uri.parse(binding.pdfTextView.text.toString()))
+                        if (binding.pdfTextView.text.toString() != "") arrayList[position][3] = getPdfFileLength(binding.pdfTextView.text.toString().toUri())
                         arrayList[position][4] = rubrika
                         arrayList[position][5] = imageLocal
                     }
@@ -250,11 +253,11 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
                     }
                 }
                 adapter.notifyDataSetChanged()
-                Toast.makeText(this@BibliatekaList, getString(by.carkva_gazeta.malitounik2.R.string.save), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@BibliatekaList, getString(by.carkva_gazeta.malitounik.R.string.save), Toast.LENGTH_SHORT).show()
                 binding.progressBar2.visibility = View.GONE
             }
         } else {
-            Toast.makeText(this@BibliatekaList, getString(by.carkva_gazeta.malitounik2.R.string.no_internet), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@BibliatekaList, getString(by.carkva_gazeta.malitounik.R.string.no_internet), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -326,13 +329,13 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
                             arrayList.add(mySqlList)
                         }
                         val json = gson.toJson(arrayList, type)
-                        val k = getSharedPreferences("biblia", Context.MODE_PRIVATE)
-                        val prefEditors = k.edit()
-                        prefEditors.putString("Biblioteka", json)
-                        prefEditors.apply()
+                        val k = getSharedPreferences("biblia", MODE_PRIVATE)
+                        k.edit {
+                            putString("Biblioteka", json)
+                        }
                         adapter.notifyDataSetChanged()
                     } else {
-                        Toast.makeText(this@BibliatekaList, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@BibliatekaList, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                     }
                     binding.progressBar2.visibility = View.GONE
                 }
@@ -340,7 +343,7 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
                 e.printStackTrace()
             }
         } else {
-            Toast.makeText(this@BibliatekaList, getString(by.carkva_gazeta.malitounik2.R.string.no_internet), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@BibliatekaList, getString(by.carkva_gazeta.malitounik.R.string.no_internet), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -348,7 +351,7 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
         val t1 = pdf.lastIndexOf(".")
         val imageTempFile = File("$filesDir/image_temp/" + pdf.substring(0, t1) + ".png")
         MainActivity.referens.child("/images/bibliateka/$image").getFile(imageTempFile).addOnFailureListener {
-            Toast.makeText(this, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
         }.await()
     }
 
@@ -358,7 +361,7 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
         val localFile = File("$filesDir/cache/cache.txt")
         pathReference.getFile(localFile).addOnCompleteListener {
             if (it.isSuccessful) text = localFile.readText()
-            else Toast.makeText(this, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+            else Toast.makeText(this, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
         }.await()
         return text
     }
@@ -386,7 +389,7 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
         binding.listView.setOnItemClickListener { _, _, position, _ ->
             onDialogEditClick(position)
         }
-        val array = arrayOf(getString(by.carkva_gazeta.malitounik2.R.string.bibliateka_gistoryia_carkvy), getString(by.carkva_gazeta.malitounik2.R.string.bibliateka_malitouniki), getString(by.carkva_gazeta.malitounik2.R.string.bibliateka_speuniki), getString(by.carkva_gazeta.malitounik2.R.string.bibliateka_rel_litaratura), getString(by.carkva_gazeta.malitounik2.R.string.arx_num_gaz))
+        val array = arrayOf(getString(by.carkva_gazeta.malitounik.R.string.bibliateka_gistoryia_carkvy), getString(by.carkva_gazeta.malitounik.R.string.bibliateka_malitouniki), getString(by.carkva_gazeta.malitounik.R.string.bibliateka_speuniki), getString(by.carkva_gazeta.malitounik.R.string.bibliateka_rel_litaratura), getString(by.carkva_gazeta.malitounik.R.string.arx_num_gaz))
         rubrikaAdapter = RubrikaAdapter(this, array)
         binding.rubrika.adapter = rubrikaAdapter
         adapter = BibliotekaAdapter(this)
@@ -411,7 +414,7 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
         }
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik2.R.string.title_biblijateka)
+        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik.R.string.title_biblijateka)
     }
 
     private fun fullTextTollbar() {
@@ -443,7 +446,7 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
     }
 
     override fun onPrepareMenu(menu: Menu) {
-        if (binding.edit.visibility == View.VISIBLE) {
+        if (binding.edit.isVisible) {
             menu.findItem(R.id.action_plus).isVisible = false
             menu.findItem(R.id.action_save).isVisible = true
         } else {
@@ -515,11 +518,11 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
             }
             viewHolder.text.text = arrayList[position][0]
             val rubrika = when (arrayList[position][4].toInt()) {
-                1 -> getString(by.carkva_gazeta.malitounik2.R.string.bibliateka_gistoryia_carkvy)
-                2 -> getString(by.carkva_gazeta.malitounik2.R.string.bibliateka_malitouniki)
-                3 -> getString(by.carkva_gazeta.malitounik2.R.string.bibliateka_speuniki)
-                4 -> getString(by.carkva_gazeta.malitounik2.R.string.bibliateka_rel_litaratura)
-                5 -> getString(by.carkva_gazeta.malitounik2.R.string.arx_num_gaz)
+                1 -> getString(by.carkva_gazeta.malitounik.R.string.bibliateka_gistoryia_carkvy)
+                2 -> getString(by.carkva_gazeta.malitounik.R.string.bibliateka_malitouniki)
+                3 -> getString(by.carkva_gazeta.malitounik.R.string.bibliateka_speuniki)
+                4 -> getString(by.carkva_gazeta.malitounik.R.string.bibliateka_rel_litaratura)
+                5 -> getString(by.carkva_gazeta.malitounik.R.string.arx_num_gaz)
                 else -> ""
             }
             viewHolder.rubrika.text = rubrika

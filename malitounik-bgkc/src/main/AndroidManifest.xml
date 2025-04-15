@@ -58,7 +58,7 @@
             android:exported="false" />
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="by.carkva_gazeta.malitounik2.fileprovider"
+            android:authorities="by.carkva_gazeta.malitounik.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

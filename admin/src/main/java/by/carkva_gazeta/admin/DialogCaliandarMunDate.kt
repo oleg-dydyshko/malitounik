@@ -17,7 +17,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.DialogFragment
 import by.carkva_gazeta.admin.databinding.DialogListviewDisplayBinding
 import by.carkva_gazeta.admin.databinding.SimpleListItem2Binding
-import by.carkva_gazeta.malitounik2.Settings
+import by.carkva_gazeta.malitounik.Settings
 import java.util.Calendar
 
 class DialogCaliandarMunDate : DialogFragment() {
@@ -46,7 +46,7 @@ class DialogCaliandarMunDate : DialogFragment() {
         if (context is Activity) {
             mListener = try {
                 context as DialogCaliandarMunDateListener
-            } catch (e: ClassCastException) {
+            } catch (_: ClassCastException) {
                 throw ClassCastException("$activity must implement DialogCaliandarMunDateListener")
             }
         }
@@ -59,13 +59,13 @@ class DialogCaliandarMunDate : DialogFragment() {
             binding.content.selector = ContextCompat.getDrawable(it, R.drawable.selector_default)
             val arrayList = ArrayList<String>()
             if (data >= Settings.GET_CALIANDAR_YEAR_MIN) {
-                binding.title.text = resources.getString(by.carkva_gazeta.malitounik2.R.string.vybor_year)
+                binding.title.text = resources.getString(by.carkva_gazeta.malitounik.R.string.vybor_year)
                 for (i in Settings.GET_CALIANDAR_YEAR_MIN..Settings.GET_CALIANDAR_YEAR_MAX) {
                     arrayList.add(i.toString())
                 }
             } else {
-                binding.title.text = resources.getString(by.carkva_gazeta.malitounik2.R.string.vybor_mun)
-                arrayList.addAll(it.resources.getStringArray(by.carkva_gazeta.malitounik2.R.array.meciac2))
+                binding.title.text = resources.getString(by.carkva_gazeta.malitounik.R.string.vybor_mun)
+                arrayList.addAll(it.resources.getStringArray(by.carkva_gazeta.malitounik.R.array.meciac2))
             }
             binding.content.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, i: Int, _: Long ->
                 if (data >= Settings.GET_CALIANDAR_YEAR_MIN) mListener?.setDataCalendar(i + Settings.GET_CALIANDAR_YEAR_MIN)
@@ -73,7 +73,7 @@ class DialogCaliandarMunDate : DialogFragment() {
                 alert.cancel()
             }
             binding.content.adapter = DataListAdaprer(it, arrayList, data)
-            builder.setPositiveButton(resources.getText(by.carkva_gazeta.malitounik2.R.string.cansel)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
+            builder.setPositiveButton(resources.getText(by.carkva_gazeta.malitounik.R.string.cansel)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
             builder.setView(binding.root)
             alert = builder.create()
         }
@@ -107,10 +107,10 @@ class DialogCaliandarMunDate : DialogFragment() {
 
         fun createFont(style: Int): Typeface? {
             return when (style) {
-                Typeface.BOLD -> ResourcesCompat.getFont(mContext, by.carkva_gazeta.malitounik2.R.font.robotocondensedbold)
-                Typeface.ITALIC -> ResourcesCompat.getFont(mContext, by.carkva_gazeta.malitounik2.R.font.robotocondenseditalic)
-                Typeface.BOLD_ITALIC -> ResourcesCompat.getFont(mContext, by.carkva_gazeta.malitounik2.R.font.robotocondensedbolditalic)
-                else -> ResourcesCompat.getFont(mContext, by.carkva_gazeta.malitounik2.R.font.robotocondensed)
+                Typeface.BOLD -> ResourcesCompat.getFont(mContext, by.carkva_gazeta.malitounik.R.font.robotocondensedbold)
+                Typeface.ITALIC -> ResourcesCompat.getFont(mContext, by.carkva_gazeta.malitounik.R.font.robotocondenseditalic)
+                Typeface.BOLD_ITALIC -> ResourcesCompat.getFont(mContext, by.carkva_gazeta.malitounik.R.font.robotocondensedbolditalic)
+                else -> ResourcesCompat.getFont(mContext, by.carkva_gazeta.malitounik.R.font.robotocondensed)
             }
         }
     }

@@ -50,19 +50,19 @@ class DialogSviatyiaImageApisanne : DialogFragment() {
             var style = R.style.AlertDialogTheme
             if (dzenNoch) style = R.style.AlertDialogTheme
             builder = AlertDialog.Builder(it, style)
-            binding.title.text = getString(by.carkva_gazeta.malitounik2.R.string.admin_opisanne_icon)
+            binding.title.text = getString(by.carkva_gazeta.malitounik.R.string.admin_opisanne_icon)
             val t1 = fileName.lastIndexOf(".")
             val fileNameT = fileName.substring(0, t1) + ".txt"
             val file = File("${it.filesDir}/iconsApisanne/$fileNameT")
             if (file.exists()) binding.content.setText(file.readText())
             binding.content.requestFocus()
             builder.setView(binding.root)
-            builder.setPositiveButton(getString(by.carkva_gazeta.malitounik2.R.string.ok)) { _: DialogInterface?, _: Int -> // Скрываем клавиатуру
+            builder.setPositiveButton(getString(by.carkva_gazeta.malitounik.R.string.ok)) { _: DialogInterface?, _: Int -> // Скрываем клавиатуру
                 val imm1 = it.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm1.hideSoftInputFromWindow(binding.content.windowToken, 0)
                 mListener?.setApisanneIcon(binding.content.text.toString(), fileName)
             }
-            builder.setNegativeButton(getString(by.carkva_gazeta.malitounik2.R.string.cansel)) { _: DialogInterface?, _: Int ->
+            builder.setNegativeButton(getString(by.carkva_gazeta.malitounik.R.string.cansel)) { _: DialogInterface?, _: Int ->
                 val imm12 = it.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm12.hideSoftInputFromWindow(binding.content.windowToken, 0)
             }

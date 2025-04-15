@@ -47,7 +47,7 @@ class StaryZapavietSemuxa : BaseActivity(), DialogBibleRazdel.DialogBibleRazdelL
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        k = getSharedPreferences("biblia", Context.MODE_PRIVATE)
+        k = getSharedPreferences("biblia", MODE_PRIVATE)
         if (savedInstanceState != null) {
             setedit = savedInstanceState.getBoolean("setedit")
         }
@@ -222,7 +222,7 @@ class StaryZapavietSemuxa : BaseActivity(), DialogBibleRazdel.DialogBibleRazdelL
             }
         }
         TabLayoutMediator(binding.tabLayout, binding.pager, false) { tab, position ->
-            tab.text = if (kniga == 18) resources.getString(by.carkva_gazeta.malitounik2.R.string.psalom) + " " + (position + 1) else resources.getString(by.carkva_gazeta.malitounik2.R.string.razdzel) + " " + (position + 1)
+            tab.text = if (kniga == 18) resources.getString(by.carkva_gazeta.malitounik.R.string.psalom) + " " + (position + 1) else resources.getString(by.carkva_gazeta.malitounik.R.string.razdzel) + " " + (position + 1)
         }.attach()
         binding.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -242,7 +242,7 @@ class StaryZapavietSemuxa : BaseActivity(), DialogBibleRazdel.DialogBibleRazdelL
         }
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik2.R.string.stary_zapaviet)
+        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik.R.string.stary_zapaviet)
         binding.subtitleToolbar.text = title
     }
 

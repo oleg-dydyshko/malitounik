@@ -31,7 +31,7 @@ class DialogContextMenu : DialogFragment() {
         super.onCreate(savedInstanceState)
         position = arguments?.getInt("position") ?: 0
         name = arguments?.getString("name") ?: ""
-        isSite = arguments?.getBoolean("isSite") ?: false
+        isSite = arguments?.getBoolean("isSite") == true
     }
 
     override fun onAttach(context: Context) {
@@ -39,7 +39,7 @@ class DialogContextMenu : DialogFragment() {
         if (context is Activity) {
             mListener = try {
                 context as DialogContextMenuListener
-            } catch (e: ClassCastException) {
+            } catch (_: ClassCastException) {
                 throw ClassCastException("$context must implement DialogContextMenuListener")
             }
         }
@@ -50,8 +50,8 @@ class DialogContextMenu : DialogFragment() {
             _binding = DialogContextDisplayBinding.inflate(layoutInflater)
             val builder = AlertDialog.Builder(it)
             binding.title.text = name
-            binding.content.text = getString(by.carkva_gazeta.malitounik2.R.string.rename_file)
-            binding.content2.text = getString(by.carkva_gazeta.malitounik2.R.string.delite)
+            binding.content.text = getString(by.carkva_gazeta.malitounik.R.string.rename_file)
+            binding.content2.text = getString(by.carkva_gazeta.malitounik.R.string.delite)
             binding.content.setBackgroundResource(R.drawable.selector_default)
             binding.content2.setBackgroundResource(R.drawable.selector_default)
             builder.setView(binding.root)

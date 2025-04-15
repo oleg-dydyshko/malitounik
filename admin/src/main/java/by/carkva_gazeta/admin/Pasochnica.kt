@@ -2,7 +2,6 @@ package by.carkva_gazeta.admin
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -27,13 +26,15 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.core.text.HtmlCompat
+import androidx.core.text.toHtml
 import androidx.core.text.toSpannable
+import androidx.core.view.isVisible
 import androidx.transition.TransitionManager
 import by.carkva_gazeta.admin.databinding.AdminPasochnicaBinding
-import by.carkva_gazeta.malitounik.InteractiveScrollView
-import by.carkva_gazeta.malitounik2.MainActivity
-import by.carkva_gazeta.malitounik2.Settings
+import by.carkva_gazeta.malitounik.MainActivity
+import by.carkva_gazeta.malitounik.Settings
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.splitcompat.SplitCompat
 import kotlinx.coroutines.CoroutineScope
@@ -62,11 +63,11 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
     private val findListSpans = ArrayList<SpanStr>()
     private var animatopRun = false
     private val mActivityResultFile = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        if (it.resultCode == Activity.RESULT_OK) {
+        if (it.resultCode == RESULT_OK) {
             val dir = it.data?.extras?.getString("dir") ?: "/"
             val oldFileName = it.data?.extras?.getString("oldFileName") ?: ""
             val fileName = it.data?.extras?.getString("fileName") ?: ""
-            val setDir = it.data?.extras?.getBoolean("setDir", false) ?: false
+            val setDir = it.data?.extras?.getBoolean("setDir", false) == true
             getFileIssetPostRequest(dir, oldFileName, fileName, setDir)
         }
     }
@@ -115,8 +116,8 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                 val strPosition = text.indexOf(search, position, true)
                 if (strPosition != -1) {
                     findListSpans.add(SpanStr(getColorSpans(text.getSpans(strPosition, strPosition + searchLig, ForegroundColorSpan::class.java)), strPosition, strPosition + searchLig))
-                    text.setSpan(BackgroundColorSpan(ContextCompat.getColor(this, by.carkva_gazeta.malitounik2.R.color.colorBezPosta)), strPosition, strPosition + searchLig, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                    text.setSpan(ForegroundColorSpan(ContextCompat.getColor(this, by.carkva_gazeta.malitounik2.R.color.colorPrimary_text)), strPosition, strPosition + searchLig, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    text.setSpan(BackgroundColorSpan(ContextCompat.getColor(this, by.carkva_gazeta.malitounik.R.color.colorBezPosta)), strPosition, strPosition + searchLig, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    text.setSpan(ForegroundColorSpan(ContextCompat.getColor(this, by.carkva_gazeta.malitounik.R.color.colorPrimary_text)), strPosition, strPosition + searchLig, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                     position = strPosition + 1
                 } else {
                     run = false
@@ -138,7 +139,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
             }
         } else {
             findPosition = 0
-            binding.textCount.text = getString(by.carkva_gazeta.malitounik2.R.string.niama)
+            binding.textCount.text = getString(by.carkva_gazeta.malitounik.R.string.niama)
         }
     }
 
@@ -171,9 +172,9 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                 findPosition = 0
             }
             val text = binding.apisanne.text as SpannableStringBuilder
-            text.setSpan(BackgroundColorSpan(ContextCompat.getColor(this, by.carkva_gazeta.malitounik2.R.color.colorBezPosta)), findListSpans[findPositionOld].start, findListSpans[findPositionOld].size, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            binding.textCount.text = getString(by.carkva_gazeta.malitounik2.R.string.fing_count, findPosition + 1, findListSpans.size)
-            text.setSpan(BackgroundColorSpan(ContextCompat.getColor(this, by.carkva_gazeta.malitounik2.R.color.colorBezPosta2)), findListSpans[findPosition].start, findListSpans[findPosition].size, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            text.setSpan(BackgroundColorSpan(ContextCompat.getColor(this, by.carkva_gazeta.malitounik.R.color.colorBezPosta)), findListSpans[findPositionOld].start, findListSpans[findPositionOld].size, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            binding.textCount.text = getString(by.carkva_gazeta.malitounik.R.string.fing_count, findPosition + 1, findListSpans.size)
+            text.setSpan(BackgroundColorSpan(ContextCompat.getColor(this, by.carkva_gazeta.malitounik.R.color.colorBezPosta2)), findListSpans[findPosition].start, findListSpans[findPosition].size, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             binding.apisanne.layout?.let { layout ->
                 val line = layout.getLineForOffset(findListSpans[findPosition].start)
                 val y = layout.getLineTop(line)
@@ -199,7 +200,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
     }
 
     private fun getColorSpans(colorSpan: Array<out ForegroundColorSpan>): Int {
-        var color = ContextCompat.getColor(this, by.carkva_gazeta.malitounik2.R.color.colorPrimary_text)
+        var color = ContextCompat.getColor(this, by.carkva_gazeta.malitounik.R.color.colorPrimary_text)
         if (colorSpan.isNotEmpty()) {
             color = colorSpan[colorSpan.size - 1].foregroundColor
         }
@@ -211,7 +212,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
         binding.apisanne.layout?.let { layout ->
             val textForVertical = binding.apisanne.text.toString().substring(layout.getLineStart(layout.getLineForVertical(positionY)), layout.getLineEnd(layout.getLineForVertical(positionY))).trim()
             if (textForVertical != "") firstTextPosition = textForVertical
-            if (binding.find.visibility == View.VISIBLE && !animatopRun) {
+            if (binding.find.isVisible && !animatopRun) {
                 if (findListSpans.isNotEmpty()) {
                     val text = binding.apisanne.text as SpannableStringBuilder
                     for (i in 0 until findListSpans.size) {
@@ -223,9 +224,9 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                             else i + 1
                             if (findPositionOld == -1) findPositionOld = findListSpans.size - 1
                             if (findPositionOld == findListSpans.size) findPositionOld = 0
-                            text.setSpan(BackgroundColorSpan(ContextCompat.getColor(this, by.carkva_gazeta.malitounik2.R.color.colorBezPosta)), findListSpans[findPositionOld].start, findListSpans[findPositionOld].size, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                            if (findPosition != ii) binding.textCount.text = getString(by.carkva_gazeta.malitounik2.R.string.fing_count, ii, findListSpans.size)
-                            text.setSpan(BackgroundColorSpan(ContextCompat.getColor(this, by.carkva_gazeta.malitounik2.R.color.colorBezPosta2)), findListSpans[i].start, findListSpans[i].size, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            text.setSpan(BackgroundColorSpan(ContextCompat.getColor(this, by.carkva_gazeta.malitounik.R.color.colorBezPosta)), findListSpans[findPositionOld].start, findListSpans[findPositionOld].size, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            if (findPosition != ii) binding.textCount.text = getString(by.carkva_gazeta.malitounik.R.string.fing_count, ii, findListSpans.size)
+                            text.setSpan(BackgroundColorSpan(ContextCompat.getColor(this, by.carkva_gazeta.malitounik.R.color.colorBezPosta2)), findListSpans[i].start, findListSpans[i].size, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                             break
                         }
                     }
@@ -285,9 +286,9 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
     override fun onPause() {
         super.onPause()
         resetTollbarJob?.cancel()
-        val prefEditor = k.edit()
-        prefEditor.putInt("admin" + fileName + "position", positionY)
-        prefEditor.apply()
+        k.edit {
+            putInt("admin" + fileName + "position", positionY)
+        }
     }
 
     private fun setResoursName() {
@@ -325,7 +326,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        k = getSharedPreferences("biblia", Context.MODE_PRIVATE)
+        k = getSharedPreferences("biblia", MODE_PRIVATE)
         binding = AdminPasochnicaBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.apisanne.addTextChangedListener(textWatcher)
@@ -340,7 +341,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
         fileName = intent.extras?.getString("fileName", "") ?: "new_file.html"
         resours = intent.extras?.getString("resours", "") ?: ""
         var title = intent.extras?.getString("title", "") ?: ""
-        val isPasochnica = intent.extras?.getBoolean("isPasochnica", false) ?: false
+        val isPasochnica = intent.extras?.getBoolean("isPasochnica", false) == true
         val text = intent.extras?.getString("text", "") ?: ""
         if (!isPasochnica) {
             if (resours == "" && title == "") {
@@ -377,7 +378,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                 }
             }
         } else {
-            val newFile = intent.extras?.getBoolean("newFile", false) ?: false
+            val newFile = intent.extras?.getBoolean("newFile", false) == true
             when {
                 intent.extras?.getBoolean("backcopy", false) == true -> {
                     if (isHTML) {
@@ -447,7 +448,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
         outState.putString("fileName", fileName)
         outState.putString("textLine", firstTextPosition)
         outState.putString("resours", resours)
-        if (binding.find.visibility == View.VISIBLE) outState.putBoolean("seach", true)
+        if (binding.find.isVisible) outState.putBoolean("seach", true)
         else outState.putBoolean("seach", false)
     }
 
@@ -457,7 +458,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
         }
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik2.R.string.pasochnica)
+        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik.R.string.pasochnica)
     }
 
     private fun fullTextTollbar() {
@@ -495,11 +496,11 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
     }
 
     override fun onBack() {
-        if (binding.find.visibility == View.VISIBLE) {
+        if (binding.find.isVisible) {
             binding.find.visibility = View.GONE
             binding.textSearch.text?.clear()
             findRemoveSpan()
-            val imm = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(binding.textSearch.windowToken, 0)
         } else {
             onSupportNavigateUp()
@@ -514,10 +515,10 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
         val logFile = File("$filesDir/cache/log.txt")
         var error = false
         logFile.writer().use {
-            it.write(getString(by.carkva_gazeta.malitounik2.R.string.check_update_resourse))
+            it.write(getString(by.carkva_gazeta.malitounik.R.string.check_update_resourse))
         }
         MainActivity.referens.child("/admin/log.txt").putFile(Uri.fromFile(logFile)).addOnFailureListener {
-            Toast.makeText(this@Pasochnica, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@Pasochnica, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
             error = true
         }.await()
         if (error && count < 3) {
@@ -542,13 +543,13 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                     } else {
                         sendSaveAsPostRequest("$dir/$fileName", oldFileName)
                     }
-                } catch (e: Throwable) {
-                    Toast.makeText(this@Pasochnica, getString(by.carkva_gazeta.malitounik2.R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                } catch (_: Throwable) {
+                    Toast.makeText(this@Pasochnica, getString(by.carkva_gazeta.malitounik.R.string.error_ch2), Toast.LENGTH_SHORT).show()
                 }
                 binding.progressBar2.visibility = View.GONE
             }
         } else {
-            Toast.makeText(this, getString(by.carkva_gazeta.malitounik2.R.string.no_internet), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(by.carkva_gazeta.malitounik.R.string.no_internet), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -559,7 +560,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                 try {
                     val localFile = File("$filesDir/cache/cache.txt")
                     MainActivity.referens.child("/admin/piasochnica/" + fileName.replace("\n", " ")).getFile(localFile).addOnFailureListener {
-                        Toast.makeText(this@Pasochnica, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@Pasochnica, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                     }.await()
                     val t3 = dirToFile.lastIndexOf("/")
                     var newFile = dirToFile.substring(t3 + 1)
@@ -610,23 +611,23 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                     else fileName.replace("\n", " ")
                     MainActivity.referens.child("/admin/piasochnica/$oldFile$tv").putFile(Uri.fromFile(localFile)).addOnCompleteListener {
                         if (it.isSuccessful) {
-                            Snackbar.make(binding.scrollView, getString(by.carkva_gazeta.malitounik2.R.string.save), Snackbar.LENGTH_LONG).apply {
-                                setActionTextColor(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik2.R.color.colorWhite))
-                                setTextColor(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik2.R.color.colorWhite))
-                                setBackgroundTint(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik2.R.color.colorPrimary))
+                            Snackbar.make(binding.scrollView, getString(by.carkva_gazeta.malitounik.R.string.save), Snackbar.LENGTH_LONG).apply {
+                                setActionTextColor(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik.R.color.colorWhite))
+                                setTextColor(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik.R.color.colorWhite))
+                                setBackgroundTint(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik.R.color.colorPrimary))
                                 show()
                             }
                         } else {
-                            Snackbar.make(binding.scrollView, getString(by.carkva_gazeta.malitounik2.R.string.error), Snackbar.LENGTH_LONG).apply {
-                                setActionTextColor(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik2.R.color.colorWhite))
-                                setTextColor(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik2.R.color.colorWhite))
-                                setBackgroundTint(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik2.R.color.colorPrimary))
+                            Snackbar.make(binding.scrollView, getString(by.carkva_gazeta.malitounik.R.string.error), Snackbar.LENGTH_LONG).apply {
+                                setActionTextColor(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik.R.color.colorWhite))
+                                setTextColor(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik.R.color.colorWhite))
+                                setBackgroundTint(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik.R.color.colorPrimary))
                                 show()
                             }
                         }
                     }.await()
-                } catch (e: Throwable) {
-                    Toast.makeText(this@Pasochnica, getString(by.carkva_gazeta.malitounik2.R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                } catch (_: Throwable) {
+                    Toast.makeText(this@Pasochnica, getString(by.carkva_gazeta.malitounik.R.string.error_ch2), Toast.LENGTH_SHORT).show()
                 }
                 saveLogFile()
                 binding.progressBar2.visibility = View.GONE
@@ -652,18 +653,18 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
             CoroutineScope(Dispatchers.Main).launch {
                 var result = ""
                 binding.progressBar2.visibility = View.VISIBLE
-                val isSite = intent.extras?.getBoolean("isSite", false) ?: false
+                val isSite = intent.extras?.getBoolean("isSite", false) == true
                 if (isSite) {
                     intent.removeExtra("isSite")
                     try {
                         val localFile = File("$filesDir/cache/cache.txt")
                         MainActivity.referens.child("/admin/piasochnica/$fileName").getFile(localFile).addOnFailureListener {
-                            Toast.makeText(this@Pasochnica, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@Pasochnica, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                         }.await()
                         result = localFile.readText()
                         localFile.delete()
-                    } catch (e: Throwable) {
-                        Toast.makeText(this@Pasochnica, getString(by.carkva_gazeta.malitounik2.R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                    } catch (_: Throwable) {
+                        Toast.makeText(this@Pasochnica, getString(by.carkva_gazeta.malitounik.R.string.error_ch2), Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     try {
@@ -689,7 +690,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                                             for (c in resours) {
                                                 val unicode = UnicodeBlock.of(c)
                                                 unicode?.let {
-                                                    if (!(unicode.equals(UnicodeBlock.CYRILLIC) || unicode.equals(UnicodeBlock.CYRILLIC_SUPPLEMENTARY) || unicode.equals(UnicodeBlock.CYRILLIC_EXTENDED_A) || unicode.equals(UnicodeBlock.CYRILLIC_EXTENDED_B))) {
+                                                    if (!(unicode == UnicodeBlock.CYRILLIC || unicode == UnicodeBlock.CYRILLIC_SUPPLEMENTARY || unicode == UnicodeBlock.CYRILLIC_EXTENDED_A || unicode == UnicodeBlock.CYRILLIC_EXTENDED_B)) {
                                                         sb.append(c)
                                                     }
                                                 }
@@ -707,10 +708,10 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                                             val intent = Intent(this@Pasochnica, PiasochnicaSaveAsFileExplorer::class.java)
                                             intent.putExtra("fileName", fileName)
                                             mActivityResultFile.launch(intent)
-                                            Snackbar.make(binding.scrollView, getString(by.carkva_gazeta.malitounik2.R.string.save), Snackbar.LENGTH_LONG).apply {
-                                                setActionTextColor(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik2.R.color.colorWhite))
-                                                setTextColor(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik2.R.color.colorWhite))
-                                                setBackgroundTint(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik2.R.color.colorPrimary))
+                                            Snackbar.make(binding.scrollView, getString(by.carkva_gazeta.malitounik.R.string.save), Snackbar.LENGTH_LONG).apply {
+                                                setActionTextColor(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik.R.color.colorWhite))
+                                                setTextColor(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik.R.color.colorWhite))
+                                                setBackgroundTint(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik.R.color.colorPrimary))
                                                 show()
                                             }
                                         } else {
@@ -719,16 +720,16 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                                     }
                                 }
                             } else {
-                                Snackbar.make(binding.scrollView, getString(by.carkva_gazeta.malitounik2.R.string.error), Snackbar.LENGTH_LONG).apply {
-                                    setActionTextColor(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik2.R.color.colorWhite))
-                                    setTextColor(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik2.R.color.colorWhite))
-                                    setBackgroundTint(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik2.R.color.colorPrimary))
+                                Snackbar.make(binding.scrollView, getString(by.carkva_gazeta.malitounik.R.string.error), Snackbar.LENGTH_LONG).apply {
+                                    setActionTextColor(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik.R.color.colorWhite))
+                                    setTextColor(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik.R.color.colorWhite))
+                                    setBackgroundTint(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik.R.color.colorPrimary))
                                     show()
                                 }
                             }
                         }.await()
-                    } catch (e: Throwable) {
-                        Toast.makeText(this@Pasochnica, getString(by.carkva_gazeta.malitounik2.R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                    } catch (_: Throwable) {
+                        Toast.makeText(this@Pasochnica, getString(by.carkva_gazeta.malitounik.R.string.error_ch2), Toast.LENGTH_SHORT).show()
                     }
                 }
                 isHTML = result.contains("<!DOCTYPE HTML>", ignoreCase = true)
@@ -753,7 +754,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
             } else {
                 binding.apisanne.setText(content)
             }
-            Toast.makeText(this, getString(by.carkva_gazeta.malitounik2.R.string.no_internet), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(by.carkva_gazeta.malitounik.R.string.no_internet), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -769,14 +770,14 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                 if (result[i].substring(t1 + 1, t2) == fileName) {
                     MainActivity.referens.child("/" + result[i]).getFile(localFile).addOnCompleteListener {
                         if (it.isSuccessful) text = localFile.readText()
-                        else Toast.makeText(this@Pasochnica, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                        else Toast.makeText(this@Pasochnica, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                     }.await()
                     break
                 }
             }
-        } catch (e: Throwable) {
+        } catch (_: Throwable) {
             text = ""
-            Toast.makeText(this@Pasochnica, getString(by.carkva_gazeta.malitounik2.R.string.error_ch2), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@Pasochnica, getString(by.carkva_gazeta.malitounik.R.string.error_ch2), Toast.LENGTH_SHORT).show()
         }
         return text
     }
@@ -1062,7 +1063,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
             }
         } else {
             text?.let {
-                var result = HtmlCompat.toHtml(it, HtmlCompat.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL)
+                var result = it.toHtml(HtmlCompat.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL)
                 result = StringEscapeUtils.unescapeHtml4(result)
                 result = clearHtml(result)
                 result = clearColor(result)
@@ -1084,7 +1085,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
         val text = binding.apisanne.text
         if (isHTML) {
             text?.let {
-                var result = HtmlCompat.toHtml(it, HtmlCompat.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL)
+                var result = it.toHtml(HtmlCompat.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL)
                 result = StringEscapeUtils.unescapeHtml4(result)
                 result = clearHtml(result)
                 result = clearColor(result)
@@ -1189,12 +1190,12 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                     val subtext = editable.getSpans(startSelect, endSelect, ForegroundColorSpan::class.java)
                     var check = false
                     subtext.forEach {
-                        if (it.foregroundColor == ContextCompat.getColor(this, by.carkva_gazeta.malitounik2.R.color.colorPrimary)) {
+                        if (it.foregroundColor == ContextCompat.getColor(this, by.carkva_gazeta.malitounik.R.color.colorPrimary)) {
                             check = true
                             editable.removeSpan(it)
                         }
                     }
-                    if (!check) editable.setSpan(ForegroundColorSpan(ContextCompat.getColor(this, by.carkva_gazeta.malitounik2.R.color.colorPrimary)), startSelect, endSelect, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    if (!check) editable.setSpan(ForegroundColorSpan(ContextCompat.getColor(this, by.carkva_gazeta.malitounik.R.color.colorPrimary)), startSelect, endSelect, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 }
             } else {
                 val text = binding.apisanne.text.toString()

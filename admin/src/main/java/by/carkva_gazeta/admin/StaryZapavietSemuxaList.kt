@@ -42,7 +42,7 @@ class StaryZapavietSemuxaList : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        k = getSharedPreferences("biblia", Context.MODE_PRIVATE)
+        k = getSharedPreferences("biblia", MODE_PRIVATE)
         binding = ContentBibleBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.elvMain.selector = ContextCompat.getDrawable(this, R.drawable.selector_default)
@@ -276,7 +276,7 @@ class StaryZapavietSemuxaList : BaseActivity() {
         }
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.titleToolbar.setText(by.carkva_gazeta.malitounik2.R.string.stary_zapaviet)
+        binding.titleToolbar.setText(by.carkva_gazeta.malitounik.R.string.stary_zapaviet)
     }
 
     private fun resetTollbar(layoutParams: ViewGroup.LayoutParams) {

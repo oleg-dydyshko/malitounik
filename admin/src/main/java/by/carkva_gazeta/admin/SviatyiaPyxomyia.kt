@@ -19,11 +19,13 @@ import android.widget.Toast
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.transition.TransitionManager
 import by.carkva_gazeta.admin.databinding.AdminSviatyBinding
 import by.carkva_gazeta.admin.databinding.SimpleListItem1Binding
-import by.carkva_gazeta.malitounik2.MainActivity
-import by.carkva_gazeta.malitounik2.Settings
+import by.carkva_gazeta.malitounik.MainActivity
+import by.carkva_gazeta.malitounik.Settings
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -94,7 +96,7 @@ class SviatyiaPyxomyia : BaseActivity(), View.OnClickListener, DialogEditImage.D
                     error = true
                 }
             }.await()
-        } catch (e: Throwable) {
+        } catch (_: Throwable) {
             error = true
         }
         if (error && count < 3) {
@@ -102,7 +104,7 @@ class SviatyiaPyxomyia : BaseActivity(), View.OnClickListener, DialogEditImage.D
             return
         }
         if (error) {
-            Toast.makeText(this@SviatyiaPyxomyia, getString(by.carkva_gazeta.malitounik2.R.string.error_ch2), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@SviatyiaPyxomyia, getString(by.carkva_gazeta.malitounik.R.string.error_ch2), Toast.LENGTH_SHORT).show()
             binding.progressBar2.visibility = View.GONE
             return
         }
@@ -142,7 +144,7 @@ class SviatyiaPyxomyia : BaseActivity(), View.OnClickListener, DialogEditImage.D
         }
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik2.R.string.admin_sviatya_pyxomyia)
+        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik.R.string.admin_sviatya_pyxomyia)
     }
 
     private fun fullTextTollbar() {
@@ -208,7 +210,7 @@ class SviatyiaPyxomyia : BaseActivity(), View.OnClickListener, DialogEditImage.D
                 binding.progressBar2.visibility = View.GONE
             }
         } else {
-            Toast.makeText(this, getString(by.carkva_gazeta.malitounik2.R.string.no_internet), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(by.carkva_gazeta.malitounik.R.string.no_internet), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -290,7 +292,7 @@ class SviatyiaPyxomyia : BaseActivity(), View.OnClickListener, DialogEditImage.D
     }
 
     override fun onBack() {
-        if (binding.scrollpreView.visibility == View.VISIBLE) {
+        if (binding.scrollpreView.isVisible) {
             binding.scrollpreView.visibility = View.GONE
             binding.scrollView.visibility = View.VISIBLE
         } else {
@@ -300,7 +302,7 @@ class SviatyiaPyxomyia : BaseActivity(), View.OnClickListener, DialogEditImage.D
 
     override fun onPrepareMenu(menu: Menu) {
         val editItem = menu.findItem(R.id.action_preview)
-        if (binding.scrollpreView.visibility == View.GONE) {
+        if (binding.scrollpreView.isGone) {
             editItem.icon = ContextCompat.getDrawable(this, R.drawable.natatka_edit)
         } else {
             editItem.icon = ContextCompat.getDrawable(this, R.drawable.natatka)
@@ -319,7 +321,7 @@ class SviatyiaPyxomyia : BaseActivity(), View.OnClickListener, DialogEditImage.D
             return true
         }
         if (id == R.id.action_preview) {
-            if (binding.scrollpreView.visibility == View.VISIBLE) {
+            if (binding.scrollpreView.isVisible) {
                 binding.scrollpreView.visibility = View.GONE
                 binding.scrollView.visibility = View.VISIBLE
                 invalidateOptionsMenu()
@@ -327,7 +329,7 @@ class SviatyiaPyxomyia : BaseActivity(), View.OnClickListener, DialogEditImage.D
                 binding.preView.text = HtmlCompat.fromHtml(binding.sviaty.text.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY).trim()
                 binding.scrollpreView.visibility = View.VISIBLE
                 binding.scrollView.visibility = View.GONE
-                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(binding.sviaty.windowToken, 0)
                 invalidateOptionsMenu()
             }
@@ -379,21 +381,21 @@ class SviatyiaPyxomyia : BaseActivity(), View.OnClickListener, DialogEditImage.D
                         }
                         MainActivity.referens.child("/chytanne/sviatyja/opisanie13.json").putFile(Uri.fromFile(localFile)).addOnCompleteListener {
                             if (it.isSuccessful) {
-                                Toast.makeText(this@SviatyiaPyxomyia, getString(by.carkva_gazeta.malitounik2.R.string.save), Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@SviatyiaPyxomyia, getString(by.carkva_gazeta.malitounik.R.string.save), Toast.LENGTH_SHORT).show()
                             } else {
-                                Toast.makeText(this@SviatyiaPyxomyia, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@SviatyiaPyxomyia, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                             }
                         }.await()
                     } else {
-                        Toast.makeText(this@SviatyiaPyxomyia, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@SviatyiaPyxomyia, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                     }
-                } catch (e: Throwable) {
-                    Toast.makeText(this@SviatyiaPyxomyia, getString(by.carkva_gazeta.malitounik2.R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                } catch (_: Throwable) {
+                    Toast.makeText(this@SviatyiaPyxomyia, getString(by.carkva_gazeta.malitounik.R.string.error_ch2), Toast.LENGTH_SHORT).show()
                 }
                 binding.progressBar2.visibility = View.GONE
             }
         } else {
-            Toast.makeText(this, getString(by.carkva_gazeta.malitounik2.R.string.no_internet), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(by.carkva_gazeta.malitounik.R.string.no_internet), Toast.LENGTH_SHORT).show()
         }
     }
 

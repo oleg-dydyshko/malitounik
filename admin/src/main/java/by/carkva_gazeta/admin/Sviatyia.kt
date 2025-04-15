@@ -22,12 +22,14 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.transition.TransitionManager
 import by.carkva_gazeta.admin.databinding.AdminSviatyiaBinding
 import by.carkva_gazeta.admin.databinding.SimpleListItem1Binding
 import by.carkva_gazeta.admin.databinding.SimpleListItemTipiconBinding
-import by.carkva_gazeta.malitounik2.MainActivity
-import by.carkva_gazeta.malitounik2.Settings
+import by.carkva_gazeta.malitounik.MainActivity
+import by.carkva_gazeta.malitounik.Settings
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -53,7 +55,7 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
     private val sviatyiaNew1 = ArrayList<ArrayList<String>>()
     private lateinit var caliandarDayOfYearList: ArrayList<ArrayList<String>>
     private val array: Array<String>
-        get() = resources.getStringArray(by.carkva_gazeta.malitounik2.R.array.admin_svity)
+        get() = resources.getStringArray(by.carkva_gazeta.malitounik.R.array.admin_svity)
     private val arrayList = ArrayList<Tipicon>()
     private var mLastClickTime: Long = 0
     private val storage: FirebaseStorage
@@ -61,7 +63,7 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
     private val referens: StorageReference
         get() = storage.reference
     private val caliandarMunLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
+        if (result.resultCode == RESULT_OK) {
             val intent = result.data
             if (intent != null) {
                 val position = intent.getIntExtra("position", 0)
@@ -93,14 +95,14 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
         super.onPause()
         urlJob?.cancel()
         resetTollbarJob?.cancel()
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(binding.appBarLayout2.windowToken, 0)
         binding.apisanne.onFocusChangeListener = null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        k = getSharedPreferences("biblia", Context.MODE_PRIVATE)
+        k = getSharedPreferences("biblia", MODE_PRIVATE)
         if (savedInstanceState != null) {
             setedit = savedInstanceState.getBoolean("setedit")
         }
@@ -111,11 +113,11 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
         val dayOfYear = intent.extras?.getInt("dayOfYear") ?: cal[Calendar.DAY_OF_YEAR]
         caliandarDayOfYearList = MenuCaliandar.getDataCalaindar(dayOfYear = dayOfYear, year = cal[Calendar.YEAR])
         arrayList.add(Tipicon(0, "Няма"))
-        arrayList.add(Tipicon(by.carkva_gazeta.malitounik2.R.drawable.znaki_krest, "З вялікай вячэрняй і вялікім услаўленьнем на ютрані"))
-        arrayList.add(Tipicon(by.carkva_gazeta.malitounik2.R.drawable.znaki_krest_v_kruge, "Двунадзясятыя і вялікія сьвяты"))
-        arrayList.add(Tipicon(by.carkva_gazeta.malitounik2.R.drawable.znaki_krest_v_polukruge, "З ліцьцёй на вячэрні"))
-        arrayList.add(Tipicon(by.carkva_gazeta.malitounik2.R.drawable.znaki_ttk, "З штодзённай вячэрняй і вялікім услаўленьнем на ютрані"))
-        arrayList.add(Tipicon(by.carkva_gazeta.malitounik2.R.drawable.znaki_ttk_black, "З штодзённай вячэрняй і малым услаўленьнем на ютрані"))
+        arrayList.add(Tipicon(by.carkva_gazeta.malitounik.R.drawable.znaki_krest, "З вялікай вячэрняй і вялікім услаўленьнем на ютрані"))
+        arrayList.add(Tipicon(by.carkva_gazeta.malitounik.R.drawable.znaki_krest_v_kruge, "Двунадзясятыя і вялікія сьвяты"))
+        arrayList.add(Tipicon(by.carkva_gazeta.malitounik.R.drawable.znaki_krest_v_polukruge, "З ліцьцёй на вячэрні"))
+        arrayList.add(Tipicon(by.carkva_gazeta.malitounik.R.drawable.znaki_ttk, "З штодзённай вячэрняй і вялікім услаўленьнем на ютрані"))
+        arrayList.add(Tipicon(by.carkva_gazeta.malitounik.R.drawable.znaki_ttk_black, "З штодзённай вячэрняй і малым услаўленьнем на ютрані"))
         binding.actionBold.setOnClickListener(this)
         binding.actionEm.setOnClickListener(this)
         binding.actionRed.setOnClickListener(this)
@@ -129,8 +131,8 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
     private fun setDate(count: Int = 0) {
         if (Settings.isNetworkAvailable(this)) {
             binding.progressBar2.visibility = View.VISIBLE
-            val munName = resources.getStringArray(by.carkva_gazeta.malitounik2.R.array.meciac_smoll)
-            binding.date.text = getString(by.carkva_gazeta.malitounik2.R.string.admin_date, caliandarDayOfYearList[0][1].toInt(), munName[caliandarDayOfYearList[0][2].toInt()])
+            val munName = resources.getStringArray(by.carkva_gazeta.malitounik.R.array.meciac_smoll)
+            binding.date.text = getString(by.carkva_gazeta.malitounik.R.string.admin_date, caliandarDayOfYearList[0][1].toInt(), munName[caliandarDayOfYearList[0][2].toInt()])
             urlJob?.cancel()
             urlJob = CoroutineScope(Dispatchers.Main).launch {
                 try {
@@ -138,7 +140,7 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
                     val localFile = File("$filesDir/cache/cache.txt")
                     referens.child("/chytanne/sviatyja/opisanie" + (caliandarDayOfYearList[0][2].toInt() + 1) + ".json").getFile(localFile).addOnCompleteListener {
                         if (it.isSuccessful) builder = localFile.readText()
-                        else Toast.makeText(this@Sviatyia, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                        else Toast.makeText(this@Sviatyia, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                     }.await()
                     val gson = Gson()
                     builder = if (builder != "") {
@@ -146,14 +148,14 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
                         val arrayList: ArrayList<String> = gson.fromJson(builder, type)
                         arrayList[caliandarDayOfYearList[0][1].toInt() - 1]
                     } else {
-                        getString(by.carkva_gazeta.malitounik2.R.string.error)
+                        getString(by.carkva_gazeta.malitounik.R.string.error)
                     }
                     binding.apisanne.setText(builder)
                     val localFile2 = File("$filesDir/cache/cache2.txt")
                     var builder2 = ""
                     referens.child("/calendarsviatyia.txt").getFile(localFile2).addOnCompleteListener {
                         if (it.isSuccessful) builder2 = localFile2.readText()
-                        else Toast.makeText(this@Sviatyia, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                        else Toast.makeText(this@Sviatyia, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                     }.await()
                     if (builder2 != "") {
                         val line = builder2.split("\n")
@@ -183,20 +185,20 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
                         else znaki.toInt()
                         binding.spinnerZnak.setSelection(position2)
                     } else {
-                        binding.sviaty.setText(getString(by.carkva_gazeta.malitounik2.R.string.error))
-                        Toast.makeText(this@Sviatyia, getString(by.carkva_gazeta.malitounik2.R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                        binding.sviaty.setText(getString(by.carkva_gazeta.malitounik.R.string.error))
+                        Toast.makeText(this@Sviatyia, getString(by.carkva_gazeta.malitounik.R.string.error_ch2), Toast.LENGTH_SHORT).show()
                     }
-                } catch (e: Throwable) {
-                    Toast.makeText(this@Sviatyia, getString(by.carkva_gazeta.malitounik2.R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                } catch (_: Throwable) {
+                    Toast.makeText(this@Sviatyia, getString(by.carkva_gazeta.malitounik.R.string.error_ch2), Toast.LENGTH_SHORT).show()
                 }
-                if ((binding.apisanne.text.toString() == getString(by.carkva_gazeta.malitounik2.R.string.error) || binding.sviaty.text.toString() == getString(by.carkva_gazeta.malitounik2.R.string.error)) && count < 3) {
+                if ((binding.apisanne.text.toString() == getString(by.carkva_gazeta.malitounik.R.string.error) || binding.sviaty.text.toString() == getString(by.carkva_gazeta.malitounik.R.string.error)) && count < 3) {
                     setDate(count + 1)
                 } else {
                     binding.progressBar2.visibility = View.GONE
                 }
             }
         } else {
-            Toast.makeText(this, getString(by.carkva_gazeta.malitounik2.R.string.no_internet), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(by.carkva_gazeta.malitounik.R.string.no_internet), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -206,7 +208,7 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
         }
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik2.R.string.sviatyia)
+        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik.R.string.sviatyia)
     }
 
     private fun fullTextTollbar() {
@@ -238,7 +240,7 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
     }
 
     override fun onBack() {
-        if (binding.scrollpreView.visibility == View.VISIBLE) {
+        if (binding.scrollpreView.isVisible) {
             binding.scrollpreView.visibility = View.GONE
             binding.scrollView.visibility = View.VISIBLE
         } else {
@@ -249,7 +251,7 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
 
     override fun onPrepareMenu(menu: Menu) {
         val editItem = menu.findItem(R.id.action_preview)
-        if (binding.scrollpreView.visibility == View.GONE) {
+        if (binding.scrollpreView.isGone) {
             editItem.icon = ContextCompat.getDrawable(this, R.drawable.natatka_edit)
         } else {
             editItem.icon = ContextCompat.getDrawable(this, R.drawable.natatka)
@@ -296,7 +298,7 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
             return true
         }
         if (id == R.id.action_preview) {
-            if (binding.scrollpreView.visibility == View.VISIBLE) {
+            if (binding.scrollpreView.isVisible) {
                 binding.scrollpreView.visibility = View.GONE
                 binding.scrollView.visibility = View.VISIBLE
                 invalidateOptionsMenu()
@@ -308,7 +310,7 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
                 binding.preView.text = HtmlCompat.fromHtml(textApisanne, HtmlCompat.FROM_HTML_MODE_LEGACY).trim()
                 binding.scrollpreView.visibility = View.VISIBLE
                 binding.scrollView.visibility = View.GONE
-                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(binding.apisanne.windowToken, 0)
                 invalidateOptionsMenu()
             }
@@ -403,10 +405,10 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
         val logFile = File("$filesDir/cache/log.txt")
         var error = false
         logFile.writer().use {
-            it.write(getString(by.carkva_gazeta.malitounik2.R.string.check_update_resourse))
+            it.write(getString(by.carkva_gazeta.malitounik.R.string.check_update_resourse))
         }
         MainActivity.referens.child("/admin/log.txt").putFile(Uri.fromFile(logFile)).addOnFailureListener {
-            Toast.makeText(this@Sviatyia, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@Sviatyia, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
             error = true
         }.await()
         if (error && count < 3) {
@@ -420,7 +422,7 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
                 var checkSviatyai = false
                 val data = caliandarDayOfYearList[0][1].toInt()
                 val mun = caliandarDayOfYearList[0][2].toInt()
-                if (!(name == getString(by.carkva_gazeta.malitounik2.R.string.error) || name == "")) {
+                if (!(name == getString(by.carkva_gazeta.malitounik.R.string.error) || name == "")) {
                     var style = 8
                     when (bold) {
                         0 -> style = 6
@@ -449,7 +451,7 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
                                 checkSviatyai = true
                             }
                         } else {
-                            Toast.makeText(this@Sviatyia, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@Sviatyia, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                         }
                     }.await()
                     var sw3 = ""
@@ -469,9 +471,9 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
                         referens.child("/calendarsviatyia.txt").putFile(Uri.fromFile(localFile3)).await()
                     }
                 } else {
-                    Toast.makeText(this@Sviatyia, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@Sviatyia, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                 }
-                if (!(spaw == getString(by.carkva_gazeta.malitounik2.R.string.error) || spaw == "")) {
+                if (!(spaw == getString(by.carkva_gazeta.malitounik.R.string.error) || spaw == "")) {
                     val localFile = File("$filesDir/cache/cache.txt")
                     val localFile4 = File("$filesDir/cache/cache4.txt")
                     var builder = ""
@@ -479,7 +481,7 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
                         if (it.isSuccessful) {
                             builder = localFile.readText()
                         } else {
-                            Toast.makeText(this@Sviatyia, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@Sviatyia, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                         }
                     }.await()
                     val gson = Gson()
@@ -494,20 +496,20 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
                     if (builder != "") {
                         referens.child("/chytanne/sviatyja/opisanie" + (mun + 1) + ".json").putFile(Uri.fromFile(localFile4)).addOnCompleteListener { task ->
                             if (task.isSuccessful) {
-                                Toast.makeText(this@Sviatyia, getString(by.carkva_gazeta.malitounik2.R.string.save), Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@Sviatyia, getString(by.carkva_gazeta.malitounik.R.string.save), Toast.LENGTH_SHORT).show()
                             } else {
-                                Toast.makeText(this@Sviatyia, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@Sviatyia, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                             }
                         }.await()
                     }
                 } else {
-                    Toast.makeText(this@Sviatyia, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@Sviatyia, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                 }
                 if (checkSviatyai) saveLogFile()
                 binding.progressBar2.visibility = View.GONE
             }
         } else {
-            Toast.makeText(this, getString(by.carkva_gazeta.malitounik2.R.string.no_internet), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(by.carkva_gazeta.malitounik.R.string.no_internet), Toast.LENGTH_SHORT).show()
         }
     }
 

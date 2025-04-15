@@ -46,7 +46,7 @@ class DialogPasochnicaFileName : DialogFragment() {
                     editPosition -= 1
                     edit = newEdit
                     activity?.let {
-                        Toast.makeText(it, getString(by.carkva_gazeta.malitounik2.R.string.admin_cyrylic_no_support), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(it, getString(by.carkva_gazeta.malitounik.R.string.admin_cyrylic_no_support), Toast.LENGTH_SHORT).show()
                     }
                 }
                 if (!edit.contains(".php", true)) {
@@ -78,7 +78,7 @@ class DialogPasochnicaFileName : DialogFragment() {
         if (context is Activity) {
             mListener = try {
                 context as DialogPasochnicaFileNameListener
-            } catch (e: ClassCastException) {
+            } catch (_: ClassCastException) {
                 throw ClassCastException("$context must implement DialogPasochnicaFileNameListener")
             }
         }
@@ -92,7 +92,7 @@ class DialogPasochnicaFileName : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         oldFileName = arguments?.getString("oldFileName") ?: "new_file.html"
-        isSite = arguments?.getBoolean("isSite") ?: false
+        isSite = arguments?.getBoolean("isSite") == true
     }
 
     override fun onResume() {
@@ -121,7 +121,7 @@ class DialogPasochnicaFileName : DialogFragment() {
         activity?.let {
             _binding = DialogEditviewDisplayBinding.inflate(layoutInflater)
             builder = AlertDialog.Builder(it, R.style.AlertDialogTheme)
-            binding.title.text = getString(by.carkva_gazeta.malitounik2.R.string.set_file_name)
+            binding.title.text = getString(by.carkva_gazeta.malitounik.R.string.set_file_name)
             if (arguments?.getBoolean("saveAs") == true) binding.content.addTextChangedListener(textWatcher)
             val text = if (savedInstanceState != null) {
                 binding.content.setText(savedInstanceState.getString("fileName"))
@@ -134,8 +134,8 @@ class DialogPasochnicaFileName : DialogFragment() {
             if (t2 != -1) {
                 binding.content.setSelection(0, t2)
             }
-            binding.content.setTextColor(ContextCompat.getColor(it, by.carkva_gazeta.malitounik2.R.color.colorPrimary_text))
-            binding.content.setBackgroundResource(by.carkva_gazeta.malitounik2.R.color.colorWhite)
+            binding.content.setTextColor(ContextCompat.getColor(it, by.carkva_gazeta.malitounik.R.color.colorPrimary_text))
+            binding.content.setBackgroundResource(by.carkva_gazeta.malitounik.R.color.colorWhite)
             binding.content.requestFocus()
             binding.content.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_GO) {
@@ -144,23 +144,23 @@ class DialogPasochnicaFileName : DialogFragment() {
                 false
             }
             binding.content.imeOptions = EditorInfo.IME_ACTION_GO
-            builder.setNegativeButton(resources.getString(by.carkva_gazeta.malitounik2.R.string.cansel)) { dialog: DialogInterface, _: Int ->
+            builder.setNegativeButton(resources.getString(by.carkva_gazeta.malitounik.R.string.cansel)) { dialog: DialogInterface, _: Int ->
                 val imm12 = it.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm12.hideSoftInputFromWindow(binding.content.windowToken, 0)
                 dialog.cancel()
             }
-            builder.setPositiveButton(resources.getString(by.carkva_gazeta.malitounik2.R.string.ok), null)
+            builder.setPositiveButton(resources.getString(by.carkva_gazeta.malitounik.R.string.ok), null)
         }
         builder.setView(binding.root)
         return builder.create()
     }
 
     private fun setFileName() {
-        val saveAs = arguments?.getBoolean("saveAs") ?: true
+        val saveAs = arguments?.getBoolean("saveAs") != false
         var fileName = binding.content.text.toString()
         if (fileName == "") {
             val gc = Calendar.getInstance()
-            val mun = resources.getStringArray(by.carkva_gazeta.malitounik2.R.array.meciac_smoll)
+            val mun = resources.getStringArray(by.carkva_gazeta.malitounik.R.array.meciac_smoll)
             fileName = gc[Calendar.DATE].toString() + "_" + mun[gc[Calendar.MONTH]] + "_" + gc[Calendar.YEAR] + "_" + gc[Calendar.HOUR_OF_DAY] + ":" + gc[Calendar.MINUTE]
         }
         mListener?.setFileName(oldFileName, fileName, isSite, saveAs)

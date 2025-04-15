@@ -30,7 +30,7 @@ class DialogDeliteAllBackCopy : DialogFragment() {
         if (context is Activity) {
             mListener = try {
                 context as DialogDeliteAllBackCopyListener
-            } catch (e: ClassCastException) {
+            } catch (_: ClassCastException) {
                 throw ClassCastException("$activity must implement DialogDeliteAllBackCopyListener")
             }
         }
@@ -40,11 +40,11 @@ class DialogDeliteAllBackCopy : DialogFragment() {
         activity?.let {
             _binding = DialogTextviewDisplayBinding.inflate(layoutInflater)
             val builder = AlertDialog.Builder(it, R.style.AlertDialogTheme)
-            binding.title.text = resources.getString(by.carkva_gazeta.malitounik2.R.string.remove)
-            binding.content.text = getString(by.carkva_gazeta.malitounik2.R.string.del_all_back_copy)
-            binding.content.setTextColor(ContextCompat.getColor(it, by.carkva_gazeta.malitounik2.R.color.colorPrimary_text))
-            builder.setPositiveButton(resources.getText(by.carkva_gazeta.malitounik2.R.string.ok)) { _: DialogInterface?, _: Int -> mListener.deliteAllBackCopy() }
-            builder.setNegativeButton(resources.getString(by.carkva_gazeta.malitounik2.R.string.cansel)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
+            binding.title.text = resources.getString(by.carkva_gazeta.malitounik.R.string.remove)
+            binding.content.text = getString(by.carkva_gazeta.malitounik.R.string.del_all_back_copy)
+            binding.content.setTextColor(ContextCompat.getColor(it, by.carkva_gazeta.malitounik.R.color.colorPrimary_text))
+            builder.setPositiveButton(resources.getText(by.carkva_gazeta.malitounik.R.string.ok)) { _: DialogInterface?, _: Int -> mListener.deliteAllBackCopy() }
+            builder.setNegativeButton(resources.getString(by.carkva_gazeta.malitounik.R.string.cansel)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
             builder.setView(binding.root)
             alert = builder.create()
         }

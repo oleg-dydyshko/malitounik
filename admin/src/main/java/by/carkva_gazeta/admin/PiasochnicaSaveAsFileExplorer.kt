@@ -20,8 +20,8 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.transition.TransitionManager
 import by.carkva_gazeta.admin.databinding.AdminDialigSaveAsBinding
 import by.carkva_gazeta.admin.databinding.AdminSimpleListItemBinding
-import by.carkva_gazeta.malitounik2.MainActivity
-import by.carkva_gazeta.malitounik2.Settings
+import by.carkva_gazeta.malitounik.MainActivity
+import by.carkva_gazeta.malitounik.Settings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -63,7 +63,7 @@ class PiasochnicaSaveAsFileExplorer : BaseActivity(), DialogPasochnicaMkDir.Dial
                 if (newEdit != edit) {
                     editPosition -= 1
                     edit = newEdit
-                    Toast.makeText(this@PiasochnicaSaveAsFileExplorer, getString(by.carkva_gazeta.malitounik2.R.string.admin_cyrylic_no_support), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@PiasochnicaSaveAsFileExplorer, getString(by.carkva_gazeta.malitounik.R.string.admin_cyrylic_no_support), Toast.LENGTH_SHORT).show()
                 }
                 if (!edit.contains(".php", true)) {
                     edit = edit.replace("-", "_")
@@ -92,7 +92,7 @@ class PiasochnicaSaveAsFileExplorer : BaseActivity(), DialogPasochnicaMkDir.Dial
         intent.putExtra("oldFileName", oldName)
         intent.putExtra("fileName", newName)
         intent.putExtra("setDir", true)
-        setResult(Activity.RESULT_OK, intent)
+        setResult(RESULT_OK, intent)
         onBack()
     }
 
@@ -152,7 +152,7 @@ class PiasochnicaSaveAsFileExplorer : BaseActivity(), DialogPasochnicaMkDir.Dial
             }
         }
         setTollbarTheme()
-        setResult(Activity.RESULT_CANCELED)
+        setResult(RESULT_CANCELED)
     }
 
     private fun setTollbarTheme() {
@@ -164,7 +164,7 @@ class PiasochnicaSaveAsFileExplorer : BaseActivity(), DialogPasochnicaMkDir.Dial
         }
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik2.R.string.save_as_up)
+        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik.R.string.save_as_up)
         binding.subtitleToolbar.text = filenameTitle
         if (filenameTitle == "") binding.subtitleToolbar.visibility = View.GONE
     }
@@ -203,7 +203,7 @@ class PiasochnicaSaveAsFileExplorer : BaseActivity(), DialogPasochnicaMkDir.Dial
         var editText = binding.edittext.text.toString()
         if (editText == "") {
             val gc = Calendar.getInstance()
-            val mun = resources.getStringArray(by.carkva_gazeta.malitounik2.R.array.meciac_smoll)
+            val mun = resources.getStringArray(by.carkva_gazeta.malitounik.R.array.meciac_smoll)
             editText = gc[Calendar.DATE].toString() + "_" + mun[gc[Calendar.MONTH]] + "_" + gc[Calendar.YEAR] + "_" + gc[Calendar.HOUR_OF_DAY] + ":" + gc[Calendar.MINUTE]
         }
         val intent = Intent()
@@ -211,7 +211,7 @@ class PiasochnicaSaveAsFileExplorer : BaseActivity(), DialogPasochnicaMkDir.Dial
         intent.putExtra("oldFileName", oldName)
         intent.putExtra("fileName", editText)
         intent.putExtra("setDir", false)
-        setResult(Activity.RESULT_OK, intent)
+        setResult(RESULT_OK, intent)
         onBack()
     }
 
@@ -242,14 +242,14 @@ class PiasochnicaSaveAsFileExplorer : BaseActivity(), DialogPasochnicaMkDir.Dial
                         }
                     }
                     fileList.addAll(temp)
-                } catch (e: Throwable) {
-                    Toast.makeText(this@PiasochnicaSaveAsFileExplorer, getString(by.carkva_gazeta.malitounik2.R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                } catch (_: Throwable) {
+                    Toast.makeText(this@PiasochnicaSaveAsFileExplorer, getString(by.carkva_gazeta.malitounik.R.string.error_ch2), Toast.LENGTH_SHORT).show()
                 }
                 binding.progressBar2.visibility = View.GONE
                 adapter.notifyDataSetChanged()
             }
         } else {
-            Toast.makeText(this, getString(by.carkva_gazeta.malitounik2.R.string.no_internet), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(by.carkva_gazeta.malitounik.R.string.no_internet), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -297,7 +297,7 @@ class PiasochnicaSaveAsFileExplorer : BaseActivity(), DialogPasochnicaMkDir.Dial
             } else {
                 viewHolder.text.typeface = createFont(Typeface.NORMAL)
             }
-            viewHolder.text.background = ContextCompat.getDrawable(mContext, by.carkva_gazeta.malitounik2.R.color.colorWhite)
+            viewHolder.text.background = ContextCompat.getDrawable(mContext, by.carkva_gazeta.malitounik.R.color.colorWhite)
             val image = ContextCompat.getDrawable(mContext, fileList[position].resources)
             val density = resources.displayMetrics.density.toInt()
             image?.setBounds(0, 0, 48 * density, 48 * density)
@@ -307,10 +307,10 @@ class PiasochnicaSaveAsFileExplorer : BaseActivity(), DialogPasochnicaMkDir.Dial
 
         fun createFont(style: Int): Typeface? {
             return when (style) {
-                Typeface.BOLD -> ResourcesCompat.getFont(mContext, by.carkva_gazeta.malitounik2.R.font.robotocondensedbold)
-                Typeface.ITALIC -> ResourcesCompat.getFont(mContext, by.carkva_gazeta.malitounik2.R.font.robotocondenseditalic)
-                Typeface.BOLD_ITALIC -> ResourcesCompat.getFont(mContext, by.carkva_gazeta.malitounik2.R.font.robotocondensedbolditalic)
-                else -> ResourcesCompat.getFont(mContext, by.carkva_gazeta.malitounik2.R.font.robotocondensed)
+                Typeface.BOLD -> ResourcesCompat.getFont(mContext, by.carkva_gazeta.malitounik.R.font.robotocondensedbold)
+                Typeface.ITALIC -> ResourcesCompat.getFont(mContext, by.carkva_gazeta.malitounik.R.font.robotocondenseditalic)
+                Typeface.BOLD_ITALIC -> ResourcesCompat.getFont(mContext, by.carkva_gazeta.malitounik.R.font.robotocondensedbolditalic)
+                else -> ResourcesCompat.getFont(mContext, by.carkva_gazeta.malitounik.R.font.robotocondensed)
             }
         }
     }

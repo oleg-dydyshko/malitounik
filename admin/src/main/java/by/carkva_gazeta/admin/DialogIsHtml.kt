@@ -25,7 +25,7 @@ class DialogIsHtml : DialogFragment() {
         if (context is Activity) {
             mListener = try {
                 context as DialogIsHtmlListener
-            } catch (e: ClassCastException) {
+            } catch (_: ClassCastException) {
                 throw ClassCastException("$activity must implement DialogIsHtmlListener")
             }
         }
@@ -40,18 +40,18 @@ class DialogIsHtml : DialogFragment() {
         activity?.let {
             _binding = DialogTextviewDisplayBinding.inflate(layoutInflater)
             val builder = AlertDialog.Builder(it, R.style.AlertDialogTheme)
-            binding.title.text = getString(by.carkva_gazeta.malitounik2.R.string.is_html_title)
-            binding.content.setText(by.carkva_gazeta.malitounik2.R.string.is_html)
-            binding.content.setTextColor(ContextCompat.getColor(it, by.carkva_gazeta.malitounik2.R.color.colorPrimary_text))
+            binding.title.text = getString(by.carkva_gazeta.malitounik.R.string.is_html_title)
+            binding.content.setText(by.carkva_gazeta.malitounik.R.string.is_html)
+            binding.content.setTextColor(ContextCompat.getColor(it, by.carkva_gazeta.malitounik.R.color.colorPrimary_text))
             builder.setView(binding.root)
-            val saveAs = arguments?.getBoolean("saveAs") ?: true
-            builder.setPositiveButton(resources.getText(by.carkva_gazeta.malitounik2.R.string.sabytie_yes)) { _: DialogInterface, _: Int ->
+            val saveAs = arguments?.getBoolean("saveAs") != false
+            builder.setPositiveButton(resources.getText(by.carkva_gazeta.malitounik.R.string.sabytie_yes)) { _: DialogInterface, _: Int ->
                 mListener?.pasochnica(true, saveAs)
             }
-            builder.setNegativeButton(resources.getString(by.carkva_gazeta.malitounik2.R.string.sabytie_no)) { _: DialogInterface, _: Int ->
+            builder.setNegativeButton(resources.getString(by.carkva_gazeta.malitounik.R.string.sabytie_no)) { _: DialogInterface, _: Int ->
                 mListener?.pasochnica(false, saveAs)
             }
-            builder.setNeutralButton(resources.getString(by.carkva_gazeta.malitounik2.R.string.cansel)) { dialog: DialogInterface, _: Int ->
+            builder.setNeutralButton(resources.getString(by.carkva_gazeta.malitounik.R.string.cansel)) { dialog: DialogInterface, _: Int ->
                 dialog.cancel()
             }
             alert = builder.create()

@@ -33,7 +33,7 @@ class DialogImageFileLoad : DialogFragment() {
         if (context is Activity) {
             mListener = try {
                 context as DialogFileExplorerListener
-            } catch (e: ClassCastException) {
+            } catch (_: ClassCastException) {
                 throw ClassCastException("$context must implement DialogFileExplorerListener")
             }
         }
@@ -61,10 +61,10 @@ class DialogImageFileLoad : DialogFragment() {
             val path = arguments?.getString("path") ?: ""
             val file = File(path)
             Picasso.get().load(file).resize(600, 1000).onlyScaleDown().centerInside().into(binding.icon)
-            builder.setNegativeButton(getString(by.carkva_gazeta.malitounik2.R.string.cansel)) { dialog: DialogInterface, _: Int ->
+            builder.setNegativeButton(getString(by.carkva_gazeta.malitounik.R.string.cansel)) { dialog: DialogInterface, _: Int ->
                 dialog.cancel()
             }
-            builder.setPositiveButton(getString(by.carkva_gazeta.malitounik2.R.string.save_sabytie)) { _: DialogInterface?, _: Int ->
+            builder.setPositiveButton(getString(by.carkva_gazeta.malitounik.R.string.save_sabytie)) { _: DialogInterface?, _: Int ->
                 mListener?.onDialogFile(path)
             }
             alert = builder.create()

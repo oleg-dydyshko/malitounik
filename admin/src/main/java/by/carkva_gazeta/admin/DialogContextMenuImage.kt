@@ -30,7 +30,7 @@ class DialogContextMenuImage : DialogFragment() {
         if (context is Activity) {
             mListener = try {
                 context as DialogContextMenuImageListener
-            } catch (e: ClassCastException) {
+            } catch (_: ClassCastException) {
                 throw ClassCastException("$context must implement DialogContextMenuImageListener")
             }
         }
@@ -45,9 +45,9 @@ class DialogContextMenuImage : DialogFragment() {
         activity?.let {
             _binding = DialogContextDisplayBinding.inflate(layoutInflater)
             val builder = AlertDialog.Builder(it)
-            binding.title.text = getString(by.carkva_gazeta.malitounik2.R.string.admin_img_sviat)
-            binding.content.text = getString(by.carkva_gazeta.malitounik2.R.string.image_upload)
-            binding.content2.text = getString(by.carkva_gazeta.malitounik2.R.string.admin_opisanne_icon)
+            binding.title.text = getString(by.carkva_gazeta.malitounik.R.string.admin_img_sviat)
+            binding.content.text = getString(by.carkva_gazeta.malitounik.R.string.image_upload)
+            binding.content2.text = getString(by.carkva_gazeta.malitounik.R.string.admin_opisanne_icon)
             binding.content.setBackgroundResource(R.drawable.selector_default)
             binding.content2.setBackgroundResource(R.drawable.selector_default)
             builder.setView(binding.root)

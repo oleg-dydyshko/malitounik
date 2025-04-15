@@ -1,6 +1,5 @@
 package by.carkva_gazeta.admin
 
-import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
@@ -18,9 +17,10 @@ import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
-import by.carkva_gazeta.malitounik2.Settings
+import androidx.core.view.get
+import androidx.core.view.size
+import by.carkva_gazeta.malitounik.Settings
 import com.google.android.play.core.splitcompat.SplitCompat
-import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.ktx.appCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
@@ -39,9 +39,9 @@ abstract class BaseActivity : AppCompatActivity(), MenuProvider {
     private var ferstStart = false
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-        for (i in 0 until menu.size()) {
-            val item = menu.getItem(i)
-            val spanString = SpannableString(menu.getItem(i).title.toString())
+        for (i in 0 until menu.size) {
+            val item = menu[i]
+            val spanString = SpannableString(menu[i].title.toString())
             val end = spanString.length
             var itemFontSize = setFontInterface()
             if (itemFontSize > 22f) itemFontSize = 18f
@@ -64,9 +64,7 @@ abstract class BaseActivity : AppCompatActivity(), MenuProvider {
             applyOverrideConfiguration(this)
         }
         super.attachBaseContext(context)
-        if (checkmodulesAdmin()) {
-            SplitCompat.install(this)
-        }
+        SplitCompat.install(this)
         FirebaseApp.initializeApp(this)
         Firebase.appCheck.installAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.getInstance())
     }
@@ -84,7 +82,7 @@ abstract class BaseActivity : AppCompatActivity(), MenuProvider {
         })
         ferstStart = true
         mLastClickTime = SystemClock.elapsedRealtime()
-        k = getSharedPreferences("biblia", Context.MODE_PRIVATE)
+        k = getSharedPreferences("biblia", MODE_PRIVATE)
         dzenNoch = savedInstanceState?.getBoolean("dzenNoch", false) ?: getBaseDzenNoch()
         checkDzenNoch = dzenNoch
         val file1 = File("$filesDir/BookCache")
@@ -121,7 +119,7 @@ abstract class BaseActivity : AppCompatActivity(), MenuProvider {
     }
 
     fun setFontInterface(): Float {
-        val k = getSharedPreferences("biblia", Context.MODE_PRIVATE)
+        val k = getSharedPreferences("biblia", MODE_PRIVATE)
         return k.getFloat("fontSizeInterface", 20f)
     }
 
@@ -138,8 +136,8 @@ abstract class BaseActivity : AppCompatActivity(), MenuProvider {
             recreate()
         }
         if (Build.VERSION.SDK_INT >= 34) {
-            overrideActivityTransition(Activity.OVERRIDE_TRANSITION_OPEN, R.anim.alphain, R.anim.alphaout)
-            overrideActivityTransition(Activity.OVERRIDE_TRANSITION_CLOSE, R.anim.alphain, R.anim.alphaout)
+            overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, R.anim.alphain, R.anim.alphaout)
+            overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE, R.anim.alphain, R.anim.alphaout)
         } else {
             @Suppress("DEPRECATION") overridePendingTransition(R.anim.alphain, R.anim.alphaout)
         }
@@ -148,15 +146,5 @@ abstract class BaseActivity : AppCompatActivity(), MenuProvider {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean("dzenNoch", dzenNoch)
-    }
-
-    private fun checkmodulesAdmin(): Boolean {
-        val muduls = SplitInstallManagerFactory.create(this).installedModules
-        for (mod in muduls) {
-            if (mod == "admin") {
-                return true
-            }
-        }
-        return false
     }
 }

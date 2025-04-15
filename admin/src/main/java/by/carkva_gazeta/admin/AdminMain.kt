@@ -31,7 +31,7 @@ class AdminMain : BaseActivity() {
         binding = AdminMainBinding.inflate(layoutInflater)
         try {
             setContentView(binding.root)
-        } catch (t: Resources.NotFoundException) {
+        } catch (_: Resources.NotFoundException) {
             onBack()
             val i = baseContext.packageManager.getLaunchIntentForPackage(baseContext.packageName)
             i?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -94,7 +94,7 @@ class AdminMain : BaseActivity() {
         }
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik2.R.string.site_admin)
+        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik.R.string.site_admin)
     }
 
     private fun resetTollbar(layoutParams: ViewGroup.LayoutParams) {

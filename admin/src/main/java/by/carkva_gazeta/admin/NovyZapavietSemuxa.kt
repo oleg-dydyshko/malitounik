@@ -47,7 +47,7 @@ class NovyZapavietSemuxa : BaseActivity(), DialogBibleRazdel.DialogBibleRazdelLi
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        k = getSharedPreferences("biblia", Context.MODE_PRIVATE)
+        k = getSharedPreferences("biblia", MODE_PRIVATE)
         if (savedInstanceState != null) {
             setedit = savedInstanceState.getBoolean("setedit")
         }
@@ -174,7 +174,7 @@ class NovyZapavietSemuxa : BaseActivity(), DialogBibleRazdel.DialogBibleRazdelLi
             }
         }
         TabLayoutMediator(binding.tabLayout, binding.pager, false) { tab, position ->
-            tab.text = resources.getString(by.carkva_gazeta.malitounik2.R.string.razdzel) + " " + (position + 1)
+            tab.text = resources.getString(by.carkva_gazeta.malitounik.R.string.razdzel) + " " + (position + 1)
         }.attach()
         binding.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -194,7 +194,7 @@ class NovyZapavietSemuxa : BaseActivity(), DialogBibleRazdel.DialogBibleRazdelLi
         }
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik2.R.string.novy_zapaviet)
+        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik.R.string.novy_zapaviet)
         binding.subtitleToolbar.text = title
     }
 

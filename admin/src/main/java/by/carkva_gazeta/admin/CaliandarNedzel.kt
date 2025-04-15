@@ -17,7 +17,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.HtmlCompat
 import by.carkva_gazeta.admin.databinding.CaliandarNedelBinding
 import by.carkva_gazeta.admin.databinding.CaliandarNedzeliaBinding
-import by.carkva_gazeta.malitounik2.Settings
+import by.carkva_gazeta.malitounik.Settings
 import java.util.Calendar
 import java.util.GregorianCalendar
 
@@ -74,8 +74,8 @@ class CaliandarNedzel : BaseFragment(), AdapterView.OnItemClickListener {
 
     private class CaliandarNedzelListAdapter(private val mContext: Activity, private val niadzelia: ArrayList<ArrayList<String>>) : ArrayAdapter<ArrayList<String>>(mContext, R.layout.caliandar_nedel, niadzelia) {
         private val c = Calendar.getInstance()
-        private val munName = mContext.resources.getStringArray(by.carkva_gazeta.malitounik2.R.array.meciac_smoll)
-        private val nedelName = mContext.resources.getStringArray(by.carkva_gazeta.malitounik2.R.array.dni_nedeli)
+        private val munName = mContext.resources.getStringArray(by.carkva_gazeta.malitounik.R.array.meciac_smoll)
+        private val nedelName = mContext.resources.getStringArray(by.carkva_gazeta.malitounik.R.array.dni_nedeli)
 
         override fun getView(position: Int, rootView: View?, parent: ViewGroup): View {
             val view: View
@@ -112,8 +112,8 @@ class CaliandarNedzel : BaseFragment(), AdapterView.OnItemClickListener {
             } else {
                 viewHolder.linearView.setBackgroundResource(R.drawable.selector_default)
             }
-            if (niadzelia[position][3].toInt() != c[Calendar.YEAR]) viewHolder.textCalendar.text = mContext.getString(by.carkva_gazeta.malitounik2.R.string.tydzen_name3, nedelName[niadzelia[position][0].toInt()], niadzelia[position][1], munName[niadzelia[position][2].toInt()], niadzelia[position][3])
-            else viewHolder.textCalendar.text = mContext.getString(by.carkva_gazeta.malitounik2.R.string.tydzen_name2, nedelName[niadzelia[position][0].toInt()], niadzelia[position][1], munName[niadzelia[position][2].toInt()])
+            if (niadzelia[position][3].toInt() != c[Calendar.YEAR]) viewHolder.textCalendar.text = mContext.getString(by.carkva_gazeta.malitounik.R.string.tydzen_name3, nedelName[niadzelia[position][0].toInt()], niadzelia[position][1], munName[niadzelia[position][2].toInt()], niadzelia[position][3])
+            else viewHolder.textCalendar.text = mContext.getString(by.carkva_gazeta.malitounik.R.string.tydzen_name2, nedelName[niadzelia[position][0].toInt()], niadzelia[position][1], munName[niadzelia[position][2].toInt()])
             val sviatyia = niadzelia[position][4]
             viewHolder.textSviatyia.text = HtmlCompat.fromHtml(sviatyia, HtmlCompat.FROM_HTML_MODE_LEGACY)
             if (niadzelia[position][4].contains("no_sviatyia")) viewHolder.textSviatyia.visibility = View.GONE
@@ -129,7 +129,7 @@ class CaliandarNedzel : BaseFragment(), AdapterView.OnItemClickListener {
                     viewHolder.textCalendar.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorBezPosta))
                     viewHolder.textPost.setTextColor(ContextCompat.getColor(mContext, R.color.colorPrimary_text))
                     viewHolder.textPost.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorBezPosta))
-                    viewHolder.textPost.text = mContext.resources.getString(by.carkva_gazeta.malitounik2.R.string.No_post_n)
+                    viewHolder.textPost.text = mContext.resources.getString(by.carkva_gazeta.malitounik.R.string.No_post_n)
                 }
 
                 2 -> {
@@ -137,7 +137,7 @@ class CaliandarNedzel : BaseFragment(), AdapterView.OnItemClickListener {
                     viewHolder.textCalendar.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorPost))
                     viewHolder.textPost.setTextColor(ContextCompat.getColor(mContext, R.color.colorPrimary_text))
                     viewHolder.textPost.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorPost))
-                    viewHolder.textPost.text = mContext.resources.getString(by.carkva_gazeta.malitounik2.R.string.Post)
+                    viewHolder.textPost.text = mContext.resources.getString(by.carkva_gazeta.malitounik.R.string.Post)
                 }
 
                 3 -> {
@@ -155,7 +155,7 @@ class CaliandarNedzel : BaseFragment(), AdapterView.OnItemClickListener {
             if (niadzelia[position][7].contains("3")) {
                 viewHolder.textPost.setTextColor(ContextCompat.getColor(mContext, R.color.colorWhite))
                 viewHolder.textPost.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorStrogiPost))
-                viewHolder.textPost.text = mContext.resources.getString(by.carkva_gazeta.malitounik2.R.string.Strogi_post_n)
+                viewHolder.textPost.text = mContext.resources.getString(by.carkva_gazeta.malitounik.R.string.Strogi_post_n)
                 viewHolder.textPost.visibility = View.VISIBLE
             } else if (niadzelia[position][0].contains("6") && !(niadzelia[position][5].contains("1") || niadzelia[position][5].contains("2"))) { // Пятница
                 viewHolder.textPost.visibility = View.VISIBLE
@@ -165,10 +165,10 @@ class CaliandarNedzel : BaseFragment(), AdapterView.OnItemClickListener {
 
         fun createFont(style: Int): Typeface? {
             return when (style) {
-                Typeface.BOLD -> ResourcesCompat.getFont(mContext, by.carkva_gazeta.malitounik2.R.font.robotocondensedbold)
-                Typeface.ITALIC -> ResourcesCompat.getFont(mContext, by.carkva_gazeta.malitounik2.R.font.robotocondenseditalic)
-                Typeface.BOLD_ITALIC -> ResourcesCompat.getFont(mContext, by.carkva_gazeta.malitounik2.R.font.robotocondensedbolditalic)
-                else -> ResourcesCompat.getFont(mContext, by.carkva_gazeta.malitounik2.R.font.robotocondensed)
+                Typeface.BOLD -> ResourcesCompat.getFont(mContext, by.carkva_gazeta.malitounik.R.font.robotocondensedbold)
+                Typeface.ITALIC -> ResourcesCompat.getFont(mContext, by.carkva_gazeta.malitounik.R.font.robotocondenseditalic)
+                Typeface.BOLD_ITALIC -> ResourcesCompat.getFont(mContext, by.carkva_gazeta.malitounik.R.font.robotocondensedbolditalic)
+                else -> ResourcesCompat.getFont(mContext, by.carkva_gazeta.malitounik.R.font.robotocondensed)
             }
         }
     }

@@ -23,12 +23,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.graphics.scale
 import androidx.core.text.isDigitsOnly
 import androidx.transition.TransitionManager
 import by.carkva_gazeta.admin.databinding.AdminSviatyiaImageBinding
 import by.carkva_gazeta.admin.databinding.ListItemImageBinding
-import by.carkva_gazeta.malitounik2.MainActivity
-import by.carkva_gazeta.malitounik2.Settings
+import by.carkva_gazeta.malitounik.MainActivity
+import by.carkva_gazeta.malitounik.Settings
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -56,7 +57,7 @@ class SviatyiaImage : BaseActivity(), DialogDeliteImage.DialogDeliteListener, Ad
     private var position = 0
 
     private val mActivityResultFile = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        if (it.resultCode == Activity.RESULT_OK) {
+        if (it.resultCode == RESULT_OK) {
             val imageUri = it.data?.data
             imageUri?.let { image ->
                 val bitmap = if (Build.VERSION.SDK_INT >= 28) {
@@ -121,7 +122,7 @@ class SviatyiaImage : BaseActivity(), DialogDeliteImage.DialogDeliteListener, Ad
         }
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik2.R.string.admin_img_sviat)
+        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik.R.string.admin_img_sviat)
     }
 
     private fun fullTextTollbar() {
@@ -181,7 +182,7 @@ class SviatyiaImage : BaseActivity(), DialogDeliteImage.DialogDeliteListener, Ad
                 binding.progressBar2.visibility = View.GONE
             }
         } else {
-            Toast.makeText(this, getString(by.carkva_gazeta.malitounik2.R.string.no_internet), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(by.carkva_gazeta.malitounik.R.string.no_internet), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -224,7 +225,7 @@ class SviatyiaImage : BaseActivity(), DialogDeliteImage.DialogDeliteListener, Ad
                 if (it.name.contains("s_${day}_${mun}_")) {
                     val fileIcon = File("$filesDir/icons/" + it.name)
                     it.getFile(fileIcon).addOnFailureListener {
-                        Toast.makeText(this, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                     }.await()
                     var iconApisanne = ""
                     try {
@@ -250,7 +251,7 @@ class SviatyiaImage : BaseActivity(), DialogDeliteImage.DialogDeliteListener, Ad
             adapter.notifyDataSetChanged()
             binding.progressBar2.visibility = View.GONE
         } else {
-            Toast.makeText(this, getString(by.carkva_gazeta.malitounik2.R.string.no_internet), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(by.carkva_gazeta.malitounik.R.string.no_internet), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -267,7 +268,7 @@ class SviatyiaImage : BaseActivity(), DialogDeliteImage.DialogDeliteListener, Ad
         val time = fileOpisanie.lastModified()
         if (!fileOpisanie.exists() || time < update) {
             storageReference.getFile(fileOpisanie).addOnFailureListener {
-                Toast.makeText(this, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
             }.await()
         }
         val gson = Gson()
@@ -336,7 +337,7 @@ class SviatyiaImage : BaseActivity(), DialogDeliteImage.DialogDeliteListener, Ad
         intent.type = "*/*"
         intent.action = Intent.ACTION_GET_CONTENT
         intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/jpeg", "image/png"))
-        mActivityResultFile.launch(Intent.createChooser(intent, getString(by.carkva_gazeta.malitounik2.R.string.vybrac_file)))
+        mActivityResultFile.launch(Intent.createChooser(intent, getString(by.carkva_gazeta.malitounik.R.string.vybrac_file)))
     }
 
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -383,12 +384,12 @@ class SviatyiaImage : BaseActivity(), DialogDeliteImage.DialogDeliteListener, Ad
                     } catch (_: Throwable) {
                     }
                 }
-                val textViewApisanne: TextView? = getViewByPosition()?.findViewById(by.carkva_gazeta.admin.R.id.textViewApisanne)
+                val textViewApisanne: TextView? = getViewByPosition()?.findViewById(R.id.textViewApisanne)
                 textViewApisanne?.text = text
                 binding.progressBar2.visibility = View.GONE
             }
         } else {
-            Toast.makeText(this, getString(by.carkva_gazeta.malitounik2.R.string.no_internet), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(by.carkva_gazeta.malitounik.R.string.no_internet), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -434,7 +435,7 @@ class SviatyiaImage : BaseActivity(), DialogDeliteImage.DialogDeliteListener, Ad
                     newWidth = widthLinear
                     newHeight = newWidth / resoluton
                 }
-                return Bitmap.createScaledBitmap(it, newWidth.toInt(), newHeight.toInt(), false)
+                return it.scale(newWidth.toInt(), newHeight.toInt(), false)
             }
             return null
         }

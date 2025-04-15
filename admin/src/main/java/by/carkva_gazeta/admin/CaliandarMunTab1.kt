@@ -13,11 +13,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import by.carkva_gazeta.admin.databinding.CalendarTab1Binding
-import by.carkva_gazeta.malitounik2.Settings
+import by.carkva_gazeta.malitounik.Settings
 import java.util.Calendar
 
 class CaliandarMunTab1 : BaseFragment() {
-    private val names get() = resources.getStringArray(by.carkva_gazeta.malitounik2.R.array.meciac2)
+    private val names get() = resources.getStringArray(by.carkva_gazeta.malitounik.R.array.meciac2)
     private var day = 0
     private var posMun = 0
     private var yearG = 0
@@ -39,7 +39,7 @@ class CaliandarMunTab1 : BaseFragment() {
         if (context is Activity) {
             munListener = try {
                 context as CaliandarMunTab1Listener
-            } catch (e: ClassCastException) {
+            } catch (_: ClassCastException) {
                 throw ClassCastException("$activity must implement CaliandarMunTab1Listener")
             }
         }
@@ -78,10 +78,10 @@ class CaliandarMunTab1 : BaseFragment() {
 
     fun createFont(style: Int): Typeface? {
         return when (style) {
-            Typeface.BOLD -> ResourcesCompat.getFont(requireActivity(), by.carkva_gazeta.malitounik2.R.font.robotocondensedbold)
-            Typeface.ITALIC -> ResourcesCompat.getFont(requireActivity(), by.carkva_gazeta.malitounik2.R.font.robotocondenseditalic)
-            Typeface.BOLD_ITALIC -> ResourcesCompat.getFont(requireActivity(), by.carkva_gazeta.malitounik2.R.font.robotocondensedbolditalic)
-            else -> ResourcesCompat.getFont(requireActivity(), by.carkva_gazeta.malitounik2.R.font.robotocondensed)
+            Typeface.BOLD -> ResourcesCompat.getFont(requireActivity(), by.carkva_gazeta.malitounik.R.font.robotocondensedbold)
+            Typeface.ITALIC -> ResourcesCompat.getFont(requireActivity(), by.carkva_gazeta.malitounik.R.font.robotocondenseditalic)
+            Typeface.BOLD_ITALIC -> ResourcesCompat.getFont(requireActivity(), by.carkva_gazeta.malitounik.R.font.robotocondensedbolditalic)
+            else -> ResourcesCompat.getFont(requireActivity(), by.carkva_gazeta.malitounik.R.font.robotocondensed)
         }
     }
 

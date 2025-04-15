@@ -1,4 +1,4 @@
-package by.carkva_gazeta.malitounik
+package by.carkva_gazeta.admin
 
 import android.graphics.Paint
 import android.graphics.Typeface

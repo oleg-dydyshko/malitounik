@@ -26,9 +26,8 @@ import androidx.core.view.forEachIndexed
 import androidx.transition.TransitionManager
 import by.carkva_gazeta.admin.databinding.AdminChytannyBinding
 import by.carkva_gazeta.admin.databinding.SimpleListItem1Binding
-import by.carkva_gazeta.malitounik.CustomTypefaceSpan
-import by.carkva_gazeta.malitounik2.MainActivity
-import by.carkva_gazeta.malitounik2.Settings
+import by.carkva_gazeta.malitounik.MainActivity
+import by.carkva_gazeta.malitounik.Settings
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.firebase.storage.StorageException
 import kotlinx.coroutines.CoroutineScope
@@ -72,7 +71,7 @@ class Chytanny : BaseActivity() {
                 }.await()
             } catch (_: StorageException) {
                 isError = true
-                Toast.makeText(this@Chytanny, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@Chytanny, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                 binding.progressBar2.visibility = View.GONE
                 return@launch
             }
@@ -99,8 +98,8 @@ class Chytanny : BaseActivity() {
                 monthP = 4
             }
             val fileLine = text.split("\n")
-            val nedelName = resources.getStringArray(by.carkva_gazeta.malitounik2.R.array.dni_nedeli)
-            val monName2 = resources.getStringArray(by.carkva_gazeta.malitounik2.R.array.meciac_smoll)
+            val nedelName = resources.getStringArray(by.carkva_gazeta.malitounik.R.array.dni_nedeli)
+            val monName2 = resources.getStringArray(by.carkva_gazeta.malitounik.R.array.meciac_smoll)
             var countDay = 0
             for (fw in fileLine) {
                 if (fw.contains("\$calendar[]")) {
@@ -151,10 +150,10 @@ class Chytanny : BaseActivity() {
 
     fun createFont(style: Int): Typeface? {
         return when (style) {
-            Typeface.BOLD -> ResourcesCompat.getFont(this, by.carkva_gazeta.malitounik2.R.font.robotocondensedbold)
-            Typeface.ITALIC -> ResourcesCompat.getFont(this, by.carkva_gazeta.malitounik2.R.font.robotocondenseditalic)
-            Typeface.BOLD_ITALIC -> ResourcesCompat.getFont(this, by.carkva_gazeta.malitounik2.R.font.robotocondensedbolditalic)
-            else -> ResourcesCompat.getFont(this, by.carkva_gazeta.malitounik2.R.font.robotocondensed)
+            Typeface.BOLD -> ResourcesCompat.getFont(this, by.carkva_gazeta.malitounik.R.font.robotocondensedbold)
+            Typeface.ITALIC -> ResourcesCompat.getFont(this, by.carkva_gazeta.malitounik.R.font.robotocondenseditalic)
+            Typeface.BOLD_ITALIC -> ResourcesCompat.getFont(this, by.carkva_gazeta.malitounik.R.font.robotocondensedbolditalic)
+            else -> ResourcesCompat.getFont(this, by.carkva_gazeta.malitounik.R.font.robotocondensed)
         }
     }
 
@@ -162,7 +161,7 @@ class Chytanny : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = AdminChytannyBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        isError = savedInstanceState?.getBoolean("isError", false) ?: false
+        isError = savedInstanceState?.getBoolean("isError", false) == true
         for (i in Settings.GET_CALIANDAR_YEAR_MIN .. Settings.GET_CALIANDAR_YEAR_MAX) data.add(i.toString())
         binding.spinnerYear.adapter = SpinnerAdapter(this, data)
         binding.spinnerYear.setSelection(2)
@@ -216,7 +215,7 @@ class Chytanny : BaseActivity() {
         }
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik2.R.string.czytanne2)
+        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik.R.string.czytanne2)
     }
 
     private fun fullTextTollbar() {
@@ -281,10 +280,10 @@ class Chytanny : BaseActivity() {
         val logFile = File("$filesDir/cache/log.txt")
         var error = false
         logFile.writer().use {
-            it.write(getString(by.carkva_gazeta.malitounik2.R.string.check_update_resourse))
+            it.write(getString(by.carkva_gazeta.malitounik.R.string.check_update_resourse))
         }
         MainActivity.referens.child("/admin/log.txt").putFile(Uri.fromFile(logFile)).addOnFailureListener {
-            Toast.makeText(this@Chytanny, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@Chytanny, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
             error = true
         }.await()
         if (error && count < 3) {
@@ -303,19 +302,19 @@ class Chytanny : BaseActivity() {
                     }
                     MainActivity.referens.child("/calendar-cytanne_$year.php").putFile(Uri.fromFile(localFile)).addOnCompleteListener {
                         if (it.isSuccessful) {
-                            Toast.makeText(this@Chytanny, getString(by.carkva_gazeta.malitounik2.R.string.save), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@Chytanny, getString(by.carkva_gazeta.malitounik.R.string.save), Toast.LENGTH_SHORT).show()
                         } else {
-                            Toast.makeText(this@Chytanny, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@Chytanny, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                         }
                     }.await()
-                } catch (e: Throwable) {
-                    Toast.makeText(this@Chytanny, getString(by.carkva_gazeta.malitounik2.R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                } catch (_: Throwable) {
+                    Toast.makeText(this@Chytanny, getString(by.carkva_gazeta.malitounik.R.string.error_ch2), Toast.LENGTH_SHORT).show()
                 }
                 saveLogFile()
                 binding.progressBar2.visibility = View.GONE
             }
         } else {
-            Toast.makeText(this@Chytanny, getString(by.carkva_gazeta.malitounik2.R.string.no_internet), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@Chytanny, getString(by.carkva_gazeta.malitounik.R.string.no_internet), Toast.LENGTH_SHORT).show()
         }
     }
 

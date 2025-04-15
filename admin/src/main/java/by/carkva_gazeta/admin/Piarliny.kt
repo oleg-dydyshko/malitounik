@@ -16,11 +16,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.text.HtmlCompat
+import androidx.core.view.isVisible
 import androidx.transition.TransitionManager
 import by.carkva_gazeta.admin.databinding.AdminPiarlinyBinding
 import by.carkva_gazeta.admin.databinding.SimpleListItem2Binding
-import by.carkva_gazeta.malitounik2.MainActivity
-import by.carkva_gazeta.malitounik2.Settings
+import by.carkva_gazeta.malitounik.MainActivity
+import by.carkva_gazeta.malitounik.Settings
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -43,14 +44,14 @@ class Piarliny : BaseActivity(), View.OnClickListener, DialogDelite.DialogDelite
     private var edit = -1
     private var timeListCalendar = Calendar.getInstance()
     private val caliandarMunLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
+        if (result.resultCode == RESULT_OK) {
             val intent = result.data
             if (intent != null) {
                 val position = intent.getIntExtra("position", 0)
                 val arrayList = MenuCaliandar.getPositionCaliandar(position)
                 timeListCalendar.set(VYSOCOSNYI_GOD, arrayList[2].toInt(), arrayList[1].toInt(), 0, 0, 0)
                 timeListCalendar.set(Calendar.MILLISECOND, 0)
-                binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik2.R.string.piarliny2, timeListCalendar.get(Calendar.DATE), resources.getStringArray(by.carkva_gazeta.malitounik2.R.array.meciac_smoll)[timeListCalendar.get(Calendar.MONTH)])
+                binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik.R.string.piarliny2, timeListCalendar.get(Calendar.DATE), resources.getStringArray(by.carkva_gazeta.malitounik.R.array.meciac_smoll)[timeListCalendar.get(Calendar.MONTH)])
             }
         }
     }
@@ -67,11 +68,11 @@ class Piarliny : BaseActivity(), View.OnClickListener, DialogDelite.DialogDelite
     }
 
     override fun onBack() {
-        if (binding.addPiarliny.visibility == View.VISIBLE) {
+        if (binding.addPiarliny.isVisible) {
             binding.listView.visibility = View.VISIBLE
             binding.addPiarliny.visibility = View.GONE
             binding.linearLayout2.visibility = View.GONE
-            binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik2.R.string.piarliny)
+            binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik.R.string.piarliny)
             invalidateOptionsMenu()
         } else {
             super.onBack()
@@ -85,7 +86,7 @@ class Piarliny : BaseActivity(), View.OnClickListener, DialogDelite.DialogDelite
         timeListCalendar.timeInMillis = piarliny[edit].time * 1000
         timeListCalendar.set(Calendar.YEAR, VYSOCOSNYI_GOD)
         timeListCalendar.set(Calendar.MILLISECOND, 0)
-        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik2.R.string.piarliny2, timeListCalendar.get(Calendar.DATE), resources.getStringArray(by.carkva_gazeta.malitounik2.R.array.meciac_smoll)[timeListCalendar.get(Calendar.MONTH)])
+        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik.R.string.piarliny2, timeListCalendar.get(Calendar.DATE), resources.getStringArray(by.carkva_gazeta.malitounik.R.array.meciac_smoll)[timeListCalendar.get(Calendar.MONTH)])
         binding.listView.visibility = View.GONE
         binding.addPiarliny.visibility = View.VISIBLE
         binding.linearLayout2.visibility = View.VISIBLE
@@ -133,7 +134,7 @@ class Piarliny : BaseActivity(), View.OnClickListener, DialogDelite.DialogDelite
                         piarliny.sort()
                         binding.listView.adapter = PiarlinyListAdaprer(this@Piarliny)
                     } else {
-                        Toast.makeText(this@Piarliny, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@Piarliny, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                     }
                     invalidateOptionsMenu()
                     binding.progressBar2.visibility = View.GONE
@@ -156,8 +157,8 @@ class Piarliny : BaseActivity(), View.OnClickListener, DialogDelite.DialogDelite
                         }
                     }
                 }.await()
-            } catch (e: Throwable) {
-                Toast.makeText(this@Piarliny, getString(by.carkva_gazeta.malitounik2.R.string.error_ch2), Toast.LENGTH_SHORT).show()
+            } catch (_: Throwable) {
+                Toast.makeText(this@Piarliny, getString(by.carkva_gazeta.malitounik.R.string.error_ch2), Toast.LENGTH_SHORT).show()
             }
         }
         binding.listView.setOnItemLongClickListener { _, _, position, _ ->
@@ -182,7 +183,7 @@ class Piarliny : BaseActivity(), View.OnClickListener, DialogDelite.DialogDelite
         }
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik2.R.string.piarliny)
+        binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik.R.string.piarliny)
     }
 
     private fun fullTextTollbar() {
@@ -218,7 +219,7 @@ class Piarliny : BaseActivity(), View.OnClickListener, DialogDelite.DialogDelite
         val save = menu.findItem(R.id.action_save)
         val glava = menu.findItem(R.id.action_glava)
         if (piarliny.isNotEmpty()) {
-            if (binding.addPiarliny.visibility == View.VISIBLE) {
+            if (binding.addPiarliny.isVisible) {
                 plus.isVisible = false
                 save.isVisible = true
                 glava.isVisible = true
@@ -265,7 +266,7 @@ class Piarliny : BaseActivity(), View.OnClickListener, DialogDelite.DialogDelite
             binding.listView.visibility = View.VISIBLE
             binding.addPiarliny.visibility = View.GONE
             binding.linearLayout2.visibility = View.GONE
-            binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik2.R.string.piarliny)
+            binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik.R.string.piarliny)
             invalidateOptionsMenu()
             return true
         }
@@ -287,7 +288,7 @@ class Piarliny : BaseActivity(), View.OnClickListener, DialogDelite.DialogDelite
             binding.addPiarliny.text?.clear()
             val c = Calendar.getInstance()
             timeListCalendar.set(VYSOCOSNYI_GOD, c[Calendar.MONTH], c[Calendar.DATE], 0, 0, 0)
-            binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik2.R.string.piarliny2, timeListCalendar.get(Calendar.DATE), resources.getStringArray(by.carkva_gazeta.malitounik2.R.array.meciac_smoll)[timeListCalendar.get(Calendar.MONTH)])
+            binding.titleToolbar.text = getString(by.carkva_gazeta.malitounik.R.string.piarliny2, timeListCalendar.get(Calendar.DATE), resources.getStringArray(by.carkva_gazeta.malitounik.R.array.meciac_smoll)[timeListCalendar.get(Calendar.MONTH)])
             invalidateOptionsMenu()
             return true
         }
@@ -366,22 +367,22 @@ class Piarliny : BaseActivity(), View.OnClickListener, DialogDelite.DialogDelite
                     }
                     MainActivity.referens.child("/chytanne/piarliny.json").putFile(Uri.fromFile(localFile)).addOnCompleteListener {
                         if (it.isSuccessful) {
-                            Toast.makeText(this@Piarliny, getString(by.carkva_gazeta.malitounik2.R.string.save), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@Piarliny, getString(by.carkva_gazeta.malitounik.R.string.save), Toast.LENGTH_SHORT).show()
                             binding.addPiarliny.text?.clear()
                             edit = -1
                         } else {
-                            Toast.makeText(this@Piarliny, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@Piarliny, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                         }
                     }.await()
-                } catch (e: Throwable) {
-                    Toast.makeText(this@Piarliny, getString(by.carkva_gazeta.malitounik2.R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                } catch (_: Throwable) {
+                    Toast.makeText(this@Piarliny, getString(by.carkva_gazeta.malitounik.R.string.error_ch2), Toast.LENGTH_SHORT).show()
                 }
                 val adapter = binding.listView.adapter as PiarlinyListAdaprer
                 adapter.notifyDataSetChanged()
                 binding.progressBar2.visibility = View.GONE
             }
         } else {
-            Toast.makeText(this, getString(by.carkva_gazeta.malitounik2.R.string.no_internet), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(by.carkva_gazeta.malitounik.R.string.no_internet), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -401,7 +402,7 @@ class Piarliny : BaseActivity(), View.OnClickListener, DialogDelite.DialogDelite
             }
             val calendar = GregorianCalendar()
             calendar.timeInMillis = piarliny[position].time * 1000
-            val munName = resources.getStringArray(by.carkva_gazeta.malitounik2.R.array.meciac_smoll)[calendar.get(Calendar.MONTH)]
+            val munName = resources.getStringArray(by.carkva_gazeta.malitounik.R.array.meciac_smoll)[calendar.get(Calendar.MONTH)]
             viewHolder.text.text = HtmlCompat.fromHtml(calendar.get(Calendar.DATE).toString() + " " + munName, HtmlCompat.FROM_HTML_MODE_LEGACY)
             return rootView
         }

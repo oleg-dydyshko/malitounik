@@ -1,17 +1,17 @@
 package by.carkva_gazeta.admin
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.edit
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.transition.TransitionManager
 import by.carkva_gazeta.admin.databinding.CalendarBinding
-import by.carkva_gazeta.malitounik2.Settings
+import by.carkva_gazeta.malitounik.Settings
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -93,7 +93,7 @@ class CaliandarMun : BaseActivity(), CaliandarMunTab1.CaliandarMunTab1Listener, 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        chin = getSharedPreferences("biblia", Context.MODE_PRIVATE)
+        chin = getSharedPreferences("biblia", MODE_PRIVATE)
         binding = CalendarBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
@@ -105,8 +105,8 @@ class CaliandarMun : BaseActivity(), CaliandarMunTab1.CaliandarMunTab1Listener, 
             fullTextTollbar()
         }
         getData = intent.getBooleanExtra("getData", false)
-        if (getData) binding.titleToolbar.setText(by.carkva_gazeta.malitounik2.R.string.get_date)
-        else binding.titleToolbar.setText(by.carkva_gazeta.malitounik2.R.string.kaliandar)
+        if (getData) binding.titleToolbar.setText(by.carkva_gazeta.malitounik.R.string.get_date)
+        else binding.titleToolbar.setText(by.carkva_gazeta.malitounik.R.string.kaliandar)
         val c = Calendar.getInstance()
         if (savedInstanceState != null) {
             day1 = savedInstanceState.getInt("day")
@@ -142,9 +142,9 @@ class CaliandarMun : BaseActivity(), CaliandarMunTab1.CaliandarMunTab1Listener, 
 
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 val position = tab?.position ?: 0
-                val editor = chin.edit()
-                editor.putInt("nedelia", position)
-                editor.apply()
+                chin.edit {
+                    putInt("nedelia", position)
+                }
                 if (position == 0) {
                     replaceFragment(CaliandarMunTab1.getInstance(posMun1, yearG1, day1))
                     binding.subtitleToolbar.visibility = View.GONE

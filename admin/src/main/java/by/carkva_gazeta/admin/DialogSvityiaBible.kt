@@ -30,7 +30,7 @@ class DialogSvityiaBible : DialogFragment() {
         activity?.let {
             _binding = AdminDialogSviatyiaBibleDisplayBinding.inflate(layoutInflater)
             val builder = AlertDialog.Builder(it, R.style.AlertDialogTheme)
-            binding.title.text = getString(by.carkva_gazeta.malitounik2.R.string.title_biblia)
+            binding.title.text = getString(by.carkva_gazeta.malitounik.R.string.title_biblia)
             builder.setView(binding.root)
 
             arrayList.add(Bible("Паводле Мацьвея", 28))
@@ -64,7 +64,7 @@ class DialogSvityiaBible : DialogFragment() {
             for (e in 1..28) fullGlav.add(e)
             binding.spinner1.adapter = BibleAdapterTitle(it, arrayList)
             binding.spinner2.adapter = BibleAdapterFullglav(it, fullGlav)
-            builder.setPositiveButton(resources.getString(by.carkva_gazeta.malitounik2.R.string.ok)) { _: DialogInterface, _: Int ->
+            builder.setPositiveButton(resources.getString(by.carkva_gazeta.malitounik.R.string.ok)) { _: DialogInterface, _: Int ->
                 val bibleTitle = binding.spinner1.selectedItem as Bible
                 val bibleTitlePosition = binding.spinner1.selectedItemPosition
                 val bibleFullGlav = binding.spinner2.selectedItem as Int
@@ -74,10 +74,10 @@ class DialogSvityiaBible : DialogFragment() {
                     intent.putExtra("glava", bibleFullGlav - 1)
                     startActivity(intent)
                 } else {
-                    Toast.makeText(it, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(it, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                 }
             }
-            builder.setNegativeButton(resources.getString(by.carkva_gazeta.malitounik2.R.string.cansel)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
+            builder.setNegativeButton(resources.getString(by.carkva_gazeta.malitounik.R.string.cansel)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
             dialog = builder.create()
         }
         return dialog

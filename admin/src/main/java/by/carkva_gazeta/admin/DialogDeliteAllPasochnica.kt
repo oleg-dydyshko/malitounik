@@ -30,7 +30,7 @@ class DialogDeliteAllPasochnica : DialogFragment() {
         if (context is Activity) {
             mListener = try {
                 context as DialogDeliteAllPasochnicaListener
-            } catch (e: ClassCastException) {
+            } catch (_: ClassCastException) {
                 throw ClassCastException("$activity must implement DialogDeliteAllPasochnicaListener")
             }
         }
@@ -40,11 +40,11 @@ class DialogDeliteAllPasochnica : DialogFragment() {
         activity?.let {
             _binding = DialogTextviewDisplayBinding.inflate(layoutInflater)
             val builder = AlertDialog.Builder(it, R.style.AlertDialogTheme)
-            binding.title.text = resources.getString(by.carkva_gazeta.malitounik2.R.string.remove)
-            binding.content.text = getString(by.carkva_gazeta.malitounik2.R.string.del_all_pasochnica)
-            binding.content.setTextColor(ContextCompat.getColor(it, by.carkva_gazeta.malitounik2.R.color.colorPrimary_text))
-            builder.setPositiveButton(resources.getText(by.carkva_gazeta.malitounik2.R.string.ok)) { _: DialogInterface?, _: Int -> mListener.deliteAllPasochnica() }
-            builder.setNegativeButton(resources.getString(by.carkva_gazeta.malitounik2.R.string.cansel)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
+            binding.title.text = resources.getString(by.carkva_gazeta.malitounik.R.string.remove)
+            binding.content.text = getString(by.carkva_gazeta.malitounik.R.string.del_all_pasochnica)
+            binding.content.setTextColor(ContextCompat.getColor(it, by.carkva_gazeta.malitounik.R.color.colorPrimary_text))
+            builder.setPositiveButton(resources.getText(by.carkva_gazeta.malitounik.R.string.ok)) { _: DialogInterface?, _: Int -> mListener.deliteAllPasochnica() }
+            builder.setNegativeButton(resources.getString(by.carkva_gazeta.malitounik.R.string.cansel)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
             builder.setView(binding.root)
             alert = builder.create()
         }

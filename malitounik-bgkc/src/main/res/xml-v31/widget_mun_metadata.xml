@@ -7,6 +7,6 @@
     android:updatePeriodMillis="0"
     android:previewImage="@drawable/screenshot_mun"
     android:widgetCategory="home_screen|keyguard"
-    android:configure="by.carkva_gazeta.malitounik2.WidgetConfigMun"
+    android:configure="by.carkva_gazeta.malitounik.WidgetConfigMun"
     android:widgetFeatures="reconfigurable|configuration_optional"
     android:resizeMode="horizontal|vertical" />

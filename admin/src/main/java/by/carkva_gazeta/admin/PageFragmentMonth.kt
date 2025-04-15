@@ -12,7 +12,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import by.carkva_gazeta.admin.databinding.CalendarMunBinding
-import by.carkva_gazeta.malitounik2.Settings
+import by.carkva_gazeta.malitounik.Settings
 import java.util.Calendar
 import java.util.GregorianCalendar
 
@@ -352,10 +352,10 @@ class PageFragmentMonth : BaseFragment() {
 
     private fun createFont(style: Int): Typeface? {
         return when (style) {
-            Typeface.BOLD -> ResourcesCompat.getFont(requireActivity(), by.carkva_gazeta.malitounik2.R.font.robotocondensedbold)
-            Typeface.ITALIC -> ResourcesCompat.getFont(requireActivity(), by.carkva_gazeta.malitounik2.R.font.robotocondenseditalic)
-            Typeface.BOLD_ITALIC -> ResourcesCompat.getFont(requireActivity(), by.carkva_gazeta.malitounik2.R.font.robotocondensedbolditalic)
-            else -> ResourcesCompat.getFont(requireActivity(), by.carkva_gazeta.malitounik2.R.font.robotocondensed)
+            Typeface.BOLD -> ResourcesCompat.getFont(requireActivity(), by.carkva_gazeta.malitounik.R.font.robotocondensedbold)
+            Typeface.ITALIC -> ResourcesCompat.getFont(requireActivity(), by.carkva_gazeta.malitounik.R.font.robotocondenseditalic)
+            Typeface.BOLD_ITALIC -> ResourcesCompat.getFont(requireActivity(), by.carkva_gazeta.malitounik.R.font.robotocondensedbolditalic)
+            else -> ResourcesCompat.getFont(requireActivity(), by.carkva_gazeta.malitounik.R.font.robotocondensed)
         }
     }
 

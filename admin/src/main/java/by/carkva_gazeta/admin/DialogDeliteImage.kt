@@ -43,7 +43,7 @@ class DialogDeliteImage : DialogFragment() {
         if (context is Activity) {
             mListener = try {
                 context as DialogDeliteListener
-            } catch (e: ClassCastException) {
+            } catch (_: ClassCastException) {
                 throw ClassCastException("$activity must implement DialogDeliteListener")
             }
         }
@@ -53,11 +53,11 @@ class DialogDeliteImage : DialogFragment() {
         activity?.let {
             _binding = DialogImageviewDisplayBinding.inflate(layoutInflater)
             val builder = AlertDialog.Builder(it, R.style.AlertDialogTheme)
-            binding.title.text = resources.getString(by.carkva_gazeta.malitounik2.R.string.remove)
+            binding.title.text = resources.getString(by.carkva_gazeta.malitounik.R.string.remove)
             val bitmap = BitmapFactory.decodeFile(path)
             binding.imageView2.setImageBitmap(bitmap)
-            builder.setPositiveButton(resources.getText(by.carkva_gazeta.malitounik2.R.string.ok)) { _: DialogInterface?, _: Int -> mListener?.imageFileDelite(position) }
-            builder.setNegativeButton(resources.getString(by.carkva_gazeta.malitounik2.R.string.cansel)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
+            builder.setPositiveButton(resources.getText(by.carkva_gazeta.malitounik.R.string.ok)) { _: DialogInterface?, _: Int -> mListener?.imageFileDelite(position) }
+            builder.setNegativeButton(resources.getString(by.carkva_gazeta.malitounik.R.string.cansel)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
             builder.setView(binding.root)
             alert = builder.create()
         }

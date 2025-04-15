@@ -37,7 +37,7 @@ class DialogBiblijatekaContextMenu : DialogFragment() {
         if (context is Activity) {
             mListener = try {
                 context as DialogPiarlinyContextMenuListener
-            } catch (e: ClassCastException) {
+            } catch (_: ClassCastException) {
                 throw ClassCastException("$context must implement DialogPiarlinyContextMenuListener")
             }
         }
@@ -48,8 +48,8 @@ class DialogBiblijatekaContextMenu : DialogFragment() {
             _binding = DialogContextDisplayBinding.inflate(layoutInflater)
             val builder = AlertDialog.Builder(it)
             binding.title.text = name
-            binding.content.text = getString(by.carkva_gazeta.malitounik2.R.string.redagaktirovat)
-            binding.content2.text = getString(by.carkva_gazeta.malitounik2.R.string.delite)
+            binding.content.text = getString(by.carkva_gazeta.malitounik.R.string.redagaktirovat)
+            binding.content2.text = getString(by.carkva_gazeta.malitounik.R.string.delite)
             builder.setView(binding.root)
             binding.content.setBackgroundResource(R.drawable.selector_default)
             binding.content2.setBackgroundResource(R.drawable.selector_default)

@@ -63,7 +63,7 @@ class DialogEditImage : DialogFragment() {
         if (context is Activity) {
             mListener = try {
                 context as DialogEditImageListener
-            } catch (e: ClassCastException) {
+            } catch (_: ClassCastException) {
                 throw ClassCastException("$activity must implement DialogEditImageListener")
             }
         }
@@ -74,14 +74,14 @@ class DialogEditImage : DialogFragment() {
         intent.type = "*/*"
         intent.action = Intent.ACTION_GET_CONTENT
         intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/jpeg", "image/png"))
-        mActivityResultFile.launch(Intent.createChooser(intent, getString(by.carkva_gazeta.malitounik2.R.string.vybrac_file)))
+        mActivityResultFile.launch(Intent.createChooser(intent, getString(by.carkva_gazeta.malitounik.R.string.vybrac_file)))
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         activity?.let {
             _binding = DialogImageviewEditDisplayBinding.inflate(layoutInflater)
             val builder = AlertDialog.Builder(it, R.style.AlertDialogTheme)
-            binding.title.text = resources.getString(by.carkva_gazeta.malitounik2.R.string.admin_opisanne_icon)
+            binding.title.text = resources.getString(by.carkva_gazeta.malitounik.R.string.admin_opisanne_icon)
             val bitmapCreate = BitmapFactory.decodeFile(path)
             if (bitmapCreate == null) getImage()
             binding.imageView2.setImageBitmap(bitmapCreate)
@@ -96,8 +96,8 @@ class DialogEditImage : DialogFragment() {
             if (file.exists()) {
                 binding.opisanie.setText(file.readText())
             }
-            builder.setPositiveButton(resources.getText(by.carkva_gazeta.malitounik2.R.string.ok)) { _: DialogInterface?, _: Int -> mListener?.imageFileEdit(bitmap, binding.opisanie.text.toString()) }
-            builder.setNegativeButton(resources.getString(by.carkva_gazeta.malitounik2.R.string.cansel)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
+            builder.setPositiveButton(resources.getText(by.carkva_gazeta.malitounik.R.string.ok)) { _: DialogInterface?, _: Int -> mListener?.imageFileEdit(bitmap, binding.opisanie.text.toString()) }
+            builder.setNegativeButton(resources.getString(by.carkva_gazeta.malitounik.R.string.cansel)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
             builder.setView(binding.root)
             alert = builder.create()
         }

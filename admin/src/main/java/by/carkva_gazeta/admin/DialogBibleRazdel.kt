@@ -36,7 +36,7 @@ class DialogBibleRazdel : DialogFragment() {
         if (context is Activity) {
             mListener = try {
                 context as DialogBibleRazdelListener
-            } catch (e: ClassCastException) {
+            } catch (_: ClassCastException) {
                 throw ClassCastException("$context must implement DialogBibleRazdelListener")
             }
         }
@@ -56,7 +56,7 @@ class DialogBibleRazdel : DialogFragment() {
         activity?.let {
             _binding = DialogEditviewDisplayBinding.inflate(layoutInflater)
             builder = AlertDialog.Builder(it, R.style.AlertDialogTheme)
-            binding.title.text = resources.getString(by.carkva_gazeta.malitounik2.R.string.data_search)//, fullGlav
+            binding.title.text = resources.getString(by.carkva_gazeta.malitounik.R.string.data_search)//, fullGlav
             binding.content.filters = Array<InputFilter>(1) { InputFilter.LengthFilter(3) }
             if (savedInstanceState != null) {
                 binding.content.setText(savedInstanceState.getString("glava"))
@@ -64,8 +64,8 @@ class DialogBibleRazdel : DialogFragment() {
                 binding.content.text?.clear()
             }
             binding.content.inputType = InputType.TYPE_CLASS_NUMBER
-            binding.content.setTextColor(ContextCompat.getColor(it, by.carkva_gazeta.malitounik2.R.color.colorPrimary_text))
-            binding.content.setBackgroundResource(by.carkva_gazeta.malitounik2.R.color.colorWhite)
+            binding.content.setTextColor(ContextCompat.getColor(it, by.carkva_gazeta.malitounik.R.color.colorPrimary_text))
+            binding.content.setBackgroundResource(by.carkva_gazeta.malitounik.R.color.colorWhite)
             binding.content.requestFocus()
             binding.content.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_GO) {
@@ -75,12 +75,12 @@ class DialogBibleRazdel : DialogFragment() {
                 false
             }
             binding.content.imeOptions = EditorInfo.IME_ACTION_GO
-            builder.setNegativeButton(resources.getString(by.carkva_gazeta.malitounik2.R.string.cansel)) { dialog: DialogInterface, _: Int ->
+            builder.setNegativeButton(resources.getString(by.carkva_gazeta.malitounik.R.string.cansel)) { dialog: DialogInterface, _: Int ->
                 val imm12 = it.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm12.hideSoftInputFromWindow(binding.content.windowToken, 0)
                 dialog.cancel()
             }
-            builder.setPositiveButton(resources.getString(by.carkva_gazeta.malitounik2.R.string.ok)) { _: DialogInterface?, _: Int ->
+            builder.setPositiveButton(resources.getString(by.carkva_gazeta.malitounik.R.string.ok)) { _: DialogInterface?, _: Int ->
                 goRazdel()
             }
         }
@@ -93,17 +93,17 @@ class DialogBibleRazdel : DialogFragment() {
             val imm1 = it.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm1.hideSoftInputFromWindow(binding.content.windowToken, 0)
             if (binding.content.text.toString() == "") {
-                Toast.makeText(it, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                Toast.makeText(it, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
             } else {
                 val value: Int = try {
                     binding.content.text.toString().toInt() - 1
-                } catch (e: NumberFormatException) {
+                } catch (_: NumberFormatException) {
                     -1
                 }
                 if (value in 0 until fullGlav) {
                     mListener?.onComplete(value)
                 } else {
-                    Toast.makeText(it, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(it, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                 }
             }
         }

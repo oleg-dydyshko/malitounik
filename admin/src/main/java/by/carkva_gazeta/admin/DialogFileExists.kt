@@ -39,7 +39,7 @@ class DialogFileExists : DialogFragment() {
         if (context is Activity) {
             mListener = try {
                 context as DialogFileExistsListener
-            } catch (e: ClassCastException) {
+            } catch (_: ClassCastException) {
                 throw ClassCastException("$activity must implement DialogFileExistsListener")
             }
         }
@@ -49,11 +49,11 @@ class DialogFileExists : DialogFragment() {
         activity?.let {
             _binding = DialogTextviewDisplayBinding.inflate(layoutInflater)
             val builder = AlertDialog.Builder(it, R.style.AlertDialogTheme)
-            binding.title.text = resources.getString(by.carkva_gazeta.malitounik2.R.string.file_exists)
-            binding.content.text = getString(by.carkva_gazeta.malitounik2.R.string.file_exists_opis, fileName)
-            val saveAs = arguments?.getBoolean("saveAs") ?: true
-            builder.setPositiveButton(resources.getText(by.carkva_gazeta.malitounik2.R.string.file_perazapisac)) { _: DialogInterface, _: Int -> mListener?.fileExists(dir, oldFileName, fileName, saveAs) }
-            builder.setNegativeButton(resources.getString(by.carkva_gazeta.malitounik2.R.string.cansel)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
+            binding.title.text = resources.getString(by.carkva_gazeta.malitounik.R.string.file_exists)
+            binding.content.text = getString(by.carkva_gazeta.malitounik.R.string.file_exists_opis, fileName)
+            val saveAs = arguments?.getBoolean("saveAs") != false
+            builder.setPositiveButton(resources.getText(by.carkva_gazeta.malitounik.R.string.file_perazapisac)) { _: DialogInterface, _: Int -> mListener?.fileExists(dir, oldFileName, fileName, saveAs) }
+            builder.setNegativeButton(resources.getString(by.carkva_gazeta.malitounik.R.string.cansel)) { dialog: DialogInterface, _: Int -> dialog.cancel() }
             builder.setView(binding.root)
             alert = builder.create()
         }

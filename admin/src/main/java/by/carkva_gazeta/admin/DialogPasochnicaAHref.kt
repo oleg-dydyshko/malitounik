@@ -34,7 +34,7 @@ class DialogPasochnicaAHref : DialogFragment() {
         if (context is Activity) {
             mListener = try {
                 context as DialogPasochnicaAHrefListener
-            } catch (e: ClassCastException) {
+            } catch (_: ClassCastException) {
                 throw ClassCastException("$context must implement DialogPasochnicaAHrefListener")
             }
         }
@@ -56,7 +56,7 @@ class DialogPasochnicaAHref : DialogFragment() {
         activity?.let {
             _binding = DialogTwoEditviewDisplayBinding.inflate(layoutInflater)
             builder = AlertDialog.Builder(it, R.style.AlertDialogTheme)
-            binding.title.text = getString(by.carkva_gazeta.malitounik2.R.string.admin_set_name_link)
+            binding.title.text = getString(by.carkva_gazeta.malitounik.R.string.admin_set_name_link)
             if (savedInstanceState != null) {
                 binding.url.setText(savedInstanceState.getString("url"))
                 binding.titleUrl.setText(savedInstanceState.getString("titleUrl"))
@@ -64,8 +64,8 @@ class DialogPasochnicaAHref : DialogFragment() {
                 binding.url.setText(url)
                 binding.titleUrl.setText(titleUrl)
             }
-            binding.url.setTextColor(ContextCompat.getColor(it, by.carkva_gazeta.malitounik2.R.color.colorPrimary_text))
-            binding.url.setBackgroundResource(by.carkva_gazeta.malitounik2.R.color.colorWhite)
+            binding.url.setTextColor(ContextCompat.getColor(it, by.carkva_gazeta.malitounik.R.color.colorPrimary_text))
+            binding.url.setBackgroundResource(by.carkva_gazeta.malitounik.R.color.colorWhite)
             binding.url.requestFocus()
             binding.titleUrl.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_GO) {
@@ -75,12 +75,12 @@ class DialogPasochnicaAHref : DialogFragment() {
                 false
             }
             binding.titleUrl.imeOptions = EditorInfo.IME_ACTION_GO
-            builder.setNegativeButton(resources.getString(by.carkva_gazeta.malitounik2.R.string.cansel)) { dialog: DialogInterface, _: Int ->
+            builder.setNegativeButton(resources.getString(by.carkva_gazeta.malitounik.R.string.cansel)) { dialog: DialogInterface, _: Int ->
                 val imm12 = it.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm12.hideSoftInputFromWindow(binding.url.windowToken, 0)
                 dialog.cancel()
             }
-            builder.setPositiveButton(resources.getString(by.carkva_gazeta.malitounik2.R.string.ok)) { _: DialogInterface?, _: Int ->
+            builder.setPositiveButton(resources.getString(by.carkva_gazeta.malitounik.R.string.ok)) { _: DialogInterface?, _: Int ->
                 setUrl()
             }
         }

@@ -9,8 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import by.carkva_gazeta.admin.databinding.AdminBiblePageFragmentBinding
-import by.carkva_gazeta.malitounik2.MainActivity
-import by.carkva_gazeta.malitounik2.Settings
+import by.carkva_gazeta.malitounik.MainActivity
+import by.carkva_gazeta.malitounik.Settings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -69,10 +69,10 @@ class NovyZapavietSemuxaFragment : BaseFragment() {
             val logFile = File("${activity.filesDir}/cache/log.txt")
             var error = false
             logFile.writer().use {
-                it.write(getString(by.carkva_gazeta.malitounik2.R.string.check_update_resourse))
+                it.write(getString(by.carkva_gazeta.malitounik.R.string.check_update_resourse))
             }
             MainActivity.referens.child("/admin/log.txt").putFile(Uri.fromFile(logFile)).addOnFailureListener {
-                Toast.makeText(activity, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                 error = true
             }.await()
             if (error && count < 3) {
@@ -111,21 +111,21 @@ class NovyZapavietSemuxaFragment : BaseFragment() {
                                 it.write(fileNew.toString())
                             }
                         } else {
-                            Toast.makeText(activity, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(activity, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                         }
                     }.await()
                     saveLogFile()
                     MainActivity.referens.child("/chytanne/Semucha/biblian$id.txt").putFile(Uri.fromFile(localFile)).addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            Toast.makeText(activity, getString(by.carkva_gazeta.malitounik2.R.string.save), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(activity, getString(by.carkva_gazeta.malitounik.R.string.save), Toast.LENGTH_SHORT).show()
                         } else {
-                            Toast.makeText(activity, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(activity, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                         }
                     }.await()
                     _binding?.progressBar2?.visibility = View.GONE
                 }
             } else {
-                Toast.makeText(activity, getString(by.carkva_gazeta.malitounik2.R.string.no_internet), Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, getString(by.carkva_gazeta.malitounik.R.string.no_internet), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -186,18 +186,18 @@ class NovyZapavietSemuxaFragment : BaseFragment() {
                                     }
                                 } else {
                                     context?.let {
-                                        Toast.makeText(fragmentActivity, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(fragmentActivity, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                                     }
                                 }
                             } else {
                                 context?.let {
-                                    Toast.makeText(fragmentActivity, getString(by.carkva_gazeta.malitounik2.R.string.error), Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(fragmentActivity, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }.await()
-                    } catch (e: Throwable) {
+                    } catch (_: Throwable) {
                         context?.let {
-                            Toast.makeText(fragmentActivity, getString(by.carkva_gazeta.malitounik2.R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(fragmentActivity, getString(by.carkva_gazeta.malitounik.R.string.error_ch2), Toast.LENGTH_SHORT).show()
                         }
                     }
                     binding.textView.setText(sb.toString().trim())
@@ -206,7 +206,7 @@ class NovyZapavietSemuxaFragment : BaseFragment() {
             }
         } else {
             activity?.let {
-                Toast.makeText(it, getString(by.carkva_gazeta.malitounik2.R.string.no_internet), Toast.LENGTH_SHORT).show()
+                Toast.makeText(it, getString(by.carkva_gazeta.malitounik.R.string.no_internet), Toast.LENGTH_SHORT).show()
             }
         }
     }

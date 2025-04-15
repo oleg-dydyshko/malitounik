@@ -1,6 +1,6 @@
 package by.carkva_gazeta.admin
 
-import by.carkva_gazeta.malitounik2.MainActivity
+import by.carkva_gazeta.malitounik.MainActivity
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.BufferedReader
@@ -16,7 +16,7 @@ class MenuCaliandar {
         }
 
         private fun initDataCalendar() {
-            val inputStream = MainActivity.applicationContext().resources.openRawResource(by.carkva_gazeta.malitounik2.R.raw.caliandar)
+            val inputStream = MainActivity.applicationContext().resources.openRawResource(by.carkva_gazeta.malitounik.R.raw.caliandar)
             val isr = InputStreamReader(inputStream)
             val reader = BufferedReader(isr)
             val builder = reader.use {
@@ -29,18 +29,6 @@ class MenuCaliandar {
 
         fun getPositionCaliandar(position: Int): ArrayList<String> {
             if (data.isEmpty()) initDataCalendar()
-            return data[position]
-        }
-
-        fun getPositionCaliandar(dayOfYear: Int, year: Int): ArrayList<String> {
-            if (data.isEmpty()) initDataCalendar()
-            var position = 0
-            data.forEach { arrayList ->
-                if (dayOfYear == arrayList[24].toInt() && year == arrayList[3].toInt()) {
-                    position = arrayList[25].toInt()
-                    return@forEach
-                }
-            }
             return data[position]
         }
 
