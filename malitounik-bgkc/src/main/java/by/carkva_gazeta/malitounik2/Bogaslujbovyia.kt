@@ -267,6 +267,7 @@ fun Bogaslujbovyia(
             }
 
             !backPressHandled -> {
+                fullscreen = false
                 backPressHandled = true
                 actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 navController.popBackStack()

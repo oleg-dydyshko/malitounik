@@ -481,6 +481,7 @@ fun CytanniList(
             }
 
             !backPressHandled -> {
+                fullscreen = false
                 val prefEditors = k.edit()
                 if (biblia == Settings.CHYTANNI_BIBLIA) {
                     prefEditors.putString("bible_time_${prevodName}_kniga", knigaText)
