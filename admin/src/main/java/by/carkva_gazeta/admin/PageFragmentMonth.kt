@@ -159,8 +159,8 @@ class PageFragmentMonth : BaseFragment() {
                     "start" -> {
                         getTextView(e).text = oldDay.toString()
                         getTextView(e).contentDescription = oldDay.toString()
-                        if (e == 1) getTextView(e).setBackgroundResource(R.drawable.calendar_bez_posta)
-                        else getTextView(e).setBackgroundResource(R.drawable.calendar_day)
+                        if (e == 1) getTextView(e).setBackgroundResource(by.carkva_gazeta.malitounik.R.drawable.calendar_bez_posta)
+                        else getTextView(e).setBackgroundResource(by.carkva_gazeta.malitounik.R.drawable.calendar_day)
                         getTextView(e).setTextColor(ContextCompat.getColor(activity, R.color.colorSecondary_text))
                         getTextView(e).setOnClickListener {
                             val intent = Intent()
@@ -174,7 +174,7 @@ class PageFragmentMonth : BaseFragment() {
                     "end" -> {
                         getTextView(e).text = newDay.toString()
                         getTextView(e).contentDescription = newDay.toString()
-                        getTextView(e).setBackgroundResource(R.drawable.calendar_day)
+                        getTextView(e).setBackgroundResource(by.carkva_gazeta.malitounik.R.drawable.calendar_day)
                         getTextView(e).setTextColor(ContextCompat.getColor(activity, R.color.colorSecondary_text))
                         getTextView(e).setOnClickListener {
                             val intent = Intent()
@@ -206,7 +206,7 @@ class PageFragmentMonth : BaseFragment() {
                                         else getTextView(e).setBackgroundResource(R.drawable.calendar_red_gos_sviata_today)
                                     } else {
                                         if (isSviatyRKC) getTextView(e).setBackgroundResource(R.drawable.calendar_red_sabytie_today)
-                                        else getTextView(e).setBackgroundResource(R.drawable.calendar_red_today)
+                                        else getTextView(e).setBackgroundResource(by.carkva_gazeta.malitounik.R.drawable.calendar_red_today)
                                     }
                                 } else {
                                     if (isGosSvita) {
@@ -214,7 +214,7 @@ class PageFragmentMonth : BaseFragment() {
                                         else getTextView(e).setBackgroundResource(R.drawable.calendar_red_gos_sviata)
                                     } else {
                                         if (isSviatyRKC) getTextView(e).setBackgroundResource(R.drawable.calendar_red_sabytie)
-                                        else getTextView(e).setBackgroundResource(R.drawable.calendar_red)
+                                        else getTextView(e).setBackgroundResource(by.carkva_gazeta.malitounik.R.drawable.calendar_red)
                                     }
                                 }
                                 getTextView(e).setTextColor(ContextCompat.getColor(activity, R.color.colorWhite))
@@ -228,7 +228,7 @@ class PageFragmentMonth : BaseFragment() {
                                         else getTextView(e).setBackgroundResource(R.drawable.calendar_red_gos_sviata_today)
                                     } else {
                                         if (isSviatyRKC) getTextView(e).setBackgroundResource(R.drawable.calendar_red_sabytie_today)
-                                        else getTextView(e).setBackgroundResource(R.drawable.calendar_red_today)
+                                        else getTextView(e).setBackgroundResource(by.carkva_gazeta.malitounik.R.drawable.calendar_red_today)
                                     }
                                 } else {
                                     if (isGosSvita) {
@@ -236,7 +236,7 @@ class PageFragmentMonth : BaseFragment() {
                                         else getTextView(e).setBackgroundResource(R.drawable.calendar_red_gos_sviata)
                                     } else {
                                         if (isSviatyRKC) getTextView(e).setBackgroundResource(R.drawable.calendar_red_sabytie)
-                                        else getTextView(e).setBackgroundResource(R.drawable.calendar_red)
+                                        else getTextView(e).setBackgroundResource(by.carkva_gazeta.malitounik.R.drawable.calendar_red)
                                     }
                                 }
                                 getTextView(e).setTextColor(ContextCompat.getColor(activity, R.color.colorWhite))
@@ -251,7 +251,7 @@ class PageFragmentMonth : BaseFragment() {
                                             else getTextView(e).setBackgroundResource(R.drawable.calendar_bez_posta_gos_sviata_today)
                                         } else {
                                             if (isSviatyRKC) getTextView(e).setBackgroundResource(R.drawable.calendar_bez_posta_sabytie_today)
-                                            else getTextView(e).setBackgroundResource(R.drawable.calendar_bez_posta_today)
+                                            else getTextView(e).setBackgroundResource(by.carkva_gazeta.malitounik.R.drawable.calendar_bez_posta_today)
                                         }
                                     } else {
                                         if (isGosSvita) {
@@ -259,7 +259,7 @@ class PageFragmentMonth : BaseFragment() {
                                             else getTextView(e).setBackgroundResource(R.drawable.calendar_bez_posta_gos_sviata)
                                         } else {
                                             if (isSviatyRKC) getTextView(e).setBackgroundResource(R.drawable.calendar_bez_posta_sabytie)
-                                            else getTextView(e).setBackgroundResource(R.drawable.calendar_bez_posta)
+                                            else getTextView(e).setBackgroundResource(by.carkva_gazeta.malitounik.R.drawable.calendar_bez_posta)
                                         }
                                     }
                                 }
@@ -270,7 +270,7 @@ class PageFragmentMonth : BaseFragment() {
                                             else getTextView(e).setBackgroundResource(R.drawable.calendar_post_gos_sviata_today)
                                         } else {
                                             if (isSviatyRKC) getTextView(e).setBackgroundResource(R.drawable.calendar_post_sabytie_today)
-                                            else getTextView(e).setBackgroundResource(R.drawable.calendar_post_today)
+                                            else getTextView(e).setBackgroundResource(by.carkva_gazeta.malitounik.R.drawable.calendar_post_today)
                                         }
                                     } else {
                                         if (isGosSvita) {
@@ -278,7 +278,7 @@ class PageFragmentMonth : BaseFragment() {
                                             else getTextView(e).setBackgroundResource(R.drawable.calendar_post_gos_sviata)
                                         } else {
                                             if (isSviatyRKC) getTextView(e).setBackgroundResource(R.drawable.calendar_post_sabytie)
-                                            else getTextView(e).setBackgroundResource(R.drawable.calendar_post)
+                                            else getTextView(e).setBackgroundResource(by.carkva_gazeta.malitounik.R.drawable.calendar_post)
                                         }
                                     }
                                 }
@@ -289,7 +289,7 @@ class PageFragmentMonth : BaseFragment() {
                                             else getTextView(e).setBackgroundResource(R.drawable.calendar_strogi_post_gos_sviata_today)
                                         } else {
                                             if (isSviatyRKC) getTextView(e).setBackgroundResource(R.drawable.calendar_strogi_post_sabytie_today)
-                                            else getTextView(e).setBackgroundResource(R.drawable.calendar_strogi_post_today)
+                                            else getTextView(e).setBackgroundResource(by.carkva_gazeta.malitounik.R.drawable.calendar_strogi_post_today)
                                         }
                                     } else {
                                         if (isGosSvita) {
@@ -297,7 +297,7 @@ class PageFragmentMonth : BaseFragment() {
                                             else getTextView(e).setBackgroundResource(R.drawable.calendar_strogi_post_gos_sviata)
                                         } else {
                                             if (isSviatyRKC) getTextView(e).setBackgroundResource(R.drawable.calendar_strogi_post_sabytie)
-                                            else getTextView(e).setBackgroundResource(R.drawable.calendar_strogi_post)
+                                            else getTextView(e).setBackgroundResource(by.carkva_gazeta.malitounik.R.drawable.calendar_strogi_post)
                                         }
                                     }
                                     getTextView(e).setTextColor(ContextCompat.getColor(activity, R.color.colorWhite))
@@ -311,7 +311,7 @@ class PageFragmentMonth : BaseFragment() {
                                                 else getTextView(e).setBackgroundResource(R.drawable.calendar_bez_posta_gos_sviata_today)
                                             } else {
                                                 if (isSviatyRKC) getTextView(e).setBackgroundResource(R.drawable.calendar_bez_posta_sabytie_today)
-                                                else getTextView(e).setBackgroundResource(R.drawable.calendar_bez_posta_today)
+                                                else getTextView(e).setBackgroundResource(by.carkva_gazeta.malitounik.R.drawable.calendar_bez_posta_today)
                                             }
                                         } else {
                                             if (isGosSvita) {
@@ -319,7 +319,7 @@ class PageFragmentMonth : BaseFragment() {
                                                 else getTextView(e).setBackgroundResource(R.drawable.calendar_bez_posta_gos_sviata)
                                             } else {
                                                 if (isSviatyRKC) getTextView(e).setBackgroundResource(R.drawable.calendar_bez_posta_sabytie)
-                                                else getTextView(e).setBackgroundResource(R.drawable.calendar_bez_posta)
+                                                else getTextView(e).setBackgroundResource(by.carkva_gazeta.malitounik.R.drawable.calendar_bez_posta)
                                             }
                                         }
                                     } else {
@@ -329,7 +329,7 @@ class PageFragmentMonth : BaseFragment() {
                                                 else getTextView(e).setBackgroundResource(R.drawable.calendar_day_gos_sviata_today)
                                             } else {
                                                 if (isSviatyRKC) getTextView(e).setBackgroundResource(R.drawable.calendar_day_sabytie_today)
-                                                else getTextView(e).setBackgroundResource(R.drawable.calendar_day_today)
+                                                else getTextView(e).setBackgroundResource(by.carkva_gazeta.malitounik.R.drawable.calendar_day_today)
                                             }
                                         } else {
                                             if (isGosSvita) {
@@ -337,7 +337,7 @@ class PageFragmentMonth : BaseFragment() {
                                                 else getTextView(e).setBackgroundResource(R.drawable.calendar_day_gos_sviata)
                                             } else {
                                                 if (isSviatyRKC) getTextView(e).setBackgroundResource(R.drawable.calendar_day_sabytie)
-                                                else getTextView(e).setBackgroundResource(R.drawable.calendar_day)
+                                                else getTextView(e).setBackgroundResource(by.carkva_gazeta.malitounik.R.drawable.calendar_day)
                                             }
                                         }
                                     }

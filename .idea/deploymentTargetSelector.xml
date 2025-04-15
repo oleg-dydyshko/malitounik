@@ -2,15 +2,12 @@
 <project version="4">
   <component name="deploymentTargetSelector">
     <selectionStates>
-      <SelectionState runConfigName="HomeScreenPreview">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="malitounik-bgkc">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-04-09T14:39:13.645402596Z">
+        <DropdownSelection timestamp="2025-04-15T18:31:21.883114525Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/home/oleg/.android/avd/Pixel_3a_API_24.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=RF8X7017YLV" />
             </handle>
           </Target>
         </DropdownSelection>
