@@ -48,6 +48,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.core.content.edit
+import by.carkva_gazeta.malitounik.Settings.isNetworkAvailable
 import by.carkva_gazeta.malitounik.ui.theme.MalitounikTheme
 import by.carkva_gazeta.malitounik.views.AllDestinations
 import by.carkva_gazeta.malitounik.views.AppNavGraph
@@ -1121,6 +1122,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
             setlightSensor()
         }
         ferstStart = true
+        Settings.fontInterface = getFontInterface(this)
         setContent {
             if (savedInstanceState != null) {
                 dzenNoch = savedInstanceState.getBoolean("dzenNoch", false)
@@ -1151,7 +1153,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
             }
         }
         CoroutineScope(Dispatchers.IO).launch {
-            if (Settings.isNetworkAvailable(this@MainActivity)) {//k.getBoolean("admin", false) &&
+            if (isNetworkAvailable(this@MainActivity)) {
                 val dir = File("$filesDir/cache")
                 if (!dir.exists()) dir.mkdir()
                 val localFile = File("$filesDir/cache/cache.txt")
@@ -1173,7 +1175,6 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
                 it?.deleteRecursively()
             }
             if (k.getBoolean("setAlarm", true)) {
-                //checkUpdateMalitounik()
                 val notify = k.getInt("notification", Settings.NOTIFICATION_SVIATY_FULL)
                 Settings.setNotifications(this@MainActivity, notify)
                 k.edit {
@@ -1181,7 +1182,6 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
                 }
             }
         }
-
     }
 
     fun checkmodulesAdmin(): Boolean {
@@ -1194,7 +1194,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         return false
     }
 
-    private fun checkASztoNovagaMD5Sum(): Boolean {
+    fun checkASztoNovagaMD5Sum(): Boolean {
         var st: String
         val inputStream = resources.openRawResource(R.raw.a_szto_novaha)
         val isr = InputStreamReader(inputStream)

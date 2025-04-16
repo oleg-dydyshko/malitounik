@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,7 +28,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
@@ -51,9 +49,7 @@ class FilterPiesnyListModel : ViewModel() {
     }
 
     fun sortBy() {
-        items.sortBy {
-            it.title
-        }
+        items.sortWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
     }
 
     fun addAllItemList(item: SnapshotStateList<PiesnyListItem>) {
@@ -700,11 +696,11 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
                 4, R.raw.pesny_taize_16, "Хай тваё сэрца больш не журыцца"
             )
         )
-        piesnyPraslList.sortBy { it.title }
-        piesnyBelarusList.sortBy { it.title }
-        piesnyBagarList.sortBy { it.title }
-        piesnyKaliadyList.sortBy { it.title }
-        piesnyTaizeList.sortBy { it.title }
+        piesnyPraslList.sortWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
+        piesnyBelarusList.sortWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
+        piesnyBagarList.sortWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
+        piesnyKaliadyList.sortWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
+        piesnyTaizeList.sortWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
     }
     if (searchText) {
         viewModel.clear()
@@ -716,11 +712,7 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
         viewModel.sortBy()
     }
     val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
-    val list = listOf(
-        stringResource(R.string.pesny1), stringResource(R.string.pesny2), stringResource(R.string.pesny3), stringResource(R.string.pesny4), stringResource(R.string.pesny5)
-    )
     viewModel.filterItem(search)
-    val coroutineScope = rememberCoroutineScope()
     Column {
         if (searchText) {
             PiesnyList(filteredItems, navigationActions, innerPadding)

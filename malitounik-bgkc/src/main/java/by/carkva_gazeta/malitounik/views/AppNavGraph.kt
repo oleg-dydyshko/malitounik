@@ -1,10 +1,16 @@
 package by.carkva_gazeta.malitounik.views
 
+import android.Manifest
 import android.app.Activity
+import android.app.AlarmManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -38,6 +44,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
@@ -52,6 +59,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -78,7 +86,9 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -95,6 +105,7 @@ import by.carkva_gazeta.malitounik.Bogaslujbovyia
 import by.carkva_gazeta.malitounik.BogaslujbovyiaMenu
 import by.carkva_gazeta.malitounik.CytanniList
 import by.carkva_gazeta.malitounik.DialogDelite
+import by.carkva_gazeta.malitounik.DialogNotification
 import by.carkva_gazeta.malitounik.KaliandarKnigaView
 import by.carkva_gazeta.malitounik.KaliandarScreen
 import by.carkva_gazeta.malitounik.KaliandarScreenMounth
@@ -111,12 +122,16 @@ import by.carkva_gazeta.malitounik.R
 import by.carkva_gazeta.malitounik.SearchBible
 import by.carkva_gazeta.malitounik.SearchSviatyia
 import by.carkva_gazeta.malitounik.Settings
+import by.carkva_gazeta.malitounik.Settings.isNetworkAvailable
 import by.carkva_gazeta.malitounik.SettingsView
 import by.carkva_gazeta.malitounik.SviatyList
 import by.carkva_gazeta.malitounik.SviatyiaView
 import by.carkva_gazeta.malitounik.VybranaeList
-import by.carkva_gazeta.malitounik.getFontInterface
+import by.carkva_gazeta.malitounik.formatFigureTwoPlaces
 import by.carkva_gazeta.malitounik.removeZnakiAndSlovy
+import by.carkva_gazeta.malitounik.setNotificationFull
+import by.carkva_gazeta.malitounik.setNotificationNon
+import by.carkva_gazeta.malitounik.setNotificationOnly
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.Post
@@ -124,6 +139,12 @@ import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.StrogiPost
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.InstallStateUpdatedListener
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
@@ -877,6 +898,78 @@ fun findCaliandarPosition(position: Int): ArrayList<ArrayList<String>> {
     return Settings.data
 }
 
+@Composable
+fun CheckUpdateMalitounik() {
+    val context = LocalContext.current
+    val activity = LocalActivity.current as MainActivity
+    var noWIFI by remember { mutableStateOf(false) }
+    var totalBytesToDownload by remember { mutableFloatStateOf(0f) }
+    var dialogUpdateMalitounik by remember { mutableStateOf(false) }
+    var bytesDownload by remember { mutableFloatStateOf(0f) }
+    if (dialogUpdateMalitounik) {
+        DialogUpdateMalitounik(totalBytesToDownload, bytesDownload / totalBytesToDownload) {
+            dialogUpdateMalitounik = false
+        }
+    }
+    if (noWIFI) {
+        DialogUpdateNoWiFI(totalBytesToDownload, {
+            val appUpdateManager = AppUpdateManagerFactory.create(context)
+            val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+            appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
+                    val installStateUpdatedListener = InstallStateUpdatedListener { state ->
+                        dialogUpdateMalitounik = true
+                        if (state.installStatus() == InstallStatus.DOWNLOADING) {
+                            bytesDownload = state.bytesDownloaded().toFloat()
+                            totalBytesToDownload = state.totalBytesToDownload().toFloat()
+                        }
+                        if (state.installStatus() == InstallStatus.DOWNLOADED) {
+                            dialogUpdateMalitounik = false
+                        }
+                    }
+                    appUpdateManager.registerListener(installStateUpdatedListener)
+                    appUpdateManager.startUpdateFlowForResult(appUpdateInfo, activity, AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build(), 300)
+                    if (!dialogUpdateMalitounik) {
+                        appUpdateManager.unregisterListener(installStateUpdatedListener)
+                        appUpdateManager.completeUpdate()
+                    }
+                }
+            }
+            noWIFI = false
+        }) { noWIFI = false }
+    }
+    if (isNetworkAvailable(context)) {
+        val appUpdateManager = AppUpdateManagerFactory.create(context)
+        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
+                if (isNetworkAvailable(context, Settings.TRANSPORT_CELLULAR)) {
+                    totalBytesToDownload = appUpdateInfo.totalBytesToDownload().toFloat()
+                    noWIFI = true
+                } else {
+                    dialogUpdateMalitounik = true
+                    val installStateUpdatedListener = InstallStateUpdatedListener { state ->
+                        dialogUpdateMalitounik = true
+                        if (state.installStatus() == InstallStatus.DOWNLOADING) {
+                            bytesDownload = state.bytesDownloaded().toFloat()
+                            totalBytesToDownload = state.totalBytesToDownload().toFloat()
+                        }
+                        if (state.installStatus() == InstallStatus.DOWNLOADED) {
+                            dialogUpdateMalitounik = false
+                        }
+                    }
+                    appUpdateManager.registerListener(installStateUpdatedListener)
+                    appUpdateManager.startUpdateFlowForResult(appUpdateInfo, activity, AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build(), 300)
+                    if (!dialogUpdateMalitounik) {
+                        appUpdateManager.unregisterListener(installStateUpdatedListener)
+                        appUpdateManager.completeUpdate()
+                    }
+                }
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainConteiner(
@@ -891,8 +984,8 @@ fun MainConteiner(
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
-    LaunchedEffect(Unit) {
-        Settings.fontInterface = getFontInterface(context)
+    if (k.getBoolean("setAlarm", true)) {
+        CheckUpdateMalitounik()
     }
     val initPage = if (Settings.caliandarPosition == -1) {
         findCaliandarPosition(-1)
@@ -1021,8 +1114,7 @@ fun MainConteiner(
         }
         context.intent = null
     }
-    if (drawerState.isOpen) isAppearanceLight =
-        !(LocalActivity.current as MainActivity).dzenNoch
+    if (drawerState.isOpen) isAppearanceLight = !context.dzenNoch
     SideEffect {
         val window = (view.context as Activity).window
         WindowCompat.getInsetsController(
@@ -1098,6 +1190,58 @@ fun MainConteiner(
             }
         )
     }
+    var dialodNotificatin by rememberSaveable { mutableStateOf(false) }
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+        if (PackageManager.PERMISSION_DENIED == permissionCheck || !alarmManager.canScheduleExactAlarms()) {
+            dialodNotificatin = true
+        }
+    }
+    if (dialodNotificatin) {
+        val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
+            if (it) {
+                when (k.getInt("notification", Settings.NOTIFICATION_SVIATY_FULL)) {
+                    Settings.NOTIFICATION_SVIATY_ONLY -> setNotificationOnly(context)
+                    Settings.NOTIFICATION_SVIATY_FULL -> setNotificationFull(context)
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    if (!alarmManager.canScheduleExactAlarms()) {
+                        dialodNotificatin = false
+                        val intent = Intent()
+                        intent.action = android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                        intent.data = ("package:" + context.packageName).toUri()
+                        context.startActivity(intent)
+                    }
+                }
+            } else {
+                k.edit {
+                    putInt("notification", Settings.NOTIFICATION_SVIATY_NONE)
+                }
+                setNotificationNon(context)
+            }
+            dialodNotificatin = false
+        }
+        DialogNotification(onConfirm = {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                if (!alarmManager.canScheduleExactAlarms()) {
+                    val intent = Intent()
+                    intent.action = android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                    intent.data = ("package:" + context.packageName).toUri()
+                    context.startActivity(intent)
+                }
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val permissionCheck2 = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                if (permissionCheck2 == PackageManager.PERMISSION_DENIED) {
+                    launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+            dialodNotificatin = false
+        }, onDismiss = {
+            dialodNotificatin = false
+        })
+    }
     ModalNavigationDrawer(drawerContent = {
         DrawView(
             route = currentRoute,
@@ -1107,6 +1251,7 @@ fun MainConteiner(
                         if (k.getBoolean("caliandarList", false)) navigationActions.navigateToKaliandarYear()
                         else navigationActions.navigateToKaliandar()
                     }
+
                     AllDestinations.BOGASLUJBOVYIA_MENU -> navigationActions.navigateToBogaslujbovyiaMenu()
                     AllDestinations.MALITVY_MENU -> navigationActions.navigateToMalitvyMenu()
                     AllDestinations.BIBLIA_SEMUXA -> navigationActions.navigateToBibliaSemuxa()
@@ -2069,6 +2214,94 @@ fun DialogUmounyiaZnachenni(
                 }
             ) {
                 Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
+            }
+        }
+    )
+}
+
+@Composable
+fun DialogUpdateMalitounik(
+    total: Float,
+    bytesDownload: Float,
+    onDismissRequest: () -> Unit
+) {
+    val totalSizeUpdate = if (total / 1024 > 1000) {
+        " ${formatFigureTwoPlaces(total / 1024 / 1024)} Мб "
+    } else {
+        " ${formatFigureTwoPlaces(total / 1024)} Кб "
+    }
+    val bytesDownloadUpdate = if (bytesDownload / 1024 > 1000) {
+        " ${formatFigureTwoPlaces(bytesDownload / 1024 / 1024)} Мб "
+    } else {
+        " ${formatFigureTwoPlaces(bytesDownload / 1024)} Кб "
+    }
+    AlertDialog(
+        icon = {
+            Icon(painter = painterResource(R.drawable.signal_wifi_off), contentDescription = "")
+        },
+        title = {
+            Text(stringResource(R.string.update_title))
+        },
+        text = {
+            Column {
+                Text(text = stringResource(R.string.update_program_progress, bytesDownloadUpdate, totalSizeUpdate), fontSize = Settings.fontInterface.sp)
+                LinearProgressIndicator(progress = { bytesDownload }, modifier = Modifier.fillMaxWidth())
+            }
+        },
+        onDismissRequest = {
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
+            }
+        }
+    )
+}
+
+@Composable
+fun DialogUpdateNoWiFI(
+    totalBytesToDownload: Float,
+    onConfirmation: () -> Unit,
+    onDismissRequest: () -> Unit
+) {
+    val sizeProgram = if (totalBytesToDownload == 0f) {
+        " "
+    } else {
+        " ${formatFigureTwoPlaces(totalBytesToDownload / 1024 / 1024)} Мб "
+    }
+    AlertDialog(
+        icon = {
+            Icon(painter = painterResource(R.drawable.signal_wifi_off), contentDescription = "")
+        },
+        title = {
+            Text(stringResource(R.string.wifi_error))
+        },
+        text = {
+            Text(stringResource(R.string.download_opisanie, sizeProgram), fontSize = Settings.fontInterface.sp)
+        },
+        onDismissRequest = {
+            onDismissRequest()
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onConfirmation()
+                }
+            ) {
+                Text(stringResource(R.string.ok), fontSize = Settings.fontInterface.sp)
             }
         }
     )

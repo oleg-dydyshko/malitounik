@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.text.KeyboardOptions
@@ -145,8 +144,16 @@ fun SettingsView(navController: NavHostController) {
         val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
             if (it) {
                 when (k.getInt("notification", Settings.NOTIFICATION_SVIATY_FULL)) {
-                    1 -> setNotificationOnly(context)
-                    2 -> setNotificationFull(context)
+                    Settings.NOTIFICATION_SVIATY_ONLY -> setNotificationOnly(context)
+                    Settings.NOTIFICATION_SVIATY_FULL -> setNotificationFull(context)
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    if (!alarmManager.canScheduleExactAlarms()) {
+                        val intent = Intent()
+                        intent.action = android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                        intent.data = ("package:" + context.packageName).toUri()
+                        context.startActivity(intent)
+                    }
                 }
             } else {
                 k.edit {
@@ -157,8 +164,9 @@ fun SettingsView(navController: NavHostController) {
             dialodNotificatin = false
         }
         DialogNotification(onConfirm = {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
                 if (!alarmManager.canScheduleExactAlarms()) {
+                    dialodNotificatin = false
                     val intent = Intent()
                     intent.action = android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
                     intent.data = ("package:" + context.packageName).toUri()
