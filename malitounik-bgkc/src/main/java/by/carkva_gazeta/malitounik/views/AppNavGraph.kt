@@ -838,7 +838,7 @@ fun AppNavGraph() {
     }
 }
 
-fun findCaliandarToDay(context: Context): ArrayList<String> {
+fun findCaliandarToDay(context: Context, isGlobal: Boolean = true): ArrayList<String> {
     if (Settings.data.isEmpty()) {
         val gson = Gson()
         val type = TypeToken.getParameterized(
@@ -856,14 +856,18 @@ fun findCaliandarToDay(context: Context): ArrayList<String> {
         }
         Settings.data.addAll(gson.fromJson(builder, type))
     }
+    var caliandarPosition = Settings.caliandarPosition
     val calendar = Calendar.getInstance()
     for (i in Settings.data.indices) {
         if (calendar[Calendar.DATE] == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
-            Settings.caliandarPosition = i
+            caliandarPosition = i
+            if (isGlobal) {
+                Settings.caliandarPosition = i
+            }
             break
         }
     }
-    return Settings.data[Settings.caliandarPosition]
+    return Settings.data[caliandarPosition]
 }
 
 @Composable
@@ -907,7 +911,7 @@ fun CheckUpdateMalitounik() {
     var dialogUpdateMalitounik by remember { mutableStateOf(false) }
     var bytesDownload by remember { mutableFloatStateOf(0f) }
     if (dialogUpdateMalitounik) {
-        DialogUpdateMalitounik(totalBytesToDownload, bytesDownload / totalBytesToDownload) {
+        DialogUpdateMalitounik(totalBytesToDownload, bytesDownload) {
             dialogUpdateMalitounik = false
         }
     }
@@ -1242,6 +1246,7 @@ fun MainConteiner(
             dialodNotificatin = false
         })
     }
+    var isToDay by remember { mutableStateOf(false) }
     ModalNavigationDrawer(drawerContent = {
         DrawView(
             route = currentRoute,
@@ -1452,7 +1457,7 @@ fun MainConteiner(
                                     showDropdown = !showDropdown
                                 }) {
                                     Icon(
-                                        painter = painterResource(R.drawable.event_upcoming),
+                                        painter = if (isToDay) painterResource(R.drawable.event) else painterResource(R.drawable.event_upcoming),
                                         tint = textTollBarColor,
                                         contentDescription = ""
                                     )
@@ -1693,6 +1698,7 @@ fun MainConteiner(
                 var colorBlackboard by remember { mutableStateOf(color) }
                 when (Settings.destinations) {
                     AllDestinations.KALIANDAR -> {
+                        val dataToDay = findCaliandarToDay(context, false)
                         val fling = PagerDefaults.flingBehavior(
                             state = pagerState,
                             pagerSnapDistance = PagerSnapDistance.atMost(1)
@@ -1701,6 +1707,7 @@ fun MainConteiner(
                             snapshotFlow { pagerState.currentPage }.collect { page ->
                                 Settings.caliandarPosition = page
                                 val data = Settings.data[page]
+                                isToDay = data[1] == dataToDay[1] && data[2] == dataToDay[2] && data[3] == dataToDay[3]
                                 var colorText = PrimaryText
                                 isAppearanceLight = false
                                 when {
@@ -2049,7 +2056,7 @@ fun DialogLogProgramy(
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .sizeIn(minHeight = 200.dp)
+                    .sizeIn(minHeight = 150.dp)
                     .verticalScroll(rememberScrollState()), text = item, fontSize = Settings.fontInterface.sp
             )
         },
@@ -2237,15 +2244,15 @@ fun DialogUpdateMalitounik(
     }
     AlertDialog(
         icon = {
-            Icon(painter = painterResource(R.drawable.signal_wifi_off), contentDescription = "")
+            Icon(painter = painterResource(R.drawable.update), contentDescription = "")
         },
         title = {
             Text(stringResource(R.string.update_title))
         },
         text = {
             Column {
-                Text(text = stringResource(R.string.update_program_progress, bytesDownloadUpdate, totalSizeUpdate), fontSize = Settings.fontInterface.sp)
-                LinearProgressIndicator(progress = { bytesDownload }, modifier = Modifier.fillMaxWidth())
+                Text(modifier = Modifier.padding(bottom = 10.dp), text = stringResource(R.string.update_program_progress, bytesDownloadUpdate, totalSizeUpdate), fontSize = Settings.fontInterface.sp)
+                LinearProgressIndicator(progress = { (bytesDownload / total).toFloat() }, modifier = Modifier.fillMaxWidth())
             }
         },
         onDismissRequest = {

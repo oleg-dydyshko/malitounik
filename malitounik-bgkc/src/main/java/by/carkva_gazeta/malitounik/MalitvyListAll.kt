@@ -1365,6 +1365,7 @@ fun getPrynagodnyia6(): ArrayList<BogaslujbovyiaListData> {
             "Юбілейная малітва", R.raw.mltv_jubilejnaja
         )
     )
+    list.add(BogaslujbovyiaListData("Малітва аб муках Госпада нашага Ісуса Хрыста", R.raw.mltv_ab_mukach_hospada))
     list.sortBy {
         it.title
     }
