@@ -134,7 +134,7 @@ fun KaliandarScreen(
                             else MaterialTheme.colorScheme.secondary
                             Icon(
                                 painter = painterResource(R.drawable.fishe), contentDescription = "", tint = color, modifier = Modifier
-                                    .size(25.dp)
+                                    .size(22.dp)
                                     .align(Alignment.CenterHorizontally)
                             )
                         }
@@ -198,7 +198,7 @@ fun KaliandarScreen(
                     Icon(
                         painter = painterResource(R.drawable.znaki_krest_v_kruge), tint = MaterialTheme.colorScheme.primary, contentDescription = "", modifier = Modifier
                             .padding(end = 10.dp)
-                            .size(25.dp)
+                            .size(22.dp)
                     )
                     padding = 35.dp
                 }
@@ -239,7 +239,7 @@ fun KaliandarScreen(
                 )
             }
         }
-        if (data[4] != "no_sviatyia") {
+        if (data[4].isNotEmpty()) {
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -272,7 +272,7 @@ fun KaliandarScreen(
                         if (icon != null && i == 0) {
                             Box(modifier = Modifier.padding(start = 10.dp)) {
                                 Icon(
-                                    painter = icon, contentDescription = "", tint = iconTint, modifier = Modifier.size(25.dp)
+                                    painter = icon, contentDescription = "", tint = iconTint, modifier = Modifier.size(22.dp)
                                 )
                             }
                         }
@@ -332,10 +332,10 @@ fun KaliandarScreen(
                 )
             }
             if (data[18].toInt() == 1 || data[21].isNotEmpty()) {
-                val textPamAndBlas = if (data[18].toInt() == 1) stringResource(id = R.string.pamerlyia)
+                val textPamAndBlas = if (data[18].toInt() == 1) stringResource(R.string.pamerlyia)
                 else data[21]
                 Text(
-                    modifier = Modifier.padding(top = 10.dp, start = 10.dp), text = textPamAndBlas, color = colorText, fontWeight = FontWeight.Bold, fontSize = Settings.fontInterface.sp
+                    modifier = Modifier.padding(top = 10.dp, start = 10.dp), text = textPamAndBlas, color = colorText, fontStyle = FontStyle.Italic, fontSize = Settings.fontInterface.sp
                 )
             }
         }

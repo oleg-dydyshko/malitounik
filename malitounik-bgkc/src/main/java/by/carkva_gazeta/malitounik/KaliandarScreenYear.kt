@@ -73,6 +73,7 @@ fun KaliandarScreenYear(
             var text = ""
             var colorBlackboard = Divider
             var colorText = PrimaryText
+            var colorIcon = MaterialTheme.colorScheme.secondary
             if (data[index][7].toInt() == 2) {
                 if (data[index][0].toInt() == Calendar.FRIDAY) text =
                     stringResource(id = R.string.Post)
@@ -87,6 +88,7 @@ fun KaliandarScreenYear(
                 text = stringResource(R.string.Strogi_post_n)
                 colorBlackboard = StrogiPost
                 colorText = PrimaryTextBlack
+                colorIcon = MaterialTheme.colorScheme.primary
             }
             if (data[index][5].toInt() > 0) {
                 colorBlackboard = Primary
@@ -118,6 +120,21 @@ fun KaliandarScreenYear(
                     color = colorText,
                     textAlign = TextAlign.Center
                 )
+                if (text.isNotEmpty()) {
+                    Row(modifier = Modifier.padding(top = 10.dp, start = 5.dp), verticalAlignment = Alignment.CenterVertically) {
+                        if (data[index][7].toInt() != 1) {
+                            Icon(modifier = Modifier.padding(end = 10.dp).size(22.dp, 22.dp), painter = painterResource(R.drawable.fishe), contentDescription = "", tint = colorIcon)
+                        }
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            textAlign = TextAlign.Start,
+                            text = text,
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontSize = Settings.fontInterface.sp
+                        )
+                    }
+                }
                 if (data[index][5].toInt() > 0) {
                     val padding1 = if (data[index][4] != "no_sviatyia") 0.dp
                     else 10.dp
@@ -141,7 +158,7 @@ fun KaliandarScreenYear(
                                     tint = MaterialTheme.colorScheme.primary,
                                     contentDescription = "",
                                     modifier = Modifier
-                                        .size(25.dp)
+                                        .size(22.dp)
                                 )
                             }
                             padding = 35.dp
@@ -187,7 +204,7 @@ fun KaliandarScreenYear(
                         textAlign = TextAlign.Center
                     )
                 }
-                if (data[index][4] != "no_sviatyia") {
+                if (data[index][4].isNotEmpty()) {
                     val list = data[index][4].split("<br>")
                     Column(
                         modifier = Modifier
@@ -216,18 +233,20 @@ fun KaliandarScreenYear(
                                         iconTint = MaterialTheme.colorScheme.secondary
                                     }
                                 }
+                                var tpadd = 0.dp
                                 if (icon != null && i == 0) {
                                     Icon(
                                         painter = icon,
                                         contentDescription = "",
                                         tint = iconTint,
                                         modifier = Modifier
-                                            .size(25.dp)
+                                            .size(22.dp)
                                     )
+                                    tpadd = 10.dp
                                 }
                                 HtmlText(
                                     modifier = Modifier
-                                        .padding(start = 10.dp, end = 10.dp)
+                                        .padding(start = tpadd, end = 10.dp)
                                         .align(Alignment.CenterVertically),
                                     text = list[i],
                                     fontSize = Settings.fontInterface.sp
@@ -235,6 +254,13 @@ fun KaliandarScreenYear(
                             }
                         }
                     }
+                }
+                if (data[index][18].toInt() == 1 || data[index][21].isNotEmpty()) {
+                    val textPamAndBlas = if (data[index][18].toInt() == 1) stringResource(R.string.pamerlyia)
+                    else data[index][21]
+                    Text(
+                        modifier = Modifier.padding(bottom = 10.dp, start = 5.dp), text = textPamAndBlas, color = MaterialTheme.colorScheme.secondary, fontStyle = FontStyle.Italic, fontSize = Settings.fontInterface.sp
+                    )
                 }
                 var svityDrugasnuia = AnnotatedString.Builder("").apply {
                     val context = LocalContext.current
@@ -280,7 +306,6 @@ fun KaliandarScreenYear(
                     if (t1 != -1) {
                         svityDrugasnuia = svityDrugasnuia.subSequence(0, t1)
                     }
-                    Spacer(Modifier.size(10.dp))
                     Row(
                         modifier = Modifier
                             .padding(bottom = 10.dp)
@@ -296,21 +321,6 @@ fun KaliandarScreenYear(
                             fontStyle = FontStyle.Italic,
                             fontSize = Settings.fontInterface.sp,
                             color = SecondaryText
-                        )
-                    }
-                }
-                if (text.isNotEmpty()) {
-                    Box {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .align(Alignment.Center)
-                                .background(colorBlackboard)
-                                .padding(vertical = 5.dp),
-                            textAlign = TextAlign.Center,
-                            text = text,
-                            color = colorText,
-                            fontSize = Settings.fontInterface.sp
                         )
                     }
                 }

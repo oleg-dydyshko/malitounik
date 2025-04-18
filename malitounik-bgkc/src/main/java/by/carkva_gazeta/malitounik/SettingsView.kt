@@ -278,7 +278,7 @@ fun SettingsView(navController: NavHostController) {
                         }
                     },
                 text = stringResource(R.string.vygliad),
-                fontSize = Settings.fontInterface.sp,
+                fontSize = (Settings.fontInterface - 2).sp,
                 color = MaterialTheme.colorScheme.primary
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
@@ -321,7 +321,7 @@ fun SettingsView(navController: NavHostController) {
                         stringResource(R.string.system),
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.secondary,
-                        fontSize = Settings.fontInterface.sp
+                        fontSize = (Settings.fontInterface - 2).sp
                     )
                 }
                 Row(
@@ -352,7 +352,7 @@ fun SettingsView(navController: NavHostController) {
                         stringResource(R.string.day),
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.secondary,
-                        fontSize = Settings.fontInterface.sp
+                        fontSize = (Settings.fontInterface - 2).sp
                     )
                 }
                 Row(
@@ -389,7 +389,7 @@ fun SettingsView(navController: NavHostController) {
                         stringResource(R.string.widget_day_d_n),
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.secondary,
-                        fontSize = Settings.fontInterface.sp
+                        fontSize = (Settings.fontInterface - 2).sp
                     )
                 }
                 Row(
@@ -422,7 +422,7 @@ fun SettingsView(navController: NavHostController) {
                         stringResource(R.string.auto_widget_day_d_n),
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.secondary,
-                        fontSize = Settings.fontInterface.sp
+                        fontSize = (Settings.fontInterface - 2).sp
                     )
                 }
             }
@@ -430,7 +430,7 @@ fun SettingsView(navController: NavHostController) {
             Text(
                 stringResource(R.string.settengs_font_size_app),
                 fontStyle = FontStyle.Italic,
-                fontSize = Settings.fontInterface.sp,
+                fontSize = (Settings.fontInterface - 2).sp,
                 color = MaterialTheme.colorScheme.secondary
             )
             Slider(
@@ -454,8 +454,8 @@ fun SettingsView(navController: NavHostController) {
                     Text(
                         stringResource(R.string.admin_day_in_year),
                         modifier = Modifier
-                            .weight(1f),
-                        fontSize = Settings.fontInterface.sp,
+                            .weight(1f).padding(end = 10.dp),
+                        fontSize = (Settings.fontInterface - 2).sp,
                         color = MaterialTheme.colorScheme.secondary
                     )
                     Switch(
@@ -502,13 +502,13 @@ fun SettingsView(navController: NavHostController) {
                     ),
                     shape = MaterialTheme.shapes.medium
                 ) {
-                    Text(stringResource(R.string.site_admin), fontSize = Settings.fontInterface.sp, color = PrimaryText)
+                    Text(stringResource(R.string.site_admin), fontSize = (Settings.fontInterface - 2).sp, color = PrimaryText)
                 }
             }
             Text(
                 modifier = Modifier.padding(top = 10.dp),
                 text = stringResource(R.string.biblia),
-                fontSize = Settings.fontInterface.sp,
+                fontSize = (Settings.fontInterface - 2).sp,
                 color = MaterialTheme.colorScheme.primary
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
@@ -527,8 +527,8 @@ fun SettingsView(navController: NavHostController) {
                 Text(
                     stringResource(R.string.bsinaidal),
                     modifier = Modifier
-                        .weight(1f),
-                    fontSize = Settings.fontInterface.sp,
+                        .weight(1f).padding(end = 10.dp),
+                    fontSize = (Settings.fontInterface - 2).sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
@@ -556,8 +556,8 @@ fun SettingsView(navController: NavHostController) {
                 Text(
                     stringResource(R.string.maranata_opis),
                     modifier = Modifier
-                        .weight(1f),
-                    fontSize = Settings.fontInterface.sp,
+                        .weight(1f).padding(end = 10.dp),
+                    fontSize = (Settings.fontInterface - 2).sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
@@ -573,7 +573,7 @@ fun SettingsView(navController: NavHostController) {
             Text(
                 modifier = Modifier.padding(top = 10.dp),
                 text = stringResource(R.string.sviaty_notifi),
-                fontSize = Settings.fontInterface.sp,
+                fontSize = (Settings.fontInterface - 2).sp,
                 color = MaterialTheme.colorScheme.primary
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
@@ -624,7 +624,7 @@ fun SettingsView(navController: NavHostController) {
                         stringResource(R.string.apav_only),
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.secondary,
-                        fontSize = Settings.fontInterface.sp
+                        fontSize = (Settings.fontInterface - 2).sp
                     )
                 }
                 Row(
@@ -671,7 +671,7 @@ fun SettingsView(navController: NavHostController) {
                         stringResource(R.string.apav_all),
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.secondary,
-                        fontSize = Settings.fontInterface.sp
+                        fontSize = (Settings.fontInterface - 2).sp
                     )
                 }
                 Row(
@@ -682,6 +682,7 @@ fun SettingsView(navController: NavHostController) {
                             k.edit {
                                 putInt("notification", modeNotification)
                             }
+                            setNotificationNon(context)
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -692,13 +693,14 @@ fun SettingsView(navController: NavHostController) {
                             k.edit {
                                 putInt("notification", modeNotification)
                             }
+                            setNotificationNon(context)
                         }
                     )
                     Text(
                         stringResource(R.string.apav_no),
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.secondary,
-                        fontSize = Settings.fontInterface.sp
+                        fontSize = (Settings.fontInterface - 2).sp
                     )
                 }
             }
@@ -706,7 +708,7 @@ fun SettingsView(navController: NavHostController) {
                 stringResource(R.string.pavedamiс_title),
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.secondary,
-                fontSize = Settings.fontInterface.sp
+                fontSize = (Settings.fontInterface - 2).sp
             )
             val dataTimes = ArrayList<DataTime>()
             for (i in 6..17) {
@@ -724,7 +726,7 @@ fun SettingsView(navController: NavHostController) {
                     state = textFieldNotificstionState,
                     readOnly = true,
                     lineLimits = TextFieldLineLimits.SingleLine,
-                    textStyle = TextStyle(fontSize = Settings.fontInterface.sp),
+                    textStyle = TextStyle(fontSize = (Settings.fontInterface - 2).sp),
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSviaty) },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(),
                 )
@@ -734,7 +736,7 @@ fun SettingsView(navController: NavHostController) {
                 ) {
                     dataTimes.forEachIndexed { index, option ->
                         DropdownMenuItem(
-                            text = { Text(text = option.string, style = MaterialTheme.typography.bodyLarge, fontSize = Settings.fontInterface.sp) },
+                            text = { Text(text = option.string, style = MaterialTheme.typography.bodyLarge, fontSize = (Settings.fontInterface - 2).sp) },
                             onClick = {
                                 textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option.string)
                                 expandedSviaty = false
@@ -777,13 +779,13 @@ fun SettingsView(navController: NavHostController) {
                     ),
                     shape = MaterialTheme.shapes.medium
                 ) {
-                    Text(stringResource(R.string.settings_notifi_sviata), fontSize = Settings.fontInterface.sp, color = PrimaryText)
+                    Text(stringResource(R.string.settings_notifi_sviata), fontSize = (Settings.fontInterface - 2).sp, color = PrimaryText)
                 }
             }
             Text(
                 modifier = Modifier.padding(top = 10.dp),
                 text = stringResource(R.string.sviaty_under),
-                fontSize = Settings.fontInterface.sp,
+                fontSize = (Settings.fontInterface - 2).sp,
                 color = MaterialTheme.colorScheme.primary
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
@@ -802,8 +804,8 @@ fun SettingsView(navController: NavHostController) {
                 Text(
                     stringResource(R.string.pkc),
                     modifier = Modifier
-                        .weight(1f),
-                    fontSize = Settings.fontInterface.sp,
+                        .weight(1f).padding(end = 10.dp),
+                    fontSize = (Settings.fontInterface - 2).sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
@@ -831,8 +833,8 @@ fun SettingsView(navController: NavHostController) {
                 Text(
                     stringResource(R.string.sviaty_ulian),
                     modifier = Modifier
-                        .weight(1f),
-                    fontSize = Settings.fontInterface.sp,
+                        .weight(1f).padding(end = 10.dp),
+                    fontSize = (Settings.fontInterface - 2).sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
@@ -860,8 +862,8 @@ fun SettingsView(navController: NavHostController) {
                 Text(
                     stringResource(R.string.sviaty_dziar),
                     modifier = Modifier
-                        .weight(1f),
-                    fontSize = Settings.fontInterface.sp,
+                        .weight(1f).padding(end = 10.dp),
+                    fontSize = (Settings.fontInterface - 2).sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
@@ -889,8 +891,8 @@ fun SettingsView(navController: NavHostController) {
                 Text(
                     stringResource(R.string.sviaty_pfes),
                     modifier = Modifier
-                        .weight(1f),
-                    fontSize = Settings.fontInterface.sp,
+                        .weight(1f).padding(end = 10.dp),
+                    fontSize = (Settings.fontInterface - 2).sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
@@ -961,7 +963,6 @@ fun SettingsView(navController: NavHostController) {
                     modeGosudSvaity = false
                     modePafesiiSvaity = false
                     textFieldNotificstionState.setTextAndPlaceCursorAtEnd(dataTimes[k.getInt("timeNotification", 2)].string)
-                    //textFieldState.setTextAndPlaceCursorAtEnd(options[k.getInt("Settings.fontInterface", 1)])
                     if ((context as MainActivity).checkDzenNoch != context.dzenNoch) context.recreate()
                     else setNotificationFull(context)
                 },
@@ -976,7 +977,7 @@ fun SettingsView(navController: NavHostController) {
                 ),
                 shape = MaterialTheme.shapes.medium
             ) {
-                Text(stringResource(R.string.settings_default), fontSize = Settings.fontInterface.sp, color = PrimaryTextBlack)
+                Text(stringResource(R.string.settings_default), fontSize = (Settings.fontInterface - 2).sp, color = PrimaryTextBlack)
             }
             TextButton(
                 onClick = {
@@ -993,7 +994,7 @@ fun SettingsView(navController: NavHostController) {
                 ),
                 shape = MaterialTheme.shapes.medium
             ) {
-                Text(stringResource(R.string.clear_chash), fontSize = Settings.fontInterface.sp, color = PrimaryText)
+                Text(stringResource(R.string.clear_chash), fontSize = (Settings.fontInterface - 2).sp, color = PrimaryText)
             }
             Spacer(modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
         }
@@ -1013,7 +1014,7 @@ fun DialogClearChash(
             Text(text = stringResource(R.string.clear_chash))
         },
         text = {
-            Text(text = stringResource(R.string.clear_chash_opis), fontSize = Settings.fontInterface.sp)
+            Text(text = stringResource(R.string.clear_chash_opis), fontSize = (Settings.fontInterface - 2).sp)
         },
         onDismissRequest = {
             onDismiss()
@@ -1024,7 +1025,7 @@ fun DialogClearChash(
                     onConfirm()
                 }
             ) {
-                Text(stringResource(R.string.delite), fontSize = Settings.fontInterface.sp)
+                Text(stringResource(R.string.delite), fontSize = (Settings.fontInterface - 2).sp)
             }
         },
         dismissButton = {
@@ -1033,7 +1034,7 @@ fun DialogClearChash(
                     onDismiss()
                 }
             ) {
-                Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
+                Text(stringResource(R.string.cansel), fontSize = (Settings.fontInterface - 2).sp)
             }
         }
     )
@@ -1063,7 +1064,7 @@ fun DialogLogin(
                         login = newText
                     },
                     singleLine = true,
-                    textStyle = TextStyle(fontSize = Settings.fontInterface.sp),
+                    textStyle = TextStyle(fontSize = (Settings.fontInterface - 2).sp),
                     trailingIcon = {
                         if (login.isNotEmpty()) {
                             IconButton(onClick = {
@@ -1087,7 +1088,7 @@ fun DialogLogin(
                         password = newText
                     },
                     singleLine = true,
-                    textStyle = TextStyle(fontSize = Settings.fontInterface.sp),
+                    textStyle = TextStyle(fontSize = (Settings.fontInterface - 2).sp),
                     trailingIcon = {
                         if (showPassword) {
                             IconButton(onClick = { showPassword = false }) {
@@ -1123,7 +1124,7 @@ fun DialogLogin(
                     onLogin(login.trim() == "Царква" && password.trim() == "Дворнікава63")
                 }
             ) {
-                Text(stringResource(R.string.ok), fontSize = Settings.fontInterface.sp)
+                Text(stringResource(R.string.ok), fontSize = (Settings.fontInterface - 2).sp)
             }
         }
     )
@@ -1142,7 +1143,7 @@ fun DialogNotification(
             Text(text = stringResource(R.string.notifi))
         },
         text = {
-            Text(stringResource(R.string.help_notifications_api33), fontSize = Settings.fontInterface.sp)
+            Text(stringResource(R.string.help_notifications_api33), fontSize = (Settings.fontInterface - 2).sp)
         },
         onDismissRequest = {
             onDismiss()
@@ -1153,7 +1154,7 @@ fun DialogNotification(
                     onConfirm()
                 }
             ) {
-                Text(stringResource(R.string.dazvolic), fontSize = Settings.fontInterface.sp)
+                Text(stringResource(R.string.dazvolic), fontSize = (Settings.fontInterface - 2).sp)
             }
         },
         dismissButton = {
@@ -1162,7 +1163,7 @@ fun DialogNotification(
                     onDismiss()
                 }
             ) {
-                Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
+                Text(stringResource(R.string.cansel), fontSize = (Settings.fontInterface - 2).sp)
             }
         }
     )

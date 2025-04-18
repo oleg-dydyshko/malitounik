@@ -111,7 +111,7 @@ fun DrawView(
             },
             icon = {
                 Icon(
-                    modifier = Modifier.size(24.dp, 24.dp),
+                    modifier = Modifier.size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary
@@ -135,7 +135,7 @@ fun DrawView(
             },
             icon = {
                 Icon(
-                    modifier = Modifier.size(24.dp, 24.dp),
+                    modifier = Modifier.size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = null
@@ -159,7 +159,7 @@ fun DrawView(
             },
             icon = {
                 Icon(
-                    modifier = Modifier.size(24.dp, 24.dp),
+                    modifier = Modifier.size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = null
@@ -183,7 +183,7 @@ fun DrawView(
             },
             icon = {
                 Icon(
-                    modifier = Modifier.size(24.dp, 24.dp),
+                    modifier = Modifier.size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = null
@@ -207,7 +207,7 @@ fun DrawView(
             },
             icon = {
                 Icon(
-                    modifier = Modifier.size(24.dp, 24.dp),
+                    modifier = Modifier.size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = null
@@ -231,7 +231,7 @@ fun DrawView(
             },
             icon = {
                 Icon(
-                    modifier = Modifier.size(24.dp, 24.dp),
+                    modifier = Modifier.size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = null
@@ -255,7 +255,7 @@ fun DrawView(
             },
             icon = {
                 Icon(
-                    modifier = Modifier.size(24.dp, 24.dp),
+                    modifier = Modifier.size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = null
@@ -281,7 +281,7 @@ fun DrawView(
                 Icon(
                     modifier = Modifier
                         .padding(start = 21.dp, end = 2.dp)
-                        .size(24.dp, 24.dp),
+                        .size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = null
@@ -297,7 +297,7 @@ fun DrawView(
                 Icon(
                     modifier = Modifier
                         .padding(start = 21.dp, end = 2.dp)
-                        .size(24.dp, 24.dp),
+                        .size(22.dp, 22.dp),
                     painter = painterResource(if (bibleItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
                     contentDescription = null
@@ -443,7 +443,7 @@ fun DrawView(
             Icon(
                 modifier = Modifier
                     .padding(start = 21.dp, end = 2.dp)
-                    .size(24.dp, 24.dp),
+                    .size(22.dp, 22.dp),
                 painter = painterResource(R.drawable.krest),
                 tint = MaterialTheme.colorScheme.primary,
                 contentDescription = null
@@ -462,7 +462,7 @@ fun DrawView(
                 CircularProgressIndicator(
                     modifier = Modifier
                         .padding(horizontal = 10.dp)
-                        .size(24.dp, 24.dp)
+                        .size(22.dp, 22.dp)
                 )
             }
             Icon(
@@ -565,7 +565,7 @@ fun DrawView(
                 Icon(
                     modifier = Modifier
                         .padding(start = 21.dp, end = 2.dp)
-                        .size(24.dp, 24.dp),
+                        .size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = null
@@ -581,7 +581,7 @@ fun DrawView(
                 Icon(
                     modifier = Modifier
                         .padding(start = 21.dp, end = 2.dp)
-                        .size(24.dp, 24.dp),
+                        .size(22.dp, 22.dp),
                     painter = painterResource(if (biblijatekaItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
                     contentDescription = null
@@ -754,7 +754,7 @@ fun DrawView(
                 Icon(
                     modifier = Modifier
                         .padding(start = 21.dp, end = 2.dp)
-                        .size(24.dp, 24.dp),
+                        .size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = null
@@ -770,7 +770,7 @@ fun DrawView(
                 Icon(
                     modifier = Modifier
                         .padding(start = 21.dp, end = 2.dp)
-                        .size(24.dp, 24.dp),
+                        .size(22.dp, 22.dp),
                     painter = painterResource(if (piesnyItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
                     contentDescription = null
@@ -923,7 +923,7 @@ fun DrawView(
                 Icon(
                     modifier = Modifier
                         .padding(start = 21.dp, end = 2.dp)
-                        .size(24.dp, 24.dp),
+                        .size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = null
@@ -939,7 +939,7 @@ fun DrawView(
                 Icon(
                     modifier = Modifier
                         .padding(start = 21.dp, end = 2.dp)
-                        .size(24.dp, 24.dp),
+                        .size(22.dp, 22.dp),
                     painter = painterResource(if (underItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
                     contentDescription = null
@@ -1124,27 +1124,8 @@ fun DrawerHeader(modifier: Modifier) {
             color = SecondaryText,
         )
 
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-            Icon(painter = painterResource(R.drawable.lahatyp), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
-            Text(
-                modifier = modifier.padding(start = 10.dp),
-                text = stringResource(R.string.malitounik_name),
-                textAlign = TextAlign.Start,
-                fontWeight = FontWeight.Bold,
-                fontSize = (Settings.fontInterface + 8).sp,
-                lineHeight = ((Settings.fontInterface + 8) * 1.15).sp,
-                color = MaterialTheme.colorScheme.primary,
-            )
-        }
+        Icon(modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp), painter = painterResource(R.drawable.lahatyp), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
 
-        Text(
-            modifier = modifier.fillMaxWidth(),
-            text = stringResource(R.string.bgkc_resource),
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.secondary,
-            fontSize = (Settings.fontInterface - 2).sp,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
+        Icon(modifier = Modifier.fillMaxWidth(), painter = painterResource(R.drawable.lahatyp_apis), contentDescription = "", tint = MaterialTheme.colorScheme.secondary)
     }
 }

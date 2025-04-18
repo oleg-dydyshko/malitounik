@@ -904,12 +904,34 @@ fun findCaliandarPosition(position: Int): ArrayList<ArrayList<String>> {
 
 @Composable
 fun CheckUpdateMalitounik() {
-    val context = LocalContext.current
-    val activity = LocalActivity.current as MainActivity
+    var dialogUpdateMalitounik by remember { mutableStateOf(false) }
     var noWIFI by remember { mutableStateOf(false) }
     var totalBytesToDownload by remember { mutableFloatStateOf(0f) }
-    var dialogUpdateMalitounik by remember { mutableStateOf(false) }
     var bytesDownload by remember { mutableFloatStateOf(0f) }
+    var isCompletDownload by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            dialogUpdateMalitounik = true
+        }
+    }
+    val appUpdateManager = AppUpdateManagerFactory.create(context)
+    val installStateUpdatedListener = InstallStateUpdatedListener { state ->
+        dialogUpdateMalitounik = true
+        if (state.installStatus() == InstallStatus.DOWNLOADING) {
+            bytesDownload = state.bytesDownloaded().toFloat()
+            totalBytesToDownload = state.totalBytesToDownload().toFloat()
+        }
+        if (state.installStatus() == InstallStatus.DOWNLOADED) {
+            dialogUpdateMalitounik = false
+            isCompletDownload = true
+        }
+    }
+    if (isCompletDownload) {
+        appUpdateManager.unregisterListener(installStateUpdatedListener)
+        appUpdateManager.completeUpdate()
+        isCompletDownload = false
+    }
     if (dialogUpdateMalitounik) {
         DialogUpdateMalitounik(totalBytesToDownload, bytesDownload) {
             dialogUpdateMalitounik = false
@@ -917,33 +939,17 @@ fun CheckUpdateMalitounik() {
     }
     if (noWIFI) {
         DialogUpdateNoWiFI(totalBytesToDownload, {
-            val appUpdateManager = AppUpdateManagerFactory.create(context)
             val appUpdateInfoTask = appUpdateManager.appUpdateInfo
             appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
                 if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
-                    val installStateUpdatedListener = InstallStateUpdatedListener { state ->
-                        dialogUpdateMalitounik = true
-                        if (state.installStatus() == InstallStatus.DOWNLOADING) {
-                            bytesDownload = state.bytesDownloaded().toFloat()
-                            totalBytesToDownload = state.totalBytesToDownload().toFloat()
-                        }
-                        if (state.installStatus() == InstallStatus.DOWNLOADED) {
-                            dialogUpdateMalitounik = false
-                        }
-                    }
                     appUpdateManager.registerListener(installStateUpdatedListener)
-                    appUpdateManager.startUpdateFlowForResult(appUpdateInfo, activity, AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build(), 300)
-                    if (!dialogUpdateMalitounik) {
-                        appUpdateManager.unregisterListener(installStateUpdatedListener)
-                        appUpdateManager.completeUpdate()
-                    }
+                    appUpdateManager.startUpdateFlowForResult(appUpdateInfo, launcher, AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build())
                 }
             }
             noWIFI = false
         }) { noWIFI = false }
     }
     if (isNetworkAvailable(context)) {
-        val appUpdateManager = AppUpdateManagerFactory.create(context)
         val appUpdateInfoTask = appUpdateManager.appUpdateInfo
         appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
@@ -951,23 +957,8 @@ fun CheckUpdateMalitounik() {
                     totalBytesToDownload = appUpdateInfo.totalBytesToDownload().toFloat()
                     noWIFI = true
                 } else {
-                    dialogUpdateMalitounik = true
-                    val installStateUpdatedListener = InstallStateUpdatedListener { state ->
-                        dialogUpdateMalitounik = true
-                        if (state.installStatus() == InstallStatus.DOWNLOADING) {
-                            bytesDownload = state.bytesDownloaded().toFloat()
-                            totalBytesToDownload = state.totalBytesToDownload().toFloat()
-                        }
-                        if (state.installStatus() == InstallStatus.DOWNLOADED) {
-                            dialogUpdateMalitounik = false
-                        }
-                    }
                     appUpdateManager.registerListener(installStateUpdatedListener)
-                    appUpdateManager.startUpdateFlowForResult(appUpdateInfo, activity, AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build(), 300)
-                    if (!dialogUpdateMalitounik) {
-                        appUpdateManager.unregisterListener(installStateUpdatedListener)
-                        appUpdateManager.completeUpdate()
-                    }
+                    appUpdateManager.startUpdateFlowForResult(appUpdateInfo, launcher, AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build())
                 }
             }
         }
@@ -1196,6 +1187,11 @@ fun MainConteiner(
     }
     var dialodNotificatin by rememberSaveable { mutableStateOf(false) }
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+        if (!alarmManager.canScheduleExactAlarms()) {
+            dialodNotificatin = true
+        }
+    }
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
         if (PackageManager.PERMISSION_DENIED == permissionCheck || !alarmManager.canScheduleExactAlarms()) {
@@ -1244,6 +1240,10 @@ fun MainConteiner(
             dialodNotificatin = false
         }, onDismiss = {
             dialodNotificatin = false
+            k.edit {
+                putInt("notification", Settings.NOTIFICATION_SVIATY_NONE)
+            }
+            setNotificationNon(context)
         })
     }
     var isToDay by remember { mutableStateOf(false) }
@@ -1950,14 +1950,23 @@ fun MainConteiner(
                         }
                     )
 
-                    AllDestinations.KALIANDAR_YEAR -> KaliandarScreenYear(
-                        coroutineScope = coroutineScope,
-                        lazyColumnState = lazyColumnState,
-                        innerPadding,
-                        navigateToSvityiaView = { svity, position ->
-                            navigationActions.navigateToSvityiaView(svity, position)
+                    AllDestinations.KALIANDAR_YEAR -> {
+                        val dataToDay = findCaliandarToDay(context, false)
+                        LaunchedEffect(lazyColumnState) {
+                            snapshotFlow { lazyColumnState.firstVisibleItemIndex }.collect { index ->
+                                val data = Settings.data[index]
+                                isToDay = data[1] == dataToDay[1] && data[2] == dataToDay[2] && data[3] == dataToDay[3]
+                            }
                         }
-                    )
+                        KaliandarScreenYear(
+                            coroutineScope = coroutineScope,
+                            lazyColumnState = lazyColumnState,
+                            innerPadding,
+                            navigateToSvityiaView = { svity, position ->
+                                navigationActions.navigateToSvityiaView(svity, position)
+                            }
+                        )
+                    }
 
                     AllDestinations.VYBRANAE_LIST -> VybranaeList(
                         navigateToCytanniList = { chytanne, position, perevod2 ->
@@ -2101,12 +2110,12 @@ fun DialogUmounyiaZnachenni(
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 Text(
                     text = stringResource(R.string.Znaki_cviat),
-                    fontSize = Settings.fontInterface.sp,
+                    fontSize = (Settings.fontInterface - 2).sp,
                     color = MaterialTheme.colorScheme.primary
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.primary)
                 Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(modifier = Modifier.size(24.dp, 24.dp), painter = painterResource(R.drawable.znaki_krest_v_kruge), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                    Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.znaki_krest_v_kruge), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
                     val text = stringResource(R.string.dvuna_i_vial)
                     val t1 = text.indexOf("\n")
                     val annotatedString =
@@ -2117,50 +2126,50 @@ fun DialogUmounyiaZnachenni(
                     Text(
                         modifier = Modifier.padding(start = 10.dp),
                         text = annotatedString,
-                        fontSize = Settings.fontInterface.sp,
+                        fontSize = (Settings.fontInterface - 2).sp,
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
                 Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(modifier = Modifier.size(24.dp, 24.dp), painter = painterResource(R.drawable.znaki_krest_v_polukruge), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                    Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.znaki_krest_v_polukruge), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
                     Text(
                         modifier = Modifier.padding(start = 10.dp),
                         text = stringResource(R.string.Z_Lic_na_ve),
-                        fontSize = Settings.fontInterface.sp,
+                        fontSize = (Settings.fontInterface - 2).sp,
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }
                 Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(modifier = Modifier.size(24.dp, 24.dp), painter = painterResource(R.drawable.znaki_krest), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                    Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.znaki_krest), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
                     Text(
                         modifier = Modifier.padding(start = 10.dp),
                         text = stringResource(R.string.Z_v_v_v_u_n_u),
-                        fontSize = Settings.fontInterface.sp,
+                        fontSize = (Settings.fontInterface - 2).sp,
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }
                 Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(modifier = Modifier.size(24.dp, 24.dp), painter = painterResource(R.drawable.znaki_ttk), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                    Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.znaki_ttk), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
                     Text(
                         modifier = Modifier.padding(start = 10.dp),
                         text = stringResource(R.string.Z_sh_v_v_u_u),
-                        fontSize = Settings.fontInterface.sp,
+                        fontSize = (Settings.fontInterface - 2).sp,
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }
                 Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(modifier = Modifier.size(24.dp, 24.dp), painter = painterResource(R.drawable.znaki_ttk_black), contentDescription = "", tint = MaterialTheme.colorScheme.secondary)
+                    Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.znaki_ttk_black), contentDescription = "", tint = MaterialTheme.colorScheme.secondary)
                     Text(
                         modifier = Modifier.padding(start = 10.dp),
                         text = stringResource(R.string.Z_sh_v_m_u_u),
-                        fontSize = Settings.fontInterface.sp,
+                        fontSize = (Settings.fontInterface - 2).sp,
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }
                 Text(
                     modifier = Modifier.padding(top = 10.dp),
                     text = stringResource(R.string.tipicon_fon),
-                    fontSize = Settings.fontInterface.sp,
+                    fontSize = (Settings.fontInterface - 2).sp,
                     color = MaterialTheme.colorScheme.primary
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.primary)
@@ -2170,7 +2179,7 @@ fun DialogUmounyiaZnachenni(
                         .background(Primary)
                         .padding(10.dp),
                     text = stringResource(R.string.niadzeli_i_sviaty),
-                    fontSize = Settings.fontInterface.sp,
+                    fontSize = (Settings.fontInterface - 2).sp,
                     color = PrimaryTextBlack
                 )
                 Text(
@@ -2179,7 +2188,7 @@ fun DialogUmounyiaZnachenni(
                         .background(Divider)
                         .padding(10.dp),
                     text = stringResource(R.string.zvychaynye_dny),
-                    fontSize = Settings.fontInterface.sp,
+                    fontSize = (Settings.fontInterface - 2).sp,
                     color = PrimaryText
                 )
                 Text(
@@ -2188,27 +2197,33 @@ fun DialogUmounyiaZnachenni(
                         .background(BezPosta)
                         .padding(10.dp),
                     text = stringResource(R.string.No_post_n),
-                    fontSize = Settings.fontInterface.sp,
+                    fontSize = (Settings.fontInterface - 2).sp,
                     color = PrimaryText
                 )
-                Text(
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                        .background(Post)
-                        .padding(10.dp),
-                    text = stringResource(R.string.Post),
-                    fontSize = Settings.fontInterface.sp,
-                    color = PrimaryText
-                )
-                Text(
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                        .background(StrogiPost)
-                        .padding(10.dp),
-                    text = stringResource(R.string.Strogi_post_n),
-                    fontSize = Settings.fontInterface.sp,
-                    color = PrimaryTextBlack
-                )
+                Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.fishe), contentDescription = "", tint = MaterialTheme.colorScheme.secondary)
+                    Text(
+                        modifier = Modifier
+                            .padding(start = 10.dp)
+                            .background(Post)
+                            .padding(10.dp),
+                        text = stringResource(R.string.Post),
+                        fontSize = (Settings.fontInterface - 2).sp,
+                        color = PrimaryText
+                    )
+                }
+                Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.fishe), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                    Text(
+                        modifier = Modifier
+                            .padding(start = 10.dp)
+                            .background(StrogiPost)
+                            .padding(10.dp),
+                        text = stringResource(R.string.Strogi_post_n),
+                        fontSize = (Settings.fontInterface - 2).sp,
+                        color = PrimaryTextBlack
+                    )
+                }
             }
         },
         onDismissRequest = {
