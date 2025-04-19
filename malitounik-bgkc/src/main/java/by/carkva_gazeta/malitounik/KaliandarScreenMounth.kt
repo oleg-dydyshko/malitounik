@@ -112,7 +112,7 @@ fun KaliandarScreenMounth(
                             Color.Unspecified,
                             Color.Unspecified
                         ),
-                        shape = MaterialTheme.shapes.medium
+                        shape = MaterialTheme.shapes.small
                     ) {
                         Text(
                             stringResource(R.string.vybor_mun),
@@ -153,7 +153,7 @@ fun KaliandarScreenMounth(
                             Color.Unspecified,
                             Color.Unspecified
                         ),
-                        shape = MaterialTheme.shapes.medium
+                        shape = MaterialTheme.shapes.small
                     ) {
                         Text(
                             stringResource(R.string.vybor_year),
@@ -452,7 +452,7 @@ fun KaliandarScreenMounth(
                     Color.Unspecified,
                     Color.Unspecified
                 ),
-                shape = MaterialTheme.shapes.medium
+                shape = MaterialTheme.shapes.small
             ) {
                 Text(stringResource(R.string.search_call), fontSize = Settings.fontInterface.sp, color = PrimaryText)
             }

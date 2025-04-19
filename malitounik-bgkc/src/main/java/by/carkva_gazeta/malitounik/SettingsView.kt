@@ -64,6 +64,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -222,7 +223,7 @@ fun SettingsView(navController: NavHostController) {
                                 maxLine.intValue = 1
                             }
                         },
-                        text = stringResource(R.string.tools_item),
+                        text = stringResource(R.string.tools_item).uppercase(),
                         color = MaterialTheme.colorScheme.onSecondary,
                         fontWeight = FontWeight.Bold,
                         fontSize = Settings.fontInterface.sp,
@@ -459,6 +460,7 @@ fun SettingsView(navController: NavHostController) {
                         color = MaterialTheme.colorScheme.secondary
                     )
                     Switch(
+                        modifier = Modifier.scale(0.8f),
                         checked = adminDayInYearState,
                         onCheckedChange = {
                             adminDayInYearState = it
@@ -500,7 +502,7 @@ fun SettingsView(navController: NavHostController) {
                         Color.Unspecified,
                         Color.Unspecified
                     ),
-                    shape = MaterialTheme.shapes.medium
+                    shape = MaterialTheme.shapes.small
                 ) {
                     Text(stringResource(R.string.site_admin), fontSize = (Settings.fontInterface - 2).sp, color = PrimaryText)
                 }
@@ -532,6 +534,7 @@ fun SettingsView(navController: NavHostController) {
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
+                    modifier = Modifier.scale(0.8f),
                     checked = sinoidalState,
                     onCheckedChange = {
                         sinoidalState = it
@@ -561,6 +564,7 @@ fun SettingsView(navController: NavHostController) {
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
+                    modifier = Modifier.scale(0.8f),
                     checked = maranafaState,
                     onCheckedChange = {
                         maranafaState = it
@@ -736,7 +740,7 @@ fun SettingsView(navController: NavHostController) {
                 ) {
                     dataTimes.forEachIndexed { index, option ->
                         DropdownMenuItem(
-                            text = { Text(text = option.string, style = MaterialTheme.typography.bodyLarge, fontSize = (Settings.fontInterface - 2).sp) },
+                            text = { Text(text = option.string, fontSize = (Settings.fontInterface - 2).sp) },
                             onClick = {
                                 textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option.string)
                                 expandedSviaty = false
@@ -774,7 +778,7 @@ fun SettingsView(navController: NavHostController) {
                         Color.Unspecified,
                         Color.Unspecified
                     ),
-                    shape = MaterialTheme.shapes.medium
+                    shape = MaterialTheme.shapes.small
                 ) {
                     Text(stringResource(R.string.settings_notifi_sviata), fontSize = (Settings.fontInterface - 2).sp, color = PrimaryText)
                 }
@@ -806,6 +810,7 @@ fun SettingsView(navController: NavHostController) {
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
+                    modifier = Modifier.scale(0.8f),
                     checked = modePkcSvaity,
                     onCheckedChange = {
                         modePkcSvaity = it
@@ -835,6 +840,7 @@ fun SettingsView(navController: NavHostController) {
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
+                    modifier = Modifier.scale(0.8f),
                     checked = modePravasSvaity,
                     onCheckedChange = {
                         modePravasSvaity = it
@@ -864,6 +870,7 @@ fun SettingsView(navController: NavHostController) {
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
+                    modifier = Modifier.scale(0.8f),
                     checked = modeGosudSvaity,
                     onCheckedChange = {
                         modeGosudSvaity = it
@@ -893,6 +900,7 @@ fun SettingsView(navController: NavHostController) {
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
+                    modifier = Modifier.scale(0.8f),
                     checked = modePafesiiSvaity,
                     onCheckedChange = {
                         modePafesiiSvaity = it
@@ -972,7 +980,7 @@ fun SettingsView(navController: NavHostController) {
                     Color.Unspecified,
                     Color.Unspecified
                 ),
-                shape = MaterialTheme.shapes.medium
+                shape = MaterialTheme.shapes.small
             ) {
                 Text(stringResource(R.string.settings_default), fontSize = (Settings.fontInterface - 2).sp, color = PrimaryTextBlack)
             }
@@ -989,7 +997,7 @@ fun SettingsView(navController: NavHostController) {
                     Color.Unspecified,
                     Color.Unspecified
                 ),
-                shape = MaterialTheme.shapes.medium
+                shape = MaterialTheme.shapes.small
             ) {
                 Text(stringResource(R.string.clear_chash), fontSize = (Settings.fontInterface - 2).sp, color = PrimaryText)
             }
@@ -1008,7 +1016,7 @@ fun DialogClearChash(
             Icon(painter = painterResource(R.drawable.warning), contentDescription = "")
         },
         title = {
-            Text(text = stringResource(R.string.clear_chash))
+            Text(text = stringResource(R.string.clear_chash).uppercase())
         },
         text = {
             Text(text = stringResource(R.string.clear_chash_opis), fontSize = (Settings.fontInterface - 2).sp)
@@ -1049,7 +1057,7 @@ fun DialogLogin(
             Icon(painter = painterResource(R.drawable.local_police), contentDescription = "")
         },
         title = {
-            Text(text = stringResource(R.string.admin_panel))
+            Text(text = stringResource(R.string.admin_panel).uppercase())
         },
         text = {
             Column {
@@ -1137,7 +1145,7 @@ fun DialogNotification(
             Icon(painter = painterResource(R.drawable.notifications), contentDescription = "")
         },
         title = {
-            Text(text = stringResource(R.string.notifi))
+            Text(text = stringResource(R.string.notifi).uppercase())
         },
         text = {
             Text(stringResource(R.string.help_notifications_api33), fontSize = (Settings.fontInterface - 2).sp)

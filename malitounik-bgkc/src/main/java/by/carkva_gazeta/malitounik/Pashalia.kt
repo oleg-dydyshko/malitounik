@@ -136,7 +136,7 @@ fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, sear
                         Color.Unspecified,
                         Color.Unspecified
                     ),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                     onClick = {
                         navigationActions.navigateToBogaslujbovyia(
                             context.getString(R.string.pascha_kaliandar_bel),

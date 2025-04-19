@@ -189,7 +189,7 @@ fun Biblijateka(
                                     maxLine.intValue = 1
                                 }
                             },
-                            text = title,
+                            text = title.uppercase(),
                             color = MaterialTheme.colorScheme.onSecondary,
                             fontWeight = FontWeight.Bold,
                             maxLines = maxLine.intValue,

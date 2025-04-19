@@ -490,7 +490,7 @@ fun Bogaslujbovyia(
                                         maxLine.intValue = 1
                                     }
                                 },
-                                text = if (iskniga) subTitle else title,
+                                text = if (iskniga) subTitle.uppercase() else title.uppercase(),
                                 color = MaterialTheme.colorScheme.onSecondary,
                                 fontWeight = FontWeight.Bold,
                                 maxLines = maxLine.intValue,
@@ -1510,7 +1510,7 @@ fun DialogLiturgia(
             Icon(painter = painterResource(R.drawable.description), contentDescription = "")
         },
         title = {
-            Text(text = title)
+            Text(text = title.uppercase())
         },
         text = {
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {

@@ -1036,7 +1036,7 @@ fun DialogSztoHovaha(
     AlertDialog(icon = {
         Icon(painter = painterResource(R.drawable.description), contentDescription = "")
     }, title = {
-        Text(text = stringResource(R.string.chto_novaga_title))
+        Text(text = stringResource(R.string.chto_novaga_title).uppercase())
     }, text = {
         var content: String
         val inputStream = LocalContext.current.resources.openRawResource(R.raw.a_szto_novaha)

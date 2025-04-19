@@ -538,7 +538,7 @@ fun CytanniList(
                                                 delay(5000L)
                                                 maxLine.intValue = 1
                                             }
-                                        }, text = titleBible, color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
+                                        }, text = titleBible.uppercase(), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
                                     )
                                     Text(
                                         modifier = Modifier.clickable {

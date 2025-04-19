@@ -7,7 +7,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -102,7 +101,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Popup
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.core.graphics.toColorInt
+import androidx.core.net.toUri
 import androidx.core.text.isDigitsOnly
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
@@ -120,8 +121,6 @@ import java.io.File
 import java.io.FileWriter
 import java.util.Calendar
 import java.util.GregorianCalendar
-import androidx.core.content.edit
-import androidx.core.net.toUri
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -452,7 +451,7 @@ fun PadzeiaView(navController: NavHostController) {
                                     maxLine.intValue = 1
                                 }
                             },
-                            text = stringResource(R.string.sabytie),
+                            text = stringResource(R.string.sabytie).uppercase(),
                             color = MaterialTheme.colorScheme.onSecondary,
                             fontWeight = FontWeight.Bold,
                             maxLines = maxLine.intValue,
@@ -914,7 +913,7 @@ fun AddPadzeia(
                         DropdownMenuItem(
                             text = {
                                 Text(
-                                    option, style = MaterialTheme.typography.bodyLarge, fontSize = Settings.fontInterface.sp,
+                                    option, fontSize = Settings.fontInterface.sp,
                                     color = MaterialTheme.colorScheme.secondary
                                 )
                             },
@@ -990,7 +989,7 @@ fun AddPadzeia(
                         DropdownMenuItem(
                             text = {
                                 Text(
-                                    option, style = MaterialTheme.typography.bodyLarge, fontSize = Settings.fontInterface.sp,
+                                    option, fontSize = Settings.fontInterface.sp,
                                     color = MaterialTheme.colorScheme.secondary
                                 )
                             },
@@ -1842,7 +1841,7 @@ fun DialogSabytieShow(
             Icon(painter = painterResource(R.drawable.description), contentDescription = "")
         },
         title = {
-            Text(text = title)
+            Text(text = title.uppercase())
         },
         text = {
             val annotatedString = buildAnnotatedString {

@@ -358,7 +358,7 @@ fun SearchBible(
                                     Color.Unspecified,
                                     Color.Unspecified
                                 ),
-                                shape = MaterialTheme.shapes.medium
+                                shape = MaterialTheme.shapes.small
                             ) {
                                 Text(
                                     stringResource(R.string.ok),
@@ -450,7 +450,7 @@ fun DropdownMenuBox(
         ) {
             options.forEachIndexed { index, option ->
                 DropdownMenuItem(
-                    text = { Text(option, style = MaterialTheme.typography.bodyLarge, fontSize = Settings.fontInterface.sp) },
+                    text = { Text(option, fontSize = Settings.fontInterface.sp) },
                     onClick = {
                         textFieldState.setTextAndPlaceCursorAtEnd(option)
                         expanded = false

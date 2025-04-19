@@ -1333,7 +1333,7 @@ fun MainConteiner(
                     title = {
                         if (!searchText) {
                             Text(
-                                title,
+                                title.uppercase(),
                                 color = textTollBarColor,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = Settings.fontInterface.sp
@@ -2154,7 +2154,7 @@ fun DialogUpdateNoWiFI(
             Icon(painter = painterResource(R.drawable.signal_wifi_off), contentDescription = "")
         },
         title = {
-            Text(stringResource(R.string.wifi_error))
+            Text(stringResource(R.string.wifi_error).uppercase())
         },
         text = {
             Text(stringResource(R.string.download_opisanie, sizeProgram), fontSize = Settings.fontInterface.sp)

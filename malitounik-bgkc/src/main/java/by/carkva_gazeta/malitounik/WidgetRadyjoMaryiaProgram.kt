@@ -160,7 +160,7 @@ fun DialogProgramRadoiMaryia(
             Icon(painter = painterResource(R.drawable.description), contentDescription = "")
         },
         title = {
-            Text(text = stringResource(R.string.program_radio_maryia))
+            Text(text = stringResource(R.string.program_radio_maryia).uppercase())
         },
         text = {
             if (progress) {

@@ -590,7 +590,7 @@ fun DialogBiblijateka(
             Icon(painter = painterResource(R.drawable.krest), contentDescription = "")
         },
         title = {
-            Text(stringResource(R.string.download_file))
+            Text(stringResource(R.string.download_file).uppercase())
         },
         text = {
             HtmlText(
@@ -636,7 +636,7 @@ fun DialogNoWiFI(
             Icon(painter = painterResource(R.drawable.signal_wifi_off), contentDescription = "")
         },
         title = {
-            Text(stringResource(R.string.wifi_error))
+            Text(stringResource(R.string.wifi_error).uppercase())
         },
         text = {
             Text(stringResource(R.string.download_bibliateka), fontSize = Settings.fontInterface.sp)

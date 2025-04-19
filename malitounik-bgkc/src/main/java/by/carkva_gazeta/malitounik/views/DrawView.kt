@@ -117,7 +117,7 @@ fun DrawView(
                     tint = MaterialTheme.colorScheme.primary
                 )
             },
-            shape = MaterialTheme.shapes.medium,
+            shape = MaterialTheme.shapes.small,
             modifier = modifier.padding(horizontal = 5.dp),
             colors = navigationDrawerItemColors
         )
@@ -141,7 +141,7 @@ fun DrawView(
                     contentDescription = null
                 )
             },
-            shape = MaterialTheme.shapes.medium,
+            shape = MaterialTheme.shapes.small,
             modifier = modifier.padding(horizontal = 5.dp),
             colors = navigationDrawerItemColors
         )
@@ -165,7 +165,7 @@ fun DrawView(
                     contentDescription = null
                 )
             },
-            shape = MaterialTheme.shapes.medium,
+            shape = MaterialTheme.shapes.small,
             modifier = modifier.padding(horizontal = 5.dp),
             colors = navigationDrawerItemColors
         )
@@ -189,7 +189,7 @@ fun DrawView(
                     contentDescription = null
                 )
             },
-            shape = MaterialTheme.shapes.medium,
+            shape = MaterialTheme.shapes.small,
             modifier = modifier.padding(horizontal = 5.dp),
             colors = navigationDrawerItemColors
         )
@@ -213,7 +213,7 @@ fun DrawView(
                     contentDescription = null
                 )
             },
-            shape = MaterialTheme.shapes.medium,
+            shape = MaterialTheme.shapes.small,
             modifier = modifier.padding(horizontal = 5.dp),
             colors = navigationDrawerItemColors
         )
@@ -237,7 +237,7 @@ fun DrawView(
                     contentDescription = null
                 )
             },
-            shape = MaterialTheme.shapes.medium,
+            shape = MaterialTheme.shapes.small,
             modifier = modifier.padding(horizontal = 5.dp),
             colors = navigationDrawerItemColors
         )
@@ -261,7 +261,7 @@ fun DrawView(
                     contentDescription = null
                 )
             },
-            shape = MaterialTheme.shapes.medium,
+            shape = MaterialTheme.shapes.small,
             modifier = modifier.padding(horizontal = 5.dp),
             colors = navigationDrawerItemColors
         )
@@ -331,7 +331,7 @@ fun DrawView(
                                 contentDescription = null
                             )
                         },
-                        shape = MaterialTheme.shapes.medium,
+                        shape = MaterialTheme.shapes.small,
                         modifier = modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
@@ -355,7 +355,7 @@ fun DrawView(
                                 contentDescription = null
                             )
                         },
-                        shape = MaterialTheme.shapes.medium,
+                        shape = MaterialTheme.shapes.small,
                         modifier = modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
@@ -379,7 +379,7 @@ fun DrawView(
                                 contentDescription = null
                             )
                         },
-                        shape = MaterialTheme.shapes.medium,
+                        shape = MaterialTheme.shapes.small,
                         modifier = modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
@@ -403,7 +403,7 @@ fun DrawView(
                                 contentDescription = null
                             )
                         },
-                        shape = MaterialTheme.shapes.medium,
+                        shape = MaterialTheme.shapes.small,
                         modifier = modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
@@ -428,7 +428,7 @@ fun DrawView(
                                     contentDescription = null
                                 )
                             },
-                            shape = MaterialTheme.shapes.medium,
+                            shape = MaterialTheme.shapes.small,
                             modifier = modifier.padding(horizontal = 5.dp),
                             colors = navigationDrawerItemColors
                         )
@@ -615,7 +615,7 @@ fun DrawView(
                                 contentDescription = null
                             )
                         },
-                        shape = MaterialTheme.shapes.medium,
+                        shape = MaterialTheme.shapes.small,
                         modifier = modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
@@ -639,7 +639,7 @@ fun DrawView(
                                 contentDescription = null
                             )
                         },
-                        shape = MaterialTheme.shapes.medium,
+                        shape = MaterialTheme.shapes.small,
                         modifier = modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
@@ -663,7 +663,7 @@ fun DrawView(
                                 contentDescription = null
                             )
                         },
-                        shape = MaterialTheme.shapes.medium,
+                        shape = MaterialTheme.shapes.small,
                         modifier = modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
@@ -687,7 +687,7 @@ fun DrawView(
                                 contentDescription = null
                             )
                         },
-                        shape = MaterialTheme.shapes.medium,
+                        shape = MaterialTheme.shapes.small,
                         modifier = modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
@@ -711,7 +711,7 @@ fun DrawView(
                                 contentDescription = null
                             )
                         },
-                        shape = MaterialTheme.shapes.medium,
+                        shape = MaterialTheme.shapes.small,
                         modifier = modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
@@ -735,7 +735,7 @@ fun DrawView(
                                 contentDescription = null
                             )
                         },
-                        shape = MaterialTheme.shapes.medium,
+                        shape = MaterialTheme.shapes.small,
                         modifier = modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
@@ -804,7 +804,7 @@ fun DrawView(
                                 contentDescription = null
                             )
                         },
-                        shape = MaterialTheme.shapes.medium,
+                        shape = MaterialTheme.shapes.small,
                         modifier = modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
@@ -828,7 +828,7 @@ fun DrawView(
                                 contentDescription = null
                             )
                         },
-                        shape = MaterialTheme.shapes.medium,
+                        shape = MaterialTheme.shapes.small,
                         modifier = modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
@@ -852,7 +852,7 @@ fun DrawView(
                                 contentDescription = null
                             )
                         },
-                        shape = MaterialTheme.shapes.medium,
+                        shape = MaterialTheme.shapes.small,
                         modifier = modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
@@ -876,7 +876,7 @@ fun DrawView(
                                 contentDescription = null
                             )
                         },
-                        shape = MaterialTheme.shapes.medium,
+                        shape = MaterialTheme.shapes.small,
                         modifier = modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
@@ -900,7 +900,7 @@ fun DrawView(
                                 contentDescription = null
                             )
                         },
-                        shape = MaterialTheme.shapes.medium,
+                        shape = MaterialTheme.shapes.small,
                         modifier = modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
@@ -973,7 +973,7 @@ fun DrawView(
                                 contentDescription = null
                             )
                         },
-                        shape = MaterialTheme.shapes.medium,
+                        shape = MaterialTheme.shapes.small,
                         modifier = modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
@@ -997,7 +997,7 @@ fun DrawView(
                                 contentDescription = null
                             )
                         },
-                        shape = MaterialTheme.shapes.medium,
+                        shape = MaterialTheme.shapes.small,
                         modifier = modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
@@ -1021,7 +1021,7 @@ fun DrawView(
                                 contentDescription = null
                             )
                         },
-                        shape = MaterialTheme.shapes.medium,
+                        shape = MaterialTheme.shapes.small,
                         modifier = modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
@@ -1045,7 +1045,7 @@ fun DrawView(
                                 contentDescription = null
                             )
                         },
-                        shape = MaterialTheme.shapes.medium,
+                        shape = MaterialTheme.shapes.small,
                         modifier = modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
@@ -1069,7 +1069,7 @@ fun DrawView(
                                 contentDescription = null
                             )
                         },
-                        shape = MaterialTheme.shapes.medium,
+                        shape = MaterialTheme.shapes.small,
                         modifier = modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )

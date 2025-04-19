@@ -140,7 +140,7 @@ fun BibliaMenu(
                     Color.Unspecified,
                     Color.Unspecified
                 ),
-                shape = MaterialTheme.shapes.medium
+                shape = MaterialTheme.shapes.small
             ) {
                 Text(
                     if (perevod == Settings.PEREVODNADSAN) stringResource(R.string.psalter)
@@ -165,7 +165,7 @@ fun BibliaMenu(
                         Color.Unspecified,
                         Color.Unspecified
                     ),
-                    shape = MaterialTheme.shapes.medium
+                    shape = MaterialTheme.shapes.small
                 ) {
                     Text(
                         stringResource(R.string.novy_zapaviet),
@@ -189,7 +189,7 @@ fun BibliaMenu(
                     Color.Unspecified,
                     Color.Unspecified
                 ),
-                shape = MaterialTheme.shapes.medium
+                shape = MaterialTheme.shapes.small
             ) {
                 Text(stringResource(R.string.bible_time), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
             }
@@ -207,7 +207,7 @@ fun BibliaMenu(
                     Color.Unspecified,
                     Color.Unspecified
                 ),
-                shape = MaterialTheme.shapes.medium
+                shape = MaterialTheme.shapes.small
             ) {
                 Text(stringResource(R.string.poshuk), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
             }
@@ -386,7 +386,7 @@ fun BibliaMenu(
                         Color.Unspecified,
                         Color.Unspecified
                     ),
-                    shape = MaterialTheme.shapes.medium
+                    shape = MaterialTheme.shapes.small
                 ) {
                     Text(stringResource(R.string.malitva_pered), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
                 }
@@ -404,7 +404,7 @@ fun BibliaMenu(
                         Color.Unspecified,
                         Color.Unspecified
                     ),
-                    shape = MaterialTheme.shapes.medium
+                    shape = MaterialTheme.shapes.small
                 ) {
                     Text(stringResource(R.string.malitva_posle), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
                 }
@@ -422,7 +422,7 @@ fun BibliaMenu(
                         Color.Unspecified,
                         Color.Unspecified
                     ),
-                    shape = MaterialTheme.shapes.medium
+                    shape = MaterialTheme.shapes.small
                 ) {
                     Text(stringResource(R.string.pesni), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
                 }
@@ -490,7 +490,7 @@ fun BibliaMenu(
                         Color.Unspecified,
                         Color.Unspecified
                     ),
-                    shape = MaterialTheme.shapes.medium
+                    shape = MaterialTheme.shapes.small
                 ) {
                     Text(stringResource(R.string.peryiady), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
                 }
@@ -508,7 +508,7 @@ fun BibliaMenu(
                         Color.Unspecified,
                         Color.Unspecified
                     ),
-                    shape = MaterialTheme.shapes.medium
+                    shape = MaterialTheme.shapes.small
                 ) {
                     Text(stringResource(R.string.title_psalter_privila), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
                 }
@@ -541,7 +541,7 @@ fun BibliaMenu(
                         Color.Unspecified,
                         Color.Unspecified
                     ),
-                    shape = MaterialTheme.shapes.medium
+                    shape = MaterialTheme.shapes.small
                 ) {
                     Text(
                         stringResource(R.string.alesyaSemukha2),
@@ -603,7 +603,7 @@ fun DialogPeryaidy(
             Icon(painter = painterResource(R.drawable.info), contentDescription = "")
         },
         title = {
-            Text(text = stringResource(R.string.peryiady))
+            Text(text = stringResource(R.string.peryiady).uppercase())
         },
         text = {
             val inputStream = LocalContext.current.resources.openRawResource(R.raw.nadsan_periody)

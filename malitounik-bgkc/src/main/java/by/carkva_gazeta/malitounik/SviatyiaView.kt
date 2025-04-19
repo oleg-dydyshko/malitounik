@@ -289,7 +289,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                         maxLine.intValue = 1
                                     }
                                 },
-                                text = stringResource(R.string.zmiest),
+                                text = stringResource(R.string.zmiest).uppercase(),
                                 color = MaterialTheme.colorScheme.onSecondary,
                                 fontWeight = FontWeight.Bold,
                                 maxLines = maxLine.intValue,
