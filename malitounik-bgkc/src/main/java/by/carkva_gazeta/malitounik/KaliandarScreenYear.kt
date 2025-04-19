@@ -104,8 +104,8 @@ fun KaliandarScreenYear(
                     .background(MaterialTheme.colorScheme.tertiary)
             ) {
                 var title =
-                    stringArrayResource(R.array.dni_nedeli)[data[index][0].toInt()] + " " + data[index][1] + " " + stringArrayResource(
-                        R.array.meciac_smoll
+                    stringArrayResource(R.array.dni_nedeli_up)[data[index][0].toInt()] + ", " + data[index][1] + " " + stringArrayResource(
+                        R.array.meciac
                     )[data[index][2].toInt()]
                 val c = Calendar.getInstance()
                 if (c[Calendar.YEAR] != data[index][3].toInt()) title =
@@ -121,14 +121,11 @@ fun KaliandarScreenYear(
                     textAlign = TextAlign.Center
                 )
                 if (text.isNotEmpty()) {
-                    Row(modifier = Modifier.padding(top = 10.dp, start = 5.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Row(modifier = Modifier.padding(top = 10.dp).fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
                         if (data[index][7].toInt() != 1) {
                             Icon(modifier = Modifier.padding(end = 10.dp).size(22.dp, 22.dp), painter = painterResource(R.drawable.fishe), contentDescription = "", tint = colorIcon)
                         }
                         Text(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            textAlign = TextAlign.Start,
                             text = text,
                             color = MaterialTheme.colorScheme.secondary,
                             fontSize = Settings.fontInterface.sp
@@ -150,7 +147,7 @@ fun KaliandarScreenYear(
                         var padding = 0.dp
                         if (data[index][5].toInt() == 1 || data[index][5].toInt() == 2) {
                             Box(
-                                modifier = Modifier.padding(horizontal = 5.dp),
+                                modifier = Modifier.padding(horizontal = 10.dp),
                                 contentAlignment = Alignment.TopCenter
                             ) {
                                 Icon(
@@ -163,8 +160,8 @@ fun KaliandarScreenYear(
                             }
                             padding = 35.dp
                         }
-                        if (!data[index][6].contains("no_sviaty")) {
-                            val weight = if (data[index][5].toInt() == 1) FontWeight.Bold
+                        if (data[index][6].isNotEmpty()) {
+                            val weight = if (data[index][5].toInt() == 1 || data[index][0].toInt() == Calendar.SUNDAY) FontWeight.Bold
                             else FontWeight.Normal
                             var color = MaterialTheme.colorScheme.primary
                             if (data[index][6].contains("Пачатак") || data[index][6].contains(
@@ -219,7 +216,7 @@ fun KaliandarScreenYear(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(top = toppadding, start = 5.dp, bottom = toppaddingEnd),
+                                    .padding(top = toppadding, start = 10.dp, bottom = toppaddingEnd),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 var icon: Painter? = null
@@ -259,7 +256,7 @@ fun KaliandarScreenYear(
                     val textPamAndBlas = if (data[index][18].toInt() == 1) stringResource(R.string.pamerlyia)
                     else data[index][21]
                     Text(
-                        modifier = Modifier.padding(bottom = 10.dp, start = 5.dp), text = textPamAndBlas, color = MaterialTheme.colorScheme.secondary, fontStyle = FontStyle.Italic, fontSize = Settings.fontInterface.sp
+                        modifier = Modifier.padding(bottom = 10.dp, start = 10.dp), text = textPamAndBlas, color = MaterialTheme.colorScheme.secondary, fontStyle = FontStyle.Italic, fontSize = Settings.fontInterface.sp
                     )
                 }
                 var svityDrugasnuia = AnnotatedString.Builder("").apply {

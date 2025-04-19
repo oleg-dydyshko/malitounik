@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="malitounik-bgkc">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-04-15T18:31:21.883114525Z">
+        <DropdownSelection timestamp="2025-04-19T10:54:33.806567241Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="PhysicalDevice" identifier="serial=RF8X7017YLV" />

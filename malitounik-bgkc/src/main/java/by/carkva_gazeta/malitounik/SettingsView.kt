@@ -434,7 +434,7 @@ fun SettingsView(navController: NavHostController) {
                 color = MaterialTheme.colorScheme.secondary
             )
             Slider(
-                modifier = Modifier.padding(10.dp), valueRange = 18f..26f, steps = 4, value = fontSizeInterface, onValueChange = {
+                valueRange = 18f..26f, steps = 4, value = fontSizeInterface, onValueChange = {
                     k.edit {
                         putFloat("fontSizeInterface", it)
                     }
@@ -506,7 +506,7 @@ fun SettingsView(navController: NavHostController) {
                 }
             }
             Text(
-                modifier = Modifier.padding(top = 10.dp),
+                modifier = Modifier.padding(top = 20.dp),
                 text = stringResource(R.string.biblia),
                 fontSize = (Settings.fontInterface - 2).sp,
                 color = MaterialTheme.colorScheme.primary
@@ -522,7 +522,7 @@ fun SettingsView(navController: NavHostController) {
                             putBoolean("sinoidal_bible", sinoidalState)
                         }
                     }
-                    .padding(vertical = 10.dp)
+                    .padding(vertical = 5.dp)
             ) {
                 Text(
                     stringResource(R.string.bsinaidal),
@@ -551,7 +551,7 @@ fun SettingsView(navController: NavHostController) {
                             putBoolean("maranafa", maranafaState)
                         }
                     }
-                    .padding(vertical = 10.dp)
+                    .padding(vertical = 5.dp)
             ) {
                 Text(
                     stringResource(R.string.maranata_opis),
@@ -571,7 +571,7 @@ fun SettingsView(navController: NavHostController) {
                 )
             }
             Text(
-                modifier = Modifier.padding(top = 10.dp),
+                modifier = Modifier.padding(top = 20.dp),
                 text = stringResource(R.string.sviaty_notifi),
                 fontSize = (Settings.fontInterface - 2).sp,
                 color = MaterialTheme.colorScheme.primary
@@ -768,9 +768,6 @@ fun SettingsView(navController: NavHostController) {
                             }
                         }
                     },
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(5.dp),
                     colors = ButtonColors(
                         Divider,
                         Color.Unspecified,
@@ -783,7 +780,7 @@ fun SettingsView(navController: NavHostController) {
                 }
             }
             Text(
-                modifier = Modifier.padding(top = 10.dp),
+                modifier = Modifier.padding(top = 20.dp),
                 text = stringResource(R.string.sviaty_under),
                 fontSize = (Settings.fontInterface - 2).sp,
                 color = MaterialTheme.colorScheme.primary
@@ -799,7 +796,7 @@ fun SettingsView(navController: NavHostController) {
                             putBoolean("s_pkc", modePkcSvaity)
                         }
                     }
-                    .padding(vertical = 10.dp)
+                    .padding(vertical = 5.dp)
             ) {
                 Text(
                     stringResource(R.string.pkc),
@@ -828,7 +825,7 @@ fun SettingsView(navController: NavHostController) {
                             putBoolean("s_pravas", modePravasSvaity)
                         }
                     }
-                    .padding(vertical = 10.dp)
+                    .padding(vertical = 5.dp)
             ) {
                 Text(
                     stringResource(R.string.sviaty_ulian),
@@ -857,7 +854,7 @@ fun SettingsView(navController: NavHostController) {
                             putBoolean("s_gosud", modeGosudSvaity)
                         }
                     }
-                    .padding(vertical = 10.dp)
+                    .padding(vertical = 5.dp)
             ) {
                 Text(
                     stringResource(R.string.sviaty_dziar),
@@ -886,7 +883,7 @@ fun SettingsView(navController: NavHostController) {
                             putBoolean("s_pafesii", modePafesiiSvaity)
                         }
                     }
-                    .padding(vertical = 10.dp)
+                    .padding(vertical = 5.dp)
             ) {
                 Text(
                     stringResource(R.string.sviaty_pfes),
@@ -905,7 +902,7 @@ fun SettingsView(navController: NavHostController) {
                     }
                 )
             }
-            HorizontalDivider(color = MaterialTheme.colorScheme.secondary)
+            HorizontalDivider(color = MaterialTheme.colorScheme.primary)
             TextButton(
                 onClick = {
                     k.edit {

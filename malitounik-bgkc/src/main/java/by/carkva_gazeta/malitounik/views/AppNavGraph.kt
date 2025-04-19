@@ -18,15 +18,12 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
@@ -76,9 +73,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
@@ -124,6 +119,7 @@ import by.carkva_gazeta.malitounik.SearchSviatyia
 import by.carkva_gazeta.malitounik.Settings
 import by.carkva_gazeta.malitounik.Settings.isNetworkAvailable
 import by.carkva_gazeta.malitounik.SettingsView
+import by.carkva_gazeta.malitounik.ShtoNovaga
 import by.carkva_gazeta.malitounik.SviatyList
 import by.carkva_gazeta.malitounik.SviatyiaView
 import by.carkva_gazeta.malitounik.VybranaeList
@@ -595,6 +591,11 @@ fun AppNavGraph() {
         composable(AllDestinations.PADZEI_VIEW) {
             PadzeiaView(navController)
         }
+
+        composable(AllDestinations.SHTO_NOVAGA) {
+            ShtoNovaga(navController)
+        }
+
         composable(
             AllDestinations.SVITYIA_VIEW + "/{svity}/{position}",
             arguments = listOf(
@@ -1141,9 +1142,8 @@ fun MainConteiner(
     var textFieldLoaded by remember { mutableStateOf(false) }
     var dialogUmounyiaZnachenni by remember { mutableStateOf(false) }
     if (dialogUmounyiaZnachenni) {
-        DialogUmounyiaZnachenni {
-            dialogUmounyiaZnachenni = false
-        }
+        dialogUmounyiaZnachenni = false
+        navigationActions.navigateToShtoNovaga()
     }
     var textFieldValueState by remember { mutableStateOf("") }
     if (logView) {
@@ -2087,152 +2087,6 @@ fun DialogLogProgramy(
                 onClick = {
                     onDismissRequest()
                     if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) context.setlightSensor()
-                }
-            ) {
-                Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
-            }
-        }
-    )
-}
-
-@Composable
-fun DialogUmounyiaZnachenni(
-    onDismissRequest: () -> Unit
-) {
-    AlertDialog(
-        icon = {
-            Icon(painter = painterResource(R.drawable.info), contentDescription = "")
-        },
-        title = {
-            Text(text = stringResource(R.string.munu_symbols))
-        },
-        text = {
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                Text(
-                    text = stringResource(R.string.Znaki_cviat),
-                    fontSize = (Settings.fontInterface - 2).sp,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                HorizontalDivider(color = MaterialTheme.colorScheme.primary)
-                Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.znaki_krest_v_kruge), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
-                    val text = stringResource(R.string.dvuna_i_vial)
-                    val t1 = text.indexOf("\n")
-                    val annotatedString =
-                        buildAnnotatedString {
-                            append(text)
-                            addStyle(SpanStyle(fontWeight = FontWeight.Bold), 0, t1)
-                        }
-                    Text(
-                        modifier = Modifier.padding(start = 10.dp),
-                        text = annotatedString,
-                        fontSize = (Settings.fontInterface - 2).sp,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
-                Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.znaki_krest_v_polukruge), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
-                    Text(
-                        modifier = Modifier.padding(start = 10.dp),
-                        text = stringResource(R.string.Z_Lic_na_ve),
-                        fontSize = (Settings.fontInterface - 2).sp,
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                }
-                Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.znaki_krest), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
-                    Text(
-                        modifier = Modifier.padding(start = 10.dp),
-                        text = stringResource(R.string.Z_v_v_v_u_n_u),
-                        fontSize = (Settings.fontInterface - 2).sp,
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                }
-                Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.znaki_ttk), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
-                    Text(
-                        modifier = Modifier.padding(start = 10.dp),
-                        text = stringResource(R.string.Z_sh_v_v_u_u),
-                        fontSize = (Settings.fontInterface - 2).sp,
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                }
-                Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.znaki_ttk_black), contentDescription = "", tint = MaterialTheme.colorScheme.secondary)
-                    Text(
-                        modifier = Modifier.padding(start = 10.dp),
-                        text = stringResource(R.string.Z_sh_v_m_u_u),
-                        fontSize = (Settings.fontInterface - 2).sp,
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                }
-                Text(
-                    modifier = Modifier.padding(top = 10.dp),
-                    text = stringResource(R.string.tipicon_fon),
-                    fontSize = (Settings.fontInterface - 2).sp,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                HorizontalDivider(color = MaterialTheme.colorScheme.primary)
-                Text(
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                        .background(Primary)
-                        .padding(10.dp),
-                    text = stringResource(R.string.niadzeli_i_sviaty),
-                    fontSize = (Settings.fontInterface - 2).sp,
-                    color = PrimaryTextBlack
-                )
-                Text(
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                        .background(Divider)
-                        .padding(10.dp),
-                    text = stringResource(R.string.zvychaynye_dny),
-                    fontSize = (Settings.fontInterface - 2).sp,
-                    color = PrimaryText
-                )
-                Text(
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                        .background(BezPosta)
-                        .padding(10.dp),
-                    text = stringResource(R.string.No_post_n),
-                    fontSize = (Settings.fontInterface - 2).sp,
-                    color = PrimaryText
-                )
-                Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.fishe), contentDescription = "", tint = MaterialTheme.colorScheme.secondary)
-                    Text(
-                        modifier = Modifier
-                            .padding(start = 10.dp)
-                            .background(Post)
-                            .padding(10.dp),
-                        text = stringResource(R.string.Post),
-                        fontSize = (Settings.fontInterface - 2).sp,
-                        color = PrimaryText
-                    )
-                }
-                Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.fishe), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
-                    Text(
-                        modifier = Modifier
-                            .padding(start = 10.dp)
-                            .background(StrogiPost)
-                            .padding(10.dp),
-                        text = stringResource(R.string.Strogi_post_n),
-                        fontSize = (Settings.fontInterface - 2).sp,
-                        color = PrimaryTextBlack
-                    )
-                }
-            }
-        },
-        onDismissRequest = {
-            onDismissRequest()
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onDismissRequest()
                 }
             ) {
                 Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)

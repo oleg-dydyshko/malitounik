@@ -42,13 +42,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
@@ -213,19 +213,33 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                 try {
                     if (Settings.isNetworkAvailable(context)) {
                         if (svity) {
+                            if (fileSvity.exists()) {
+                                sviatyiaListLocale.clear()
+                                sviatyiaListLocale.addAll(loadOpisanieSviat(context, mun, day, position))
+                                sviatyiaList.clear()
+                                sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, true, position))
+                            }
                             downloadOpisanieSviat(context)
                             sviatyiaListLocale.clear()
                             sviatyiaListLocale.addAll(loadOpisanieSviat(context, mun, day, position))
                             getIcons(context, dirList, sviatyiaListLocale, true, isloadIcons, position, wiFiExists = { dialoNoWIFI = true })
                             if (!dialoNoWIFI) {
+                                sviatyiaList.clear()
                                 sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, true, position))
                             }
                         } else {
+                            if (fileOpisanie.exists()) {
+                                sviatyiaListLocale.clear()
+                                sviatyiaListLocale.addAll(loadOpisanieSviatyia(context, year, mun, day))
+                                sviatyiaList.clear()
+                                sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, true, position))
+                            }
                             downloadOpisanieSviatyia(context, mun)
                             sviatyiaListLocale.clear()
                             sviatyiaListLocale.addAll(loadOpisanieSviatyia(context, year, mun, day))
                             getIcons(context, dirList, sviatyiaListLocale, false, isloadIcons, position, wiFiExists = { dialoNoWIFI = true })
                             if (!dialoNoWIFI) {
+                                sviatyiaList.clear()
                                 sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, false, position))
                             }
                         }
@@ -690,96 +704,92 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                     )
                 }
             } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .pointerInput(Unit) {
-                            detectTapGestures(
-                                onDoubleTap = {
-                                    fullscreen = !fullscreen
-                                }
-                            )
-                        },
-                    state = lazyListState
-                ) {
-                    item {
-                        Spacer(Modifier.padding(top = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp))
+                Column {
+                    if (isProgressVisable) {
+                        LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                     }
-                    items(sviatyiaList.size) { index ->
-                        val file = File(sviatyiaList[index].image)
-                        SelectionContainer {
-                            Column {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text(
-                                        modifier = Modifier
-                                            .padding(10.dp)
-                                            .weight(1f), text = sviatyiaList[index].title, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary
-                                    )
-                                    Icon(
-                                        modifier = Modifier
-                                            .padding(end = 10.dp)
-                                            .clickable {
-                                                val sb = StringBuilder()
-                                                sb.append(sviatyiaList[index].text)
-                                                sb.append(sviatyiaList[index].text.trim())
-                                                val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-                                                val clip = ClipData.newPlainText(context.getString(R.string.copy_text), sb.toString())
-                                                clipboard.setPrimaryClip(clip)
-                                                if (file.exists()) {
-                                                    val sendIntent = Intent(Intent.ACTION_SEND)
-                                                    sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "by.carkva_gazeta.malitounik.fileprovider", file))
-                                                    sendIntent.putExtra(Intent.EXTRA_TEXT, sviatyiaList[index].text.trim())
-                                                    sendIntent.putExtra(Intent.EXTRA_SUBJECT, sviatyiaList[index].text.trim())
-                                                    sendIntent.type = "image/*"
-                                                    context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.zmiest)))
-                                                } else {
-                                                    val sendIntent = Intent(Intent.ACTION_SEND)
-                                                    sendIntent.putExtra(Intent.EXTRA_TEXT, sb.toString())
-                                                    sendIntent.putExtra(Intent.EXTRA_SUBJECT, context.getText(R.string.zmiest))
-                                                    sendIntent.type = "text/plain"
-                                                    context.startActivity(Intent.createChooser(sendIntent, context.getText(R.string.zmiest)))
-                                                }
-                                            }, painter = painterResource(R.drawable.share), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
-                                    )
-                                }
-                                if (file.exists()) {
-                                    val image = BitmapFactory.decodeFile(sviatyiaList[index].image).asImageBitmap()
-                                    var imW = image.width.toFloat()
-                                    var imH = image.height.toFloat()
-                                    val imageScale: Float = imW / imH
-                                    if (imW > 150F) {
-                                        imW = 150F
-                                        imH = 150F / imageScale
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .pointerInput(Unit) {
+                                detectTapGestures(
+                                    onDoubleTap = {
+                                        fullscreen = !fullscreen
                                     }
-                                    Image(
-                                        modifier = Modifier
-                                            .size(imW.dp, imH.dp)
-                                            .align(Alignment.CenterHorizontally)
-                                            .clickable {
-                                                fullImagePathVisable = file.absolutePath
-                                                imageFull = true
-                                            }, bitmap = image, contentDescription = ""
-                                    )
-                                }
-                                if (sviatyiaList[index].text.isNotEmpty()) {
-                                    Text(modifier = Modifier.padding(10.dp), text = sviatyiaList[index].text, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary)
+                                )
+                            },
+                        state = lazyListState
+                    ) {
+                        item {
+                            Spacer(Modifier.padding(top = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp))
+                        }
+                        items(sviatyiaList.size) { index ->
+                            val file = File(sviatyiaList[index].image)
+                            SelectionContainer {
+                                Column {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Text(
+                                            modifier = Modifier
+                                                .padding(10.dp)
+                                                .weight(1f), text = sviatyiaList[index].title, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary
+                                        )
+                                        Icon(
+                                            modifier = Modifier
+                                                .padding(end = 10.dp)
+                                                .clickable {
+                                                    val sb = StringBuilder()
+                                                    sb.append(sviatyiaList[index].text)
+                                                    sb.append(sviatyiaList[index].text.trim())
+                                                    val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                                                    val clip = ClipData.newPlainText(context.getString(R.string.copy_text), sb.toString())
+                                                    clipboard.setPrimaryClip(clip)
+                                                    if (file.exists()) {
+                                                        val sendIntent = Intent(Intent.ACTION_SEND)
+                                                        sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "by.carkva_gazeta.malitounik.fileprovider", file))
+                                                        sendIntent.putExtra(Intent.EXTRA_TEXT, sviatyiaList[index].text.trim())
+                                                        sendIntent.putExtra(Intent.EXTRA_SUBJECT, sviatyiaList[index].text.trim())
+                                                        sendIntent.type = "image/*"
+                                                        context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.zmiest)))
+                                                    } else {
+                                                        val sendIntent = Intent(Intent.ACTION_SEND)
+                                                        sendIntent.putExtra(Intent.EXTRA_TEXT, sb.toString())
+                                                        sendIntent.putExtra(Intent.EXTRA_SUBJECT, context.getText(R.string.zmiest))
+                                                        sendIntent.type = "text/plain"
+                                                        context.startActivity(Intent.createChooser(sendIntent, context.getText(R.string.zmiest)))
+                                                    }
+                                                }, painter = painterResource(R.drawable.share), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
+                                        )
+                                    }
+                                    if (file.exists()) {
+                                        val image = BitmapFactory.decodeFile(sviatyiaList[index].image).asImageBitmap()
+                                        var imW = image.width.toFloat()
+                                        var imH = image.height.toFloat()
+                                        val imageScale: Float = imW / imH
+                                        if (imW > 150F) {
+                                            imW = 150F
+                                            imH = 150F / imageScale
+                                        }
+                                        Image(
+                                            modifier = Modifier
+                                                .size(imW.dp, imH.dp)
+                                                .align(Alignment.CenterHorizontally)
+                                                .clickable {
+                                                    fullImagePathVisable = file.absolutePath
+                                                    imageFull = true
+                                                }, bitmap = image, contentDescription = ""
+                                        )
+                                    }
+                                    if (sviatyiaList[index].text.isNotEmpty()) {
+                                        Text(modifier = Modifier.padding(10.dp), text = sviatyiaList[index].text, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary)
+                                    }
                                 }
                             }
                         }
-                    }
-                    item {
-                        Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
+                        item {
+                            Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
+                        }
                     }
                 }
-            }
-        }
-        if (isProgressVisable) {
-            Box(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-            ) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
     }

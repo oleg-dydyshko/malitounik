@@ -271,7 +271,7 @@ class Widget : AppWidgetProvider() {
                 updateViews.setInt(R.id.textMesiac, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorPost))
             }
         }
-        if (!data[6].contains("no_sviaty")) {
+        if (data[6].isNotEmpty()) {
             val svita = data[6].replace("\n", "<br>")
             if (data[5].contains("1")) updateViews.setTextViewText(R.id.textCviatyGlavnyia, HtmlCompat.fromHtml("<strong>$svita</strong>", HtmlCompat.FROM_HTML_MODE_LEGACY))
             else updateViews.setTextViewText(R.id.textCviatyGlavnyia, HtmlCompat.fromHtml(svita, HtmlCompat.FROM_HTML_MODE_LEGACY))
@@ -286,7 +286,7 @@ class Widget : AppWidgetProvider() {
             updateViews.setTextViewText(R.id.textCviatyGlavnyia, HtmlCompat.fromHtml("<strong>${data[6]}</strong>", HtmlCompat.FROM_HTML_MODE_LEGACY))
         }
         var dataSviatyia = ""
-        if (!data[4].contains("no_sviatyia")) {
+        if (data[4].isNotEmpty()) {
             dataSviatyia = data[4]
         }
         if (data[8] != "") {

@@ -478,6 +478,16 @@
         <item>пятніца</item>
         <item>субота</item>
     </string-array>
+    <string-array name="dni_nedeli_up">
+        <item />
+        <item>НЯДЗЕЛЯ</item>
+        <item>ПАНЯДЗЕЛАК</item>
+        <item>АЎТОРАК</item>
+        <item>СЕРАДА</item>
+        <item>ЧАЦЬВЕР</item>
+        <item>ПЯТНІЦА</item>
+        <item>СУБОТА</item>
+    </string-array>
     <string-array name="meciac">
         <item>СТУДЗЕНЯ</item>
         <item>ЛЮТАГА</item>

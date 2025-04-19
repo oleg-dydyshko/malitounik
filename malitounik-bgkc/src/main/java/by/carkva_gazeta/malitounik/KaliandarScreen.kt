@@ -183,7 +183,7 @@ fun KaliandarScreen(
                     })
         }
         if (data[5].toInt() > 0) {
-            val padding1 = if (data[4] != "no_sviatyia") 0.dp
+            val padding1 = if (data[4].isNotEmpty()) 0.dp
             else 10.dp
             Row(
                 modifier = Modifier
@@ -202,7 +202,7 @@ fun KaliandarScreen(
                     )
                     padding = 35.dp
                 }
-                if (!data[6].contains("no_sviaty")) {
+                if (data[6].isNotEmpty()) {
                     val weight = if (data[5].toInt() == 1 || data[0].toInt() == Calendar.SUNDAY) FontWeight.Bold
                     else FontWeight.Normal
                     var color = MaterialTheme.colorScheme.primary
@@ -235,7 +235,7 @@ fun KaliandarScreen(
                 HtmlText(
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
-                        .padding(bottom = if (data[4] == "no_sviatyia") 10.dp else 0.dp), text = data[8], color = MaterialTheme.colorScheme.secondary, textAlign = TextAlign.Center, fontSize = Settings.fontInterface.sp
+                        .padding(bottom = if (data[4].isEmpty()) 10.dp else 0.dp), text = data[8], color = MaterialTheme.colorScheme.secondary, textAlign = TextAlign.Center, fontSize = Settings.fontInterface.sp
                 )
             }
         }
