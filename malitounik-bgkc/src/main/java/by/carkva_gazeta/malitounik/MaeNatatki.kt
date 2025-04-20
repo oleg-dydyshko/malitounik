@@ -4,15 +4,20 @@ import android.app.Activity
 import android.content.Context
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.AlertDialog
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -43,6 +48,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.core.view.WindowCompat
 import java.io.BufferedReader
 import java.io.File
@@ -113,14 +119,14 @@ fun MaeNatatki(
                 fileList.removeAt(natatkaPosition)
                 removeNatatka = false
             },
-            onDismissRequest = { removeNatatka = false }
+            onDismiss = { removeNatatka = false }
         )
     }
     if (addFile) {
         DialogMyNatatki(
             "",
             "",
-            onDismissRequest = {
+            onDismiss = {
                 onDismissAddFile()
             },
             onConfirmation = { title, content ->
@@ -136,7 +142,7 @@ fun MaeNatatki(
         DialogMyNatatki(
             fileList[natatkaPosition].title,
             fileList[natatkaPosition].content,
-            onDismissRequest = {
+            onDismiss = {
                 isNatatkaVisable = false
                 dialogContextMenuEdit = false
             },
@@ -153,7 +159,8 @@ fun MaeNatatki(
                 isNatatkaVisable = false
                 dialogContextMenuEdit = false
             },
-            isEditMode = dialogContextMenuEdit)
+            isEditMode = dialogContextMenuEdit
+        )
     }
     if (dialogContextMenu) {
         DialogContextMenu(
@@ -218,7 +225,7 @@ fun MaeNatatki(
 fun DialogMyNatatki(
     title: String,
     content: String,
-    onDismissRequest: () -> Unit,
+    onDismiss: () -> Unit,
     onConfirmation: (String, String) -> Unit,
     isEditMode: Boolean = false
 ) {
@@ -237,78 +244,101 @@ fun DialogMyNatatki(
     val actyvity = LocalActivity.current as MainActivity
     val k = actyvity.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     if (editMode) actyvity.removelightSensor()
-    AlertDialog(
-        icon = {
-            Icon(painter = painterResource(R.drawable.description), contentDescription = "")
-        },
-        title = {
-            if (editMode) {
-                TextField(
-                    placeholder = { Text(stringResource(R.string.natatka_name), fontSize = Settings.fontInterface.sp) },
-                    value = editTitle,
-                    onValueChange = {
-                        editTitle = it
-                    }
-                )
-            } else {
-                Text(editTitle, fontSize = Settings.fontInterface.sp)
-            }
-        },
-        text = {
-            if (editMode) {
-                TextField(
-                    modifier = Modifier
-                        .focusRequester(focusRequester)
-                        .onGloballyPositioned {
-                            if (!textFieldLoaded) {
-                                focusRequester.requestFocus()
-                                textFieldLoaded = true
-                            }
+    Dialog(onDismissRequest = {
+        if (editMode) {
+            onConfirmation(editTitle, textFieldValueState.text)
+            if (k?.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
+        } else onDismiss()
+    }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column {
+                if (editMode) {
+                    TextField(
+                        textStyle = TextStyle(fontSize = Settings.fontInterface.sp),
+                        placeholder = { Text(stringResource(R.string.natatka_name), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary) },
+                        value = editTitle,
+                        onValueChange = {
+                            editTitle = it
                         },
-                    placeholder = { Text(stringResource(R.string.natatka), fontSize = Settings.fontInterface.sp) },
-                    value = textFieldValueState,
-                    onValueChange = {
-                        textFieldValueState = it
-                    },
-                    textStyle = TextStyle(fontSize = Settings.fontInterface.sp)
-                )
-            } else {
-                Text(textFieldValueState.text, fontSize = Settings.fontInterface.sp)
-            }
-        },
-        onDismissRequest = {
-            if (editMode) {
-                onConfirmation(editTitle, textFieldValueState.text)
-                if (k?.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
-            } else onDismissRequest()
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    if (editMode) {
-                        onDismissRequest()
-                        if (k?.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
-                    } else editMode = true
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                } else {
+                    Text(
+                        text = editTitle, fontSize = Settings.fontInterface.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.primary)
+                            .padding(10.dp), color = MaterialTheme.colorScheme.onSecondary
+                    )
                 }
-            ) {
-                if (editMode) Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
-                else Text(stringResource(R.string.redagaktirovat), fontSize = Settings.fontInterface.sp)
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    if (editMode) {
-                        onConfirmation(editTitle, textFieldValueState.text)
-                        if (k?.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
-                    } else onDismissRequest()
+                if (editMode) {
+                    TextField(
+                        modifier = Modifier
+                            .focusRequester(focusRequester)
+                            .onGloballyPositioned {
+                                if (!textFieldLoaded) {
+                                    focusRequester.requestFocus()
+                                    textFieldLoaded = true
+                                }
+                            },
+                        placeholder = { Text(stringResource(R.string.natatka), fontSize = Settings.fontInterface.sp) },
+                        value = textFieldValueState,
+                        onValueChange = {
+                            textFieldValueState = it
+                        },
+                        textStyle = TextStyle(fontSize = Settings.fontInterface.sp)
+                    )
+                } else {
+                    Text(modifier = Modifier.padding(10.dp), text = textFieldValueState.text, fontSize = Settings.fontInterface.sp)
                 }
-            ) {
-                if (editMode) Text(stringResource(R.string.save_sabytie), fontSize = Settings.fontInterface.sp)
-                else Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = {
+                            if (editMode) {
+                                onDismiss()
+                                if (k?.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
+                            } else editMode = true
+                        }
+                    ) {
+                        if (editMode) {
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                            Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
+                        } else {
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.edit), contentDescription = "")
+                            Text(stringResource(R.string.redagaktirovat), fontSize = Settings.fontInterface.sp)
+                        }
+                    }
+                    TextButton(
+                        onClick = {
+                            if (editMode) {
+                                onConfirmation(editTitle, textFieldValueState.text)
+                                if (k?.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
+                            } else onDismiss()
+                        }
+                    ) {
+                        if (editMode) {
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.save), contentDescription = "")
+                            Text(stringResource(R.string.save_sabytie), fontSize = Settings.fontInterface.sp)
+                        } else {
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                            Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
+                        }
+                    }
+                }
             }
         }
-    )
+    }
 }
 
 private fun write(

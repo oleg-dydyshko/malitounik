@@ -23,6 +23,7 @@ import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,7 +42,7 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -94,6 +95,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Popup
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
@@ -144,7 +146,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
         }
     }
     if (dialoNoWIFI) {
-        DialogNoWiFI(onDismissRequest = {
+        DialogNoWiFI(onDismiss = {
             dialoNoWIFI = false
             sviatyiaList.addAll(sviatyiaListLocale)
         }) {
@@ -761,6 +763,13 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                         )
                                     }
                                     if (file.exists()) {
+                                        try {
+                                            BitmapFactory.decodeFile(sviatyiaList[index].image).asImageBitmap()
+                                        } catch (_: Throwable) {
+                                            file.delete()
+                                        }
+                                    }
+                                    if (file.exists()) {
                                         val image = BitmapFactory.decodeFile(sviatyiaList[index].image).asImageBitmap()
                                         var imW = image.width.toFloat()
                                         var imH = image.height.toFloat()
@@ -1172,7 +1181,7 @@ fun checkParliny(context: Context, mun: Int, day: Int): Boolean {
 fun DialogPairlinyView(
     day: Int,
     mun: Int,
-    onDismissRequest: () -> Unit,
+    onDismiss: () -> Unit,
 ) {
     val context = LocalActivity.current as MainActivity
     var result by remember { mutableStateOf("") }
@@ -1194,30 +1203,45 @@ fun DialogPairlinyView(
             result = piarliny[1]
         }
     }
-    AlertDialog(
-        icon = {
-            Icon(painter = painterResource(R.drawable.description), contentDescription = "")
-        },
-        title = {
-            Text(text = stringResource(R.string.piarliny2, day, stringArrayResource(R.array.meciac_smoll)[mun - 1]))
-        },
-        text = {
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                HtmlText(text = result, fontSize = Settings.fontInterface.sp)
-            }
-        },
-        onDismissRequest = {
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onDismissRequest()
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column {
+                Text(
+                    text = stringResource(R.string.piarliny2, day, stringArrayResource(R.array.meciac_smoll)[mun - 1]).uppercase(), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
+                )
+                Column(
+                    modifier = Modifier
+                        .padding(10.dp).verticalScroll(rememberScrollState())
+                ) {
+                    HtmlText(
+                        text = result, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
+                    )
                 }
-            ) {
-                Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = { onDismiss() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Text(stringResource(R.string.close), fontSize = 18.sp)
+                    }
+                }
             }
         }
-    )
+    }
 }
 
 data class DirList(val name: String?, val sizeBytes: Long)

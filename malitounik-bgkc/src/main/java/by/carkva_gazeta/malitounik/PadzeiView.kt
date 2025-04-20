@@ -350,7 +350,8 @@ fun PadzeiaView(navController: NavHostController) {
     if (dialogContextMenu) {
         val p = listPadzeia[showPadziaPosition]
         val title = p.padz
-        DialogContextMenu(title,
+        DialogContextMenu(
+            title,
             onEdit = {
                 dialogContextMenu = false
                 editMode = true
@@ -434,7 +435,7 @@ fun PadzeiaView(navController: NavHostController) {
             }
             Toast.makeText(context, context.getString(R.string.remove_padzea), Toast.LENGTH_SHORT).show()
             delitePadzia = false
-        }, onDismissRequest = {
+        }, onDismiss = {
             delitePadzia = false
         })
     }
@@ -462,10 +463,11 @@ fun PadzeiaView(navController: NavHostController) {
                 },
                 navigationIcon = {
                     if (editMode) {
-                        IconButton(onClick = {
-                            editMode = false
-                            editPadzeiaInit = true
-                        },
+                        IconButton(
+                            onClick = {
+                                editMode = false
+                                editPadzeiaInit = true
+                            },
                             content = {
                                 Icon(
                                     painter = painterResource(R.drawable.close),
@@ -474,9 +476,10 @@ fun PadzeiaView(navController: NavHostController) {
                                 )
                             })
                     } else {
-                        IconButton(onClick = {
-                            navController.popBackStack()
-                        },
+                        IconButton(
+                            onClick = {
+                                navController.popBackStack()
+                            },
                             content = {
                                 Icon(
                                     painter = painterResource(R.drawable.arrow_back),
@@ -593,25 +596,26 @@ fun PadzeiaView(navController: NavHostController) {
                     exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
                 ) {
                     if (kalendarMun || kalendarMun2 || kalendarMun3) {
-                        KaliandarScreenMounth(colorBlackboard = MaterialTheme.colorScheme.onTertiary, setPageCaliandar = { date ->
-                            var nol1 = ""
-                            var nol2 = ""
-                            val kal = Settings.data[date]
-                            if (kal[1].toInt() < 10) nol1 = "0"
-                            if (kal[2].toInt() < 9) nol2 = "0"
-                            if (kalendarMun) {
-                                data = nol1 + kal[1] + "." + nol2 + (kal[2].toInt() + 1) + "." + kal[3]
-                                data2 = nol1 + kal[1] + "." + nol2 + (kal[2].toInt() + 1) + "." + kal[3]
-                            } else if (kalendarMun2) {
-                                data2 = nol1 + kal[1] + "." + nol2 + (kal[2].toInt() + 1) + "." + kal[3]
-                            } else {
-                                data3 = nol1 + kal[1] + "." + nol2 + (kal[2].toInt() + 1) + "." + kal[3]
-                            }
-                            kalendarMun = false
-                            kalendarMun2 = false
-                            kalendarMun3 = false
-                            showDropdown = false
-                        },
+                        KaliandarScreenMounth(
+                            colorBlackboard = MaterialTheme.colorScheme.onTertiary, setPageCaliandar = { date ->
+                                var nol1 = ""
+                                var nol2 = ""
+                                val kal = Settings.data[date]
+                                if (kal[1].toInt() < 10) nol1 = "0"
+                                if (kal[2].toInt() < 9) nol2 = "0"
+                                if (kalendarMun) {
+                                    data = nol1 + kal[1] + "." + nol2 + (kal[2].toInt() + 1) + "." + kal[3]
+                                    data2 = nol1 + kal[1] + "." + nol2 + (kal[2].toInt() + 1) + "." + kal[3]
+                                } else if (kalendarMun2) {
+                                    data2 = nol1 + kal[1] + "." + nol2 + (kal[2].toInt() + 1) + "." + kal[3]
+                                } else {
+                                    data3 = nol1 + kal[1] + "." + nol2 + (kal[2].toInt() + 1) + "." + kal[3]
+                                }
+                                kalendarMun = false
+                                kalendarMun2 = false
+                                kalendarMun3 = false
+                                showDropdown = false
+                            },
                             close = {
                                 kalendarMun = false
                                 kalendarMun2 = false
@@ -1836,44 +1840,52 @@ fun DialogSabytieShow(
     onDismiss: () -> Unit,
     onEdit: (Int) -> Unit
 ) {
-    AlertDialog(
-        icon = {
-            Icon(painter = painterResource(R.drawable.description), contentDescription = "")
-        },
-        title = {
-            Text(text = title.uppercase())
-        },
-        text = {
-            val annotatedString = buildAnnotatedString {
-                append(padzeia)
-                var t1 = padzeia.indexOf("Паведаміць:")
-                if (padzeia.contains("Ніколі")) t1 = -1
-                if (paznicia && t1 != -1) addStyle(SpanStyle(color = MaterialTheme.colorScheme.primary), t1, padzeia.length)
-            }
-            Text(annotatedString, fontSize = Settings.fontInterface.sp)
-        },
-        onDismissRequest = {
-            onDismiss()
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    onEdit(position)
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column {
+                Text(
+                    text = title, modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
+                )
+                val annotatedString = buildAnnotatedString {
+                    append(padzeia)
+                    var t1 = padzeia.indexOf("Паведаміць:")
+                    if (padzeia.contains("Ніколі")) t1 = -1
+                    if (paznicia && t1 != -1) addStyle(SpanStyle(color = MaterialTheme.colorScheme.primary), t1, padzeia.length)
                 }
-            ) {
-                Text(stringResource(R.string.redagaktirovat), fontSize = Settings.fontInterface.sp)
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onDismiss()
+                Text(
+                    text = annotatedString, fontSize = Settings.fontInterface.sp,
+                    modifier = Modifier.padding(10.dp),
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = { onEdit(position) },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.edit), contentDescription = "")
+                        Text(stringResource(R.string.redagaktirovat), fontSize = 22.sp)
+                    }
+                    TextButton(
+                        onClick = { onDismiss() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Text(stringResource(R.string.close), fontSize = 22.sp)
+                    }
                 }
-            ) {
-                Text(stringResource(R.string.ok), fontSize = Settings.fontInterface.sp)
             }
         }
-    )
+    }
 }
 
 @Composable
@@ -1886,23 +1898,20 @@ fun DialogDelitePadsei(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Icon(painter = painterResource(R.drawable.delete), contentDescription = "")
+            Column {
                 Text(
-                    text = stringResource(R.string.del_sabytie),
-                    modifier = Modifier.padding(16.dp), fontSize = (Settings.fontInterface + 6).sp,
+                    text = stringResource(R.string.del_sabytie).uppercase(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
                 Text(
                     text = stringResource(R.string.remove_sabytie_iak), fontSize = Settings.fontInterface.sp,
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier.padding(10.dp),
                 )
                 Row(
                     modifier = Modifier
@@ -1911,22 +1920,26 @@ fun DialogDelitePadsei(
                 ) {
                     TextButton(
                         onClick = { onDelAll() },
-                        modifier = Modifier.padding(8.dp),
+                        shape = MaterialTheme.shapes.small
                     ) {
-                        Text(stringResource(R.string.sabytie_del_all), fontSize = Settings.fontInterface.sp)
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.delete), contentDescription = "")
+                        Text(stringResource(R.string.sabytie_del_all), fontSize = 22.sp)
                     }
                     TextButton(
                         onClick = { onDelOld() },
-                        modifier = Modifier.padding(8.dp),
+                        shape = MaterialTheme.shapes.small
                     ) {
-                        Text(stringResource(R.string.sabytie_del_old), fontSize = Settings.fontInterface.sp)
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.delete), contentDescription = "")
+                        Text(stringResource(R.string.sabytie_del_old), fontSize = 22.sp)
                     }
                 }
                 TextButton(
                     onClick = { onDismiss() },
-                    modifier = Modifier.padding(8.dp),
+                    shape = MaterialTheme.shapes.small,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
-                    Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
+                    Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                    Text(stringResource(R.string.cansel), fontSize = 22.sp)
                 }
             }
         }
@@ -1944,22 +1957,24 @@ fun DialogContextMenu(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp),
+                    .fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Icon(painter = painterResource(R.drawable.description), contentDescription = "")
                 Text(
                     text = title,
                     fontSize = Settings.fontInterface.sp,
+                    color = MaterialTheme.colorScheme.onSecondary,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(10.dp),
                 )
                 HorizontalDivider()
                 Row(
@@ -1972,9 +1987,9 @@ fun DialogContextMenu(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier.size(12.dp, 12.dp),
+                        modifier = Modifier.size(22.dp, 22.dp),
                         painter = painterResource(R.drawable.edit),
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = MaterialTheme.colorScheme.secondary,
                         contentDescription = null
                     )
                     Text(
@@ -1996,9 +2011,9 @@ fun DialogContextMenu(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier.size(12.dp, 12.dp),
+                        modifier = Modifier.size(22.dp, 22.dp),
                         painter = painterResource(R.drawable.delete),
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = MaterialTheme.colorScheme.secondary,
                         contentDescription = null
                     )
                     Text(
@@ -2015,8 +2030,10 @@ fun DialogContextMenu(
                     modifier = Modifier
                         .padding(8.dp)
                         .align(Alignment.End),
+                    shape = MaterialTheme.shapes.small
                 ) {
-                    Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
+                    Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                    Text(stringResource(R.string.cansel), fontSize = 18.sp)
                 }
             }
         }

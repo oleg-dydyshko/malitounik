@@ -13,9 +13,11 @@ import android.widget.Toast
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,13 +28,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
@@ -81,6 +84,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.net.toUri
@@ -455,7 +459,8 @@ fun SettingsView(navController: NavHostController) {
                     Text(
                         stringResource(R.string.admin_day_in_year),
                         modifier = Modifier
-                            .weight(1f).padding(end = 10.dp),
+                            .weight(1f)
+                            .padding(end = 10.dp),
                         fontSize = (Settings.fontInterface - 2).sp,
                         color = MaterialTheme.colorScheme.secondary
                     )
@@ -529,7 +534,8 @@ fun SettingsView(navController: NavHostController) {
                 Text(
                     stringResource(R.string.bsinaidal),
                     modifier = Modifier
-                        .weight(1f).padding(end = 10.dp),
+                        .weight(1f)
+                        .padding(end = 10.dp),
                     fontSize = (Settings.fontInterface - 2).sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
@@ -559,7 +565,8 @@ fun SettingsView(navController: NavHostController) {
                 Text(
                     stringResource(R.string.maranata_opis),
                     modifier = Modifier
-                        .weight(1f).padding(end = 10.dp),
+                        .weight(1f)
+                        .padding(end = 10.dp),
                     fontSize = (Settings.fontInterface - 2).sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
@@ -805,7 +812,8 @@ fun SettingsView(navController: NavHostController) {
                 Text(
                     stringResource(R.string.pkc),
                     modifier = Modifier
-                        .weight(1f).padding(end = 10.dp),
+                        .weight(1f)
+                        .padding(end = 10.dp),
                     fontSize = (Settings.fontInterface - 2).sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
@@ -835,7 +843,8 @@ fun SettingsView(navController: NavHostController) {
                 Text(
                     stringResource(R.string.sviaty_ulian),
                     modifier = Modifier
-                        .weight(1f).padding(end = 10.dp),
+                        .weight(1f)
+                        .padding(end = 10.dp),
                     fontSize = (Settings.fontInterface - 2).sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
@@ -865,7 +874,8 @@ fun SettingsView(navController: NavHostController) {
                 Text(
                     stringResource(R.string.sviaty_dziar),
                     modifier = Modifier
-                        .weight(1f).padding(end = 10.dp),
+                        .weight(1f)
+                        .padding(end = 10.dp),
                     fontSize = (Settings.fontInterface - 2).sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
@@ -895,7 +905,8 @@ fun SettingsView(navController: NavHostController) {
                 Text(
                     stringResource(R.string.sviaty_pfes),
                     modifier = Modifier
-                        .weight(1f).padding(end = 10.dp),
+                        .weight(1f)
+                        .padding(end = 10.dp),
                     fontSize = (Settings.fontInterface - 2).sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
@@ -1011,38 +1022,52 @@ fun DialogClearChash(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    AlertDialog(
-        icon = {
-            Icon(painter = painterResource(R.drawable.warning), contentDescription = "")
-        },
-        title = {
-            Text(text = stringResource(R.string.clear_chash).uppercase())
-        },
-        text = {
-            Text(text = stringResource(R.string.clear_chash_opis), fontSize = (Settings.fontInterface - 2).sp)
-        },
-        onDismissRequest = {
-            onDismiss()
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onConfirm()
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column {
+                Text(
+                    text = stringResource(R.string.clear_chash).uppercase(), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
+                )
+                Column(
+                    modifier = Modifier
+                        .padding(10.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.clear_chash_opis), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
+                    )
                 }
-            ) {
-                Text(stringResource(R.string.delite), fontSize = (Settings.fontInterface - 2).sp)
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    onDismiss()
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = { onConfirm() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.delete), contentDescription = "")
+                        Text(stringResource(R.string.delite), fontSize = 18.sp)
+                    }
+                    TextButton(
+                        onClick = { onDismiss() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Text(stringResource(R.string.cansel), fontSize = 18.sp)
+                    }
                 }
-            ) {
-                Text(stringResource(R.string.cansel), fontSize = (Settings.fontInterface - 2).sp)
             }
         }
-    )
+    }
 }
 
 @Composable
@@ -1052,87 +1077,99 @@ fun DialogLogin(
     var login by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
-    AlertDialog(
-        icon = {
-            Icon(painter = painterResource(R.drawable.local_police), contentDescription = "")
-        },
-        title = {
-            Text(text = stringResource(R.string.admin_panel).uppercase())
-        },
-        text = {
+    Dialog(onDismissRequest = {}) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
             Column {
-                TextField(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    value = login,
-                    onValueChange = { newText ->
-                        login = newText
-                    },
-                    singleLine = true,
-                    textStyle = TextStyle(fontSize = (Settings.fontInterface - 2).sp),
-                    trailingIcon = {
-                        if (login.isNotEmpty()) {
-                            IconButton(onClick = {
-                                login = ""
-                            }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.close),
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                            }
-                        }
-                    }
-                )
-                TextField(
-                    modifier = Modifier
+                Text(
+                    text = stringResource(R.string.admin_panel).uppercase(), modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 10.dp),
-                    value = password,
-                    onValueChange = { newText ->
-                        password = newText
-                    },
-                    singleLine = true,
-                    textStyle = TextStyle(fontSize = (Settings.fontInterface - 2).sp),
-                    trailingIcon = {
-                        if (showPassword) {
-                            IconButton(onClick = { showPassword = false }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.visibility),
-                                    contentDescription = "hide_password"
-                                )
-                            }
-                        } else {
-                            IconButton(
-                                onClick = { showPassword = true }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.visibility_off),
-                                    contentDescription = "hide_password"
-                                )
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
+                )
+                Column(
+                    modifier = Modifier.padding(10.dp)
+                ) {
+                    TextField(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        value = login,
+                        onValueChange = { newText ->
+                            login = newText
+                        },
+                        singleLine = true,
+                        textStyle = TextStyle(fontSize = (Settings.fontInterface - 2).sp),
+                        trailingIcon = {
+                            if (login.isNotEmpty()) {
+                                IconButton(onClick = {
+                                    login = ""
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.close),
+                                        contentDescription = "",
+                                        tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
                             }
                         }
-                    },
-                    visualTransformation = if (showPassword) {
-                        VisualTransformation.None
-                    } else {
-                        PasswordVisualTransformation()
-                    },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                )
-            }
-        },
-        onDismissRequest = {
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onLogin(login.trim() == "Царква" && password.trim() == "Дворнікава63")
+                    )
+                    TextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp),
+                        value = password,
+                        onValueChange = { newText ->
+                            password = newText
+                        },
+                        singleLine = true,
+                        textStyle = TextStyle(fontSize = (Settings.fontInterface - 2).sp),
+                        trailingIcon = {
+                            if (showPassword) {
+                                IconButton(onClick = { showPassword = false }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.visibility),
+                                        contentDescription = "hide_password"
+                                    )
+                                }
+                            } else {
+                                IconButton(
+                                    onClick = { showPassword = true }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.visibility_off),
+                                        contentDescription = "hide_password"
+                                    )
+                                }
+                            }
+                        },
+                        visualTransformation = if (showPassword) {
+                            VisualTransformation.None
+                        } else {
+                            PasswordVisualTransformation()
+                        },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    )
                 }
-            ) {
-                Text(stringResource(R.string.ok), fontSize = (Settings.fontInterface - 2).sp)
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = { onLogin(login.trim() == "Царква" && password.trim() == "Дворнікава63") },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Text(stringResource(R.string.ok), fontSize = 18.sp)
+                    }
+                }
             }
         }
-    )
+    }
 }
 
 @Composable
@@ -1140,38 +1177,52 @@ fun DialogNotification(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
-    AlertDialog(
-        icon = {
-            Icon(painter = painterResource(R.drawable.notifications), contentDescription = "")
-        },
-        title = {
-            Text(text = stringResource(R.string.notifi).uppercase())
-        },
-        text = {
-            Text(stringResource(R.string.help_notifications_api33), fontSize = (Settings.fontInterface - 2).sp)
-        },
-        onDismissRequest = {
-            onDismiss()
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onConfirm()
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column {
+                Text(
+                    text = stringResource(R.string.notifi).uppercase(), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
+                )
+                Column(
+                    modifier = Modifier
+                        .padding(10.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.help_notifications_api33), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
+                    )
                 }
-            ) {
-                Text(stringResource(R.string.dazvolic), fontSize = (Settings.fontInterface - 2).sp)
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    onDismiss()
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = { onConfirm() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Text(stringResource(R.string.cansel), fontSize = 18.sp)
+                    }
+                    TextButton(
+                        onClick = { onDismiss() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Text(stringResource(R.string.dazvolic), fontSize = 18.sp)
+                    }
                 }
-            ) {
-                Text(stringResource(R.string.cansel), fontSize = (Settings.fontInterface - 2).sp)
             }
         }
-    )
+    }
 }
 
 fun setNotificationOnly(context: Context) {

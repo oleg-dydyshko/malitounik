@@ -52,6 +52,13 @@ class LogView(val context: MainActivity) {
         }
     }
 
+    fun checkFiles() {
+        logJob?.cancel()
+        logJob = CoroutineScope(Dispatchers.Main).launch {
+            getLogFile()
+        }
+    }
+
     private suspend fun getLogFile(count: Int = 0): ArrayList<String> {
         val localFile = File("${context.filesDir}/cache/log.txt")
         var error = false

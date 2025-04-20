@@ -44,7 +44,7 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -105,6 +105,7 @@ import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Popup
 import androidx.core.content.edit
 import androidx.core.view.WindowCompat
@@ -402,7 +403,7 @@ fun Bogaslujbovyia(
     var printFile by remember { mutableStateOf("") }
     if (isDialogNoWIFIVisable) {
         DialogNoWiFI(
-            onDismissRequest = {
+            onDismiss = {
                 isWebViewVisible = true
                 isDialogNoWIFIVisable = false
             },
@@ -1431,7 +1432,7 @@ fun Bogaslujbovyia(
 @Composable
 fun DialogLiturgia(
     chast: Int,
-    onDismissRequest: () -> Unit,
+    onDismiss: () -> Unit,
 ) {
     val context = LocalActivity.current as MainActivity
     var title by remember { mutableStateOf("") }
@@ -1505,31 +1506,40 @@ fun DialogLiturgia(
     }
     inputStream.close()
     item = builder.toString()
-    AlertDialog(
-        icon = {
-            Icon(painter = painterResource(R.drawable.description), contentDescription = "")
-        },
-        title = {
-            Text(text = title.uppercase())
-        },
-        text = {
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                HtmlText(text = item, fontSize = Settings.fontInterface.sp)
-            }
-        },
-        onDismissRequest = {
-            onDismissRequest()
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onDismissRequest()
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column {
+                Text(
+                    text = title.uppercase(), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
+                )
+                Column(modifier = Modifier.padding(10.dp).weight(1f).verticalScroll(rememberScrollState())) {
+                    HtmlText(text = item, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
                 }
-            ) {
-                Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = { onDismiss() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Text(stringResource(R.string.close), fontSize = 18.sp)
+                    }
+                }
             }
         }
-    )
+    }
 }
 
 suspend fun findAllAsanc(text: String, search: String): ArrayList<ArrayList<Int>> {

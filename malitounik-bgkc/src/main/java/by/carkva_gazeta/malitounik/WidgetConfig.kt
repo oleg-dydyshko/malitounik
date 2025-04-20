@@ -6,13 +6,16 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.material3.AlertDialog
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -32,6 +35,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.core.content.edit
 import by.carkva_gazeta.malitounik.ui.theme.MalitounikTheme
 
@@ -70,7 +74,7 @@ fun DialogWidgetConfig(
     isWidgetMun: Boolean,
     widgetID: Int,
     onConfirmRequest: () -> Unit,
-    onDismissRequest: () -> Unit
+    onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
@@ -80,119 +84,129 @@ fun DialogWidgetConfig(
             else k.getInt("mode_night_widget_day$widgetID", Settings.MODE_NIGHT_SYSTEM)
         )
     }
-    AlertDialog(
-        icon = {
-            Icon(painter = painterResource(R.drawable.contrast), contentDescription = "")
-        },
-        title = {
-            Text(text = stringResource(R.string.vygliad2))
-        },
-        text = {
-            Column(Modifier.selectableGroup())
-            {
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column {
                 Text(
-                    stringResource(R.string.dzen_noch),
-                    modifier = Modifier.padding(start = 10.dp, top = 10.dp),
-                    textAlign = TextAlign.Center,
-                    fontStyle = FontStyle.Italic,
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontSize = Settings.fontInterface.sp
+                    text = stringResource(R.string.vygliad2).uppercase(), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            modeNight = Settings.MODE_NIGHT_SYSTEM
-                        },
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(
-                        selected = modeNight == Settings.MODE_NIGHT_SYSTEM,
-                        onClick = {
-                            modeNight = Settings.MODE_NIGHT_SYSTEM
-                        }
-                    )
+                Column(Modifier
+                    .selectableGroup()
+                    .padding(10.dp)) {
                     Text(
-                        stringResource(R.string.system),
+                        stringResource(R.string.dzen_noch),
+                        modifier = Modifier.padding(start = 10.dp, top = 10.dp),
                         textAlign = TextAlign.Center,
+                        fontStyle = FontStyle.Italic,
                         color = MaterialTheme.colorScheme.secondary,
                         fontSize = Settings.fontInterface.sp
                     )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            modeNight = Settings.MODE_NIGHT_NO
-                        },
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(
-                        selected = modeNight == Settings.MODE_NIGHT_NO,
-                        onClick = {
-                            modeNight = Settings.MODE_NIGHT_NO
-                        }
-                    )
-                    Text(
-                        stringResource(R.string.day),
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = Settings.fontInterface.sp
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            modeNight = Settings.MODE_NIGHT_YES
-                        },
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(
-                        selected = modeNight == Settings.MODE_NIGHT_YES,
-                        onClick = {
-                            modeNight = Settings.MODE_NIGHT_YES
-                        }
-                    )
-                    Text(
-                        stringResource(R.string.widget_day_d_n),
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = Settings.fontInterface.sp
-                    )
-                }
-            }
-            if (!isWidgetMun) {
-                val intent = Intent(context, Widget::class.java)
-                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID)
-                intent.putExtra("actionEndLoad", true)
-                context.sendBroadcast(intent)
-            }
-        },
-        onDismissRequest = {
-            onDismissRequest()
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    onDismissRequest()
-                }
-            ) {
-                Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    k.edit {
-                        if (isWidgetMun) putInt("mode_night_widget_mun$widgetID", modeNight)
-                        else putInt("mode_night_widget_day$widgetID", modeNight)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                modeNight = Settings.MODE_NIGHT_SYSTEM
+                            },
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = modeNight == Settings.MODE_NIGHT_SYSTEM,
+                            onClick = {
+                                modeNight = Settings.MODE_NIGHT_SYSTEM
+                            }
+                        )
+                        Text(
+                            stringResource(R.string.system),
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontSize = Settings.fontInterface.sp
+                        )
                     }
-                    onConfirmRequest()
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                modeNight = Settings.MODE_NIGHT_NO
+                            },
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = modeNight == Settings.MODE_NIGHT_NO,
+                            onClick = {
+                                modeNight = Settings.MODE_NIGHT_NO
+                            }
+                        )
+                        Text(
+                            stringResource(R.string.day),
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontSize = Settings.fontInterface.sp
+                        )
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                modeNight = Settings.MODE_NIGHT_YES
+                            },
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = modeNight == Settings.MODE_NIGHT_YES,
+                            onClick = {
+                                modeNight = Settings.MODE_NIGHT_YES
+                            }
+                        )
+                        Text(
+                            stringResource(R.string.widget_day_d_n),
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontSize = Settings.fontInterface.sp
+                        )
+                    }
                 }
-            ) {
-                Text(stringResource(R.string.save_sabytie), fontSize = Settings.fontInterface.sp)
+                if (!isWidgetMun) {
+                    val intent = Intent(context, Widget::class.java)
+                    intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID)
+                    intent.putExtra("actionEndLoad", true)
+                    context.sendBroadcast(intent)
+                }
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = {
+                            k.edit {
+                                if (isWidgetMun) putInt("mode_night_widget_mun$widgetID", modeNight)
+                                else putInt("mode_night_widget_day$widgetID", modeNight)
+                            }
+                            onConfirmRequest()
+                        },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Text(stringResource(R.string.save_sabytie), fontSize = 18.sp)
+                    }
+                    TextButton(
+                        onClick = { onDismiss() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Text(stringResource(R.string.cansel), fontSize = 18.sp)
+                    }
+                }
             }
         }
-    )
+    }
 }

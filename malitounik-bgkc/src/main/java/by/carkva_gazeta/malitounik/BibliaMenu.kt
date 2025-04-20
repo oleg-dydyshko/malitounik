@@ -12,6 +12,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,7 +23,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
@@ -559,94 +559,135 @@ fun BibliaMenu(
 @Composable
 fun DialogSemuxa(
     isSemuxa: Boolean,
-    onDismissRequest: () -> Unit,
+    onDismiss: () -> Unit,
 ) {
-    AlertDialog(
-        icon = {
-            Icon(painter = painterResource(R.drawable.copyright), contentDescription = "")
-        },
-        title = {
-            Text(text = stringResource(R.string.alesyaSemukha))
-        },
-        text = {
-            val context = LocalContext.current
-            val inputStream =
-                if (isSemuxa) context.resources.openRawResource(R.raw.all_rights_reserved_semuxa)
-                else context.resources.openRawResource(R.raw.all_rights_reserved_bokun)
-            val isr = InputStreamReader(inputStream)
-            val reader = BufferedReader(isr)
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                HtmlText(text = reader.readText(), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
-            }
-        },
-        onDismissRequest = {
-            onDismissRequest()
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onDismissRequest()
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column {
+                Text(
+                    text = stringResource(R.string.alesyaSemukha).uppercase(), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
+                )
+                val context = LocalContext.current
+                val inputStream =
+                    if (isSemuxa) context.resources.openRawResource(R.raw.all_rights_reserved_semuxa)
+                    else context.resources.openRawResource(R.raw.all_rights_reserved_bokun)
+                val isr = InputStreamReader(inputStream)
+                val reader = BufferedReader(isr)
+                Column(modifier = Modifier.verticalScroll(rememberScrollState()).weight(1f)) {
+                    HtmlText(text = reader.readText(), modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
                 }
-            ) {
-                Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = { onDismiss() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Text(stringResource(R.string.close), fontSize = 18.sp)
+                    }
+                }
             }
         }
-    )
+    }
 }
 
 @Composable
 fun DialogPeryaidy(
-    onDismissRequest: () -> Unit
+    onDismiss: () -> Unit
 ) {
-    AlertDialog(
-        icon = {
-            Icon(painter = painterResource(R.drawable.info), contentDescription = "")
-        },
-        title = {
-            Text(text = stringResource(R.string.peryiady).uppercase())
-        },
-        text = {
-            val inputStream = LocalContext.current.resources.openRawResource(R.raw.nadsan_periody)
-            val isr = InputStreamReader(inputStream)
-            val reader = BufferedReader(isr)
-            HtmlText(
-                modifier = Modifier.padding(start = 10.dp),
-                text = reader.readText(),
-                fontSize = Settings.fontInterface.sp
-            )
-        },
-        onDismissRequest = {
-            onDismissRequest()
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onDismissRequest()
-                }
-            ) {
-                Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
-            }
-        }
-    )
-}
-
-@Composable
-fun DialogImage(
-    painter: Painter,
-    onDismissRequest: () -> Unit
-) {
-    Dialog(onDismissRequest = { onDismissRequest() }) {
+    Dialog(onDismissRequest = { onDismiss() }) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
         ) {
-            Image(
-                painter = painter, contentDescription = "", Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState()), contentScale = ContentScale.FillWidth
-            )
+            Column {
+                Text(
+                    text = stringResource(R.string.peryiady).uppercase(), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
+                )
+                val inputStream = LocalContext.current.resources.openRawResource(R.raw.nadsan_periody)
+                val isr = InputStreamReader(inputStream)
+                val reader = BufferedReader(isr)
+                Row(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                        .weight(1f)
+                ) {
+                    HtmlText(
+                        modifier = Modifier.padding(10.dp),
+                        text = reader.readText(),
+                        fontSize = Settings.fontInterface.sp
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = { onDismiss() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Text(stringResource(R.string.close), fontSize = 18.sp)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun DialogImage(
+    painter: Painter,
+    onDismiss: () -> Unit
+) {
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Image(
+                    painter = painter, contentDescription = "", Modifier
+                        .fillMaxWidth(), contentScale = ContentScale.FillWidth
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = { onDismiss() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Text(stringResource(R.string.close), fontSize = 22.sp)
+                    }
+                }
+            }
         }
     }
 }

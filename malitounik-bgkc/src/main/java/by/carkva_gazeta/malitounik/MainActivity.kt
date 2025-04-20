@@ -29,11 +29,19 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -42,11 +50,14 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.core.content.edit
 import by.carkva_gazeta.malitounik.Settings.isNetworkAvailable
 import by.carkva_gazeta.malitounik.ui.theme.MalitounikTheme
@@ -1031,31 +1042,56 @@ object Settings {
 
 @Composable
 fun DialogSztoHovaha(
-    onDismissRequest: () -> Unit
+    onDismiss: () -> Unit
 ) {
-    AlertDialog(icon = {
-        Icon(painter = painterResource(R.drawable.description), contentDescription = "")
-    }, title = {
-        Text(text = stringResource(R.string.chto_novaga_title).uppercase())
-    }, text = {
-        var content: String
-        val inputStream = LocalContext.current.resources.openRawResource(R.raw.a_szto_novaha)
-        val isr = InputStreamReader(inputStream)
-        val reader = BufferedReader(isr)
-        reader.use { bufferedReader ->
-            content = bufferedReader.readText()
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column {
+                Text(
+                    text = stringResource(R.string.chto_novaga_title).uppercase(), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
+                )
+                var content: String
+                val inputStream = LocalContext.current.resources.openRawResource(R.raw.a_szto_novaha)
+                val isr = InputStreamReader(inputStream)
+                val reader = BufferedReader(isr)
+                reader.use { bufferedReader ->
+                    content = bufferedReader.readText()
+                }
+                Column(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    Text(
+                        text = content, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = { onDismiss() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Text(stringResource(R.string.close), fontSize = 18.sp)
+                    }
+                }
+            }
         }
-        Text(
-            modifier = Modifier.verticalScroll(rememberScrollState()), text = content, fontSize = Settings.fontInterface.sp
-        )
-    }, onDismissRequest = {}, confirmButton = {
-        TextButton(
-            onClick = {
-                onDismissRequest()
-            }) {
-            Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
-        }
-    })
+    }
 }
 
 fun getFontInterface(context: Context): Float {

@@ -24,7 +24,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
@@ -38,7 +37,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
@@ -59,7 +57,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -85,7 +82,6 @@ import androidx.core.text.isDigitsOnly
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
-import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryBlack
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
@@ -207,8 +203,8 @@ fun SearchBible(
                             if (searshString.isNotEmpty()) {
                                 IconButton(
                                     onClick = {
-                                    searshString = ""
-                                }) {
+                                        searshString = ""
+                                    }) {
                                     Icon(
                                         painter = painterResource(R.drawable.close),
                                         contentDescription = "",
@@ -228,7 +224,8 @@ fun SearchBible(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() },
+                    IconButton(
+                        onClick = { navController.popBackStack() },
                         content = {
                             Icon(
                                 painter = painterResource(R.drawable.arrow_back),
@@ -278,7 +275,6 @@ fun SearchBible(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 10.dp)
                             .clip(
                                 shape = RoundedCornerShape(
                                     bottomStart = 10.dp,
@@ -286,7 +282,7 @@ fun SearchBible(
                                 )
                             )
                             .background(MaterialTheme.colorScheme.onTertiary)
-                            .padding(10.dp)
+                            .padding(start = 10.dp, top = 10.dp, end = 10.dp)
                             .background(MaterialTheme.colorScheme.tertiary)
                     ) {
                         Column(modifier = Modifier.fillMaxWidth()) {
@@ -345,26 +341,14 @@ fun SearchBible(
                                     color = MaterialTheme.colorScheme.secondary
                                 )
                             }
-                            TextButton(
-                                onClick = {
-                                    showDropdown = false
-                                },
+                            Column(
                                 modifier = Modifier
-                                    .align(Alignment.End)
-                                    .padding(5.dp),
-                                colors = ButtonColors(
-                                    Divider,
-                                    Color.Unspecified,
-                                    Color.Unspecified,
-                                    Color.Unspecified
-                                ),
-                                shape = MaterialTheme.shapes.small
-                            ) {
-                                Text(
-                                    stringResource(R.string.ok),
-                                    fontSize = Settings.fontInterface.sp,
-                                    color = PrimaryText
-                                )
+                                    .fillMaxWidth()
+                                    .background(MaterialTheme.colorScheme.onTertiary)
+                                    .clickable {
+                                        showDropdown = false
+                                    }) {
+                                Icon(modifier = Modifier.align(Alignment.End), painter = painterResource(R.drawable.keyboard_arrow_up), contentDescription = "", tint = PrimaryTextBlack)
                             }
                         }
                     }

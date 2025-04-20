@@ -5,20 +5,24 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -31,7 +35,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -48,6 +51,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -106,9 +110,9 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
     var fileListPosition by remember { mutableIntStateOf(0) }
     val viewModel: FilterBiblijatekaModel = viewModel()
     var isProgressVisable by remember { mutableStateOf(false) }
-    var isDialogBiblijatekaVisable by rememberSaveable { mutableStateOf(false) }
-    var isDialogNoWIFIVisable by rememberSaveable { mutableStateOf(false) }
-    var isDialogNoIntent by rememberSaveable { mutableStateOf(false) }
+    var isDialogBiblijatekaVisable by remember { mutableStateOf(false) }
+    var isDialogNoWIFIVisable by remember { mutableStateOf(false) }
+    var isDialogNoIntent by remember { mutableStateOf(false) }
     val bibliatekaList = remember { SnapshotStateList<ArrayList<String>>() }
     LaunchedEffect(Unit) {
         biblijatekaJob?.cancel()
@@ -206,7 +210,7 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
         DialogBiblijateka(
             content = opisanie,
             pdfFileSize = izm,
-            onDismissRequest = {
+            onDismiss = {
                 isDialogBiblijatekaVisable = false
             },
             onConfirmation = {
@@ -241,7 +245,7 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
             bibliatekaList[fileListPosition]
         }
         DialogNoWiFI(
-            onDismissRequest = {
+            onDismiss = {
                 isDialogNoWIFIVisable = false
             },
             onConfirmation = {
@@ -582,85 +586,102 @@ private suspend fun saveImagePdf(context: Context, image: String) {
 fun DialogBiblijateka(
     content: String,
     pdfFileSize: String,
-    onDismissRequest: () -> Unit,
+    onDismiss: () -> Unit,
     onConfirmation: () -> Unit
 ) {
-    AlertDialog(
-        icon = {
-            Icon(painter = painterResource(R.drawable.krest), contentDescription = "")
-        },
-        title = {
-            Text(stringResource(R.string.download_file).uppercase())
-        },
-        text = {
-            HtmlText(
-                modifier = Modifier.verticalScroll(rememberScrollState()),
-                text = content,
-                fontSize = Settings.fontInterface.sp
-            )
-        },
-        onDismissRequest = {
-            onDismissRequest()
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    onDismissRequest()
-                }
-            ) {
-                Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onConfirmation()
-                }
-            ) {
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column {
                 Text(
-                    stringResource(R.string.download_bibliateka_file, pdfFileSize),
-                    fontSize = Settings.fontInterface.sp
+                    text = stringResource(R.string.download_file).uppercase(), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                        .weight(1f)
+                ) {
+                    HtmlText(text = content, modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
+                }
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    Column {
+                        TextButton(
+                            modifier = Modifier.align(Alignment.End),
+                            onClick = { onConfirmation() },
+                            shape = MaterialTheme.shapes.small
+                        ) {
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                            Text(stringResource(R.string.download_bibliateka_file, pdfFileSize), fontSize = 18.sp)
+                        }
+                        TextButton(
+                            modifier = Modifier.align(Alignment.End),
+                            onClick = { onDismiss() },
+                            shape = MaterialTheme.shapes.small
+                        ) {
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                            Text(stringResource(R.string.close), fontSize = 18.sp)
+                        }
+                    }
+                }
             }
         }
-    )
+    }
 }
 
 @Composable
 fun DialogNoWiFI(
-    onDismissRequest: () -> Unit,
+    onDismiss: () -> Unit,
     onConfirmation: () -> Unit
 ) {
-    AlertDialog(
-        icon = {
-            Icon(painter = painterResource(R.drawable.signal_wifi_off), contentDescription = "")
-        },
-        title = {
-            Text(stringResource(R.string.wifi_error).uppercase())
-        },
-        text = {
-            Text(stringResource(R.string.download_bibliateka), fontSize = Settings.fontInterface.sp)
-        },
-        onDismissRequest = {
-            onDismissRequest()
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    onDismissRequest()
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column {
+                Text(
+                    text = stringResource(R.string.wifi_error).uppercase(), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
+                )
+                Text(text = stringResource(R.string.download_bibliateka), modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = { onDismiss() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Text(stringResource(R.string.cansel), fontSize = 18.sp)
+                    }
+                    TextButton(
+                        onClick = { onConfirmation() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Text(stringResource(R.string.ok), fontSize = 18.sp)
+                    }
                 }
-            ) {
-                Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onConfirmation()
-                }
-            ) {
-                Text(stringResource(R.string.ok), fontSize = Settings.fontInterface.sp)
             }
         }
-    )
+    }
 }

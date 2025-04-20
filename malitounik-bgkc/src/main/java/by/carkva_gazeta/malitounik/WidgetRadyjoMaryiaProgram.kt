@@ -5,13 +5,20 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -26,7 +33,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import by.carkva_gazeta.malitounik.ui.theme.MalitounikTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,10 +57,10 @@ class WidgetRadyjoMaryiaProgram : ComponentActivity() {
                 val checkInternet = intent.extras?.getBoolean("checkInternet", false) == true
                 if (checkInternet) {
                     DialogNoInternet(
-                        onDismissRequest = { finish() })
+                        onDismiss = { finish() })
                 } else {
                     DialogProgramRadoiMaryia(
-                        onDismissRequest = { finish() }
+                        onDismiss = { finish() }
                     )
                     val intent = Intent(this, WidgetRadyjoMaryia::class.java)
                     intent.putExtra(
@@ -67,7 +76,7 @@ class WidgetRadyjoMaryiaProgram : ComponentActivity() {
 
 @Composable
 fun DialogProgramRadoiMaryia(
-    onDismissRequest: () -> Unit
+    onDismiss: () -> Unit
 ) {
     var sendTitlePadioMaryiaJob: Job? = null
     var progress by remember { mutableStateOf(false) }
@@ -155,68 +164,100 @@ fun DialogProgramRadoiMaryia(
             progress = false
         }
     }
-    AlertDialog(
-        icon = {
-            Icon(painter = painterResource(R.drawable.description), contentDescription = "")
-        },
-        title = {
-            Text(text = stringResource(R.string.program_radio_maryia).uppercase())
-        },
-        text = {
-            if (progress) {
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-            } else {
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column {
                 Text(
-                    modifier = Modifier.verticalScroll(rememberScrollState()),
-                    text = program,
-                    fontSize = Settings.fontInterface.sp
+                    text = stringResource(R.string.program_radio_maryia).uppercase(), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
-            }
-        },
-        onDismissRequest = {
-            onDismissRequest()
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onDismissRequest()
-                    sendTitlePadioMaryiaJob?.cancel()
-                    sendTitlePadioMaryiaJob = null
+                if (progress) {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    }
+                } else {
+                    Text(
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .weight(1f)
+                            .verticalScroll(rememberScrollState()),
+                        text = program,
+                        fontSize = Settings.fontInterface.sp,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
                 }
-            ) {
-                Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = {
+                            onDismiss()
+                            sendTitlePadioMaryiaJob?.cancel()
+                            sendTitlePadioMaryiaJob = null
+                        },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Text(stringResource(R.string.close), fontSize = 18.sp)
+                    }
+                }
             }
         }
-    )
+    }
 }
 
 @Composable
 fun DialogNoInternet(
-    onDismissRequest: () -> Unit
+    onDismiss: () -> Unit
 ) {
-    AlertDialog(
-        icon = {
-            Icon(painter = painterResource(R.drawable.cloud_off), contentDescription = "")
-        },
-        title = {
-            Text(text = stringResource(R.string.no_internet))
-        },
-        text = {
-            Text(text = stringResource(R.string.check_internet), fontSize = Settings.fontInterface.sp)
-        },
-        onDismissRequest = {
-            onDismissRequest()
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onDismissRequest()
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column {
+                Text(
+                    text = stringResource(R.string.no_internet).uppercase(), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
+                )
+                Column(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    Text(
+                        text = stringResource(R.string.check_internet), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
+                    )
                 }
-            ) {
-                Text(stringResource(R.string.ok), fontSize = Settings.fontInterface.sp)
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = { onDismiss() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Text(stringResource(R.string.ok), fontSize = 18.sp)
+                    }
+                }
             }
         }
-    )
+    }
 }

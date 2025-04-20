@@ -4,7 +4,10 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,7 +17,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.AlertDialog
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -36,6 +42,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -126,7 +133,7 @@ fun VybranaeList(
         )
         DialogDelite(
             title = titleVybrenae,
-            onDismissRequest = {
+            onDismiss = {
                 removeItem = -1
                 removeItemBible = -1
                 removeItemBibleAll = false
@@ -360,41 +367,56 @@ fun VybranaeList(
 @Composable
 fun DialogDelite(
     title: String,
-    onDismissRequest: () -> Unit,
+    onDismiss: () -> Unit,
     onConfirmation: () -> Unit
 ) {
-    AlertDialog(
-        icon = {
-            Icon(painter = painterResource(R.drawable.delete), contentDescription = "")
-        },
-        title = {
-            Text(text = stringResource(R.string.remove))
-        },
-        text = {
-            Text(text = title, fontSize = Settings.fontInterface.sp)
-        },
-        onDismissRequest = {
-            onDismissRequest()
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onConfirmation()
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column {
+                Text(
+                    text = stringResource(R.string.remove).uppercase(), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
+                )
+                Column(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    Text(
+                        text = title, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
+                    )
                 }
-            ) {
-                Text(stringResource(R.string.ok), fontSize = Settings.fontInterface.sp)
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    onDismissRequest()
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = { onConfirmation() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Text(stringResource(R.string.ok), fontSize = 18.sp)
+                    }
+                    TextButton(
+                        onClick = { onDismiss() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Text(stringResource(R.string.cansel), fontSize = 18.sp)
+                    }
                 }
-            ) {
-                Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
             }
         }
-    )
+    }
 }
 
 data class VybranaeListData(

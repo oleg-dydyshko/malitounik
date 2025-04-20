@@ -214,7 +214,7 @@ fun MalitvyListAll(
                                         delay(5000L)
                                         maxLine.intValue = 1
                                     }
-                                }, text = title, color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
+                                }, text = title.uppercase(), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
                             )
                             if (subTitle != "") {
                                 Text(

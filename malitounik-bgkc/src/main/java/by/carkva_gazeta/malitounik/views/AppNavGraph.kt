@@ -18,21 +18,25 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
@@ -80,6 +84,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Popup
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
@@ -1155,7 +1160,7 @@ fun MainConteiner(
         DialogDelite(
             title = if (removeAllVybranaeDialog) stringResource(R.string.del_all_vybranoe)
             else stringResource(R.string.delite_all_natatki),
-            onDismissRequest = {
+            onDismiss = {
                 removeAllVybranaeDialog = false
                 removeAllNatatkiDialog = false
             },
@@ -2039,7 +2044,7 @@ fun MainConteiner(
 
 @Composable
 fun DialogLogProgramy(
-    onDismissRequest: () -> Unit,
+    onDismiss: () -> Unit,
 ) {
     val context = LocalActivity.current as MainActivity
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
@@ -2054,52 +2059,68 @@ fun DialogLogProgramy(
     LaunchedEffect(Unit) {
         logView.upDateLog()
     }
-    AlertDialog(
-        icon = {
-            Icon(painter = painterResource(R.drawable.description), contentDescription = "")
-        },
-        title = {
-            Text(text = stringResource(R.string.log))
-        },
-        text = {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .sizeIn(minHeight = 150.dp)
-                    .verticalScroll(rememberScrollState()), text = item, fontSize = Settings.fontInterface.sp
-            )
-        },
-        onDismissRequest = {
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    logView.createAndSentFile()
-                    onDismissRequest()
-                    if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) context.setlightSensor()
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column {
+                Text(
+                    text = stringResource(R.string.log).uppercase(), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
+                )
+                Column(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    HtmlText(
+                        modifier = Modifier.clickable {
+                            logView.checkFiles()
+                        }, text = item, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
+                    )
                 }
-            ) {
-                Text(stringResource(R.string.set_log), fontSize = Settings.fontInterface.sp)
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    onDismissRequest()
-                    if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) context.setlightSensor()
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    Column {
+                        TextButton(
+                            onClick = {
+                                logView.createAndSentFile()
+                                onDismiss()
+                                if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) context.setlightSensor()
+                            },
+                            shape = MaterialTheme.shapes.small
+                        ) {
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                            Text(stringResource(R.string.set_log), fontSize = 18.sp)
+                        }
+                        TextButton(
+                            onClick = { onDismiss() },
+                            shape = MaterialTheme.shapes.small
+                        ) {
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                            Text(stringResource(R.string.close), fontSize = 18.sp)
+                        }
+                    }
                 }
-            ) {
-                Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
             }
         }
-    )
+    }
 }
 
 @Composable
 fun DialogUpdateMalitounik(
     total: Float,
     bytesDownload: Float,
-    onDismissRequest: () -> Unit
+    onDismiss: () -> Unit
 ) {
     val totalSizeUpdate = if (total / 1024 > 1000) {
         " ${formatFigureTwoPlaces(total / 1024 / 1024)} Мб "
@@ -2111,74 +2132,91 @@ fun DialogUpdateMalitounik(
     } else {
         " ${formatFigureTwoPlaces(bytesDownload / 1024)} Кб "
     }
-    AlertDialog(
-        icon = {
-            Icon(painter = painterResource(R.drawable.update), contentDescription = "")
-        },
-        title = {
-            Text(stringResource(R.string.update_title))
-        },
-        text = {
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
             Column {
-                Text(modifier = Modifier.padding(bottom = 10.dp), text = stringResource(R.string.update_program_progress, bytesDownloadUpdate, totalSizeUpdate), fontSize = Settings.fontInterface.sp)
-                LinearProgressIndicator(progress = { (bytesDownload / total).toFloat() }, modifier = Modifier.fillMaxWidth())
-            }
-        },
-        onDismissRequest = {
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onDismissRequest()
+                Text(
+                    text = stringResource(R.string.update_title).uppercase(), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
+                )
+                Column {
+                    Text(modifier = Modifier.padding(bottom = 10.dp), text = stringResource(R.string.update_program_progress, bytesDownloadUpdate, totalSizeUpdate), fontSize = Settings.fontInterface.sp)
+                    LinearProgressIndicator(progress = { (bytesDownload / total).toFloat() }, modifier = Modifier.fillMaxWidth())
                 }
-            ) {
-                Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = { onDismiss() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Text(stringResource(R.string.close), fontSize = 18.sp)
+                    }
+                }
             }
         }
-    )
+    }
 }
 
 @Composable
 fun DialogUpdateNoWiFI(
     totalBytesToDownload: Float,
     onConfirmation: () -> Unit,
-    onDismissRequest: () -> Unit
+    onDismiss: () -> Unit
 ) {
     val sizeProgram = if (totalBytesToDownload == 0f) {
         " "
     } else {
         " ${formatFigureTwoPlaces(totalBytesToDownload / 1024 / 1024)} Мб "
     }
-    AlertDialog(
-        icon = {
-            Icon(painter = painterResource(R.drawable.signal_wifi_off), contentDescription = "")
-        },
-        title = {
-            Text(stringResource(R.string.wifi_error).uppercase())
-        },
-        text = {
-            Text(stringResource(R.string.download_opisanie, sizeProgram), fontSize = Settings.fontInterface.sp)
-        },
-        onDismissRequest = {
-            onDismissRequest()
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    onDismissRequest()
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column {
+                Text(
+                    text = stringResource(R.string.wifi_error).uppercase(), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
+                )
+                Text(text = stringResource(R.string.download_opisanie, sizeProgram), modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = { onDismiss() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Text(stringResource(R.string.cansel), fontSize = 22.sp)
+                    }
+                    TextButton(
+                        onClick = { onConfirmation() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Text(stringResource(R.string.ok), fontSize = 22.sp)
+                    }
                 }
-            ) {
-                Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onConfirmation()
-                }
-            ) {
-                Text(stringResource(R.string.ok), fontSize = Settings.fontInterface.sp)
             }
         }
-    )
+    }
 }
