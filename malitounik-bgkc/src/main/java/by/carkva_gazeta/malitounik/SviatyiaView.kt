@@ -1219,7 +1219,7 @@ fun DialogPairlinyView(
                 )
                 Column(
                     modifier = Modifier
-                        .padding(10.dp).verticalScroll(rememberScrollState())
+                        .padding(10.dp).weight(1f).verticalScroll(rememberScrollState())
                 ) {
                     HtmlText(
                         text = result, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary

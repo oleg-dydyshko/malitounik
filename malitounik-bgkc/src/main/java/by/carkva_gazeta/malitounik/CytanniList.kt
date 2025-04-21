@@ -806,7 +806,7 @@ fun CytanniList(
     ) { innerPadding ->
         Box(
             modifier = Modifier.padding(
-                innerPadding.calculateStartPadding(LayoutDirection.Ltr), if (biblia == Settings.CHYTANNI_BIBLIA || !fullscreen) innerPadding.calculateTopPadding() else 0.dp, innerPadding.calculateEndPadding(LayoutDirection.Rtl), 0.dp
+                innerPadding.calculateStartPadding(LayoutDirection.Ltr), if (fullscreen) 0.dp else innerPadding.calculateTopPadding(), innerPadding.calculateEndPadding(LayoutDirection.Rtl), 0.dp
             )
         ) {
             Popup(
@@ -1238,7 +1238,7 @@ fun CytanniList(
                 }
             }
             Column {
-                if (biblia == Settings.CHYTANNI_BIBLIA && listState.size - 1 != 0) {
+                if (!fullscreen && biblia == Settings.CHYTANNI_BIBLIA && listState.size - 1 != 0) {
                     LazyRow(
                         state = lazyRowState
                     ) {
@@ -1397,10 +1397,10 @@ fun CytanniList(
                                 }
                             }
                             .nestedScroll(nestedScrollConnection), state = listState[page]) {
+                        item {
+                            Spacer(Modifier.padding(top = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp))
+                        }
                         if (biblia != Settings.CHYTANNI_BIBLIA) {
-                            item {
-                                Spacer(Modifier.padding(top = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp))
-                            }
                             if (subTitle != resultPage[listState[selectedIndex].firstVisibleItemIndex].title) subTitle = resultPage[listState[selectedIndex].firstVisibleItemIndex].title
                             item {
                                 val titlePerevod = when (perevod) {
@@ -1451,7 +1451,7 @@ fun CytanniList(
                             }
                         }
                         item {
-                            Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
+                            Spacer(Modifier.padding(bottom = if (fullscreen) 10.dp else innerPadding.calculateBottomPadding()))
                             if (listState[page].lastScrolledForward && !listState[page].canScrollForward) {
                                 autoScroll = false
                                 autoScrollSensor = false
@@ -1734,14 +1734,14 @@ fun getBible(
                                                 )
                                             )
                                         } else {
-                                            result.add(
-                                                CytanniListData(
-                                                    id, "${
-                                                        getNameBook(
-                                                            context, kniga, perevodNew, knigiBiblii >= 50
-                                                        )
-                                                    } $glava",
-                                                    if (isTitle) {
+                                            if (isTitle) {
+                                                result.add(
+                                                    CytanniListData(
+                                                        id, "${
+                                                            getNameBook(
+                                                                context, kniga, perevodNew, knigiBiblii >= 50
+                                                            )
+                                                        } $glava",
                                                         if (biblia == Settings.CHYTANNI_LITURGICHNYIA) {
                                                             val eGlavy = knigaStyxi.ifEmpty { glava.toString() }
                                                             "<strong><br>" + getNameBook(
@@ -1752,7 +1752,9 @@ fun getBible(
                                                                 context, kniga, perevodNew, knigiBiblii >= 50
                                                             ) + " " + "$glava<strong><br>"
                                                         }
-                                                    } else ""))
+                                                    )
+                                                )
+                                            }
                                         }
                                         id++
                                     }
@@ -1770,28 +1772,13 @@ fun getBible(
                                                 getNameBook(
                                                     context, kniga, perevodNew, knigiBiblii >= 50
                                                 )
-                                            } $glava"/*if (biblia != Settings.CHYTANNI_VYBRANAE) {
-                                                "${
-                                                    getNameBook(
-                                                        context,
-                                                        kniga,
-                                                        perevodNew,
-                                                        knigiBiblii >= 50
-                                                    )
-                                                } $glava"
-                                            } else {
-                                                val tg =
-                                                    if (knigiBiblii == 21) context.getString(R.string.psalom2)
-                                                    else context.getString(R.string.razdzel)
-                                                "$tg $glava"
-                                            }*/, text, textBible[w].paralelStyx
+                                            } $glava", text, textBible[w].paralelStyx
                                         )
                                     )
                                     id++
                                 }
                             }
-                        } catch (e: Throwable) {
-                            e.printStackTrace()
+                        } catch (_: Throwable) {
                             val inputStream = context.resources.openRawResource(R.raw.biblia_error)
                             val isr = InputStreamReader(inputStream)
                             val reader = BufferedReader(isr)
