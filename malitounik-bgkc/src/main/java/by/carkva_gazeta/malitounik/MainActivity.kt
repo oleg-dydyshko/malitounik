@@ -45,6 +45,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -65,6 +66,8 @@ import by.carkva_gazeta.malitounik.views.AllDestinations
 import by.carkva_gazeta.malitounik.views.AppNavGraph
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.google.firebase.FirebaseApp
+import com.google.firebase.appcheck.ktx.appCheck
+import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -1040,6 +1043,18 @@ object Settings {
     }
 }
 
+enum class SystemNavigation {
+    THREE_BUTTON,
+    TWO_BUTTON,
+    GESTURE;
+
+    companion object {
+        fun create(context: Context) = entries.getOrNull(
+            android.provider.Settings.Secure.getInt(context.contentResolver, "navigation_mode", -1)
+        )
+    }
+}
+
 @Composable
 fun DialogSztoHovaha(
     onDismiss: () -> Unit
@@ -1106,6 +1121,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
     private var ferstStart = false
     var dzenNoch = false
     var checkDzenNoch = false
+    private var isGesture = false
     private var startTimeJob: Job? = null
     var isConnectServise = false
     var mRadyjoMaryiaService: ServiceRadyjoMaryia? = null
@@ -1186,6 +1202,16 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
                         k.edit { putInt("chtoNavaha", BuildConfig.VERSION_CODE) }
                     }
                 }
+                SideEffect {
+                    isGesture = when (SystemNavigation.create(this)) {
+                        SystemNavigation.THREE_BUTTON,
+                        SystemNavigation.TWO_BUTTON -> false
+
+                        SystemNavigation.GESTURE -> true
+
+                        else -> false
+                    }
+                }
             }
         }
         CoroutineScope(Dispatchers.IO).launch {
@@ -1263,7 +1289,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         }*/
         super.attachBaseContext(context)
         FirebaseApp.initializeApp(context)
-        //Firebase.appCheck.installAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.getInstance())
+        Firebase.appCheck.installAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.getInstance())
     }
 
     private fun timeJob(isDzenNoch: Boolean) {
@@ -1352,7 +1378,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
             snackbar?.dismiss()
         }*/
         //if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-        if (backPressed + 2000 > System.currentTimeMillis()) {
+        if (isGesture || backPressed + 2000 > System.currentTimeMillis()) {
             moveTaskToBack(true)
             val k = getSharedPreferences("biblia", MODE_PRIVATE)
             k.edit {

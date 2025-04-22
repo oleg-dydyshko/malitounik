@@ -451,7 +451,7 @@ fun MalitvyListAll(
                                     }, verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
-                                    modifier = Modifier.size(12.dp, 12.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = null
+                                    modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                                 )
                                 Text(
                                     "ВЯЧЭРНЯ", modifier = Modifier
@@ -552,12 +552,12 @@ fun MalitvyListAll(
                                 }, verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                modifier = if (menuItem == Settings.MENU_TRYEDZ || menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH || menuItem == Settings.MENU_TRYEDZ_POSNAIA) Modifier.size(12.dp, 12.dp) else Modifier.size(5.dp, 5.dp), painter = if (menuItem == Settings.MENU_TRYEDZ || menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH || menuItem == Settings.MENU_TRYEDZ_POSNAIA) painterResource(R.drawable.folder)
+                                modifier = if (menuItem == Settings.MENU_TRYEDZ || menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH || menuItem == Settings.MENU_TRYEDZ_POSNAIA) Modifier.size(17.dp, 17.dp) else Modifier.size(5.dp, 5.dp), painter = if (menuItem == Settings.MENU_TRYEDZ || menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH || menuItem == Settings.MENU_TRYEDZ_POSNAIA) painterResource(R.drawable.folder)
                                 else painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                             )
                             Text(
-                                list[index].title, modifier = Modifier
-                                    .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontWeight = if (menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH) {
+                                text = if (menuItem == Settings.MENU_TRYEDZ || menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH || menuItem == Settings.MENU_TRYEDZ_POSNAIA) list[index].title.uppercase() else list[index].title,
+                                modifier = Modifier.padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontWeight = if (menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH) {
                                     if (Calendar.getInstance()[Calendar.MONTH] == index) {
                                         FontWeight.Bold
                                     } else {
@@ -569,11 +569,14 @@ fun MalitvyListAll(
                             )
                             if (menuItem == Settings.MENU_TRAPARY_KANDAKI_NIADZELNYIA) {
                                 Column(modifier = Modifier.fillMaxWidth()) {
-                                    Icon(modifier = Modifier.padding(end = 20.dp).align(Alignment.End).clickable {
-                                        val uri = "https://soundcloud.com/24dwbqqpu9sk/trapar-${index + 1}?in=24dwbqqpu9sk/sets/trapary-bgkts&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing".toUri()
-                                        val intent = Intent(Intent.ACTION_VIEW, uri)
-                                        context.startActivity(intent)
-                                    }, painter = painterResource(R.drawable.play_arrow), contentDescription = "", tint = MaterialTheme.colorScheme.secondary)
+                                    Icon(modifier = Modifier
+                                        .padding(end = 20.dp)
+                                        .align(Alignment.End)
+                                        .clickable {
+                                            val uri = "https://soundcloud.com/24dwbqqpu9sk/trapar-${index + 1}?in=24dwbqqpu9sk/sets/trapary-bgkts&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing".toUri()
+                                            val intent = Intent(Intent.ACTION_VIEW, uri)
+                                            context.startActivity(intent)
+                                        }, painter = painterResource(R.drawable.play_arrow), contentDescription = "", tint = MaterialTheme.colorScheme.secondary)
                                 }
                             }
                         }
@@ -592,7 +595,7 @@ fun MalitvyListAll(
                                 }, verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                modifier = Modifier.size(12.dp, 12.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = null
+                                modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                             )
                             Text(
                                 "ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ", modifier = Modifier

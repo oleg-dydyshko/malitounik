@@ -1325,8 +1325,15 @@ fun CytanniList(
                         isPerevodError = false
                     }
                     val selectState = remember(resultPage) { resultPage.map { false }.toMutableStateList() }
-                    if (!isPerevodError && perevodRoot != Settings.PEREVODNADSAN) {
+                    if (biblia == Settings.CHYTANNI_BIBLIA && !isPerevodError && perevodRoot != Settings.PEREVODNADSAN) {
                         subTitle = resultPage[0].title.substringBeforeLast(" ")
+                    }
+                    if (biblia != Settings.CHYTANNI_BIBLIA) {
+                        LaunchedEffect(listState[page]) {
+                            snapshotFlow { listState[page].firstVisibleItemIndex }.collect { index ->
+                                if (subTitle != resultPage[index].title) subTitle = resultPage[index].title
+                            }
+                        }
                     }
                     if (isSelectAll) {
                         isSelectAll = false
@@ -1397,26 +1404,23 @@ fun CytanniList(
                                 }
                             }
                             .nestedScroll(nestedScrollConnection), state = listState[page]) {
-                        item {
-                            Spacer(Modifier.padding(top = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp))
-                        }
-                        if (biblia != Settings.CHYTANNI_BIBLIA) {
-                            if (subTitle != resultPage[listState[selectedIndex].firstVisibleItemIndex].title) subTitle = resultPage[listState[selectedIndex].firstVisibleItemIndex].title
-                            item {
-                                val titlePerevod = when (perevod) {
-                                    Settings.PEREVODSEMUXI -> stringResource(R.string.title_biblia2)
-                                    Settings.PEREVODSINOIDAL -> stringResource(R.string.bsinaidal2)
-                                    Settings.PEREVODNADSAN -> stringResource(R.string.title_psalter)
-                                    Settings.PEREVODBOKUNA -> stringResource(R.string.title_biblia_bokun2)
-                                    Settings.PEREVODCARNIAUSKI -> stringResource(R.string.title_biblia_charniauski2)
-                                    else -> stringResource(R.string.title_biblia2)
-                                }
-                                Text(
-                                    modifier = Modifier.padding(horizontal = 10.dp), text = titlePerevod, fontSize = fontSize.sp, lineHeight = fontSize.sp * 1.15, fontStyle = FontStyle.Italic, color = MaterialTheme.colorScheme.secondary
-                                )
-                            }
-                        }
                         items(resultPage.size, key = { index -> resultPage[index].id }) { index ->
+                            if (index == 0) {
+                                Spacer(Modifier.padding(top = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp))
+                                if (biblia != Settings.CHYTANNI_BIBLIA) {
+                                    val titlePerevod = when (perevod) {
+                                        Settings.PEREVODSEMUXI -> stringResource(R.string.title_biblia2)
+                                        Settings.PEREVODSINOIDAL -> stringResource(R.string.bsinaidal2)
+                                        Settings.PEREVODNADSAN -> stringResource(R.string.title_psalter)
+                                        Settings.PEREVODBOKUNA -> stringResource(R.string.title_biblia_bokun2)
+                                        Settings.PEREVODCARNIAUSKI -> stringResource(R.string.title_biblia_charniauski2)
+                                        else -> stringResource(R.string.title_biblia2)
+                                    }
+                                    Text(
+                                        modifier = Modifier.padding(horizontal = 10.dp), text = titlePerevod, fontSize = fontSize.sp, lineHeight = fontSize.sp * 1.15, fontStyle = FontStyle.Italic, color = MaterialTheme.colorScheme.secondary
+                                    )
+                                }
+                            }
                             HtmlText(
                                 modifier = if (!autoScrollSensor && !showDropdown) {
                                     Modifier.combinedClickable(onClick = {

@@ -168,10 +168,10 @@ fun BogaslujbovyiaMenu(
                         }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier.size(12.dp, 12.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = null
+                        modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                     )
                     Text(
-                        folderList[index], modifier = Modifier
+                        folderList[index].uppercase(), modifier = Modifier
                             .fillMaxSize()
                             .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                     )
@@ -215,10 +215,10 @@ fun BogaslujbovyiaMenu(
                         }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier.size(12.dp, 12.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = null
+                        modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                     )
                     Text(
-                        title, modifier = Modifier
+                        title.uppercase(), modifier = Modifier
                             .fillMaxSize()
                             .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                     )

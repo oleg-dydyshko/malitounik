@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
@@ -150,6 +152,7 @@ fun KaliandarScreen(
             Column(
                 modifier = Modifier
                     .defaultMinSize(minWidth = dateColumnWidth)
+                    .clip(shape = RoundedCornerShape(5.dp))
                     .background(colorBlackboard), verticalArrangement = Arrangement.Center
             ) {
                 Text(
@@ -295,6 +298,7 @@ fun KaliandarScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .clip(shape = RoundedCornerShape(5.dp))
                 .background(colorBlackboard)
                 .padding(vertical = 10.dp)
         ) {
@@ -344,6 +348,7 @@ fun KaliandarScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .clip(shape = RoundedCornerShape(5.dp))
                     .background(colorBlackboard)
                     .padding(vertical = 10.dp)
             ) {
@@ -524,6 +529,7 @@ fun SetPadzeia(title: String, apisanne: String, color: Int, raznica: Boolean, re
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clip(shape = RoundedCornerShape(5.dp))
             .background(Divider), horizontalArrangement = Arrangement.SpaceBetween
     ) {
         var message by remember { mutableStateOf(false) }
