@@ -186,6 +186,13 @@ fun DialogWidgetConfig(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
+                        onClick = { onDismiss() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Text(stringResource(R.string.cansel), fontSize = 18.sp)
+                    }
+                    TextButton(
                         onClick = {
                             k.edit {
                                 if (isWidgetMun) putInt("mode_night_widget_mun$widgetID", modeNight)
@@ -197,13 +204,6 @@ fun DialogWidgetConfig(
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
                         Text(stringResource(R.string.save_sabytie), fontSize = 18.sp)
-                    }
-                    TextButton(
-                        onClick = { onDismiss() },
-                        shape = MaterialTheme.shapes.small
-                    ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
-                        Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                 }
             }

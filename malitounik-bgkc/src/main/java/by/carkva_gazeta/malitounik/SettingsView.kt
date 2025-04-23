@@ -1051,18 +1051,18 @@ fun DialogClearChash(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onConfirm() },
-                        shape = MaterialTheme.shapes.small
-                    ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.delete), contentDescription = "")
-                        Text(stringResource(R.string.delite), fontSize = 18.sp)
-                    }
-                    TextButton(
                         onClick = { onDismiss() },
                         shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
+                    }
+                    TextButton(
+                        onClick = { onConfirm() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.delete), contentDescription = "")
+                        Text(stringResource(R.string.delite), fontSize = 18.sp)
                     }
                 }
             }

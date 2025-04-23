@@ -1869,18 +1869,18 @@ fun DialogSabytieShow(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onEdit(position) },
-                        shape = MaterialTheme.shapes.small
-                    ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.edit), contentDescription = "")
-                        Text(stringResource(R.string.redagaktirovat), fontSize = 22.sp)
-                    }
-                    TextButton(
                         onClick = { onDismiss() },
                         shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.close), fontSize = 22.sp)
+                    }
+                    TextButton(
+                        onClick = { onEdit(position) },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.edit), contentDescription = "")
+                        Text(stringResource(R.string.redagaktirovat), fontSize = 22.sp)
                     }
                 }
             }
@@ -1919,18 +1919,18 @@ fun DialogDelitePadsei(
                     horizontalArrangement = Arrangement.Center,
                 ) {
                     TextButton(
-                        onClick = { onDelAll() },
-                        shape = MaterialTheme.shapes.small
-                    ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.delete), contentDescription = "")
-                        Text(stringResource(R.string.sabytie_del_all), fontSize = 22.sp)
-                    }
-                    TextButton(
                         onClick = { onDelOld() },
                         shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.delete), contentDescription = "")
                         Text(stringResource(R.string.sabytie_del_old), fontSize = 22.sp)
+                    }
+                    TextButton(
+                        onClick = { onDelAll() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.delete), contentDescription = "")
+                        Text(stringResource(R.string.sabytie_del_all), fontSize = 22.sp)
                     }
                 }
                 TextButton(

@@ -152,7 +152,6 @@ fun KaliandarScreen(
             Column(
                 modifier = Modifier
                     .defaultMinSize(minWidth = dateColumnWidth)
-                    .clip(shape = RoundedCornerShape(5.dp))
                     .background(colorBlackboard), verticalArrangement = Arrangement.Center
             ) {
                 Text(

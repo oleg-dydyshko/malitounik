@@ -2092,6 +2092,13 @@ fun DialogLogProgramy(
                 ) {
                     Column {
                         TextButton(
+                            onClick = { onDismiss() },
+                            shape = MaterialTheme.shapes.small
+                        ) {
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                            Text(stringResource(R.string.close), fontSize = 18.sp)
+                        }
+                        TextButton(
                             onClick = {
                                 logView.createAndSentFile()
                                 onDismiss()
@@ -2101,13 +2108,6 @@ fun DialogLogProgramy(
                         ) {
                             Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
                             Text(stringResource(R.string.set_log), fontSize = 18.sp)
-                        }
-                        TextButton(
-                            onClick = { onDismiss() },
-                            shape = MaterialTheme.shapes.small
-                        ) {
-                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
-                            Text(stringResource(R.string.close), fontSize = 18.sp)
                         }
                     }
                 }
