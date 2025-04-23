@@ -1851,7 +1851,7 @@ fun DialogSabytieShow(
                 Text(
                     text = title, modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
                 val annotatedString = buildAnnotatedString {
@@ -1906,7 +1906,7 @@ fun DialogDelitePadsei(
                     text = stringResource(R.string.del_sabytie).uppercase(),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
                 Text(
@@ -1973,7 +1973,7 @@ fun DialogContextMenu(
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp),
                 )
                 HorizontalDivider()

@@ -1070,7 +1070,7 @@ fun DialogSztoHovaha(
                 Text(
                     text = stringResource(R.string.chto_novaga_title).uppercase(), modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
                 var content: String

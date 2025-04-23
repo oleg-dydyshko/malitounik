@@ -2070,7 +2070,7 @@ fun DialogLogProgramy(
                 Text(
                     text = stringResource(R.string.log).uppercase(), modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
                 Column(
@@ -2143,7 +2143,7 @@ fun DialogUpdateMalitounik(
                 Text(
                     text = stringResource(R.string.update_title).uppercase(), modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
                 Column {
@@ -2191,7 +2191,7 @@ fun DialogUpdateNoWiFI(
                 Text(
                     text = stringResource(R.string.wifi_error).uppercase(), modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
                 Text(text = stringResource(R.string.download_opisanie, sizeProgram), modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)

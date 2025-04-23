@@ -206,6 +206,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                 } else {
                     if (fileOpisanie.exists()) {
                         val sviatyiaListLocale = loadOpisanieSviatyia(context, year, mun, day)
+                        sviatyiaList.clear()
                         sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, false, position))
                     } else {
                         dialoNoIntent = true
@@ -1214,7 +1215,7 @@ fun DialogPairlinyView(
                 Text(
                     text = stringResource(R.string.piarliny2, day, stringArrayResource(R.array.meciac_smoll)[mun - 1]).uppercase(), modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
                 Column(

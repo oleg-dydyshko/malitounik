@@ -1033,7 +1033,7 @@ fun DialogClearChash(
                 Text(
                     text = stringResource(R.string.clear_chash).uppercase(), modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
                 Column(
@@ -1088,7 +1088,7 @@ fun DialogLogin(
                 Text(
                     text = stringResource(R.string.admin_panel).uppercase(), modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
                 Column(
@@ -1188,7 +1188,7 @@ fun DialogNotification(
                 Text(
                     text = stringResource(R.string.notifi).uppercase(), modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
                 Column(

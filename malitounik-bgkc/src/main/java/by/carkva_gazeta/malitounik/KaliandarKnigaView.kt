@@ -31,7 +31,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -292,22 +291,20 @@ fun DialogKniga(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp),
+                    .fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Icon(painter = painterResource(R.drawable.description), contentDescription = "")
                 Text(
-                    text = slujvaTitle,
-                    fontSize = Settings.fontInterface.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(16.dp),
+                    text = slujvaTitle.uppercase(), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.onTertiary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
                 HorizontalDivider()
                 for (i in list.indices) {
@@ -341,7 +338,9 @@ fun DialogKniga(
                     modifier = Modifier
                         .padding(8.dp)
                         .align(Alignment.End),
+                    shape = MaterialTheme.shapes.small
                 ) {
+                    Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                     Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
                 }
             }

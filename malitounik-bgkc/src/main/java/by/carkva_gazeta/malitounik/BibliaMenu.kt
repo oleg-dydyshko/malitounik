@@ -572,7 +572,7 @@ fun DialogSemuxa(
                 Text(
                     text = stringResource(R.string.alesyaSemukha).uppercase(), modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
                 val context = LocalContext.current
@@ -618,7 +618,7 @@ fun DialogPeryaidy(
                 Text(
                     text = stringResource(R.string.peryiady).uppercase(), modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
                 val inputStream = LocalContext.current.resources.openRawResource(R.raw.nadsan_periody)

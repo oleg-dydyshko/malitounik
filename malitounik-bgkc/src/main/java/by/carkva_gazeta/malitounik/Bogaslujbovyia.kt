@@ -1517,7 +1517,7 @@ fun DialogLiturgia(
                 Text(
                     text = title.uppercase(), modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
                 Column(modifier = Modifier.padding(10.dp).weight(1f).verticalScroll(rememberScrollState())) {

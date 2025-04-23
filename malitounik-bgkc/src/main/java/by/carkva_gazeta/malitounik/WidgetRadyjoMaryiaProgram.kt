@@ -175,7 +175,7 @@ fun DialogProgramRadoiMaryia(
                 Text(
                     text = stringResource(R.string.program_radio_maryia).uppercase(), modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
                 if (progress) {
@@ -231,7 +231,7 @@ fun DialogNoInternet(
                 Text(
                     text = stringResource(R.string.no_internet).uppercase(), modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
                 Column(

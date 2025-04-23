@@ -95,7 +95,7 @@ fun DialogWidgetConfig(
                 Text(
                     text = stringResource(R.string.vygliad2).uppercase(), modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
                 Column(Modifier
