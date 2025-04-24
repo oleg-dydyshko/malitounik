@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package by.carkva_gazeta.malitounik
 
 import android.content.Context
@@ -37,6 +39,8 @@ import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.views.AllDestinations
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
 import kotlinx.coroutines.flow.MutableStateFlow
+import java.text.Collator
+import java.util.Locale
 
 class FilterPiesnyListModel : ViewModel() {
     private val items = SnapshotStateList<PiesnyListItem>()
@@ -49,7 +53,7 @@ class FilterPiesnyListModel : ViewModel() {
     }
 
     fun sortBy() {
-        items.sortWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
+        items.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
     }
 
     fun addAllItemList(item: SnapshotStateList<PiesnyListItem>) {
@@ -696,11 +700,11 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
                 4, R.raw.pesny_taize_16, "Хай тваё сэрца больш не журыцца"
             )
         )
-        piesnyPraslList.sortWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
-        piesnyBelarusList.sortWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
-        piesnyBagarList.sortWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
-        piesnyKaliadyList.sortWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
-        piesnyTaizeList.sortWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
+        piesnyPraslList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
+        piesnyBelarusList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
+        piesnyBagarList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
+        piesnyKaliadyList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
+        piesnyTaizeList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
     }
     if (searchText) {
         viewModel.clear()

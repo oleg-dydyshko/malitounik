@@ -1192,18 +1192,33 @@ fun MainConteiner(
     }
     var dialodNotificatin by rememberSaveable { mutableStateOf(false) }
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-        if (!alarmManager.canScheduleExactAlarms()) {
-            dialodNotificatin = true
-        }
-    }
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
-        if (PackageManager.PERMISSION_DENIED == permissionCheck || !alarmManager.canScheduleExactAlarms()) {
-            dialodNotificatin = true
+    if (k.getInt("notification", Settings.NOTIFICATION_SVIATY_FULL) != Settings.NOTIFICATION_SVIATY_NONE) {
+        LaunchedEffect(Unit) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                if (!alarmManager.canScheduleExactAlarms()) {
+                    dialodNotificatin = true
+                }
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                if (PackageManager.PERMISSION_DENIED == permissionCheck || !alarmManager.canScheduleExactAlarms()) {
+                    dialodNotificatin = true
+                }
+            }
         }
     }
     if (dialodNotificatin) {
+        val launcherAlarm = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (!alarmManager.canScheduleExactAlarms()) {
+                    k.edit {
+                        putInt("notification", Settings.NOTIFICATION_SVIATY_NONE)
+                    }
+                    setNotificationNon(context)
+                }
+            }
+            dialodNotificatin = false
+        }
         val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
             if (it) {
                 when (k.getInt("notification", Settings.NOTIFICATION_SVIATY_FULL)) {
@@ -1216,7 +1231,7 @@ fun MainConteiner(
                         val intent = Intent()
                         intent.action = android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
                         intent.data = ("package:" + context.packageName).toUri()
-                        context.startActivity(intent)
+                        launcherAlarm.launch(intent)
                     }
                 }
             } else {
@@ -1233,7 +1248,7 @@ fun MainConteiner(
                     val intent = Intent()
                     intent.action = android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
                     intent.data = ("package:" + context.packageName).toUri()
-                    context.startActivity(intent)
+                    launcherAlarm.launch(intent)
                 }
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

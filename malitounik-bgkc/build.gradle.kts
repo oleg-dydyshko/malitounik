@@ -12,7 +12,7 @@ android {
         applicationId = "by.carkva_gazeta.malitounik"
         minSdk = 21
         targetSdk = 36
-        versionCode = 442440
+        versionCode = 442441
         versionName = "5.90.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -23,7 +23,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -41,6 +41,11 @@ android {
         viewBinding = true
         buildConfig = true
         compose = true
+    }
+    bundle {
+        density.enableSplit = true
+        language.enableSplit = false
+        abi.enableSplit = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
