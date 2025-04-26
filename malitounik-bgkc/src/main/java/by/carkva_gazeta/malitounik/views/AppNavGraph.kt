@@ -88,7 +88,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Popup
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
-import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -105,7 +104,6 @@ import by.carkva_gazeta.malitounik.Bogaslujbovyia
 import by.carkva_gazeta.malitounik.BogaslujbovyiaMenu
 import by.carkva_gazeta.malitounik.CytanniList
 import by.carkva_gazeta.malitounik.DialogDelite
-import by.carkva_gazeta.malitounik.DialogNotification
 import by.carkva_gazeta.malitounik.KaliandarKnigaView
 import by.carkva_gazeta.malitounik.KaliandarScreen
 import by.carkva_gazeta.malitounik.KaliandarScreenMounth
@@ -130,9 +128,7 @@ import by.carkva_gazeta.malitounik.SviatyiaView
 import by.carkva_gazeta.malitounik.VybranaeList
 import by.carkva_gazeta.malitounik.formatFigureTwoPlaces
 import by.carkva_gazeta.malitounik.removeZnakiAndSlovy
-import by.carkva_gazeta.malitounik.setNotificationFull
 import by.carkva_gazeta.malitounik.setNotificationNon
-import by.carkva_gazeta.malitounik.setNotificationOnly
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.Post
@@ -1190,81 +1186,25 @@ fun MainConteiner(
             }
         )
     }
-    var dialodNotificatin by rememberSaveable { mutableStateOf(false) }
-    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     if (k.getInt("notification", Settings.NOTIFICATION_SVIATY_FULL) != Settings.NOTIFICATION_SVIATY_NONE) {
-        LaunchedEffect(Unit) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                if (!alarmManager.canScheduleExactAlarms()) {
-                    dialodNotificatin = true
-                }
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
-                if (PackageManager.PERMISSION_DENIED == permissionCheck || !alarmManager.canScheduleExactAlarms()) {
-                    dialodNotificatin = true
-                }
-            }
-        }
-    }
-    if (dialodNotificatin) {
-        val launcherAlarm = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                if (!alarmManager.canScheduleExactAlarms()) {
-                    k.edit {
-                        putInt("notification", Settings.NOTIFICATION_SVIATY_NONE)
-                    }
-                    setNotificationNon(context)
-                }
-            }
-            dialodNotificatin = false
-        }
-        val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
-            if (it) {
-                when (k.getInt("notification", Settings.NOTIFICATION_SVIATY_FULL)) {
-                    Settings.NOTIFICATION_SVIATY_ONLY -> setNotificationOnly(context)
-                    Settings.NOTIFICATION_SVIATY_FULL -> setNotificationFull(context)
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    if (!alarmManager.canScheduleExactAlarms()) {
-                        dialodNotificatin = false
-                        val intent = Intent()
-                        intent.action = android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
-                        intent.data = ("package:" + context.packageName).toUri()
-                        launcherAlarm.launch(intent)
-                    }
-                }
-            } else {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            if (!alarmManager.canScheduleExactAlarms()) {
                 k.edit {
                     putInt("notification", Settings.NOTIFICATION_SVIATY_NONE)
                 }
                 setNotificationNon(context)
             }
-            dialodNotificatin = false
         }
-        DialogNotification(onConfirm = {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                if (!alarmManager.canScheduleExactAlarms()) {
-                    val intent = Intent()
-                    intent.action = android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
-                    intent.data = ("package:" + context.packageName).toUri()
-                    launcherAlarm.launch(intent)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+            if (PackageManager.PERMISSION_DENIED == permissionCheck || !alarmManager.canScheduleExactAlarms()) {
+                k.edit {
+                    putInt("notification", Settings.NOTIFICATION_SVIATY_NONE)
                 }
+                setNotificationNon(context)
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                val permissionCheck2 = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
-                if (permissionCheck2 == PackageManager.PERMISSION_DENIED) {
-                    launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                }
-            }
-            dialodNotificatin = false
-        }, onDismiss = {
-            dialodNotificatin = false
-            k.edit {
-                putInt("notification", Settings.NOTIFICATION_SVIATY_NONE)
-            }
-            setNotificationNon(context)
-        })
+        }
     }
     var isToDay by remember { mutableStateOf(false) }
     ModalNavigationDrawer(drawerContent = {

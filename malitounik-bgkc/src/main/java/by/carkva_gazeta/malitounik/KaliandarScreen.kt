@@ -1,6 +1,9 @@
+@file:Suppress("DEPRECATION")
+
 package by.carkva_gazeta.malitounik
 
 import android.content.Context
+import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -64,8 +67,10 @@ import com.google.gson.reflect.TypeToken
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
+import java.text.Collator
 import java.util.Calendar
 import java.util.GregorianCalendar
+import java.util.Locale
 
 @Composable
 fun measureTextWidth(text: String, fontSize: TextUnit, fontWeight: FontWeight): Dp {

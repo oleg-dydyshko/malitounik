@@ -1,6 +1,9 @@
+@file:Suppress("DEPRECATION")
+
 package by.carkva_gazeta.malitounik
 
 import android.content.Context
+import android.os.Build
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -35,6 +38,8 @@ import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.text.Collator
+import java.util.Locale
 
 class FilterBogaslujbovyiaListModel : ViewModel() {
     private val items = ArrayList<BogaslujbovyiaListData>()
@@ -90,8 +95,10 @@ fun BogaslujbovyiaMenu(
         listPast.forEach { slugbovyiaTextuData ->
             listAll.add(BogaslujbovyiaListData(slugbovyiaTextuData.title + ". " + slugbovyiaTextu.getNazouSluzby(slugbovyiaTextuData.sluzba), slugbovyiaTextuData.resource))
         }
-        listAll.sortBy {
-            it.title
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+            listPast.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+        } else {
+            listPast.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
         }
         viewModel.addAllItemList(listAll)
         viewModel.filterItem(search)
@@ -107,10 +114,16 @@ fun BogaslujbovyiaMenu(
         viewModel.addAllItemList(listAll)
         listAll
     }
-    folderList.sort()
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+        folderList.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it })
+    } else {
+        folderList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it })
+    }
     if (menuItem == Settings.MENU_BOGASLUJBOVYIA) {
-        list.sortBy {
-            it.title
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+            list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+        } else {
+            list.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
         }
     }
     val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
@@ -318,8 +331,10 @@ fun getBogaslujbovyia(): ArrayList<BogaslujbovyiaListData> {
             "Вялікі пакаянны канон сьвятога Андрэя Крыцкага(у 4-х частках)", R.raw.kanon_andreja_kryckaha_4_czastki
         )
     )
-    list.sortBy {
-        it.title
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+        list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+    } else {
+        list.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
     }
     return list
 }

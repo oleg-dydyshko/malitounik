@@ -1,5 +1,8 @@
+@file:Suppress("DEPRECATION")
+
 package by.carkva_gazeta.malitounik
 
+import android.os.Build
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
@@ -47,6 +50,8 @@ import by.carkva_gazeta.malitounik.ui.theme.Divider
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
+import java.text.Collator
+import java.util.Locale
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -113,7 +118,11 @@ fun VybranaeList(
         }
     }
     if (sorted == Settings.SORT_BY_ABC) {
-        list.sortBy { it.title }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+            list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+        } else {
+            list.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
+        }
     } else {
         list.sortByDescending { it.id }
     }

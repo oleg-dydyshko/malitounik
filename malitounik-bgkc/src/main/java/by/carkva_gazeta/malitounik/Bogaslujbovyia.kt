@@ -27,7 +27,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollBy
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,7 +39,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
@@ -52,7 +50,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -160,14 +157,6 @@ fun Bogaslujbovyia(
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
     var searshString by rememberSaveable { mutableStateOf("") }
-    var modeNight by remember {
-        mutableIntStateOf(
-            k.getInt(
-                "mode_night",
-                Settings.MODE_NIGHT_SYSTEM
-            )
-        )
-    }
     val scrollState = rememberScrollState()
     val scrollStateDop = rememberScrollState()
     val gson = Gson()
@@ -720,21 +709,6 @@ fun Bogaslujbovyia(
                                     )
                                     DropdownMenuItem(
                                         onClick = {
-                                            showDropdown = !showDropdown
-                                            autoScroll = false
-                                            expanded = false
-                                            menuPosition = 3
-                                        },
-                                        text = { Text(stringResource(R.string.dzen_noch), fontSize = (Settings.fontInterface - 2).sp) },
-                                        trailingIcon = {
-                                            Icon(
-                                                painter = painterResource(R.drawable.contrast),
-                                                contentDescription = ""
-                                            )
-                                        }
-                                    )
-                                    DropdownMenuItem(
-                                        onClick = {
                                             showDropdown = false
                                             autoScroll = false
                                             expanded = false
@@ -1014,159 +988,6 @@ fun Bogaslujbovyia(
                                             }
                                             HorizontalDivider()
                                         }
-                                    }
-                                }
-                            }
-                            if (menuPosition == 3) {
-                                Column(Modifier.selectableGroup())
-                                {
-                                    val isSystemInDarkTheme = isSystemInDarkTheme()
-                                    Text(
-                                        stringResource(R.string.dzen_noch),
-                                        modifier = Modifier.padding(start = 10.dp, top = 10.dp),
-                                        textAlign = TextAlign.Center,
-                                        fontStyle = FontStyle.Italic,
-                                        color = MaterialTheme.colorScheme.secondary,
-                                        fontSize = Settings.fontInterface.sp
-                                    )
-                                    val edit = k.edit()
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable {
-                                                modeNight = Settings.MODE_NIGHT_SYSTEM
-                                                edit.putInt(
-                                                    "mode_night",
-                                                    Settings.MODE_NIGHT_SYSTEM
-                                                )
-                                                edit.apply()
-                                                actyvity.dzenNoch = isSystemInDarkTheme
-                                                if (actyvity.dzenNoch != actyvity.checkDzenNoch)
-                                                    actyvity.recreate()
-                                            },
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        RadioButton(
-                                            selected = modeNight == Settings.MODE_NIGHT_SYSTEM,
-                                            onClick = {
-                                                modeNight = Settings.MODE_NIGHT_SYSTEM
-                                                edit.putInt(
-                                                    "mode_night",
-                                                    Settings.MODE_NIGHT_SYSTEM
-                                                )
-                                                edit.apply()
-                                                actyvity.dzenNoch = isSystemInDarkTheme
-                                                if (actyvity.dzenNoch != actyvity.checkDzenNoch)
-                                                    actyvity.recreate()
-                                            }
-                                        )
-                                        Text(
-                                            stringResource(R.string.system),
-                                            textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.secondary,
-                                            fontSize = Settings.fontInterface.sp
-                                        )
-                                    }
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable {
-                                                modeNight = Settings.MODE_NIGHT_NO
-                                                edit.putInt("mode_night", Settings.MODE_NIGHT_NO)
-                                                edit.apply()
-                                                actyvity.dzenNoch = false
-                                                if (actyvity.checkDzenNoch)
-                                                    actyvity.recreate()
-                                            },
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        RadioButton(
-                                            selected = modeNight == Settings.MODE_NIGHT_NO,
-                                            onClick = {
-                                                modeNight = Settings.MODE_NIGHT_NO
-                                                edit.putInt("mode_night", Settings.MODE_NIGHT_NO)
-                                                edit.apply()
-                                                actyvity.dzenNoch = false
-                                                if (actyvity.checkDzenNoch)
-                                                    actyvity.recreate()
-                                            }
-                                        )
-                                        Text(
-                                            stringResource(R.string.day),
-                                            textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.secondary,
-                                            fontSize = Settings.fontInterface.sp
-                                        )
-                                    }
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable {
-                                                modeNight = Settings.MODE_NIGHT_YES
-                                                edit.putInt(
-                                                    "mode_night",
-                                                    Settings.MODE_NIGHT_YES
-                                                )
-                                                edit.apply()
-                                                actyvity.dzenNoch = true
-                                                if (!actyvity.checkDzenNoch)
-                                                    actyvity.recreate()
-                                            },
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        RadioButton(
-                                            selected = modeNight == Settings.MODE_NIGHT_YES,
-                                            onClick = {
-                                                modeNight = Settings.MODE_NIGHT_YES
-                                                edit.putInt(
-                                                    "mode_night",
-                                                    Settings.MODE_NIGHT_YES
-                                                )
-                                                edit.apply()
-                                                actyvity.dzenNoch = true
-                                                if (!actyvity.checkDzenNoch)
-                                                    actyvity.recreate()
-                                            }
-                                        )
-                                        Text(
-                                            stringResource(R.string.widget_day_d_n),
-                                            textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.secondary,
-                                            fontSize = Settings.fontInterface.sp
-                                        )
-                                    }
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable {
-                                                modeNight = Settings.MODE_NIGHT_AUTO
-                                                edit.putInt(
-                                                    "mode_night",
-                                                    Settings.MODE_NIGHT_AUTO
-                                                )
-                                                edit.apply()
-                                                actyvity.recreate()
-                                            },
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        RadioButton(
-                                            selected = modeNight == Settings.MODE_NIGHT_AUTO,
-                                            onClick = {
-                                                modeNight = Settings.MODE_NIGHT_AUTO
-                                                edit.putInt(
-                                                    "mode_night",
-                                                    Settings.MODE_NIGHT_AUTO
-                                                )
-                                                edit.apply()
-                                                actyvity.recreate()
-                                            }
-                                        )
-                                        Text(
-                                            stringResource(R.string.auto_widget_day_d_n),
-                                            textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.secondary,
-                                            fontSize = Settings.fontInterface.sp
-                                        )
                                     }
                                 }
                             }

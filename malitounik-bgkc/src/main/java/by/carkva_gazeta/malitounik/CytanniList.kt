@@ -22,7 +22,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollBy
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -249,13 +248,6 @@ fun CytanniList(
     var isParallelVisable by remember { mutableStateOf(false) }
     var paralelChtenia by rememberSaveable { mutableStateOf("") }
     var menuPosition by remember { mutableIntStateOf(0) }
-    var modeNight by remember {
-        mutableIntStateOf(
-            k.getInt(
-                "mode_night", Settings.MODE_NIGHT_SYSTEM
-            )
-        )
-    }
     var perevod by remember {
         mutableStateOf(
             when (biblia) {
@@ -784,20 +776,6 @@ fun CytanniList(
                                     painter = painterResource(R.drawable.format_size), contentDescription = ""
                                 )
                             })
-                            DropdownMenuItem(onClick = {
-                                showDropdown = !showDropdown
-                                autoScroll = false
-                                expanded = false
-                                menuPosition = 3
-                            }, text = {
-                                Text(
-                                    stringResource(R.string.dzen_noch), fontSize = (Settings.fontInterface - 2).sp
-                                )
-                            }, trailingIcon = {
-                                Icon(
-                                    painter = painterResource(R.drawable.contrast), contentDescription = ""
-                                )
-                            })
                         }
                     }, colors = TopAppBarDefaults.topAppBarColors(containerColor = colorTollBar)
                 )
@@ -858,123 +836,6 @@ fun CytanniList(
                                                     .padding(5.dp), textAlign = TextAlign.Center, color = PrimaryText, fontSize = Settings.fontInterface.sp
                                             )
                                         }
-                                    }
-                                }
-                            }
-                            if (menuPosition == 3) {
-                                Column(Modifier.selectableGroup()) {
-                                    val isSystemInDarkTheme = isSystemInDarkTheme()
-                                    Text(
-                                        stringResource(R.string.dzen_noch), modifier = Modifier.padding(start = 10.dp, top = 10.dp), textAlign = TextAlign.Center, fontStyle = FontStyle.Italic, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                                    )
-                                    val edit = k.edit()
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable {
-                                                modeNight = Settings.MODE_NIGHT_SYSTEM
-                                                edit.putInt(
-                                                    "mode_night", Settings.MODE_NIGHT_SYSTEM
-                                                )
-                                                edit.apply()
-                                                actyvity.dzenNoch = isSystemInDarkTheme
-                                                actyvity.removelightSensor()
-                                                if (actyvity.dzenNoch != actyvity.checkDzenNoch) actyvity.recreate()
-                                            }, verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        RadioButton(
-                                            selected = modeNight == Settings.MODE_NIGHT_SYSTEM, onClick = {
-                                                modeNight = Settings.MODE_NIGHT_SYSTEM
-                                                edit.putInt(
-                                                    "mode_night", Settings.MODE_NIGHT_SYSTEM
-                                                )
-                                                edit.apply()
-                                                actyvity.dzenNoch = isSystemInDarkTheme
-                                                actyvity.removelightSensor()
-                                                if (actyvity.dzenNoch != actyvity.checkDzenNoch) actyvity.recreate()
-                                            })
-                                        Text(
-                                            stringResource(R.string.system), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                                        )
-                                    }
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable {
-                                                modeNight = Settings.MODE_NIGHT_NO
-                                                edit.putInt("mode_night", Settings.MODE_NIGHT_NO)
-                                                edit.apply()
-                                                actyvity.dzenNoch = false
-                                                actyvity.removelightSensor()
-                                                if (actyvity.checkDzenNoch) actyvity.recreate()
-                                            }, verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        RadioButton(
-                                            selected = modeNight == Settings.MODE_NIGHT_NO, onClick = {
-                                                modeNight = Settings.MODE_NIGHT_NO
-                                                edit.putInt("mode_night", Settings.MODE_NIGHT_NO)
-                                                edit.apply()
-                                                actyvity.dzenNoch = false
-                                                actyvity.removelightSensor()
-                                                if (actyvity.checkDzenNoch) actyvity.recreate()
-                                            })
-                                        Text(
-                                            stringResource(R.string.day), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                                        )
-                                    }
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable {
-                                                modeNight = Settings.MODE_NIGHT_YES
-                                                edit.putInt(
-                                                    "mode_night", Settings.MODE_NIGHT_YES
-                                                )
-                                                edit.apply()
-                                                actyvity.dzenNoch = true
-                                                actyvity.removelightSensor()
-                                                if (!actyvity.checkDzenNoch) actyvity.recreate()
-                                            }, verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        RadioButton(
-                                            selected = modeNight == Settings.MODE_NIGHT_YES, onClick = {
-                                                modeNight = Settings.MODE_NIGHT_YES
-                                                edit.putInt(
-                                                    "mode_night", Settings.MODE_NIGHT_YES
-                                                )
-                                                edit.apply()
-                                                actyvity.dzenNoch = true
-                                                actyvity.removelightSensor()
-                                                if (!actyvity.checkDzenNoch) actyvity.recreate()
-                                            })
-                                        Text(
-                                            stringResource(R.string.widget_day_d_n), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                                        )
-                                    }
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable {
-                                                modeNight = Settings.MODE_NIGHT_AUTO
-                                                edit.putInt(
-                                                    "mode_night", Settings.MODE_NIGHT_AUTO
-                                                )
-                                                edit.apply()
-                                                actyvity.setlightSensor()
-                                            }, verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        RadioButton(
-                                            selected = modeNight == Settings.MODE_NIGHT_AUTO, onClick = {
-                                                modeNight = Settings.MODE_NIGHT_AUTO
-                                                edit.putInt(
-                                                    "mode_night", Settings.MODE_NIGHT_AUTO
-                                                )
-                                                edit.apply()
-                                                actyvity.setlightSensor()
-                                            })
-                                        Text(
-                                            stringResource(R.string.auto_widget_day_d_n), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                                        )
                                     }
                                 }
                             }
@@ -1567,13 +1428,7 @@ fun CytanniList(
                 }
             }
         }
-        AnimatedVisibility(
-            isParallelVisable, enter = fadeIn(
-                tween(
-                    durationMillis = 1000, easing = LinearOutSlowInEasing
-                )
-            ), exit = fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
-        ) {
+        if (isParallelVisable) {
             Column(
                 modifier = Modifier
                     .padding(

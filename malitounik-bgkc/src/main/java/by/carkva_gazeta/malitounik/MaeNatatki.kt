@@ -1,7 +1,10 @@
+@file:Suppress("DEPRECATION")
+
 package by.carkva_gazeta.malitounik
 
 import android.app.Activity
 import android.content.Context
+import android.os.Build
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -53,7 +56,9 @@ import androidx.core.view.WindowCompat
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
+import java.text.Collator
 import java.util.Calendar
+import java.util.Locale
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -98,7 +103,11 @@ fun MaeNatatki(
         }
     }
     if (sort == Settings.SORT_BY_ABC) {
-        fileList.sortBy { it.title }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+            fileList.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+        } else {
+            fileList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
+        }
     } else {
         fileList.sortByDescending { it.lastModified }
     }
@@ -260,7 +269,7 @@ fun DialogMyNatatki(
                 if (editMode) {
                     TextField(
                         textStyle = TextStyle(fontSize = Settings.fontInterface.sp),
-                        placeholder = { Text(stringResource(R.string.natatka_name), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary) },
+                        placeholder = { Text(stringResource(R.string.natatka_name), fontSize = Settings.fontInterface.sp) },
                         value = editTitle,
                         onValueChange = {
                             editTitle = it

@@ -1,7 +1,10 @@
+@file:Suppress("DEPRECATION")
+
 package by.carkva_gazeta.malitounik
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
@@ -68,9 +71,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.text.Collator
 import java.util.Calendar
 import java.util.GregorianCalendar
+import java.util.Locale
 
+@Suppress("DEPRECATION")
 class FilterMalitvyPrynagodnyiaModel : ViewModel() {
     private val items = ArrayList<BogaslujbovyiaListData>()
 
@@ -85,9 +91,11 @@ class FilterMalitvyPrynagodnyiaModel : ViewModel() {
         items.clear()
     }
 
-    fun sortBy() {
-        items.sortBy {
-            it.title
+    fun sortWith() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+            items.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+        } else {
+            items.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
         }
     }
 
@@ -303,7 +311,7 @@ fun MalitvyListAll(
             viewModel.addItemList(getPrynagodnyia4())
             viewModel.addItemList(getPrynagodnyia5())
             viewModel.addItemList(getPrynagodnyia6())
-            viewModel.sortBy()
+            viewModel.sortWith()
             val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
             viewModel.filterItem(textFieldValueState)
             PynagodnyiaList(filteredItems, navigationActions, innerPadding)
@@ -1191,8 +1199,10 @@ fun getPrynagodnyia1(): ArrayList<BogaslujbovyiaListData> {
         )
     )
     list.add(BogaslujbovyiaListData("Малітва да Маці Божай Бялыніцкай", R.raw.mltv_mb_bialynickaja))
-    list.sortBy {
-        it.title
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+        list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+    } else {
+        list.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
     }
     return list
 }
@@ -1223,8 +1233,10 @@ fun getPrynagodnyia2(): ArrayList<BogaslujbovyiaListData> {
     list.add(BogaslujbovyiaListData("Малітва да сьв. Язэпа", R.raw.prynagodnyia_37))
     list.add(BogaslujbovyiaListData("Малітва мужа і бацькі да сьв. Язэпа", R.raw.prynagodnyia_38))
     list.add(BogaslujbovyiaListData("Малітва да сьв. Язэпа за мужчынаў", R.raw.prynagodnyia_39))
-    list.sortBy {
-        it.title
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+        list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+    } else {
+        list.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
     }
     return list
 }
@@ -1238,8 +1250,10 @@ fun getPrynagodnyia3(): ArrayList<BogaslujbovyiaListData> {
             "Малітва за ўсіх, што пацярпелі за Беларусь", R.raw.mltv_paciarpieli_za_bielarus
         )
     )
-    list.sortBy {
-        it.title
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+        list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+    } else {
+        list.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
     }
     return list
 }
@@ -1273,8 +1287,10 @@ fun getPrynagodnyia4(): ArrayList<BogaslujbovyiaListData> {
         )
     )
     list.add(BogaslujbovyiaListData("Малітва за нашую зямлю", R.raw.mltv_za_naszuju_ziamlu))
-    list.sortBy {
-        it.title
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+        list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+    } else {
+        list.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
     }
     return list
 }
@@ -1293,8 +1309,10 @@ fun getPrynagodnyia5(): ArrayList<BogaslujbovyiaListData> {
     )
     list.add(BogaslujbovyiaListData("Малітва ў часе хваробы", R.raw.mltv_u_czasie_chvaroby))
     list.add(BogaslujbovyiaListData("Малітва падчас згубнай пошасьці", R.raw.prynagodnyia_28))
-    list.sortBy {
-        it.title
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+        list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+    } else {
+        list.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
     }
     return list
 }
@@ -1369,8 +1387,10 @@ fun getPrynagodnyia6(): ArrayList<BogaslujbovyiaListData> {
         )
     )
     list.add(BogaslujbovyiaListData("Малітва аб муках Госпада нашага Ісуса Хрыста", R.raw.mltv_ab_mukach_hospada))
-    list.sortBy {
-        it.title
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+        list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+    } else {
+        list.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
     }
     return list
 }

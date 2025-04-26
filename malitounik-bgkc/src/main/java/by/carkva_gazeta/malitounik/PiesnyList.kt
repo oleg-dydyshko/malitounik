@@ -52,7 +52,7 @@ class FilterPiesnyListModel : ViewModel() {
         items.clear()
     }
 
-    fun sortBy() {
+    fun sortWith() {
         items.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
     }
 
@@ -713,7 +713,7 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
         viewModel.addAllItemList(piesnyBagarList)
         viewModel.addAllItemList(piesnyKaliadyList)
         viewModel.addAllItemList(piesnyTaizeList)
-        viewModel.sortBy()
+        viewModel.sortWith()
     }
     val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
     viewModel.filterItem(search)

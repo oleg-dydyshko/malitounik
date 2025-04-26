@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package by.carkva_gazeta.malitounik
 
 import android.Manifest
@@ -119,8 +121,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileWriter
+import java.text.Collator
 import java.util.Calendar
 import java.util.GregorianCalendar
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -1825,6 +1829,11 @@ fun savePadzeia(
         val type = TypeToken.getParameterized(java.util.ArrayList::class.java, Padzeia::class.java).type
         outputStream.write(gson.toJson(padzeiaList, type))
         outputStream.close()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+            padzeiaList.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it })
+        } else {
+            padzeiaList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it })
+        }
         padzeiaList.sort()
         isSave()
         Toast.makeText(context, context.getString(R.string.save), Toast.LENGTH_SHORT).show()
