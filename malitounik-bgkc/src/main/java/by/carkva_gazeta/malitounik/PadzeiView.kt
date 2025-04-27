@@ -121,10 +121,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileWriter
-import java.text.Collator
 import java.util.Calendar
 import java.util.GregorianCalendar
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -1829,11 +1827,6 @@ fun savePadzeia(
         val type = TypeToken.getParameterized(java.util.ArrayList::class.java, Padzeia::class.java).type
         outputStream.write(gson.toJson(padzeiaList, type))
         outputStream.close()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-            padzeiaList.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it })
-        } else {
-            padzeiaList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it })
-        }
         padzeiaList.sort()
         isSave()
         Toast.makeText(context, context.getString(R.string.save), Toast.LENGTH_SHORT).show()
@@ -1882,14 +1875,14 @@ fun DialogSabytieShow(
                         shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
-                        Text(stringResource(R.string.close), fontSize = 22.sp)
+                        Text(stringResource(R.string.close), fontSize = 18.sp)
                     }
                     TextButton(
                         onClick = { onEdit(position) },
                         shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.edit), contentDescription = "")
-                        Text(stringResource(R.string.redagaktirovat), fontSize = 22.sp)
+                        Text(stringResource(R.string.redagaktirovat), fontSize = 18.sp)
                     }
                 }
             }
@@ -1932,14 +1925,14 @@ fun DialogDelitePadsei(
                         shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.delete), contentDescription = "")
-                        Text(stringResource(R.string.sabytie_del_old), fontSize = 22.sp)
+                        Text(stringResource(R.string.sabytie_del_old), fontSize = 18.sp)
                     }
                     TextButton(
                         onClick = { onDelAll() },
                         shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.delete), contentDescription = "")
-                        Text(stringResource(R.string.sabytie_del_all), fontSize = 22.sp)
+                        Text(stringResource(R.string.sabytie_del_all), fontSize = 18.sp)
                     }
                 }
                 TextButton(
@@ -1948,7 +1941,7 @@ fun DialogDelitePadsei(
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
                     Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
-                    Text(stringResource(R.string.cansel), fontSize = 22.sp)
+                    Text(stringResource(R.string.cansel), fontSize = 18.sp)
                 }
             }
         }

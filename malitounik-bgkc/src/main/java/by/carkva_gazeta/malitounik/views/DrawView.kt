@@ -8,6 +8,7 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -64,7 +64,7 @@ import kotlin.random.Random
 
 @Composable
 fun DrawView(
-    modifier: Modifier = Modifier,
+    drawerScrollStete: ScrollState,
     route: String,
     navigateToRazdel: (String) -> Unit
 ) {
@@ -90,11 +90,11 @@ fun DrawView(
     ModalDrawerSheet(
         modifier = Modifier
             .fillMaxHeight()
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(drawerScrollStete)
     ) {
-        DrawerHeader(modifier)
+        DrawerHeader()
         HorizontalDivider(
-            modifier = modifier.padding(bottom = 5.dp),
+            modifier = Modifier.padding(bottom = 5.dp),
             color = MaterialTheme.colorScheme.secondary
         )
         NavigationDrawerItem(
@@ -118,7 +118,7 @@ fun DrawView(
                 )
             },
             shape = MaterialTheme.shapes.small,
-            modifier = modifier.padding(horizontal = 5.dp),
+            modifier = Modifier.padding(horizontal = 5.dp),
             colors = navigationDrawerItemColors
         )
         NavigationDrawerItem(
@@ -142,7 +142,7 @@ fun DrawView(
                 )
             },
             shape = MaterialTheme.shapes.small,
-            modifier = modifier.padding(horizontal = 5.dp),
+            modifier = Modifier.padding(horizontal = 5.dp),
             colors = navigationDrawerItemColors
         )
         NavigationDrawerItem(
@@ -166,7 +166,7 @@ fun DrawView(
                 )
             },
             shape = MaterialTheme.shapes.small,
-            modifier = modifier.padding(horizontal = 5.dp),
+            modifier = Modifier.padding(horizontal = 5.dp),
             colors = navigationDrawerItemColors
         )
         NavigationDrawerItem(
@@ -190,7 +190,7 @@ fun DrawView(
                 )
             },
             shape = MaterialTheme.shapes.small,
-            modifier = modifier.padding(horizontal = 5.dp),
+            modifier = Modifier.padding(horizontal = 5.dp),
             colors = navigationDrawerItemColors
         )
         NavigationDrawerItem(
@@ -214,7 +214,7 @@ fun DrawView(
                 )
             },
             shape = MaterialTheme.shapes.small,
-            modifier = modifier.padding(horizontal = 5.dp),
+            modifier = Modifier.padding(horizontal = 5.dp),
             colors = navigationDrawerItemColors
         )
         NavigationDrawerItem(
@@ -238,7 +238,7 @@ fun DrawView(
                 )
             },
             shape = MaterialTheme.shapes.small,
-            modifier = modifier.padding(horizontal = 5.dp),
+            modifier = Modifier.padding(horizontal = 5.dp),
             colors = navigationDrawerItemColors
         )
         NavigationDrawerItem(
@@ -262,11 +262,11 @@ fun DrawView(
                 )
             },
             shape = MaterialTheme.shapes.small,
-            modifier = modifier.padding(horizontal = 5.dp),
+            modifier = Modifier.padding(horizontal = 5.dp),
             colors = navigationDrawerItemColors
         )
         HorizontalDivider(
-            modifier = modifier.padding(vertical = 5.dp),
+            modifier = Modifier.padding(vertical = 5.dp),
             color = MaterialTheme.colorScheme.secondary
         )
         Column {
@@ -332,7 +332,7 @@ fun DrawView(
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -356,7 +356,7 @@ fun DrawView(
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -380,7 +380,7 @@ fun DrawView(
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -404,7 +404,7 @@ fun DrawView(
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
                     if (k.getBoolean("sinoidal_bible", false)) {
@@ -429,7 +429,7 @@ fun DrawView(
                                 )
                             },
                             shape = MaterialTheme.shapes.small,
-                            modifier = modifier.padding(horizontal = 5.dp),
+                            modifier = Modifier.padding(horizontal = 5.dp),
                             colors = navigationDrawerItemColors
                         )
                     }
@@ -616,7 +616,7 @@ fun DrawView(
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -640,7 +640,7 @@ fun DrawView(
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -664,7 +664,7 @@ fun DrawView(
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -688,7 +688,7 @@ fun DrawView(
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -712,7 +712,7 @@ fun DrawView(
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -736,7 +736,7 @@ fun DrawView(
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
                 }
@@ -805,7 +805,7 @@ fun DrawView(
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -829,7 +829,7 @@ fun DrawView(
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -853,7 +853,7 @@ fun DrawView(
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -877,7 +877,7 @@ fun DrawView(
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -901,14 +901,14 @@ fun DrawView(
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
                 }
             }
         }
         HorizontalDivider(
-            modifier = modifier.padding(vertical = 5.dp),
+            modifier = Modifier.padding(vertical = 5.dp),
             color = MaterialTheme.colorScheme.secondary
         )
         Column {
@@ -974,7 +974,7 @@ fun DrawView(
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -998,7 +998,7 @@ fun DrawView(
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -1022,7 +1022,7 @@ fun DrawView(
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -1046,7 +1046,7 @@ fun DrawView(
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -1070,7 +1070,7 @@ fun DrawView(
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 5.dp),
                         colors = navigationDrawerItemColors
                     )
                 }
@@ -1080,11 +1080,11 @@ fun DrawView(
 }
 
 @Composable
-fun DrawerHeader(modifier: Modifier) {
+fun DrawerHeader() {
     val context = LocalContext.current
     Column(
         verticalArrangement = Arrangement.Center,
-        modifier = modifier
+        modifier = Modifier
             .padding(10.dp)
             .fillMaxWidth()
     ) {
@@ -1116,7 +1116,7 @@ fun DrawerHeader(modifier: Modifier) {
         }.toAnnotatedString()
 
         Text(
-            modifier = modifier.fillMaxWidth().padding(bottom = 10.dp),
+            modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
             text = annotated,
             fontSize = (Settings.fontInterface - 2).sp,
             textAlign = TextAlign.End,

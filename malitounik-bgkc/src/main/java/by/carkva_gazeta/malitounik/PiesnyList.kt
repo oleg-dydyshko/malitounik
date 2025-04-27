@@ -62,9 +62,11 @@ class FilterPiesnyListModel : ViewModel() {
 
     fun filterItem(search: String) {
         if (search.isNotEmpty()) {
-            _filteredItems.value = items.filter {
+            val filter = items.filter {
                 it.title.contains(search, ignoreCase = true)
-            } as SnapshotStateList<PiesnyListItem>
+            }
+            _filteredItems.value.clear()
+            _filteredItems.value.addAll(filter)
         }
     }
 }

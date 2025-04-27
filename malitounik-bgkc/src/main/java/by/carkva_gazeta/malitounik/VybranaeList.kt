@@ -148,7 +148,8 @@ fun VybranaeList(
                 removeItemBibleAll = false
             },
             onConfirmation = {
-                val perevod = list[removeItem].listBible[0].perevod
+                val perevod = if (list[removeItem].recourse.isEmpty()) list[removeItem].listBible[0].perevod
+                else Settings.PEREVODSEMUXI
                 if (removeItemBible != -1) {
                     val prevodName = when (perevod) {
                         Settings.PEREVODSEMUXI -> "biblia"
@@ -216,7 +217,7 @@ fun VybranaeList(
     ) {
         list.forEachIndexed { i, dataItem ->
             val collapsed = collapsedState[i]
-            if (dataItem.recourse == "") {
+            if (dataItem.recourse.isEmpty()) {
                 item(key = "header_$i") {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,

@@ -121,9 +121,13 @@ fun KaliandarScreenYear(
                     textAlign = TextAlign.Center
                 )
                 if (text.isNotEmpty()) {
-                    Row(modifier = Modifier.padding(top = 10.dp).fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+                    Row(modifier = Modifier
+                        .padding(top = 10.dp)
+                        .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
                         if (data[index][7].toInt() != 1) {
-                            Icon(modifier = Modifier.padding(end = 10.dp).size(22.dp, 22.dp), painter = painterResource(R.drawable.fishe), contentDescription = "", tint = colorIcon)
+                            Icon(modifier = Modifier
+                                .padding(end = 10.dp)
+                                .size(22.dp, 22.dp), painter = painterResource(R.drawable.fishe), contentDescription = "", tint = colorIcon)
                         }
                         Text(
                             text = text,
@@ -135,11 +139,12 @@ fun KaliandarScreenYear(
                 if (data[index][5].toInt() > 0) {
                     val padding1 = if (data[index][4] != "no_sviatyia") 0.dp
                     else 10.dp
+                    val svaity = data[index][6]
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 10.dp, bottom = padding1)
-                            .clickable {
+                            .clickable(svaity.contains("уваход у ерусалім", true) || svaity.contains("уваскрасеньне", true) || svaity.contains("узьнясеньне", true) || svaity.contains("зыход", true) || svaity.contains("Айцоў першых 6-ці Ўсяленскіх сабораў", true)) {
                                 navigateToSvityiaView(true, index)
                             },
                         verticalAlignment = Alignment.CenterVertically

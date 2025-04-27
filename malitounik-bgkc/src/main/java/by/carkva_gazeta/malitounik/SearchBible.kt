@@ -19,7 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -46,11 +46,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -69,10 +69,13 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
@@ -96,11 +99,13 @@ import java.io.InputStream
 import java.io.InputStreamReader
 
 var searchJob: Job? = null
+val searchList = SnapshotStateList<SearchBibleItem>()
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBible(
     navController: NavHostController,
+    searchBibleState: LazyListState,
     perevod: String,
     isBogaslujbovyiaSearch: Boolean,
     navigateToCytanniList: (String, Int, String) -> Unit,
@@ -108,8 +113,6 @@ fun SearchBible(
 ) {
     var searchSettings by remember { mutableStateOf(false) }
     var isProgressVisable by remember { mutableStateOf(false) }
-    val lazyRowState = rememberLazyListState()
-    val res = remember { mutableStateListOf<SearchBibleItem>() }
     val context = LocalContext.current
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -117,22 +120,23 @@ fun SearchBible(
     var searshString by rememberSaveable { mutableStateOf("") }
     LaunchedEffect(searchSettings, searshString) {
         if (searchSettings) {
-            res.clear()
+            searchList.clear()
             searchSettings = false
         }
-        if (searshString.trim().length >= 3 && res.isEmpty()) {
+        if (searshString.trim().length >= 3 && searchList.isEmpty()) {
             searchJob?.cancel()
             searchJob = CoroutineScope(Dispatchers.Main).launch {
                 isProgressVisable = true
-                res.clear()
+                searchList.clear()
                 val list = withContext(Dispatchers.IO) {
                     return@withContext doInBackground(context, searshString.trim(), perevod, isBogaslujbovyiaSearch)
                 }
-                res.addAll(list)
+                searchList.addAll(list)
                 isProgressVisable = false
             }
         } else {
             searchJob?.cancel()
+            isProgressVisable = false
         }
     }
     val nestedScrollConnection = remember {
@@ -174,7 +178,7 @@ fun SearchBible(
                             },
                         value = searshString,
                         onValueChange = { newText ->
-                            res.clear()
+                            searchList.clear()
                             var edit = newText
                             if (perevod == Settings.PEREVODSINOIDAL) {
                                 edit = edit.replace("і", "и")
@@ -220,7 +224,8 @@ fun SearchBible(
                             focusedIndicatorColor = PrimaryTextBlack,
                             unfocusedIndicatorColor = PrimaryTextBlack,
                             cursorColor = PrimaryTextBlack
-                        )
+                        ),
+                        textStyle = TextStyle(fontSize = TextUnit(Settings.fontInterface, TextUnitType.Sp))
                     )
                 },
                 navigationIcon = {
@@ -243,7 +248,7 @@ fun SearchBible(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary),
             )
         }, modifier = Modifier
     ) { innerPadding ->
@@ -356,32 +361,32 @@ fun SearchBible(
             }
             Column {
                 Text(
-                    modifier = Modifier.padding(start = 10.dp),
-                    text = stringResource(R.string.searh_sviatyia_result, res.size),
+                    modifier = Modifier.fillMaxWidth().padding(start = 10.dp),
+                    text = stringResource(R.string.searh_sviatyia_result, searchList.size),
                     fontStyle = FontStyle.Italic,
                     fontSize = Settings.fontInterface.sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
                 LazyColumn(
                     Modifier.nestedScroll(nestedScrollConnection),
-                    state = lazyRowState
+                    state = searchBibleState
                 ) {
-                    items(res.size) { index ->
+                    items(searchList.size) { index ->
                         Text(
                             modifier = Modifier
                                 .padding(10.dp)
                                 .clickable {
                                     if (isBogaslujbovyiaSearch) {
-                                        navigateToBogaslujbovyia(res[index].subTitle, res[index].resource)
+                                        navigateToBogaslujbovyia(searchList[index].subTitle, searchList[index].resource)
                                     } else {
                                         navigateToCytanniList(
-                                            res[index].subTitle + " " + res[index].glava.toString(),
-                                            res[index].styx,
+                                            searchList[index].subTitle + " " + searchList[index].glava.toString(),
+                                            searchList[index].styx,
                                             perevod
                                         )
                                     }
                                 },
-                            text = res[index].text.toAnnotatedString(),
+                            text = searchList[index].text.toAnnotatedString(),
                             color = MaterialTheme.colorScheme.secondary,
                             fontSize = Settings.fontInterface.sp
                         )

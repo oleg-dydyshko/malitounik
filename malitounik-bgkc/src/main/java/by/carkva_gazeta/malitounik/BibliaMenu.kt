@@ -684,7 +684,7 @@ fun DialogImage(
                         shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
-                        Text(stringResource(R.string.close), fontSize = 22.sp)
+                        Text(stringResource(R.string.close), fontSize = 18.sp)
                     }
                 }
             }

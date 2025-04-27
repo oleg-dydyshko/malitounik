@@ -82,7 +82,7 @@ fun SearchSviatyia(navController: NavHostController) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var textFieldLoaded by remember { mutableStateOf(false) }
     var searshString by rememberSaveable { mutableStateOf("") }
-    LaunchedEffect(searshString, searshString) {
+    LaunchedEffect(searshString) {
         if (searshString.trim().length >= 3 && res.isEmpty()) {
             if (searchJob?.isActive == true) {
                 searchJob?.cancel()

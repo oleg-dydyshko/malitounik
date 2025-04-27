@@ -27,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -53,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.core.view.WindowCompat
+import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
@@ -275,14 +277,22 @@ fun DialogMyNatatki(
                             editTitle = it
                         },
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .fillMaxWidth(),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.onTertiary,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.onTertiary,
+                            focusedTextColor = PrimaryTextBlack,
+                            focusedIndicatorColor = PrimaryTextBlack,
+                            unfocusedIndicatorColor = PrimaryTextBlack,
+                            cursorColor = PrimaryTextBlack
+                        )
                     )
                 } else {
                     Text(
                         text = editTitle, fontSize = Settings.fontInterface.sp,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.primary)
+                            .background(MaterialTheme.colorScheme.onTertiary)
                             .padding(10.dp), color = MaterialTheme.colorScheme.onSecondary
                     )
                 }
@@ -322,10 +332,10 @@ fun DialogMyNatatki(
                     ) {
                         if (editMode) {
                             Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
-                            Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
+                            Text(stringResource(R.string.cansel), fontSize = 18.sp)
                         } else {
                             Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.edit), contentDescription = "")
-                            Text(stringResource(R.string.redagaktirovat), fontSize = Settings.fontInterface.sp)
+                            Text(stringResource(R.string.redagaktirovat), fontSize = 18.sp)
                         }
                     }
                     TextButton(
@@ -338,10 +348,10 @@ fun DialogMyNatatki(
                     ) {
                         if (editMode) {
                             Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.save), contentDescription = "")
-                            Text(stringResource(R.string.save_sabytie), fontSize = Settings.fontInterface.sp)
+                            Text(stringResource(R.string.save_sabytie), fontSize = 18.sp)
                         } else {
                             Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
-                            Text(stringResource(R.string.close), fontSize = Settings.fontInterface.sp)
+                            Text(stringResource(R.string.close), fontSize = 18.sp)
                         }
                     }
                 }

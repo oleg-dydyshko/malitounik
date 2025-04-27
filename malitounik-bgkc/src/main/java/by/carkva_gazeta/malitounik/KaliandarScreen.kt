@@ -3,7 +3,6 @@
 package by.carkva_gazeta.malitounik
 
 import android.content.Context
-import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -67,10 +66,8 @@ import com.google.gson.reflect.TypeToken
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
-import java.text.Collator
 import java.util.Calendar
 import java.util.GregorianCalendar
-import java.util.Locale
 
 @Composable
 fun measureTextWidth(text: String, fontSize: TextUnit, fontWeight: FontWeight): Dp {
@@ -81,7 +78,11 @@ fun measureTextWidth(text: String, fontSize: TextUnit, fontWeight: FontWeight): 
 
 @Composable
 fun KaliandarScreen(
-    position: Int, innerPadding: PaddingValues, navigateToCytanneList: (String, String, Int) -> Unit, navigateToSvityiaView: (svity: Boolean, position: Int) -> Unit, navigateToBogaslujbovyia: (title: String, resurs: Int) -> Unit, navigateToKniga: () -> Unit
+    position: Int, innerPadding: PaddingValues,
+    navigateToCytanneList: (String, String, Int) -> Unit,
+    navigateToSvityiaView: (svity: Boolean, position: Int) -> Unit,
+    navigateToBogaslujbovyia: (title: String, resurs: Int) -> Unit,
+    navigateToKniga: () -> Unit
 ) {
     val data = Settings.data[position]
     val context = LocalContext.current
@@ -192,11 +193,12 @@ fun KaliandarScreen(
         if (data[5].toInt() > 0) {
             val padding1 = if (data[4].isNotEmpty()) 0.dp
             else 10.dp
+            val svaity = data[6]
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 10.dp, bottom = padding1)
-                    .clickable {
+                    .clickable(svaity.contains("уваход у ерусалім", true) || svaity.contains("уваскрасеньне", true) || svaity.contains("узьнясеньне", true) || svaity.contains("зыход", true) || svaity.contains("Айцоў першых 6-ці Ўсяленскіх сабораў", true)) {
                         navigateToSvityiaView(true, position)
                     }, verticalAlignment = Alignment.CenterVertically
             ) {

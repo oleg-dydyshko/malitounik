@@ -18,6 +18,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -156,6 +157,8 @@ fun AppNavGraph() {
     val navController: NavHostController = rememberNavController()
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
     val drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val drawerScrollStete = rememberScrollState()
+    val searchBibleState = rememberLazyListState()
     BackHandler(
         enabled = drawerState.isClosed,
     ) {
@@ -198,7 +201,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -214,7 +218,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -230,7 +235,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -246,7 +252,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -262,7 +269,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -278,7 +286,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -294,7 +303,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -310,7 +320,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -326,7 +337,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -342,7 +354,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -358,7 +371,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -374,7 +388,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -390,7 +405,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -406,7 +422,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -422,7 +439,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -438,7 +456,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -454,7 +473,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -470,7 +490,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -486,7 +507,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -502,7 +524,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -518,7 +541,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -534,7 +558,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -550,7 +575,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -566,7 +592,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -640,7 +667,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -656,7 +684,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -672,7 +701,8 @@ fun AppNavGraph() {
             MainConteiner(
                 navController = navController,
                 coroutineScope = coroutineScope,
-                drawerState = drawerState
+                drawerState = drawerState,
+                drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -821,6 +851,7 @@ fun AppNavGraph() {
             val searchBogaslujbovyia = stackEntry.arguments?.getBoolean("searchBogaslujbovyia", false) == true
             SearchBible(
                 navController,
+                searchBibleState,
                 perevod,
                 searchBogaslujbovyia,
                 navigateToCytanniList = { chytanne, position, perevod2 ->
@@ -972,7 +1003,8 @@ fun CheckUpdateMalitounik() {
 fun MainConteiner(
     navController: NavHostController,
     coroutineScope: CoroutineScope,
-    drawerState: DrawerState
+    drawerState: DrawerState,
+    drawerScrollStete: ScrollState
 ) {
     val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentNavBackStackEntry?.destination?.route ?: AllDestinations.KALIANDAR
@@ -1209,6 +1241,7 @@ fun MainConteiner(
     var isToDay by remember { mutableStateOf(false) }
     ModalNavigationDrawer(drawerContent = {
         DrawView(
+            drawerScrollStete = drawerScrollStete,
             route = currentRoute,
             navigateToRazdel = { razdzel ->
                 when (razdzel) {
@@ -2161,14 +2194,14 @@ fun DialogUpdateNoWiFI(
                         shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
-                        Text(stringResource(R.string.cansel), fontSize = 22.sp)
+                        Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
                         onClick = { onConfirmation() },
                         shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
-                        Text(stringResource(R.string.ok), fontSize = 22.sp)
+                        Text(stringResource(R.string.ok), fontSize = 18.sp)
                     }
                 }
             }

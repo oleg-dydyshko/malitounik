@@ -87,7 +87,7 @@ fun KaliandarKnigaView(
         slujba.loadPiarliny()
         var viewPiarliny by remember { mutableStateOf(false) }
         if (viewPiarliny) {
-            DialogPairlinyView(data[1].toInt(), data[2].toInt()) {
+            DialogPairlinyView(data[1].toInt(), data[2].toInt() + 1) {
                 viewPiarliny = false
             }
         }
@@ -341,7 +341,7 @@ fun DialogKniga(
                     shape = MaterialTheme.shapes.small
                 ) {
                     Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
-                    Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
+                    Text(stringResource(R.string.cansel), fontSize = 18.sp)
                 }
             }
         }

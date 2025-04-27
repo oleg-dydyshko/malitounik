@@ -1292,8 +1292,10 @@ fun CytanniList(
                                             selectState[index] = !selectState[index]
                                         }
                                     }, onLongClick = {
-                                        isSelectMode = true
-                                        selectState[index] = !selectState[index]
+                                        if (!fullscreen) {
+                                            isSelectMode = true
+                                            selectState[index] = !selectState[index]
+                                        }
                                     }, onDoubleClick = {
                                         fullscreen = !fullscreen
                                     })
