@@ -1597,11 +1597,11 @@ fun getBible(
                                                             val eGlavy = knigaStyxi.ifEmpty { glava.toString() }
                                                             "<strong><br>" + getNameBook(
                                                                 context, kniga, perevodNew, knigiBiblii >= 50
-                                                            ) + " " + "$eGlavy<strong><br>"
+                                                            ) + " $eGlavy<strong><br>"
                                                         } else {
                                                             "<strong><br>" + getNameBook(
                                                                 context, kniga, perevodNew, knigiBiblii >= 50
-                                                            ) + " " + "$glava<strong><br>"
+                                                            ) + " $glava<strong><br>"
                                                         }
                                                     )
                                                 )
@@ -1611,11 +1611,10 @@ fun getBible(
                                     }
                                     var text = textBible[w].styx
                                     if (isInt) {
+                                        val styx = textBible[w].styx.substring(t5, t6).toInt()
                                         text = textBible[w].styx.substring(
                                             0, t5
-                                        ) + "<font color=#D00505>" + textBible[w].styx.substring(
-                                            t5, t6
-                                        ) + ". </font>" + textBible[w].styx.substring(t6)
+                                        ) + "<font color=#D00505>$styx. </font>" + textBible[w].styx.substring(t6)
                                     }
                                     result.add(
                                         CytanniListData(

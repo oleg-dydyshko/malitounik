@@ -268,7 +268,7 @@
     <string name="copynadsan">Скапіявана: %1$s</string>
     <string name="dazvolic">Дазволіць</string>
     <string name="download_bibliateka">Спампаваць з дапамогай мабільнай сеткі?</string>
-    <string name="download_opisanie">Спампаваць%1$sз дапамогай мабільнай сеткі?</string>
+    <string name="download_opisanie">Адсутнічае злучэньне праз wi-fi.\nСпампаваць%1$sз дапамогай мабільнай сеткі?</string>
     <string name="download_opisanie_all">Спампаваць усе іконы</string>
     <string name="skid_brightness">СКІД</string>
     <string name="default_font">Па змаўчаньні</string>

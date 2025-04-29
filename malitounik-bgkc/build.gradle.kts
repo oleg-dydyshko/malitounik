@@ -12,7 +12,7 @@ android {
         applicationId = "by.carkva_gazeta.malitounik"
         minSdk = 21
         targetSdk = 36
-        versionCode = 442444
+        versionCode = 442446
         versionName = "5.90.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

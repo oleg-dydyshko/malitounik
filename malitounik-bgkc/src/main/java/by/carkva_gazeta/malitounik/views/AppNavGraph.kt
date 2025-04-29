@@ -169,6 +169,8 @@ object AppNavGraphState {
     var piesnyItem by mutableStateOf(k.getString("navigate", AllDestinations.PIESNY_PRASLAULENNIA)?.contains("Piesny", ignoreCase = true) == true)
     var underItem by mutableStateOf(k.getString("navigate", AllDestinations.PIESNY_PRASLAULENNIA)?.contains("Under", ignoreCase = true) == true)
     var scrollValue = 0
+    var checkUpdate = true
+    var setAlarm = true
 
     fun getCytata(context: MainActivity): AnnotatedString {
         val inputStream = context.resources.openRawResource(R.raw.citata)
@@ -1082,16 +1084,18 @@ fun CheckUpdateMalitounik() {
             noWIFI = false
         }) { noWIFI = false }
     }
-    if (isNetworkAvailable(context)) {
-        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
-        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
-                if (isNetworkAvailable(context, Settings.TRANSPORT_CELLULAR)) {
-                    totalBytesToDownload = appUpdateInfo.totalBytesToDownload().toFloat()
-                    noWIFI = true
-                } else {
-                    appUpdateManager.registerListener(installStateUpdatedListener)
-                    appUpdateManager.startUpdateFlowForResult(appUpdateInfo, launcher, AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build())
+    LaunchedEffect(Unit) {
+        if (isNetworkAvailable(context)) {
+            val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+            appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
+                    if (isNetworkAvailable(context, Settings.TRANSPORT_CELLULAR)) {
+                        totalBytesToDownload = appUpdateInfo.totalBytesToDownload().toFloat()
+                        noWIFI = true
+                    } else {
+                        appUpdateManager.registerListener(installStateUpdatedListener)
+                        appUpdateManager.startUpdateFlowForResult(appUpdateInfo, launcher, AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build())
+                    }
                 }
             }
         }
@@ -1114,8 +1118,9 @@ fun MainConteiner(
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
-    if (k.getBoolean("setAlarm", true)) {
+    if (AppNavGraphState.checkUpdate) {
         CheckUpdateMalitounik()
+        AppNavGraphState.checkUpdate = false
     }
     val initPage = if (Settings.caliandarPosition == -1) {
         findCaliandarPosition(-1)
@@ -2279,7 +2284,7 @@ fun DialogUpdateNoWiFI(
         ) {
             Column {
                 Text(
-                    text = stringResource(R.string.wifi_error).uppercase(), modifier = Modifier
+                    text = stringResource(R.string.update_title2), modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary

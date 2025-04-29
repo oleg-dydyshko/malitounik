@@ -1201,6 +1201,8 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
                         AppNavGraphState.underItem = false
                         AppNavGraphState.scrollValue = 0
                         AppNavGraphState.getCytata(this@MainActivity)
+                        AppNavGraphState.checkUpdate = true
+                        AppNavGraphState.setAlarm = true
                         onBack()
                     }
                 })
@@ -1245,12 +1247,10 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
             cacheDir?.listFiles()?.forEach {
                 it?.deleteRecursively()
             }
-            if (k.getBoolean("setAlarm", true)) {
+            if (AppNavGraphState.setAlarm) {
                 val notify = k.getInt("notification", Settings.NOTIFICATION_SVIATY_FULL)
                 Settings.setNotifications(this@MainActivity, notify)
-                k.edit {
-                    putBoolean("setAlarm", false)
-                }
+                AppNavGraphState.setAlarm = false
             }
         }
     }
