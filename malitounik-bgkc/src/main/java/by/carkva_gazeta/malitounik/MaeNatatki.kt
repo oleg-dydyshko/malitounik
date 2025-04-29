@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -283,18 +284,21 @@ fun DialogMyNatatki(
                             unfocusedContainerColor = MaterialTheme.colorScheme.onTertiary,
                             focusedTextColor = PrimaryTextBlack,
                             focusedIndicatorColor = PrimaryTextBlack,
+                            unfocusedTextColor = PrimaryTextBlack,
                             unfocusedIndicatorColor = PrimaryTextBlack,
                             cursorColor = PrimaryTextBlack
                         )
                     )
                 } else {
-                    Text(
-                        text = editTitle, fontSize = Settings.fontInterface.sp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.onTertiary)
-                            .padding(10.dp), color = MaterialTheme.colorScheme.onSecondary
-                    )
+                    SelectionContainer {
+                        Text(
+                            text = editTitle, fontSize = Settings.fontInterface.sp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.onTertiary)
+                                .padding(10.dp), color = MaterialTheme.colorScheme.onSecondary
+                        )
+                    }
                 }
                 if (editMode) {
                     TextField(
@@ -314,7 +318,9 @@ fun DialogMyNatatki(
                         textStyle = TextStyle(fontSize = Settings.fontInterface.sp)
                     )
                 } else {
-                    Text(modifier = Modifier.padding(10.dp), text = textFieldValueState.text, fontSize = Settings.fontInterface.sp)
+                    SelectionContainer {
+                        Text(modifier = Modifier.padding(10.dp), text = textFieldValueState.text, fontSize = Settings.fontInterface.sp)
+                    }
                 }
                 Row(
                     modifier = Modifier

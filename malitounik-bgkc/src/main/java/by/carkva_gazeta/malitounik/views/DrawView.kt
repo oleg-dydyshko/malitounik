@@ -34,15 +34,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -58,25 +53,19 @@ import by.carkva_gazeta.malitounik.WidgetRadyjoMaryia
 import by.carkva_gazeta.malitounik.ui.theme.BackgroundDrawelMenu
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import kotlin.random.Random
 
 @Composable
 fun DrawView(
     drawerScrollStete: ScrollState,
     route: String,
+    cytata: AnnotatedString,
     navigateToRazdel: (String) -> Unit
 ) {
     val context = LocalActivity.current as MainActivity
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var dialogNoInternet by remember { mutableStateOf(false) }
     var dialogProgram by remember { mutableStateOf(false) }
-    var bibleItem by remember { mutableStateOf(k.getString("navigate", AllDestinations.BIBLIA_SEMUXA)?.contains("Biblia", ignoreCase = true) == true) }
-    var biblijatekaItem by remember { mutableStateOf(k.getString("navigate", AllDestinations.BIBLIJATEKA_NIADAUNIA)?.contains("Biblijateka", ignoreCase = true) == true) }
-    var piesnyItem by remember { mutableStateOf(k.getString("navigate", AllDestinations.PIESNY_PRASLAULENNIA)?.contains("Piesny", ignoreCase = true) == true) }
     val navigationDrawerItemColors = NavigationDrawerItemDefaults.colors(selectedContainerColor = if (context.dzenNoch) BackgroundDrawelMenu else Divider)
-    var underItem by remember { mutableStateOf(k.getString("navigate", AllDestinations.PIESNY_PRASLAULENNIA)?.contains("Under", ignoreCase = true) == true) }
     if (dialogNoInternet) {
         DialogNoInternet {
             dialogNoInternet = false
@@ -92,7 +81,7 @@ fun DrawView(
             .fillMaxHeight()
             .verticalScroll(drawerScrollStete)
     ) {
-        DrawerHeader()
+        DrawerHeader(cytata)
         HorizontalDivider(
             modifier = Modifier.padding(bottom = 5.dp),
             color = MaterialTheme.colorScheme.secondary
@@ -274,7 +263,7 @@ fun DrawView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        bibleItem = !bibleItem
+                        AppNavGraphState.bibleItem = !AppNavGraphState.bibleItem
                     },
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -298,13 +287,13 @@ fun DrawView(
                     modifier = Modifier
                         .padding(start = 21.dp, end = 2.dp)
                         .size(22.dp, 22.dp),
-                    painter = painterResource(if (bibleItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
+                    painter = painterResource(if (AppNavGraphState.bibleItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
                     contentDescription = null
                 )
             }
             AnimatedVisibility(
-                bibleItem, enter = fadeIn(
+                AppNavGraphState.bibleItem, enter = fadeIn(
                     tween(
                         durationMillis = 1000, easing = LinearOutSlowInEasing
                     )
@@ -558,7 +547,7 @@ fun DrawView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        biblijatekaItem = !biblijatekaItem
+                        AppNavGraphState.biblijatekaItem = !AppNavGraphState.biblijatekaItem
                     },
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -582,13 +571,13 @@ fun DrawView(
                     modifier = Modifier
                         .padding(start = 21.dp, end = 2.dp)
                         .size(22.dp, 22.dp),
-                    painter = painterResource(if (biblijatekaItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
+                    painter = painterResource(if (AppNavGraphState.biblijatekaItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
                     contentDescription = null
                 )
             }
             AnimatedVisibility(
-                biblijatekaItem, enter = fadeIn(
+                AppNavGraphState.biblijatekaItem, enter = fadeIn(
                     tween(
                         durationMillis = 1000, easing = LinearOutSlowInEasing
                     )
@@ -747,7 +736,7 @@ fun DrawView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        piesnyItem = !piesnyItem
+                        AppNavGraphState.piesnyItem = !AppNavGraphState.piesnyItem
                     },
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -771,13 +760,13 @@ fun DrawView(
                     modifier = Modifier
                         .padding(start = 21.dp, end = 2.dp)
                         .size(22.dp, 22.dp),
-                    painter = painterResource(if (piesnyItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
+                    painter = painterResource(if (AppNavGraphState.piesnyItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
                     contentDescription = null
                 )
             }
             AnimatedVisibility(
-                piesnyItem, enter = fadeIn(
+                AppNavGraphState.piesnyItem, enter = fadeIn(
                     tween(
                         durationMillis = 1000, easing = LinearOutSlowInEasing
                     )
@@ -916,7 +905,7 @@ fun DrawView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        underItem = !underItem
+                        AppNavGraphState.underItem = !AppNavGraphState.underItem
                     },
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -940,13 +929,13 @@ fun DrawView(
                     modifier = Modifier
                         .padding(start = 21.dp, end = 2.dp)
                         .size(22.dp, 22.dp),
-                    painter = painterResource(if (underItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
+                    painter = painterResource(if (AppNavGraphState.underItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
                     contentDescription = null
                 )
             }
             AnimatedVisibility(
-                underItem, enter = fadeIn(
+                AppNavGraphState.underItem, enter = fadeIn(
                     tween(
                         durationMillis = 1000, easing = LinearOutSlowInEasing
                     )
@@ -1080,52 +1069,22 @@ fun DrawView(
 }
 
 @Composable
-fun DrawerHeader() {
-    val context = LocalContext.current
+fun DrawerHeader(cytata: AnnotatedString) {
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .padding(10.dp)
             .fillMaxWidth()
     ) {
-        val inputStream = context.resources.openRawResource(R.raw.citata)
-        val isr = InputStreamReader(inputStream)
-        val reader = BufferedReader(isr)
-        val citataList = ArrayList<String>()
-        reader.forEachLine {
-            val line = StringBuilder()
-            val t1 = it.indexOf("(")
-            if (t1 != -1) {
-                line.append(it.substring(0, t1).trim())
-                line.append("\n")
-                line.append(it.substring(t1))
-                citataList.add(line.toString())
-            }
-        }
-        val annotated = AnnotatedString.Builder(citataList[Random.nextInt(citataList.size)]).apply {
-            addStyle(
-                SpanStyle(
-                    fontFamily = FontFamily(Font(R.font.andantinoscript)),
-                    fontWeight = FontWeight.Bold,
-                    fontStyle = FontStyle.Italic,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = (Settings.fontInterface + 4).sp
-                ), 0, 1
-            )
-            addStyle(SpanStyle(fontFamily = FontFamily(Font(R.font.comici))), 1, this.length)
-        }.toAnnotatedString()
-
         Text(
             modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
-            text = annotated,
+            text = cytata,
             fontSize = (Settings.fontInterface - 2).sp,
             textAlign = TextAlign.End,
             fontStyle = FontStyle.Italic,
             color = SecondaryText,
         )
-
         Icon(modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp), painter = painterResource(R.drawable.lahatyp), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
-
         Icon(modifier = Modifier.fillMaxWidth(), painter = painterResource(R.drawable.lahatyp_apis), contentDescription = "", tint = MaterialTheme.colorScheme.secondary)
     }
 }

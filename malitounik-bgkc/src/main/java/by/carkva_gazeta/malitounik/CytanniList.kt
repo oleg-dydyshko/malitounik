@@ -176,7 +176,7 @@ class CytanniListItems(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun CytanniList(
-    navController: NavHostController, title: String, cytanne: String, biblia: Int, perevodRoot: String, position: Int
+    navController: NavHostController, title: String, cytanne: String, biblia: Int, perevodRoot: String, position: Int, list: ArrayList<LazyListState>
 ) {
     val t1 = cytanne.indexOf(";")
     var knigaText by remember {
@@ -190,17 +190,7 @@ fun CytanniList(
             } else cytanne
         )
     }
-    val count = if (biblia == Settings.CHYTANNI_BIBLIA) remember {
-        bibleCount(
-            knigaBiblii(knigaText), perevodRoot
-        )
-    }
-    else 1
     var positionRemember by rememberSaveable { mutableIntStateOf(position) }
-    val list = ArrayList<LazyListState>()
-    for (i in 0 until count) {
-        list.add(rememberLazyListState())
-    }
     val listState = remember { list }
     val coroutineScope = rememberCoroutineScope()
     val view = LocalView.current
@@ -1162,7 +1152,7 @@ fun CytanniList(
                                 if (tit.isNotEmpty() && resultPage[i].title != tit) {
                                     cnt++
                                     if (cnt == positionRemember) {
-                                        resultCount = i + 1
+                                        resultCount = i
                                         break
                                     }
                                 }
@@ -1458,11 +1448,11 @@ fun getBible(
 ): ArrayList<CytanniListData> {
     val context = MainActivity.applicationContext()
     val result = ArrayList<CytanniListData>()
+    var id = 0
     try {
         val list = cytanne.split(";")
         var knigaText = ""
         var knigaStyxi = ""
-        var id = 0
         for (i in list.indices) {
             val itemList = list[i].trim()
             if (itemList != "") {
@@ -1651,7 +1641,11 @@ fun getBible(
             }
         }
     } catch (_: Throwable) {
-        result.clear()
+        val inputStream = context.resources.openRawResource(R.raw.biblia_error)
+        val isr = InputStreamReader(inputStream)
+        val reader = BufferedReader(isr)
+        result.add(CytanniListData(id, title = "", text = reader.readText()))
+        id++
     }
     return result
 }

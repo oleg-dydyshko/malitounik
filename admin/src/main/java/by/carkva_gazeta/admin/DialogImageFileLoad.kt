@@ -4,16 +4,17 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.graphics.scale
 import androidx.fragment.app.DialogFragment
 import by.carkva_gazeta.admin.databinding.AdminDialogImageLoadBinding
 import by.carkva_gazeta.admin.databinding.SimpleListItem1Binding
-import com.squareup.picasso.Picasso
 import java.io.File
 
 class DialogImageFileLoad : DialogFragment() {
@@ -60,7 +61,9 @@ class DialogImageFileLoad : DialogFragment() {
             binding.content.adapter = arrayAdapter
             val path = arguments?.getString("path") ?: ""
             val file = File(path)
-            Picasso.get().load(file).resize(600, 1000).onlyScaleDown().centerInside().into(binding.icon)
+            val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+            binding.icon.setImageBitmap(bitmap.scale(600, 1000, false))
+            //Picasso.get().load(file).resize(600, 1000).onlyScaleDown().centerInside().into(binding.icon)
             builder.setNegativeButton(getString(by.carkva_gazeta.malitounik.R.string.cansel)) { dialog: DialogInterface, _: Int ->
                 dialog.cancel()
             }

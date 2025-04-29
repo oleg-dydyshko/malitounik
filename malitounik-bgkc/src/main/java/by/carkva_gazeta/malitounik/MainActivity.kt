@@ -49,6 +49,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -64,6 +65,7 @@ import by.carkva_gazeta.malitounik.Settings.isNetworkAvailable
 import by.carkva_gazeta.malitounik.ui.theme.MalitounikTheme
 import by.carkva_gazeta.malitounik.views.AllDestinations
 import by.carkva_gazeta.malitounik.views.AppNavGraph
+import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.ktx.appCheck
@@ -1188,10 +1190,17 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 window.isNavigationBarContrastEnforced = false
             }
+            val cytata = remember { AppNavGraphState.getCytata(this) }
             MalitounikTheme(darkTheme = dzenNoch) {
-                AppNavGraph()
+                AppNavGraph(cytata)
                 onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
                     override fun handleOnBackPressed() {
+                        AppNavGraphState.bibleItem = false
+                        AppNavGraphState.piesnyItem = false
+                        AppNavGraphState.biblijatekaItem = false
+                        AppNavGraphState.underItem = false
+                        AppNavGraphState.scrollValue = 0
+                        AppNavGraphState.getCytata(this@MainActivity)
                         onBack()
                     }
                 })
@@ -1281,12 +1290,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         return checkMD5 != md5Hex.toString()
     }
 
-    override fun attachBaseContext(context: Context) {/*Configuration(context.resources.configuration).apply {
-            if (this.fontScale != 1.0f) {
-                this.fontScale = 1.0f
-            }
-            applyOverrideConfiguration(this)
-        }*/
+    override fun attachBaseContext(context: Context) {
         super.attachBaseContext(context)
         FirebaseApp.initializeApp(context)
         Firebase.appCheck.installAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.getInstance())

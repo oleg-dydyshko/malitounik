@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
@@ -78,7 +79,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
@@ -127,13 +133,16 @@ import by.carkva_gazeta.malitounik.ShtoNovaga
 import by.carkva_gazeta.malitounik.SviatyList
 import by.carkva_gazeta.malitounik.SviatyiaView
 import by.carkva_gazeta.malitounik.VybranaeList
+import by.carkva_gazeta.malitounik.bibleCount
 import by.carkva_gazeta.malitounik.formatFigureTwoPlaces
+import by.carkva_gazeta.malitounik.knigaBiblii
 import by.carkva_gazeta.malitounik.removeZnakiAndSlovy
 import by.carkva_gazeta.malitounik.setNotificationNon
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.Post
 import by.carkva_gazeta.malitounik.ui.theme.Primary
+import by.carkva_gazeta.malitounik.ui.theme.PrimaryBlack
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.StrogiPost
@@ -151,14 +160,54 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
 import java.util.Calendar
+import kotlin.random.Random
+
+object AppNavGraphState {
+    private val k = MainActivity.applicationContext().getSharedPreferences("biblia", Context.MODE_PRIVATE)
+    var bibleItem by mutableStateOf(k.getString("navigate", AllDestinations.BIBLIA_SEMUXA)?.contains("Biblia", ignoreCase = true) == true)
+    var biblijatekaItem by mutableStateOf(k.getString("navigate", AllDestinations.BIBLIJATEKA_NIADAUNIA)?.contains("Biblijateka", ignoreCase = true) == true)
+    var piesnyItem by mutableStateOf(k.getString("navigate", AllDestinations.PIESNY_PRASLAULENNIA)?.contains("Piesny", ignoreCase = true) == true)
+    var underItem by mutableStateOf(k.getString("navigate", AllDestinations.PIESNY_PRASLAULENNIA)?.contains("Under", ignoreCase = true) == true)
+    var scrollValue = 0
+
+    fun getCytata(context: MainActivity): AnnotatedString {
+        val inputStream = context.resources.openRawResource(R.raw.citata)
+        val isr = InputStreamReader(inputStream)
+        val reader = BufferedReader(isr)
+        val citataList = ArrayList<String>()
+        reader.forEachLine {
+            val line = StringBuilder()
+            val t1 = it.indexOf("(")
+            if (t1 != -1) {
+                line.append(it.substring(0, t1).trim())
+                line.append("\n")
+                line.append(it.substring(t1))
+                citataList.add(line.toString())
+            }
+        }
+        return AnnotatedString.Builder(citataList[Random.nextInt(citataList.size)]).apply {
+            addStyle(
+                SpanStyle(
+                    fontFamily = FontFamily(Font(R.font.andantinoscript)),
+                    fontWeight = FontWeight.Bold,
+                    fontStyle = FontStyle.Italic,
+                    color = if (context.dzenNoch) PrimaryBlack else Primary,
+                    fontSize = (Settings.fontInterface + 4).sp
+                ), 0, 1
+            )
+            addStyle(SpanStyle(fontFamily = FontFamily(Font(R.font.comici))), 1, this.length)
+        }.toAnnotatedString()
+    }
+}
 
 @Composable
-fun AppNavGraph() {
+fun AppNavGraph(cytata: AnnotatedString) {
     val navController: NavHostController = rememberNavController()
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
     val drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val drawerScrollStete = rememberScrollState()
     val searchBibleState = rememberLazyListState()
+    val cytanniListState = remember { ArrayList<LazyListState>() }
     BackHandler(
         enabled = drawerState.isClosed,
     ) {
@@ -202,7 +251,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -219,7 +269,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -236,7 +287,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -253,7 +305,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -270,7 +323,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -287,7 +341,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -304,7 +359,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -321,7 +377,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -338,7 +395,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -355,7 +413,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -372,7 +431,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -389,7 +449,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -406,7 +467,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -423,7 +485,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -440,7 +503,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -457,7 +521,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -474,7 +539,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -491,7 +557,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -508,7 +575,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -525,7 +593,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -542,7 +611,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -559,7 +629,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -576,7 +647,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -593,7 +665,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -668,7 +741,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -685,7 +759,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -702,7 +777,8 @@ fun AppNavGraph() {
                 navController = navController,
                 coroutineScope = coroutineScope,
                 drawerState = drawerState,
-                drawerScrollStete = drawerScrollStete
+                drawerScrollStete = drawerScrollStete,
+                cytata = cytata
             )
         }
 
@@ -816,7 +892,31 @@ fun AppNavGraph() {
             val perevod = stackEntry.arguments?.getString("perevod", Settings.PEREVODSEMUXI)
                 ?: Settings.PEREVODSEMUXI
             val position = stackEntry.arguments?.getInt("position", 0) ?: 0
-            CytanniList(navController, title, cytanne, biblia, perevod, position)
+            val t1 = cytanne.indexOf(";")
+            var knigaText by remember {
+                mutableStateOf(
+                    if (biblia == Settings.CHYTANNI_BIBLIA || biblia == Settings.CHYTANNI_VYBRANAE) {
+                        if (t1 == -1) cytanne.substringBeforeLast(" ")
+                        else {
+                            val sb = cytanne.substring(0, t1)
+                            sb.substringBeforeLast(" ")
+                        }
+                    } else cytanne
+                )
+            }
+            val count = if (biblia == Settings.CHYTANNI_BIBLIA) remember {
+                bibleCount(
+                    knigaBiblii(knigaText), perevod
+                )
+            }
+            else 1
+            if (count != cytanniListState.size) {
+                cytanniListState.clear()
+                for (i in 0 until count) {
+                    cytanniListState.add(rememberLazyListState())
+                }
+            }
+            CytanniList(navController, title, cytanne, biblia, perevod, position, cytanniListState)
         }
 
         composable(
@@ -1004,7 +1104,8 @@ fun MainConteiner(
     navController: NavHostController,
     coroutineScope: CoroutineScope,
     drawerState: DrawerState,
-    drawerScrollStete: ScrollState
+    drawerScrollStete: ScrollState,
+    cytata: AnnotatedString,
 ) {
     val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentNavBackStackEntry?.destination?.route ?: AllDestinations.KALIANDAR
@@ -1243,6 +1344,7 @@ fun MainConteiner(
         DrawView(
             drawerScrollStete = drawerScrollStete,
             route = currentRoute,
+            cytata = cytata,
             navigateToRazdel = { razdzel ->
                 when (razdzel) {
                     AllDestinations.KALIANDAR -> {

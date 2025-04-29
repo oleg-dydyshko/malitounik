@@ -166,6 +166,7 @@ fun SearchSviatyia(navController: NavHostController) {
                             unfocusedContainerColor = MaterialTheme.colorScheme.onTertiary,
                             focusedTextColor = PrimaryTextBlack,
                             focusedIndicatorColor = PrimaryTextBlack,
+                            unfocusedTextColor = PrimaryTextBlack,
                             unfocusedIndicatorColor = PrimaryTextBlack,
                             cursorColor = PrimaryTextBlack
                         )

@@ -32,7 +32,6 @@ dependencies {
     implementation (libs.androidx.constraintlayout)
     implementation (libs.material)
     implementation (libs.commons.text)
-    implementation (libs.picasso)
     implementation (libs.androidx.core.ktx)
     implementation(libs.feature.delivery)
     testImplementation (libs.junit)

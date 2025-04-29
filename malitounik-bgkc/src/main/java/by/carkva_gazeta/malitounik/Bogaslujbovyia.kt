@@ -115,6 +115,7 @@ import by.carkva_gazeta.malitounik.ui.theme.Post
 import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.HtmlText
 import by.carkva_gazeta.malitounik.views.findCaliandarToDay
 import com.google.gson.Gson
@@ -535,6 +536,7 @@ fun Bogaslujbovyia(
                                     unfocusedContainerColor = MaterialTheme.colorScheme.onTertiary,
                                     focusedTextColor = PrimaryTextBlack,
                                     focusedIndicatorColor = PrimaryTextBlack,
+                                    unfocusedTextColor = PrimaryTextBlack,
                                     unfocusedIndicatorColor = PrimaryTextBlack,
                                     cursorColor = PrimaryTextBlack
                                 ),
@@ -1034,6 +1036,8 @@ fun Bogaslujbovyia(
                         source: NestedScrollSource
                     ): Offset {
                         isScrollRun = true
+                        AppNavGraphState.scrollValue = scrollState.value
+                        android.util.Log.d("Oleg", scrollState.value.toString())
                         return super.onPreScroll(available, source)
                     }
 
@@ -1103,6 +1107,9 @@ fun Bogaslujbovyia(
                                 navigateTo(navigate)
                             },
                             textLayoutResult = { layout ->
+                                coroutineScope.launch {
+                                    scrollState.scrollTo(AppNavGraphState.scrollValue)
+                                }
                                 textLayout.value = layout
                             }
                         )
