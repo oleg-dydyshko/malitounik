@@ -2386,7 +2386,7 @@ class SlugbovyiaTextu {
         slugbaType: Int, dayOfYear: Int, year: Int
     ): ArrayList<SlugbovyiaTextuData> {
         var dayOfYearReal: Int
-        var day: Int
+        var day = 0
         val resultSlugba = datMinALL.filter {
             when (slugbaType) {
                 VIACZERNIA -> it.sluzba == VIACZERNIA || it.sluzba == VIACZERNIA_Z_LITURHIJA
@@ -2406,6 +2406,17 @@ class SlugbovyiaTextu {
             if (dayOfYearReal + addDay == dayOfYear) {
                 resultDay.add(resultSlugba[i])
             }
+        }
+        val data = Settings.data[Settings.caliandarPosition]
+        if (data[0].toInt() == Calendar.SUNDAY && data[20] != "0") {
+            val list = getTraparyKandakiNiadzelnyia()
+            val ton = data[20].toInt() - 1
+            resultDay.add(SlugbovyiaTextuData(day, list[ton].title, list[ton].resurs, LITURHIJA))
+        }
+        if (data[0].toInt() != Calendar.SUNDAY) {
+            val list = getTraparyKandakiShtodzennyia()
+            val dzenNedeli = data[0].toInt() - 2
+            resultDay.add(SlugbovyiaTextuData(day, list[dzenNedeli].title, list[dzenNedeli].resurs, LITURHIJA))
         }
         return resultDay
     }

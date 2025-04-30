@@ -225,6 +225,7 @@ fun Bogaslujbovyia(
                     while (true) {
                         delay(autoScrollSpeed.toLong())
                         scrollState.scrollBy(2f)
+                        AppNavGraphState.scrollValue = scrollState.value
                     }
                 }
             }

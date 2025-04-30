@@ -56,6 +56,7 @@ fun KaliandarKnigaView(
         DialogKniga(slujva, slujbaList,
             navigateToBogaslujbovyia = { title, resourse ->
                 navigateToBogaslujbovyia(title, resourse)
+                dialogKnigaView = false
             }) {
             dialogKnigaView = false
         }
