@@ -169,15 +169,6 @@ fun SettingsView(navController: NavHostController) {
             dialodNotificatin = false
         }
         DialogNotification(onConfirm = {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                if (!alarmManager.canScheduleExactAlarms()) {
-                    dialodNotificatin = false
-                    val intent = Intent()
-                    intent.action = android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
-                    intent.data = ("package:" + context.packageName).toUri()
-                    context.startActivity(intent)
-                }
-            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 val permissionCheck2 = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
                 if (permissionCheck2 == PackageManager.PERMISSION_DENIED) {
@@ -601,7 +592,7 @@ fun SettingsView(navController: NavHostController) {
                             }
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
-                                if (PackageManager.PERMISSION_DENIED == permissionCheck || !alarmManager.canScheduleExactAlarms()) {
+                                if (PackageManager.PERMISSION_DENIED == permissionCheck) {
                                     dialodNotificatin = true
                                 } else {
                                     setNotificationOnly(context)
@@ -621,7 +612,7 @@ fun SettingsView(navController: NavHostController) {
                             }
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
-                                if (PackageManager.PERMISSION_DENIED == permissionCheck || !alarmManager.canScheduleExactAlarms()) {
+                                if (PackageManager.PERMISSION_DENIED == permissionCheck) {
                                     dialodNotificatin = true
                                 } else {
                                     setNotificationOnly(context)

@@ -429,9 +429,9 @@ fun BibliaMenu(
                 AnimatedVisibility(
                     pesnyView, enter = fadeIn(
                         tween(
-                            durationMillis = 1000, easing = LinearOutSlowInEasing
+                            durationMillis = 700, easing = LinearOutSlowInEasing
                         )
-                    ), exit = fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                    ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
                 ) {
                     Column {
                         for (i in 1..9) {
@@ -516,9 +516,9 @@ fun BibliaMenu(
             AnimatedVisibility(
                 dialogImageView, enter = fadeIn(
                     tween(
-                        durationMillis = 1000, easing = LinearOutSlowInEasing
+                        durationMillis = 700, easing = LinearOutSlowInEasing
                     )
-                ), exit = fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             ) {
                 Image(
                     painter = painterResource(R.drawable.pravily_chytannia_psaltyria), contentDescription = "", modifier = Modifier

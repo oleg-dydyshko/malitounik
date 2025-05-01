@@ -22,6 +22,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -46,6 +47,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -57,6 +59,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -97,6 +100,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Popup
 import androidx.core.content.edit
 import androidx.core.text.isDigitsOnly
@@ -505,6 +509,12 @@ fun CytanniList(
     val context = LocalContext.current
     var isShareMode by remember { mutableStateOf(false) }
     var isSelectAll by remember { mutableStateOf(false) }
+    var dialogRazdel by remember { mutableStateOf(false) }
+    if (dialogRazdel) {
+        DialogRazdzel(listState, autoScrollSensor, setSelectedIndex = { selectedIndex = it }, setAutoScroll = { autoScroll = it }) {
+            dialogRazdel = false
+        }
+    }
     Scaffold(
         topBar = {
             if (!fullscreen) {
@@ -679,10 +689,9 @@ fun CytanniList(
                             }
                             if (biblia == Settings.CHYTANNI_BIBLIA && listState.size - 1 > 1) {
                                 DropdownMenuItem(onClick = {
-                                    showDropdown = !showDropdown
                                     autoScroll = false
                                     expanded = false
-                                    menuPosition = 4
+                                    dialogRazdel = true
                                 }, text = {
                                     Text(
                                         stringResource(R.string.razdzel), fontSize = (Settings.fontInterface - 2).sp
@@ -802,33 +811,6 @@ fun CytanniList(
                             .background(MaterialTheme.colorScheme.tertiary)
                     ) {
                         Column {
-                            if (menuPosition == 4) {
-                                LazyVerticalGrid(
-                                    columns = GridCells.Adaptive(60.dp)
-                                ) {
-                                    items(listState.size) { item ->
-                                        Box(
-                                            modifier = Modifier
-                                                .padding(10.dp)
-                                                .clip(shape = RoundedCornerShape(10.dp))
-                                                .border(
-                                                    width = 1.dp, color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(10.dp)
-                                                )
-                                                .background(Divider)
-                                                .clickable {
-                                                    selectedIndex = item
-                                                    showDropdown = false
-                                                    if (autoScrollSensor) autoScroll = true
-                                                }) {
-                                            Text(
-                                                (item + 1).toString(), modifier = Modifier
-                                                    .fillMaxSize()
-                                                    .padding(5.dp), textAlign = TextAlign.Center, color = PrimaryText, fontSize = Settings.fontInterface.sp
-                                            )
-                                        }
-                                    }
-                                }
-                            }
                             if (menuPosition == 2) {
                                 Column(Modifier.selectableGroup()) {
                                     if (isPerevodError) {
@@ -1329,9 +1311,9 @@ fun CytanniList(
                 AnimatedVisibility(
                     autoScrollTextVisable, enter = fadeIn(
                         tween(
-                            durationMillis = 1000, easing = LinearOutSlowInEasing
+                            durationMillis = 700, easing = LinearOutSlowInEasing
                         )
-                    ), exit = fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                    ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
                 ) {
                     Row(
                         modifier = Modifier
@@ -1352,9 +1334,9 @@ fun CytanniList(
                 AnimatedVisibility(
                     autoScrollSensor, enter = fadeIn(
                         tween(
-                            durationMillis = 1000, easing = LinearOutSlowInEasing
+                            durationMillis = 700, easing = LinearOutSlowInEasing
                         )
-                    ), exit = fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                    ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
                 ) {
                     Row(
                         modifier = Modifier
@@ -1438,6 +1420,75 @@ fun CytanniList(
                     )
                 }
                 Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
+            }
+        }
+    }
+}
+
+@Composable
+fun DialogRazdzel(
+    listState: ArrayList<LazyListState>,
+    autoScrollSensor: Boolean,
+    setSelectedIndex: (Int) -> Unit,
+    setAutoScroll: (Boolean) -> Unit,
+    onDismiss: () -> Unit
+) {
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column {
+                Text(
+                    text = stringResource(R.string.data_search), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.onTertiary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
+                )
+                LazyVerticalGrid(
+                    modifier = Modifier.weight(1f),
+                    columns = GridCells.Adaptive(60.dp)
+                ) {
+                    items(listState.size) { item ->
+                        Box(
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .clip(shape = RoundedCornerShape(10.dp))
+                                .border(
+                                    width = 1.dp, color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(10.dp)
+                                )
+                                .background(Divider)
+                                .clickable {
+                                    setSelectedIndex(item)
+                                    if (autoScrollSensor) setAutoScroll(true)
+                                    onDismiss()
+                                }) {
+                            Text(
+                                (item + 1).toString(), modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(5.dp), textAlign = TextAlign.Center, color = PrimaryText, fontSize = Settings.fontInterface.sp
+                            )
+                        }
+                    }
+                }
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    Column {
+                        TextButton(
+                            onClick = { onDismiss() },
+                            shape = MaterialTheme.shapes.small
+                        ) {
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                            Text(stringResource(R.string.cansel), fontSize = 18.sp)
+                        }
+                    }
+                }
             }
         }
     }

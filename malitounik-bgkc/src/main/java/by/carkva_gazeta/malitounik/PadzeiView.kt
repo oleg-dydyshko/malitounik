@@ -103,7 +103,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Popup
 import androidx.core.content.ContextCompat
-import androidx.core.content.edit
 import androidx.core.graphics.toColorInt
 import androidx.core.net.toUri
 import androidx.core.text.isDigitsOnly
@@ -720,7 +719,6 @@ fun AddPadzeia(
             setPautorRaz = "5"
             countText = p.datK
         }
-        //countText = if (position != -1) p.datK else data3
     }
     var color by remember { mutableStateOf(optionsColors[p.color]) }
     var colorPosition by remember { mutableIntStateOf(p.color) }
@@ -740,35 +738,43 @@ fun AddPadzeia(
     }
     if (dialodNotificatin) {
         val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
-            val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-            if (it) {
-                when (k.getInt("notification", Settings.NOTIFICATION_SVIATY_FULL)) {
-                    1 -> setNotificationOnly(context)
-                    2 -> setNotificationFull(context)
-                }
-            } else {
-                k.edit {
-                    putInt("notification", Settings.NOTIFICATION_SVIATY_NONE)
-                }
-                setNotificationNon(context)
+            if (!it) {
                 setTimeZa = ""
             }
             dialodNotificatin = false
         }
-        DialogNotification(onConfirm = {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                val permissionCheck2 = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
-                if (permissionCheck2 == PackageManager.PERMISSION_DENIED) {
-                    launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                }
-            }
+        val launcherAlarm = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                if (alarmManager.canScheduleExactAlarms()) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        val permissionCheck2 = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                        if (permissionCheck2 == PackageManager.PERMISSION_DENIED) {
+                            launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        }
+                    }
+                } else {
+                    setTimeZa = ""
+                }
+            }
+        }
+        DialogNotification(onConfirm = {
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
                 if (!alarmManager.canScheduleExactAlarms()) {
+                    dialodNotificatin = false
                     val intent = Intent()
                     intent.action = android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
                     intent.data = ("package:" + context.packageName).toUri()
-                    context.startActivity(intent)
+                    launcherAlarm.launch(intent)
+                }
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (alarmManager.canScheduleExactAlarms()) {
+                    val permissionCheck2 = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                    if (permissionCheck2 == PackageManager.PERMISSION_DENIED) {
+                        launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    }
                 }
             }
             dialodNotificatin = false

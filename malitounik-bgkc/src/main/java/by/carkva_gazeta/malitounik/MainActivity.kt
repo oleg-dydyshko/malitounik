@@ -285,8 +285,12 @@ object Settings {
             val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             if (padzeia && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !am.canScheduleExactAlarms()) return
             when {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !am.canScheduleExactAlarms() -> {
-                    am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeAlarm, it)
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+                    if (am.canScheduleExactAlarms()) {
+                        am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeAlarm, it)
+                    } else {
+                        am.set(AlarmManager.RTC_WAKEUP, timeAlarm, it)
+                    }
                 }
 
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {

@@ -2,7 +2,6 @@ package by.carkva_gazeta.malitounik.views
 
 import android.Manifest
 import android.app.Activity
-import android.app.AlarmManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -243,10 +242,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.KALIANDAR,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.KALIANDAR
             MainConteiner(
@@ -261,10 +260,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.AKAFIST_MENU,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.AKAFIST_MENU
             MainConteiner(
@@ -279,10 +278,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.RUJANEC_MENU,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.RUJANEC_MENU
             MainConteiner(
@@ -297,10 +296,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.MAE_NATATKI_MENU,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.MAE_NATATKI_MENU
             MainConteiner(
@@ -315,10 +314,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.BOGASLUJBOVYIA_MENU,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.BOGASLUJBOVYIA_MENU
             MainConteiner(
@@ -333,10 +332,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.MALITVY_MENU,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.MALITVY_MENU
             MainConteiner(
@@ -351,10 +350,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.BIBLIA_SEMUXA,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.BIBLIA_SEMUXA
             MainConteiner(
@@ -369,10 +368,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.BIBLIA_BOKUNA,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.BIBLIA_BOKUNA
             MainConteiner(
@@ -387,10 +386,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.BIBLIA_NADSAN,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.BIBLIA_NADSAN
             MainConteiner(
@@ -405,10 +404,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.BIBLIA_CHARNIAUSKI,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.BIBLIA_CHARNIAUSKI
             MainConteiner(
@@ -423,10 +422,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.BIBLIA_SINODAL,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.BIBLIA_SINODAL
             MainConteiner(
@@ -441,10 +440,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.KALIANDAR_YEAR,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.KALIANDAR_YEAR
             MainConteiner(
@@ -459,10 +458,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.VYBRANAE_LIST,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.VYBRANAE_LIST
             MainConteiner(
@@ -477,10 +476,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.BIBLIJATEKA_NIADAUNIA,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_NIADAUNIA
             MainConteiner(
@@ -495,10 +494,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.BIBLIJATEKA_SPEUNIKI,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_SPEUNIKI
             MainConteiner(
@@ -513,10 +512,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.BIBLIJATEKA_GISTORYIA,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_GISTORYIA
             MainConteiner(
@@ -531,10 +530,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.BIBLIJATEKA_MALITOUNIKI,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_MALITOUNIKI
             MainConteiner(
@@ -549,10 +548,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA
             MainConteiner(
@@ -567,10 +566,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU
             MainConteiner(
@@ -585,10 +584,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.PIESNY_PRASLAULENNIA,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.PIESNY_PRASLAULENNIA
             MainConteiner(
@@ -603,10 +602,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.PIESNY_DA_BAGARODZICY,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.PIESNY_DA_BAGARODZICY
             MainConteiner(
@@ -621,10 +620,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.PIESNY_ZA_BELARUS,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.PIESNY_ZA_BELARUS
             MainConteiner(
@@ -639,10 +638,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.PIESNY_KALIADNYIA,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.PIESNY_KALIADNYIA
             MainConteiner(
@@ -657,10 +656,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.PIESNY_TAIZE,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.PIESNY_TAIZE
             MainConteiner(
@@ -675,10 +674,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.UNDER_PADRYXTOUKA,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Bogaslujbovyia(navController, stringResource(R.string.spovedz), R.raw.padryxtouka_da_spovedzi)
         }
@@ -714,10 +713,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.UNDER_PAMIATKA,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Bogaslujbovyia(navController, stringResource(R.string.pamiatka), R.raw.pamiatka)
         }
@@ -733,10 +732,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.UNDER_SVAITY_MUNU,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.UNDER_SVAITY_MUNU
             MainConteiner(
@@ -751,10 +750,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.UNDER_PARAFII_BGKC,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.UNDER_PARAFII_BGKC
             MainConteiner(
@@ -769,10 +768,10 @@ fun AppNavGraph(cytata: AnnotatedString) {
         composable(
             AllDestinations.UNDER_PASHALIA,
             enterTransition = {
-                fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             },
             exitTransition = {
-                fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
             Settings.destinations = AllDestinations.UNDER_PASHALIA
             MainConteiner(
@@ -1052,7 +1051,6 @@ fun CheckUpdateMalitounik() {
     }
     val appUpdateManager = AppUpdateManagerFactory.create(context)
     val installStateUpdatedListener = InstallStateUpdatedListener { state ->
-        dialogUpdateMalitounik = true
         if (state.installStatus() == InstallStatus.DOWNLOADING) {
             bytesDownload = state.bytesDownloaded().toFloat()
             totalBytesToDownload = state.totalBytesToDownload().toFloat()
@@ -1325,18 +1323,9 @@ fun MainConteiner(
         )
     }
     if (k.getInt("notification", Settings.NOTIFICATION_SVIATY_FULL) != Settings.NOTIFICATION_SVIATY_NONE) {
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            if (!alarmManager.canScheduleExactAlarms()) {
-                k.edit {
-                    putInt("notification", Settings.NOTIFICATION_SVIATY_NONE)
-                }
-                setNotificationNon(context)
-            }
-        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
-            if (PackageManager.PERMISSION_DENIED == permissionCheck || !alarmManager.canScheduleExactAlarms()) {
+            if (PackageManager.PERMISSION_DENIED == permissionCheck) {
                 k.edit {
                     putInt("notification", Settings.NOTIFICATION_SVIATY_NONE)
                 }
@@ -1345,6 +1334,23 @@ fun MainConteiner(
         }
     }
     var isToDay by remember { mutableStateOf(false) }
+    val color = MaterialTheme.colorScheme.onTertiary
+    var colorBlackboard by remember { mutableStateOf(color) }
+    var dialogKniga by remember { mutableStateOf(false) }
+    if (dialogKniga) {
+        KaliandarKnigaView(
+            colorBlackboard,
+            navigateToBogaslujbovyia = { title, resourse ->
+                dialogKniga = false
+                navigationActions.navigateToBogaslujbovyia(title, resourse)
+            },
+            navigateToSvityiaView = { svity, position ->
+                dialogKniga = false
+                navigationActions.navigateToSvityiaView(svity, position)
+            }) {
+            dialogKniga = false
+        }
+    }
     ModalNavigationDrawer(drawerContent = {
         DrawView(
             drawerScrollStete = drawerScrollStete,
@@ -1794,8 +1800,6 @@ fun MainConteiner(
                     0.dp
                 )
             ) {
-                val color = MaterialTheme.colorScheme.onTertiary
-                var colorBlackboard by remember { mutableStateOf(color) }
                 when (Settings.destinations) {
                     AllDestinations.KALIANDAR -> {
                         val dataToDay = findCaliandarToDay(context, false)
@@ -1864,8 +1868,7 @@ fun MainConteiner(
                                     navigationActions.navigateToBogaslujbovyia(title, resurs)
                                 },
                                 navigateToKniga = {
-                                    showDropdownMenuPos = 2
-                                    showDropdown = true
+                                    dialogKniga = true
                                 }
                             )
                         }
@@ -2116,20 +2119,6 @@ fun MainConteiner(
                                 },
                                 close = { showDropdown = false })
                         }
-                        if (showDropdownMenuPos == 2) {
-                            KaliandarKnigaView(
-                                colorBlackboard,
-                                navigateToBogaslujbovyia = { title, resourse ->
-                                    showDropdown = false
-                                    navigationActions.navigateToBogaslujbovyia(title, resourse)
-                                },
-                                navigateToSvityiaView = { svity, position ->
-                                    showDropdown = false
-                                    navigationActions.navigateToSvityiaView(svity, position)
-                                }) {
-                                showDropdown = false
-                            }
-                        }
                     }
                 }
             }
@@ -2139,7 +2128,7 @@ fun MainConteiner(
 
 @Composable
 fun DialogLogProgramy(
-    onDismiss: () -> Unit,
+    onDismiss: () -> Unit
 ) {
     val context = LocalActivity.current as MainActivity
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
@@ -2243,7 +2232,9 @@ fun DialogUpdateMalitounik(
                 )
                 Column {
                     Text(modifier = Modifier.padding(bottom = 10.dp), text = stringResource(R.string.update_program_progress, bytesDownloadUpdate, totalSizeUpdate), fontSize = Settings.fontInterface.sp)
-                    LinearProgressIndicator(progress = { (bytesDownload / total).toFloat() }, modifier = Modifier.fillMaxWidth())
+                    LinearProgressIndicator(progress = { (bytesDownload / total).toFloat() }, modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp))
                 }
                 Row(
                     modifier = Modifier

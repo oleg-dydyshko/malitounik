@@ -1134,9 +1134,9 @@ fun Bogaslujbovyia(
                 AnimatedVisibility(
                     autoScrollTextVisable, enter = fadeIn(
                         tween(
-                            durationMillis = 1000, easing = LinearOutSlowInEasing
+                            durationMillis = 700, easing = LinearOutSlowInEasing
                         )
-                    ), exit = fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                    ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
                 ) {
                     Row(
                         modifier = Modifier
@@ -1160,9 +1160,9 @@ fun Bogaslujbovyia(
                 AnimatedVisibility(
                     autoScrollSensor, enter = fadeIn(
                         tween(
-                            durationMillis = 1000, easing = LinearOutSlowInEasing
+                            durationMillis = 700, easing = LinearOutSlowInEasing
                         )
-                    ), exit = fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                    ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
                 ) {
                     Row(
                         modifier = Modifier
