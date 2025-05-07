@@ -66,6 +66,7 @@ import by.carkva_gazeta.malitounik.ui.theme.MalitounikTheme
 import by.carkva_gazeta.malitounik.views.AllDestinations
 import by.carkva_gazeta.malitounik.views.AppNavGraph
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
+import by.carkva_gazeta.malitounik.views.openAssetsResources
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.ktx.appCheck
@@ -81,9 +82,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import java.io.BufferedReader
 import java.io.File
-import java.io.InputStreamReader
 import java.math.BigInteger
 import java.security.MessageDigest
 import java.util.Calendar
@@ -1079,13 +1078,7 @@ fun DialogSztoHovaha(
                         .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
-                var content: String
-                val inputStream = LocalContext.current.resources.openRawResource(R.raw.a_szto_novaha)
-                val isr = InputStreamReader(inputStream)
-                val reader = BufferedReader(isr)
-                reader.use { bufferedReader ->
-                    content = bufferedReader.readText()
-                }
+                val content = openAssetsResources(LocalContext.current, "a_szto_novaha.txt")
                 Column(
                     modifier = Modifier
                         .padding(10.dp)
@@ -1181,6 +1174,19 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         }
         ferstStart = true
         Settings.fontInterface = getFontInterface(this)
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                AppNavGraphState.bibleItem = false
+                AppNavGraphState.piesnyItem = false
+                AppNavGraphState.biblijatekaItem = false
+                AppNavGraphState.underItem = false
+                AppNavGraphState.scrollValue = 0
+                AppNavGraphState.getCytata(this@MainActivity)
+                AppNavGraphState.checkUpdate = true
+                AppNavGraphState.setAlarm = true
+                onBack()
+            }
+        })
         setContent {
             if (savedInstanceState != null) {
                 dzenNoch = savedInstanceState.getBoolean("dzenNoch", false)
@@ -1197,19 +1203,6 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
             val cytata = remember { AppNavGraphState.getCytata(this) }
             MalitounikTheme(darkTheme = dzenNoch) {
                 AppNavGraph(cytata)
-                onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-                    override fun handleOnBackPressed() {
-                        AppNavGraphState.bibleItem = false
-                        AppNavGraphState.piesnyItem = false
-                        AppNavGraphState.biblijatekaItem = false
-                        AppNavGraphState.underItem = false
-                        AppNavGraphState.scrollValue = 0
-                        AppNavGraphState.getCytata(this@MainActivity)
-                        AppNavGraphState.checkUpdate = true
-                        AppNavGraphState.setAlarm = true
-                        onBack()
-                    }
-                })
                 var dialogSztoHovahaVisable by rememberSaveable { mutableStateOf(checkASztoNovagaMD5Sum()) }
                 if (dialogSztoHovahaVisable) {
                     DialogSztoHovaha {
@@ -1270,16 +1263,9 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
     }
 
     fun checkASztoNovagaMD5Sum(): Boolean {
-        var st: String
-        val inputStream = resources.openRawResource(R.raw.a_szto_novaha)
-        val isr = InputStreamReader(inputStream)
-        val reader = BufferedReader(isr)
-        reader.use { bufferedReader ->
-            st = bufferedReader.readText()
-        }
         val messageDigest = MessageDigest.getInstance("MD5")
         messageDigest.reset()
-        messageDigest.update(st.toByteArray())
+        messageDigest.update(openAssetsResources(this, "a_szto_novaha.txt").toByteArray())
         val digest = messageDigest.digest()
         val bigInt = BigInteger(1, digest)
         val md5Hex = StringBuilder(bigInt.toString(16))

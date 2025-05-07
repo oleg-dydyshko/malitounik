@@ -34,6 +34,7 @@ import by.carkva_gazeta.malitounik.views.AllDestinations.UNDER_PARAFII_BGKC
 import by.carkva_gazeta.malitounik.views.AllDestinations.UNDER_PASHALIA
 import by.carkva_gazeta.malitounik.views.AllDestinations.UNDER_SVAITY_MUNU
 import by.carkva_gazeta.malitounik.views.AllDestinations.VYBRANAE_LIST
+import java.net.URLEncoder
 
 object AllDestinations {
     const val KALIANDAR = "Kaliandar"
@@ -350,8 +351,8 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
         }
     }
 
-    fun navigateToBogaslujbovyia(title: String, resurs: Int) {
-        navController.navigate("$BOGASLUJBOVYIA/$title/$resurs") {
+    fun navigateToBogaslujbovyia(title: String, resurs: String) {
+        navController.navigate("$BOGASLUJBOVYIA/$title/" + URLEncoder.encode(resurs, "UTF8")) {
             BOGASLUJBOVYIA
         }
     }

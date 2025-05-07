@@ -264,7 +264,7 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
     private suspend fun saveBibliatekaJson() {
         val localFile = File("$filesDir/cache/cache.txt")
         val gson = Gson()
-        val type = TypeToken.getParameterized(java.util.ArrayList::class.java, TypeToken.getParameterized(java.util.ArrayList::class.java, String::class.java).type).type
+        val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
         localFile.writer().use {
             it.write(gson.toJson(arrayList, type))
         }
@@ -298,7 +298,7 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
                     if (sb != "") {
                         binding.progressBar2.visibility = View.VISIBLE
                         val gson = Gson()
-                        val type = TypeToken.getParameterized(java.util.ArrayList::class.java, TypeToken.getParameterized(java.util.ArrayList::class.java, TypeToken.getParameterized(String::class.java).type).type).type
+                        val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(String::class.java).type).type).type
                         val biblioteka = gson.fromJson<ArrayList<ArrayList<String>>>(sb, type)
                         for (i in 0 until biblioteka.size) {
                             val mySqlList = ArrayList<String>()

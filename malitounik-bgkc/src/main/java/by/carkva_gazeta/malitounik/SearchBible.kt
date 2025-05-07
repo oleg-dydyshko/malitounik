@@ -89,14 +89,12 @@ import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryBlack
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik.views.openAssetsResources
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.BufferedReader
-import java.io.InputStream
-import java.io.InputStreamReader
 
 var searchJob: Job? = null
 val searchList = SnapshotStateList<SearchBibleItem>()
@@ -109,7 +107,7 @@ fun SearchBible(
     perevod: String,
     isBogaslujbovyiaSearch: Boolean,
     navigateToCytanniList: (String, Int, String) -> Unit,
-    navigateToBogaslujbovyia: (title: String, resurs: Int) -> Unit
+    navigateToBogaslujbovyia: (title: String, resurs: String) -> Unit
 ) {
     var searchSettings by remember { mutableStateOf(false) }
     var isProgressVisable by remember { mutableStateOf(false) }
@@ -362,7 +360,9 @@ fun SearchBible(
             }
             Column {
                 Text(
-                    modifier = Modifier.fillMaxWidth().padding(start = 10.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 10.dp),
                     text = stringResource(R.string.searh_sviatyia_result, searchList.size),
                     fontStyle = FontStyle.Italic,
                     fontSize = Settings.fontInterface.sp,
@@ -511,11 +511,7 @@ fun bogashlugbovya(context: Context, poshuk: String, secondRun: Boolean = false)
     for (i in 0 until bogaslugbovyiaListAll.size) {
         if (searchJob?.isActive == false) break
         var nazva = context.getString(R.string.error_ch)
-        val id = bogaslugbovyiaListAll[i].resurs
-        val inputStream = context.resources.openRawResource(id)
-        val isr = InputStreamReader(inputStream)
-        val reader = BufferedReader(isr)
-        val bibleline = reader.readText()
+        val bibleline = openAssetsResources(context, bogaslugbovyiaListAll[i].resurs)
         val t1 = bibleline.indexOf("<strong>")
         if (t1 != -1) {
             val t2 = bibleline.indexOf("</strong>", t1 + 8)
@@ -602,13 +598,19 @@ fun biblia(
             if (searchJob?.isActive == false) break
             val nazva = list[i]
             val subTitle = subTitleListName[i].subTitle
-            val inputStream = getInputStream(context, perevod, novyZapaviet == 1, i)
-            val isr = InputStreamReader(inputStream)
-            val reader = BufferedReader(isr)
-            var glava = 0
-            val split = reader.use {
-                it.readText().split("===")
+            val zavet = if (novyZapaviet == 1) "n"
+            else "s"
+            val prevodName = when (perevod) {
+                Settings.PEREVODSEMUXI -> "chytanne/Semucha/biblia"
+                Settings.PEREVODBOKUNA -> "chytanne/Bokun/bokuna"
+                Settings.PEREVODCARNIAUSKI -> "chytanne/Carniauski/carniauski"
+                Settings.PEREVODNADSAN -> "bogashlugbovya/psaltyr_nadsan.txt"
+                Settings.PEREVODSINOIDAL -> "chytanne/Sinodal/sinaidal"
+                else -> "chytanne/Semucha/biblia"
             }
+            var glava = 0
+            val split = if (perevod == Settings.PEREVODNADSAN) openAssetsResources(context, prevodName).split("===")
+            else openAssetsResources(context, "$prevodName$zavet${i + 1}.txt").split("===")
             for (e in 1 until split.size) {
                 glava++
                 val bibleline = split[e].split("\n")
@@ -655,7 +657,7 @@ fun biblia(
                             t1
                         )
                     }
-                    seashpost.add(SearchBibleItem(subTitle, glava, stix, 0, span))
+                    seashpost.add(SearchBibleItem(subTitle, glava, stix, "", span))
                 }
             }
         }
@@ -757,42 +759,12 @@ fun findChars(context: Context, search: String, textSearch: String): ArrayList<F
     return result
 }
 
-fun getInputStream(
-    context: Context,
-    perevod: String,
-    novyZapaviet: Boolean,
-    kniga: Int
-): InputStream {
-    val fields = R.raw::class.java.fields
-    val zavet = if (novyZapaviet) "n"
-    else "s"
-    val prevodName = when (perevod) {
-        Settings.PEREVODSEMUXI -> "biblia"
-        Settings.PEREVODBOKUNA -> "bokuna"
-        Settings.PEREVODCARNIAUSKI -> "carniauski"
-        Settings.PEREVODNADSAN -> "nadsan"
-        Settings.PEREVODSINOIDAL -> "sinaidal"
-        else -> "biblia"
-    }
-    if (perevod != Settings.PEREVODNADSAN) {
-        for (element in fields) {
-            val name = element.name
-            if (name == "$prevodName$zavet${kniga + 1}") {
-                return context.resources.openRawResource(element.getInt(name))
-            }
-        }
-    } else {
-        return context.resources.openRawResource(R.raw.psaltyr_nadsan)
-    }
-    return context.resources.openRawResource(R.raw.biblia_error)
-}
-
 data class FindString(val str: String, val position: Int)
 
 data class SearchBibleItem(
     val subTitle: String,
     val glava: Int,
     val styx: Int,
-    val resource: Int,
+    val resource: String,
     val text: AnnotatedString.Builder
 )

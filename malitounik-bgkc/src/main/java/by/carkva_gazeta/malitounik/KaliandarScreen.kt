@@ -81,7 +81,7 @@ fun KaliandarScreen(
     position: Int, innerPadding: PaddingValues,
     navigateToCytanneList: (String, String, Int) -> Unit,
     navigateToSvityiaView: (svity: Boolean, position: Int) -> Unit,
-    navigateToBogaslujbovyia: (title: String, resurs: Int) -> Unit,
+    navigateToBogaslujbovyia: (title: String, resurs: String) -> Unit,
     navigateToKniga: () -> Unit
 ) {
     val data = Settings.data[position]

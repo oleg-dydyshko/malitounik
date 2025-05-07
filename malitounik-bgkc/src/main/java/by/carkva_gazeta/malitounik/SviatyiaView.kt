@@ -728,7 +728,7 @@ fun loadOpisanieSviatyia(context: Context, year: Int, mun: Int, day: Int): Snaps
     if (fileOpisanie13.exists()) {
         val builder = fileOpisanie13.readText()
         val gson = Gson()
-        val type = TypeToken.getParameterized(java.util.ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
+        val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
         val arrayList = ArrayList<ArrayList<String>>()
         if (builder.isNotEmpty()) {
             arrayList.addAll(gson.fromJson(builder, type))
@@ -795,7 +795,7 @@ fun loadOpisanieSviat(context: Context, mun: Int, day: Int, position: Int): Snap
     if (fileOpisanieSviat.exists()) {
         val builder = fileOpisanieSviat.readText()
         val gson = Gson()
-        val type = TypeToken.getParameterized(java.util.ArrayList::class.java, TypeToken.getParameterized(java.util.ArrayList::class.java, String::class.java).type).type
+        val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
         val arrayList = gson.fromJson<ArrayList<ArrayList<String>>>(builder, type)
         arrayList?.forEach { strings ->
             var puxomuia = false
@@ -985,7 +985,7 @@ fun checkParliny(context: Context, mun: Int, day: Int): Boolean {
         try {
             val builder = fileOpisanieSviat.readText()
             val gson = Gson()
-            val type = TypeToken.getParameterized(java.util.ArrayList::class.java, TypeToken.getParameterized(java.util.ArrayList::class.java, String::class.java).type).type
+            val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
             piarliny.addAll(gson.fromJson(builder, type))
         } catch (_: Throwable) {
             fileOpisanieSviat.delete()
@@ -1015,7 +1015,7 @@ fun DialogPairlinyView(
         try {
             val builder = localFile.readText()
             val gson = Gson()
-            val type = TypeToken.getParameterized(java.util.ArrayList::class.java, TypeToken.getParameterized(java.util.ArrayList::class.java, String::class.java).type).type
+            val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
             piarlin.addAll(gson.fromJson(builder, type))
         } catch (_: Throwable) {
         }

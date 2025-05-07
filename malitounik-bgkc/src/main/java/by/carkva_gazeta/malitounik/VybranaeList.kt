@@ -57,7 +57,7 @@ import java.util.Locale
 @Composable
 fun VybranaeList(
     navigateToCytanniList: (String, Int, String) -> Unit = { _, _, _ -> },
-    navigateToBogaslujbovyia: (String, Int) -> Unit = { _, _ -> },
+    navigateToBogaslujbovyia: (String, String) -> Unit = { _, _ -> },
     sorted: Int,
     removeAllVybranae: Boolean,
     innerPadding: PaddingValues
@@ -321,16 +321,7 @@ fun VybranaeList(
                         modifier = Modifier
                             .combinedClickable(
                                 onClick = {
-                                    val fields = R.raw::class.java.fields
-                                    var recourseInt = R.raw.bogashlugbovya_error
-                                    for (element in fields) {
-                                        val name = element.name
-                                        if (dataItem.recourse == name) {
-                                            recourseInt = element.getInt(name)
-                                            break
-                                        }
-                                    }
-                                    navigateToBogaslujbovyia(dataItem.title, recourseInt)
+                                    navigateToBogaslujbovyia(dataItem.title, dataItem.recourse)
                                 },
                                 onLongClick = {
                                     removeItemBible = -1

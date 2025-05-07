@@ -58,8 +58,7 @@ import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.TitleCalendarMounth
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
 import by.carkva_gazeta.malitounik.views.HtmlText
-import java.io.BufferedReader
-import java.io.InputStreamReader
+import by.carkva_gazeta.malitounik.views.openAssetsResources
 
 @Composable
 fun BibliaMenu(
@@ -68,7 +67,7 @@ fun BibliaMenu(
     innerPadding: PaddingValues,
     navigateToSearchBible: (String) -> Unit,
     navigateToCytanniList: (String, String) -> Unit,
-    navigateToBogaslujbovyia: (String, Int) -> Unit
+    navigateToBogaslujbovyia: (String, String) -> Unit
 ) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
@@ -374,7 +373,7 @@ fun BibliaMenu(
                 }
                 TextButton(
                     onClick = {
-                        navigateToBogaslujbovyia(context.getString(R.string.malitva_pered), R.raw.nadsan_pered)
+                        navigateToBogaslujbovyia(context.getString(R.string.malitva_pered), "nadsan_pered.html")
                     },
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
@@ -392,7 +391,7 @@ fun BibliaMenu(
                 }
                 TextButton(
                     onClick = {
-                        navigateToBogaslujbovyia(context.getString(R.string.malitva_posle), R.raw.nadsan_posle)
+                        navigateToBogaslujbovyia(context.getString(R.string.malitva_posle), "nadsan_posle.html")
                     },
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
@@ -442,16 +441,16 @@ fun BibliaMenu(
                                         navigationActions.navigateToBogaslujbovyia(
                                             context.getString(R.string.pesnia, i),
                                             when (i) {
-                                                1 -> R.raw.nadsan_pesni_1
-                                                2 -> R.raw.nadsan_pesni_2
-                                                3 -> R.raw.nadsan_pesni_3
-                                                4 -> R.raw.nadsan_pesni_4
-                                                5 -> R.raw.nadsan_pesni_5
-                                                6 -> R.raw.nadsan_pesni_6
-                                                7 -> R.raw.nadsan_pesni_7
-                                                8 -> R.raw.nadsan_pesni_8
-                                                9 -> R.raw.nadsan_pesni_9
-                                                else -> R.raw.nadsan_pesni_1
+                                                1 -> "nadsan_pesni_1.html"
+                                                2 -> "nadsan_pesni_2.html"
+                                                3 -> "nadsan_pesni_3.html"
+                                                4 -> "nadsan_pesni_4.html"
+                                                5 -> "nadsan_pesni_5.html"
+                                                6 -> "nadsan_pesni_6.html"
+                                                7 -> "nadsan_pesni_7.html"
+                                                8 -> "nadsan_pesni_8.html"
+                                                9 -> "nadsan_pesni_9.html"
+                                                else -> "nadsan_pesni_1.html"
                                             }
                                         )
                                     },
@@ -576,13 +575,11 @@ fun DialogSemuxa(
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
                 val context = LocalContext.current
-                val inputStream =
-                    if (isSemuxa) context.resources.openRawResource(R.raw.all_rights_reserved_semuxa)
-                    else context.resources.openRawResource(R.raw.all_rights_reserved_bokun)
-                val isr = InputStreamReader(inputStream)
-                val reader = BufferedReader(isr)
+                val text =
+                    if (isSemuxa) openAssetsResources(context, "all_rights_reserved_semuxa.html")
+                    else openAssetsResources(context, "all_rights_reserved_bokun.html")
                 Column(modifier = Modifier.verticalScroll(rememberScrollState()).weight(1f)) {
-                    HtmlText(text = reader.readText(), modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
+                    HtmlText(text = text, modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
                 }
                 Row(
                     modifier = Modifier
@@ -621,9 +618,6 @@ fun DialogPeryaidy(
                         .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
-                val inputStream = LocalContext.current.resources.openRawResource(R.raw.nadsan_periody)
-                val isr = InputStreamReader(inputStream)
-                val reader = BufferedReader(isr)
                 Row(
                     modifier = Modifier
                         .verticalScroll(rememberScrollState())
@@ -631,7 +625,7 @@ fun DialogPeryaidy(
                 ) {
                     HtmlText(
                         modifier = Modifier.padding(10.dp),
-                        text = reader.readText(),
+                        text = openAssetsResources(LocalContext.current, "nadsan_periody.txt"),
                         fontSize = Settings.fontInterface.sp
                     )
                 }

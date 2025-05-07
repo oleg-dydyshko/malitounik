@@ -157,6 +157,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.InputStreamReader
 import java.util.Calendar
 import kotlin.random.Random
@@ -172,11 +173,10 @@ object AppNavGraphState {
     var setAlarm = true
 
     fun getCytata(context: MainActivity): AnnotatedString {
-        val inputStream = context.resources.openRawResource(R.raw.citata)
-        val isr = InputStreamReader(inputStream)
-        val reader = BufferedReader(isr)
+        val text = openAssetsResources(context, "citata.txt")
         val citataList = ArrayList<String>()
-        reader.forEachLine {
+        val listText = text.split("\n")
+        listText.forEach {
             val line = StringBuilder()
             val t1 = it.indexOf("(")
             if (t1 != -1) {
@@ -199,6 +199,35 @@ object AppNavGraphState {
             addStyle(SpanStyle(fontFamily = FontFamily(Font(R.font.comici))), 1, this.length)
         }.toAnnotatedString()
     }
+}
+
+fun openAssetsResources(context: Context, fileName: String): String {
+    var result = ""
+    val builder = StringBuilder()
+    try {
+        val inputStream = context.assets.open(fileName)
+        val isr = InputStreamReader(inputStream)
+        val reader = BufferedReader(isr)
+        var line: String
+        reader.forEachLine {
+            line = it
+            if ((context as? MainActivity)?.dzenNoch == true) line = line.replace("#d00505", "#ff6666")
+            if (line.contains("//")) {
+                val t1 = line.indexOf("//")
+                line = line.substring(0, t1).trim()
+                if (line != "") builder.append(line).append("\n")
+            } else {
+                builder.append(line).append("\n")
+            }
+        }
+        result = builder.toString()
+    } catch (_: FileNotFoundException) {
+        val inputStream = context.assets.open("bogashlugbovya_error.html")
+        val isr = InputStreamReader(inputStream)
+        val reader = BufferedReader(isr)
+        result = reader.readText()
+    }
+    return result
 }
 
 @Composable
@@ -679,7 +708,7 @@ fun AppNavGraph(cytata: AnnotatedString) {
             exitTransition = {
                 fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
-            Bogaslujbovyia(navController, stringResource(R.string.spovedz), R.raw.padryxtouka_da_spovedzi)
+            Bogaslujbovyia(navController, stringResource(R.string.spovedz), "padryxtouka_da_spovedzi.html")
         }
 
         composable(AllDestinations.SEARCH_SVITYIA) {
@@ -718,15 +747,15 @@ fun AppNavGraph(cytata: AnnotatedString) {
             exitTransition = {
                 fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             }) {
-            Bogaslujbovyia(navController, stringResource(R.string.pamiatka), R.raw.pamiatka)
+            Bogaslujbovyia(navController, stringResource(R.string.pamiatka), "pamiatka.html")
         }
 
         composable(AllDestinations.PRANAS) {
-            Bogaslujbovyia(navController, stringResource(R.string.pra_nas), R.raw.onas)
+            Bogaslujbovyia(navController, stringResource(R.string.pra_nas), "onas.html")
         }
 
         composable(AllDestinations.HELP) {
-            Bogaslujbovyia(navController, stringResource(R.string.help), R.raw.help)
+            Bogaslujbovyia(navController, stringResource(R.string.help), "help.html")
         }
 
         composable(
@@ -803,17 +832,16 @@ fun AppNavGraph(cytata: AnnotatedString) {
 
         composable(
             AllDestinations.BOGASLUJBOVYIA + "/{title}/{resurs}",
-            arguments = listOf(navArgument("resurs") { type = NavType.IntType })
         ) { stackEntry ->
             val title = stackEntry.arguments?.getString("title") ?: ""
-            val resurs = stackEntry.arguments?.getInt("resurs") ?: R.raw.bogashlugbovya_error
             val context = LocalContext.current
+            val resurs = stackEntry.arguments?.getString("resurs") ?: "bogashlugbovya_error.html"
             Bogaslujbovyia(
                 navController, title, resurs,
                 navigateTo = { navigate ->
                     when (navigate) {
                         "error" -> {
-                            navigationActions.navigateToBogaslujbovyia(context.getString(R.string.error_ch2), R.raw.bogashlugbovya_error)
+                            navigationActions.navigateToBogaslujbovyia(context.getString(R.string.error_ch2), "bogashlugbovya_error.html")
                         }
 
                         "malitvypasliaprychastia" -> {
@@ -821,11 +849,11 @@ fun AppNavGraph(cytata: AnnotatedString) {
                         }
 
                         "litciaiblaslavennechl" -> {
-                            navigationActions.navigateToBogaslujbovyia("Ліцьця і блаславеньне хлябоў", R.raw.viaczernia_liccia_i_blaslavenne_chliabou)
+                            navigationActions.navigateToBogaslujbovyia("Ліцьця і блаславеньне хлябоў", "bogashlugbovya/viaczernia_liccia_i_blaslavenne_chliabou.html")
                         }
 
                         "gliadzitutdabraveshchane" -> {
-                            navigationActions.navigateToBogaslujbovyia("Дабравешчаньне Найсьвяцейшай Багародзіцы", R.raw.mm_25_03_dabravieszczannie_viaczernia_z_liturhijaj)
+                            navigationActions.navigateToBogaslujbovyia("Дабравешчаньне Найсьвяцейшай Багародзіцы", "bogashlugbovya/mm_25_03_dabravieszczannie_viaczernia_z_liturhijaj.html")
                         }
 
                         "cytanne" -> {
@@ -2159,6 +2187,7 @@ fun DialogLogProgramy(
                 )
                 Column(
                     modifier = Modifier
+                        .weight(1f)
                         .padding(10.dp)
                         .verticalScroll(rememberScrollState())
                 ) {
@@ -2174,25 +2203,23 @@ fun DialogLogProgramy(
                         .padding(horizontal = 8.dp, vertical = 2.dp),
                     horizontalArrangement = Arrangement.End,
                 ) {
-                    Column {
-                        TextButton(
-                            onClick = { onDismiss() },
-                            shape = MaterialTheme.shapes.small
-                        ) {
-                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
-                            Text(stringResource(R.string.close), fontSize = 18.sp)
-                        }
-                        TextButton(
-                            onClick = {
-                                logView.createAndSentFile()
-                                onDismiss()
-                                if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) context.setlightSensor()
-                            },
-                            shape = MaterialTheme.shapes.small
-                        ) {
-                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
-                            Text(stringResource(R.string.set_log), fontSize = 18.sp)
-                        }
+                    TextButton(
+                        onClick = { onDismiss() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Text(stringResource(R.string.close), fontSize = 18.sp)
+                    }
+                    TextButton(
+                        onClick = {
+                            logView.createAndSentFile()
+                            onDismiss()
+                            if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) context.setlightSensor()
+                        },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Text(stringResource(R.string.set_log), fontSize = 18.sp)
                     }
                 }
             }
@@ -2232,9 +2259,11 @@ fun DialogUpdateMalitounik(
                 )
                 Column {
                     Text(modifier = Modifier.padding(bottom = 10.dp), text = stringResource(R.string.update_program_progress, bytesDownloadUpdate, totalSizeUpdate), fontSize = Settings.fontInterface.sp)
-                    LinearProgressIndicator(progress = { (bytesDownload / total).toFloat() }, modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 10.dp))
+                    LinearProgressIndicator(
+                        progress = { (bytesDownload / total).toFloat() }, modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 10.dp)
+                    )
                 }
                 Row(
                     modifier = Modifier

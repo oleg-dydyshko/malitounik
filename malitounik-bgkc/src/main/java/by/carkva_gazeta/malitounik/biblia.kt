@@ -1,8 +1,7 @@
 package by.carkva_gazeta.malitounik
 
 import android.content.Context
-import java.io.BufferedReader
-import java.io.InputStreamReader
+import by.carkva_gazeta.malitounik.views.openAssetsResources
 
 fun biblia(
     context: Context,
@@ -16,7 +15,6 @@ fun biblia(
     var perevodNew = perevod
     val result = ArrayList<BibliaDataItem>()
     if (glavaStart == 0) return result
-    val fields = R.raw::class.java.fields
     var knigaNew = getRealBook(kniga, perevodNew)
     if (knigaNew == -1) {
         perevodNew = Settings.PEREVODCARNIAUSKI
@@ -31,100 +29,59 @@ fun biblia(
     } else {
         "s"
     }
-    var fileName = 0
+    var fileName = "biblia_error.txt"
     if (perevod == Settings.PEREVODNADSAN) {
-        fileName = R.raw.psaltyr_nadsan
+        fileName = "psaltyr_nadsan.txt"
     } else {
         val prevodName = when (perevodNew) {
-            Settings.PEREVODSEMUXI -> "biblia"
-            Settings.PEREVODBOKUNA -> "bokuna"
-            Settings.PEREVODCARNIAUSKI -> "carniauski"
-            Settings.PEREVODSINOIDAL -> "sinaidal"
-            else -> "biblia"
-        }
-        for (element in fields) {
-            val name = element.name
-            if (name == "$prevodName$zavet${knigaNew + 1}") {
-                fileName = element.getInt(name)
-                break
+            Settings.PEREVODSEMUXI -> {
+                "chytanne/Semucha/biblia"
+            }
+
+            Settings.PEREVODBOKUNA -> {
+                "chytanne/Bokun/bokuna"
+            }
+
+            Settings.PEREVODCARNIAUSKI -> {
+                "chytanne/Carniauski/carniauski"
+            }
+
+            Settings.PEREVODSINOIDAL -> {
+                "chytanne/Sinodal/sinaidal"
+            }
+
+            else -> {
+                "chytanne/Semucha/biblia"
             }
         }
+        fileName = "$prevodName$zavet${knigaNew + 1}.txt"
     }
-    if (fileName != 0) {
-        val inputStream =
-            context.resources.openRawResource(fileName)
-        val isr = InputStreamReader(inputStream)
-        val reader = BufferedReader(isr)
-        var line: String
-        val sb = StringBuilder()
-        reader.forEachLine {
-            line = it
-            if (line.contains("//")) {
-                val t1 = line.indexOf("//")
-                line = line.substring(0, t1).trim()
-                if (line != "") sb.append(line).append("\n")
-            } else {
-                sb.append(line).append("\n")
-            }
-        }
-        val isPsaltyrGreek =
-            perevodNew == Settings.PEREVODSEMUXI || perevodNew == Settings.PEREVODNADSAN || perevodNew == Settings.PEREVODSINOIDAL
-        val listGlav = sb.toString().split("===")
-        for (glava in glavaStart..glavaEnd) {
-            val spisStyxov = listGlav[glava].trim().split("\n")
-            if (glava == glavaStart) {
-                for (styx in spisStyxov.indices) {
-                    if (styxStart != 0 && styxEnd != 0 && glavaEnd == glavaStart) {
-                        if (styxStart - 1 <= styx && styxEnd > styx) result.add(
+    val isPsaltyrGreek =
+        perevodNew == Settings.PEREVODSEMUXI || perevodNew == Settings.PEREVODNADSAN || perevodNew == Settings.PEREVODSINOIDAL
+    val listGlav = openAssetsResources(context, fileName).split("===")
+    for (glava in glavaStart..glavaEnd) {
+        val spisStyxov = listGlav[glava].trim().split("\n")
+        if (glava == glavaStart) {
+            for (styx in spisStyxov.indices) {
+                if (styxStart != 0 && styxEnd != 0 && glavaEnd == glavaStart) {
+                    if (styxStart - 1 <= styx && styxEnd > styx) result.add(
+                        BibliaDataItem(
+                            spisStyxov[styx].replace(
+                                "\\n",
+                                "<br>"
+                            ),
+                            getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
+                        )
+                    )
+                } else {
+                    if (styxStart != 0) {
+                        if (styxStart - 1 <= styx) result.add(
                             BibliaDataItem(
                                 spisStyxov[styx].replace(
                                     "\\n",
                                     "<br>"
                                 ),
                                 getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
-                            )
-                        )
-                    } else {
-                        if (styxStart != 0) {
-                            if (styxStart - 1 <= styx) result.add(
-                                BibliaDataItem(
-                                    spisStyxov[styx].replace(
-                                        "\\n",
-                                        "<br>"
-                                    ),
-                                    getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
-                                )
-                            )
-                        } else {
-                            result.add(
-                                BibliaDataItem(
-                                    spisStyxov[styx].replace("\\n", "<br>"),
-                                    getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
-                                )
-                            )
-                        }
-                    }
-                }
-            }
-            if (glava != glavaStart && glava != glavaEnd) {
-                for (styx in spisStyxov.indices) {
-                    result.add(
-                        BibliaDataItem(
-                            spisStyxov[styx].replace("\\n", "<br>"),
-                            getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
-                        )
-                    )
-                }
-            }
-            if (glava == glavaEnd && glavaEnd != glavaStart) {
-                for (styx in spisStyxov.indices) {
-                    if (styxEnd != 0) {
-                        if (styxEnd > styx) result.add(
-                            BibliaDataItem(
-                                spisStyxov[styx].replace(
-                                    "\\n",
-                                    "<br>"
-                                ), getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
                             )
                         )
                     } else {
@@ -138,12 +95,37 @@ fun biblia(
                 }
             }
         }
-    } else {
-        val inputStream =
-            context.resources.openRawResource(R.raw.biblia_error)
-        val isr = InputStreamReader(inputStream)
-        val reader = BufferedReader(isr)
-        result.add(BibliaDataItem(reader.readText(), "+-+"))
+        if (glava != glavaStart && glava != glavaEnd) {
+            for (styx in spisStyxov.indices) {
+                result.add(
+                    BibliaDataItem(
+                        spisStyxov[styx].replace("\\n", "<br>"),
+                        getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
+                    )
+                )
+            }
+        }
+        if (glava == glavaEnd && glavaEnd != glavaStart) {
+            for (styx in spisStyxov.indices) {
+                if (styxEnd != 0) {
+                    if (styxEnd > styx) result.add(
+                        BibliaDataItem(
+                            spisStyxov[styx].replace(
+                                "\\n",
+                                "<br>"
+                            ), getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
+                        )
+                    )
+                } else {
+                    result.add(
+                        BibliaDataItem(
+                            spisStyxov[styx].replace("\\n", "<br>"),
+                            getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
+                        )
+                    )
+                }
+            }
+        }
     }
     return result
 }

@@ -45,7 +45,7 @@ import java.util.Calendar
 @Composable
 fun KaliandarKnigaView(
     colorBlackboard: Color,
-    navigateToBogaslujbovyia: (title: String, resurs: Int) -> Unit,
+    navigateToBogaslujbovyia: (title: String, resurs: String) -> Unit,
     navigateToSvityiaView: (svity: Boolean, position: Int) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -116,7 +116,7 @@ fun KaliandarKnigaView(
                             )
                         }
                         val listSlujbaPavia = slujba.loadSluzbaDayList(SlugbovyiaTextu.PAVIACHERNICA, dayOfYear, year)
-                        listSlujbaPavia.add(SlugbovyiaTextuData(0, "Павячэрніца малая", R.raw.paviaczernica_malaja, SlugbovyiaTextu.PAVIACHERNICA))
+                        listSlujbaPavia.add(SlugbovyiaTextuData(0, "Павячэрніца малая", "bogashlugbovya/paviaczernica_malaja.html", SlugbovyiaTextu.PAVIACHERNICA))
                         Column(modifier = modifier.clickable {
                             if (listSlujbaPavia.size == 1) {
                                 navigateToBogaslujbovyia(listSlujbaPavia[0].title, listSlujbaPavia[0].resource)
@@ -158,7 +158,7 @@ fun KaliandarKnigaView(
                     Row(modifier = Modifier.padding(vertical = 10.dp)) {
                         val listSlujbaJutran = slujba.loadSluzbaDayList(SlugbovyiaTextu.JUTRAN, dayOfYear, year)
                         if (data[0].toInt() == Calendar.SUNDAY) {
-                            listSlujbaJutran.add(SlugbovyiaTextuData(0, "Ютрань нядзельная (у скароце)", R.raw.jutran_niadzelnaja, SlugbovyiaTextu.JUTRAN))
+                            listSlujbaJutran.add(SlugbovyiaTextuData(0, "Ютрань нядзельная (у скароце)", "bogashlugbovya/jutran_niadzelnaja.html", SlugbovyiaTextu.JUTRAN))
                         }
                         Column(modifier = modifier.clickable(listSlujbaJutran.isNotEmpty()) {
                             if (listSlujbaJutran.size == 1) {
@@ -262,7 +262,7 @@ fun KaliandarKnigaView(
 fun DialogKniga(
     slujba: Int,
     list: SnapshotStateList<SlugbovyiaTextuData>,
-    navigateToBogaslujbovyia: (title: String, resurs: Int) -> Unit,
+    navigateToBogaslujbovyia: (title: String, resurs: String) -> Unit,
     onDismiss: () -> Unit
 ) {
     val slujvaTitle = when (slujba) {

@@ -208,7 +208,7 @@ fun PadzeiaView(navController: NavHostController) {
                     listPadzeia.removeAll(del.toSet())
                     val outputStream = FileWriter("${context.filesDir}/Sabytie.json")
                     val gson = Gson()
-                    val type = TypeToken.getParameterized(java.util.ArrayList::class.java, Padzeia::class.java).type
+                    val type = TypeToken.getParameterized(ArrayList::class.java, Padzeia::class.java).type
                     outputStream.write(gson.toJson(listPadzeia, type))
                     outputStream.close()
                     coroutineScope.launch {
@@ -380,7 +380,7 @@ fun PadzeiaView(navController: NavHostController) {
             listPadzeia.removeAll(del.toSet())
             val outputStream = FileWriter("${context.filesDir}/Sabytie.json")
             val gson = Gson()
-            val type = TypeToken.getParameterized(java.util.ArrayList::class.java, Padzeia::class.java).type
+            val type = TypeToken.getParameterized(ArrayList::class.java, Padzeia::class.java).type
             outputStream.write(gson.toJson(listPadzeia, type))
             outputStream.close()
             CoroutineScope(Dispatchers.IO).launch {
@@ -1830,7 +1830,7 @@ fun savePadzeia(
         }
         val gson = Gson()
         val outputStream = FileWriter("${context.filesDir}/Sabytie.json")
-        val type = TypeToken.getParameterized(java.util.ArrayList::class.java, Padzeia::class.java).type
+        val type = TypeToken.getParameterized(ArrayList::class.java, Padzeia::class.java).type
         outputStream.write(gson.toJson(padzeiaList, type))
         outputStream.close()
         padzeiaList.sort()

@@ -22,3 +22,5 @@
 -keepclassmembers class **.R$* {
     public static <fields>;
 }
+#-keep class androidx.compose.runtime.snapshots.SnapshotStateList
+#-printusage /home/oleg/usage.txt

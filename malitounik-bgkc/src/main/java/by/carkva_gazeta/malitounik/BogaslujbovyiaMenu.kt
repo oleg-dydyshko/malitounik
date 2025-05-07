@@ -247,18 +247,18 @@ fun BogaslujbovyiaMenu(
 
 fun getAkafist(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
-    list.add(BogaslujbovyiaListData("Пра Акафіст", R.raw.akafist0))
-    list.add(BogaslujbovyiaListData("Найсьвяцейшай Багародзіцы", R.raw.akafist1))
-    list.add(BogaslujbovyiaListData("Маці Божай Нястомнай Дапамогі", R.raw.akafist2))
-    list.add(BogaslujbovyiaListData("перад Жыровіцкай іконай", R.raw.akafist3))
-    list.add(BogaslujbovyiaListData("у гонар Падляшскіх мучанікаў", R.raw.akafist4))
-    list.add(BogaslujbovyiaListData("Імю Ісусаваму", R.raw.akafist5))
-    list.add(BogaslujbovyiaListData("да Духа Сьвятога", R.raw.akafist6))
-    list.add(BogaslujbovyiaListData("сьв. Апосталам Пятру і Паўлу", R.raw.akafist7))
-    list.add(BogaslujbovyiaListData("Акафіст сьв. Язэпу", R.raw.akafist_praviednamu_jazepu))
+    list.add(BogaslujbovyiaListData("Пра Акафіст", "bogashlugbovya/akafist0.html"))
+    list.add(BogaslujbovyiaListData("Найсьвяцейшай Багародзіцы", "bogashlugbovya/akafist1.html"))
+    list.add(BogaslujbovyiaListData("Маці Божай Нястомнай Дапамогі", "bogashlugbovya/akafist2.html"))
+    list.add(BogaslujbovyiaListData("перад Жыровіцкай іконай", "bogashlugbovya/akafist3.html"))
+    list.add(BogaslujbovyiaListData("у гонар Падляшскіх мучанікаў", "bogashlugbovya/akafist4.html"))
+    list.add(BogaslujbovyiaListData("Імю Ісусаваму", "bogashlugbovya/akafist5.html"))
+    list.add(BogaslujbovyiaListData("да Духа Сьвятога", "bogashlugbovya/akafist6.html"))
+    list.add(BogaslujbovyiaListData("сьв. Апосталам Пятру і Паўлу", "bogashlugbovya/akafist7.html"))
+    list.add(BogaslujbovyiaListData("Акафіст сьв. Язэпу", "bogashlugbovya/akafist_praviednamu_jazepu.html"))
     list.add(
         BogaslujbovyiaListData(
-            "Акафіст Росіцкім мучанікам", R.raw.akafist_rosickim_muczanikam
+            "Акафіст Росіцкім мучанікам", "bogashlugbovya/akafist_rosickim_muczanikam.html"
         )
     )
     return list
@@ -266,20 +266,20 @@ fun getAkafist(): ArrayList<BogaslujbovyiaListData> {
 
 fun getRujanec(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
-    list.add(BogaslujbovyiaListData("Малітвы на вяровіцы", R.raw.ruzanec0))
-    list.add(BogaslujbovyiaListData("Молімся на ружанцы", R.raw.ruzanec2))
-    list.add(BogaslujbovyiaListData("Разважаньні на Ружанец", R.raw.ruzanec1))
-    list.add(BogaslujbovyiaListData("Частка I. Радасныя таямніцы (пн, сб)", R.raw.ruzanec3))
-    list.add(BogaslujbovyiaListData("Частка II. Балесныя таямніцы (аўт, пт)", R.raw.ruzanec4))
-    list.add(BogaslujbovyiaListData("Частка III. Слаўныя таямніцы (ср, ндз)", R.raw.ruzanec5))
-    list.add(BogaslujbovyiaListData("Частка IV. Таямніцы сьвятла (чц)", R.raw.ruzanec6))
+    list.add(BogaslujbovyiaListData("Малітвы на вяровіцы", "bogashlugbovya/ruzanec0.html"))
+    list.add(BogaslujbovyiaListData("Молімся на ружанцы", "bogashlugbovya/ruzanec2.html"))
+    list.add(BogaslujbovyiaListData("Разважаньні на Ружанец", "bogashlugbovya/ruzanec1.html"))
+    list.add(BogaslujbovyiaListData("Частка I. Радасныя таямніцы (пн, сб)", "bogashlugbovya/ruzanec3.html"))
+    list.add(BogaslujbovyiaListData("Частка II. Балесныя таямніцы (аўт, пт)", "bogashlugbovya/ruzanec4.html"))
+    list.add(BogaslujbovyiaListData("Частка III. Слаўныя таямніцы (ср, ндз)", "bogashlugbovya/ruzanec5.html"))
+    list.add(BogaslujbovyiaListData("Частка IV. Таямніцы сьвятла (чц)", "bogashlugbovya/ruzanec6.html"))
     return list
 }
 
 fun getMalitvy(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
-    list.add(BogaslujbovyiaListData("Ранішняя малітвы", R.raw.malitvy_ranisznija))
-    list.add(BogaslujbovyiaListData("Вячэрнія малітвы", R.raw.malitvy_viaczernija))
+    list.add(BogaslujbovyiaListData("Ранішняя малітвы", "bogashlugbovya/malitvy_ranisznija.html"))
+    list.add(BogaslujbovyiaListData("Вячэрнія малітвы", "bogashlugbovya/malitvy_viaczernija.html"))
     return list
 }
 
@@ -287,48 +287,48 @@ fun getBogaslujbovyia(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
-            "Боская Літургія сьв. Яна Залатавуснага", R.raw.lit_jana_zalatavusnaha
+            "Боская Літургія сьв. Яна Залатавуснага", "bogashlugbovya/lit_jana_zalatavusnaha.html"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Боская Літургія ў Велікодны перыяд", R.raw.lit_jan_zalat_vielikodn
+            "Боская Літургія ў Велікодны перыяд", "bogashlugbovya/lit_jan_zalat_vielikodn.html"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Боская Літургія сьв. Васіля Вялікага", R.raw.lit_vasila_vialikaha
+            "Боская Літургія сьв. Васіля Вялікага", "bogashlugbovya/lit_vasila_vialikaha.html"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Літургія раней асьвячаных дароў", R.raw.lit_raniej_asviaczanych_darou
+            "Літургія раней асьвячаных дароў", "bogashlugbovya/lit_raniej_asviaczanych_darou.html"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Набажэнства ў гонар Маці Божай Нястомнай Дапамогі", R.raw.nabazenstva_maci_bozaj_niast_dap
+            "Набажэнства ў гонар Маці Божай Нястомнай Дапамогі", "bogashlugbovya/nabazenstva_maci_bozaj_niast_dap.html"
         )
     )
-    list.add(BogaslujbovyiaListData("Абедніца", R.raw.abiednica))
+    list.add(BogaslujbovyiaListData("Абедніца", "bogashlugbovya/abiednica.html"))
     list.add(
         BogaslujbovyiaListData(
-            "Малебны канон Найсьвяцейшай Багародзіцы", R.raw.kanon_malebny_baharodzicy
-        )
-    )
-    list.add(
-        BogaslujbovyiaListData(
-            "Вялікі пакаянны канон сьвятога Андрэя Крыцкага", R.raw.kanon_andreja_kryckaha
+            "Малебны канон Найсьвяцейшай Багародзіцы", "bogashlugbovya/kanon_malebny_baharodzicy.html"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малебен сьв. Кірылу і Мятоду, настаўнікам славянскім", R.raw.malebien_kiryla_miatod
+            "Вялікі пакаянны канон сьвятога Андрэя Крыцкага", "bogashlugbovya/kanon_andreja_kryckaha.html"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вялікі пакаянны канон сьвятога Андрэя Крыцкага(у 4-х частках)", R.raw.kanon_andreja_kryckaha_4_czastki
+            "Малебен сьв. Кірылу і Мятоду, настаўнікам славянскім", "bogashlugbovya/malebien_kiryla_miatod.html"
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Вялікі пакаянны канон сьвятога Андрэя Крыцкага(у 4-х частках)", "bogashlugbovya/kanon_andreja_kryckaha_4_czastki.html"
         )
     )
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
@@ -339,4 +339,4 @@ fun getBogaslujbovyia(): ArrayList<BogaslujbovyiaListData> {
     return list
 }
 
-data class BogaslujbovyiaListData(val title: String, val resurs: Int)
+data class BogaslujbovyiaListData(val title: String, val resurs: String)

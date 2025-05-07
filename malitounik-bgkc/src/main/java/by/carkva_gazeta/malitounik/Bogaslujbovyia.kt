@@ -118,6 +118,7 @@ import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.HtmlText
 import by.carkva_gazeta.malitounik.views.findCaliandarToDay
+import by.carkva_gazeta.malitounik.views.openAssetsResources
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
@@ -125,17 +126,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.BufferedReader
 import java.io.File
-import java.io.InputStreamReader
+import java.net.URLDecoder
 import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun Bogaslujbovyia(
-    navController: NavHostController, title: String, resurs: Int,
+    navController: NavHostController, title: String, resurs: String,
     navigateTo: (String) -> Unit = {}
 ) {
+    val resursEncode = URLDecoder.decode(resurs, "UTF8")
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var fontSize by remember { mutableFloatStateOf(k.getFloat("font_biblia", 22F)) }
@@ -171,13 +172,12 @@ fun Bogaslujbovyia(
         }
         initVybranoe = false
     }
-    val resursText = context.resources.getResourceEntryName(resurs)
     LaunchedEffect(Unit) {
         coroutineScope.launch {
             isVybranoe = false
             if (vybranoeList.isNotEmpty()) {
                 for (i in 0 until vybranoeList.size) {
-                    if (resursText == vybranoeList[i].resource) {
+                    if (resursEncode == vybranoeList[i].resource) {
                         isVybranoe = true
                         break
                     }
@@ -189,7 +189,7 @@ fun Bogaslujbovyia(
         if (isVybranoe) {
             var pos = 0
             for (i in 0 until vybranoeList.size) {
-                if (resursText == vybranoeList[i].resource) {
+                if (resursEncode == vybranoeList[i].resource) {
                     pos = i
                     break
                 }
@@ -202,7 +202,7 @@ fun Bogaslujbovyia(
                 VybranaeDataAll(
                     Calendar.getInstance().timeInMillis,
                     title,
-                    resursText,
+                    resursEncode,
                 )
             )
         }
@@ -299,10 +299,7 @@ fun Bogaslujbovyia(
     val maxLine = remember { mutableIntStateOf(1) }
     var htmlText by rememberSaveable { mutableStateOf("") }
     LaunchedEffect(Unit) {
-        val inputStream = context.resources.openRawResource(resurs)
-        val isr = InputStreamReader(inputStream)
-        val reader = BufferedReader(isr)
-        htmlText = reader.readText()
+        htmlText = openAssetsResources(context, resursEncode)
     }
     var findBack by remember { mutableStateOf(false) }
     var findForward by remember { mutableStateOf(false) }
@@ -437,29 +434,29 @@ fun Bogaslujbovyia(
             }
         )
     }
-    val isViachernia = resurs == R.raw.viaczernia_niadzelnaja || resurs == R.raw.viaczernia_na_kozny_dzen || resurs == R.raw.viaczernia_u_vialikim_poscie || resurs == R.raw.viaczerniaja_sluzba_sztodzionnaja_biez_sviatara || resurs == R.raw.viaczernia_svietly_tydzien
-    val isLiturgia = resurs == R.raw.lit_jana_zalatavusnaha || resurs == R.raw.lit_jan_zalat_vielikodn || resurs == R.raw.lit_vasila_vialikaha || resurs == R.raw.abiednica || resurs == R.raw.vialikdzien_liturhija
+    val isViachernia = resursEncode == "bogashlugbovya/viaczernia_niadzelnaja.html" || resursEncode == "bogashlugbovya/viaczernia_na_kozny_dzen.html" || resursEncode == "bogashlugbovya/viaczernia_u_vialikim_poscie.html" || resursEncode == "bogashlugbovya/viaczerniaja_sluzba_sztodzionnaja_biez_sviatara.html" || resursEncode == "bogashlugbovya/viaczernia_svietly_tydzien.html"
+    val isLiturgia = resursEncode == "bogashlugbovya/lit_jana_zalatavusnaha.html" || resursEncode == "bogashlugbovya/lit_jan_zalat_vielikodn.html" || resursEncode == "bogashlugbovya/lit_vasila_vialikaha.html" || resursEncode == "bogashlugbovya/abiednica.html" || resursEncode == "bogashlugbovya/vialikdzien_liturhija.html"
     val dataCal = findCaliandarToDay(context)
     val isNoLiturgia = dataCal[22].toInt() == -53 || dataCal[22].toInt() == -51 || (dataCal[22].toInt() in -48..-2 && !(dataCal[0].toInt() == Calendar.SATURDAY || dataCal[0].toInt() == Calendar.SUNDAY))
     val cytanneVisable = (isLiturgia && !isNoLiturgia) || (isViachernia && isNoLiturgia)
     val data = findCaliandarToDay(context)
     val listResource = ArrayList<SlugbovyiaTextuData>()
-    if (isLiturgia || isViachernia) {
-        when (resurs) {
-            R.raw.lit_jana_zalatavusnaha, R.raw.lit_jan_zalat_vielikodn, R.raw.lit_vasila_vialikaha, R.raw.abiednica -> {
+    if (isLiturgia || isViachernia || resursEncode == "bogashlugbovya/jutran_niadzelnaja.html") {
+        when (resursEncode) {
+                "bogashlugbovya/lit_jana_zalatavusnaha.html", "bogashlugbovya/lit_jan_zalat_vielikodn.html", "bogashlugbovya/lit_vasila_vialikaha.html", "bogashlugbovya/abiednica.html" -> {
                 if (data[0].toInt() == Calendar.SUNDAY) {
                     if (data[20] != "0") {
                         val trapary = getTraparyKandakiNiadzelnyia()
-                        listResource.add(SlugbovyiaTextuData(0, trapary[data[20].toInt() - 1].title, trapary[data[20].toInt() - 1].resurs, SlugbovyiaTextu.LITURHIJA))
+                        listResource.add(SlugbovyiaTextuData(0, trapary[data[20].toInt() - 1].title, trapary[data[20].toInt() - 1].resurs.toString(), SlugbovyiaTextu.LITURHIJA))
                     }
                 } else {
                     val trapary = getTraparyKandakiShtodzennyia()
-                    listResource.add(SlugbovyiaTextuData(0, trapary[data[0].toInt() - 2].title.replace("\n", ": "), trapary[data[0].toInt() - 2].resurs, SlugbovyiaTextu.LITURHIJA))
+                    listResource.add(SlugbovyiaTextuData(0, trapary[data[0].toInt() - 2].title.replace("\n", ": "), trapary[data[0].toInt() - 2].resurs.toString(), SlugbovyiaTextu.LITURHIJA))
                 }
                 listResource.addAll(SlugbovyiaTextu().loadSluzbaDayList(SlugbovyiaTextu.LITURHIJA, data[24].toInt(), data[3].toInt()))
             }
 
-            R.raw.jutran_niadzelnaja -> {
+            "bogashlugbovya/jutran_niadzelnaja.html" -> {
                 listResource.addAll(SlugbovyiaTextu().loadSluzbaDayList(SlugbovyiaTextu.JUTRAN, data[24].toInt(), data[3].toInt()))
             }
 
@@ -743,33 +740,33 @@ fun Bogaslujbovyia(
                                             val slugbovyiaTextu = SlugbovyiaTextu()
                                             var res = slugbovyiaTextu.getTydzen1()
                                             res.forEach {
-                                                if (resurs == it.resource) printFile = "Tydzien-1 VP_2012.pdf"
+                                                if (resursEncode == it.resource) printFile = "Tydzien-1 VP_2012.pdf"
                                             }
                                             res = slugbovyiaTextu.getTydzen2()
                                             res.forEach {
-                                                if (resurs == it.resource) printFile = "Tydzien-2 VP_2012.pdf"
+                                                if (resursEncode == it.resource) printFile = "Tydzien-2 VP_2012.pdf"
                                             }
                                             res = slugbovyiaTextu.getTydzen3()
                                             res.forEach {
-                                                if (resurs == it.resource) printFile = "Tydzien-3 VP_2014.pdf"
+                                                if (resursEncode == it.resource) printFile = "Tydzien-3 VP_2014.pdf"
                                             }
                                             res = slugbovyiaTextu.getTydzen4()
                                             res.forEach {
-                                                if (resurs == it.resource) printFile = "Tydzien-4 VP_2014.pdf"
+                                                if (resursEncode == it.resource) printFile = "Tydzien-4 VP_2014.pdf"
                                             }
                                             res = slugbovyiaTextu.getTydzen5()
                                             res.forEach {
-                                                if (resurs == it.resource) printFile = "Tydzien-5 VP_2015.pdf"
+                                                if (resursEncode == it.resource) printFile = "Tydzien-5 VP_2015.pdf"
                                             }
                                             res = slugbovyiaTextu.getTydzen6()
                                             res.forEach {
-                                                if (resurs == it.resource) printFile = "Tydzien-6 VP_2015.pdf"
+                                                if (resursEncode == it.resource) printFile = "Tydzien-6 VP_2015.pdf"
                                             }
-                                            if (resurs == R.raw.lit_jana_zalatavusnaha) printFile = "LITURGIJA Jana Zlt.pdf"
-                                            if (resurs == R.raw.kanon_andreja_kryckaha) printFile = "Kanon_A-Kryckaha.pdf"
-                                            if (resurs == R.raw.akafist4) printFile = "Akafist-Padl-muczanikam.pdf"
-                                            if (resurs == R.raw.akafist6) printFile = "Akafist da Ducha Sviatoha.pdf"
-                                            if (resurs == R.raw.vialikaja_piatnica_jutran_12jevanhellau) printFile = "Vial-Piatnica-jutran-12-Evang.pdf"
+                                            if (resursEncode == "bogashlugbovya/lit_jana_zalatavusnaha.html") printFile = "LITURGIJA Jana Zlt.pdf"
+                                            if (resursEncode == "bogashlugbovya/kanon_andreja_kryckaha.html") printFile = "Kanon_A-Kryckaha.pdf"
+                                            if (resursEncode == "bogashlugbovya/akafist4.html") printFile = "Akafist-Padl-muczanikam.pdf"
+                                            if (resursEncode == "bogashlugbovya/akafist6.html") printFile = "Akafist da Ducha Sviatoha.pdf"
+                                            if (resursEncode == "bogashlugbovya/vialikaja_piatnica_jutran_12jevanhellau.html") printFile = "Vial-Piatnica-jutran-12-Evang.pdf"
                                             if (printFile.isNotEmpty()) {
                                                 if (fileExistsBiblijateka(context, printFile)) {
                                                     val printAdapter = PdfDocumentAdapter(context, printFile)
@@ -814,18 +811,18 @@ fun Bogaslujbovyia(
                                                 autoScroll = false
                                                 expanded = false
                                                 if ((context as MainActivity).checkmodulesAdmin()) {
-                                                    val fields = R.raw::class.java.fields
-                                                    var recourse = "bogashlugbovya_error"
-                                                    for (element in fields) {
-                                                        val name = element.getInt(element.name)
-                                                        if (resurs == name) {
-                                                            recourse = element.name
-                                                            break
-                                                        }
-                                                    }
                                                     val intent = Intent()
                                                     intent.setClassName(context, "by.carkva_gazeta.admin.PasochnicaList")
-                                                    intent.putExtra("resours", recourse)
+                                                    val t1 = resursEncode.lastIndexOf("/")
+                                                    val t2 = resursEncode.lastIndexOf(".")
+                                                    val resursAdmin = if (t1 != -1) {
+                                                        if (t2 != -1) resursEncode.substring(t1 + 1, t2)
+                                                        else resursEncode.substring(t1 + 1)
+                                                    } else {
+                                                        if (t2 != -1) resursEncode.substring(0, t2)
+                                                        else resursEncode
+                                                    }
+                                                    intent.putExtra("resours", resursAdmin)
                                                     intent.putExtra("title", title)
                                                     intent.putExtra("text", htmlText)
                                                     context.startActivity(intent)
@@ -919,10 +916,7 @@ fun Bogaslujbovyia(
                                                 .padding(10.dp)
                                                 .clickable {
                                                     subTitle = listResource[i].title
-                                                    val inputStream = context.resources.openRawResource(listResource[i].resource)
-                                                    val isr = InputStreamReader(inputStream)
-                                                    val reader = BufferedReader(isr)
-                                                    subText = reader.readText()
+                                                    subText = openAssetsResources(context, listResource[i].resource)
                                                     iskniga = true
                                                     showDropdown = false
                                                     autoScroll = false
@@ -949,18 +943,18 @@ fun Bogaslujbovyia(
                                     if (cytanneVisable) {
                                         val chytanneList = ArrayList<BogaslujbovyiaListData>()
                                         if (data[9].isNotEmpty()) {
-                                            chytanneList.add(BogaslujbovyiaListData(data[9], 9))
+                                            chytanneList.add(BogaslujbovyiaListData(data[9], "9"))
                                         }
                                         if (data[10].isNotEmpty()) {
-                                            chytanneList.add(BogaslujbovyiaListData(data[10], 10))
+                                            chytanneList.add(BogaslujbovyiaListData(data[10], "10"))
                                         }
                                         if (data[11].isNotEmpty()) {
-                                            chytanneList.add(BogaslujbovyiaListData(data[11], 11))
+                                            chytanneList.add(BogaslujbovyiaListData(data[11], "11"))
                                         }
                                         for (i in chytanneList.indices) {
                                             val navigate = when (chytanneList[i].resurs) {
-                                                10 -> "cytannesvityx"
-                                                11 -> "cytannedop"
+                                                "10" -> "cytannesvityx"
+                                                "11" -> "cytannedop"
                                                 else -> "cytanne"
                                             }
                                             Row(
@@ -1266,75 +1260,64 @@ fun DialogLiturgia(
     val context = LocalActivity.current as MainActivity
     var title by remember { mutableStateOf("") }
     var item by remember { mutableStateOf("") }
-    val builder = StringBuilder()
-    val r = context.resources
-    var inputStream = r.openRawResource(R.raw.bogashlugbovya1_1)
+    var filename = "bogashlugbovya/bogashlugbovya1_1.html"
     when (chast) {
         1 -> {
-            inputStream = r.openRawResource(R.raw.bogashlugbovya1_1)
+            filename = "bogashlugbovya/bogashlugbovya1_1.html"
             title = stringResource(R.string.ps_102)
         }
 
         2 -> {
-            inputStream = r.openRawResource(R.raw.bogashlugbovya1_2)
+            filename = "bogashlugbovya/bogashlugbovya1_2.html"
             title = stringResource(R.string.ps_91)
         }
 
         3 -> {
-            inputStream = r.openRawResource(R.raw.bogashlugbovya1_3)
+            filename = "bogashlugbovya/bogashlugbovya1_3.html"
             title = stringResource(R.string.ps_145)
         }
 
         4 -> {
-            inputStream = r.openRawResource(R.raw.bogashlugbovya1_4)
+            filename = "bogashlugbovya/bogashlugbovya1_4.html"
             title = stringResource(R.string.ps_92)
         }
 
         5 -> {
-            inputStream = r.openRawResource(R.raw.bogashlugbovya1_5)
+            filename = "bogashlugbovya/bogashlugbovya1_5.html"
             title = stringResource(R.string.mc_5_3_12)
         }
 
         6 -> {
-            inputStream = r.openRawResource(R.raw.bogashlugbovya1_6)
+            filename = "bogashlugbovya/bogashlugbovya1_6.html"
             title = stringResource(R.string.malitva_za_pamerlyx)
         }
 
         7 -> {
-            inputStream = r.openRawResource(R.raw.bogashlugbovya1_7)
+            filename = "bogashlugbovya/bogashlugbovya1_7.html"
             title = stringResource(R.string.malitva_za_paclicanyx)
         }
 
         10 -> {
-            inputStream = r.openRawResource(R.raw.bogashlugbovya1_8)
+            filename = "bogashlugbovya/bogashlugbovya1_8.html"
             title = stringResource(R.string.ps_94)
         }
 
         11 -> {
-            inputStream = r.openRawResource(R.raw.viaczernia_bierascie_1)
+            filename = "bogashlugbovya/viaczernia_bierascie_1.html"
             title = stringResource(R.string.viaczernia_bierascie_1)
         }
 
         13 -> {
-            inputStream = r.openRawResource(R.raw.viaczernia_bierascie_3)
+            filename = "bogashlugbovya/viaczernia_bierascie_3.html"
             title = stringResource(R.string.viaczernia_bierascie_3)
         }
 
         14 -> {
-            inputStream = r.openRawResource(R.raw.bogashlugbovya1_9)
+            filename = "bogashlugbovya/bogashlugbovya1_9.html"
             title = stringResource(R.string.malitva_za_paclicanyx_i_jyvyx)
         }
     }
-    val isr = InputStreamReader(inputStream)
-    val reader = BufferedReader(isr)
-    var line: String
-    reader.forEachLine {
-        line = it
-        if (context.dzenNoch) line = line.replace("#d00505", "#ff6666")
-        builder.append(line).append("\n")
-    }
-    inputStream.close()
-    item = builder.toString()
+    item = openAssetsResources(context, filename)
     Dialog(onDismissRequest = { onDismiss() }) {
         Card(
             modifier = Modifier

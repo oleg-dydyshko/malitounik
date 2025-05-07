@@ -118,6 +118,7 @@ import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
 import by.carkva_gazeta.malitounik.ui.theme.StrogiPost
 import by.carkva_gazeta.malitounik.views.HtmlText
+import by.carkva_gazeta.malitounik.views.openAssetsResources
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
@@ -380,7 +381,7 @@ fun CytanniList(
     var isVybranoe by remember { mutableStateOf(false) }
     var saveVybranoe by remember { mutableStateOf(false) }
     val gson = Gson()
-    val type = TypeToken.getParameterized(SnapshotStateList::class.java, VybranaeData::class.java).type
+    val type = TypeToken.getParameterized(ArrayList::class.java, VybranaeData::class.java).type
     val file = File("${LocalContext.current.filesDir}/vybranoe_${prevodName}.json")
     if (initVybranoe) {
         vybranoeList.clear()
@@ -1149,10 +1150,7 @@ fun CytanniList(
                         positionRemember = -1
                     }
                     if (resultPage.isEmpty()) {
-                        val inputStream = context.resources.openRawResource(R.raw.biblia_error)
-                        val isr = InputStreamReader(inputStream)
-                        val reader = BufferedReader(isr)
-                        resultPage.add(CytanniListData(0, subTitle, reader.readText()))
+                        resultPage.add(CytanniListData(0, subTitle, openAssetsResources(context, "biblia_error.txt")))
                         isPerevodError = true
                     } else {
                         isPerevodError = false
@@ -1680,10 +1678,7 @@ fun getBible(
                                 }
                             }
                         } catch (_: Throwable) {
-                            val inputStream = context.resources.openRawResource(R.raw.biblia_error)
-                            val isr = InputStreamReader(inputStream)
-                            val reader = BufferedReader(isr)
-                            result.add(CytanniListData(id, title = "", text = reader.readText()))
+                            result.add(CytanniListData(id, title = "", text = openAssetsResources(context, "biblia_error.txt")))
                             id++
                         }
                     }
@@ -1691,10 +1686,7 @@ fun getBible(
             }
         }
     } catch (_: Throwable) {
-        val inputStream = context.resources.openRawResource(R.raw.biblia_error)
-        val isr = InputStreamReader(inputStream)
-        val reader = BufferedReader(isr)
-        result.add(CytanniListData(id, title = "", text = reader.readText()))
+        result.add(CytanniListData(id, title = "", text = openAssetsResources(context, "biblia_error.txt")))
         id++
     }
     return result

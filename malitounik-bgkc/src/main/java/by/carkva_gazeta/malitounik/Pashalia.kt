@@ -140,7 +140,7 @@ fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, sear
                     onClick = {
                         navigationActions.navigateToBogaslujbovyia(
                             context.getString(R.string.pascha_kaliandar_bel),
-                            R.raw.pasxa
+                            "pasxa.html"
                         )
                     }
                 ) {
