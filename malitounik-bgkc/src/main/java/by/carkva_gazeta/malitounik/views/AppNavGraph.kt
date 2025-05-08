@@ -1365,20 +1365,6 @@ fun MainConteiner(
     val color = MaterialTheme.colorScheme.onTertiary
     var colorBlackboard by remember { mutableStateOf(color) }
     var dialogKniga by remember { mutableStateOf(false) }
-    if (dialogKniga) {
-        KaliandarKnigaView(
-            colorBlackboard,
-            navigateToBogaslujbovyia = { title, resourse ->
-                dialogKniga = false
-                navigationActions.navigateToBogaslujbovyia(title, resourse)
-            },
-            navigateToSvityiaView = { svity, position ->
-                dialogKniga = false
-                navigationActions.navigateToSvityiaView(svity, position)
-            }) {
-            dialogKniga = false
-        }
-    }
     ModalNavigationDrawer(drawerContent = {
         DrawView(
             drawerScrollStete = drawerScrollStete,
@@ -2149,6 +2135,20 @@ fun MainConteiner(
                         }
                     }
                 }
+            }
+        }
+        if (dialogKniga) {
+            KaliandarKnigaView(
+                colorBlackboard,
+                navigateToBogaslujbovyia = { title, resourse ->
+                    dialogKniga = false
+                    navigationActions.navigateToBogaslujbovyia(title, resourse)
+                },
+                navigateToSvityiaView = { svity, position ->
+                    dialogKniga = false
+                    navigationActions.navigateToSvityiaView(svity, position)
+                }) {
+                dialogKniga = false
             }
         }
     }

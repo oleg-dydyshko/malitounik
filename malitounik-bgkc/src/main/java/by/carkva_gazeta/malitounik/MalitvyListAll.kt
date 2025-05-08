@@ -1199,6 +1199,7 @@ fun getPrynagodnyia1(): ArrayList<BogaslujbovyiaListData> {
         )
     )
     list.add(BogaslujbovyiaListData("Малітва да Маці Божай Бялыніцкай", "prynagodnyia/mltv_mb_bialynickaja.html"))
+    list.add(BogaslujbovyiaListData("Малітва да Найсьвяцейшае Багародзіцы з пакорным і скрушлівым сэрцам", "prynagodnyia/mltv_da_baharodzicy_skaryna.html"))
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
         list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
     } else {

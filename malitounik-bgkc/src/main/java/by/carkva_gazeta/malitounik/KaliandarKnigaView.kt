@@ -2,9 +2,11 @@ package by.carkva_gazeta.malitounik
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -49,11 +51,13 @@ fun KaliandarKnigaView(
     navigateToSvityiaView: (svity: Boolean, position: Int) -> Unit,
     onDismiss: () -> Unit
 ) {
+    val interactionSourse = remember { MutableInteractionSource() }
     var dialogKnigaView by remember { mutableStateOf(false) }
     val slujbaList = remember { mutableStateListOf<SlugbovyiaTextuData>() }
     var slujva by remember { mutableIntStateOf(SlugbovyiaTextu.LITURHIJA) }
     if (dialogKnigaView) {
-        DialogKniga(slujva, slujbaList,
+        DialogKniga(
+            slujva, slujbaList,
             navigateToBogaslujbovyia = { title, resourse ->
                 navigateToBogaslujbovyia(title, resourse)
                 dialogKnigaView = false
@@ -61,196 +65,201 @@ fun KaliandarKnigaView(
             dialogKnigaView = false
         }
     }
-    Dialog(onDismissRequest = { onDismiss() }) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            val tint = if (colorBlackboard == Primary || colorBlackboard == StrogiPost || colorBlackboard == BackgroundTolBarDark) PrimaryTextBlack
-            else PrimaryText
-            val data = Settings.data[Settings.caliandarPosition]
-            val dayOfYear = data[24].toInt()
-            val year = data[3].toInt()
-            val modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 5.dp)
-                .align(Alignment.CenterVertically)
-                .clip(shape = RoundedCornerShape(10.dp))
-                .background(MaterialTheme.colorScheme.secondary)
-                .padding(2.dp)
-                .clip(shape = RoundedCornerShape(10.dp))
-                .background(colorBlackboard)
-                .padding(vertical = 10.dp)
-            val slujba = SlugbovyiaTextu()
-            slujba.loadPiarliny()
-            var viewPiarliny by remember { mutableStateOf(false) }
-            if (viewPiarliny) {
-                DialogPairlinyView(data[1].toInt(), data[2].toInt() + 1) {
-                    viewPiarliny = false
-                }
-            }
-            Column(
-                modifier = Modifier
-                    .align(Alignment.Top)
-                    .verticalScroll(rememberScrollState())
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0f, 0f, 0f, 0.5f))
+            .clickable(
+                interactionSource = interactionSourse,
+                indication = null
             ) {
-                Column {
-                    Row(modifier = Modifier.padding(vertical = 10.dp)) {
-                        val listSlujbaViach = slujba.loadSluzbaDayList(SlugbovyiaTextu.VIACZERNIA, dayOfYear, year)
-                        Column(modifier = modifier.clickable(listSlujbaViach.isNotEmpty()) {
-                            if (listSlujbaViach.size == 1) {
-                                navigateToBogaslujbovyia(listSlujbaViach[0].title, listSlujbaViach[0].resource)
-                            } else {
-                                slujbaList.clear()
-                                slujbaList.addAll(listSlujbaViach)
-                                slujva = 1
-                                dialogKnigaView = true
-                            }
-                        }) {
-                            val newTint = if (listSlujbaViach.isEmpty()) SecondaryText else tint
-                            Icon(painterResource(R.drawable.moon2_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally), tint = newTint)
-                            Text(
-                                text = stringResource(R.string.viachernia), modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
-                                    .padding(top = 10.dp), fontSize = 16.sp, color = newTint
-                            )
+                onDismiss()
+            }
+    ) {
+        val tint = if (colorBlackboard == Primary || colorBlackboard == StrogiPost || colorBlackboard == BackgroundTolBarDark) PrimaryTextBlack
+        else PrimaryText
+        val data = Settings.data[Settings.caliandarPosition]
+        val dayOfYear = data[24].toInt()
+        val year = data[3].toInt()
+        val modifier = Modifier
+            .weight(1f)
+            .padding(horizontal = 5.dp)
+            .align(Alignment.CenterVertically)
+            .clip(shape = RoundedCornerShape(10.dp))
+            .background(MaterialTheme.colorScheme.secondary)
+            .padding(2.dp)
+            .clip(shape = RoundedCornerShape(10.dp))
+            .background(colorBlackboard)
+            .padding(vertical = 10.dp)
+        val slujba = SlugbovyiaTextu()
+        slujba.loadPiarliny()
+        var viewPiarliny by remember { mutableStateOf(false) }
+        if (viewPiarliny) {
+            DialogPairlinyView(data[1].toInt(), data[2].toInt() + 1) {
+                viewPiarliny = false
+            }
+        }
+        Column(
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .verticalScroll(rememberScrollState())
+        ) {
+            Column {
+                Row(modifier = Modifier.padding(vertical = 10.dp)) {
+                    val listSlujbaViach = slujba.loadSluzbaDayList(SlugbovyiaTextu.VIACZERNIA, dayOfYear, year)
+                    Column(modifier = modifier.clickable(listSlujbaViach.isNotEmpty()) {
+                        if (listSlujbaViach.size == 1) {
+                            navigateToBogaslujbovyia(listSlujbaViach[0].title, listSlujbaViach[0].resource)
+                        } else {
+                            slujbaList.clear()
+                            slujbaList.addAll(listSlujbaViach)
+                            slujva = 1
+                            dialogKnigaView = true
                         }
-                        val listSlujbaPavia = slujba.loadSluzbaDayList(SlugbovyiaTextu.PAVIACHERNICA, dayOfYear, year)
-                        listSlujbaPavia.add(SlugbovyiaTextuData(0, "Павячэрніца малая", "bogashlugbovya/paviaczernica_malaja.html", SlugbovyiaTextu.PAVIACHERNICA))
-                        Column(modifier = modifier.clickable {
-                            if (listSlujbaPavia.size == 1) {
-                                navigateToBogaslujbovyia(listSlujbaPavia[0].title, listSlujbaPavia[0].resource)
-                            } else {
-                                slujbaList.clear()
-                                slujbaList.addAll(listSlujbaPavia)
-                                slujva = 2
-                                dialogKnigaView = true
-                            }
-                        }) {
-                            val newTint = if (listSlujbaPavia.isEmpty()) SecondaryText else tint
-                            Icon(painterResource(R.drawable.moon_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally), tint = newTint)
-                            Text(
-                                text = stringResource(R.string.raviachernica), modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
-                                    .padding(top = 10.dp), fontSize = 16.sp, color = newTint
-                            )
-                        }
-                        val listSlujbaPaunoch = slujba.loadSluzbaDayList(SlugbovyiaTextu.PAUNOCHNICA, dayOfYear, year)
-                        Column(modifier = modifier.clickable(listSlujbaPaunoch.isNotEmpty()) {
-                            if (listSlujbaPaunoch.size == 1) {
-                                navigateToBogaslujbovyia(listSlujbaPaunoch[0].title, listSlujbaPaunoch[0].resource)
-                            } else {
-                                slujbaList.clear()
-                                slujbaList.addAll(listSlujbaPaunoch)
-                                slujva = 3
-                                dialogKnigaView = true
-                            }
-                        }) {
-                            val newTint = if (listSlujbaPaunoch.isEmpty()) SecondaryText else tint
-                            Icon(painterResource(R.drawable.sun2_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally), tint = newTint)
-                            Text(
-                                text = stringResource(R.string.paunochnica), modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
-                                    .padding(top = 10.dp), fontSize = 16.sp, color = newTint
-                            )
-                        }
+                    }) {
+                        val newTint = if (listSlujbaViach.isEmpty()) SecondaryText else tint
+                        Icon(painterResource(R.drawable.moon2_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally).size(40.dp, 40.dp), tint = newTint)
+                        Text(
+                            text = stringResource(R.string.viachernia), modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(top = 10.dp), fontSize = 18.sp, color = newTint
+                        )
                     }
-                    Row(modifier = Modifier.padding(vertical = 10.dp)) {
-                        val listSlujbaJutran = slujba.loadSluzbaDayList(SlugbovyiaTextu.JUTRAN, dayOfYear, year)
-                        if (data[0].toInt() == Calendar.SUNDAY) {
-                            listSlujbaJutran.add(SlugbovyiaTextuData(0, "Ютрань нядзельная (у скароце)", "bogashlugbovya/jutran_niadzelnaja.html", SlugbovyiaTextu.JUTRAN))
+                    val listSlujbaPavia = slujba.loadSluzbaDayList(SlugbovyiaTextu.PAVIACHERNICA, dayOfYear, year)
+                    listSlujbaPavia.add(SlugbovyiaTextuData(0, "Павячэрніца малая", "bogashlugbovya/paviaczernica_malaja.html", SlugbovyiaTextu.PAVIACHERNICA))
+                    Column(modifier = modifier.clickable {
+                        if (listSlujbaPavia.size == 1) {
+                            navigateToBogaslujbovyia(listSlujbaPavia[0].title, listSlujbaPavia[0].resource)
+                        } else {
+                            slujbaList.clear()
+                            slujbaList.addAll(listSlujbaPavia)
+                            slujva = 2
+                            dialogKnigaView = true
                         }
-                        Column(modifier = modifier.clickable(listSlujbaJutran.isNotEmpty()) {
-                            if (listSlujbaJutran.size == 1) {
-                                navigateToBogaslujbovyia(listSlujbaJutran[0].title, listSlujbaJutran[0].resource)
-                            } else {
-                                slujbaList.clear()
-                                slujbaList.addAll(listSlujbaJutran)
-                                slujva = 4
-                                dialogKnigaView = true
-                            }
-                        }) {
-                            val newTint = if (listSlujbaJutran.isEmpty()) SecondaryText else tint
-                            Icon(painterResource(R.drawable.sun_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally), tint = newTint)
-                            Text(
-                                text = stringResource(R.string.utran), modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
-                                    .padding(top = 10.dp), fontSize = 16.sp, color = newTint
-                            )
-                        }
-                        val listSlujbaVilHadz = slujba.loadSluzbaDayList(SlugbovyiaTextu.VIALHADZINY, dayOfYear, year)
-                        Column(modifier = modifier.clickable(listSlujbaVilHadz.isNotEmpty()) {
-                            if (listSlujbaVilHadz.size == 1) {
-                                navigateToBogaslujbovyia(listSlujbaVilHadz[0].title, listSlujbaVilHadz[0].resource)
-                            } else {
-                                slujbaList.clear()
-                                slujbaList.addAll(listSlujbaVilHadz)
-                                slujva = 5
-                                dialogKnigaView = true
-                            }
-                        }) {
-                            val newTint = if (listSlujbaVilHadz.isEmpty()) SecondaryText else tint
-                            Icon(painterResource(R.drawable.clock_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally), tint = newTint)
-                            Text(
-                                text = stringResource(R.string.gadziny), modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
-                                    .padding(top = 10.dp), fontSize = 16.sp, color = newTint
-                            )
-                        }
-                        val listSlujbaLitur = slujba.loadSluzbaDayList(SlugbovyiaTextu.LITURHIJA, dayOfYear, year)
-                        Column(modifier = modifier.clickable(listSlujbaLitur.isNotEmpty()) {
-                            if (listSlujbaLitur.size == 1) {
-                                navigateToBogaslujbovyia(listSlujbaLitur[0].title, listSlujbaLitur[0].resource)
-                            } else {
-                                slujbaList.clear()
-                                slujbaList.addAll(listSlujbaLitur)
-                                slujva = 6
-                                dialogKnigaView = true
-                            }
-                        }) {
-                            val newTint = if (listSlujbaLitur.isEmpty()) SecondaryText else tint
-                            Icon(painterResource(R.drawable.carkva_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally), tint = newTint)
-                            Text(
-                                text = stringResource(R.string.liturgia), modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
-                                    .padding(top = 10.dp), fontSize = 16.sp, color = newTint
-                            )
-                        }
+                    }) {
+                        val newTint = if (listSlujbaPavia.isEmpty()) SecondaryText else tint
+                        Icon(painterResource(R.drawable.moon_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally).size(40.dp, 40.dp), tint = newTint)
+                        Text(
+                            text = stringResource(R.string.raviachernica), modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(top = 10.dp), fontSize = 18.sp, color = newTint
+                        )
                     }
-                    Row(modifier = Modifier.padding(vertical = 10.dp)) {
-                        Column(modifier = modifier) {
-                            val newTint = SecondaryText
-                            Icon(painterResource(R.drawable.kanon_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally), tint = newTint)
-                            Text(
-                                text = stringResource(R.string.ustau), modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
-                                    .padding(top = 10.dp), fontSize = 16.sp, color = newTint
-                            )
+                    val listSlujbaPaunoch = slujba.loadSluzbaDayList(SlugbovyiaTextu.PAUNOCHNICA, dayOfYear, year)
+                    Column(modifier = modifier.clickable(listSlujbaPaunoch.isNotEmpty()) {
+                        if (listSlujbaPaunoch.size == 1) {
+                            navigateToBogaslujbovyia(listSlujbaPaunoch[0].title, listSlujbaPaunoch[0].resource)
+                        } else {
+                            slujbaList.clear()
+                            slujbaList.addAll(listSlujbaPaunoch)
+                            slujva = 3
+                            dialogKnigaView = true
                         }
-                        val svityia = data[4]
-                        Column(modifier = modifier.clickable(svityia != "no_sviatyia") {
-                            navigateToSvityiaView(false, Settings.caliandarPosition)
-                        }) {
-                            val newTint = if (svityia == "no_sviatyia") SecondaryText else tint
-                            Icon(painterResource(R.drawable.man_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally), tint = newTint)
-                            Text(
-                                text = stringResource(R.string.jyci), modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
-                                    .padding(top = 10.dp), fontSize = 16.sp, color = newTint
-                            )
+                    }) {
+                        val newTint = if (listSlujbaPaunoch.isEmpty()) SecondaryText else tint
+                        Icon(painterResource(R.drawable.sun2_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally).size(40.dp, 40.dp), tint = newTint)
+                        Text(
+                            text = stringResource(R.string.paunochnica), modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(top = 10.dp), fontSize = 18.sp, color = newTint
+                        )
+                    }
+                }
+                Row(modifier = Modifier.padding(vertical = 10.dp)) {
+                    val listSlujbaJutran = slujba.loadSluzbaDayList(SlugbovyiaTextu.JUTRAN, dayOfYear, year)
+                    if (data[0].toInt() == Calendar.SUNDAY) {
+                        listSlujbaJutran.add(SlugbovyiaTextuData(0, "Ютрань нядзельная (у скароце)", "bogashlugbovya/jutran_niadzelnaja.html", SlugbovyiaTextu.JUTRAN))
+                    }
+                    Column(modifier = modifier.clickable(listSlujbaJutran.isNotEmpty()) {
+                        if (listSlujbaJutran.size == 1) {
+                            navigateToBogaslujbovyia(listSlujbaJutran[0].title, listSlujbaJutran[0].resource)
+                        } else {
+                            slujbaList.clear()
+                            slujbaList.addAll(listSlujbaJutran)
+                            slujva = 4
+                            dialogKnigaView = true
                         }
-                        val parliny = slujba.checkParliny(dayOfYear)
-                        Column(modifier = modifier.clickable(parliny) {
-                            viewPiarliny = true
-                        }) {
-                            val newTint = if (!parliny) SecondaryText else tint
-                            Icon(painterResource(R.drawable.book_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally), tint = newTint)
-                            Text(
-                                text = stringResource(R.string.piarliny), modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
-                                    .padding(top = 10.dp), fontSize = 16.sp, color = newTint
-                            )
+                    }) {
+                        val newTint = if (listSlujbaJutran.isEmpty()) SecondaryText else tint
+                        Icon(painterResource(R.drawable.sun_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally).size(40.dp, 40.dp), tint = newTint)
+                        Text(
+                            text = stringResource(R.string.utran), modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(top = 10.dp), fontSize = 18.sp, color = newTint
+                        )
+                    }
+                    val listSlujbaVilHadz = slujba.loadSluzbaDayList(SlugbovyiaTextu.VIALHADZINY, dayOfYear, year)
+                    Column(modifier = modifier.clickable(listSlujbaVilHadz.isNotEmpty()) {
+                        if (listSlujbaVilHadz.size == 1) {
+                            navigateToBogaslujbovyia(listSlujbaVilHadz[0].title, listSlujbaVilHadz[0].resource)
+                        } else {
+                            slujbaList.clear()
+                            slujbaList.addAll(listSlujbaVilHadz)
+                            slujva = 5
+                            dialogKnigaView = true
                         }
+                    }) {
+                        val newTint = if (listSlujbaVilHadz.isEmpty()) SecondaryText else tint
+                        Icon(painterResource(R.drawable.clock_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally).size(40.dp, 40.dp), tint = newTint)
+                        Text(
+                            text = stringResource(R.string.gadziny), modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(top = 10.dp), fontSize = 18.sp, color = newTint
+                        )
+                    }
+                    val listSlujbaLitur = slujba.loadSluzbaDayList(SlugbovyiaTextu.LITURHIJA, dayOfYear, year)
+                    Column(modifier = modifier.clickable(listSlujbaLitur.isNotEmpty()) {
+                        if (listSlujbaLitur.size == 1) {
+                            navigateToBogaslujbovyia(listSlujbaLitur[0].title, listSlujbaLitur[0].resource)
+                        } else {
+                            slujbaList.clear()
+                            slujbaList.addAll(listSlujbaLitur)
+                            slujva = 6
+                            dialogKnigaView = true
+                        }
+                    }) {
+                        val newTint = if (listSlujbaLitur.isEmpty()) SecondaryText else tint
+                        Icon(painterResource(R.drawable.carkva_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally).size(40.dp, 40.dp), tint = newTint)
+                        Text(
+                            text = stringResource(R.string.liturgia), modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(top = 10.dp), fontSize = 18.sp, color = newTint
+                        )
+                    }
+                }
+                Row(modifier = Modifier.padding(vertical = 10.dp)) {
+                    Column(modifier = modifier) {
+                        val newTint = SecondaryText
+                        Icon(painterResource(R.drawable.kanon_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally).size(40.dp, 40.dp), tint = newTint)
+                        Text(
+                            text = stringResource(R.string.ustau), modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(top = 10.dp), fontSize = 18.sp, color = newTint
+                        )
+                    }
+                    val svityia = data[4]
+                    Column(modifier = modifier.clickable(svityia != "no_sviatyia") {
+                        navigateToSvityiaView(false, Settings.caliandarPosition)
+                    }) {
+                        val newTint = if (svityia == "no_sviatyia") SecondaryText else tint
+                        Icon(painterResource(R.drawable.man_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally).size(40.dp, 40.dp), tint = newTint)
+                        Text(
+                            text = stringResource(R.string.jyci), modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(top = 10.dp), fontSize = 18.sp, color = newTint
+                        )
+                    }
+                    val parliny = slujba.checkParliny(dayOfYear)
+                    Column(modifier = modifier.clickable(parliny) {
+                        viewPiarliny = true
+                    }) {
+                        val newTint = if (!parliny) SecondaryText else tint
+                        Icon(painterResource(R.drawable.book_white), contentDescription = "", modifier = Modifier.align(Alignment.CenterHorizontally).size(40.dp, 40.dp), tint = newTint)
+                        Text(
+                            text = stringResource(R.string.piarliny), modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(top = 10.dp), fontSize = 18.sp, color = newTint
+                        )
                     }
                 }
             }

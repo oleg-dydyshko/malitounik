@@ -824,7 +824,7 @@ fun Bogaslujbovyia(
                                                     }
                                                     intent.putExtra("resours", resursAdmin)
                                                     intent.putExtra("title", title)
-                                                    intent.putExtra("text", htmlText)
+                                                    intent.putExtra("text", htmlText.replace("#ff6666", "#d00505", true))
                                                     context.startActivity(intent)
                                                 }
                                             },

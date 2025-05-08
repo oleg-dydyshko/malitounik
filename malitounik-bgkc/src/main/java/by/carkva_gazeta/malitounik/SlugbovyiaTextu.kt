@@ -17,14 +17,14 @@ class SlugbovyiaTextu {
     private var loadPiarlinyJob: Job? = null
 
     companion object {
-        const val VIACZERNIA = 1
-        const val JUTRAN = 2
-        const val VIALHADZINY = 3
-        const val LITURHIJA = 4
-        const val VIACZERNIA_UVIECZARY = 5
-        const val VIACZERNIA_Z_LITURHIJA = 6
-        const val VELIKODNYIAHADZINY = 7
-        const val HADZINA6 = 8
+        const val HADZINA6 = 1
+        const val VIACZERNIA = 2
+        const val JUTRAN = 3
+        const val VIALHADZINY = 4
+        const val LITURHIJA = 5
+        const val VIACZERNIA_UVIECZARY = 6
+        const val VIACZERNIA_Z_LITURHIJA = 7
+        const val VELIKODNYIAHADZINY = 8
         const val ABIEDNICA = 9
         const val PAVIACHERNICA = 10
         const val PAUNOCHNICA = 11
@@ -181,6 +181,11 @@ class SlugbovyiaTextu {
         datMinALL.add(
             SlugbovyiaTextuData(
                 25, "Чацьвер Паловы сьвята Пяцідзясятніцы ўвечары", "bogashlugbovya/palova_sviata_piacidziasiatnicy_viaczernia_u_czacvier.html", VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
+            )
+        )
+        datMinALL.add(
+            SlugbovyiaTextuData(
+                26, "Пятніца Паловы сьвята Пяцідзясятніцы ўвечары", "bogashlugbovya/palova_sviata_piacidziasiatnicy_viaczernia_u_piatnicu.html", VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
@@ -464,7 +469,7 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                -27, "Панядзeлак 4-га тыдня вялікага посту", "bogashlugbovya/tydzien_4_v_post_01paniadzielak_hadzina_6.html", HADZINA6, pasxa = true, mineia = MINEIA_VIALIKI_POST_4
+                -27, "Панядзeлак 4-га тыдня вялікага посту. Шостая гадзіна", "bogashlugbovya/tydzien_4_v_post_01paniadzielak_hadzina_6.html", HADZINA6, pasxa = true, mineia = MINEIA_VIALIKI_POST_4
             )
         )
         datMinALL.add(
@@ -474,7 +479,7 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                -26, "Аўторак 4-га тыдня вялікага посту", "bogashlugbovya/tydzien_4_v_post_02autorak_hadzina_6.html", HADZINA6, pasxa = true, mineia = MINEIA_VIALIKI_POST_4
+                -26, "Аўторак 4-га тыдня вялікага посту. Шостая гадзіна", "bogashlugbovya/tydzien_4_v_post_02autorak_hadzina_6.html", HADZINA6, pasxa = true, mineia = MINEIA_VIALIKI_POST_4
             )
         )
         datMinALL.add(
@@ -484,7 +489,7 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                -25, "Серада 4-га тыдня вялікага посту", "bogashlugbovya/tydzien_4_v_post_03sierada_hadzina_6.html", HADZINA6, pasxa = true, mineia = MINEIA_VIALIKI_POST_4
+                -25, "Серада 4-га тыдня вялікага посту. Шостая гадзіна", "bogashlugbovya/tydzien_4_v_post_03sierada_hadzina_6.html", HADZINA6, pasxa = true, mineia = MINEIA_VIALIKI_POST_4
             )
         )
         datMinALL.add(
@@ -494,7 +499,7 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                -24, "Чацьвер 4-га тыдня вялікага посту", "bogashlugbovya/tydzien_4_v_post_04czacvier_hadzina_6.html", HADZINA6, pasxa = true, mineia = MINEIA_VIALIKI_POST_4
+                -24, "Чацьвер 4-га тыдня вялікага посту. Шостая гадзіна", "bogashlugbovya/tydzien_4_v_post_04czacvier_hadzina_6.html", HADZINA6, pasxa = true, mineia = MINEIA_VIALIKI_POST_4
             )
         )
         datMinALL.add(
@@ -504,7 +509,7 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                -23, "Пятніца 4-га тыдня вялікага посту", "bogashlugbovya/tydzien_4_v_post_05piatnica_hadzina_6.html", HADZINA6, pasxa = true, mineia = MINEIA_VIALIKI_POST_4
+                -23, "Пятніца 4-га тыдня вялікага посту. Шостая гадзіна", "bogashlugbovya/tydzien_4_v_post_05piatnica_hadzina_6.html", HADZINA6, pasxa = true, mineia = MINEIA_VIALIKI_POST_4
             )
         )
         datMinALL.add(
@@ -535,7 +540,7 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                -20, "Панядзелак 5-га тыдня Вялікага посту", "bogashlugbovya/tydzien_5_v_post_01paniadzielak_hadzina_6.html", HADZINA6, pasxa = true, mineia = MINEIA_VIALIKI_POST_5
+                -20, "Панядзелак 5-га тыдня Вялікага посту. Шостая гадзіна", "bogashlugbovya/tydzien_5_v_post_01paniadzielak_hadzina_6.html", HADZINA6, pasxa = true, mineia = MINEIA_VIALIKI_POST_5
             )
         )
         datMinALL.add(
@@ -545,7 +550,7 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                -19, "Аўторак 5-га тыдня Вялікага посту", "bogashlugbovya/tydzien_5_v_post_02autorak_hadzina_6.html", HADZINA6, pasxa = true, mineia = MINEIA_VIALIKI_POST_5
+                -19, "Аўторак 5-га тыдня Вялікага посту. Шостая гадзіна", "bogashlugbovya/tydzien_5_v_post_02autorak_hadzina_6.html", HADZINA6, pasxa = true, mineia = MINEIA_VIALIKI_POST_5
             )
         )
         datMinALL.add(
@@ -555,7 +560,7 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                -18, "Серада 5-га тыдня Вялікага посту", "bogashlugbovya/tydzien_5_v_post_03sierada_hadzina_6.html", HADZINA6, pasxa = true, mineia = MINEIA_VIALIKI_POST_5
+                -18, "Серада 5-га тыдня Вялікага посту. Шостая гадзіна", "bogashlugbovya/tydzien_5_v_post_03sierada_hadzina_6.html", HADZINA6, pasxa = true, mineia = MINEIA_VIALIKI_POST_5
             )
         )
         datMinALL.add(
@@ -565,7 +570,7 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                -17, "Чацьвер 5-га тыдня Вялікага посту", "bogashlugbovya/tydzien_5_v_post_04_czacvier_hadzina_6.html", HADZINA6, pasxa = true, mineia = MINEIA_VIALIKI_POST_5
+                -17, "Чацьвер 5-га тыдня Вялікага посту. Шостая гадзіна", "bogashlugbovya/tydzien_5_v_post_04_czacvier_hadzina_6.html", HADZINA6, pasxa = true, mineia = MINEIA_VIALIKI_POST_5
             )
         )
         datMinALL.add(
@@ -575,7 +580,7 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                -16, "Пятніца 5-га тыдня Вялікага посту", "bogashlugbovya/tydzien_5_v_post_05_piatnica_hadzina_6.html", HADZINA6, pasxa = true, mineia = MINEIA_VIALIKI_POST_5
+                -16, "Пятніца 5-га тыдня Вялікага посту. Шостая гадзіна", "bogashlugbovya/tydzien_5_v_post_05_piatnica_hadzina_6.html", HADZINA6, pasxa = true, mineia = MINEIA_VIALIKI_POST_5
             )
         )
         datMinALL.add(
@@ -2409,16 +2414,18 @@ class SlugbovyiaTextu {
                 resultDay.add(resultSlugba[i])
             }
         }
-        val data = Settings.data[Settings.caliandarPosition]
-        if (data[0].toInt() == Calendar.SUNDAY && data[20] != "0") {
-            val list = getTraparyKandakiNiadzelnyia()
-            val ton = data[20].toInt() - 1
-            resultDay.add(SlugbovyiaTextuData(day, list[ton].title, list[ton].resurs.toString(), LITURHIJA))
-        }
-        if (data[0].toInt() != Calendar.SUNDAY) {
-            val list = getTraparyKandakiShtodzennyia()
-            val dzenNedeli = data[0].toInt() - 2
-            resultDay.add(SlugbovyiaTextuData(day, list[dzenNedeli].title, list[dzenNedeli].resurs.toString(), LITURHIJA))
+        if (slugbaType == LITURHIJA) {
+            val data = Settings.data[Settings.caliandarPosition]
+            if (data[0].toInt() == Calendar.SUNDAY && data[20] != "0") {
+                val list = getTraparyKandakiNiadzelnyia()
+                val ton = data[20].toInt() - 1
+                resultDay.add(SlugbovyiaTextuData(day, list[ton].title, list[ton].resurs.toString(), LITURHIJA))
+            }
+            if (data[0].toInt() != Calendar.SUNDAY) {
+                val list = getTraparyKandakiShtodzennyia()
+                val dzenNedeli = data[0].toInt() - 2
+                resultDay.add(SlugbovyiaTextuData(day, list[dzenNedeli].title, list[dzenNedeli].resurs.toString(), LITURHIJA))
+            }
         }
         return resultDay
     }

@@ -8,13 +8,13 @@ coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-lifecycleRuntimeKtx = "2.8.7"
+lifecycleRuntimeKtx = "2.9.0"
 #jsoup = "1.19.1"
 gson = "2.13.1"
 playServicesInstantapps = "18.1.0"
 featureDeliveryKtx = "2.1.0"
 appUpdateKtx = "2.1.0"
-documentfile = "1.0.1"
+documentfile = "1.1.0"
 pagingCompose = "3.3.6"
 constraintlayout = "2.2.1"
 material = "1.12.0"
@@ -23,11 +23,12 @@ featureDelivery = "2.1.0"
 #firebaseAppcheckPlayintegrity = "18.0.0"
 fragmentKtx = "1.8.6"
 coil = "3.1.0"
-material3 = "1.4.0-alpha13"
-navigation = "2.8.9"
-compose-bom = "2025.04.01"
+material3 = "1.4.0-alpha14"
+navigation = "2.9.0"
+compose-bom = "2025.05.00"
 activity-compose = "1.10.1"
 firebase-bom = "33.13.0"
+viewbinding = "8.10.0"
 #glanceAppwidget = "1.1.1"
 
 [libraries]
@@ -68,6 +69,7 @@ feature-delivery = { module = "com.google.android.play:feature-delivery", versio
 #google-firebase-appcheck-playintegrity = { group = "com.google.firebase", name = "firebase-appcheck-playintegrity", version.ref = "firebaseAppcheckPlayintegrity" }
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx" }
 coil3 = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+androidx-viewbinding = { group = "androidx.databinding", name = "viewbinding", version.ref = "viewbinding" }
 #androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glanceAppwidget" }
 
 [plugins]

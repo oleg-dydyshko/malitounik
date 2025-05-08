@@ -19,8 +19,8 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
--keepclassmembers class **.R$* {
-    public static <fields>;
-}
+#-keepclassmembers class **.R$* {
+#    public static <fields>;
+#}
 #-keep class androidx.compose.runtime.snapshots.SnapshotStateList
 #-printusage /home/oleg/usage.txt

@@ -24,10 +24,15 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            isMinifyEnabled = true
+            isShrinkResources = true
         }
     }
     compileOptions {
@@ -83,6 +88,7 @@ dependencies {
     implementation(libs.androidx.documentfile)
     implementation(libs.androidx.paging.compose)
     implementation(libs.coil3)
+    api(libs.androidx.viewbinding)
     //implementation(libs.androidx.glance.appwidget)
     //implementation(libs.jsoup)
     testImplementation(libs.junit)

@@ -66,12 +66,12 @@ fun VybranaeList(
     val gson = Gson()
     val type =
         TypeToken.getParameterized(
-            SnapshotStateList::class.java,
+            ArrayList::class.java,
             VybranaeData::class.java
         ).type
     val type2 =
         TypeToken.getParameterized(
-            SnapshotStateList::class.java,
+            ArrayList::class.java,
             VybranaeDataAll::class.java
         ).type
     val list = remember { SnapshotStateList<VybranaeListData>() }

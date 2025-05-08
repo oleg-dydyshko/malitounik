@@ -1314,6 +1314,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         if (myTimer?.isActive != true) {
             myTimer = CoroutineScope(Dispatchers.Main).launch {
                 if (!ferstStart) delay(1000)
+                ferstStart = false
                 when {
                     sensorValue <= 4f -> {
                         if (!dzenNoch && !checkDzenNoch) {
@@ -1335,7 +1336,6 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
                 }
             }
         }
-        ferstStart = false
     }
 
     override fun onStop() {
