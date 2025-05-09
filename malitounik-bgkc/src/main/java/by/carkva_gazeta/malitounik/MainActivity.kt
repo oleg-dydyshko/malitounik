@@ -1168,11 +1168,11 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        ferstStart = true
         val k = getSharedPreferences("biblia", MODE_PRIVATE)
         if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) {
             setlightSensor()
         }
-        ferstStart = true
         Settings.fontInterface = getFontInterface(this)
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -1368,45 +1368,19 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         }
     }
 
-    private fun onBack() {/*if (snackbar?.isShown == true) {
-            snackbar?.dismiss()
-        }*/
-        //if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+    private fun onBack() {
         if (isGesture || backPressed + 2000 > System.currentTimeMillis()) {
             moveTaskToBack(true)
             val k = getSharedPreferences("biblia", MODE_PRIVATE)
             k.edit {
                 putBoolean("setAlarm", true)
             }
-            finish()/*for ((key) in k.all) {
-                if (key.contains("Scroll") || key.contains("position")) {
-                    prefEditors.remove(key)
-                }
-            }
-            prefEditors.remove("search_svityx_string")
-            prefEditors.remove("search_string")
-            prefEditors.remove("search_array")
-            prefEditors.remove("search_bogashugbovya_string")
-            prefEditors.remove("search_bogashugbovya_array")
-            prefEditors.remove("search_bible_fierstPosition")
-            prefEditors.remove("search_position")
-            prefEditors.putBoolean("BibliotekaUpdate", false)
-            prefEditors.putBoolean("autoscroll", false)
-            prefEditors.putBoolean("setAlarm", true)
-            prefEditors.apply()
-            val dir = File("$filesDir/cache")
-            val list = dir.listFiles()
-            list?.forEach {
-                it.delete()
-            }*/
-            //super.onBack()
+            finish()
         } else {
             backPressed = System.currentTimeMillis()
             val mes = Toast.makeText(this, getString(R.string.exit), Toast.LENGTH_SHORT)
             mes.show()
-        }/*} else {
-            binding.drawerLayout.openDrawer(GravityCompat.START)
-        }*/
+        }
     }
 
     fun setlightSensor() {

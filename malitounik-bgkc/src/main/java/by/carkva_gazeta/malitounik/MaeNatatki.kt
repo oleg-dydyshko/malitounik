@@ -258,7 +258,9 @@ fun DialogMyNatatki(
     if (editMode) actyvity.removelightSensor()
     Dialog(onDismissRequest = {
         if (editMode) {
-            onConfirmation(editTitle, textFieldValueState.text)
+            if (editTitle.isNotEmpty() || textFieldValueState.text.isNotEmpty()) {
+                onConfirmation(editTitle, textFieldValueState.text)
+            }
             if (k?.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
         } else onDismiss()
     }) {
@@ -272,7 +274,7 @@ fun DialogMyNatatki(
                 if (editMode) {
                     TextField(
                         textStyle = TextStyle(fontSize = Settings.fontInterface.sp),
-                        placeholder = { Text(stringResource(R.string.natatka_name), fontSize = Settings.fontInterface.sp) },
+                        placeholder = { Text(stringResource(R.string.natatka_name), fontSize = Settings.fontInterface.sp, color = PrimaryTextBlack) },
                         value = editTitle,
                         onValueChange = {
                             editTitle = it

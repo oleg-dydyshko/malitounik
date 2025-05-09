@@ -382,7 +382,7 @@ fun SearchBible(
                                     } else {
                                         navigateToCytanniList(
                                             searchList[index].subTitle + " " + searchList[index].glava.toString(),
-                                            searchList[index].styx,
+                                            searchList[index].styx - 1,
                                             perevod
                                         )
                                     }

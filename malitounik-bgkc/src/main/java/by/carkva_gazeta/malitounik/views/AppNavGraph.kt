@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
@@ -85,6 +86,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -203,24 +205,27 @@ object AppNavGraphState {
 
 fun openAssetsResources(context: Context, fileName: String): String {
     var result = ""
-    val builder = StringBuilder()
     try {
         val inputStream = context.assets.open(fileName)
         val isr = InputStreamReader(inputStream)
         val reader = BufferedReader(isr)
         var line: String
-        reader.forEachLine {
-            line = it
-            if ((context as? MainActivity)?.dzenNoch == true) line = line.replace("#d00505", "#ff6666")
-            if (line.contains("//")) {
-                val t1 = line.indexOf("//")
-                line = line.substring(0, t1).trim()
-                if (line != "") builder.append(line).append("\n")
-            } else {
-                builder.append(line).append("\n")
+        if (fileName.contains("chytanne/")) {
+            val builder = StringBuilder()
+            reader.forEachLine {
+                line = it
+                if (line.contains("//")) {
+                    val t1 = line.indexOf("//")
+                    line = line.substring(0, t1).trim()
+                    if (line.isNotEmpty()) builder.append(line).append("\n")
+                } else {
+                    builder.append(line).append("\n")
+                }
             }
+            result = builder.toString()
+        } else {
+            result = reader.readText()
         }
-        result = builder.toString()
     } catch (_: FileNotFoundException) {
         val inputStream = context.assets.open("bogashlugbovya_error.html")
         val isr = InputStreamReader(inputStream)
@@ -2188,6 +2193,7 @@ fun DialogLogProgramy(
                 Column(
                     modifier = Modifier
                         .weight(1f)
+                        .size(Dp.Unspecified, 200.dp)
                         .padding(10.dp)
                         .verticalScroll(rememberScrollState())
                 ) {

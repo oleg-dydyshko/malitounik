@@ -1877,18 +1877,18 @@ fun DialogSabytieShow(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() },
-                        shape = MaterialTheme.shapes.small
-                    ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
-                        Text(stringResource(R.string.close), fontSize = 18.sp)
-                    }
-                    TextButton(
                         onClick = { onEdit(position) },
                         shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.edit), contentDescription = "")
                         Text(stringResource(R.string.redagaktirovat), fontSize = 18.sp)
+                    }
+                    TextButton(
+                        onClick = { onDismiss() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Text(stringResource(R.string.close), fontSize = 18.sp)
                     }
                 }
             }

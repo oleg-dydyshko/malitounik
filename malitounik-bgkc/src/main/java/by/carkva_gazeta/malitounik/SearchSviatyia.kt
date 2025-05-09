@@ -249,7 +249,8 @@ fun SearchSviatyia(navController: NavHostController) {
                                     HtmlText(
                                         modifier = Modifier
                                             .padding(10.dp),
-                                        text = res[index].opisanie
+                                        text = res[index].opisanie,
+                                        fontSize = Settings.fontInterface.sp
                                     )
                                 }
 
