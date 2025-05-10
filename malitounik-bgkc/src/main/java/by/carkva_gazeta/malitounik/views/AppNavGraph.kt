@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
@@ -86,7 +85,6 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -2082,7 +2080,16 @@ fun MainConteiner(
                 }
             }
         }
-        if (dialogKniga) {
+        AnimatedVisibility(
+            dialogKniga,
+            enter = fadeIn(
+                tween(
+                    durationMillis = 500,
+                    easing = LinearOutSlowInEasing
+                )
+            ),
+            exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
+        ) {
             KaliandarKnigaView(
                 colorBlackboard,
                 navigateToBogaslujbovyia = { title, resourse ->
