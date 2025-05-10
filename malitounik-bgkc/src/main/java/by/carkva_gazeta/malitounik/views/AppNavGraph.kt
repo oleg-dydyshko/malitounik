@@ -238,16 +238,9 @@ fun openAssetsResources(context: Context, fileName: String): String {
 @Composable
 fun AppNavGraph(cytata: AnnotatedString) {
     val navController: NavHostController = rememberNavController()
-    val coroutineScope: CoroutineScope = rememberCoroutineScope()
-    val drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val drawerScrollStete = rememberScrollState()
     val searchBibleState = rememberLazyListState()
     val cytanniListState = remember { ArrayList<LazyListState>() }
-    BackHandler(
-        enabled = drawerState.isClosed,
-    ) {
-        coroutineScope.launch { drawerState.open() }
-    }
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var start = k.getString("navigate", AllDestinations.KALIANDAR) ?: AllDestinations.KALIANDAR
     if (start.contains("Biblijateka_List")) {
@@ -284,8 +277,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.KALIANDAR
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -302,8 +293,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.AKAFIST_MENU
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -320,8 +309,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.RUJANEC_MENU
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -338,8 +325,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.MAE_NATATKI_MENU
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -356,8 +341,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.BOGASLUJBOVYIA_MENU
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -374,8 +357,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.MALITVY_MENU
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -392,8 +373,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.BIBLIA_SEMUXA
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -410,8 +389,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.BIBLIA_BOKUNA
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -428,8 +405,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.BIBLIA_NADSAN
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -446,8 +421,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.BIBLIA_CHARNIAUSKI
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -464,8 +437,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.BIBLIA_SINODAL
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -482,8 +453,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.KALIANDAR_YEAR
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -500,8 +469,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.VYBRANAE_LIST
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -518,8 +485,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_NIADAUNIA
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -536,8 +501,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_SPEUNIKI
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -554,8 +517,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_GISTORYIA
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -572,8 +533,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_MALITOUNIKI
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -590,8 +549,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -608,8 +565,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -626,8 +581,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.PIESNY_PRASLAULENNIA
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -644,8 +597,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.PIESNY_DA_BAGARODZICY
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -662,8 +613,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.PIESNY_ZA_BELARUS
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -680,8 +629,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.PIESNY_KALIADNYIA
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -698,8 +645,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.PIESNY_TAIZE
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -774,8 +719,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.UNDER_SVAITY_MUNU
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -792,8 +735,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.UNDER_PARAFII_BGKC
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -810,8 +751,6 @@ fun AppNavGraph(cytata: AnnotatedString) {
             Settings.destinations = AllDestinations.UNDER_PASHALIA
             MainConteiner(
                 navController = navController,
-                coroutineScope = coroutineScope,
-                drawerState = drawerState,
                 drawerScrollStete = drawerScrollStete,
                 cytata = cytata
             )
@@ -1137,12 +1076,12 @@ fun CheckUpdateMalitounik() {
 @Composable
 fun MainConteiner(
     navController: NavHostController,
-    coroutineScope: CoroutineScope,
-    drawerState: DrawerState,
     drawerScrollStete: ScrollState,
     cytata: AnnotatedString,
 ) {
     val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
+    val coroutineScope: CoroutineScope = rememberCoroutineScope()
+    val drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val currentRoute = currentNavBackStackEntry?.destination?.route ?: AllDestinations.KALIANDAR
     val context = LocalActivity.current as MainActivity
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
@@ -1161,10 +1100,11 @@ fun MainConteiner(
     val pagerState = rememberPagerState(pageCount = {
         Settings.data.size
     }, initialPage = initPage)
-    var showDropdown by rememberSaveable { mutableStateOf(false) }
+    var showDropdown by remember { mutableStateOf(false) }
     var showDropdownMenuPos by rememberSaveable { mutableIntStateOf(1) }
-    BackHandler(showDropdown) {
-        showDropdown = !showDropdown
+    BackHandler(drawerState.isClosed || showDropdown) {
+        if (drawerState.isClosed) coroutineScope.launch { drawerState.open() }
+        showDropdown = false
     }
     val view = LocalView.current
     var isAppearanceLight = false
@@ -2193,7 +2133,6 @@ fun DialogLogProgramy(
                 Column(
                     modifier = Modifier
                         .weight(1f)
-                        .size(Dp.Unspecified, 200.dp)
                         .padding(10.dp)
                         .verticalScroll(rememberScrollState())
                 ) {

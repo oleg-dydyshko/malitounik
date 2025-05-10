@@ -129,7 +129,7 @@ fun PadzeiaView(navController: NavHostController) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val maxLine = remember { mutableIntStateOf(1) }
-    var editMode by remember { mutableStateOf(false) }
+    var editMode by rememberSaveable { mutableStateOf(false) }
     var editPadzeia by remember { mutableStateOf(false) }
     var editPadzeiaInit by remember { mutableStateOf(true) }
     var deliteAll by remember { mutableStateOf(false) }
@@ -252,7 +252,7 @@ fun PadzeiaView(navController: NavHostController) {
             view
         ).isAppearanceLightStatusBars = false
     }
-    var showDropdown by rememberSaveable { mutableStateOf(false) }
+    var showDropdown by remember { mutableStateOf(false) }
     BackHandler(showDropdown || editMode) {
         if (editMode) {
             editMode = false

@@ -168,7 +168,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
     var checkPiarliny by remember { mutableStateOf(false) }
     var viewPiarliny by remember { mutableStateOf(false) }
     var fullImagePathVisable by remember { mutableStateOf("") }
-    BackHandler(imageFull || showDropdown) {
+    BackHandler(!backPressHandled || imageFull || showDropdown) {
         when {
             imageFull -> imageFull = false
             showDropdown -> {
