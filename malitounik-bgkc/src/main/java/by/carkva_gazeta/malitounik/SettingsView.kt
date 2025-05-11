@@ -237,6 +237,20 @@ fun SettingsView(navController: NavHostController) {
                             )
                         })
                 },
+                actions = {
+                    if (admin) {
+                        IconButton(onClick = {
+                            admin = false
+                            k.edit {
+                                putBoolean("admin", false)
+                            }
+                        }) {
+                            Icon(
+                                painter = painterResource(R.drawable.logout), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                            )
+                        }
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
             )
         }
