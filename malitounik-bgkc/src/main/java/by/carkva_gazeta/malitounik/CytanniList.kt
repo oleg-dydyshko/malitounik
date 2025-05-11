@@ -19,7 +19,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
@@ -458,7 +457,10 @@ fun CytanniList(
     }
     BackHandler(!backPressHandled || isSelectMode || isParallelVisable || showDropdown) {
         when {
-            isSelectMode -> isSelectMode = false
+            isSelectMode -> {
+                if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
+                isSelectMode = false
+            }
             isParallelVisable -> isParallelVisable = false
             showDropdown -> {
                 showDropdown = false
@@ -560,7 +562,10 @@ fun CytanniList(
                     navigationIcon = {
                         if (isSelectMode || isParallelVisable) {
                             IconButton(onClick = {
-                                if (isSelectMode) isSelectMode = false
+                                if (isSelectMode) {
+                                    if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
+                                    isSelectMode = false
+                                }
                                 else isParallelVisable = false
                             }, content = {
                                 Icon(
@@ -577,19 +582,20 @@ fun CytanniList(
                                     }
 
                                     else -> {
+                                        fullscreen = false
                                         val prefEditors = k.edit()
                                         if (biblia == Settings.CHYTANNI_BIBLIA) {
-                                            prefEditors.putString(
-                                                "bible_time_${prevodName}_kniga", knigaText
-                                            )
-                                            prefEditors.putInt(
-                                                "bible_time_${prevodName}_glava", selectedIndex
-                                            )
+                                            prefEditors.putString("bible_time_${prevodName}_kniga", knigaText)
+                                            prefEditors.putInt("bible_time_${prevodName}_glava", selectedIndex)
                                             prefEditors.putInt(
                                                 "bible_time_${prevodName}_stix", listState[selectedIndex].firstVisibleItemIndex
                                             )
                                         }
                                         prefEditors.apply()
+                                        autoScrollJob?.cancel()
+                                        autoScrollTextVisableJob?.cancel()
+                                        backPressHandled = true
+                                        actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                                         navController.popBackStack()
                                     }
                                 }
@@ -1216,6 +1222,7 @@ fun CytanniList(
                         isCopyMode = false
                         isShareMode = false
                         isSelectMode = false
+                        if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
                     }
                     LazyColumn(
                         Modifier
@@ -1252,21 +1259,29 @@ fun CytanniList(
                             }
                             HtmlText(
                                 modifier = if (!autoScrollSensor && !showDropdown) {
-                                    Modifier.combinedClickable(onClick = {
-                                        if (!isSelectMode && isParallel && resultPage[index].parallel != "+-+") {
-                                            isParallelVisable = true
-                                            paralelChtenia = resultPage[index].parallel
-                                        } else {
-                                            selectState[index] = !selectState[index]
-                                        }
-                                    }, onLongClick = {
-                                        if (!fullscreen) {
-                                            isSelectMode = true
-                                            selectState[index] = !selectState[index]
-                                        }
-                                    }, onDoubleClick = {
-                                        fullscreen = !fullscreen
-                                    })
+                                    Modifier.pointerInput(Unit) {
+                                        detectTapGestures(
+                                            onTap = {
+                                                if (!isSelectMode && isParallel && resultPage[index].parallel != "+-+") {
+                                                    isParallelVisable = true
+                                                    paralelChtenia = resultPage[index].parallel
+                                                }
+                                                if (isSelectMode) {
+                                                    selectState[index] = !selectState[index]
+                                                }
+                                            },
+                                            onLongPress = {
+                                                if (!fullscreen) {
+                                                    isSelectMode = true
+                                                    actyvity.removelightSensor()
+                                                    selectState[index] = !selectState[index]
+                                                }
+                                            },
+                                            onDoubleTap = {
+                                                fullscreen = !fullscreen
+                                            }
+                                        )
+                                    }
                                 } else {
                                     Modifier.pointerInput(Unit) {
                                         detectTapGestures(

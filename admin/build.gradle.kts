@@ -34,6 +34,7 @@ dependencies {
     implementation (libs.commons.text)
     implementation (libs.androidx.core.ktx)
     implementation(libs.feature.delivery)
+    implementation(libs.androidx.viewbinding)
     testImplementation (libs.junit)
     androidTestImplementation (libs.androidx.junit)
     androidTestImplementation (libs.androidx.espresso.core)

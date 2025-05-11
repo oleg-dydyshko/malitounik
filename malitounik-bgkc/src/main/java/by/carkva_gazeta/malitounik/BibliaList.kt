@@ -2,6 +2,7 @@ package by.carkva_gazeta.malitounik
 
 import android.app.Activity
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -29,10 +30,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +58,7 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
+import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -101,6 +107,12 @@ fun BibliaList(
             view
         ).isAppearanceLightStatusBars = false
     }
+    var backPressHandled by remember { mutableStateOf(false) }
+    BackHandler(!backPressHandled) {
+        navController.popBackStack()
+        AppNavGraphState.bibleListPosition = -1
+        backPressHandled = true
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -141,7 +153,12 @@ fun BibliaList(
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() },
+                    IconButton(
+                        onClick = {
+                            navController.popBackStack()
+                            AppNavGraphState.bibleListPosition = -1
+                            backPressHandled = true
+                        },
                         content = {
                             Icon(
                                 painter = painterResource(R.drawable.arrow_back),
@@ -154,9 +171,15 @@ fun BibliaList(
             )
         }
     ) { innerPadding ->
+        val lazyColumnState = rememberLazyListState()
         val bibleList = bibleCount(perevod, isNovyZapavet)
         val collapsedState = remember(bibleList) { bibleList.map { true }.toMutableStateList() }
-        val lazyColumnState = rememberLazyListState()
+        LaunchedEffect(Unit) {
+            if (AppNavGraphState.bibleListPosition != -1) {
+                collapsedState[AppNavGraphState.bibleListPosition] = false
+                lazyColumnState.scrollToItem(AppNavGraphState.bibleListPosition)
+            }
+        }
         BoxWithConstraints(
             modifier = Modifier.padding(
                 innerPadding.calculateStartPadding(LayoutDirection.Ltr),
@@ -232,6 +255,7 @@ fun BibliaList(
                                             )
                                             .background(Divider)
                                             .clickable {
+                                                AppNavGraphState.bibleListPosition = i
                                                 navigateToCytanniList(
                                                     dataItem.subTitle + " " + (item + 1).toString(),
                                                     perevod
@@ -355,6 +379,7 @@ fun bibleCount(kniga: Int, perevod: String): Int {
             if (perevod == Settings.PEREVODSINOIDAL) 43
             else 42
         }
+
         21 -> {
             if (perevod == Settings.PEREVODSEMUXI) 151
             else 150
@@ -373,6 +398,7 @@ fun bibleCount(kniga: Int, perevod: String): Int {
             if (perevod == Settings.PEREVODCARNIAUSKI) 6
             else 5
         }
+
         32 -> 48
         33 -> 14
         34 -> 14

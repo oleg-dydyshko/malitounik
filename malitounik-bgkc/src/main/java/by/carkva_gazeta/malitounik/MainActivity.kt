@@ -1182,7 +1182,6 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
                 AppNavGraphState.underItem = false
                 AppNavGraphState.scrollValue = 0
                 AppNavGraphState.getCytata(this@MainActivity)
-                AppNavGraphState.checkUpdate = true
                 AppNavGraphState.setAlarm = true
                 onBack()
             }
