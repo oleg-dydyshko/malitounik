@@ -319,9 +319,9 @@ fun KaliandarScreenMounth(
                             color = PrimaryTextBlack
                         )
                     }
-                    for (w in 1..end / 7) {
+                    (1..end / 7).forEach {
                         Row(modifier = Modifier.fillMaxWidth()) {
-                            for (r in 1..7) {
+                            (1..7).forEach {
                                 if (e < wik) {
                                     oldDay++
                                     day = "start"

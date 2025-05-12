@@ -366,7 +366,9 @@ fun CytanniList(
         }
         if (perevod == Settings.PEREVODCARNIAUSKI) {
             if (knigaBiblii(knigaText) == 30) {
-                for (i in 1..5) listState.add(rememberLazyListState())
+                (1..5).forEach {
+                    listState.add(rememberLazyListState())
+                }
                 selectedIndex = 5
                 knigaText = "Бар"
             }

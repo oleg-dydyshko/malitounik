@@ -884,7 +884,7 @@ fun AppNavGraph(cytata: AnnotatedString) {
             else 1
             if (count != cytanniListState.size) {
                 cytanniListState.clear()
-                for (i in 0 until count) {
+                (0 until count).forEach {
                     cytanniListState.add(rememberLazyListState())
                 }
             }

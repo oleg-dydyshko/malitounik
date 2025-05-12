@@ -2555,13 +2555,11 @@ class SlugbovyiaTextu {
                             calendar.get(Calendar.YEAR), Calendar.DECEMBER, 30
                         )
                         else calendar.set(calendar.get(Calendar.YEAR) - 1, Calendar.DECEMBER, 30)
-                        for (i in 1..7) {
-                            //addDay = 0
+                        (1..7).forEach {
                             val wik = calendar.get(Calendar.DAY_OF_WEEK)
                             if (wik == Calendar.SUNDAY) {
-                                //if (!calendar.isLeapYear(calendar.get(Calendar.YEAR)) && calendar[Calendar.MONTH] > Calendar.FEBRUARY) addDay = 1
                                 realDay = calendar.get(Calendar.DAY_OF_YEAR)
-                                break
+                                return@forEach
                             }
                             calendar.add(Calendar.DATE, 1)
                         }

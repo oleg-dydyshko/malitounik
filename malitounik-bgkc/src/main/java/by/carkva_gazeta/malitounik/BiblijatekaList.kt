@@ -457,9 +457,9 @@ fun writeFile(
         inProcess(true)
         var error = false
         try {
-            for (i in 0..2) {
+            (0..2).forEach {
                 error = downloadPdfFile(context, url)
-                if (!error) break
+                if (!error) return@forEach
             }
         } catch (_: Throwable) {
             error = true
@@ -511,9 +511,9 @@ private suspend fun getBibliateka(
         try {
             val temp = ArrayList<ArrayList<String>>()
             var sb = ""
-            for (i in 0..2) {
+            (0..2).forEach {
                 sb = getBibliatekaJson(context)
-                if (sb != "") break
+                if (sb != "") return@forEach
             }
             if (sb != "") {
                 val gson = Gson()
