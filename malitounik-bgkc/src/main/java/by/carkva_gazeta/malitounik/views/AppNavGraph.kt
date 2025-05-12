@@ -1087,7 +1087,14 @@ fun MainConteiner(
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
-    CheckUpdateMalitounik()
+    var appUpdate by remember { mutableStateOf(false) }
+    if (appUpdate) {
+        CheckUpdateMalitounik()
+        appUpdate = false
+    }
+    LaunchedEffect(Unit) {
+        appUpdate = true
+    }
     val initPage = if (Settings.caliandarPosition == -1) {
         findCaliandarPosition(-1)
         Settings.initCaliandarPosition

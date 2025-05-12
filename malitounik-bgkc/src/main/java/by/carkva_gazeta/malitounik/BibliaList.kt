@@ -109,8 +109,10 @@ fun BibliaList(
             for (i in bibleList.indices) {
                 if (knigaText == bibleList[i].subTitle) {
                     AppNavGraphState.bibleListPosition = i
-                    collapsedState[AppNavGraphState.bibleListPosition] = false
-                    lazyColumnState.scrollToItem(AppNavGraphState.bibleListPosition)
+                    coroutineScope.launch {
+                        collapsedState[AppNavGraphState.bibleListPosition] = false
+                        lazyColumnState.scrollToItem(AppNavGraphState.bibleListPosition)
+                    }
                     break
                 }
             }
