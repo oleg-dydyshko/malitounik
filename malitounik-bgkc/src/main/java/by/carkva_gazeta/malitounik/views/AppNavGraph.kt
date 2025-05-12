@@ -170,6 +170,7 @@ object AppNavGraphState {
     var underItem by mutableStateOf(k.getString("navigate", AllDestinations.PIESNY_PRASLAULENNIA)?.contains("Under", ignoreCase = true) == true)
     var scrollValue = 0
     var bibleListPosition = -1
+    var vybranaeListPosition = -1
     var setAlarm = true
 
     fun getCytata(context: MainActivity): AnnotatedString {

@@ -30,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -47,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import by.carkva_gazeta.malitounik.ui.theme.Divider
+import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
@@ -212,6 +214,12 @@ fun VybranaeList(
     if (removeAllVybranae) {
         list.clear()
     }
+    LaunchedEffect(Unit) {
+        if (AppNavGraphState.vybranaeListPosition != -1) {
+            collapsedState[AppNavGraphState.vybranaeListPosition] = false
+            lazyColumnState.scrollToItem(AppNavGraphState.vybranaeListPosition)
+        }
+    }
     LazyColumn(
         state = lazyColumnState
     ) {
@@ -224,6 +232,7 @@ fun VybranaeList(
                         modifier = Modifier
                             .combinedClickable(
                                 onClick = {
+                                    AppNavGraphState.vybranaeListPosition = i
                                     collapsedState[i] = !collapsed
                                 },
                                 onLongClick = {

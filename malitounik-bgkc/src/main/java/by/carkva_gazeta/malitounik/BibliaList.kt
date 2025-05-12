@@ -82,20 +82,40 @@ fun BibliaList(
         Settings.PEREVODSINOIDAL -> stringResource(R.string.bsinaidal)
         else -> stringResource(R.string.kaliandar2)
     }
-    if (Settings.bibleTime) {
-        Settings.bibleTime = false
-        Settings.bibleTimeList = true
-        val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-        val prevodName = when (perevod) {
-            Settings.PEREVODSEMUXI -> "biblia"
-            Settings.PEREVODBOKUNA -> "bokuna"
-            Settings.PEREVODCARNIAUSKI -> "carniauski"
-            Settings.PEREVODSINOIDAL -> "sinaidal"
-            else -> "biblia"
+    val context = LocalContext.current
+    val lazyColumnState = rememberLazyListState()
+    val bibleList = bibleCount(perevod, isNovyZapavet)
+    val collapsedState = remember(bibleList) { bibleList.map { true }.toMutableStateList() }
+    LaunchedEffect(Unit) {
+        if (AppNavGraphState.bibleListPosition != -1) {
+            collapsedState[AppNavGraphState.bibleListPosition] = false
+            lazyColumnState.scrollToItem(AppNavGraphState.bibleListPosition)
         }
-        val knigaText = k.getString("bible_time_${prevodName}_kniga", "Быц") ?: "Быц"
-        val glava = k.getInt("bible_time_${prevodName}_glava", 0)
-        navigateToCytanniList("$knigaText ${glava + 1}", perevod)
+    }
+    LaunchedEffect(Settings.bibleTime) {
+        if (Settings.bibleTime) {
+            Settings.bibleTime = false
+            Settings.bibleTimeList = true
+            val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+            val prevodName = when (perevod) {
+                Settings.PEREVODSEMUXI -> "biblia"
+                Settings.PEREVODBOKUNA -> "bokuna"
+                Settings.PEREVODCARNIAUSKI -> "carniauski"
+                Settings.PEREVODSINOIDAL -> "sinaidal"
+                else -> "biblia"
+            }
+            val knigaText = k.getString("bible_time_${prevodName}_kniga", "Быц") ?: "Быц"
+            val glava = k.getInt("bible_time_${prevodName}_glava", 0)
+            for (i in bibleList.indices) {
+                if (knigaText == bibleList[i].subTitle) {
+                    AppNavGraphState.bibleListPosition = i
+                    collapsedState[AppNavGraphState.bibleListPosition] = false
+                    lazyColumnState.scrollToItem(AppNavGraphState.bibleListPosition)
+                    break
+                }
+            }
+            navigateToCytanniList("$knigaText ${glava + 1}", perevod)
+        }
     }
     val subTitle = if (isNovyZapavet) stringResource(R.string.novy_zapaviet)
     else stringResource(R.string.stary_zapaviet)
@@ -171,15 +191,6 @@ fun BibliaList(
             )
         }
     ) { innerPadding ->
-        val lazyColumnState = rememberLazyListState()
-        val bibleList = bibleCount(perevod, isNovyZapavet)
-        val collapsedState = remember(bibleList) { bibleList.map { true }.toMutableStateList() }
-        LaunchedEffect(Unit) {
-            if (AppNavGraphState.bibleListPosition != -1) {
-                collapsedState[AppNavGraphState.bibleListPosition] = false
-                lazyColumnState.scrollToItem(AppNavGraphState.bibleListPosition)
-            }
-        }
         BoxWithConstraints(
             modifier = Modifier.padding(
                 innerPadding.calculateStartPadding(LayoutDirection.Ltr),

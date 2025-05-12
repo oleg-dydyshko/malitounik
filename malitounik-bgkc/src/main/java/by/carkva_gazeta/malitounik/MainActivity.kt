@@ -1183,6 +1183,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
                 AppNavGraphState.scrollValue = 0
                 AppNavGraphState.getCytata(this@MainActivity)
                 AppNavGraphState.setAlarm = true
+                AppNavGraphState.vybranaeListPosition = -1
                 onBack()
             }
         })

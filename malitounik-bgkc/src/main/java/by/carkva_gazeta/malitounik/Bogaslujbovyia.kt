@@ -185,37 +185,37 @@ fun Bogaslujbovyia(
             }
         }
     }
-    if (saveVybranoe) {
-        if (isVybranoe) {
-            var pos = 0
-            for (i in 0 until vybranoeList.size) {
-                if (resursEncode == vybranoeList[i].resource) {
-                    pos = i
-                    break
+    LaunchedEffect(saveVybranoe) {
+        if (saveVybranoe) {
+            if (isVybranoe) {
+                var pos = 0
+                for (i in 0 until vybranoeList.size) {
+                    if (resursEncode == vybranoeList[i].resource) {
+                        pos = i
+                        break
+                    }
+                }
+                vybranoeList.removeAt(pos)
+            } else {
+                vybranoeList.add(
+                    0,
+                    VybranaeDataAll(
+                        Calendar.getInstance().timeInMillis,
+                        title,
+                        resursEncode,
+                    )
+                )
+            }
+            isVybranoe = !isVybranoe
+            if (vybranoeList.isEmpty() && file.exists()) {
+                file.delete()
+            } else {
+                file.writer().use {
+                    it.write(gson.toJson(vybranoeList, type))
                 }
             }
-            vybranoeList.removeAt(pos)
-            isVybranoe = false
-        } else {
-            vybranoeList.add(
-                0,
-                VybranaeDataAll(
-                    Calendar.getInstance().timeInMillis,
-                    title,
-                    resursEncode,
-                )
-            )
+            saveVybranoe = false
         }
-        if (vybranoeList.isEmpty() && file.exists()) {
-            file.delete()
-            isVybranoe = false
-        } else {
-            file.writer().use {
-                it.write(gson.toJson(vybranoeList, type))
-            }
-            isVybranoe = true
-        }
-        saveVybranoe = false
     }
     LaunchedEffect(autoScroll) {
         if (autoScroll) {
