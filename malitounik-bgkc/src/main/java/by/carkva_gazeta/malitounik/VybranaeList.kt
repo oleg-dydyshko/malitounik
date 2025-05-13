@@ -232,7 +232,8 @@ fun VybranaeList(
                         modifier = Modifier
                             .combinedClickable(
                                 onClick = {
-                                    AppNavGraphState.vybranaeListPosition = i
+                                    AppNavGraphState.vybranaeListPosition = if (!collapsed) -1
+                                    else i
                                     collapsedState[i] = !collapsed
                                 },
                                 onLongClick = {

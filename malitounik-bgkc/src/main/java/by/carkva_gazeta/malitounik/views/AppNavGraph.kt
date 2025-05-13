@@ -1008,7 +1008,9 @@ fun findCaliandarPosition(position: Int): ArrayList<ArrayList<String>> {
 }
 
 @Composable
-fun CheckUpdateMalitounik() {
+fun CheckUpdateMalitounik(
+    onDismiss: () -> Unit
+) {
     var dialogUpdateMalitounik by remember { mutableStateOf(false) }
     var noWIFI by remember { mutableStateOf(false) }
     var totalBytesToDownload by remember { mutableFloatStateOf(0f) }
@@ -1018,6 +1020,8 @@ fun CheckUpdateMalitounik() {
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             dialogUpdateMalitounik = true
+        } else {
+            onDismiss()
         }
     }
     val appUpdateManager = AppUpdateManagerFactory.create(context)
@@ -1039,6 +1043,7 @@ fun CheckUpdateMalitounik() {
     if (dialogUpdateMalitounik) {
         DialogUpdateMalitounik(totalBytesToDownload, bytesDownload) {
             dialogUpdateMalitounik = false
+            onDismiss()
         }
     }
     if (noWIFI) {
@@ -1051,7 +1056,10 @@ fun CheckUpdateMalitounik() {
                 }
             }
             noWIFI = false
-        }) { noWIFI = false }
+        }) {
+            onDismiss()
+            noWIFI = false
+        }
     }
     LaunchedEffect(Unit) {
         if (isNetworkAvailable(context)) {
@@ -1089,8 +1097,9 @@ fun MainConteiner(
     }
     var appUpdate by remember { mutableStateOf(false) }
     if (appUpdate) {
-        CheckUpdateMalitounik()
-        appUpdate = false
+        CheckUpdateMalitounik {
+            appUpdate = false
+        }
     }
     LaunchedEffect(Unit) {
         appUpdate = true
