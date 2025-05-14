@@ -42,6 +42,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -443,16 +444,7 @@ fun Bogaslujbovyia(
     val listResource = ArrayList<SlugbovyiaTextuData>()
     if (isLiturgia || isViachernia || resursEncode == "bogashlugbovya/jutran_niadzelnaja.html") {
         when (resursEncode) {
-                "bogashlugbovya/lit_jana_zalatavusnaha.html", "bogashlugbovya/lit_jan_zalat_vielikodn.html", "bogashlugbovya/lit_vasila_vialikaha.html", "bogashlugbovya/abiednica.html" -> {
-                if (data[0].toInt() == Calendar.SUNDAY) {
-                    if (data[20] != "0") {
-                        val trapary = getTraparyKandakiNiadzelnyia()
-                        listResource.add(SlugbovyiaTextuData(0, trapary[data[20].toInt() - 1].title, trapary[data[20].toInt() - 1].resurs.toString(), SlugbovyiaTextu.LITURHIJA))
-                    }
-                } else {
-                    val trapary = getTraparyKandakiShtodzennyia()
-                    listResource.add(SlugbovyiaTextuData(0, trapary[data[0].toInt() - 2].title.replace("\n", ": "), trapary[data[0].toInt() - 2].resurs.toString(), SlugbovyiaTextu.LITURHIJA))
-                }
+            "bogashlugbovya/lit_jana_zalatavusnaha.html", "bogashlugbovya/lit_jan_zalat_vielikodn.html", "bogashlugbovya/lit_vasila_vialikaha.html", "bogashlugbovya/abiednica.html" -> {
                 listResource.addAll(SlugbovyiaTextu().loadSluzbaDayList(SlugbovyiaTextu.LITURHIJA, data[24].toInt(), data[3].toInt()))
             }
 
@@ -479,7 +471,7 @@ fun Bogaslujbovyia(
                                         maxLine.intValue = 1
                                     }
                                 },
-                                text = if (iskniga) subTitle.uppercase() else title.uppercase(),
+                                text = if (iskniga) subTitle.replace("\n", " ").uppercase() else title.replace("\n", " ").uppercase(),
                                 color = MaterialTheme.colorScheme.onSecondary,
                                 fontWeight = FontWeight.Bold,
                                 maxLines = maxLine.intValue,
@@ -591,255 +583,7 @@ fun Bogaslujbovyia(
                         }
                     },
                     actions = {
-                        if (!searchText) {
-                            if (!iskniga) {
-                                var expanded by remember { mutableStateOf(false) }
-                                if ((isLiturgia || isViachernia) && cytanneVisable && listResource.isNotEmpty()) {
-                                    IconButton(onClick = {
-                                        showDropdown = true
-                                        menuPosition = 2
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.book_red),
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.onSecondary
-                                        )
-                                    }
-                                }
-                                if (scrollState.canScrollForward) {
-                                    val iconAutoScroll =
-                                        if (autoScrollSensor) painterResource(R.drawable.stop_circle)
-                                        else painterResource(R.drawable.play_circle)
-                                    IconButton(onClick = {
-                                        autoScroll = !autoScroll
-                                        autoScrollSensor = !autoScrollSensor
-                                        if (autoScrollSensor) actyvity.window.addFlags(
-                                            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                                        )
-                                        else actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                                    }) {
-                                        Icon(
-                                            iconAutoScroll,
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.onSecondary
-                                        )
-                                    }
-                                } else if (scrollState.canScrollBackward) {
-                                    IconButton(onClick = {
-                                        isUpList = true
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.arrow_upward),
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.onSecondary
-                                        )
-                                    }
-                                }
-                                IconButton(onClick = { expanded = true }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.more_vert),
-                                        contentDescription = "",
-                                        tint = MaterialTheme.colorScheme.onSecondary
-                                    )
-                                }
-                                DropdownMenu(
-                                    expanded = expanded,
-                                    onDismissRequest = { expanded = false }
-                                ) {
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            expanded = false
-                                            if (autoScrollSensor) autoScroll = true
-                                            searchText = true
-                                        },
-                                        text = { Text(stringResource(R.string.searche_text), fontSize = (Settings.fontInterface - 2).sp) },
-                                        trailingIcon = {
-                                            Icon(
-                                                painter = painterResource(R.drawable.search),
-                                                contentDescription = ""
-                                            )
-                                        }
-                                    )
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            expanded = false
-                                            saveVybranoe = true
-                                        },
-                                        text = {
-                                            if (isVybranoe) Text(stringResource(R.string.vybranoe_del), fontSize = (Settings.fontInterface - 2).sp)
-                                            else Text(stringResource(R.string.vybranoe), fontSize = (Settings.fontInterface - 2).sp)
-                                        },
-                                        trailingIcon = {
-                                            val icon = if (isVybranoe) painterResource(R.drawable.stars)
-                                            else painterResource(R.drawable.star)
-                                            Icon(
-                                                painter = icon,
-                                                contentDescription = ""
-                                            )
-                                        }
-                                    )
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            expanded = false
-                                            if (autoScrollSensor) autoScroll = true
-                                            fullscreen = true
-                                        },
-                                        text = { Text(stringResource(R.string.fullscreen), fontSize = (Settings.fontInterface - 2).sp) },
-                                        trailingIcon = {
-                                            Icon(
-                                                painter = painterResource(R.drawable.fullscreen),
-                                                contentDescription = ""
-                                            )
-                                        }
-                                    )
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            showDropdown = !showDropdown
-                                            autoScroll = false
-                                            expanded = false
-                                            menuPosition = 1
-                                        },
-                                        text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) },
-                                        trailingIcon = {
-                                            Icon(
-                                                painter = painterResource(R.drawable.format_size),
-                                                contentDescription = ""
-                                            )
-                                        }
-                                    )
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            showDropdown = false
-                                            autoScroll = false
-                                            expanded = false
-                                            val sent = textLayout.value?.layoutInput?.text?.text
-                                            val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-                                            sent?.let { shareText ->
-                                                val clip = ClipData.newPlainText(context.getString(R.string.copy_text), shareText)
-                                                clipboard.setPrimaryClip(clip)
-                                                val sendIntent = Intent(Intent.ACTION_SEND)
-                                                sendIntent.putExtra(Intent.EXTRA_TEXT, shareText)
-                                                sendIntent.putExtra(Intent.EXTRA_SUBJECT, title)
-                                                sendIntent.type = "text/plain"
-                                                context.startActivity(Intent.createChooser(sendIntent, title))
-                                            }
-                                        },
-                                        text = { Text(stringResource(R.string.share), fontSize = (Settings.fontInterface - 2).sp) },
-                                        trailingIcon = {
-                                            Icon(
-                                                painter = painterResource(R.drawable.share),
-                                                contentDescription = ""
-                                            )
-                                        }
-                                    )
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            showDropdown = false
-                                            autoScroll = false
-                                            expanded = false
-                                            val slugbovyiaTextu = SlugbovyiaTextu()
-                                            var res = slugbovyiaTextu.getTydzen1()
-                                            res.forEach {
-                                                if (resursEncode == it.resource) printFile = "Tydzien-1 VP_2012.pdf"
-                                            }
-                                            res = slugbovyiaTextu.getTydzen2()
-                                            res.forEach {
-                                                if (resursEncode == it.resource) printFile = "Tydzien-2 VP_2012.pdf"
-                                            }
-                                            res = slugbovyiaTextu.getTydzen3()
-                                            res.forEach {
-                                                if (resursEncode == it.resource) printFile = "Tydzien-3 VP_2014.pdf"
-                                            }
-                                            res = slugbovyiaTextu.getTydzen4()
-                                            res.forEach {
-                                                if (resursEncode == it.resource) printFile = "Tydzien-4 VP_2014.pdf"
-                                            }
-                                            res = slugbovyiaTextu.getTydzen5()
-                                            res.forEach {
-                                                if (resursEncode == it.resource) printFile = "Tydzien-5 VP_2015.pdf"
-                                            }
-                                            res = slugbovyiaTextu.getTydzen6()
-                                            res.forEach {
-                                                if (resursEncode == it.resource) printFile = "Tydzien-6 VP_2015.pdf"
-                                            }
-                                            if (resursEncode == "bogashlugbovya/lit_jana_zalatavusnaha.html") printFile = "LITURGIJA Jana Zlt.pdf"
-                                            if (resursEncode == "bogashlugbovya/kanon_andreja_kryckaha.html") printFile = "Kanon_A-Kryckaha.pdf"
-                                            if (resursEncode == "bogashlugbovya/akafist4.html") printFile = "Akafist-Padl-muczanikam.pdf"
-                                            if (resursEncode == "bogashlugbovya/akafist6.html") printFile = "Akafist da Ducha Sviatoha.pdf"
-                                            if (resursEncode == "bogashlugbovya/vialikaja_piatnica_jutran_12jevanhellau.html") printFile = "Vial-Piatnica-jutran-12-Evang.pdf"
-                                            if (printFile.isNotEmpty()) {
-                                                if (fileExistsBiblijateka(context, printFile)) {
-                                                    val printAdapter = PdfDocumentAdapter(context, printFile)
-                                                    val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
-                                                    val printAttributes = PrintAttributes.Builder().setMediaSize(PrintAttributes.MediaSize.ISO_A4).build()
-                                                    printManager.print(printFile, printAdapter, printAttributes)
-                                                } else {
-                                                    if (Settings.isNetworkAvailable(
-                                                            context,
-                                                            Settings.TRANSPORT_CELLULAR
-                                                        )
-                                                    ) isDialogNoWIFIVisable = true
-                                                    else {
-                                                        writeFile(
-                                                            context, printFile, loadComplete = {
-                                                                val printAdapter = PdfDocumentAdapter(context, printFile)
-                                                                val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
-                                                                val printAttributes = PrintAttributes.Builder().setMediaSize(PrintAttributes.MediaSize.ISO_A4).build()
-                                                                printManager.print(printFile, printAdapter, printAttributes)
-                                                            },
-                                                            inProcess = {
-                                                            })
-                                                    }
-                                                }
-                                            } else {
-                                                isWebViewVisible = true
-                                            }
-                                        },
-                                        text = { Text(stringResource(R.string.print), fontSize = (Settings.fontInterface - 2).sp) },
-                                        trailingIcon = {
-                                            Icon(
-                                                painter = painterResource(R.drawable.print),
-                                                contentDescription = ""
-                                            )
-                                        }
-                                    )
-                                    if (k.getBoolean("admin", false)) {
-                                        HorizontalDivider()
-                                        DropdownMenuItem(
-                                            onClick = {
-                                                showDropdown = false
-                                                autoScroll = false
-                                                expanded = false
-                                                if ((context as MainActivity).checkmodulesAdmin()) {
-                                                    val intent = Intent()
-                                                    intent.setClassName(context, "by.carkva_gazeta.admin.PasochnicaList")
-                                                    val t1 = resursEncode.lastIndexOf("/")
-                                                    val t2 = resursEncode.lastIndexOf(".")
-                                                    val resursAdmin = if (t1 != -1) {
-                                                        if (t2 != -1) resursEncode.substring(t1 + 1, t2)
-                                                        else resursEncode.substring(t1 + 1)
-                                                    } else {
-                                                        if (t2 != -1) resursEncode.substring(0, t2)
-                                                        else resursEncode
-                                                    }
-                                                    intent.putExtra("resours", resursAdmin)
-                                                    intent.putExtra("title", title)
-                                                    intent.putExtra("text", htmlText.replace("#ff6666", "#d00505", true))
-                                                    context.startActivity(intent)
-                                                }
-                                            },
-                                            text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) },
-                                            trailingIcon = {
-                                                Icon(
-                                                    painter = painterResource(R.drawable.edit),
-                                                    contentDescription = ""
-                                                )
-                                            }
-                                        )
-                                    }
-                                }
-                            }
-                        } else {
+                        if (searchText) {
                             IconButton(onClick = {
                                 findBack = true
                             }) {
@@ -863,7 +607,256 @@ fun Bogaslujbovyia(
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
                 )
             }
-        }, modifier = Modifier
+        },
+        bottomBar = {
+            if (!fullscreen) {
+                if (!iskniga) {
+                    BottomAppBar(containerColor = MaterialTheme.colorScheme.onTertiary) {
+                        var expanded by remember { mutableStateOf(false) }
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            if (k.getBoolean("admin", false)) {
+                                DropdownMenuItem(
+                                    onClick = {
+                                        showDropdown = false
+                                        autoScroll = false
+                                        expanded = false
+                                        if ((context as MainActivity).checkmodulesAdmin()) {
+                                            val intent = Intent()
+                                            intent.setClassName(context, "by.carkva_gazeta.admin.PasochnicaList")
+                                            val t1 = resursEncode.lastIndexOf("/")
+                                            val t2 = resursEncode.lastIndexOf(".")
+                                            val resursAdmin = if (t1 != -1) {
+                                                if (t2 != -1) resursEncode.substring(t1 + 1, t2)
+                                                else resursEncode.substring(t1 + 1)
+                                            } else {
+                                                if (t2 != -1) resursEncode.substring(0, t2)
+                                                else resursEncode
+                                            }
+                                            intent.putExtra("resours", resursAdmin)
+                                            intent.putExtra("title", title)
+                                            intent.putExtra("text", htmlText.replace("#ff6666", "#d00505", true))
+                                            context.startActivity(intent)
+                                        }
+                                    },
+                                    text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) },
+                                    trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.edit),
+                                            contentDescription = ""
+                                        )
+                                    }
+                                )
+                            }
+                            HorizontalDivider()
+                            DropdownMenuItem(
+                                onClick = {
+                                    showDropdown = false
+                                    autoScroll = false
+                                    expanded = false
+                                    val slugbovyiaTextu = SlugbovyiaTextu()
+                                    var res = slugbovyiaTextu.getTydzen1()
+                                    res.forEach {
+                                        if (resursEncode == it.resource) printFile = "Tydzien-1 VP_2012.pdf"
+                                    }
+                                    res = slugbovyiaTextu.getTydzen2()
+                                    res.forEach {
+                                        if (resursEncode == it.resource) printFile = "Tydzien-2 VP_2012.pdf"
+                                    }
+                                    res = slugbovyiaTextu.getTydzen3()
+                                    res.forEach {
+                                        if (resursEncode == it.resource) printFile = "Tydzien-3 VP_2014.pdf"
+                                    }
+                                    res = slugbovyiaTextu.getTydzen4()
+                                    res.forEach {
+                                        if (resursEncode == it.resource) printFile = "Tydzien-4 VP_2014.pdf"
+                                    }
+                                    res = slugbovyiaTextu.getTydzen5()
+                                    res.forEach {
+                                        if (resursEncode == it.resource) printFile = "Tydzien-5 VP_2015.pdf"
+                                    }
+                                    res = slugbovyiaTextu.getTydzen6()
+                                    res.forEach {
+                                        if (resursEncode == it.resource) printFile = "Tydzien-6 VP_2015.pdf"
+                                    }
+                                    if (resursEncode == "bogashlugbovya/lit_jana_zalatavusnaha.html") printFile = "LITURGIJA Jana Zlt.pdf"
+                                    if (resursEncode == "bogashlugbovya/kanon_andreja_kryckaha.html") printFile = "Kanon_A-Kryckaha.pdf"
+                                    if (resursEncode == "bogashlugbovya/akafist4.html") printFile = "Akafist-Padl-muczanikam.pdf"
+                                    if (resursEncode == "bogashlugbovya/akafist6.html") printFile = "Akafist da Ducha Sviatoha.pdf"
+                                    if (resursEncode == "bogashlugbovya/vialikaja_piatnica_jutran_12jevanhellau.html") printFile = "Vial-Piatnica-jutran-12-Evang.pdf"
+                                    if (printFile.isNotEmpty()) {
+                                        if (fileExistsBiblijateka(context, printFile)) {
+                                            val printAdapter = PdfDocumentAdapter(context, printFile)
+                                            val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
+                                            val printAttributes = PrintAttributes.Builder().setMediaSize(PrintAttributes.MediaSize.ISO_A4).build()
+                                            printManager.print(printFile, printAdapter, printAttributes)
+                                        } else {
+                                            if (Settings.isNetworkAvailable(
+                                                    context,
+                                                    Settings.TRANSPORT_CELLULAR
+                                                )
+                                            ) isDialogNoWIFIVisable = true
+                                            else {
+                                                writeFile(
+                                                    context, printFile, loadComplete = {
+                                                        val printAdapter = PdfDocumentAdapter(context, printFile)
+                                                        val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
+                                                        val printAttributes = PrintAttributes.Builder().setMediaSize(PrintAttributes.MediaSize.ISO_A4).build()
+                                                        printManager.print(printFile, printAdapter, printAttributes)
+                                                    },
+                                                    inProcess = {
+                                                    })
+                                            }
+                                        }
+                                    } else {
+                                        isWebViewVisible = true
+                                    }
+                                },
+                                text = { Text(stringResource(R.string.print), fontSize = (Settings.fontInterface - 2).sp) },
+                                trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.print),
+                                        contentDescription = ""
+                                    )
+                                }
+                            )
+                            DropdownMenuItem(
+                                onClick = {
+                                    showDropdown = false
+                                    autoScroll = false
+                                    expanded = false
+                                    val sent = textLayout.value?.layoutInput?.text?.text
+                                    val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                                    sent?.let { shareText ->
+                                        val clip = ClipData.newPlainText(context.getString(R.string.copy_text), shareText)
+                                        clipboard.setPrimaryClip(clip)
+                                        val sendIntent = Intent(Intent.ACTION_SEND)
+                                        sendIntent.putExtra(Intent.EXTRA_TEXT, shareText)
+                                        sendIntent.putExtra(Intent.EXTRA_SUBJECT, title)
+                                        sendIntent.type = "text/plain"
+                                        context.startActivity(Intent.createChooser(sendIntent, title))
+                                    }
+                                },
+                                text = { Text(stringResource(R.string.share), fontSize = (Settings.fontInterface - 2).sp) },
+                                trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.share),
+                                        contentDescription = ""
+                                    )
+                                }
+                            )
+                            DropdownMenuItem(
+                                onClick = {
+                                    showDropdown = !showDropdown
+                                    autoScroll = false
+                                    expanded = false
+                                    menuPosition = 1
+                                },
+                                text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) },
+                                trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.format_size),
+                                        contentDescription = ""
+                                    )
+                                }
+                            )
+                            DropdownMenuItem(
+                                onClick = {
+                                    expanded = false
+                                    if (autoScrollSensor) autoScroll = true
+                                    fullscreen = true
+                                },
+                                text = { Text(stringResource(R.string.fullscreen), fontSize = (Settings.fontInterface - 2).sp) },
+                                trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.fullscreen),
+                                        contentDescription = ""
+                                    )
+                                }
+                            )
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceAround
+                        ) {
+                            IconButton(
+                                onClick = { expanded = true }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.more_vert),
+                                    contentDescription = "",
+                                    tint = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
+                            IconButton(onClick = {
+                                expanded = false
+                                if (autoScrollSensor) autoScroll = true
+                                searchText = true
+                            }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.search),
+                                    contentDescription = "",
+                                    tint = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
+                            IconButton(onClick = {
+                                findForward = true
+                            }) {
+                                val icon = if (isVybranoe) painterResource(R.drawable.stars)
+                                else painterResource(R.drawable.star)
+                                Icon(
+                                    painter = icon,
+                                    contentDescription = "",
+                                    tint = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
+                            if (scrollState.canScrollForward) {
+                                val iconAutoScroll =
+                                    if (autoScrollSensor) painterResource(R.drawable.stop_circle)
+                                    else painterResource(R.drawable.play_circle)
+                                IconButton(onClick = {
+                                    autoScroll = !autoScroll
+                                    autoScrollSensor = !autoScrollSensor
+                                    if (autoScrollSensor) actyvity.window.addFlags(
+                                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                    )
+                                    else actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                }) {
+                                    Icon(
+                                        iconAutoScroll,
+                                        contentDescription = "",
+                                        tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
+                            } else if (scrollState.canScrollBackward) {
+                                IconButton(onClick = {
+                                    isUpList = true
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.arrow_upward),
+                                        contentDescription = "",
+                                        tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
+                            }
+                            if ((isLiturgia || isViachernia) && cytanneVisable && listResource.isNotEmpty()) {
+                                IconButton(onClick = {
+                                    showDropdown = true
+                                    menuPosition = 2
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.book_red),
+                                        contentDescription = "",
+                                        tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -875,7 +868,7 @@ fun Bogaslujbovyia(
                 )
         ) {
             Popup(
-                alignment = Alignment.TopCenter,
+                alignment = Alignment.BottomCenter,
                 onDismissRequest = {
                     if (menuPosition != 2) {
                         showDropdown = false
@@ -903,10 +896,19 @@ fun Bogaslujbovyia(
                                 )
                             )
                             .background(MaterialTheme.colorScheme.onTertiary)
-                            .padding(start = 10.dp, end = 10.dp, top = 10.dp)
+                            .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
                             .background(MaterialTheme.colorScheme.tertiary)
                     ) {
                         Column {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(MaterialTheme.colorScheme.onTertiary)
+                                    .clickable {
+                                        showDropdown = false
+                                    }) {
+                                Icon(modifier = Modifier.align(Alignment.Start), painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = "", tint = PrimaryTextBlack)
+                            }
                             if (menuPosition == 2) {
                                 Column {
                                     for (i in listResource.indices) {
@@ -1009,15 +1011,6 @@ fun Bogaslujbovyia(
                                         fontSize = it
                                     }
                                 )
-                            }
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(MaterialTheme.colorScheme.onTertiary)
-                                    .clickable {
-                                        showDropdown = false
-                                    }) {
-                                Icon(modifier = Modifier.align(Alignment.End), painter = painterResource(R.drawable.keyboard_arrow_up), contentDescription = "", tint = PrimaryTextBlack)
                             }
                         }
                     }
@@ -1332,7 +1325,12 @@ fun DialogLiturgia(
                         .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
-                Column(modifier = Modifier.padding(10.dp).weight(1f).verticalScroll(rememberScrollState())) {
+                Column(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState())
+                ) {
                     HtmlText(text = item, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
                 }
                 Row(

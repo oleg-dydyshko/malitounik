@@ -751,6 +751,11 @@ fun getChasaslou(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
+            "Гадзіна 1", "bogashlugbovya/kan_hadz_hadzina_1.html"
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
             "Гадзіна 6", "bogashlugbovya/kan_hadz_hadzina_6.html"
         )
     )
