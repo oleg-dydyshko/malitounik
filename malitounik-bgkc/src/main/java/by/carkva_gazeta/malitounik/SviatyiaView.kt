@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
@@ -583,6 +584,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                                         sendIntent.type = "text/plain"
                                                         context.startActivity(Intent.createChooser(sendIntent, context.getText(R.string.zmiest)))
                                                     }
+                                                    Toast.makeText(context, context.getString(R.string.copy), Toast.LENGTH_SHORT).show()
                                                 }, painter = painterResource(R.drawable.share), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
                                         )
                                     }

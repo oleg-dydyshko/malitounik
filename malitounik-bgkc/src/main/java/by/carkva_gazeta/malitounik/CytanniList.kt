@@ -6,6 +6,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
@@ -1207,12 +1208,13 @@ fun CytanniList(
                                 )
                             }
                         }
-                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                         if (isCopyMode) {
+                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                             val clip = ClipData.newPlainText(
                                 "", sb.toString()
                             )
                             clipboard.setPrimaryClip(clip)
+                            Toast.makeText(context, context.getString(R.string.copy), Toast.LENGTH_SHORT).show()
                         }
                         if (isShareMode) {
                             val sendIntent = Intent()

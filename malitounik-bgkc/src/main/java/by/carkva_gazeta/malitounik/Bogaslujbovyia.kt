@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
@@ -20,7 +21,6 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -197,6 +197,7 @@ fun Bogaslujbovyia(
                     }
                 }
                 vybranoeList.removeAt(pos)
+                Toast.makeText(context, context.getString(R.string.removeVybranoe), Toast.LENGTH_SHORT).show()
             } else {
                 vybranoeList.add(
                     0,
@@ -206,6 +207,7 @@ fun Bogaslujbovyia(
                         resursEncode,
                     )
                 )
+                Toast.makeText(context, context.getString(R.string.addVybranoe), Toast.LENGTH_SHORT).show()
             }
             isVybranoe = !isVybranoe
             if (vybranoeList.isEmpty() && file.exists()) {
@@ -611,6 +613,155 @@ fun Bogaslujbovyia(
         bottomBar = {
             if (!fullscreen) {
                 if (!iskniga) {
+                    Popup(
+                        alignment = Alignment.BottomCenter,
+                        onDismissRequest = {
+                            if (menuPosition != 2) {
+                                showDropdown = false
+                                if (autoScrollSensor) autoScroll = true
+                            }
+                        }
+                    ) {
+                        AnimatedVisibility(
+                            showDropdown,
+                            enter = fadeIn(
+                                tween(
+                                    durationMillis = 500,
+                                    easing = LinearOutSlowInEasing
+                                )
+                            ),
+                            exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(
+                                        shape = RoundedCornerShape(
+                                            bottomStart = 10.dp,
+                                            bottomEnd = 10.dp
+                                        )
+                                    )
+                                    .background(MaterialTheme.colorScheme.onTertiary)
+                                    .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
+                                    .background(MaterialTheme.colorScheme.tertiary)
+                            ) {
+                                Column {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .background(MaterialTheme.colorScheme.onTertiary)
+                                            .clickable {
+                                                showDropdown = false
+                                            }) {
+                                        Icon(modifier = Modifier.align(Alignment.Start), painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = "", tint = PrimaryTextBlack)
+                                    }
+                                    if (menuPosition == 2) {
+                                        Column {
+                                            for (i in listResource.indices) {
+                                                Row(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(10.dp)
+                                                        .clickable {
+                                                            subTitle = listResource[i].title
+                                                            subText = openAssetsResources(context, listResource[i].resource)
+                                                            iskniga = true
+                                                            showDropdown = false
+                                                            autoScroll = false
+                                                        },
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Icon(
+                                                        modifier = Modifier.size(5.dp, 5.dp),
+                                                        painter = painterResource(R.drawable.poiter),
+                                                        tint = MaterialTheme.colorScheme.primary,
+                                                        contentDescription = null
+                                                    )
+                                                    Text(
+                                                        modifier = Modifier.padding(start = 10.dp),
+                                                        text = listResource[i].title,
+                                                        fontSize = Settings.fontInterface.sp,
+                                                        maxLines = 2,
+                                                        overflow = TextOverflow.Ellipsis,
+                                                        color = MaterialTheme.colorScheme.secondary
+                                                    )
+                                                }
+                                                HorizontalDivider()
+                                            }
+                                            if (cytanneVisable) {
+                                                val chytanneList = ArrayList<BogaslujbovyiaListData>()
+                                                if (data[9].isNotEmpty()) {
+                                                    chytanneList.add(BogaslujbovyiaListData(data[9], "9"))
+                                                }
+                                                if (data[10].isNotEmpty()) {
+                                                    chytanneList.add(BogaslujbovyiaListData(data[10], "10"))
+                                                }
+                                                if (data[11].isNotEmpty()) {
+                                                    chytanneList.add(BogaslujbovyiaListData(data[11], "11"))
+                                                }
+                                                for (i in chytanneList.indices) {
+                                                    val navigate = when (chytanneList[i].resurs) {
+                                                        "10" -> "cytannesvityx"
+                                                        "11" -> "cytannedop"
+                                                        else -> "cytanne"
+                                                    }
+                                                    Row(
+                                                        modifier = Modifier
+                                                            .fillMaxWidth()
+                                                            .padding(10.dp)
+                                                            .clickable {
+                                                                showDropdown = false
+                                                                autoScroll = false
+                                                                navigateTo(navigate)
+                                                            },
+                                                        verticalAlignment = Alignment.CenterVertically
+                                                    ) {
+                                                        Icon(
+                                                            modifier = Modifier.size(5.dp, 5.dp),
+                                                            painter = painterResource(R.drawable.poiter),
+                                                            tint = MaterialTheme.colorScheme.primary,
+                                                            contentDescription = null
+                                                        )
+                                                        Text(
+                                                            modifier = Modifier.padding(start = 10.dp),
+                                                            text = chytanneList[i].title,
+                                                            fontSize = Settings.fontInterface.sp,
+                                                            maxLines = 2,
+                                                            overflow = TextOverflow.Ellipsis,
+                                                            color = MaterialTheme.colorScheme.secondary
+                                                        )
+                                                    }
+                                                    HorizontalDivider()
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if (menuPosition == 1) {
+                                        Text(
+                                            stringResource(R.string.menu_font_size_app),
+                                            modifier = Modifier.padding(start = 10.dp, top = 10.dp),
+                                            fontStyle = FontStyle.Italic,
+                                            textAlign = TextAlign.Center,
+                                            color = MaterialTheme.colorScheme.secondary,
+                                            fontSize = Settings.fontInterface.sp
+                                        )
+                                        Slider(
+                                            modifier = Modifier.padding(horizontal = 10.dp),
+                                            valueRange = 18f..58f,
+                                            steps = 10,
+                                            value = fontSize,
+                                            onValueChange = {
+                                                k.edit {
+                                                    putFloat("font_biblia", it)
+                                                }
+                                                fontSize = it
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                     BottomAppBar(containerColor = MaterialTheme.colorScheme.onTertiary) {
                         var expanded by remember { mutableStateOf(false) }
                         DropdownMenu(
@@ -724,31 +875,6 @@ fun Bogaslujbovyia(
                             )
                             DropdownMenuItem(
                                 onClick = {
-                                    showDropdown = false
-                                    autoScroll = false
-                                    expanded = false
-                                    val sent = textLayout.value?.layoutInput?.text?.text
-                                    val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-                                    sent?.let { shareText ->
-                                        val clip = ClipData.newPlainText(context.getString(R.string.copy_text), shareText)
-                                        clipboard.setPrimaryClip(clip)
-                                        val sendIntent = Intent(Intent.ACTION_SEND)
-                                        sendIntent.putExtra(Intent.EXTRA_TEXT, shareText)
-                                        sendIntent.putExtra(Intent.EXTRA_SUBJECT, title)
-                                        sendIntent.type = "text/plain"
-                                        context.startActivity(Intent.createChooser(sendIntent, title))
-                                    }
-                                },
-                                text = { Text(stringResource(R.string.share), fontSize = (Settings.fontInterface - 2).sp) },
-                                trailingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.share),
-                                        contentDescription = ""
-                                    )
-                                }
-                            )
-                            DropdownMenuItem(
-                                onClick = {
                                     showDropdown = !showDropdown
                                     autoScroll = false
                                     expanded = false
@@ -758,20 +884,6 @@ fun Bogaslujbovyia(
                                 trailingIcon = {
                                     Icon(
                                         painter = painterResource(R.drawable.format_size),
-                                        contentDescription = ""
-                                    )
-                                }
-                            )
-                            DropdownMenuItem(
-                                onClick = {
-                                    expanded = false
-                                    if (autoScrollSensor) autoScroll = true
-                                    fullscreen = true
-                                },
-                                text = { Text(stringResource(R.string.fullscreen), fontSize = (Settings.fontInterface - 2).sp) },
-                                trailingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.fullscreen),
                                         contentDescription = ""
                                     )
                                 }
@@ -790,6 +902,40 @@ fun Bogaslujbovyia(
                                 )
                             }
                             IconButton(onClick = {
+                                showDropdown = false
+                                autoScroll = false
+                                expanded = false
+                                val sent = textLayout.value?.layoutInput?.text?.text
+                                val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                                sent?.let { shareText ->
+                                    val clip = ClipData.newPlainText(context.getString(R.string.copy_text), shareText)
+                                    clipboard.setPrimaryClip(clip)
+                                    val sendIntent = Intent(Intent.ACTION_SEND)
+                                    sendIntent.putExtra(Intent.EXTRA_TEXT, shareText)
+                                    sendIntent.putExtra(Intent.EXTRA_SUBJECT, title)
+                                    sendIntent.type = "text/plain"
+                                    context.startActivity(Intent.createChooser(sendIntent, title))
+                                    Toast.makeText(context, context.getString(R.string.copy), Toast.LENGTH_SHORT).show()
+                                }
+                            }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.share),
+                                    contentDescription = "",
+                                    tint = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
+                            IconButton(onClick = {
+                                expanded = false
+                                if (autoScrollSensor) autoScroll = true
+                                fullscreen = true
+                            }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.fullscreen),
+                                    contentDescription = "",
+                                    tint = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
+                            IconButton(onClick = {
                                 expanded = false
                                 if (autoScrollSensor) autoScroll = true
                                 searchText = true
@@ -801,7 +947,8 @@ fun Bogaslujbovyia(
                                 )
                             }
                             IconButton(onClick = {
-                                findForward = true
+                                expanded = false
+                                saveVybranoe = true
                             }) {
                                 val icon = if (isVybranoe) painterResource(R.drawable.stars)
                                 else painterResource(R.drawable.star)
@@ -867,155 +1014,6 @@ fun Bogaslujbovyia(
                     0.dp
                 )
         ) {
-            Popup(
-                alignment = Alignment.BottomCenter,
-                onDismissRequest = {
-                    if (menuPosition != 2) {
-                        showDropdown = false
-                        if (autoScrollSensor) autoScroll = true
-                    }
-                }
-            ) {
-                AnimatedVisibility(
-                    showDropdown,
-                    enter = slideInVertically(
-                        tween(
-                            durationMillis = 500,
-                            easing = LinearOutSlowInEasing
-                        )
-                    ),
-                    exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(
-                                shape = RoundedCornerShape(
-                                    bottomStart = 10.dp,
-                                    bottomEnd = 10.dp
-                                )
-                            )
-                            .background(MaterialTheme.colorScheme.onTertiary)
-                            .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
-                            .background(MaterialTheme.colorScheme.tertiary)
-                    ) {
-                        Column {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(MaterialTheme.colorScheme.onTertiary)
-                                    .clickable {
-                                        showDropdown = false
-                                    }) {
-                                Icon(modifier = Modifier.align(Alignment.Start), painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = "", tint = PrimaryTextBlack)
-                            }
-                            if (menuPosition == 2) {
-                                Column {
-                                    for (i in listResource.indices) {
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(10.dp)
-                                                .clickable {
-                                                    subTitle = listResource[i].title
-                                                    subText = openAssetsResources(context, listResource[i].resource)
-                                                    iskniga = true
-                                                    showDropdown = false
-                                                    autoScroll = false
-                                                },
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Icon(
-                                                modifier = Modifier.size(5.dp, 5.dp),
-                                                painter = painterResource(R.drawable.poiter),
-                                                tint = MaterialTheme.colorScheme.primary,
-                                                contentDescription = null
-                                            )
-                                            Text(
-                                                modifier = Modifier.padding(start = 10.dp),
-                                                text = listResource[i].title,
-                                                fontSize = Settings.fontInterface.sp,
-                                                maxLines = 2,
-                                                overflow = TextOverflow.Ellipsis,
-                                                color = MaterialTheme.colorScheme.secondary
-                                            )
-                                        }
-                                        HorizontalDivider()
-                                    }
-                                    if (cytanneVisable) {
-                                        val chytanneList = ArrayList<BogaslujbovyiaListData>()
-                                        if (data[9].isNotEmpty()) {
-                                            chytanneList.add(BogaslujbovyiaListData(data[9], "9"))
-                                        }
-                                        if (data[10].isNotEmpty()) {
-                                            chytanneList.add(BogaslujbovyiaListData(data[10], "10"))
-                                        }
-                                        if (data[11].isNotEmpty()) {
-                                            chytanneList.add(BogaslujbovyiaListData(data[11], "11"))
-                                        }
-                                        for (i in chytanneList.indices) {
-                                            val navigate = when (chytanneList[i].resurs) {
-                                                "10" -> "cytannesvityx"
-                                                "11" -> "cytannedop"
-                                                else -> "cytanne"
-                                            }
-                                            Row(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(10.dp)
-                                                    .clickable {
-                                                        showDropdown = false
-                                                        autoScroll = false
-                                                        navigateTo(navigate)
-                                                    },
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                Icon(
-                                                    modifier = Modifier.size(5.dp, 5.dp),
-                                                    painter = painterResource(R.drawable.poiter),
-                                                    tint = MaterialTheme.colorScheme.primary,
-                                                    contentDescription = null
-                                                )
-                                                Text(
-                                                    modifier = Modifier.padding(start = 10.dp),
-                                                    text = chytanneList[i].title,
-                                                    fontSize = Settings.fontInterface.sp,
-                                                    maxLines = 2,
-                                                    overflow = TextOverflow.Ellipsis,
-                                                    color = MaterialTheme.colorScheme.secondary
-                                                )
-                                            }
-                                            HorizontalDivider()
-                                        }
-                                    }
-                                }
-                            }
-                            if (menuPosition == 1) {
-                                Text(
-                                    stringResource(R.string.menu_font_size_app),
-                                    modifier = Modifier.padding(start = 10.dp, top = 10.dp),
-                                    fontStyle = FontStyle.Italic,
-                                    textAlign = TextAlign.Center,
-                                    color = MaterialTheme.colorScheme.secondary,
-                                    fontSize = Settings.fontInterface.sp
-                                )
-                                Slider(
-                                    modifier = Modifier.padding(horizontal = 10.dp),
-                                    valueRange = 18f..58f,
-                                    steps = 10,
-                                    value = fontSize,
-                                    onValueChange = {
-                                        k.edit {
-                                            putFloat("font_biblia", it)
-                                        }
-                                        fontSize = it
-                                    }
-                                )
-                            }
-                        }
-                    }
-                }
-            }
             var isScrollRun by remember { mutableStateOf(false) }
             val nestedScrollConnection = remember {
                 object : NestedScrollConnection {
