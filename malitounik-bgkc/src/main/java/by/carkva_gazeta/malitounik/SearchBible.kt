@@ -21,20 +21,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -420,17 +417,17 @@ fun DropdownMenuBox(
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val options = stringArrayResource(R.array.serche_bible)
     var expanded by remember { mutableStateOf(false) }
-    val textFieldState = rememberTextFieldState(options[k.getInt("biblia_seash", 0)])
+    var textFieldState by remember { mutableStateOf(options[k.getInt("biblia_seash", 0)]) }
     ExposedDropdownMenuBox(
         modifier = Modifier.padding(10.dp),
         expanded = expanded,
         onExpandedChange = { expanded = it },
     ) {
         TextField(
-            modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-            state = textFieldState,
+            modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
+            value = textFieldState,
+            onValueChange = { },
             readOnly = true,
-            lineLimits = TextFieldLineLimits.SingleLine,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             colors = ExposedDropdownMenuDefaults.textFieldColors(),
         )
@@ -442,7 +439,7 @@ fun DropdownMenuBox(
                 DropdownMenuItem(
                     text = { Text(option, fontSize = Settings.fontInterface.sp) },
                     onClick = {
-                        textFieldState.setTextAndPlaceCursorAtEnd(option)
+                        textFieldState = option
                         expanded = false
                         k.edit {
                             putInt("biblia_seash", index)

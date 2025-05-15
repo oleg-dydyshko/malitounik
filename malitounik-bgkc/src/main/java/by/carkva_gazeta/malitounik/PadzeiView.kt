@@ -41,22 +41,19 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -880,7 +877,7 @@ fun AddPadzeia(
         }
         val options = stringArrayResource(R.array.sabytie_izmerenie)
         var expanded2 by remember { mutableStateOf(false) }
-        val textFieldState2 = rememberTextFieldState(options[textFieldState2Position])
+        var selectedOptionText2 by remember { mutableStateOf(options[textFieldState2Position]) }
         Row(modifier = Modifier.padding(start = 10.dp, top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(
                 stringResource(R.string.Sabytie_uved), fontSize = Settings.fontInterface.sp,
@@ -909,10 +906,10 @@ fun AddPadzeia(
                 onExpandedChange = { expanded2 = it },
             ) {
                 TextField(
-                    modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-                    state = textFieldState2,
+                    modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
                     readOnly = true,
-                    lineLimits = TextFieldLineLimits.SingleLine,
+                    value = selectedOptionText2,
+                    onValueChange = { },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded2) },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(),
                     textStyle = TextStyle(fontSize = Settings.fontInterface.sp),
@@ -931,7 +928,7 @@ fun AddPadzeia(
                             },
                             onClick = {
                                 textFieldState2Position = position
-                                textFieldState2.setTextAndPlaceCursorAtEnd(option)
+                                selectedOptionText2 = option
                                 expanded2 = false
                             },
                             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
@@ -949,7 +946,7 @@ fun AddPadzeia(
                 val gc = GregorianCalendar(days[2].toInt(), days[1].toInt() - 1, days[0].toInt(), times[0].toInt(), times[1].toInt(), 0)
                 val result = gc.timeInMillis
                 var londs = setTimeZa.toLong()
-                when (textFieldState2.text) {
+                when (selectedOptionText2) {
                     options[0] -> londs *= 60000L
                     options[1] -> londs *= 3600000L
                     options[2] -> londs *= 86400000L
@@ -973,7 +970,7 @@ fun AddPadzeia(
         }
         val sabytieRepit = stringArrayResource(R.array.sabytie_repit)
         var expanded by remember { mutableStateOf(false) }
-        val textFieldState = rememberTextFieldState(sabytieRepit[textFieldStatePosition])
+        var selectedOptionText by remember { mutableStateOf(sabytieRepit[textFieldStatePosition]) }
         Row(modifier = Modifier.padding(start = 10.dp, top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(
                 stringResource(R.string.Sabytie_repit), fontSize = Settings.fontInterface.sp,
@@ -985,10 +982,10 @@ fun AddPadzeia(
                 onExpandedChange = { expanded = it },
             ) {
                 TextField(
-                    modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-                    state = textFieldState,
+                    modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
                     readOnly = true,
-                    lineLimits = TextFieldLineLimits.SingleLine,
+                    value = selectedOptionText,
+                    onValueChange = { },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(),
                     textStyle = TextStyle(fontSize = Settings.fontInterface.sp)
@@ -1007,7 +1004,7 @@ fun AddPadzeia(
                             },
                             onClick = {
                                 textFieldStatePosition = position
-                                textFieldState.setTextAndPlaceCursorAtEnd(option)
+                                selectedOptionText = option
                                 expanded = false
                             },
                             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
@@ -1016,7 +1013,7 @@ fun AddPadzeia(
                 }
             }
         }
-        if (textFieldState.text != sabytieRepit[0]) {
+        if (selectedOptionText != sabytieRepit[0]) {
             Row {
                 Column(Modifier.selectableGroup())
                 {
@@ -1137,9 +1134,9 @@ fun AddPadzeia(
                 color = MaterialTheme.colorScheme.secondary
             )
             var expanded1 by remember { mutableStateOf(false) }
-            val textFieldState1 = rememberTextFieldState(padzeia)
+            var textFieldState1 = remember { padzeia }
             LaunchedEffect(padzeia) {
-                textFieldState1.setTextAndPlaceCursorAtEnd(padzeia.ifEmpty { context.getString(R.string.sabytie_name) })
+                textFieldState1 = padzeia.ifEmpty { context.getString(R.string.sabytie_name) }
             }
             ExposedDropdownMenuBox(
                 modifier = Modifier.padding(10.dp),
@@ -1147,10 +1144,10 @@ fun AddPadzeia(
                 onExpandedChange = { expanded1 = it },
             ) {
                 TextField(
-                    modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-                    state = textFieldState1,
+                    modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
                     readOnly = true,
-                    lineLimits = TextFieldLineLimits.SingleLine,
+                    value = textFieldState1,
+                    onValueChange = { },
                     trailingIcon = {
                         val image = if (expanded1) painterResource(R.drawable.keyboard_arrow_up)
                         else painterResource(R.drawable.keyboard_arrow_down)
@@ -1176,7 +1173,7 @@ fun AddPadzeia(
                             modifier = Modifier.background(Color(option.toColorInt())),
                             text = {
                                 Text(
-                                    textFieldState1.text.toString(), style = MaterialTheme.typography.bodyLarge, fontSize = Settings.fontInterface.sp,
+                                    textFieldState1, style = MaterialTheme.typography.bodyLarge, fontSize = Settings.fontInterface.sp,
                                     color = PrimaryTextBlack
                                 )
                             },

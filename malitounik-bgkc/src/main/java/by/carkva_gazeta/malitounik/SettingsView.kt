@@ -30,21 +30,18 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
@@ -730,18 +727,18 @@ fun SettingsView(navController: NavHostController) {
             for (i in 6..17) {
                 dataTimes.add(DataTime(stringResource(R.string.pavedamic, i), i))
             }
-            val textFieldNotificstionState = rememberTextFieldState(dataTimes[k.getInt("timeNotification", 2)].string)
             var expandedSviaty by remember { mutableStateOf(false) }
+            var selectedOptionText by remember { mutableStateOf(dataTimes[k.getInt("timeNotification", 2)].string) }
             ExposedDropdownMenuBox(
                 modifier = Modifier.padding(vertical = 10.dp),
                 expanded = expandedSviaty,
                 onExpandedChange = { expandedSviaty = it },
             ) {
                 TextField(
-                    modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-                    state = textFieldNotificstionState,
+                    modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
                     readOnly = true,
-                    lineLimits = TextFieldLineLimits.SingleLine,
+                    value = selectedOptionText,
+                    onValueChange = { },
                     textStyle = TextStyle(fontSize = (Settings.fontInterface - 2).sp),
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSviaty) },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(),
@@ -754,7 +751,7 @@ fun SettingsView(navController: NavHostController) {
                         DropdownMenuItem(
                             text = { Text(text = option.string, fontSize = (Settings.fontInterface - 2).sp) },
                             onClick = {
-                                textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option.string)
+                                selectedOptionText = option.string
                                 expandedSviaty = false
                                 k.edit {
                                     putInt("timeNotification", index)
@@ -983,7 +980,7 @@ fun SettingsView(navController: NavHostController) {
                     modePravasSvaity = false
                     modeGosudSvaity = false
                     modePafesiiSvaity = false
-                    textFieldNotificstionState.setTextAndPlaceCursorAtEnd(dataTimes[k.getInt("timeNotification", 2)].string)
+                    selectedOptionText = dataTimes[k.getInt("timeNotification", 2)].string
                     if ((context as MainActivity).checkDzenNoch != context.dzenNoch) context.recreate()
                     else setNotificationFull(context)
                 },
