@@ -321,7 +321,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                         }
 
                                         else -> {
-                                            navController.popBackStack()
+                                            navController.navigateUp()
                                         }
                                     }
                                 },

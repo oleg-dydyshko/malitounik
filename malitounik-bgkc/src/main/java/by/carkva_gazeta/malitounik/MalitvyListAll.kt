@@ -281,7 +281,7 @@ fun MalitvyListAll(
                         })
                     } else {
                         IconButton(onClick = {
-                            navController.popBackStack()
+                            navController.navigateUp()
                         }, content = {
                             Icon(
                                 painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""

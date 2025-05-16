@@ -599,7 +599,7 @@ fun CytanniList(
                                         autoScrollTextVisableJob?.cancel()
                                         backPressHandled = true
                                         actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                                        navController.popBackStack()
+                                        navController.navigateUp()
                                     }
                                 }
                             }, content = {

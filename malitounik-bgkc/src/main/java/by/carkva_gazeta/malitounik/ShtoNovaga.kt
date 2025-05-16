@@ -81,7 +81,7 @@ fun ShtoNovaga(navController: NavHostController) {
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = { navController.popBackStack() },
+                        onClick = { navController.navigateUp() },
                         content = {
                             Icon(
                                 painter = painterResource(R.drawable.arrow_back),

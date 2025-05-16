@@ -173,7 +173,7 @@ fun SearchSviatyia(navController: NavHostController) {
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() },
+                    IconButton(onClick = { navController.navigateUp() },
                         content = {
                             Icon(
                                 painter = painterResource(R.drawable.arrow_back),

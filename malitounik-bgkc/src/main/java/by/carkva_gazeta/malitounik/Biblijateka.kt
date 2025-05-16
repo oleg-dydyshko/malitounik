@@ -200,7 +200,7 @@ fun Biblijateka(
                     navigationIcon = {
                         IconButton(
                             onClick = {
-                                navController.popBackStack()
+                                navController.navigateUp()
                             },
                             content = {
                                 Icon(
