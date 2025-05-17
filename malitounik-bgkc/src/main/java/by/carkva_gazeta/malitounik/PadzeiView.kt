@@ -108,7 +108,6 @@ import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
-import by.carkva_gazeta.malitounik.views.navigateBack
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
@@ -477,7 +476,7 @@ fun PadzeiaView(navController: NavHostController) {
                     } else {
                         IconButton(
                             onClick = {
-                                navController.navigateBack()
+                                navController.navigateUp()
                             },
                             content = {
                                 Icon(

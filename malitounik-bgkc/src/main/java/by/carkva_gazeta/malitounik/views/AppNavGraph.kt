@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -233,22 +232,6 @@ fun openAssetsResources(context: Context, fileName: String): String {
         result = reader.readText()
     }
     return result
-}
-
-fun NavHostController.navigateBack() {
-    val k = MainActivity.applicationContext().getSharedPreferences("biblia", Context.MODE_PRIVATE)
-    val start = k.getString("navigate", AllDestinations.KALIANDAR) ?: AllDestinations.KALIANDAR
-    try {
-        if (!navigateUp()) {
-            Log.d("Oleg", "navigateUp() -> false")
-            val navigationActions = AppNavigationActions(this, k)
-            navigationActions.navigateToKaliandar()
-        }
-    } catch (_: Throwable) {
-        Log.d("Oleg", "navigateUp() -> error")
-        navigate(start)
-        popBackStack(start, inclusive = true)
-    }
 }
 
 @Composable

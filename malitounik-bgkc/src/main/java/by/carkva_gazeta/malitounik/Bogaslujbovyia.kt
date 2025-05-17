@@ -119,7 +119,6 @@ import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.HtmlText
 import by.carkva_gazeta.malitounik.views.findCaliandarToDay
-import by.carkva_gazeta.malitounik.views.navigateBack
 import by.carkva_gazeta.malitounik.views.openAssetsResources
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -572,7 +571,7 @@ fun Bogaslujbovyia(
                                         }
 
                                         else -> {
-                                            navController.navigateBack()
+                                            navController.navigateUp()
                                         }
                                     }
                                 },

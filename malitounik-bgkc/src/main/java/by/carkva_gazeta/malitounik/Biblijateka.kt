@@ -81,7 +81,6 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
-import by.carkva_gazeta.malitounik.views.navigateBack
 import coil3.compose.rememberAsyncImagePainter
 import coil3.imageLoader
 import coil3.memory.MemoryCache
@@ -201,7 +200,7 @@ fun Biblijateka(
                     navigationIcon = {
                         IconButton(
                             onClick = {
-                                navController.navigateBack()
+                                navController.navigateUp()
                             },
                             content = {
                                 Icon(

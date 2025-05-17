@@ -59,7 +59,6 @@ import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
-import by.carkva_gazeta.malitounik.views.navigateBack
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -178,7 +177,7 @@ fun BibliaList(
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            navController.navigateBack()
+                            navController.navigateUp()
                             AppNavGraphState.bibleListPosition = -1
                             backPressHandled = true
                         },

@@ -1170,5 +1170,6 @@
     <string name="searh_sviatyia_result">Знойдзена %1$d</string>
     <string name="clear_chash">Ачыстка кэша</string>
     <string name="clear_chash_opis">Пры неабходнасці, файлы будуць спампаваныя зноў.</string>
+    <string name="botom_bar">Ніжняя панель</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

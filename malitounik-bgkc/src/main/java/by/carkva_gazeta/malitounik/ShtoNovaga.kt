@@ -43,7 +43,6 @@ import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.StrogiPost
-import by.carkva_gazeta.malitounik.views.navigateBack
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -82,7 +81,7 @@ fun ShtoNovaga(navController: NavHostController) {
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = { navController.navigateBack() },
+                        onClick = { navController.navigateUp() },
                         content = {
                             Icon(
                                 painter = painterResource(R.drawable.arrow_back),
