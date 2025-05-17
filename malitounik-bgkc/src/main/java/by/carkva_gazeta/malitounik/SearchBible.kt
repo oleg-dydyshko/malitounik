@@ -86,6 +86,7 @@ import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryBlack
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik.views.navigateBack
 import by.carkva_gazeta.malitounik.views.openAssetsResources
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -226,7 +227,7 @@ fun SearchBible(
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = { navController.navigateUp() },
+                        onClick = { navController.navigateBack() },
                         content = {
                             Icon(
                                 painter = painterResource(R.drawable.arrow_back),

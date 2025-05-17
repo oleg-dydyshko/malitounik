@@ -103,6 +103,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.views.HtmlText
+import by.carkva_gazeta.malitounik.views.navigateBack
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.delay
@@ -321,7 +322,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                         }
 
                                         else -> {
-                                            navController.navigateUp()
+                                            navController.navigateBack()
                                         }
                                     }
                                 },

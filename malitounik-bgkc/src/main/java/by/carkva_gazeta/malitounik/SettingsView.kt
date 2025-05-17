@@ -93,6 +93,7 @@ import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik.views.navigateBack
 import com.google.android.play.core.splitinstall.SplitInstallException
 import com.google.android.play.core.splitinstall.SplitInstallHelper
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
@@ -225,7 +226,7 @@ fun SettingsView(navController: NavHostController) {
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = { navController.navigateUp() },
+                        onClick = { navController.navigateBack() },
                         content = {
                             Icon(
                                 painter = painterResource(R.drawable.arrow_back),

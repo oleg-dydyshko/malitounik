@@ -67,6 +67,7 @@ import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
+import by.carkva_gazeta.malitounik.views.navigateBack
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -281,7 +282,7 @@ fun MalitvyListAll(
                         })
                     } else {
                         IconButton(onClick = {
-                            navController.navigateUp()
+                            navController.navigateBack()
                         }, content = {
                             Icon(
                                 painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
