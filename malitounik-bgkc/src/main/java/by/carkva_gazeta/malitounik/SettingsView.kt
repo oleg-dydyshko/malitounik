@@ -225,7 +225,9 @@ fun SettingsView(navController: NavHostController) {
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = { navController.navigateUp() },
+                        onClick = {
+                            navController.popBackStack()
+                        },
                         content = {
                             Icon(
                                 painter = painterResource(R.drawable.arrow_back),

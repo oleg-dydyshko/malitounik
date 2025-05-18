@@ -571,7 +571,7 @@ fun Bogaslujbovyia(
                                         }
 
                                         else -> {
-                                            navController.navigateUp()
+                                            navController.popBackStack()
                                         }
                                     }
                                 },

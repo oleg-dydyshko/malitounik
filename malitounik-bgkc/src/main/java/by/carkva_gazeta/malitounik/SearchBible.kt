@@ -226,7 +226,9 @@ fun SearchBible(
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = { navController.navigateUp() },
+                        onClick = {
+                            navController.popBackStack()
+                        },
                         content = {
                             Icon(
                                 painter = painterResource(R.drawable.arrow_back),
@@ -601,7 +603,7 @@ fun biblia(
                 Settings.PEREVODSEMUXI -> "chytanne/Semucha/biblia"
                 Settings.PEREVODBOKUNA -> "chytanne/Bokun/bokuna"
                 Settings.PEREVODCARNIAUSKI -> "chytanne/Carniauski/carniauski"
-                Settings.PEREVODNADSAN -> "bogashlugbovya/psaltyr_nadsan.txt"
+                Settings.PEREVODNADSAN -> "chytanne/psaltyr_nadsan.txt"
                 Settings.PEREVODSINOIDAL -> "chytanne/Sinodal/sinaidal"
                 else -> "chytanne/Semucha/biblia"
             }

@@ -10,11 +10,6 @@ import android.graphics.BitmapFactory
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -42,16 +37,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -71,7 +62,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
@@ -84,19 +74,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.Popup
 import androidx.core.content.FileProvider
-import androidx.core.content.edit
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -162,7 +148,6 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
     var showDropdown by remember { mutableStateOf(false) }
     var fullscreen by rememberSaveable { mutableStateOf(false) }
     var backPressHandled by remember { mutableStateOf(false) }
-    var menuPosition by remember { mutableIntStateOf(0) }
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var fontSize by remember { mutableFloatStateOf(k.getFloat("font_biblia", 22F)) }
     var imageFull by remember { mutableStateOf(false) }
@@ -321,7 +306,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                         }
 
                                         else -> {
-                                            navController.navigateUp()
+                                            navController.popBackStack()
                                         }
                                     }
                                 },
@@ -346,67 +331,15 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                 )
                             }
                         }
-                        var expanded by remember { mutableStateOf(false) }
-                        IconButton(onClick = { expanded = true }) {
+                        IconButton(onClick = {
+                            fullscreen = true
+                        }) {
                             Icon(
-                                painter = painterResource(R.drawable.more_vert),
+                                painter = painterResource(R.drawable.fullscreen),
                                 contentDescription = "",
                                 tint = MaterialTheme.colorScheme.onSecondary
                             )
                         }
-                        DropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false }
-                        ) {
-                            DropdownMenuItem(
-                                onClick = {
-                                    expanded = false
-                                    fullscreen = true
-                                },
-                                text = { Text(stringResource(R.string.fullscreen), fontSize = (Settings.fontInterface - 2).sp) },
-                                trailingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.fullscreen),
-                                        contentDescription = ""
-                                    )
-                                }
-                            )
-                            DropdownMenuItem(
-                                onClick = {
-                                    showDropdown = !showDropdown
-                                    expanded = false
-                                    menuPosition = 1
-                                },
-                                text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) },
-                                trailingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.format_size),
-                                        contentDescription = ""
-                                    )
-                                }
-                            )
-                            if (k.getBoolean("admin", false)) {
-                                HorizontalDivider()
-                                DropdownMenuItem(
-                                    onClick = {
-                                        if ((context as MainActivity).checkmodulesAdmin()) {
-                                            val intent = Intent()
-                                            intent.setClassName(context, "by.carkva_gazeta.admin.Sviatyia")
-                                            intent.putExtra("dayOfYear", Settings.data[Settings.caliandarPosition][24].toInt())
-                                            context.startActivity(intent)
-                                        }
-                                    },
-                                    text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) },
-                                    trailingIcon = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.edit),
-                                            contentDescription = ""
-                                        )
-                                    }
-                                )
-                            }
-                        }
-
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
                 )
@@ -422,71 +355,6 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                     0.dp
                 )
         ) {
-            Popup(
-                alignment = Alignment.TopCenter,
-                onDismissRequest = {
-                    showDropdown = false
-                }
-            ) {
-                AnimatedVisibility(
-                    showDropdown,
-                    enter = slideInVertically(
-                        tween(
-                            durationMillis = 500,
-                            easing = LinearOutSlowInEasing
-                        )
-                    ),
-                    exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(
-                                shape = RoundedCornerShape(
-                                    bottomStart = 10.dp,
-                                    bottomEnd = 10.dp
-                                )
-                            )
-                            .background(MaterialTheme.colorScheme.onTertiary)
-                            .padding(start = 10.dp, end = 10.dp, top = 10.dp)
-                            .background(MaterialTheme.colorScheme.tertiary)
-                    ) {
-                        Column {
-                            if (menuPosition == 1) {
-                                Text(
-                                    stringResource(R.string.menu_font_size_app),
-                                    modifier = Modifier.padding(start = 10.dp, top = 10.dp),
-                                    fontStyle = FontStyle.Italic,
-                                    textAlign = TextAlign.Center,
-                                    color = MaterialTheme.colorScheme.secondary,
-                                    fontSize = Settings.fontInterface.sp
-                                )
-                                Slider(
-                                    modifier = Modifier.padding(horizontal = 10.dp),
-                                    valueRange = 18f..58f,
-                                    steps = 10,
-                                    value = fontSize,
-                                    onValueChange = {
-                                        k.edit {
-                                            putFloat("font_biblia", it)
-                                        }
-                                        fontSize = it
-                                    }
-                                )
-                            }
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(MaterialTheme.colorScheme.onTertiary)
-                                    .clickable {
-                                        showDropdown = false
-                                    }) {
-                                Icon(modifier = Modifier.align(Alignment.End), painter = painterResource(R.drawable.keyboard_arrow_up), contentDescription = "", tint = PrimaryTextBlack)
-                            }
-                        }
-                    }
-                }
-            }
             if (imageFull) {
                 Column(
                     modifier = Modifier.fillMaxSize()
@@ -1045,7 +913,9 @@ fun DialogPairlinyView(
                 )
                 Column(
                     modifier = Modifier
-                        .padding(10.dp).weight(1f).verticalScroll(rememberScrollState())
+                        .padding(10.dp)
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState())
                 ) {
                     HtmlText(
                         text = result, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary

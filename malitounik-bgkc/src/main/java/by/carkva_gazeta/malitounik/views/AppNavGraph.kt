@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -16,7 +17,6 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,6 +37,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -145,6 +146,10 @@ import by.carkva_gazeta.malitounik.ui.theme.PrimaryBlack
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.StrogiPost
+import by.carkva_gazeta.malitounik.views.AppNavGraphState.bibleItem
+import by.carkva_gazeta.malitounik.views.AppNavGraphState.biblijatekaItem
+import by.carkva_gazeta.malitounik.views.AppNavGraphState.piesnyItem
+import by.carkva_gazeta.malitounik.views.AppNavGraphState.underItem
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.InstallStateUpdatedListener
@@ -164,10 +169,10 @@ import kotlin.random.Random
 
 object AppNavGraphState {
     private val k = MainActivity.applicationContext().getSharedPreferences("biblia", Context.MODE_PRIVATE)
-    var bibleItem by mutableStateOf(k.getString("navigate", AllDestinations.BIBLIA_SEMUXA)?.contains("Biblia", ignoreCase = true) == true)
-    var biblijatekaItem by mutableStateOf(k.getString("navigate", AllDestinations.BIBLIJATEKA_NIADAUNIA)?.contains("Biblijateka", ignoreCase = true) == true)
-    var piesnyItem by mutableStateOf(k.getString("navigate", AllDestinations.PIESNY_PRASLAULENNIA)?.contains("Piesny", ignoreCase = true) == true)
-    var underItem by mutableStateOf(k.getString("navigate", AllDestinations.PIESNY_PRASLAULENNIA)?.contains("Under", ignoreCase = true) == true)
+    var bibleItem by mutableStateOf(false)
+    var biblijatekaItem by mutableStateOf(false)
+    var piesnyItem by mutableStateOf(false)
+    var underItem by mutableStateOf(false)
     var scrollValue = 0
     var bibleListPosition = -1
     var vybranaeListPosition = -1
@@ -240,7 +245,35 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
     val searchBibleState = rememberLazyListState()
     val cytanniListState = remember { ArrayList<LazyListState>() }
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-    val start = k.getString("navigate", AllDestinations.KALIANDAR) ?: AllDestinations.KALIANDAR
+    var start = k.getString("navigate", AllDestinations.KALIANDAR) ?: AllDestinations.KALIANDAR
+    bibleItem = start.contains("Biblia", ignoreCase = true) == true
+    biblijatekaItem = start.contains("Biblijateka", ignoreCase = true) == true
+    piesnyItem = start.contains("Piesny", ignoreCase = true) == true
+    underItem = start.contains("Under", ignoreCase = true) == true
+    val context = LocalActivity.current
+    val data = context?.intent
+    if (data?.data != null) {
+        when {
+            data.data.toString().contains("shortcuts=1") -> {
+                if (Settings.destinations != AllDestinations.VYBRANAE_LIST) {
+                    start = AllDestinations.VYBRANAE_LIST
+                }
+            }
+
+            data.data.toString().contains("shortcuts=3") -> {
+                if (Settings.destinations != AllDestinations.MAE_NATATKI_MENU) {
+                    start = AllDestinations.MAE_NATATKI_MENU
+                }
+            }
+
+            data.data.toString().contains("shortcuts=2") -> {
+                if (!Settings.destinations.contains("Biblijateka", ignoreCase = true)) {
+                    start = AllDestinations.BIBLIJATEKA_NIADAUNIA
+                }
+            }
+        }
+        context.intent?.data = null
+    }
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
@@ -1117,29 +1150,6 @@ fun MainConteiner(
         isAppearanceLight = !isAppearanceLight
     }
     LaunchedEffect(Unit) {
-        val data = context.intent
-        if (data?.data != null) {
-            when {
-                data.data.toString().contains("shortcuts=1") -> {
-                    if (Settings.destinations != AllDestinations.VYBRANAE_LIST) {
-                        navigationActions.navigateToVybranaeList()
-                    }
-                }
-
-                data.data.toString().contains("shortcuts=3") -> {
-                    if (Settings.destinations != AllDestinations.MAE_NATATKI_MENU) {
-                        navigationActions.navigateToMaeNatatkiMenu()
-                    }
-                }
-
-                data.data.toString().contains("shortcuts=2") -> {
-                    if (Settings.destinations.contains("Biblijateka", ignoreCase = true)) {
-                        navigationActions.navigateToBiblijatekaList(k.getString("navigate", AllDestinations.BIBLIJATEKA_NIADAUNIA) ?: AllDestinations.BIBLIJATEKA_NIADAUNIA)
-                    }
-                }
-            }
-            context.intent?.data = null
-        }
         val extras = context.intent?.extras
         if (extras != null) {
             val widgetday = "widget_day"
@@ -1391,6 +1401,7 @@ fun MainConteiner(
             AllDestinations.BIBLIA_SINODAL -> stringResource(R.string.bsinaidal)
             else -> ""
         }
+        var expanded by remember { mutableStateOf(false) }
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -1481,52 +1492,6 @@ fun MainConteiner(
                     },
                     actions = {
                         if (!searchText) {
-                            if (currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.RUJANEC_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA) {
-                                IconButton({
-                                    searchText = true
-                                }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.search),
-                                        tint = textTollBarColor,
-                                        contentDescription = ""
-                                    )
-                                }
-                            }
-                            if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
-                                IconButton({
-                                    k.edit {
-                                        if (k.getBoolean("caliandarList", false)) {
-                                            navigationActions.navigateToKaliandar()
-                                            putBoolean("caliandarList", false)
-                                        } else {
-                                            putBoolean("caliandarList", true)
-                                            navigationActions.navigateToKaliandarYear()
-                                        }
-                                    }
-                                }) {
-                                    val icon = if (k.getBoolean(
-                                            "caliandarList",
-                                            false
-                                        )
-                                    ) painterResource(R.drawable.calendar_today)
-                                    else painterResource(R.drawable.list)
-                                    Icon(
-                                        painter = icon,
-                                        tint = textTollBarColor,
-                                        contentDescription = ""
-                                    )
-                                }
-                                IconButton({
-                                    showDropdownMenuPos = 1
-                                    showDropdown = !showDropdown
-                                }) {
-                                    Icon(
-                                        painter = if (isToDay) painterResource(R.drawable.event) else painterResource(R.drawable.event_upcoming),
-                                        tint = textTollBarColor,
-                                        contentDescription = ""
-                                    )
-                                }
-                            }
                             if (currentRoute == AllDestinations.MAE_NATATKI_MENU) {
                                 IconButton({
                                     addFileNatatki = true
@@ -1535,6 +1500,43 @@ fun MainConteiner(
                                         painter = painterResource(R.drawable.add),
                                         tint = textTollBarColor,
                                         contentDescription = ""
+                                    )
+                                }
+                            }
+                            if (currentRoute.contains(AllDestinations.VYBRANAE_LIST) || currentRoute.contains(AllDestinations.MAE_NATATKI_MENU)) {
+                                IconButton(onClick = {
+                                    expanded = false
+                                    sortedVybranae =
+                                        if (sortedVybranae == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
+                                        else Settings.SORT_BY_ABC
+                                    sortedNatatki =
+                                        if (sortedNatatki == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
+                                        else Settings.SORT_BY_ABC
+                                    k.edit {
+                                        if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) putInt(
+                                            "sortedVybranae",
+                                            sortedVybranae
+                                        )
+                                        else putInt("natatki_sort", sortedNatatki)
+                                    }
+                                    if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) {
+                                        if (sortedVybranae == Settings.SORT_BY_TIME) {
+                                            Toast.makeText(context, context.getString(R.string.sort_add), Toast.LENGTH_SHORT).show()
+                                        } else {
+                                            Toast.makeText(context, context.getString(R.string.sort_alf), Toast.LENGTH_SHORT).show()
+                                        }
+                                    } else {
+                                        if (sortedNatatki == Settings.SORT_BY_TIME) {
+                                            Toast.makeText(context, context.getString(R.string.sort_add), Toast.LENGTH_SHORT).show()
+                                        } else {
+                                            Toast.makeText(context, context.getString(R.string.sort_alf), Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.sort),
+                                        contentDescription = "",
+                                        tint = textTollBarColor
                                     )
                                 }
                             }
@@ -1551,7 +1553,17 @@ fun MainConteiner(
                                     )
                                 }
                             }
-                            var expanded by remember { mutableStateOf(false) }
+                            if (currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.RUJANEC_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA) {
+                                IconButton({
+                                    searchText = true
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.search),
+                                        tint = textTollBarColor,
+                                        contentDescription = ""
+                                    )
+                                }
+                            }
                             IconButton(onClick = { expanded = true }) {
                                 Icon(
                                     painter = painterResource(R.drawable.more_vert),
@@ -1576,93 +1588,6 @@ fun MainConteiner(
                                         )
                                     }
                                 )
-                                if (currentRoute.contains(AllDestinations.KALIANDAR)) {
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            expanded = false
-                                            dialogUmounyiaZnachenni = true
-                                        },
-                                        text = { Text(stringResource(R.string.munu_symbols), fontSize = (Settings.fontInterface - 2).sp) },
-                                        trailingIcon = {
-                                            Icon(
-                                                painter = painterResource(R.drawable.info),
-                                                contentDescription = ""
-                                            )
-                                        }
-                                    )
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            expanded = false
-                                            navigationActions.navigateToPadzeiView()
-                                        },
-                                        text = { Text(stringResource(R.string.sabytie), fontSize = (Settings.fontInterface - 2).sp) },
-                                        trailingIcon = {
-                                            Icon(
-                                                painter = painterResource(R.drawable.event),
-                                                contentDescription = ""
-                                            )
-                                        }
-                                    )
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            expanded = false
-                                            navigationActions.navigateToSearchSvityia()
-                                        },
-                                        text = { Text(stringResource(R.string.search_svityia), fontSize = (Settings.fontInterface - 2).sp) },
-                                        trailingIcon = {
-                                            Icon(
-                                                painter = painterResource(R.drawable.search),
-                                                contentDescription = ""
-                                            )
-                                        }
-                                    )
-                                }
-                                if (currentRoute.contains(AllDestinations.VYBRANAE_LIST) || currentRoute.contains(
-                                        AllDestinations.MAE_NATATKI_MENU
-                                    )
-                                ) {
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            expanded = false
-                                            sortedVybranae =
-                                                if (sortedVybranae == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
-                                                else Settings.SORT_BY_ABC
-                                            sortedNatatki =
-                                                if (sortedNatatki == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
-                                                else Settings.SORT_BY_ABC
-                                            k.edit {
-                                                if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) putInt(
-                                                    "sortedVybranae",
-                                                    sortedVybranae
-                                                )
-                                                else putInt("natatki_sort", sortedNatatki)
-                                            }
-                                        },
-                                        text = {
-                                            if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) {
-                                                if (sortedVybranae == Settings.SORT_BY_TIME) Text(
-                                                    stringResource(
-                                                        R.string.sort_alf
-                                                    )
-                                                )
-                                                else Text(stringResource(R.string.sort_add), fontSize = (Settings.fontInterface - 2).sp)
-                                            } else {
-                                                if (sortedNatatki == Settings.SORT_BY_TIME) Text(
-                                                    stringResource(
-                                                        R.string.sort_alf
-                                                    ), fontSize = (Settings.fontInterface - 2).sp
-                                                )
-                                                else Text(stringResource(R.string.sort_add), fontSize = (Settings.fontInterface - 2).sp)
-                                            }
-                                        },
-                                        trailingIcon = {
-                                            Icon(
-                                                painter = painterResource(R.drawable.sort),
-                                                contentDescription = ""
-                                            )
-                                        }
-                                    )
-                                }
                                 DropdownMenuItem(
                                     onClick = {
                                         expanded = false
@@ -1748,6 +1673,116 @@ fun MainConteiner(
                     },
                     colors = TopAppBarDefaults.topAppBarColors(tollBarColor)
                 )
+            },
+            bottomBar = {
+                if (!(currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.RUJANEC_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA || currentRoute == AllDestinations.UNDER_PARAFII_BGKC || currentRoute == AllDestinations.UNDER_SVAITY_MUNU || currentRoute.contains("BIBLIA", ignoreCase = true) || currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.MAE_NATATKI_MENU)) {
+                    if (!searchText) {
+                        Popup(
+                            alignment = Alignment.BottomCenter,
+                            onDismissRequest = { showDropdown = false }
+                        ) {
+                            AnimatedVisibility(
+                                showDropdown,
+                                enter = fadeIn(
+                                    tween(
+                                        durationMillis = 500,
+                                        easing = LinearOutSlowInEasing
+                                    )
+                                ),
+                                exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
+                            ) {
+                                if (showDropdownMenuPos == 1) {
+                                    KaliandarScreenMounth(
+                                        colorBlackboard = colorBlackboard,
+                                        setPageCaliandar = { date ->
+                                            showDropdown = false
+                                            coroutineScope.launch {
+                                                if (k.getBoolean(
+                                                        "caliandarList",
+                                                        false
+                                                    )
+                                                ) lazyColumnState.scrollToItem(date)
+                                                else pagerState.scrollToPage(date)
+                                            }
+                                        },
+                                        close = { showDropdown = false })
+                                }
+                            }
+                        }
+                        BottomAppBar(containerColor = tollBarColor) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceAround
+                            ) {
+                                if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
+                                    IconButton(onClick = {
+                                        expanded = false
+                                        dialogUmounyiaZnachenni = true
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.info),
+                                            contentDescription = "",
+                                            tint = textTollBarColor
+                                        )
+                                    }
+                                    IconButton(onClick = {
+                                        expanded = false
+                                        navigationActions.navigateToSearchSvityia()
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.search),
+                                            contentDescription = "",
+                                            tint = textTollBarColor
+                                        )
+                                    }
+                                    IconButton(onClick = {
+                                        expanded = false
+                                        navigationActions.navigateToPadzeiView()
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.event),
+                                            contentDescription = "",
+                                            tint = textTollBarColor
+                                        )
+                                    }
+                                    IconButton({
+                                        k.edit {
+                                            if (k.getBoolean("caliandarList", false)) {
+                                                navigationActions.navigateToKaliandar()
+                                                putBoolean("caliandarList", false)
+                                            } else {
+                                                putBoolean("caliandarList", true)
+                                                navigationActions.navigateToKaliandarYear()
+                                            }
+                                        }
+                                    }) {
+                                        val icon = if (k.getBoolean(
+                                                "caliandarList",
+                                                false
+                                            )
+                                        ) painterResource(R.drawable.calendar_today)
+                                        else painterResource(R.drawable.list)
+                                        Icon(
+                                            painter = icon,
+                                            tint = textTollBarColor,
+                                            contentDescription = ""
+                                        )
+                                    }
+                                    IconButton({
+                                        showDropdownMenuPos = 1
+                                        showDropdown = !showDropdown
+                                    }) {
+                                        Icon(
+                                            painter = if (isToDay) painterResource(R.drawable.today) else painterResource(R.drawable.event_upcoming),
+                                            tint = textTollBarColor,
+                                            contentDescription = ""
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         ) { innerPadding ->
             Box(
@@ -2046,38 +2081,6 @@ fun MainConteiner(
                         removeAllVybranae,
                         innerPadding
                     )
-                }
-                Popup(
-                    alignment = Alignment.TopCenter,
-                    onDismissRequest = { showDropdown = false }
-                ) {
-                    AnimatedVisibility(
-                        showDropdown,
-                        enter = slideInVertically(
-                            tween(
-                                durationMillis = 500,
-                                easing = LinearOutSlowInEasing
-                            )
-                        ),
-                        exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
-                    ) {
-                        if (showDropdownMenuPos == 1) {
-                            KaliandarScreenMounth(
-                                colorBlackboard = colorBlackboard,
-                                setPageCaliandar = { date ->
-                                    showDropdown = false
-                                    coroutineScope.launch {
-                                        if (k.getBoolean(
-                                                "caliandarList",
-                                                false
-                                            )
-                                        ) lazyColumnState.scrollToItem(date)
-                                        else pagerState.scrollToPage(date)
-                                    }
-                                },
-                                close = { showDropdown = false })
-                        }
-                    }
                 }
             }
         }

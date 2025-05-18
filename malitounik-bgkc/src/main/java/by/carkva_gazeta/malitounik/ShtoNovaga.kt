@@ -81,7 +81,9 @@ fun ShtoNovaga(navController: NavHostController) {
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = { navController.navigateUp() },
+                        onClick = {
+                            navController.popBackStack()
+                        },
                         content = {
                             Icon(
                                 painter = painterResource(R.drawable.arrow_back),
@@ -94,7 +96,10 @@ fun ShtoNovaga(navController: NavHostController) {
             )
         }
     ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding).padding(10.dp).verticalScroll(rememberScrollState())) {
+        Column(modifier = Modifier
+            .padding(innerPadding)
+            .padding(10.dp)
+            .verticalScroll(rememberScrollState())) {
             Text(
                 text = stringResource(R.string.Znaki_cviat),
                 fontSize = (Settings.fontInterface - 2).sp,

@@ -2,19 +2,22 @@ package by.carkva_gazeta.malitounik
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerSnapDistance
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Card
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -38,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import by.carkva_gazeta.malitounik.ui.theme.BackgroundTolBarDark
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik.ui.theme.Divider
@@ -77,13 +81,24 @@ fun KaliandarScreenMounth(
             .fillMaxWidth()
             .clip(shape = RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp))
             .background(colorBlackboard)
-            .padding(start = 10.dp, end = 10.dp, top = 10.dp)
+            .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
             .background(MaterialTheme.colorScheme.tertiary)
     ) {
         Column(
             modifier = Modifier
                 .align(Alignment.Top)
         ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(colorBlackboard)
+                    .clickable {
+                        close()
+                    }) {
+                val tint = if (colorBlackboard == Primary || colorBlackboard == StrogiPost || colorBlackboard == BackgroundTolBarDark) PrimaryTextBlack
+                else PrimaryText
+                Icon(modifier = Modifier.align(Alignment.Start), painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = "", tint = tint)
+            }
             val initDate = Settings.data[Settings.caliandarPosition]
             var mun1 by remember { mutableIntStateOf(initDate[2].toInt()) }
             var year1 by remember { mutableIntStateOf(initDate[3].toInt()) }
@@ -96,9 +111,20 @@ fun KaliandarScreenMounth(
                 state = pagerState,
                 pagerSnapDistance = PagerSnapDistance.atMost(1)
             )
+            var expanded by remember { mutableStateOf(false) }
+            var expanded2 by remember { mutableStateOf(false) }
+            if (expanded) {
+                DialogSetDataCaliandar(pagerState, mun1, year1, true) {
+                    expanded = false
+                }
+            }
+            if (expanded2) {
+                DialogSetDataCaliandar(pagerState, mun1, year1, false) {
+                    expanded2 = false
+                }
+            }
             val list = stringArrayResource(R.array.meciac2)
             Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                var expanded by remember { mutableStateOf(false) }
                 Box(modifier = Modifier.padding(10.dp)) {
                     TextButton(
                         onClick = {
@@ -120,26 +146,7 @@ fun KaliandarScreenMounth(
                             color = PrimaryText
                         )
                     }
-                    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                        for (i in list.indices)
-                            DropdownMenuItem(
-                                onClick = {
-                                    CoroutineScope(Dispatchers.Main).launch {
-                                        pagerState.scrollToPage(getFindPage(i, year1))
-                                    }
-                                    expanded = false
-                                },
-                                text = {
-                                    Text(
-                                        list[i],
-                                        fontSize = Settings.fontInterface.sp,
-                                        modifier = Modifier.padding(10.dp)
-                                    )
-                                }
-                            )
-                    }
                 }
-                var expanded2 by remember { mutableStateOf(false) }
                 Box(modifier = Modifier.padding(10.dp)) {
                     TextButton(
                         onClick = {
@@ -160,25 +167,6 @@ fun KaliandarScreenMounth(
                             fontSize = Settings.fontInterface.sp,
                             color = PrimaryText
                         )
-                    }
-                    DropdownMenu(expanded = expanded2, onDismissRequest = { expanded2 = false }) {
-                        for (i in Settings.GET_CALIANDAR_YEAR_MIN..Settings.GET_CALIANDAR_YEAR_MAX)
-                            DropdownMenuItem(
-                                onClick = {
-                                    CoroutineScope(Dispatchers.Main).launch {
-                                        pagerState.scrollToPage(getFindPage(mun1, i))
-                                    }
-                                    expanded2 = false
-                                },
-                                text = {
-                                    Text(
-                                        i.toString(),
-                                        fontSize = Settings.fontInterface.sp,
-                                        modifier = Modifier
-                                            .padding(10.dp)
-                                    )
-                                }
-                            )
                     }
                 }
             }
@@ -456,15 +444,99 @@ fun KaliandarScreenMounth(
             ) {
                 Text(stringResource(R.string.search_call), fontSize = Settings.fontInterface.sp, color = PrimaryText)
             }
-            Column(modifier = Modifier
+        }
+    }
+}
+
+@Composable
+fun DialogSetDataCaliandar(
+    pagerState: PagerState,
+    mun: Int,
+    year: Int,
+    isMun: Boolean,
+    onDismiss: () -> Unit
+) {
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
                 .fillMaxWidth()
-                .background(colorBlackboard)
-                .clickable {
-                    close()
-                }) {
-                val tint = if (colorBlackboard == Primary || colorBlackboard == StrogiPost || colorBlackboard == BackgroundTolBarDark) PrimaryTextBlack
-                else PrimaryText
-                Icon(modifier = Modifier.align(Alignment.End), painter = painterResource(R.drawable.keyboard_arrow_up), contentDescription = "", tint = tint)
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column {
+                Text(
+                    text = if (isMun) stringResource(R.string.vybor_mun) else stringResource(R.string.vybor_year), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.onTertiary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
+                )
+                if (isMun) {
+                    val list = stringArrayResource(R.array.meciac2)
+                    for (i in list.indices) {
+                        Column {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 10.dp)
+                                    .clickable {
+                                        CoroutineScope(Dispatchers.Main).launch {
+                                            pagerState.scrollToPage(getFindPage(i, year))
+                                        }
+                                        android.util.Log.d("Oleg", getFindPage(mun, i).toString() + " " + mun + " " + i)
+                                        onDismiss()
+                                    }, verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(5.dp, 5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
+                                )
+                                Text(
+                                    text = list[i], modifier = Modifier
+                                        .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                                )
+                            }
+                        }
+                        HorizontalDivider()
+                    }
+                } else {
+                    for (i in Settings.GET_CALIANDAR_YEAR_MIN..Settings.GET_CALIANDAR_YEAR_MAX) {
+                        Column {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 10.dp)
+                                    .clickable {
+                                        CoroutineScope(Dispatchers.Main).launch {
+                                            pagerState.scrollToPage(getFindPage(mun, i))
+                                        }
+                                        onDismiss()
+                                    }, verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(5.dp, 5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
+                                )
+                                Text(
+                                    text = i.toString(), modifier = Modifier
+                                        .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                                )
+                            }
+                        }
+                        HorizontalDivider()
+                    }
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(horizontal = 8.dp, vertical = 2.dp),
+                horizontalArrangement = Arrangement.End,
+            ) {
+                TextButton(
+                    onClick = { onDismiss() },
+                    shape = MaterialTheme.shapes.small
+                ) {
+                    Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                    Text(stringResource(R.string.cansel), fontSize = 18.sp)
+                }
             }
         }
     }

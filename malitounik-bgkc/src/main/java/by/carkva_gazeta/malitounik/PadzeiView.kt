@@ -476,7 +476,7 @@ fun PadzeiaView(navController: NavHostController) {
                     } else {
                         IconButton(
                             onClick = {
-                                navController.navigateUp()
+                                navController.popBackStack()
                             },
                             content = {
                                 Icon(

@@ -86,7 +86,7 @@ fun KaliandarKnigaView(
             .padding(horizontal = 5.dp)
             .align(Alignment.CenterVertically)
             .clip(shape = RoundedCornerShape(10.dp))
-            .background(MaterialTheme.colorScheme.secondary)
+            .background(PrimaryTextBlack)
             .padding(2.dp)
             .clip(shape = RoundedCornerShape(10.dp))
             .background(colorBlackboard)

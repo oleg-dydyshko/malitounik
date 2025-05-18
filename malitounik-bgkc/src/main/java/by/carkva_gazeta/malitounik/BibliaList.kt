@@ -177,7 +177,7 @@ fun BibliaList(
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            navController.navigateUp()
+                            navController.popBackStack()
                             AppNavGraphState.bibleListPosition = -1
                             backPressHandled = true
                         },

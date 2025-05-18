@@ -31,7 +31,7 @@ fun biblia(
     }
     var fileName = "biblia_error.txt"
     if (perevod == Settings.PEREVODNADSAN) {
-        fileName = "psaltyr_nadsan.txt"
+        fileName = "chytanne/psaltyr_nadsan.txt"
     } else {
         val prevodName = when (perevodNew) {
             Settings.PEREVODSEMUXI -> {
