@@ -56,11 +56,6 @@ fun MalitounikTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
-    /*val view = LocalView.current
-    SideEffect {
-        val window = (view.context as Activity).window
-        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
-    }*/
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,

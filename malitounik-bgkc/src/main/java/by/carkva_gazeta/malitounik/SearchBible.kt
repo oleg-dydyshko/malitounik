@@ -155,7 +155,10 @@ fun SearchBible(
         WindowCompat.getInsetsController(
             window,
             view
-        ).isAppearanceLightStatusBars = false
+        ).apply {
+            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = false
+        }
     }
     Scaffold(
         topBar = {

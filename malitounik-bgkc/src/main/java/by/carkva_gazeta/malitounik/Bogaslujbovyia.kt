@@ -297,7 +297,10 @@ fun Bogaslujbovyia(
         WindowCompat.getInsetsController(
             window,
             view
-        ).isAppearanceLightStatusBars = false
+        ).apply {
+            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = false
+        }
     }
     val maxLine = remember { mutableIntStateOf(1) }
     var htmlText by rememberSaveable { mutableStateOf("") }

@@ -114,7 +114,10 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
         WindowCompat.getInsetsController(
             window,
             view
-        ).isAppearanceLightStatusBars = false
+        ).apply {
+            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = false
+        }
     }
     val context = LocalContext.current
     val sviatyiaList = remember { SnapshotStateList<OpisanieData>() }

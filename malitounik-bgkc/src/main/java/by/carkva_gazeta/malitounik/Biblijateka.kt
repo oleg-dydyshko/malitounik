@@ -135,7 +135,10 @@ fun Biblijateka(
         WindowCompat.getInsetsController(
             window,
             view
-        ).isAppearanceLightStatusBars = false
+        ).apply {
+            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = !(context as MainActivity).dzenNoch
+        }
     }
     var fullscreen by rememberSaveable { mutableStateOf(false) }
     val file = File("${context.filesDir}/bibliatekaPdf/$fileName")

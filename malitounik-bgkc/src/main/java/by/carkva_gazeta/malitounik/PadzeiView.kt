@@ -247,7 +247,10 @@ fun PadzeiaView(navController: NavHostController) {
         WindowCompat.getInsetsController(
             window,
             view
-        ).isAppearanceLightStatusBars = false
+        ).apply {
+            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = !(context as MainActivity).dzenNoch
+        }
     }
     var showDropdown by remember { mutableStateOf(false) }
     BackHandler(showDropdown || editMode) {

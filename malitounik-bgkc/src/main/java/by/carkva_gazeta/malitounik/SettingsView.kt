@@ -117,7 +117,10 @@ fun SettingsView(navController: NavHostController) {
         WindowCompat.getInsetsController(
             window,
             view
-        ).isAppearanceLightStatusBars = false
+        ).apply {
+            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = !(context as MainActivity).dzenNoch
+        }
     }
     val coroutineScope = rememberCoroutineScope()
     val maxLine = remember { mutableIntStateOf(1) }

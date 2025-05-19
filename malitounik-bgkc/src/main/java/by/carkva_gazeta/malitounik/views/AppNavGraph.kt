@@ -129,7 +129,7 @@ import by.carkva_gazeta.malitounik.SearchSviatyia
 import by.carkva_gazeta.malitounik.Settings
 import by.carkva_gazeta.malitounik.Settings.isNetworkAvailable
 import by.carkva_gazeta.malitounik.SettingsView
-import by.carkva_gazeta.malitounik.ShtoNovaga
+import by.carkva_gazeta.malitounik.KaliandarScreenInfo
 import by.carkva_gazeta.malitounik.SviatyList
 import by.carkva_gazeta.malitounik.SviatyiaView
 import by.carkva_gazeta.malitounik.VybranaeList
@@ -168,7 +168,6 @@ import java.util.Calendar
 import kotlin.random.Random
 
 object AppNavGraphState {
-    private val k = MainActivity.applicationContext().getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var bibleItem by mutableStateOf(false)
     var biblijatekaItem by mutableStateOf(false)
     var piesnyItem by mutableStateOf(false)
@@ -693,7 +692,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
         }
 
         composable(AllDestinations.SHTO_NOVAGA) {
-            ShtoNovaga(navController)
+            KaliandarScreenInfo(navController)
         }
 
         composable(
@@ -1232,10 +1231,10 @@ fun MainConteiner(
     if (drawerState.isOpen) isAppearanceLight = !context.dzenNoch
     SideEffect {
         val window = (view.context as Activity).window
-        WindowCompat.getInsetsController(
-            window,
-            view
-        ).isAppearanceLightStatusBars = isAppearanceLight
+        WindowCompat.getInsetsController(window, view).apply {
+            isAppearanceLightStatusBars = isAppearanceLight
+            isAppearanceLightNavigationBars = isAppearanceLight
+        }
     }
     var sortedVybranae by remember {
         mutableIntStateOf(
@@ -1832,7 +1831,10 @@ fun MainConteiner(
                                 WindowCompat.getInsetsController(
                                     window,
                                     view
-                                ).isAppearanceLightStatusBars = !isAppearanceLight
+                                ).apply {
+                                    isAppearanceLightStatusBars = !isAppearanceLight
+                                    isAppearanceLightNavigationBars = !isAppearanceLight
+                                }
                             }
                         }
                         HorizontalPager(

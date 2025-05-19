@@ -127,7 +127,10 @@ fun BibliaList(
         WindowCompat.getInsetsController(
             window,
             view
-        ).isAppearanceLightStatusBars = false
+        ).apply {
+            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = false
+        }
     }
     var backPressHandled by remember { mutableStateOf(false) }
     BackHandler(!backPressHandled) {

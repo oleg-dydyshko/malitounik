@@ -78,7 +78,10 @@ fun MaeNatatki(
         WindowCompat.getInsetsController(
             window,
             view
-        ).isAppearanceLightStatusBars = false
+        ).apply {
+            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = false
+        }
     }
     val context = LocalContext.current
     val fileList = remember { mutableStateListOf<MaeNatatkiItem>() }

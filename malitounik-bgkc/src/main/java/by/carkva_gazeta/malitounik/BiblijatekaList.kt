@@ -1,5 +1,6 @@
 package by.carkva_gazeta.malitounik
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -31,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -47,11 +49,13 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -114,6 +118,14 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
     var isDialogNoWIFIVisable by remember { mutableStateOf(false) }
     var isDialogNoIntent by remember { mutableStateOf(false) }
     val bibliatekaList = remember { SnapshotStateList<ArrayList<String>>() }
+    val view = LocalView.current
+    SideEffect {
+        val window = (view.context as Activity).window
+        WindowCompat.getInsetsController(window, view).apply {
+            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = !(context as MainActivity).dzenNoch
+        }
+    }
     LaunchedEffect(Unit) {
         biblijatekaJob?.cancel()
         biblijatekaJob = CoroutineScope(Dispatchers.IO).launch {

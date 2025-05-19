@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -48,16 +49,20 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShtoNovaga(navController: NavHostController) {
+fun KaliandarScreenInfo(navController: NavHostController) {
     val view = LocalView.current
     val coroutineScope = rememberCoroutineScope()
     val maxLine = remember { mutableIntStateOf(1) }
+    val context = LocalContext.current
     SideEffect {
         val window = (view.context as Activity).window
         WindowCompat.getInsetsController(
             window,
             view
-        ).isAppearanceLightStatusBars = false
+        ).apply {
+            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = !(context as MainActivity).dzenNoch
+        }
     }
     Scaffold(
         topBar = {

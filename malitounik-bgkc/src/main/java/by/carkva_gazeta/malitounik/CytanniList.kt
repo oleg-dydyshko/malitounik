@@ -198,7 +198,10 @@ fun CytanniList(
         val window = (view.context as Activity).window
         WindowCompat.getInsetsController(
             window, view
-        ).isAppearanceLightStatusBars = false
+        ).apply {
+            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = false
+        }
     }
     val maxLine = remember { mutableIntStateOf(1) }
     var isToDay = -1
@@ -663,7 +666,7 @@ fun CytanniList(
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .background(MaterialTheme.colorScheme.onTertiary)
+                                        .background(colorTollBar)
                                         .clickable {
                                             showDropdown = false
                                         }) {

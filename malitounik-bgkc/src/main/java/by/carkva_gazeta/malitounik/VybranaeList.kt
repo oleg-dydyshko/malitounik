@@ -2,6 +2,7 @@
 
 package by.carkva_gazeta.malitounik
 
+import android.app.Activity
 import android.os.Build
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
@@ -31,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -41,12 +43,14 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.core.view.WindowCompat
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import com.google.gson.Gson
@@ -132,6 +136,14 @@ fun VybranaeList(
         remember(list) { list.map { true }.toMutableStateList() }
     val lazyColumnState = rememberLazyListState()
     val context = LocalContext.current
+    val view = LocalView.current
+    SideEffect {
+        val window = (view.context as Activity).window
+        WindowCompat.getInsetsController(window, view).apply {
+            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = !(context as MainActivity).dzenNoch
+        }
+    }
     var removeItem by remember { mutableIntStateOf(-1) }
     var removeItemBible by remember { mutableIntStateOf(-1) }
     var removeItemBibleAll by remember { mutableStateOf(false) }

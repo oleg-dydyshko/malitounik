@@ -190,7 +190,7 @@ fun KaliandarScreen(
                         navigateToKniga()
                     })
         }
-        if (data[5].toInt() > 0) {
+        if (data[5].toInt() > 0 || data[6].isNotEmpty()) {
             val padding1 = if (data[4].isNotEmpty()) 0.dp
             else 10.dp
             val svaity = data[6]
@@ -212,7 +212,7 @@ fun KaliandarScreen(
                     padding = 35.dp
                 }
                 if (data[6].isNotEmpty()) {
-                    val weight = if (data[5].toInt() == 1 || data[0].toInt() == Calendar.SUNDAY) FontWeight.Bold
+                    val weight = if (data[5].toInt() == 1 || data[0].toInt() == Calendar.SUNDAY || (data[22].toInt() > 0 && data[22].toInt() <= 6)) FontWeight.Bold
                     else FontWeight.Normal
                     var color = MaterialTheme.colorScheme.primary
                     if (data[6].contains("Пачатак") || data[6].contains(
