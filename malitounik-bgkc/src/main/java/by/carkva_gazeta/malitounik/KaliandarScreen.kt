@@ -474,7 +474,7 @@ fun KaliandarScreen(
                 )
             }
         }
-        Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
+        Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding() + if (k.getBoolean("isInstallApp", false)) 60.dp else 0.dp))
     }
 }
 

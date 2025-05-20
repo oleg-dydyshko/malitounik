@@ -32,7 +32,6 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
@@ -41,7 +40,7 @@ import kotlinx.coroutines.flow.StateFlow
 import java.text.Collator
 import java.util.Locale
 
-class FilterBogaslujbovyiaListModel : ViewModel() {
+class FilterBogaslujbovyiaListModel {
     private val items = ArrayList<BogaslujbovyiaListData>()
 
     private val _filteredItems = MutableStateFlow(items)
@@ -60,7 +59,8 @@ class FilterBogaslujbovyiaListModel : ViewModel() {
 fun BogaslujbovyiaMenu(
     navController: NavHostController, innerPadding: PaddingValues, menuItem: Int, searchText: Boolean, search: String
 ) {
-    val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+    val context = LocalContext.current
+    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }

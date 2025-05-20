@@ -2,7 +2,6 @@
 
 package by.carkva_gazeta.malitounik
 
-import android.app.Activity
 import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -19,7 +18,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -31,11 +29,9 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -80,15 +76,6 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
-    }
-    val view = LocalView.current
-    val context = LocalContext.current
-    SideEffect {
-        val window = (view.context as Activity).window
-        WindowCompat.getInsetsController(window, view).apply {
-            isAppearanceLightStatusBars = false
-            isAppearanceLightNavigationBars = !(context as MainActivity).dzenNoch
-        }
     }
     val viewModel: FilterPiesnyListModel = viewModel()
     val piesnyBagarList = remember { SnapshotStateList<PiesnyListItem>() }
@@ -752,6 +739,7 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
 @Composable
 fun PiesnyList(piesnyList: SnapshotStateList<PiesnyListItem>, navigationActions: AppNavigationActions, innerPadding: PaddingValues) {
     val keyboardController = LocalSoftwareKeyboardController.current
+    val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
             override fun onPreScroll(
@@ -788,7 +776,7 @@ fun PiesnyList(piesnyList: SnapshotStateList<PiesnyListItem>, navigationActions:
             HorizontalDivider()
         }
         item {
-            Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
+            Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding() + if (k.getBoolean("isInstallApp", false)) 60.dp else 0.dp))
         }
     }
 }

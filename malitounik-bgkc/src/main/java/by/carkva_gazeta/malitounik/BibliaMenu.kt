@@ -1,6 +1,5 @@
 package by.carkva_gazeta.malitounik
 
-import android.app.Activity
 import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -32,7 +31,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,7 +43,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -53,7 +50,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.Primary
@@ -77,13 +73,6 @@ fun BibliaMenu(
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
-    }
-    val view = LocalView.current
-    SideEffect {
-        val window = (view.context as Activity).window
-        WindowCompat.getInsetsController(window, view).apply {
-            isAppearanceLightStatusBars = false
-        }
     }
     var bibleTime by remember { mutableStateOf(false) }
     if (bibleTime) {
@@ -561,7 +550,7 @@ fun BibliaMenu(
                     )
                 }
             }
-            Spacer(modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
+            Spacer(modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding() + if (k.getBoolean("isInstallApp", false)) 60.dp else 0.dp))
         }
     }
 }

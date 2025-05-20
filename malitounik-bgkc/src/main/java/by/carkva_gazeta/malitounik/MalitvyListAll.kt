@@ -2,7 +2,6 @@
 
 package by.carkva_gazeta.malitounik
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -33,7 +32,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -53,7 +51,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -63,7 +60,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -116,14 +112,6 @@ fun MalitvyListAll(
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
-    }
-    val view = LocalView.current
-    SideEffect {
-        val window = (view.context as Activity).window
-        WindowCompat.getInsetsController(window, view).apply {
-            isAppearanceLightStatusBars = false
-            isAppearanceLightNavigationBars = !(context as MainActivity).dzenNoch
-        }
     }
     val coroutineScope = rememberCoroutineScope()
     val maxLine = remember { mutableIntStateOf(1) }

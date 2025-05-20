@@ -614,108 +614,64 @@ fun Bogaslujbovyia(
             }
         },
         bottomBar = {
-            if (!fullscreen) {
-                if (!iskniga) {
-                    Popup(
-                        alignment = Alignment.BottomCenter,
-                        onDismissRequest = {
-                            if (menuPosition != 2) {
-                                showDropdown = false
-                                if (autoScrollSensor) autoScroll = true
+            if (!searchText) {
+                if (!fullscreen) {
+                    if (!iskniga) {
+                        Popup(
+                            alignment = Alignment.BottomCenter,
+                            onDismissRequest = {
+                                if (menuPosition != 2) {
+                                    showDropdown = false
+                                    if (autoScrollSensor) autoScroll = true
+                                }
                             }
-                        }
-                    ) {
-                        AnimatedVisibility(
-                            showDropdown,
-                            enter = fadeIn(
-                                tween(
-                                    durationMillis = 500,
-                                    easing = LinearOutSlowInEasing
-                                )
-                            ),
-                            exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clip(
-                                        shape = RoundedCornerShape(
-                                            bottomStart = 10.dp,
-                                            bottomEnd = 10.dp
-                                        )
+                            AnimatedVisibility(
+                                showDropdown,
+                                enter = fadeIn(
+                                    tween(
+                                        durationMillis = 500,
+                                        easing = LinearOutSlowInEasing
                                     )
-                                    .background(MaterialTheme.colorScheme.onTertiary)
-                                    .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
-                                    .background(MaterialTheme.colorScheme.tertiary)
+                                ),
+                                exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
                             ) {
-                                Column {
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .background(MaterialTheme.colorScheme.onTertiary)
-                                            .clickable {
-                                                showDropdown = false
-                                            }) {
-                                        Icon(modifier = Modifier.align(Alignment.Start), painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = "", tint = PrimaryTextBlack)
-                                    }
-                                    if (menuPosition == 2) {
-                                        Column {
-                                            for (i in listResource.indices) {
-                                                Row(
-                                                    modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .padding(10.dp)
-                                                        .clickable {
-                                                            subTitle = listResource[i].title
-                                                            subText = openAssetsResources(context, listResource[i].resource)
-                                                            iskniga = true
-                                                            showDropdown = false
-                                                            autoScroll = false
-                                                        },
-                                                    verticalAlignment = Alignment.CenterVertically
-                                                ) {
-                                                    Icon(
-                                                        modifier = Modifier.size(5.dp, 5.dp),
-                                                        painter = painterResource(R.drawable.poiter),
-                                                        tint = MaterialTheme.colorScheme.primary,
-                                                        contentDescription = null
-                                                    )
-                                                    Text(
-                                                        modifier = Modifier.padding(start = 10.dp),
-                                                        text = listResource[i].title,
-                                                        fontSize = Settings.fontInterface.sp,
-                                                        maxLines = 2,
-                                                        overflow = TextOverflow.Ellipsis,
-                                                        color = MaterialTheme.colorScheme.secondary
-                                                    )
-                                                }
-                                                HorizontalDivider()
-                                            }
-                                            if (cytanneVisable) {
-                                                val chytanneList = ArrayList<BogaslujbovyiaListData>()
-                                                if (data[9].isNotEmpty()) {
-                                                    chytanneList.add(BogaslujbovyiaListData(data[9], "9"))
-                                                }
-                                                if (data[10].isNotEmpty()) {
-                                                    chytanneList.add(BogaslujbovyiaListData(data[10], "10"))
-                                                }
-                                                if (data[11].isNotEmpty()) {
-                                                    chytanneList.add(BogaslujbovyiaListData(data[11], "11"))
-                                                }
-                                                for (i in chytanneList.indices) {
-                                                    val navigate = when (chytanneList[i].resurs) {
-                                                        "10" -> "cytannesvityx"
-                                                        "11" -> "cytannedop"
-                                                        else -> "cytanne"
-                                                    }
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(
+                                            shape = RoundedCornerShape(
+                                                bottomStart = 10.dp,
+                                                bottomEnd = 10.dp
+                                            )
+                                        )
+                                        .background(MaterialTheme.colorScheme.onTertiary)
+                                        .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
+                                        .background(MaterialTheme.colorScheme.tertiary)
+                                ) {
+                                    Column {
+                                        Column(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .background(MaterialTheme.colorScheme.onTertiary)
+                                                .clickable {
+                                                    showDropdown = false
+                                                }) {
+                                            Icon(modifier = Modifier.align(Alignment.Start), painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = "", tint = PrimaryTextBlack)
+                                        }
+                                        if (menuPosition == 2) {
+                                            Column {
+                                                for (i in listResource.indices) {
                                                     Row(
                                                         modifier = Modifier
                                                             .fillMaxWidth()
                                                             .padding(10.dp)
                                                             .clickable {
+                                                                subTitle = listResource[i].title
+                                                                subText = openAssetsResources(context, listResource[i].resource)
+                                                                iskniga = true
                                                                 showDropdown = false
                                                                 autoScroll = false
-                                                                navigateTo(navigate)
                                                             },
                                                         verticalAlignment = Alignment.CenterVertically
                                                     ) {
@@ -727,7 +683,7 @@ fun Bogaslujbovyia(
                                                         )
                                                         Text(
                                                             modifier = Modifier.padding(start = 10.dp),
-                                                            text = chytanneList[i].title,
+                                                            text = listResource[i].title,
                                                             fontSize = Settings.fontInterface.sp,
                                                             maxLines = 2,
                                                             overflow = TextOverflow.Ellipsis,
@@ -736,270 +692,316 @@ fun Bogaslujbovyia(
                                                     }
                                                     HorizontalDivider()
                                                 }
+                                                if (cytanneVisable) {
+                                                    val chytanneList = ArrayList<BogaslujbovyiaListData>()
+                                                    if (data[9].isNotEmpty()) {
+                                                        chytanneList.add(BogaslujbovyiaListData(data[9], "9"))
+                                                    }
+                                                    if (data[10].isNotEmpty()) {
+                                                        chytanneList.add(BogaslujbovyiaListData(data[10], "10"))
+                                                    }
+                                                    if (data[11].isNotEmpty()) {
+                                                        chytanneList.add(BogaslujbovyiaListData(data[11], "11"))
+                                                    }
+                                                    for (i in chytanneList.indices) {
+                                                        val navigate = when (chytanneList[i].resurs) {
+                                                            "10" -> "cytannesvityx"
+                                                            "11" -> "cytannedop"
+                                                            else -> "cytanne"
+                                                        }
+                                                        Row(
+                                                            modifier = Modifier
+                                                                .fillMaxWidth()
+                                                                .padding(10.dp)
+                                                                .clickable {
+                                                                    showDropdown = false
+                                                                    autoScroll = false
+                                                                    navigateTo(navigate)
+                                                                },
+                                                            verticalAlignment = Alignment.CenterVertically
+                                                        ) {
+                                                            Icon(
+                                                                modifier = Modifier.size(5.dp, 5.dp),
+                                                                painter = painterResource(R.drawable.poiter),
+                                                                tint = MaterialTheme.colorScheme.primary,
+                                                                contentDescription = null
+                                                            )
+                                                            Text(
+                                                                modifier = Modifier.padding(start = 10.dp),
+                                                                text = chytanneList[i].title,
+                                                                fontSize = Settings.fontInterface.sp,
+                                                                maxLines = 2,
+                                                                overflow = TextOverflow.Ellipsis,
+                                                                color = MaterialTheme.colorScheme.secondary
+                                                            )
+                                                        }
+                                                        HorizontalDivider()
+                                                    }
+                                                }
                                             }
                                         }
-                                    }
-                                    if (menuPosition == 1) {
-                                        Text(
-                                            stringResource(R.string.menu_font_size_app),
-                                            modifier = Modifier.padding(start = 10.dp, top = 10.dp),
-                                            fontStyle = FontStyle.Italic,
-                                            textAlign = TextAlign.Center,
-                                            color = MaterialTheme.colorScheme.secondary,
-                                            fontSize = Settings.fontInterface.sp
-                                        )
-                                        Slider(
-                                            modifier = Modifier.padding(horizontal = 10.dp),
-                                            valueRange = 18f..58f,
-                                            steps = 10,
-                                            value = fontSize,
-                                            onValueChange = {
-                                                k.edit {
-                                                    putFloat("font_biblia", it)
+                                        if (menuPosition == 1) {
+                                            Text(
+                                                stringResource(R.string.menu_font_size_app),
+                                                modifier = Modifier.padding(start = 10.dp, top = 10.dp),
+                                                fontStyle = FontStyle.Italic,
+                                                textAlign = TextAlign.Center,
+                                                color = MaterialTheme.colorScheme.secondary,
+                                                fontSize = Settings.fontInterface.sp
+                                            )
+                                            Slider(
+                                                modifier = Modifier.padding(horizontal = 10.dp),
+                                                valueRange = 18f..58f,
+                                                steps = 10,
+                                                value = fontSize,
+                                                onValueChange = {
+                                                    k.edit {
+                                                        putFloat("font_biblia", it)
+                                                    }
+                                                    fontSize = it
                                                 }
-                                                fontSize = it
-                                            }
-                                        )
+                                            )
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                    BottomAppBar(containerColor = MaterialTheme.colorScheme.onTertiary) {
-                        var expanded by remember { mutableStateOf(false) }
-                        DropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false }
-                        ) {
-                            if (k.getBoolean("admin", false)) {
+                        BottomAppBar(containerColor = MaterialTheme.colorScheme.onTertiary) {
+                            var expanded by remember { mutableStateOf(false) }
+                            DropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false }
+                            ) {
+                                if (k.getBoolean("admin", false)) {
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            showDropdown = false
+                                            autoScroll = false
+                                            expanded = false
+                                            if ((context as MainActivity).checkmodulesAdmin()) {
+                                                val intent = Intent()
+                                                intent.setClassName(context, "by.carkva_gazeta.admin.PasochnicaList")
+                                                val t1 = resursEncode.lastIndexOf("/")
+                                                val t2 = resursEncode.lastIndexOf(".")
+                                                val resursAdmin = if (t1 != -1) {
+                                                    if (t2 != -1) resursEncode.substring(t1 + 1, t2)
+                                                    else resursEncode.substring(t1 + 1)
+                                                } else {
+                                                    if (t2 != -1) resursEncode.substring(0, t2)
+                                                    else resursEncode
+                                                }
+                                                intent.putExtra("resours", resursAdmin)
+                                                intent.putExtra("title", title)
+                                                intent.putExtra("text", htmlText.replace("#ff6666", "#d00505", true))
+                                                context.startActivity(intent)
+                                            }
+                                        },
+                                        text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) },
+                                        trailingIcon = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.edit),
+                                                contentDescription = ""
+                                            )
+                                        }
+                                    )
+                                }
+                                HorizontalDivider()
                                 DropdownMenuItem(
                                     onClick = {
                                         showDropdown = false
                                         autoScroll = false
                                         expanded = false
-                                        if ((context as MainActivity).checkmodulesAdmin()) {
-                                            val intent = Intent()
-                                            intent.setClassName(context, "by.carkva_gazeta.admin.PasochnicaList")
-                                            val t1 = resursEncode.lastIndexOf("/")
-                                            val t2 = resursEncode.lastIndexOf(".")
-                                            val resursAdmin = if (t1 != -1) {
-                                                if (t2 != -1) resursEncode.substring(t1 + 1, t2)
-                                                else resursEncode.substring(t1 + 1)
+                                        val slugbovyiaTextu = SlugbovyiaTextu()
+                                        var res = slugbovyiaTextu.getTydzen1()
+                                        res.forEach {
+                                            if (resursEncode == it.resource) printFile = "Tydzien-1 VP_2012.pdf"
+                                        }
+                                        res = slugbovyiaTextu.getTydzen2()
+                                        res.forEach {
+                                            if (resursEncode == it.resource) printFile = "Tydzien-2 VP_2012.pdf"
+                                        }
+                                        res = slugbovyiaTextu.getTydzen3()
+                                        res.forEach {
+                                            if (resursEncode == it.resource) printFile = "Tydzien-3 VP_2014.pdf"
+                                        }
+                                        res = slugbovyiaTextu.getTydzen4()
+                                        res.forEach {
+                                            if (resursEncode == it.resource) printFile = "Tydzien-4 VP_2014.pdf"
+                                        }
+                                        res = slugbovyiaTextu.getTydzen5()
+                                        res.forEach {
+                                            if (resursEncode == it.resource) printFile = "Tydzien-5 VP_2015.pdf"
+                                        }
+                                        res = slugbovyiaTextu.getTydzen6()
+                                        res.forEach {
+                                            if (resursEncode == it.resource) printFile = "Tydzien-6 VP_2015.pdf"
+                                        }
+                                        if (resursEncode == "bogashlugbovya/lit_jana_zalatavusnaha.html") printFile = "LITURGIJA Jana Zlt.pdf"
+                                        if (resursEncode == "bogashlugbovya/kanon_andreja_kryckaha.html") printFile = "Kanon_A-Kryckaha.pdf"
+                                        if (resursEncode == "bogashlugbovya/akafist4.html") printFile = "Akafist-Padl-muczanikam.pdf"
+                                        if (resursEncode == "bogashlugbovya/akafist6.html") printFile = "Akafist da Ducha Sviatoha.pdf"
+                                        if (resursEncode == "bogashlugbovya/vialikaja_piatnica_jutran_12jevanhellau.html") printFile = "Vial-Piatnica-jutran-12-Evang.pdf"
+                                        if (printFile.isNotEmpty()) {
+                                            if (fileExistsBiblijateka(context, printFile)) {
+                                                val printAdapter = PdfDocumentAdapter(context, printFile)
+                                                val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
+                                                val printAttributes = PrintAttributes.Builder().setMediaSize(PrintAttributes.MediaSize.ISO_A4).build()
+                                                printManager.print(printFile, printAdapter, printAttributes)
                                             } else {
-                                                if (t2 != -1) resursEncode.substring(0, t2)
-                                                else resursEncode
+                                                if (Settings.isNetworkAvailable(
+                                                        context,
+                                                        Settings.TRANSPORT_CELLULAR
+                                                    )
+                                                ) isDialogNoWIFIVisable = true
+                                                else {
+                                                    writeFile(
+                                                        context, printFile, loadComplete = {
+                                                            val printAdapter = PdfDocumentAdapter(context, printFile)
+                                                            val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
+                                                            val printAttributes = PrintAttributes.Builder().setMediaSize(PrintAttributes.MediaSize.ISO_A4).build()
+                                                            printManager.print(printFile, printAdapter, printAttributes)
+                                                        },
+                                                        inProcess = {
+                                                        })
+                                                }
                                             }
-                                            intent.putExtra("resours", resursAdmin)
-                                            intent.putExtra("title", title)
-                                            intent.putExtra("text", htmlText.replace("#ff6666", "#d00505", true))
-                                            context.startActivity(intent)
+                                        } else {
+                                            isWebViewVisible = true
                                         }
                                     },
-                                    text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) },
+                                    text = { Text(stringResource(R.string.print), fontSize = (Settings.fontInterface - 2).sp) },
                                     trailingIcon = {
                                         Icon(
-                                            painter = painterResource(R.drawable.edit),
+                                            painter = painterResource(R.drawable.print),
+                                            contentDescription = ""
+                                        )
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    onClick = {
+                                        showDropdown = !showDropdown
+                                        autoScroll = false
+                                        expanded = false
+                                        menuPosition = 1
+                                    },
+                                    text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) },
+                                    trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.format_size),
                                             contentDescription = ""
                                         )
                                     }
                                 )
                             }
-                            HorizontalDivider()
-                            DropdownMenuItem(
-                                onClick = {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceAround
+                            ) {
+                                IconButton(
+                                    onClick = { expanded = true }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.more_vert),
+                                        contentDescription = "",
+                                        tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
+                                IconButton(onClick = {
                                     showDropdown = false
                                     autoScroll = false
                                     expanded = false
-                                    val slugbovyiaTextu = SlugbovyiaTextu()
-                                    var res = slugbovyiaTextu.getTydzen1()
-                                    res.forEach {
-                                        if (resursEncode == it.resource) printFile = "Tydzien-1 VP_2012.pdf"
+                                    val sent = textLayout.value?.layoutInput?.text?.text
+                                    val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                                    sent?.let { shareText ->
+                                        val clip = ClipData.newPlainText(context.getString(R.string.copy_text), shareText)
+                                        clipboard.setPrimaryClip(clip)
+                                        val sendIntent = Intent(Intent.ACTION_SEND)
+                                        sendIntent.putExtra(Intent.EXTRA_TEXT, shareText)
+                                        sendIntent.putExtra(Intent.EXTRA_SUBJECT, title)
+                                        sendIntent.type = "text/plain"
+                                        context.startActivity(Intent.createChooser(sendIntent, title))
+                                        Toast.makeText(context, context.getString(R.string.copy), Toast.LENGTH_SHORT).show()
                                     }
-                                    res = slugbovyiaTextu.getTydzen2()
-                                    res.forEach {
-                                        if (resursEncode == it.resource) printFile = "Tydzien-2 VP_2012.pdf"
-                                    }
-                                    res = slugbovyiaTextu.getTydzen3()
-                                    res.forEach {
-                                        if (resursEncode == it.resource) printFile = "Tydzien-3 VP_2014.pdf"
-                                    }
-                                    res = slugbovyiaTextu.getTydzen4()
-                                    res.forEach {
-                                        if (resursEncode == it.resource) printFile = "Tydzien-4 VP_2014.pdf"
-                                    }
-                                    res = slugbovyiaTextu.getTydzen5()
-                                    res.forEach {
-                                        if (resursEncode == it.resource) printFile = "Tydzien-5 VP_2015.pdf"
-                                    }
-                                    res = slugbovyiaTextu.getTydzen6()
-                                    res.forEach {
-                                        if (resursEncode == it.resource) printFile = "Tydzien-6 VP_2015.pdf"
-                                    }
-                                    if (resursEncode == "bogashlugbovya/lit_jana_zalatavusnaha.html") printFile = "LITURGIJA Jana Zlt.pdf"
-                                    if (resursEncode == "bogashlugbovya/kanon_andreja_kryckaha.html") printFile = "Kanon_A-Kryckaha.pdf"
-                                    if (resursEncode == "bogashlugbovya/akafist4.html") printFile = "Akafist-Padl-muczanikam.pdf"
-                                    if (resursEncode == "bogashlugbovya/akafist6.html") printFile = "Akafist da Ducha Sviatoha.pdf"
-                                    if (resursEncode == "bogashlugbovya/vialikaja_piatnica_jutran_12jevanhellau.html") printFile = "Vial-Piatnica-jutran-12-Evang.pdf"
-                                    if (printFile.isNotEmpty()) {
-                                        if (fileExistsBiblijateka(context, printFile)) {
-                                            val printAdapter = PdfDocumentAdapter(context, printFile)
-                                            val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
-                                            val printAttributes = PrintAttributes.Builder().setMediaSize(PrintAttributes.MediaSize.ISO_A4).build()
-                                            printManager.print(printFile, printAdapter, printAttributes)
-                                        } else {
-                                            if (Settings.isNetworkAvailable(
-                                                    context,
-                                                    Settings.TRANSPORT_CELLULAR
-                                                )
-                                            ) isDialogNoWIFIVisable = true
-                                            else {
-                                                writeFile(
-                                                    context, printFile, loadComplete = {
-                                                        val printAdapter = PdfDocumentAdapter(context, printFile)
-                                                        val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
-                                                        val printAttributes = PrintAttributes.Builder().setMediaSize(PrintAttributes.MediaSize.ISO_A4).build()
-                                                        printManager.print(printFile, printAdapter, printAttributes)
-                                                    },
-                                                    inProcess = {
-                                                    })
-                                            }
-                                        }
-                                    } else {
-                                        isWebViewVisible = true
-                                    }
-                                },
-                                text = { Text(stringResource(R.string.print), fontSize = (Settings.fontInterface - 2).sp) },
-                                trailingIcon = {
+                                }) {
                                     Icon(
-                                        painter = painterResource(R.drawable.print),
-                                        contentDescription = ""
+                                        painter = painterResource(R.drawable.share),
+                                        contentDescription = "",
+                                        tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
-                            )
-                            DropdownMenuItem(
-                                onClick = {
-                                    showDropdown = !showDropdown
-                                    autoScroll = false
+                                IconButton(onClick = {
                                     expanded = false
-                                    menuPosition = 1
-                                },
-                                text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) },
-                                trailingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.format_size),
-                                        contentDescription = ""
-                                    )
-                                }
-                            )
-                        }
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceAround
-                        ) {
-                            IconButton(
-                                onClick = { expanded = true }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.more_vert),
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                            }
-                            IconButton(onClick = {
-                                showDropdown = false
-                                autoScroll = false
-                                expanded = false
-                                val sent = textLayout.value?.layoutInput?.text?.text
-                                val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-                                sent?.let { shareText ->
-                                    val clip = ClipData.newPlainText(context.getString(R.string.copy_text), shareText)
-                                    clipboard.setPrimaryClip(clip)
-                                    val sendIntent = Intent(Intent.ACTION_SEND)
-                                    sendIntent.putExtra(Intent.EXTRA_TEXT, shareText)
-                                    sendIntent.putExtra(Intent.EXTRA_SUBJECT, title)
-                                    sendIntent.type = "text/plain"
-                                    context.startActivity(Intent.createChooser(sendIntent, title))
-                                    Toast.makeText(context, context.getString(R.string.copy), Toast.LENGTH_SHORT).show()
-                                }
-                            }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.share),
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                            }
-                            IconButton(onClick = {
-                                expanded = false
-                                if (autoScrollSensor) autoScroll = true
-                                fullscreen = true
-                            }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.fullscreen),
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                            }
-                            IconButton(onClick = {
-                                expanded = false
-                                if (autoScrollSensor) autoScroll = true
-                                searchText = true
-                            }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.search),
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                            }
-                            IconButton(onClick = {
-                                expanded = false
-                                saveVybranoe = true
-                            }) {
-                                val icon = if (isVybranoe) painterResource(R.drawable.stars)
-                                else painterResource(R.drawable.star)
-                                Icon(
-                                    painter = icon,
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                            }
-                            if (scrollState.canScrollForward) {
-                                val iconAutoScroll =
-                                    if (autoScrollSensor) painterResource(R.drawable.stop_circle)
-                                    else painterResource(R.drawable.play_circle)
-                                IconButton(onClick = {
-                                    autoScroll = !autoScroll
-                                    autoScrollSensor = !autoScrollSensor
-                                    if (autoScrollSensor) actyvity.window.addFlags(
-                                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                                    )
-                                    else actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                    if (autoScrollSensor) autoScroll = true
+                                    fullscreen = true
                                 }) {
                                     Icon(
-                                        iconAutoScroll,
+                                        painter = painterResource(R.drawable.fullscreen),
                                         contentDescription = "",
                                         tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
-                            } else if (scrollState.canScrollBackward) {
                                 IconButton(onClick = {
-                                    isUpList = true
+                                    expanded = false
+                                    if (autoScrollSensor) autoScroll = true
+                                    searchText = true
                                 }) {
                                     Icon(
-                                        painter = painterResource(R.drawable.arrow_upward),
+                                        painter = painterResource(R.drawable.search),
                                         contentDescription = "",
                                         tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
-                            }
-                            if ((isLiturgia || isViachernia) && cytanneVisable && listResource.isNotEmpty()) {
                                 IconButton(onClick = {
-                                    showDropdown = true
-                                    menuPosition = 2
+                                    expanded = false
+                                    saveVybranoe = true
                                 }) {
+                                    val icon = if (isVybranoe) painterResource(R.drawable.stars)
+                                    else painterResource(R.drawable.star)
                                     Icon(
-                                        painter = painterResource(R.drawable.book_red),
+                                        painter = icon,
                                         contentDescription = "",
                                         tint = MaterialTheme.colorScheme.onSecondary
                                     )
+                                }
+                                if (scrollState.canScrollForward) {
+                                    val iconAutoScroll =
+                                        if (autoScrollSensor) painterResource(R.drawable.stop_circle)
+                                        else painterResource(R.drawable.play_circle)
+                                    IconButton(onClick = {
+                                        autoScroll = !autoScroll
+                                        autoScrollSensor = !autoScrollSensor
+                                        if (autoScrollSensor) actyvity.window.addFlags(
+                                            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                        )
+                                        else actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                    }) {
+                                        Icon(
+                                            iconAutoScroll,
+                                            contentDescription = "",
+                                            tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
+                                } else if (scrollState.canScrollBackward) {
+                                    IconButton(onClick = {
+                                        isUpList = true
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.arrow_upward),
+                                            contentDescription = "",
+                                            tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
+                                }
+                                if ((isLiturgia || isViachernia) && cytanneVisable && listResource.isNotEmpty()) {
+                                    IconButton(onClick = {
+                                        showDropdown = true
+                                        menuPosition = 2
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.book_red),
+                                            contentDescription = "",
+                                            tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
                                 }
                             }
                         }

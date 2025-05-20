@@ -38,7 +38,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
@@ -74,6 +76,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -113,6 +116,7 @@ import by.carkva_gazeta.malitounik.CytanniList
 import by.carkva_gazeta.malitounik.DialogDelite
 import by.carkva_gazeta.malitounik.KaliandarKnigaView
 import by.carkva_gazeta.malitounik.KaliandarScreen
+import by.carkva_gazeta.malitounik.KaliandarScreenInfo
 import by.carkva_gazeta.malitounik.KaliandarScreenMounth
 import by.carkva_gazeta.malitounik.KaliandarScreenYear
 import by.carkva_gazeta.malitounik.LogView
@@ -129,7 +133,6 @@ import by.carkva_gazeta.malitounik.SearchSviatyia
 import by.carkva_gazeta.malitounik.Settings
 import by.carkva_gazeta.malitounik.Settings.isNetworkAvailable
 import by.carkva_gazeta.malitounik.SettingsView
-import by.carkva_gazeta.malitounik.KaliandarScreenInfo
 import by.carkva_gazeta.malitounik.SviatyList
 import by.carkva_gazeta.malitounik.SviatyiaView
 import by.carkva_gazeta.malitounik.VybranaeList
@@ -139,6 +142,7 @@ import by.carkva_gazeta.malitounik.knigaBiblii
 import by.carkva_gazeta.malitounik.removeZnakiAndSlovy
 import by.carkva_gazeta.malitounik.setNotificationNon
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
+import by.carkva_gazeta.malitounik.ui.theme.Button
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.Post
 import by.carkva_gazeta.malitounik.ui.theme.Primary
@@ -1028,6 +1032,7 @@ fun findCaliandarPosition(position: Int): ArrayList<ArrayList<String>> {
 
 @Composable
 fun CheckUpdateMalitounik(
+    onDownloadComplet: () -> Unit,
     onDismiss: () -> Unit
 ) {
     var dialogUpdateMalitounik by remember { mutableStateOf(false) }
@@ -1036,14 +1041,15 @@ fun CheckUpdateMalitounik(
     var bytesDownload by remember { mutableFloatStateOf(0f) }
     var isCompletDownload by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val appUpdateManager = AppUpdateManagerFactory.create(context)
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
+        val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+        if (k.getBoolean("isDialogUdate", true) && result.resultCode == Activity.RESULT_OK) {
             dialogUpdateMalitounik = true
         } else {
             onDismiss()
         }
     }
-    val appUpdateManager = AppUpdateManagerFactory.create(context)
     val installStateUpdatedListener = InstallStateUpdatedListener { state ->
         if (state.installStatus() == InstallStatus.DOWNLOADING) {
             bytesDownload = state.bytesDownloaded().toFloat()
@@ -1052,17 +1058,16 @@ fun CheckUpdateMalitounik(
         if (state.installStatus() == InstallStatus.DOWNLOADED) {
             dialogUpdateMalitounik = false
             isCompletDownload = true
+            onDownloadComplet()
         }
     }
     if (isCompletDownload) {
         appUpdateManager.unregisterListener(installStateUpdatedListener)
-        appUpdateManager.completeUpdate()
         isCompletDownload = false
     }
     if (dialogUpdateMalitounik) {
         DialogUpdateMalitounik(totalBytesToDownload, bytesDownload) {
             dialogUpdateMalitounik = false
-            onDismiss()
         }
     }
     if (noWIFI) {
@@ -1114,9 +1119,15 @@ fun MainConteiner(
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
+    var isInstallApp by remember { mutableStateOf(k.getBoolean("isInstallApp", false)) }
     var appUpdate by remember { mutableStateOf(false) }
     if (appUpdate) {
-        CheckUpdateMalitounik {
+        CheckUpdateMalitounik(onDownloadComplet = {
+            isInstallApp = true
+            k.edit {
+                putBoolean("isInstallApp", true)
+            }
+        }) {
             appUpdate = false
         }
     }
@@ -1232,8 +1243,8 @@ fun MainConteiner(
     SideEffect {
         val window = (view.context as Activity).window
         WindowCompat.getInsetsController(window, view).apply {
-            isAppearanceLightStatusBars = isAppearanceLight
-            isAppearanceLightNavigationBars = isAppearanceLight
+            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = !context.dzenNoch
         }
     }
     var sortedVybranae by remember {
@@ -1782,6 +1793,50 @@ fun MainConteiner(
                         }
                     }
                 }
+            },
+            snackbarHost = {
+                if (isInstallApp) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Button),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(R.string.update_program),
+                            modifier = Modifier
+                                .padding(horizontal = 5.dp),
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontSize = 18.sp
+                        )
+                        TextButton(
+                            onClick = {
+                                val appUpdateManager = AppUpdateManagerFactory.create(context)
+                                appUpdateManager.completeUpdate()
+                                k.edit {
+                                    putBoolean("isInstallApp", false)
+                                }
+                                isInstallApp = false
+                            },
+                            modifier = Modifier
+                                .padding(5.dp),
+                            colors = ButtonColors(
+                                Divider,
+                                Color.Unspecified,
+                                Color.Unspecified,
+                                Color.Unspecified
+                            ),
+                            shape = MaterialTheme.shapes.small
+                        ) {
+                            Text(
+                                text = stringResource(R.string.restsrt_program),
+                                color = PrimaryText,
+                                fontSize = 18.sp
+                            )
+                        }
+                    }
+                }
             }
         ) { innerPadding ->
             Box(
@@ -2222,6 +2277,18 @@ fun DialogUpdateMalitounik(
                             .fillMaxWidth()
                             .padding(horizontal = 10.dp)
                     )
+                }
+                val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(
+                        checked = !k.getBoolean("isDialogUdate", true),
+                        onCheckedChange = {
+                            k.edit {
+                                putBoolean("isDialogUdate", it)
+                            }
+                        }
+                    )
+                    Text(stringResource(R.string.sabytie_check_mun), fontSize = 18.sp)
                 }
                 Row(
                     modifier = Modifier

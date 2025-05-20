@@ -129,7 +129,7 @@ fun BibliaList(
             view
         ).apply {
             isAppearanceLightStatusBars = false
-            isAppearanceLightNavigationBars = false
+            isAppearanceLightNavigationBars = !(context as MainActivity).dzenNoch
         }
     }
     var backPressHandled by remember { mutableStateOf(false) }

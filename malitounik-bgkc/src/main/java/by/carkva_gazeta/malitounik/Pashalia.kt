@@ -1,6 +1,5 @@
 package by.carkva_gazeta.malitounik
 
-import android.app.Activity
 import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -33,12 +31,10 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -83,14 +79,6 @@ fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, sear
     val lazyListState = rememberLazyListState()
     var findIndex by remember { mutableIntStateOf(0) }
     val cal = Calendar.getInstance()
-    val view = LocalView.current
-    SideEffect {
-        val window = (view.context as Activity).window
-        WindowCompat.getInsetsController(window, view).apply {
-            isAppearanceLightStatusBars = false
-            isAppearanceLightNavigationBars = !(context as MainActivity).dzenNoch
-        }
-    }
     LaunchedEffect(Unit) {
         viewModel.clear()
         for (year in 1582..2099) {
@@ -205,7 +193,7 @@ fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, sear
                 HorizontalDivider()
             }
             item {
-                Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
+                Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding() + if (k.getBoolean("isInstallApp", false)) 60.dp else 0.dp))
             }
         }
     }

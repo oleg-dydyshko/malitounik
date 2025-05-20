@@ -2,7 +2,6 @@
 
 package by.carkva_gazeta.malitounik
 
-import android.app.Activity
 import android.content.Context
 import android.os.Build
 import androidx.activity.compose.LocalActivity
@@ -31,7 +30,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -45,7 +43,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -54,7 +51,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.core.view.WindowCompat
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import java.io.BufferedReader
 import java.io.File
@@ -72,18 +68,8 @@ fun MaeNatatki(
     removeAllNatatki: Boolean,
     onDismissAddFile: () -> Unit,
 ) {
-    val view = LocalView.current
-    SideEffect {
-        val window = (view.context as Activity).window
-        WindowCompat.getInsetsController(
-            window,
-            view
-        ).apply {
-            isAppearanceLightStatusBars = false
-            isAppearanceLightNavigationBars = false
-        }
-    }
     val context = LocalContext.current
+    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val fileList = remember { mutableStateListOf<MaeNatatkiItem>() }
     LaunchedEffect(Unit) {
         File(context.filesDir.toString().plus("/Malitva")).walk().forEach {
@@ -231,7 +217,7 @@ fun MaeNatatki(
             HorizontalDivider()
         }
         item {
-            Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
+            Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding() + if (k.getBoolean("isInstallApp", false)) 60.dp else 0.dp))
         }
     }
 }

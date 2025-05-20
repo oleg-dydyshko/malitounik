@@ -26,7 +26,6 @@ import android.os.SystemClock
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
@@ -1169,7 +1168,6 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        SystemBarStyle
         ferstStart = true
         val k = getSharedPreferences("biblia", MODE_PRIVATE)
         if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) {
@@ -1178,14 +1176,6 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         Settings.fontInterface = getFontInterface(this)
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                AppNavGraphState.bibleItem = false
-                AppNavGraphState.piesnyItem = false
-                AppNavGraphState.biblijatekaItem = false
-                AppNavGraphState.underItem = false
-                AppNavGraphState.scrollValue = 0
-                AppNavGraphState.getCytata(this@MainActivity)
-                AppNavGraphState.setAlarm = true
-                AppNavGraphState.vybranaeListPosition = -1
                 onBack()
             }
         })
@@ -1377,6 +1367,14 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
             k.edit {
                 putBoolean("setAlarm", true)
             }
+            AppNavGraphState.bibleItem = false
+            AppNavGraphState.piesnyItem = false
+            AppNavGraphState.biblijatekaItem = false
+            AppNavGraphState.underItem = false
+            AppNavGraphState.scrollValue = 0
+            AppNavGraphState.getCytata(this@MainActivity)
+            AppNavGraphState.setAlarm = true
+            AppNavGraphState.vybranaeListPosition = -1
             finish()
         } else {
             backPressed = System.currentTimeMillis()

@@ -17,7 +17,6 @@ import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Spacer
@@ -137,7 +136,7 @@ fun Biblijateka(
             view
         ).apply {
             isAppearanceLightStatusBars = false
-            isAppearanceLightNavigationBars = !(context as MainActivity).dzenNoch
+            isAppearanceLightNavigationBars = true
         }
     }
     var fullscreen by rememberSaveable { mutableStateOf(false) }
@@ -383,13 +382,13 @@ fun Biblijateka(
                                 offsetY += dragAmount.y * 3
                             }
                         }
-                        .pointerInput(Unit) {
+                        /*.pointerInput(Unit) {
                             detectTapGestures(
                                 onDoubleTap = {
                                     fullscreen = !fullscreen
                                 }
                             )
-                        }
+                        }*/
                 ) {
                     item {
                         Spacer(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
