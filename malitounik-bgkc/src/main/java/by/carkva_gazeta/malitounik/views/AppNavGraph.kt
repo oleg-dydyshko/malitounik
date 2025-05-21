@@ -1243,8 +1243,10 @@ fun MainConteiner(
     SideEffect {
         val window = (view.context as Activity).window
         WindowCompat.getInsetsController(window, view).apply {
-            isAppearanceLightStatusBars = false
-            isAppearanceLightNavigationBars = !context.dzenNoch
+            isAppearanceLightStatusBars = if (Settings.destinations == AllDestinations.KALIANDAR) isAppearanceLight
+            else false
+            isAppearanceLightNavigationBars = if (Settings.destinations == AllDestinations.KALIANDAR) isAppearanceLight
+            else !context.dzenNoch
         }
     }
     var sortedVybranae by remember {
