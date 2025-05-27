@@ -51,6 +51,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
     private val newArrayList = ArrayList<SviatyData>()
     private var edittext: AppCompatEditText? = null
     private var caliandarArrayList = ArrayList<String>()
+
     @SuppressLint("SetTextI18n")
     private val caliandarMunLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
@@ -59,18 +60,24 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                 val position = intent.getIntExtra("position", 0)
                 caliandarArrayList.clear()
                 caliandarArrayList.addAll(MenuCaliandar.getPositionCaliandar(position))
-                binding.calandar.text = caliandarArrayList[1] + " " + resources.getStringArray(by.carkva_gazeta.malitounik.R.array.meciac_smoll)[caliandarArrayList[2].toInt()] + " " +  caliandarArrayList[3]
+                binding.calandar.text = caliandarArrayList[1] + " " + resources.getStringArray(by.carkva_gazeta.malitounik.R.array.meciac_smoll)[caliandarArrayList[2].toInt()] + " " + caliandarArrayList[3]
                 var check = false
                 for (i in newArrayList.indices) {
                     if ((newArrayList[i].data == caliandarArrayList[22].toInt() && newArrayList[i].dataCaliandar == SviatyData.PASHA) || (newArrayList[i].data == caliandarArrayList[24].toInt() && newArrayList[i].dataCaliandar == SviatyData.CALAINDAR)) {
+                        binding.spinnerSviaty.setSelection(i)
                         binding.sviaty.setText(newArrayList[i].opisanie)
                         binding.spinnerIsPasxa.setSelection(newArrayList[i].dataCaliandar)
+                        binding.sviaty.visibility = View.VISIBLE
+                        binding.spinnerIsPasxa.visibility = View.VISIBLE
+                        binding.spinnerSviaty.visibility = View.VISIBLE
                         check = true
                         break
                     }
                 }
                 if (!check) {
                     binding.sviaty.setText("<font color=\"#d00505\"><strong>${caliandarArrayList[6]}</strong></font><p>")
+                    binding.sviaty.visibility = View.VISIBLE
+                    binding.spinnerIsPasxa.visibility = View.VISIBLE
                 }
             }
         }
@@ -134,8 +141,26 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
             caliandarMunLauncher.launch(i)
         }
         binding.spinnerSviaty.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            @SuppressLint("SetTextI18n")
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 binding.sviaty.setText(newArrayList[position].opisanie)
+                binding.spinnerIsPasxa.setSelection(newArrayList[position].dataCaliandar)
+                caliandarArrayList.clear()
+                val dat = MenuCaliandar.getDataCalaindar(year = Calendar.getInstance()[Calendar.YEAR])
+                for (i in dat.indices) {
+                    if (newArrayList[position].dataCaliandar == SviatyData.PASHA) {
+                        if (dat[i][22].toInt() == newArrayList[position].data) {
+                            caliandarArrayList.addAll(MenuCaliandar.getPositionCaliandar(dat[i][25].toInt()))
+                            break
+                        }
+                    } else {
+                        if (dat[i][24].toInt() == newArrayList[position].data) {
+                            caliandarArrayList.addAll(MenuCaliandar.getPositionCaliandar(dat[i][25].toInt()))
+                            break
+                        }
+                    }
+                }
+                binding.calandar.text = caliandarArrayList[1] + " " + resources.getStringArray(by.carkva_gazeta.malitounik.R.array.meciac_smoll)[caliandarArrayList[2].toInt()] + " " + caliandarArrayList[3]
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -177,7 +202,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                             }
                         }
                     }
-                    binding.calandar.text = caliandarArrayList[1] + " " + resources.getStringArray(by.carkva_gazeta.malitounik.R.array.meciac_smoll)[caliandarArrayList[2].toInt()] + " " +  caliandarArrayList[3]
+                    binding.calandar.text = caliandarArrayList[1] + " " + resources.getStringArray(by.carkva_gazeta.malitounik.R.array.meciac_smoll)[caliandarArrayList[2].toInt()] + " " + caliandarArrayList[3]
                 } else {
                     error = true
                 }
@@ -376,7 +401,9 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
             binding.spinnerSviaty.visibility = View.GONE
             binding.calandar.text = ""
             binding.sviaty.setText("")
+            binding.sviaty.visibility = View.GONE
             binding.spinnerIsPasxa.setSelection(SviatyData.CALAINDAR)
+            binding.spinnerIsPasxa.visibility = View.GONE
             invalidateOptionsMenu()
             return true
         }

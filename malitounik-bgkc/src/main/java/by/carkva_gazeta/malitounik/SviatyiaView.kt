@@ -680,13 +680,8 @@ fun loadOpisanieSviat(context: Context, position: Int): SnapshotStateList<Opisan
             val day = if (strings.dataCaliandar == SviatyData.PASHA) Settings.data[position][22].toInt()
             else Settings.data[position][24].toInt()
             if (strings.dataCaliandar == SviatyData.UNDER) {
-                val pasha = GregorianCalendar()
-                for (i in 13..19) {
-                    pasha.set(Settings.data[position][3].toInt(), Calendar.JULY, i)
-                    val wik = pasha[Calendar.DAY_OF_WEEK]
-                    if (wik == Calendar.SUNDAY && day == pasha[Calendar.DAY_OF_YEAR]) {
-                        puxomuia = true
-                    }
+                if (strings.opisanie.contains("Айцоў першых 6-ці Ўсяленскіх сабораў", true) && Settings.data[position][1].toInt() >= 13 && Settings.data[position][1].toInt() <= 19 && Settings.data[position][2].toInt() == Calendar.JULY) {
+                    puxomuia = true
                 }
             }
             if (puxomuia || day == strings.data) {
