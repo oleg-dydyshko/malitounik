@@ -193,12 +193,12 @@ fun KaliandarScreen(
         if (data[5].toInt() > 0 || data[6].isNotEmpty()) {
             val padding1 = if (data[4].isNotEmpty()) 0.dp
             else 10.dp
-            val svaity = data[6]
+            val svaity = loadOpisanieSviat(context, position)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 10.dp, bottom = padding1)
-                    .clickable(svaity.contains("уваход у ерусалім", true) || svaity.contains("уваскрасеньне", true) || svaity.contains("узьнясеньне", true) || svaity.contains("зыход", true) || svaity.contains("Айцоў першых 6-ці Ўсяленскіх сабораў", true)) {
+                    .clickable(svaity.isNotEmpty()) {
                         navigateToSvityiaView(true, position)
                     }, verticalAlignment = Alignment.CenterVertically
             ) {
@@ -229,7 +229,7 @@ fun KaliandarScreen(
                             .padding(end = padding), contentAlignment = Alignment.TopCenter
                     ) {
                         Text(
-                            modifier = Modifier, fontWeight = weight, text = data[6], color = color, textAlign = TextAlign.Center, fontSize = Settings.fontInterface.sp
+                            modifier = Modifier.fillMaxWidth(), fontWeight = weight, text = data[6], color = color, textAlign = TextAlign.Center, fontSize = Settings.fontInterface.sp
                         )
                     }
                 }
@@ -243,6 +243,7 @@ fun KaliandarScreen(
             ) {
                 HtmlText(
                     modifier = Modifier
+                        .fillMaxWidth()
                         .align(Alignment.CenterVertically)
                         .padding(bottom = if (data[4].isEmpty()) 10.dp else 0.dp), text = data[8], color = MaterialTheme.colorScheme.secondary, textAlign = TextAlign.Center, fontSize = Settings.fontInterface.sp
                 )
@@ -317,6 +318,7 @@ fun KaliandarScreen(
                 )
                 Text(
                     modifier = Modifier
+                        .fillMaxWidth()
                         .padding(top = 10.dp, start = 10.dp, end = 10.dp)
                         .clickable { navigateToCytanneList(title, removeZnakiAndSlovy(data[9]), Settings.CHYTANNI_LITURGICHNYIA) }, text = data[9], color = colorText, fontSize = Settings.fontInterface.sp
                 )
@@ -327,6 +329,7 @@ fun KaliandarScreen(
                 )
                 Text(
                     modifier = Modifier
+                        .fillMaxWidth()
                         .padding(top = 10.dp, start = 10.dp, end = 10.dp)
                         .clickable { navigateToCytanneList(title, removeZnakiAndSlovy(data[10]), Settings.CHYTANNI_LITURGICHNYIA) }, text = data[10], fontStyle = FontStyle.Italic, color = colorText, fontSize = Settings.fontInterface.sp
                 )
@@ -337,6 +340,7 @@ fun KaliandarScreen(
                 )
                 Text(
                     modifier = Modifier
+                        .fillMaxWidth()
                         .padding(top = 10.dp, start = 10.dp, end = 10.dp)
                         .clickable { navigateToCytanneList(title, removeZnakiAndSlovy(data[11]), Settings.CHYTANNI_LITURGICHNYIA) }, text = data[11], fontStyle = FontStyle.Italic, color = colorText, fontSize = Settings.fontInterface.sp
                 )
@@ -366,7 +370,8 @@ fun KaliandarScreen(
                 )
                 Text(
                     modifier = Modifier
-                        .padding(start = 10.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp)
                         .clickable { navigateToCytanneList(title, data[13], Settings.CHYTANNI_MARANATA) }, text = data[13], color = colorText, fontSize = Settings.fontInterface.sp
                 )
             }

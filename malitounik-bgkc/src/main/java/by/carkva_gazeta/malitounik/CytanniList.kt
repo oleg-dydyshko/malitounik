@@ -522,7 +522,13 @@ fun CytanniList(
     }
     Scaffold(
         topBar = {
-            if (!fullscreen) {
+            AnimatedVisibility(
+                !fullscreen, enter = fadeIn(
+                    tween(
+                        durationMillis = 500, easing = LinearOutSlowInEasing
+                    )
+                ), exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
+            ) {
                 TopAppBar(
                     title = {
                         if (!isSelectMode) {
@@ -554,9 +560,7 @@ fun CytanniList(
                                                 delay(5000L)
                                                 maxLine.intValue = 1
                                             }
-                                        }, text = stringResource(
-                                            R.string.paralel_smoll, paralelChtenia
-                                        ), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
+                                        }, text = stringResource(R.string.paralel), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
                                     )
                                 }
                             }
@@ -637,7 +641,13 @@ fun CytanniList(
             }
         },
         bottomBar = {
-            if (!fullscreen) {
+            AnimatedVisibility(
+                !fullscreen, enter = fadeIn(
+                    tween(
+                        durationMillis = 500, easing = LinearOutSlowInEasing
+                    )
+                ), exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
+            ) {
                 Popup(
                     alignment = Alignment.BottomCenter, onDismissRequest = {
                         showDropdown = false
@@ -878,119 +888,121 @@ fun CytanniList(
                     }
                 }
                 if (!isSelectMode) {
-                    BottomAppBar(containerColor = colorTollBar) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceAround
-                        ) {
-                            if (!(biblia == Settings.CHYTANNI_LITURGICHNYIA || perevodRoot == Settings.PEREVODNADSAN || biblia == Settings.CHYTANNI_VYBRANAE)) {
-                                IconButton(
-                                    onClick = {
-                                        isParallel = !isParallel
-                                        if (autoScrollSensor) autoScroll = true
-                                        k.edit {
-                                            if (biblia == Settings.CHYTANNI_BIBLIA) putBoolean(
-                                                "paralel_biblia", isParallel
-                                            )
-                                            else putBoolean("paralel_maranata", isParallel)
-                                        }
-                                    }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.two_pager),
-                                        contentDescription = "",
-                                        tint = MaterialTheme.colorScheme.onSecondary
-                                    )
+                    if (!isParallelVisable) {
+                        BottomAppBar(containerColor = colorTollBar) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceAround
+                            ) {
+                                if (!(biblia == Settings.CHYTANNI_LITURGICHNYIA || perevodRoot == Settings.PEREVODNADSAN || biblia == Settings.CHYTANNI_VYBRANAE)) {
+                                    IconButton(
+                                        onClick = {
+                                            isParallel = !isParallel
+                                            if (autoScrollSensor) autoScroll = true
+                                            k.edit {
+                                                if (biblia == Settings.CHYTANNI_BIBLIA) putBoolean(
+                                                    "paralel_biblia", isParallel
+                                                )
+                                                else putBoolean("paralel_maranata", isParallel)
+                                            }
+                                        }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.two_pager),
+                                            contentDescription = "",
+                                            tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
                                 }
-                            }
-                            IconButton(
-                                onClick = {
-                                    showDropdown = !showDropdown
-                                    autoScroll = false
-                                    menuPosition = 1
-                                }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.format_size),
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                            }
-                            IconButton(
-                                onClick = {
-                                    if (autoScrollSensor) autoScroll = true
-                                    fullscreen = true
-                                }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.fullscreen),
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                            }
-                            IconButton(
-                                onClick = {
-                                    showDropdown = !showDropdown
-                                    autoScroll = false
-                                    menuPosition = 2
-                                }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.book_red),
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                            }
-                            if (biblia == Settings.CHYTANNI_BIBLIA && listState.size - 1 > 1) {
                                 IconButton(
                                     onClick = {
+                                        showDropdown = !showDropdown
                                         autoScroll = false
-                                        dialogRazdel = true
+                                        menuPosition = 1
                                     }) {
                                     Icon(
-                                        painter = painterResource(R.drawable.apps),
+                                        painter = painterResource(R.drawable.format_size),
                                         contentDescription = "",
                                         tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
-                            }
-                            if (biblia == Settings.CHYTANNI_BIBLIA) {
                                 IconButton(
                                     onClick = {
-                                        saveVybranoe = true
+                                        showDropdown = !showDropdown
+                                        autoScroll = false
+                                        menuPosition = 2
                                     }) {
-                                    val icon = if (isVybranoe) painterResource(R.drawable.stars)
-                                    else painterResource(R.drawable.star)
                                     Icon(
-                                        painter = icon,
+                                        painter = painterResource(R.drawable.book_red),
                                         contentDescription = "",
                                         tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
-                            }
-                            if (!isParallelVisable) {
-                                if (listState[selectedIndex].canScrollForward) {
-                                    val iconAutoScroll = if (autoScrollSensor) painterResource(R.drawable.stop_circle)
-                                    else painterResource(R.drawable.play_circle)
-                                    IconButton(onClick = {
-                                        autoScroll = !autoScroll
-                                        autoScrollSensor = !autoScrollSensor
-                                        if (autoScrollSensor) actyvity.window.addFlags(
-                                            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                                        )
-                                        else actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                IconButton(
+                                    onClick = {
+                                        if (autoScrollSensor) autoScroll = true
+                                        fullscreen = true
                                     }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.fullscreen),
+                                        contentDescription = "",
+                                        tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
+                                if (biblia == Settings.CHYTANNI_BIBLIA && listState.size - 1 > 1) {
+                                    IconButton(
+                                        onClick = {
+                                            autoScroll = false
+                                            dialogRazdel = true
+                                        }) {
                                         Icon(
-                                            iconAutoScroll, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                        )
-                                    }
-                                } else if (listState[selectedIndex].canScrollBackward) {
-                                    IconButton(onClick = {
-                                        isUpList = true
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.arrow_upward), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                            painter = painterResource(R.drawable.apps),
+                                            contentDescription = "",
+                                            tint = MaterialTheme.colorScheme.onSecondary
                                         )
                                     }
                                 }
-                            } else {
-                                autoScroll = false
+                                if (biblia == Settings.CHYTANNI_BIBLIA) {
+                                    IconButton(
+                                        onClick = {
+                                            saveVybranoe = true
+                                        }) {
+                                        val icon = if (isVybranoe) painterResource(R.drawable.stars)
+                                        else painterResource(R.drawable.star)
+                                        Icon(
+                                            painter = icon,
+                                            contentDescription = "",
+                                            tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
+                                }
+                                if (!isParallelVisable) {
+                                    if (listState[selectedIndex].canScrollForward) {
+                                        val iconAutoScroll = if (autoScrollSensor) painterResource(R.drawable.stop_circle)
+                                        else painterResource(R.drawable.play_circle)
+                                        IconButton(onClick = {
+                                            autoScroll = !autoScroll
+                                            autoScrollSensor = !autoScrollSensor
+                                            if (autoScrollSensor) actyvity.window.addFlags(
+                                                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                            )
+                                            else actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                        }) {
+                                            Icon(
+                                                iconAutoScroll, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                            )
+                                        }
+                                    } else if (listState[selectedIndex].canScrollBackward) {
+                                        IconButton(onClick = {
+                                            isUpList = true
+                                        }) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.arrow_upward), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                            )
+                                        }
+                                    }
+                                } else {
+                                    autoScroll = false
+                                }
                             }
                         }
                     }
@@ -1227,50 +1239,58 @@ fun CytanniList(
                                         else -> stringResource(R.string.title_biblia2)
                                     }
                                     Text(
-                                        modifier = Modifier.padding(horizontal = 10.dp), text = titlePerevod, fontSize = fontSize.sp, lineHeight = fontSize.sp * 1.15, fontStyle = FontStyle.Italic, color = MaterialTheme.colorScheme.secondary
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 10.dp), text = titlePerevod, fontSize = fontSize.sp, lineHeight = fontSize.sp * 1.15, fontStyle = FontStyle.Italic, color = MaterialTheme.colorScheme.secondary
                                     )
                                 }
                             }
                             HtmlText(
                                 modifier = if (!autoScrollSensor && !showDropdown) {
-                                    Modifier.pointerInput(Unit) {
-                                        detectTapGestures(
-                                            onTap = {
-                                                if (!isSelectMode && isParallel && resultPage[index].parallel != "+-+") {
-                                                    isParallelVisable = true
-                                                    paralelChtenia = resultPage[index].parallel
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .pointerInput(Unit) {
+                                            detectTapGestures(
+                                                onTap = {
+                                                    if (!isSelectMode && isParallel && resultPage[index].parallel != "+-+") {
+                                                        isParallelVisable = true
+                                                        paralelChtenia = resultPage[index].parallel
+                                                    }
+                                                    if (isSelectMode) {
+                                                        selectState[index] = !selectState[index]
+                                                    }
+                                                },
+                                                onLongPress = {
+                                                    if (!fullscreen) {
+                                                        isSelectMode = true
+                                                        actyvity.removelightSensor()
+                                                        selectState[index] = !selectState[index]
+                                                    }
+                                                },
+                                                onDoubleTap = {
+                                                    fullscreen = !fullscreen
                                                 }
-                                                if (isSelectMode) {
-                                                    selectState[index] = !selectState[index]
-                                                }
-                                            },
-                                            onLongPress = {
-                                                if (!fullscreen) {
-                                                    isSelectMode = true
-                                                    actyvity.removelightSensor()
-                                                    selectState[index] = !selectState[index]
-                                                }
-                                            },
-                                            onDoubleTap = {
-                                                fullscreen = !fullscreen
-                                            }
-                                        )
-                                    }
+                                            )
+                                        }
                                 } else {
-                                    Modifier.pointerInput(Unit) {
-                                        detectTapGestures(
-                                            onDoubleTap = {
-                                                fullscreen = !fullscreen
-                                            }
-                                        )
-                                    }
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .pointerInput(Unit) {
+                                            detectTapGestures(
+                                                onDoubleTap = {
+                                                    fullscreen = !fullscreen
+                                                }
+                                            )
+                                        }
                                 }
                                     .padding(horizontal = 10.dp)
                                     .background(if (selectState[index]) Post else Color.Unspecified), text = resultPage[index].text, fontSize = fontSize.sp, color = if (selectState[index]) PrimaryText else MaterialTheme.colorScheme.secondary
                             )
                             if (isParallel && resultPage[index].parallel != "+-+") {
                                 Text(
-                                    text = resultPage[index].parallel, modifier = Modifier.padding(horizontal = 10.dp), fontSize = (Settings.fontInterface - 4).sp, lineHeight = (Settings.fontInterface - 4).sp * 1.15, color = SecondaryText
+                                    text = resultPage[index].parallel, modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 10.dp), fontSize = (Settings.fontInterface - 4).sp, lineHeight = (Settings.fontInterface - 4).sp * 1.15, color = SecondaryText
                                 )
                             }
                         }

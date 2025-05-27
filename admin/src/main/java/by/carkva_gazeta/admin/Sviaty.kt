@@ -1,7 +1,9 @@
 package by.carkva_gazeta.admin
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
@@ -16,6 +18,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
@@ -26,6 +29,7 @@ import by.carkva_gazeta.admin.databinding.AdminSviatyBinding
 import by.carkva_gazeta.admin.databinding.SimpleListItem1Binding
 import by.carkva_gazeta.malitounik.MainActivity
 import by.carkva_gazeta.malitounik.Settings
+import by.carkva_gazeta.malitounik.SviatyData
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -38,14 +42,39 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
+import java.util.Calendar
 
 class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditImageListener {
     private lateinit var binding: AdminSviatyBinding
     private var urlJob: Job? = null
     private var resetTollbarJob: Job? = null
-    private val sviaty = ArrayList<SviatyData>()
-    private val arrayList = ArrayList<ArrayList<String>>()
+    private val newArrayList = ArrayList<SviatyData>()
     private var edittext: AppCompatEditText? = null
+    private var caliandarArrayList = ArrayList<String>()
+    @SuppressLint("SetTextI18n")
+    private val caliandarMunLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val intent = result.data
+            if (intent != null) {
+                val position = intent.getIntExtra("position", 0)
+                caliandarArrayList.clear()
+                caliandarArrayList.addAll(MenuCaliandar.getPositionCaliandar(position))
+                binding.calandar.text = caliandarArrayList[1] + " " + resources.getStringArray(by.carkva_gazeta.malitounik.R.array.meciac_smoll)[caliandarArrayList[2].toInt()] + " " +  caliandarArrayList[3]
+                var check = false
+                for (i in newArrayList.indices) {
+                    if ((newArrayList[i].data == caliandarArrayList[22].toInt() && newArrayList[i].dataCaliandar == SviatyData.PASHA) || (newArrayList[i].data == caliandarArrayList[24].toInt() && newArrayList[i].dataCaliandar == SviatyData.CALAINDAR)) {
+                        binding.sviaty.setText(newArrayList[i].opisanie)
+                        binding.spinnerIsPasxa.setSelection(newArrayList[i].dataCaliandar)
+                        check = true
+                        break
+                    }
+                }
+                if (!check) {
+                    binding.sviaty.setText("<font color=\"#d00505\"><strong>${caliandarArrayList[6]}</strong></font><p>")
+                }
+            }
+        }
+    }
 
     override fun imageFileEdit(bitmap: Bitmap?, opisanie: String) {
         fileUpload(bitmap, opisanie)
@@ -66,25 +95,25 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
         super.onCreate(savedInstanceState)
         binding = AdminSviatyBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        sviaty.add(SviatyData(-1, 0, "Уваход у Ерусалім"))
-        sviaty.add(SviatyData(-1, 1, "Уваскрасеньне"))
-        sviaty.add(SviatyData(-1, 2, "Узьнясеньне"))
-        sviaty.add(SviatyData(-1, 3, "Тройца"))
-        sviaty.add(SviatyData(1, 1, "1 Студзеня"))
-        sviaty.add(SviatyData(6, 1, "6 Студзеня"))
-        sviaty.add(SviatyData(2, 2, "2 Лютага"))
-        sviaty.add(SviatyData(25, 3, "25 Сакавіка"))
-        sviaty.add(SviatyData(24, 6, "24 Чэрвеня"))
-        sviaty.add(SviatyData(29, 6, "29 Чэрвеня"))
-        sviaty.add(SviatyData(6, 8, "6 Жніўня"))
-        sviaty.add(SviatyData(15, 8, "15 Жніўня"))
-        sviaty.add(SviatyData(29, 8, "29 Жніўня"))
-        sviaty.add(SviatyData(8, 9, "8 Верасьня"))
-        sviaty.add(SviatyData(14, 9, "14 Верасьня"))
-        sviaty.add(SviatyData(1, 10, "1 Кастрычніка"))
-        sviaty.add(SviatyData(21, 11, "21 Лістапада"))
-        sviaty.add(SviatyData(25, 12, "25 Сьнежня"))
-        sviaty.add(SviatyData(-1, 4, "Айцоў першых 6-ці Ўсяленскіх сабораў"))
+        /*sviaty.add(SviatyDataM(-1, 0, "Уваход у Ерусалім"))
+        sviaty.add(SviatyDataM(-1, 1, "Уваскрасеньне"))
+        sviaty.add(SviatyDataM(-1, 2, "Узьнясеньне"))
+        sviaty.add(SviatyDataM(-1, 3, "Тройца"))
+        sviaty.add(SviatyDataM(1, 1, "1 Студзеня"))
+        sviaty.add(SviatyDataM(6, 1, "6 Студзеня"))
+        sviaty.add(SviatyDataM(2, 2, "2 Лютага"))
+        sviaty.add(SviatyDataM(25, 3, "25 Сакавіка"))
+        sviaty.add(SviatyDataM(24, 6, "24 Чэрвеня"))
+        sviaty.add(SviatyDataM(29, 6, "29 Чэрвеня"))
+        sviaty.add(SviatyDataM(6, 8, "6 Жніўня"))
+        sviaty.add(SviatyDataM(15, 8, "15 Жніўня"))
+        sviaty.add(SviatyDataM(29, 8, "29 Жніўня"))
+        sviaty.add(SviatyDataM(8, 9, "8 Верасьня"))
+        sviaty.add(SviatyDataM(14, 9, "14 Верасьня"))
+        sviaty.add(SviatyDataM(1, 10, "1 Кастрычніка"))
+        sviaty.add(SviatyDataM(21, 11, "21 Лістапада"))
+        sviaty.add(SviatyDataM(25, 12, "25 Сьнежня"))
+        sviaty.add(SviatyDataM(-1, 4, "Айцоў першых 6-ці Ўсяленскіх сабораў"))*/
         binding.actionBold.setOnClickListener(this)
         binding.actionEm.setOnClickListener(this)
         binding.actionRed.setOnClickListener(this)
@@ -95,20 +124,60 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
         urlJob = CoroutineScope(Dispatchers.Main).launch {
             getFileSviat()
         }
+        binding.calandar.setOnClickListener {
+            val i = Intent(this, CaliandarMun::class.java)
+            val cal = Calendar.getInstance()
+            i.putExtra("day", cal[Calendar.DATE])
+            i.putExtra("year", cal[Calendar.YEAR])
+            i.putExtra("mun", cal[Calendar.MONTH])
+            i.putExtra("getData", true)
+            caliandarMunLauncher.launch(i)
+        }
+        binding.spinnerSviaty.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                binding.sviaty.setText(newArrayList[position].opisanie)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+        }
+        binding.spinnerSviaty.adapter = SpinnerAdapter(this@Sviaty, newArrayList)
+        binding.spinnerIsPasxa.adapter = SpinnerAdapterPasha(this@Sviaty, resources.getStringArray(by.carkva_gazeta.malitounik.R.array.admin_svity_data))
         setTollbarTheme()
     }
 
+    @SuppressLint("SetTextI18n")
     private suspend fun getFileSviat(count: Int = 0) {
         var error = false
         binding.progressBar2.visibility = View.VISIBLE
         try {
             val localFile = File("$filesDir/cache/cache.txt")
-            MainActivity.referens.child("/opisanie_sviat.json").getFile(localFile).addOnCompleteListener {
+            MainActivity.referens.child("/sviaty.json").getFile(localFile).addOnCompleteListener {
                 if (it.isSuccessful) {
                     val builder = localFile.readText()
                     val gson = Gson()
-                    val type = TypeToken.getParameterized(java.util.ArrayList::class.java, TypeToken.getParameterized(java.util.ArrayList::class.java, String::class.java).type).type
-                    arrayList.addAll(gson.fromJson(builder, type))
+                    val type = TypeToken.getParameterized(ArrayList::class.java, SviatyData::class.java).type
+                    newArrayList.addAll(gson.fromJson(builder, type))
+                    (binding.spinnerSviaty.adapter as SpinnerAdapter).notifyDataSetChanged()
+                    binding.spinnerSviaty.setSelection(0)
+                    binding.sviaty.setText(newArrayList[0].opisanie)
+                    binding.spinnerIsPasxa.setSelection(newArrayList[0].dataCaliandar)
+                    caliandarArrayList.clear()
+                    val dat = MenuCaliandar.getDataCalaindar(year = Calendar.getInstance()[Calendar.YEAR])
+                    for (i in dat.indices) {
+                        if (newArrayList[0].dataCaliandar == SviatyData.PASHA) {
+                            if (dat[i][22].toInt() == newArrayList[0].data) {
+                                caliandarArrayList.addAll(MenuCaliandar.getPositionCaliandar(dat[i][25].toInt()))
+                                break
+                            }
+                        } else {
+                            if (dat[i][24].toInt() == newArrayList[0].data) {
+                                caliandarArrayList.addAll(MenuCaliandar.getPositionCaliandar(dat[i][25].toInt()))
+                                break
+                            }
+                        }
+                    }
+                    binding.calandar.text = caliandarArrayList[1] + " " + resources.getStringArray(by.carkva_gazeta.malitounik.R.array.meciac_smoll)[caliandarArrayList[2].toInt()] + " " +  caliandarArrayList[3]
                 } else {
                     error = true
                 }
@@ -124,36 +193,6 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
             Toast.makeText(this@Sviaty, getString(by.carkva_gazeta.malitounik.R.string.error_ch2), Toast.LENGTH_SHORT).show()
             binding.progressBar2.visibility = View.GONE
             return
-        }
-        for (i in 0 until arrayList.size) {
-            for (e in 0 until sviaty.size) {
-                if (arrayList[i][0].toInt() == sviaty[e].data && arrayList[i][1].toInt() == sviaty[e].mun) {
-                    sviaty[e].opisanie = arrayList[i][2]
-                    sviaty[e].utran = arrayList[i][3]
-                    sviaty[e].liturgia = arrayList[i][4]
-                    sviaty[e].viachernia = arrayList[i][5]
-                    break
-                }
-            }
-        }
-        binding.spinnerSviaty.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                binding.sviaty.setText(sviaty[position].opisanie)
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
-        }
-        binding.spinnerSviaty.adapter = SpinnerAdapter(this@Sviaty, sviaty)
-        if (intent.extras != null) {
-            for (i in 0 until sviaty.size) {
-                if (intent.extras?.getInt("day") == sviaty[i].data && intent.extras?.getInt("mun") == sviaty[i].mun) {
-                    binding.spinnerSviaty.setSelection(i)
-                    break
-                }
-            }
-        } else {
-            binding.spinnerSviaty.setSelection(0)
         }
         binding.progressBar2.visibility = View.GONE
     }
@@ -200,7 +239,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
             CoroutineScope(Dispatchers.Main).launch {
                 binding.progressBar2.visibility = View.VISIBLE
                 val localFile = File("$filesDir/cache/cache.txt")
-                val fileName = "v_" + sviaty[binding.spinnerSviaty.selectedItemPosition].data.toString() + "_" + sviaty[binding.spinnerSviaty.selectedItemPosition].mun.toString() + "_1.jpg"
+                val fileName = "v_" + newArrayList[binding.spinnerSviaty.selectedItemPosition].data.toString() + "_" + newArrayList[binding.spinnerSviaty.selectedItemPosition].dataCaliandar.toString() + ".jpg"
                 bitmap?.let {
                     withContext(Dispatchers.IO) {
                         val out = FileOutputStream(localFile)
@@ -328,12 +367,21 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
         } else {
             editItem.icon = ContextCompat.getDrawable(this, R.drawable.natatka)
         }
+        menu.findItem(R.id.action_add).isVisible = binding.spinnerSviaty.isVisible
     }
 
     override fun onMenuItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
+        if (id == R.id.action_add) {
+            binding.spinnerSviaty.visibility = View.GONE
+            binding.calandar.text = ""
+            binding.sviaty.setText("")
+            binding.spinnerIsPasxa.setSelection(SviatyData.CALAINDAR)
+            invalidateOptionsMenu()
+            return true
+        }
         if (id == R.id.action_upload_image) {
-            val dialog = DialogEditImage.getInstance("$filesDir/icons/v_" + sviaty[binding.spinnerSviaty.selectedItemPosition].data.toString() + "_" + sviaty[binding.spinnerSviaty.selectedItemPosition].mun.toString() + "_1.jpg")
+            val dialog = DialogEditImage.getInstance("$filesDir/icons/v_" + newArrayList[binding.spinnerSviaty.selectedItemPosition].data.toString() + "_" + newArrayList[binding.spinnerSviaty.selectedItemPosition].dataCaliandar.toString() + ".jpg")
             dialog.show(supportFragmentManager, "DialogEditImage")
             return true
         }
@@ -363,141 +411,29 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
         if (Settings.isNetworkAvailable(this)) {
             CoroutineScope(Dispatchers.Main).launch {
                 binding.progressBar2.visibility = View.VISIBLE
+                var pos = position
                 try {
-                    var day = -1
-                    var mun = 0
-                    when (position) {
-                        0 -> {
-                            day = -1
-                            mun = 0
-                        }
-
-                        1 -> {
-                            day = -1
-                            mun = 1
-                        }
-
-                        2 -> {
-                            day = -1
-                            mun = 2
-                        }
-
-                        3 -> {
-                            day = -1
-                            mun = 3
-                        }
-
-                        4 -> {
-                            day = 1
-                            mun = 1
-                        }
-
-                        5 -> {
-                            day = 6
-                            mun = 1
-                        }
-
-                        6 -> {
-                            day = 2
-                            mun = 2
-                        }
-
-                        7 -> {
-                            day = 25
-                            mun = 3
-                        }
-
-                        8 -> {
-                            day = 24
-                            mun = 6
-                        }
-
-                        9 -> {
-                            day = 29
-                            mun = 6
-                        }
-
-                        10 -> {
-                            day = 6
-                            mun = 8
-                        }
-
-                        11 -> {
-                            day = 15
-                            mun = 8
-                        }
-
-                        12 -> {
-                            day = 29
-                            mun = 8
-                        }
-
-                        13 -> {
-                            day = 8
-                            mun = 9
-                        }
-
-                        14 -> {
-                            day = 14
-                            mun = 9
-                        }
-
-                        15 -> {
-                            day = 1
-                            mun = 10
-                        }
-
-                        16 -> {
-                            day = 21
-                            mun = 11
-                        }
-
-                        17 -> {
-                            day = 25
-                            mun = 12
-                        }
-
-                        18 -> {
-                            day = -1
-                            mun = 4
-                        }
-                    }
-                    var utran = ""
-                    var linur = ""
-                    var viach = ""
-                    var index = -5
-                    for (i in 0 until arrayList.size) {
-                        if (day == arrayList[i][0].toInt() && mun == arrayList[i][1].toInt()) {
-                            utran = arrayList[i][3]
-                            linur = arrayList[i][4]
-                            viach = arrayList[i][5]
-                            index = i
-                            break
-                        }
-                    }
-                    if (index == -5) {
-                        val temp = ArrayList<String>()
-                        temp.add(day.toString())
-                        temp.add(mun.toString())
-                        temp.add(apisanne)
-                        temp.add(utran)
-                        temp.add(linur)
-                        temp.add(viach)
-                        arrayList.add(temp)
+                    val data = if (binding.spinnerIsPasxa.selectedItemPosition == SviatyData.PASHA) {
+                        caliandarArrayList[22].toInt()
                     } else {
-                        arrayList[index][2] = apisanne
-                        arrayList[index][3] = utran
-                        arrayList[index][4] = linur
-                        arrayList[index][5] = viach
+                        caliandarArrayList[24].toInt()
                     }
-                    if (arrayList.isNotEmpty()) {
+                    if (binding.spinnerSviaty.isVisible) {
+                        newArrayList[position].data = data
+                        newArrayList[position].dataCaliandar = binding.spinnerIsPasxa.selectedItemPosition
+                        newArrayList[position].opisanie = apisanne
+                    } else {
+                        newArrayList.add(SviatyData(data, binding.spinnerIsPasxa.selectedItemPosition, apisanne))
+                        pos = newArrayList.size - 1
+                    }
+                    if (newArrayList.isNotEmpty()) {
                         val localFile = File("$filesDir/cache/cache.txt")
                         val gson = Gson()
-                        val type = TypeToken.getParameterized(java.util.ArrayList::class.java, TypeToken.getParameterized(java.util.ArrayList::class.java, String::class.java).type).type
+                        val type = TypeToken.getParameterized(ArrayList::class.java, SviatyData::class.java).type
                         localFile.writer().use {
-                            it.write(gson.toJson(arrayList, type))
+                            it.write(gson.toJson(newArrayList, type))
                         }
-                        MainActivity.referens.child("/opisanie_sviat.json").putFile(Uri.fromFile(localFile)).addOnCompleteListener {
+                        MainActivity.referens.child("/sviaty.json").putFile(Uri.fromFile(localFile)).addOnCompleteListener {
                             if (it.isSuccessful) {
                                 Toast.makeText(this@Sviaty, getString(by.carkva_gazeta.malitounik.R.string.save), Toast.LENGTH_SHORT).show()
                             } else {
@@ -510,6 +446,10 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                 } catch (_: Throwable) {
                     Toast.makeText(this@Sviaty, getString(by.carkva_gazeta.malitounik.R.string.error_ch2), Toast.LENGTH_SHORT).show()
                 }
+                (binding.spinnerSviaty.adapter as SpinnerAdapter).notifyDataSetChanged()
+                binding.spinnerSviaty.visibility = View.VISIBLE
+                binding.spinnerSviaty.setSelection(pos)
+                invalidateOptionsMenu()
                 binding.progressBar2.visibility = View.GONE
             }
         } else {
@@ -522,12 +462,46 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
         super.onCreateMenu(menu, menuInflater)
     }
 
-    private class SpinnerAdapter(private val activity: Activity, private val data: ArrayList<SviatyData>) : ArrayAdapter<SviatyData>(activity, R.layout.simple_list_item_1, data) {
+    private class SpinnerAdapterPasha(private val activity: Activity, private val data: Array<String>) : ArrayAdapter<String>(activity, R.layout.simple_list_item_1, data) {
 
         override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
             val v = super.getDropDownView(position, convertView, parent)
             val textView = v as TextView
-            textView.text = data[position].title
+            textView.text = data[position]
+            textView.setBackgroundResource(R.drawable.selector_default)
+            return v
+        }
+
+        override fun getCount() = data.size
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+            val rootView: View
+            val viewHolder: ViewHolder
+            if (convertView == null) {
+                val binding = SimpleListItem1Binding.inflate(activity.layoutInflater, parent, false)
+                rootView = binding.root
+                viewHolder = ViewHolder(binding.text1)
+                rootView.tag = viewHolder
+            } else {
+                rootView = convertView
+                viewHolder = rootView.tag as ViewHolder
+            }
+            viewHolder.text.text = data[position]
+            viewHolder.text.setBackgroundResource(R.drawable.selector_default)
+            return rootView
+        }
+    }
+
+    private class SpinnerAdapter(private val activity: Activity, private val data: ArrayList<SviatyData>) : ArrayAdapter<SviatyData>(activity, R.layout.simple_list_item_1, data) {
+
+        override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+            val v = super.getDropDownView(position, convertView, parent)
+            val textView = v as TextViewCustom
+            val datam = data[position].opisanie
+            val t1 = datam.indexOf("</strong>")
+            val title = if (t1 != -1) HtmlCompat.fromHtml(datam.substring(0, t1), HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
+            else HtmlCompat.fromHtml(datam.substring(0, 30), HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
+            textView.text = title
             textView.setBackgroundResource(R.drawable.selector_default)
             return v
         }
@@ -548,13 +522,15 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                 rootView = convertView
                 viewHolder = rootView.tag as ViewHolder
             }
-            viewHolder.text.text = data[position].title
+            val datam = data[position].opisanie
+            val t1 = datam.indexOf("</strong>")
+            val title = if (t1 != -1) HtmlCompat.fromHtml(datam.substring(0, t1), HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
+            else HtmlCompat.fromHtml(datam.substring(0, 30), HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
+            viewHolder.text.text = title
             viewHolder.text.setBackgroundResource(R.drawable.selector_default)
             return rootView
         }
     }
 
     private class ViewHolder(var text: TextView)
-
-    private data class SviatyData(val data: Int, val mun: Int, val title: String, var opisanie: String = "", var utran: String = "", var liturgia: String = "", var viachernia: String = "")
 }

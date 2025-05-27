@@ -1243,8 +1243,7 @@ fun MainConteiner(
     SideEffect {
         val window = (view.context as Activity).window
         WindowCompat.getInsetsController(window, view).apply {
-            isAppearanceLightStatusBars = if (Settings.destinations == AllDestinations.KALIANDAR) isAppearanceLight
-            else false
+            isAppearanceLightStatusBars = isAppearanceLight
             isAppearanceLightNavigationBars = if (Settings.destinations == AllDestinations.KALIANDAR) isAppearanceLight
             else !context.dzenNoch
         }

@@ -1239,6 +1239,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
             if (AppNavGraphState.setAlarm) {
                 val notify = k.getInt("notification", Settings.NOTIFICATION_SVIATY_FULL)
                 Settings.setNotifications(this@MainActivity, notify)
+                downloadOpisanieSviat(this@MainActivity)
                 AppNavGraphState.setAlarm = false
             }
         }

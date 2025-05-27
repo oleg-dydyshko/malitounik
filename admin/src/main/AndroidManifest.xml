@@ -138,5 +138,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="by.carkva_gazeta.admin.AdminMain" />
         </activity>
+        <activity
+            android:name="by.carkva_gazeta.admin.CaliandarMun"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
+            android:label="@string/widget_mun_title">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="by.carkva_gazeta.admin.AdminMain" />
+        </activity>
     </application>
 </manifest>

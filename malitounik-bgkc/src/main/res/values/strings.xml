@@ -129,7 +129,6 @@
     <string name="removeVybranoe">Выдалена з Выбранага</string>
     <string name="autoScroll">Аўтапрагортка</string>
     <string name="parafii">Дзе знайсьці грэка-католікаў Беларусі</string>
-    <string name="paralel_smoll">Паралельныя месцы для %1$s</string>
     <string name="paralel_opis">%1$s \n</string>
     <string name="sabytie">Падзеі</string>
     <string name="poshuk_semuxa">Пошук па перакладу В. Сёмухі</string>
@@ -1172,5 +1171,10 @@
     <string name="clear_chash">Ачыстка кэша</string>
     <string name="clear_chash_opis">Пры неабходнасці, файлы будуць спампаваныя зноў.</string>
     <string name="botom_bar">Ніжняя панель</string>
+    <string-array name="admin_svity_data">
+        <item>Ад пачатку года</item>
+        <item>Ад Пасхі</item>
+        <item>Іншае</item>
+    </string-array>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

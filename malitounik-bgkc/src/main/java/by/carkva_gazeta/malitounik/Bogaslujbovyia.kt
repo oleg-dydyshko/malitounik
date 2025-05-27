@@ -464,7 +464,13 @@ fun Bogaslujbovyia(
     }
     Scaffold(
         topBar = {
-            if (!fullscreen) {
+            AnimatedVisibility(
+                !fullscreen, enter = fadeIn(
+                    tween(
+                        durationMillis = 500, easing = LinearOutSlowInEasing
+                    )
+                ), exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
+            ) {
                 TopAppBar(
                     title = {
                         if (!searchText) {
@@ -615,7 +621,13 @@ fun Bogaslujbovyia(
         },
         bottomBar = {
             if (!searchText) {
-                if (!fullscreen) {
+                AnimatedVisibility(
+                    !fullscreen, enter = fadeIn(
+                        tween(
+                            durationMillis = 500, easing = LinearOutSlowInEasing
+                        )
+                    ), exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
+                ) {
                     if (!iskniga) {
                         Popup(
                             alignment = Alignment.BottomCenter,
@@ -931,10 +943,10 @@ fun Bogaslujbovyia(
                                 IconButton(onClick = {
                                     expanded = false
                                     if (autoScrollSensor) autoScroll = true
-                                    fullscreen = true
+                                    searchText = true
                                 }) {
                                     Icon(
-                                        painter = painterResource(R.drawable.fullscreen),
+                                        painter = painterResource(R.drawable.search),
                                         contentDescription = "",
                                         tint = MaterialTheme.colorScheme.onSecondary
                                     )
@@ -942,10 +954,10 @@ fun Bogaslujbovyia(
                                 IconButton(onClick = {
                                     expanded = false
                                     if (autoScrollSensor) autoScroll = true
-                                    searchText = true
+                                    fullscreen = true
                                 }) {
                                     Icon(
-                                        painter = painterResource(R.drawable.search),
+                                        painter = painterResource(R.drawable.fullscreen),
                                         contentDescription = "",
                                         tint = MaterialTheme.colorScheme.onSecondary
                                     )
