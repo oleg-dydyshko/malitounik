@@ -79,8 +79,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
@@ -495,6 +497,12 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                                     imageFull = true
                                                 }, bitmap = image, contentDescription = ""
                                         )
+                                        val t3 = file.name.lastIndexOf(".")
+                                        val fileNameT = file.name.substring(0, t3) + ".txt"
+                                        val fileImageOpis = File("${context.filesDir}/iconsApisanne/$fileNameT")
+                                        if (fileImageOpis.exists()) {
+                                            Text(modifier = Modifier.padding(10.dp).fillMaxWidth(), text = fileImageOpis.readText(), fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary, textAlign = TextAlign.Center, fontStyle = FontStyle.Italic)
+                                        }
                                     }
                                     if (sviatyiaList[index].text.isNotEmpty()) {
                                         Text(modifier = Modifier.padding(10.dp), text = sviatyiaList[index].text, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary)

@@ -63,7 +63,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                 binding.calandar.text = caliandarArrayList[1] + " " + resources.getStringArray(by.carkva_gazeta.malitounik.R.array.meciac_smoll)[caliandarArrayList[2].toInt()] + " " + caliandarArrayList[3]
                 var check = false
                 for (i in newArrayList.indices) {
-                    if ((newArrayList[i].data == caliandarArrayList[22].toInt() && newArrayList[i].dataCaliandar == SviatyData.PASHA) || (newArrayList[i].data == caliandarArrayList[24].toInt() && newArrayList[i].dataCaliandar == SviatyData.CALAINDAR)) {
+                    if ((newArrayList[i].data == caliandarArrayList[22].toInt() && newArrayList[i].dataCaliandar == SviatyData.PASHA) || (newArrayList[i].data == caliandarArrayList[1].toInt() && newArrayList[i].mun == caliandarArrayList[2].toInt() + 1 && newArrayList[i].dataCaliandar == SviatyData.CALAINDAR)) {
                         binding.spinnerSviaty.setSelection(i)
                         binding.sviaty.setText(newArrayList[i].opisanie)
                         binding.spinnerIsPasxa.setSelection(newArrayList[i].dataCaliandar)
@@ -154,7 +154,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                             break
                         }
                     } else {
-                        if (dat[i][24].toInt() == newArrayList[position].data) {
+                        if (dat[i][1].toInt() == newArrayList[position].data && dat[i][2].toInt() + 1 == newArrayList[position].mun) {
                             caliandarArrayList.addAll(MenuCaliandar.getPositionCaliandar(dat[i][25].toInt()))
                             break
                         }
@@ -196,7 +196,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                                 break
                             }
                         } else {
-                            if (dat[i][24].toInt() == newArrayList[0].data) {
+                            if (dat[i][1].toInt() == newArrayList[0].data && dat[i][2].toInt() + 1 == newArrayList[0].mun) {
                                 caliandarArrayList.addAll(MenuCaliandar.getPositionCaliandar(dat[i][25].toInt()))
                                 break
                             }
@@ -264,7 +264,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
             CoroutineScope(Dispatchers.Main).launch {
                 binding.progressBar2.visibility = View.VISIBLE
                 val localFile = File("$filesDir/cache/cache.txt")
-                val fileName = "v_" + newArrayList[binding.spinnerSviaty.selectedItemPosition].data.toString() + "_" + newArrayList[binding.spinnerSviaty.selectedItemPosition].dataCaliandar.toString() + ".jpg"
+                val fileName = "v_" + newArrayList[binding.spinnerSviaty.selectedItemPosition].data.toString() + "_" + newArrayList[binding.spinnerSviaty.selectedItemPosition].mun.toString() + "_1.jpg"
                 bitmap?.let {
                     withContext(Dispatchers.IO) {
                         val out = FileOutputStream(localFile)
@@ -408,7 +408,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
             return true
         }
         if (id == R.id.action_upload_image) {
-            val dialog = DialogEditImage.getInstance("$filesDir/icons/v_" + newArrayList[binding.spinnerSviaty.selectedItemPosition].data.toString() + "_" + newArrayList[binding.spinnerSviaty.selectedItemPosition].dataCaliandar.toString() + ".jpg")
+            val dialog = DialogEditImage.getInstance("$filesDir/icons/v_" + newArrayList[binding.spinnerSviaty.selectedItemPosition].data.toString() + "_" + newArrayList[binding.spinnerSviaty.selectedItemPosition].mun.toString() + "_1.jpg")
             dialog.show(supportFragmentManager, "DialogEditImage")
             return true
         }
@@ -443,14 +443,20 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                     val data = if (binding.spinnerIsPasxa.selectedItemPosition == SviatyData.PASHA) {
                         caliandarArrayList[22].toInt()
                     } else {
-                        caliandarArrayList[24].toInt()
+                        caliandarArrayList[1].toInt()
+                    }
+                    val mun = if (binding.spinnerIsPasxa.selectedItemPosition == SviatyData.PASHA) {
+                        1
+                    } else {
+                        caliandarArrayList[2].toInt() + 1
                     }
                     if (binding.spinnerSviaty.isVisible) {
                         newArrayList[position].data = data
+                        newArrayList[position].mun = mun
                         newArrayList[position].dataCaliandar = binding.spinnerIsPasxa.selectedItemPosition
                         newArrayList[position].opisanie = apisanne
                     } else {
-                        newArrayList.add(SviatyData(data, binding.spinnerIsPasxa.selectedItemPosition, apisanne))
+                        newArrayList.add(SviatyData(data, mun, binding.spinnerIsPasxa.selectedItemPosition, apisanne))
                         pos = newArrayList.size - 1
                     }
                     if (newArrayList.isNotEmpty()) {

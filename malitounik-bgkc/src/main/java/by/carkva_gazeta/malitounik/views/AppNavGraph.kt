@@ -142,7 +142,6 @@ import by.carkva_gazeta.malitounik.knigaBiblii
 import by.carkva_gazeta.malitounik.removeZnakiAndSlovy
 import by.carkva_gazeta.malitounik.setNotificationNon
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
-import by.carkva_gazeta.malitounik.ui.theme.Button
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.Post
 import by.carkva_gazeta.malitounik.ui.theme.Primary
@@ -258,24 +257,35 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
     if (data?.data != null) {
         when {
             data.data.toString().contains("shortcuts=1") -> {
-                if (Settings.destinations != AllDestinations.VYBRANAE_LIST) {
-                    start = AllDestinations.VYBRANAE_LIST
-                }
+                start = AllDestinations.VYBRANAE_LIST
             }
 
             data.data.toString().contains("shortcuts=3") -> {
-                if (Settings.destinations != AllDestinations.MAE_NATATKI_MENU) {
-                    start = AllDestinations.MAE_NATATKI_MENU
-                }
+                start = AllDestinations.MAE_NATATKI_MENU
             }
 
             data.data.toString().contains("shortcuts=2") -> {
-                if (!Settings.destinations.contains("Biblijateka", ignoreCase = true)) {
-                    start = AllDestinations.BIBLIJATEKA_NIADAUNIA
-                }
+                start = AllDestinations.BIBLIJATEKA_NIADAUNIA
             }
         }
+        Settings.destinations = start
+        k.edit {
+            putString("navigate", start)
+        }
         context.intent?.data = null
+    }
+    val extras = context?.intent?.extras
+    if (extras != null) {
+        val widgetday = "widget_day"
+        val widgetmun = "widget_mun"
+        if (extras.getBoolean(widgetmun, false) || extras.getBoolean(widgetday, false) || extras.getBoolean("sabytie", false)) {
+            start = if (k.getBoolean("caliandarList", false)) AllDestinations.KALIANDAR_YEAR
+            else AllDestinations.KALIANDAR
+            Settings.destinations = start
+            k.edit {
+                putString("navigate", start)
+            }
+        }
     }
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
@@ -1166,20 +1176,15 @@ fun MainConteiner(
             val widgetmun = "widget_mun"
             if (extras.getBoolean(widgetmun, false)) {
                 val caliandarPosition = extras.getInt("position", Settings.caliandarPosition)
-                if (Settings.destinations == AllDestinations.KALIANDAR || Settings.destinations == AllDestinations.KALIANDAR_YEAR) {
-                    coroutineScope.launch {
-                        if (k.getBoolean(
-                                "caliandarList",
-                                false
-                            )
-                        ) {
-                            Settings.caliandarPosition = caliandarPosition
-                            lazyColumnState.scrollToItem(caliandarPosition)
-                        } else pagerState.scrollToPage(caliandarPosition)
-                    }
-                } else {
-                    if (k.getBoolean("caliandarList", false)) navigationActions.navigateToKaliandarYear()
-                    else navigationActions.navigateToKaliandar()
+                coroutineScope.launch {
+                    if (k.getBoolean(
+                            "caliandarList",
+                            false
+                        )
+                    ) {
+                        Settings.caliandarPosition = caliandarPosition
+                        lazyColumnState.scrollToItem(caliandarPosition)
+                    } else pagerState.scrollToPage(caliandarPosition)
                 }
             }
             if (extras.getBoolean(widgetday, false)) {
@@ -1192,21 +1197,12 @@ fun MainConteiner(
                     }
                 }
                 if (k.getBoolean("caliandarList", false)) {
-                    if (Settings.destinations == AllDestinations.KALIANDAR_YEAR) {
-                        coroutineScope.launch {
-                            lazyColumnState.scrollToItem(caliandarPosition)
-                        }
-                    } else {
-                        navigationActions.navigateToKaliandarYear()
+                    coroutineScope.launch {
+                        lazyColumnState.scrollToItem(caliandarPosition)
                     }
                 } else {
-                    if (Settings.destinations == AllDestinations.KALIANDAR) {
-                        coroutineScope.launch {
-                            pagerState.scrollToPage(caliandarPosition)
-                        }
-                    } else {
-                        Settings.caliandarPosition = caliandarPosition
-                        navigationActions.navigateToKaliandar()
+                    coroutineScope.launch {
+                        pagerState.scrollToPage(caliandarPosition)
                     }
                 }
             }
@@ -1222,18 +1218,13 @@ fun MainConteiner(
                         break
                     }
                 }
-                if (Settings.destinations == AllDestinations.KALIANDAR || Settings.destinations == AllDestinations.KALIANDAR_YEAR) {
-                    coroutineScope.launch {
-                        if (k.getBoolean(
-                                "caliandarList",
-                                false
-                            )
-                        ) lazyColumnState.scrollToItem(Settings.caliandarPosition)
-                        else pagerState.scrollToPage(Settings.caliandarPosition)
-                    }
-                } else {
-                    if (k.getBoolean("caliandarList", false)) navigationActions.navigateToKaliandarYear()
-                    else navigationActions.navigateToKaliandar()
+                coroutineScope.launch {
+                    if (k.getBoolean(
+                            "caliandarList",
+                            false
+                        )
+                    ) lazyColumnState.scrollToItem(Settings.caliandarPosition)
+                    else pagerState.scrollToPage(Settings.caliandarPosition)
                 }
             }
         }
@@ -1800,15 +1791,15 @@ fun MainConteiner(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(Button),
+                            .background(tollBarColor),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
                             text = stringResource(R.string.update_program),
                             modifier = Modifier
-                                .padding(horizontal = 5.dp),
-                            color = MaterialTheme.colorScheme.secondary,
+                                .padding(start = 5.dp),
+                            color = textTollBarColor,
                             fontSize = 18.sp
                         )
                         TextButton(

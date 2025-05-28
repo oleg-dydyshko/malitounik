@@ -737,7 +737,7 @@
         <item>#20B2AA</item>
     </string-array>
     <string name="update_program">Абнаўленьне спампована</string>
-    <string name="restsrt_program">Перазапусціць&#8230;</string>
+    <string name="restsrt_program">Перазапусьціць&#8230;</string>
     <string name="update_program_progress">%1$s з %2$s</string>
     <string name="update_no_biblijateka">Абнаўленьняў няма</string>
     <string name="day">Дзённы</string>

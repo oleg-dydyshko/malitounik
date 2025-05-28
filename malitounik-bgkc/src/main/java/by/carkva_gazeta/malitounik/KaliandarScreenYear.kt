@@ -177,9 +177,13 @@ fun KaliandarScreenYear(
                             ) {
                                 color = MaterialTheme.colorScheme.secondary
                             }
+                            val svaity = loadOpisanieSviat(LocalContext.current, index)
                             Box(
                                 modifier = Modifier
                                     .weight(1f)
+                                    .clickable(svaity.isNotEmpty()) {
+                                        navigateToSvityiaView(true, index)
+                                    }
                                     .padding(end = padding),
                                 contentAlignment = Alignment.TopCenter
                             ) {
