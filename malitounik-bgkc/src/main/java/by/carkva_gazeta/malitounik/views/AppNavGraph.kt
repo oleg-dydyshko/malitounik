@@ -40,7 +40,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
@@ -1043,9 +1042,9 @@ fun findCaliandarPosition(position: Int): ArrayList<ArrayList<String>> {
 @Composable
 fun CheckUpdateMalitounik(
     onDownloadComplet: () -> Unit,
+    updateDownloadProgress: (Boolean, Float) -> Unit,
     onDismiss: () -> Unit
 ) {
-    var dialogUpdateMalitounik by remember { mutableStateOf(false) }
     var noWIFI by remember { mutableStateOf(false) }
     var totalBytesToDownload by remember { mutableFloatStateOf(0f) }
     var bytesDownload by remember { mutableFloatStateOf(0f) }
@@ -1053,9 +1052,8 @@ fun CheckUpdateMalitounik(
     val context = LocalContext.current
     val appUpdateManager = AppUpdateManagerFactory.create(context)
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-        val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-        if (k.getBoolean("isDialogUdate", true) && result.resultCode == Activity.RESULT_OK) {
-            dialogUpdateMalitounik = true
+        if (result.resultCode == Activity.RESULT_OK) {
+            updateDownloadProgress(true, 0f)
         } else {
             onDismiss()
         }
@@ -1064,9 +1062,10 @@ fun CheckUpdateMalitounik(
         if (state.installStatus() == InstallStatus.DOWNLOADING) {
             bytesDownload = state.bytesDownloaded().toFloat()
             totalBytesToDownload = state.totalBytesToDownload().toFloat()
+            updateDownloadProgress(true, bytesDownload / totalBytesToDownload)
         }
         if (state.installStatus() == InstallStatus.DOWNLOADED) {
-            dialogUpdateMalitounik = false
+            updateDownloadProgress(false, 1f)
             isCompletDownload = true
             onDownloadComplet()
         }
@@ -1074,11 +1073,6 @@ fun CheckUpdateMalitounik(
     if (isCompletDownload) {
         appUpdateManager.unregisterListener(installStateUpdatedListener)
         isCompletDownload = false
-    }
-    if (dialogUpdateMalitounik) {
-        DialogUpdateMalitounik(totalBytesToDownload, bytesDownload) {
-            dialogUpdateMalitounik = false
-        }
     }
     if (noWIFI) {
         DialogUpdateNoWiFI(totalBytesToDownload, {
@@ -1130,6 +1124,8 @@ fun MainConteiner(
         AppNavigationActions(navController, k)
     }
     var isInstallApp by remember { mutableStateOf(k.getBoolean("isInstallApp", false)) }
+    var isProgressVisable by remember { mutableStateOf(false) }
+    var progressApp by remember { mutableFloatStateOf(0f) }
     var appUpdate by remember { mutableStateOf(false) }
     if (appUpdate) {
         CheckUpdateMalitounik(onDownloadComplet = {
@@ -1137,6 +1133,9 @@ fun MainConteiner(
             k.edit {
                 putBoolean("isInstallApp", true)
             }
+        }, updateDownloadProgress = { isVisable, progress ->
+            isProgressVisable = isVisable
+            progressApp = progress
         }) {
             appUpdate = false
         }
@@ -1649,6 +1648,7 @@ fun MainConteiner(
                                     if (currentRoute.contains(AllDestinations.KALIANDAR) || currentRoute.contains("BIBLIJATEKA", ignoreCase = true)) {
                                         DropdownMenuItem(
                                             onClick = {
+                                                expanded = false
                                                 if (context.checkmodulesAdmin()) {
                                                     val intent = Intent()
                                                     if (currentRoute.contains(AllDestinations.KALIANDAR)) {
@@ -1787,6 +1787,9 @@ fun MainConteiner(
                 }
             },
             snackbarHost = {
+                if (isProgressVisable) {
+                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth(), progress = { progressApp })
+                }
                 if (isInstallApp) {
                     Row(
                         modifier = Modifier
@@ -2225,75 +2228,6 @@ fun DialogLogProgramy(
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
                         Text(stringResource(R.string.set_log), fontSize = 18.sp)
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun DialogUpdateMalitounik(
-    total: Float,
-    bytesDownload: Float,
-    onDismiss: () -> Unit
-) {
-    val totalSizeUpdate = if (total / 1024 > 1000) {
-        " ${formatFigureTwoPlaces(total / 1024 / 1024)} Мб "
-    } else {
-        " ${formatFigureTwoPlaces(total / 1024)} Кб "
-    }
-    val bytesDownloadUpdate = if (bytesDownload / 1024 > 1000) {
-        " ${formatFigureTwoPlaces(bytesDownload / 1024 / 1024)} Мб "
-    } else {
-        " ${formatFigureTwoPlaces(bytesDownload / 1024)} Кб "
-    }
-    Dialog(onDismissRequest = { onDismiss() }) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp),
-            shape = RoundedCornerShape(10.dp),
-        ) {
-            Column {
-                Text(
-                    text = stringResource(R.string.update_title).uppercase(), modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.onTertiary)
-                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
-                )
-                Column {
-                    Text(modifier = Modifier.padding(bottom = 10.dp), text = stringResource(R.string.update_program_progress, bytesDownloadUpdate, totalSizeUpdate), fontSize = Settings.fontInterface.sp)
-                    LinearProgressIndicator(
-                        progress = { (bytesDownload / total).toFloat() }, modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 10.dp)
-                    )
-                }
-                val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(
-                        checked = !k.getBoolean("isDialogUdate", true),
-                        onCheckedChange = {
-                            k.edit {
-                                putBoolean("isDialogUdate", it)
-                            }
-                        }
-                    )
-                    Text(stringResource(R.string.sabytie_check_mun), fontSize = 18.sp)
-                }
-                Row(
-                    modifier = Modifier
-                        .align(Alignment.End)
-                        .padding(horizontal = 8.dp, vertical = 2.dp),
-                    horizontalArrangement = Arrangement.End,
-                ) {
-                    TextButton(
-                        onClick = { onDismiss() },
-                        shape = MaterialTheme.shapes.small
-                    ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
-                        Text(stringResource(R.string.close), fontSize = 18.sp)
                     }
                 }
             }

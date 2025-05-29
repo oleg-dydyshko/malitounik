@@ -160,6 +160,16 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                         }
                     }
                 }
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        val fileIcon = File("$filesDir/icons/v_" + newArrayList[binding.spinnerSviaty.selectedItemPosition].data.toString() + "_" + newArrayList[binding.spinnerSviaty.selectedItemPosition].mun.toString() + "_1.jpg")
+                        if (!fileIcon.exists()) {
+                            val pathReference = MainActivity.referens.child("/chytanne/icons/" + fileIcon.name)
+                            pathReference.getFile(fileIcon).await()
+                        }
+                    } catch (_: Throwable) {
+                    }
+                }
                 binding.calandar.text = caliandarArrayList[1] + " " + resources.getStringArray(by.carkva_gazeta.malitounik.R.array.meciac_smoll)[caliandarArrayList[2].toInt()] + " " + caliandarArrayList[3]
             }
 

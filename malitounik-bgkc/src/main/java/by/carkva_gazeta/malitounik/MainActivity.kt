@@ -1187,6 +1187,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
                 dzenNoch = isSystemInDarkTheme()
                 if (modeNight == Settings.MODE_NIGHT_NO) dzenNoch = false
                 if (modeNight == Settings.MODE_NIGHT_YES) dzenNoch = true
+                if (modeNight == Settings.MODE_NIGHT_AUTO) dzenNoch = k.getBoolean("dzenNoch", false)
             }
             checkDzenNoch = dzenNoch
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -1367,6 +1368,9 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
             val k = getSharedPreferences("biblia", MODE_PRIVATE)
             k.edit {
                 putBoolean("setAlarm", true)
+                if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) {
+                    putBoolean("dzenNoch", dzenNoch)
+                }
             }
             AppNavGraphState.bibleItem = false
             AppNavGraphState.piesnyItem = false

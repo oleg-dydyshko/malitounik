@@ -1,6 +1,4 @@
 <resources>
-    <string name="navigation_drawer_open">Адкрыць навігацыйнае меню</string>
-    <string name="navigation_drawer_close">Закрыць навігацыйнае меню</string>
     <string name="app_name">Малітоўнік</string>
     <string name="kaliandar">Каляндар БГКЦ</string>
     <string name="kaliandar2">КАЛЯНДАР БГКЦ</string>
@@ -9,11 +7,8 @@
     <string name="title_activity_stary_zapaviet2">Стары Запавет</string>
     <string name="exit">Націсьніце другі раз, каб закрыць</string>
     <string name="error">Памылка</string>
-    <string name="error_up">ПАМЫЛКА</string>
     <string name="ok">Добра</string>
     <string name="cansel">Скасаваць</string>
-    <string name="ok_u">ДОБРА</string>
-    <string name="cansel_u">СКАСАВАЦЬ</string>
     <string name="close">Зачыніць</string>
     <string name="bibliaAll">БІБЛІЯ</string>
     <string name="title_biblia">БІБЛІЯ (пераклад В. Сёмухі)</string>
@@ -23,29 +18,17 @@
     <string name="title_biblia_bokun2">Пераклад А. Бокуна</string>
     <string name="title_biblia_charniauski2">Пераклад У. Чарняўскага 2017</string>
     <string name="tools_item">Налады</string>
-    <string name="tools_admin_item">Налады%1$s</string>
     <string name="search_call">Абраць сёньняшні дзень</string>
     <string name="data_search">ВЫБЯРЫЦЕ РАЗЬДЗЕЛ</string>
     <string name="razdzel">Разьдзел</string>
     <string name="psalom">Псальма</string>
     <string name="liturgikon">БОГАСЛУЖБОВЫЯ ТЭКСТЫ</string>
-    <string name="liturgikon2">Богаслужбовыя тэксты</string>
     <string name="malitvy">МАЛІТВЫ</string>
     <string name="akafisty">АКАФІСТЫ</string>
-    <string name="akafist0">Пра Акафіст</string>
-    <string name="akafist1">Найсьвяцейшай Багародзіцы</string>
-    <string name="akafist2">Маці Божай Нястомнай дапамогі</string>
-    <string name="akafist3">перад Жыровіцкай іконай</string>
-    <string name="akafist4">у гонар Падляшскіх мучанікаў</string>
-    <string name="akafist5">Імю Ісусаваму</string>
-    <string name="akafist6">да Духа Сьвятога</string>
-    <string name="akafist7">сьвятым апосталам Пятру і Паўлу</string>
     <string name="other">ІНШАЕ</string>
     <string name="czytanne">Чытаньне</string>
     <string name="czytanne3">Чытаньне, за %1$d %2$s</string>
     <string name="czytanne2">Чытаньні</string>
-    <string name="carkva_sviaty">Царкоўныя сьвяты</string>
-    <string name="kaliandar_bel">Даты Вялікадня</string>
     <string name="font_size_app2">Шрыфт</string>
     <string name="font_size_app">ВЫБРАЦЬ ПАМЕР ШРЫФТУ</string>
     <string name="menu_font_size_app">Выбраць памер шрыфту</string>
@@ -678,7 +661,6 @@
     <string name="admin_link">Спасылка:</string>
     <string name="admin_title_link">Імя спасылкі:</string>
     <string name="malitva_za_paclicanyx_i_jyvyx">УСПАМІН ПАМЕРЛЫХ І ЖЫВЫХ</string>
-    <string name="gl_tyt">%1$s: Глядзіце тут</string>
     <string name="settings_poshuk">НАЛАДЫ ПОШУКУ</string>
     <string name="settings_poshuk_smoll">Налады пошуку</string>
     <string name="help_notifications_api33">Для паказу апавяшчэньняў пра падзеі і сьвяты, патрабуецца дазвол на ўстаноўку будзільнікаў і паказ апавяшчэньняў.</string>
@@ -1163,7 +1145,7 @@
     <string name="tryedz_8">\nТрыёдзь -> Трыёдзь посная -> Службы 5-га тыдня Вялікага посту</string>
     <string name="tryedz_9">\nТрыёдзь -> Трыёдзь посная -> Службы 6-га тыдня Вялікага посту</string>
     <string name="open_in">Адчыніць у&#8230;</string>
-    <string name="pdfView_page_no" >%1$d/%2$d</string>
+    <string name="pdfView_page_no">%1$d/%2$d</string>
     <string name="zmest">ЗЬМЕСТ</string>
     <string name="zmest_smoll">Зьмест</string>
     <string name="admin_cyrylic_no_support">Кірыліца не падтрымліваецца</string>

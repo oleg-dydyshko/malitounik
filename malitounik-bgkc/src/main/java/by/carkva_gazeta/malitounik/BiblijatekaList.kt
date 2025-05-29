@@ -554,8 +554,7 @@ private suspend fun getBibliateka(
                 }
             }
             progressVisable(false)
-        } catch (e: Throwable) {
-            e.printStackTrace()
+        } catch (_: Throwable) {
         }
     }
 }

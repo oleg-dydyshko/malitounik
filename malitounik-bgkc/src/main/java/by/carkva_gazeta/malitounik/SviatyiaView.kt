@@ -580,7 +580,7 @@ fun loadOpisanieSviatyia(context: Context, year: Int, mun: Int, day: Int): Snaps
             arrayList.addAll(gson.fromJson(builder, type))
             res = arrayList[day - 1]
         }
-        if ((context as MainActivity).dzenNoch) res = res.replace("#d00505", "#ff6666")
+        if ((context as MainActivity).dzenNoch) res = res.replace("#d00505", "#ff6666", true)
         val title = ArrayList<String>()
         val listRes = res.split("<strong>")
         var sb = ""
@@ -607,7 +607,7 @@ fun loadOpisanieSviatyia(context: Context, year: Int, mun: Int, day: Int): Snaps
             }
             val spannedtitle = AnnotatedString.fromHtml(textTitle)
             val spanned = AnnotatedString.fromHtml(fulText)
-            sviatyiaList.add(OpisanieData(index + 1, day, mun, spannedtitle, spanned, "", ""))
+            sviatyiaList.add(OpisanieData(index + 1, day, mun, SviatyData.CALAINDAR, spannedtitle, spanned, "", ""))
         }
     }
     val fileOpisanie13 = File("${context.filesDir}/sviatyja/opisanie13.json")
@@ -635,7 +635,7 @@ fun loadOpisanieSviatyia(context: Context, year: Int, mun: Int, day: Int): Snaps
                             }
                             val spannedtitle = AnnotatedString.fromHtml(textTitle)
                             val spanned = AnnotatedString.fromHtml(fulText)
-                            sviatyiaList.add(OpisanieData(sviatyiaList.size + 1, arrayList[e][0].toInt(), arrayList[e][1].toInt(), spannedtitle, spanned, "", ""))
+                            sviatyiaList.add(OpisanieData(sviatyiaList.size + 1, arrayList[e][0].toInt(), arrayList[e][1].toInt(), SviatyData.CALAINDAR, spannedtitle, spanned, "", ""))
                         }
                     } else {
                         if (arrayList[e][1].toInt() == 0 && mun - 1 == Calendar.DECEMBER && day == i && Calendar.MONDAY == iazepW) {
@@ -648,7 +648,7 @@ fun loadOpisanieSviatyia(context: Context, year: Int, mun: Int, day: Int): Snaps
                             }
                             val spannedtitle = AnnotatedString.fromHtml(textTitle)
                             val spanned = AnnotatedString.fromHtml(fulText)
-                            sviatyiaList.add(OpisanieData(sviatyiaList.size + 1, arrayList[e][0].toInt(), arrayList[e][1].toInt(), spannedtitle, spanned, "", ""))
+                            sviatyiaList.add(OpisanieData(sviatyiaList.size + 1, arrayList[e][0].toInt(), arrayList[e][1].toInt(), SviatyData.CALAINDAR, spannedtitle, spanned, "", ""))
                         }
                     }
                 }
@@ -667,7 +667,7 @@ fun loadOpisanieSviatyia(context: Context, year: Int, mun: Int, day: Int): Snaps
                     }
                     val spannedtitle = AnnotatedString.fromHtml(textTitle)
                     val spanned = AnnotatedString.fromHtml(fulText)
-                    sviatyiaList.add(OpisanieData(sviatyiaList.size + 1, arrayList[e][0].toInt(), arrayList[e][1].toInt(), spannedtitle, spanned, "", ""))
+                    sviatyiaList.add(OpisanieData(sviatyiaList.size + 1, arrayList[e][0].toInt(), arrayList[e][1].toInt(), SviatyData.CALAINDAR, spannedtitle, spanned, "", ""))
                 }
             }
         }
@@ -686,15 +686,17 @@ fun loadOpisanieSviat(context: Context, position: Int): SnapshotStateList<Opisan
         arrayList?.forEach { strings ->
             var puxomuia = false
             val day = if (strings.dataCaliandar == SviatyData.PASHA) Settings.data[position][22].toInt()
-            else Settings.data[position][24].toInt()
+            else Settings.data[position][1].toInt()
+            val mun = if (strings.dataCaliandar == SviatyData.PASHA) 1
+            else Settings.data[position][2].toInt() + 1
             if (strings.dataCaliandar == SviatyData.UNDER) {
                 if (strings.opisanie.contains("Айцоў першых 6-ці Ўсяленскіх сабораў", true) && Settings.data[position][1].toInt() >= 13 && Settings.data[position][1].toInt() <= 19 && Settings.data[position][2].toInt() == Calendar.JULY) {
                     puxomuia = true
                 }
             }
-            if (puxomuia || day == strings.data) {
+            if (puxomuia || (day == strings.data && mun == strings.mun)) {
                 var res = strings.opisanie
-                if ((context as MainActivity).dzenNoch) res = res.replace("#d00505", "#ff6666")
+                if ((context as MainActivity).dzenNoch) res = res.replace("#d00505", "#ff6666", true)
                 val t1 = res.indexOf("</strong>")
                 var textTitle = ""
                 var fulText = ""
@@ -704,7 +706,7 @@ fun loadOpisanieSviat(context: Context, position: Int): SnapshotStateList<Opisan
                 }
                 val spannedtitle = AnnotatedString.fromHtml(textTitle)
                 val spanned = AnnotatedString.fromHtml(fulText)
-                sviatyiaList.add(OpisanieData(1, Settings.data[position][1].toInt(), Settings.data[position][2].toInt() + 1, spannedtitle, spanned, "", ""))
+                sviatyiaList.add(OpisanieData(1, strings.data, strings.mun, strings.dataCaliandar, spannedtitle, spanned, "", ""))
             }
         }
     }
@@ -748,10 +750,10 @@ suspend fun getIcons(
                 var imageSrc = "${pref}_${sviatyiaList[i].date}_${sviatyiaList[i].mun}"
                 if (svity) {
                     imageSrc = when (Settings.data[position][22]) {
-                        "-7" -> "v_-1_0"
-                        "0" -> "v_-1_1"
-                        "39" -> "v_-1_2"
-                        "49" -> "v_-1_3"
+                        "-7" -> "v_-7_1_1"
+                        "0" -> "v_0_1_1"
+                        "39" -> "v_39_1_1"
+                        "49" -> "v_49_1_1"
                         else -> "v_${sviatyiaList[i].date}_${sviatyiaList[i].mun}"
                     }
                 }
@@ -816,10 +818,10 @@ fun loadIconsOnImageView(context: Context, sviatyiaList: SnapshotStateList<Opisa
             var imageSrc = "${pref}_${sviatyiaList[i].date}_${sviatyiaList[i].mun}_${indexImg}"
             if (svity) {
                 imageSrc = when (Settings.data[position][22]) {
-                    "-7" -> "v_-1_0_${indexImg}"
-                    "0" -> "v_-1_1_${indexImg}"
-                    "39" -> "v_-1_2_${indexImg}"
-                    "49" -> "v_-1_3_${indexImg}"
+                    "-7" -> "v_-7_1_1"
+                    "0" -> "v_0_1_1"
+                    "39" -> "v_39_1_1"
+                    "49" -> "v_49_1_1"
                     else -> "v_${sviatyiaList[i].date}_${sviatyiaList[i].mun}_${indexImg}"
                 }
             }
@@ -943,4 +945,4 @@ fun DialogPairlinyView(
 
 data class DirList(val name: String?, val sizeBytes: Long)
 
-data class OpisanieData(val index: Int, val date: Int, val mun: Int, val title: AnnotatedString, val text: AnnotatedString, var image: String, var textApisanne: String)
+data class OpisanieData(val index: Int, val date: Int, val mun: Int, var dataCaliandar: Int, val title: AnnotatedString, val text: AnnotatedString, var image: String, var textApisanne: String)
