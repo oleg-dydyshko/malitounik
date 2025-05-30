@@ -3,7 +3,6 @@ package by.carkva_gazeta.malitounik
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -124,59 +123,48 @@ fun KaliandarScreenMounth(
                 }
             }
             val list = stringArrayResource(R.array.meciac2)
-            Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                Box(modifier = Modifier.padding(10.dp)) {
-                    TextButton(
-                        onClick = {
-                            expanded = true
-                        },
-                        modifier = Modifier
-                            .padding(5.dp),
-                        colors = ButtonColors(
-                            Divider,
-                            Color.Unspecified,
-                            Color.Unspecified,
-                            Color.Unspecified
-                        ),
-                        shape = MaterialTheme.shapes.small
-                    ) {
-                        Text(
-                            stringResource(R.string.vybor_mun),
-                            fontSize = Settings.fontInterface.sp,
-                            color = PrimaryText
-                        )
+            var textMounth by remember { mutableStateOf(list[mun1]) }
+            var textYear by remember { mutableIntStateOf(year1) }
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    textMounth,
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontSize = Settings.fontInterface.sp,
+                    modifier = Modifier.clickable {
+                        expanded = true
                     }
-                }
-                Box(modifier = Modifier.padding(10.dp)) {
-                    TextButton(
-                        onClick = {
+                )
+                Icon(
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .size(22.dp, 22.dp),
+                    painter = painterResource(R.drawable.keyboard_arrow_down),
+                    tint = MaterialTheme.colorScheme.secondary,
+                    contentDescription = null
+                )
+                Text(
+                    textYear.toString(),
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontSize = Settings.fontInterface.sp,
+                    modifier = Modifier
+                        .padding(start = 20.dp)
+                        .clickable {
                             expanded2 = true
-                        },
-                        modifier = Modifier
-                            .padding(5.dp),
-                        colors = ButtonColors(
-                            Divider,
-                            Color.Unspecified,
-                            Color.Unspecified,
-                            Color.Unspecified
-                        ),
-                        shape = MaterialTheme.shapes.small
-                    ) {
-                        Text(
-                            stringResource(R.string.vybor_year),
-                            fontSize = Settings.fontInterface.sp,
-                            color = PrimaryText
-                        )
-                    }
-                }
+                        }
+                )
+                Icon(
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .size(22.dp, 22.dp),
+                    painter = painterResource(R.drawable.keyboard_arrow_down),
+                    tint = MaterialTheme.colorScheme.secondary,
+                    contentDescription = null
+                )
             }
-            var textMounthYear by remember { mutableStateOf(list[mun1] + ", $year1") }
-            Text(
-                textMounthYear, modifier = Modifier
-                    .align(Alignment.CenterHorizontally),
-                color = MaterialTheme.colorScheme.secondary,
-                fontSize = Settings.fontInterface.sp
-            )
             LaunchedEffect(pagerState) {
                 snapshotFlow { pagerState.currentPage }.collect { page ->
                     var calPas = Settings.caliandarPosition
@@ -188,7 +176,8 @@ fun KaliandarScreenMounth(
                     }
                     mun1 = Settings.data[calPas][2].toInt()
                     year1 = Settings.data[calPas][3].toInt()
-                    textMounthYear = list[mun1] + ", $year1"
+                    textMounth = list[mun1]
+                    textYear = year1
                 }
             }
             HorizontalPager(
@@ -432,6 +421,7 @@ fun KaliandarScreenMounth(
                     setPageCaliandar(Settings.caliandarPosition)
                 },
                 modifier = Modifier
+                    .padding(bottom = 10.dp)
                     .align(Alignment.CenterHorizontally)
                     .padding(5.dp),
                 colors = ButtonColors(
