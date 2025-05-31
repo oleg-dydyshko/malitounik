@@ -126,44 +126,49 @@ fun KaliandarScreenMounth(
             var textMounth by remember { mutableStateOf(list[mun1]) }
             var textYear by remember { mutableIntStateOf(year1) }
             Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    textMounth,
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontSize = Settings.fontInterface.sp,
-                    modifier = Modifier.clickable {
-                        expanded = true
-                    }
-                )
-                Icon(
-                    modifier = Modifier
-                        .padding(start = 10.dp)
-                        .size(22.dp, 22.dp),
-                    painter = painterResource(R.drawable.keyboard_arrow_down),
-                    tint = MaterialTheme.colorScheme.secondary,
-                    contentDescription = null
-                )
-                Text(
-                    textYear.toString(),
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontSize = Settings.fontInterface.sp,
+                Row(modifier = Modifier.clickable {
+                    expanded = true
+                }) {
+                    Text(
+                        textMounth,
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = Settings.fontInterface.sp
+                    )
+                    Icon(
+                        modifier = Modifier
+                            .padding(start = 10.dp)
+                            .size(22.dp, 22.dp),
+                        painter = painterResource(R.drawable.keyboard_arrow_down),
+                        tint = MaterialTheme.colorScheme.secondary,
+                        contentDescription = null
+                    )
+                }
+                Row(
                     modifier = Modifier
                         .padding(start = 20.dp)
                         .clickable {
                             expanded2 = true
-                        }
-                )
-                Icon(
-                    modifier = Modifier
-                        .padding(start = 10.dp)
-                        .size(22.dp, 22.dp),
-                    painter = painterResource(R.drawable.keyboard_arrow_down),
-                    tint = MaterialTheme.colorScheme.secondary,
-                    contentDescription = null
-                )
+                        }) {
+                    Text(
+                        textYear.toString(),
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = Settings.fontInterface.sp
+                    )
+                    Icon(
+                        modifier = Modifier
+                            .padding(start = 10.dp)
+                            .size(22.dp, 22.dp),
+                        painter = painterResource(R.drawable.keyboard_arrow_down),
+                        tint = MaterialTheme.colorScheme.secondary,
+                        contentDescription = null
+                    )
+                }
             }
             LaunchedEffect(pagerState) {
                 snapshotFlow { pagerState.currentPage }.collect { page ->

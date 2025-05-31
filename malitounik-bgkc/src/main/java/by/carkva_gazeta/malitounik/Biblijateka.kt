@@ -85,12 +85,14 @@ import coil3.imageLoader
 import coil3.memory.MemoryCache
 import coil3.request.ImageRequest
 import coil3.toBitmap
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import java.io.File
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
@@ -176,7 +178,6 @@ fun Biblijateka(
         }
     }
     val imageLoader = LocalContext.current.imageLoader
-    val imageLoadingScope = rememberCoroutineScope()
     val pageCount by remember(renderer) { derivedStateOf { renderer?.pageCount ?: 0 } }
     Scaffold(
         topBar = {
@@ -382,13 +383,6 @@ fun Biblijateka(
                                 offsetY += dragAmount.y * 3
                             }
                         }
-                        /*.pointerInput(Unit) {
-                            detectTapGestures(
-                                onDoubleTap = {
-                                    fullscreen = !fullscreen
-                                }
-                            )
-                        }*/
                 ) {
                     item {
                         Spacer(modifier = Modifier.padding(top = innerPadding.calculateTopPadding()))
@@ -406,25 +400,27 @@ fun Biblijateka(
                         var bitmap: Bitmap? by remember { mutableStateOf(cacheValue) }
                         if (bitmap == null) {
                             DisposableEffect(file, index) {
-                                val job = imageLoadingScope.launch(Dispatchers.IO) {
-                                    val destinationBitmap =
-                                        createBitmap(width, height)
-                                    mutex.withLock {
-                                        if (!coroutineContext.isActive) return@launch
-                                        try {
-                                            renderer?.let {
-                                                it.openPage(index).use { page ->
-                                                    page.render(
-                                                        destinationBitmap,
-                                                        null,
-                                                        null,
-                                                        PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY
-                                                    )
+                                val job = CoroutineScope(Dispatchers.IO).launch {
+                                    val destinationBitmap = withContext(Dispatchers.IO) {
+                                        val bitmap = createBitmap(width, height)
+                                        mutex.withLock {
+                                            if (!coroutineContext.isActive) return@withContext bitmap
+                                            try {
+                                                renderer?.let {
+                                                    it.openPage(index).use { page ->
+                                                        page.render(
+                                                            bitmap,
+                                                            null,
+                                                            null,
+                                                            PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY
+                                                        )
+                                                    }
                                                 }
+                                            } catch (_: Exception) {
+                                                return@withContext bitmap
                                             }
-                                        } catch (_: Exception) {
-                                            return@launch
                                         }
+                                        return@withContext bitmap
                                     }
                                     bitmap = destinationBitmap
                                 }
