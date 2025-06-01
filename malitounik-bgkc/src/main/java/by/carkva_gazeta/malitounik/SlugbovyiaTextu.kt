@@ -2268,6 +2268,7 @@ class SlugbovyiaTextu {
             )
         )
         datMinALL.add(SlugbovyiaTextuData(69, "40 мучанікаў Себастыйскіх", "bogashlugbovya/mm_09_03_40_muczanikau_siebastyjskich_viaczernia.html", VIACZERNIA))
+        datMinALL.add(SlugbovyiaTextuData(177, "Сьвятой мучаніцы Хаўроньні", "bogashlugbovya/mm_25_06_muczanicy_chauronni_viaczernia.html", VIACZERNIA))
     }
 
     fun getNazouSluzby(sluzba: Int): String {

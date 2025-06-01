@@ -12,8 +12,8 @@ android {
         applicationId = "by.carkva_gazeta.malitounik"
         minSdk = 21
         targetSdk = 36
-        versionCode = 442469
-        versionName = "5.97.6"
+        versionCode = 442470
+        versionName = "5.97.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -81,7 +81,7 @@ dependencies {
     implementation (libs.androidx.media3.exoplayer)
     implementation (libs.androidx.media3.exoplayer.smoothstreaming)
     implementation (libs.androidx.media)
-    implementation(libs.androidx.documentfile)
+    //implementation(libs.androidx.documentfile)
     implementation(libs.androidx.paging.compose)
     implementation(libs.coil3)
     //implementation(libs.androidx.glance.appwidget)

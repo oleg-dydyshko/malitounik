@@ -14,7 +14,7 @@ gson = "2.13.1"
 playServicesInstantapps = "18.1.0"
 featureDeliveryKtx = "2.1.0"
 appUpdateKtx = "2.1.0"
-documentfile = "1.1.0"
+#documentfile = "1.1.0"
 pagingCompose = "3.3.6"
 constraintlayout = "2.2.1"
 material = "1.12.0"
@@ -60,7 +60,7 @@ app-update-ktx = { group = "com.google.android.play", name = "app-update-ktx", v
 androidx-media = { module = "androidx.media:media", version.ref = "media" }
 androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3Exoplayer" }
 androidx-media3-exoplayer-smoothstreaming = { module = "androidx.media3:media3-exoplayer-smoothstreaming", version.ref = "media3Exoplayer" }
-androidx-documentfile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentfile" }
+#androidx-documentfile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentfile" }
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "pagingCompose" }
 androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
 material = { module = "com.google.android.material:material", version.ref = "material" }

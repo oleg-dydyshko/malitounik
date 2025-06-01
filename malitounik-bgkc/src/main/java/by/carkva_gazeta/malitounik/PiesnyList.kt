@@ -380,7 +380,7 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
         piesnyKaliadyList.add(PiesnyListItem(3, "pesny/piesni_kalady_u_betlejem.html", "У Бэтлеем"))
         piesnyKaliadyList.add(
             PiesnyListItem(
-                3, "pesny/piesni_kalady_o_zyvatvorny_tvorca_zor.html", "O, жыватворны Творца зор"
+                3, "pesny/piesni_kalady_o_zyvatvorny_tvorca_zor.html", "О, жыватворны Творца зор"
             )
         )
         piesnyKaliadyList.add(
