@@ -15,6 +15,8 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -371,7 +373,10 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                     0.dp
                 )
         ) {
-            if (imageFull) {
+            AnimatedVisibility(
+                imageFull, enter = scaleIn(tween(durationMillis = 500, easing = LinearOutSlowInEasing)),
+                exit = scaleOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
+            ) {
                 Column(
                     modifier = Modifier.fillMaxSize()
                 ) {
@@ -414,7 +419,14 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                             .align(Alignment.CenterHorizontally), bitmap = BitmapFactory.decodeFile(fullImagePathVisable).asImageBitmap(), contentDescription = ""
                     )
                 }
-            } else {
+            }
+            AnimatedVisibility(
+                !imageFull, enter = fadeIn(
+                    tween(
+                        durationMillis = 500, easing = LinearOutSlowInEasing
+                    )
+                ), exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
+            ) {
                 Column {
                     if (isProgressVisable) {
                         LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
@@ -501,7 +513,11 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                         val fileNameT = file.name.substring(0, t3) + ".txt"
                                         val fileImageOpis = File("${context.filesDir}/iconsApisanne/$fileNameT")
                                         if (fileImageOpis.exists()) {
-                                            Text(modifier = Modifier.padding(10.dp).fillMaxWidth(), text = fileImageOpis.readText(), fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary, textAlign = TextAlign.Center, fontStyle = FontStyle.Italic)
+                                            Text(
+                                                modifier = Modifier
+                                                    .padding(10.dp)
+                                                    .fillMaxWidth(), text = fileImageOpis.readText(), fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary, textAlign = TextAlign.Center, fontStyle = FontStyle.Italic
+                                            )
                                         }
                                     }
                                     if (sviatyiaList[index].text.isNotEmpty()) {

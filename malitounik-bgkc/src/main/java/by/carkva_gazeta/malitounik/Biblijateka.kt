@@ -70,6 +70,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
+import androidx.core.content.edit
 import androidx.core.graphics.createBitmap
 import androidx.core.util.lruCache
 import androidx.core.view.WindowCompat
@@ -311,6 +312,7 @@ fun Biblijateka(
     var fullscreen by rememberSaveable { mutableStateOf(false) }
     val file = File("${context.filesDir}/bibliatekaPdf/$fileName")
     var backPressHandled by remember { mutableStateOf(false) }
+    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     BackHandler(!backPressHandled || fullscreen) {
         if (fullscreen) {
             fullscreen = false
@@ -318,6 +320,10 @@ fun Biblijateka(
             backPressHandled = true
             navController.popBackStack()
         }
+    }
+    LaunchedEffect(Unit) {
+        val page = k.getInt(fileName, 0)
+        lazyListState.scrollToItem(page)
     }
     LaunchedEffect(fullscreen) {
         val controller =
@@ -520,6 +526,9 @@ fun Biblijateka(
                 }
             LaunchedEffect(lazyListState) {
                 snapshotFlow { lazyListState.firstVisibleItemIndex }.collect { page ->
+                    k.edit {
+                        putInt(fileName, page)
+                    }
                     pageState = (page + 1).toString() + "/" + pager.itemsCount()
                 }
             }

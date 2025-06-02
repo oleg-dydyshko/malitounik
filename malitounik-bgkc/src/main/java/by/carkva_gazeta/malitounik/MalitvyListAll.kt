@@ -1054,7 +1054,7 @@ fun getMalitvyPasliaPrychascia(): ArrayList<BogaslujbovyiaListData> {
     list.add(BogaslujbovyiaListData("Малітва падзякі", "bogashlugbovya/paslia_prychascia1.html"))
     list.add(BogaslujbovyiaListData("Малітва сьв. Васіля Вялікага", "bogashlugbovya/paslia_prychascia2.html"))
     list.add(BogaslujbovyiaListData("Малітва Сымона Мэтафраста", "bogashlugbovya/paslia_prychascia3.html"))
-    list.add(BogaslujbovyiaListData("Iншая малітва", "bogashlugbovya/paslia_prychascia4.html"))
+    list.add(BogaslujbovyiaListData("Іншая малітва", "bogashlugbovya/paslia_prychascia4.html"))
     list.add(
         BogaslujbovyiaListData(
             "Малітва да Найсьвяцейшай Багародзіцы", "bogashlugbovya/paslia_prychascia5.html"

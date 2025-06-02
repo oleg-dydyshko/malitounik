@@ -52,6 +52,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -402,8 +403,9 @@ fun BiblijatekaListItems(
 
 fun addNiadaunia(
     context: Context,
-    bibliatekaList: ArrayList<String>,
+    bibliatekaList: ArrayList<String>
 ) {
+    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val gson = Gson()
     val type = TypeToken.getParameterized(
         ArrayList::class.java,
@@ -428,6 +430,9 @@ fun addNiadaunia(
             biblioteka.removeAt(inDel)
         }
         if (biblioteka.size > 4) {
+            k.edit {
+                remove(biblioteka[4][2])
+            }
             biblioteka.removeAt(4)
         }
     }

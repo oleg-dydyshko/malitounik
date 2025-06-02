@@ -77,7 +77,7 @@ fun BogaslujbovyiaMenu(
     }
     val folderList = stringArrayResource(R.array.bogaslugbovyia_folder_list)
     val viewModel = FilterBogaslujbovyiaListModel()
-    val list = if (searchText) {
+    if (searchText) {
         val listAll = ArrayList<BogaslujbovyiaListData>()
         listAll.addAll(getBogaslujbovyia())
         listAll.addAll(getMalitvy())
@@ -96,13 +96,12 @@ fun BogaslujbovyiaMenu(
             listAll.add(BogaslujbovyiaListData(slugbovyiaTextuData.title + ". " + slugbovyiaTextu.getNazouSluzby(slugbovyiaTextuData.sluzba), slugbovyiaTextuData.resource))
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-            listPast.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+            listAll.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
         } else {
-            listPast.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
+            listAll.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
         }
         viewModel.addAllItemList(listAll)
         viewModel.filterItem(search)
-        listAll
     } else {
         val listAll = when (menuItem) {
             Settings.MENU_BOGASLUJBOVYIA -> getBogaslujbovyia()
@@ -111,20 +110,19 @@ fun BogaslujbovyiaMenu(
             Settings.MENU_RUJANEC -> getRujanec()
             else -> ArrayList()
         }
+        if (menuItem == Settings.MENU_BOGASLUJBOVYIA) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                listAll.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+            } else {
+                listAll.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
+            }
+        }
         viewModel.addAllItemList(listAll)
-        listAll
     }
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
         folderList.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it })
     } else {
         folderList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it })
-    }
-    if (menuItem == Settings.MENU_BOGASLUJBOVYIA) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-            list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
-        } else {
-            list.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
-        }
     }
     val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
     LazyColumn(

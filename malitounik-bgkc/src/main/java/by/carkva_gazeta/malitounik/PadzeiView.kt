@@ -15,11 +15,6 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -57,6 +52,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -101,7 +97,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.Popup
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.toColorInt
 import androidx.core.net.toUri
@@ -585,23 +580,14 @@ fun PadzeiaView(navController: NavHostController) {
                     Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
                 }
             }
-            Popup(
-                alignment = Alignment.TopCenter,
-                onDismissRequest = { showDropdown = false }
-            ) {
-                AnimatedVisibility(
-                    showDropdown,
-                    enter = slideInVertically(
-                        tween(
-                            durationMillis = 500,
-                            easing = LinearOutSlowInEasing
-                        )
-                    ),
-                    exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
+            if (showDropdown) {
+                ModalBottomSheet(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    onDismissRequest = { showDropdown = false }
                 ) {
                     if (kalendarMun || kalendarMun2 || kalendarMun3) {
                         KaliandarScreenMounth(
-                            colorBlackboard = MaterialTheme.colorScheme.onTertiary, setPageCaliandar = { date ->
+                            setPageCaliandar = { date ->
                                 var nol1 = ""
                                 var nol2 = ""
                                 val kal = Settings.data[date]
@@ -619,13 +605,8 @@ fun PadzeiaView(navController: NavHostController) {
                                 kalendarMun2 = false
                                 kalendarMun3 = false
                                 showDropdown = false
-                            },
-                            close = {
-                                kalendarMun = false
-                                kalendarMun2 = false
-                                kalendarMun3 = false
-                                showDropdown = false
-                            })
+                            }
+                        )
                     }
                 }
             }
@@ -1142,7 +1123,7 @@ fun AddPadzeia(
             var expanded1 by remember { mutableStateOf(false) }
             val textFieldNotificstionState = rememberTextFieldState(padzeia)
             LaunchedEffect(padzeia) {
-                padzeia.ifEmpty { textFieldNotificstionState.setTextAndPlaceCursorAtEnd( context.getString(R.string.sabytie_name)) }
+                padzeia.ifEmpty { textFieldNotificstionState.setTextAndPlaceCursorAtEnd(context.getString(R.string.sabytie_name)) }
             }
             ExposedDropdownMenuBox(
                 modifier = Modifier.padding(10.dp),

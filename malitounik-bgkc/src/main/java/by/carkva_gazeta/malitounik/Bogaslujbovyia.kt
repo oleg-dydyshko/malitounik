@@ -51,6 +51,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -104,7 +105,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.Popup
 import androidx.core.content.edit
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -629,61 +629,75 @@ fun Bogaslujbovyia(
                     ), exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
                 ) {
                     if (!iskniga) {
-                        Popup(
-                            alignment = Alignment.BottomCenter,
-                            onDismissRequest = {
-                                if (menuPosition != 2) {
-                                    showDropdown = false
-                                    if (autoScrollSensor) autoScroll = true
+                        if (showDropdown) {
+                            ModalBottomSheet(
+                                containerColor = MaterialTheme.colorScheme.background,
+                                onDismissRequest = {
+                                    if (menuPosition != 2) {
+                                        showDropdown = false
+                                        if (autoScrollSensor) autoScroll = true
+                                    }
                                 }
-                            }
-                        ) {
-                            AnimatedVisibility(
-                                showDropdown,
-                                enter = fadeIn(
-                                    tween(
-                                        durationMillis = 500,
-                                        easing = LinearOutSlowInEasing
-                                    )
-                                ),
-                                exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
                             ) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clip(
-                                            shape = RoundedCornerShape(
-                                                bottomStart = 10.dp,
-                                                bottomEnd = 10.dp
-                                            )
-                                        )
-                                        .background(MaterialTheme.colorScheme.onTertiary)
-                                        .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
-                                        .background(MaterialTheme.colorScheme.tertiary)
-                                ) {
-                                    Column {
-                                        Column(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .background(MaterialTheme.colorScheme.onTertiary)
-                                                .clickable {
-                                                    showDropdown = false
-                                                }) {
-                                            Icon(modifier = Modifier.align(Alignment.Start), painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = "", tint = PrimaryTextBlack)
-                                        }
-                                        if (menuPosition == 2) {
-                                            Column {
-                                                for (i in listResource.indices) {
+                                Column {
+                                    if (menuPosition == 2) {
+                                        Column {
+                                            for (i in listResource.indices) {
+                                                Row(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(10.dp)
+                                                        .clickable {
+                                                            subTitle = listResource[i].title
+                                                            subText = openAssetsResources(context, listResource[i].resource)
+                                                            iskniga = true
+                                                            showDropdown = false
+                                                            autoScroll = false
+                                                        },
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Icon(
+                                                        modifier = Modifier.size(5.dp, 5.dp),
+                                                        painter = painterResource(R.drawable.poiter),
+                                                        tint = MaterialTheme.colorScheme.primary,
+                                                        contentDescription = null
+                                                    )
+                                                    Text(
+                                                        modifier = Modifier.padding(start = 10.dp),
+                                                        text = listResource[i].title,
+                                                        fontSize = Settings.fontInterface.sp,
+                                                        maxLines = 2,
+                                                        overflow = TextOverflow.Ellipsis,
+                                                        color = MaterialTheme.colorScheme.secondary
+                                                    )
+                                                }
+                                                HorizontalDivider()
+                                            }
+                                            if (cytanneVisable) {
+                                                val chytanneList = ArrayList<BogaslujbovyiaListData>()
+                                                if (data[9].isNotEmpty()) {
+                                                    chytanneList.add(BogaslujbovyiaListData(data[9], "9"))
+                                                }
+                                                if (data[10].isNotEmpty()) {
+                                                    chytanneList.add(BogaslujbovyiaListData(data[10], "10"))
+                                                }
+                                                if (data[11].isNotEmpty()) {
+                                                    chytanneList.add(BogaslujbovyiaListData(data[11], "11"))
+                                                }
+                                                for (i in chytanneList.indices) {
+                                                    val navigate = when (chytanneList[i].resurs) {
+                                                        "10" -> "cytannesvityx"
+                                                        "11" -> "cytannedop"
+                                                        else -> "cytanne"
+                                                    }
                                                     Row(
                                                         modifier = Modifier
                                                             .fillMaxWidth()
                                                             .padding(10.dp)
                                                             .clickable {
-                                                                subTitle = listResource[i].title
-                                                                subText = openAssetsResources(context, listResource[i].resource)
-                                                                iskniga = true
                                                                 showDropdown = false
                                                                 autoScroll = false
+                                                                navigateTo(navigate)
                                                             },
                                                         verticalAlignment = Alignment.CenterVertically
                                                     ) {
@@ -695,7 +709,7 @@ fun Bogaslujbovyia(
                                                         )
                                                         Text(
                                                             modifier = Modifier.padding(start = 10.dp),
-                                                            text = listResource[i].title,
+                                                            text = chytanneList[i].title,
                                                             fontSize = Settings.fontInterface.sp,
                                                             maxLines = 2,
                                                             overflow = TextOverflow.Ellipsis,
@@ -704,76 +718,30 @@ fun Bogaslujbovyia(
                                                     }
                                                     HorizontalDivider()
                                                 }
-                                                if (cytanneVisable) {
-                                                    val chytanneList = ArrayList<BogaslujbovyiaListData>()
-                                                    if (data[9].isNotEmpty()) {
-                                                        chytanneList.add(BogaslujbovyiaListData(data[9], "9"))
-                                                    }
-                                                    if (data[10].isNotEmpty()) {
-                                                        chytanneList.add(BogaslujbovyiaListData(data[10], "10"))
-                                                    }
-                                                    if (data[11].isNotEmpty()) {
-                                                        chytanneList.add(BogaslujbovyiaListData(data[11], "11"))
-                                                    }
-                                                    for (i in chytanneList.indices) {
-                                                        val navigate = when (chytanneList[i].resurs) {
-                                                            "10" -> "cytannesvityx"
-                                                            "11" -> "cytannedop"
-                                                            else -> "cytanne"
-                                                        }
-                                                        Row(
-                                                            modifier = Modifier
-                                                                .fillMaxWidth()
-                                                                .padding(10.dp)
-                                                                .clickable {
-                                                                    showDropdown = false
-                                                                    autoScroll = false
-                                                                    navigateTo(navigate)
-                                                                },
-                                                            verticalAlignment = Alignment.CenterVertically
-                                                        ) {
-                                                            Icon(
-                                                                modifier = Modifier.size(5.dp, 5.dp),
-                                                                painter = painterResource(R.drawable.poiter),
-                                                                tint = MaterialTheme.colorScheme.primary,
-                                                                contentDescription = null
-                                                            )
-                                                            Text(
-                                                                modifier = Modifier.padding(start = 10.dp),
-                                                                text = chytanneList[i].title,
-                                                                fontSize = Settings.fontInterface.sp,
-                                                                maxLines = 2,
-                                                                overflow = TextOverflow.Ellipsis,
-                                                                color = MaterialTheme.colorScheme.secondary
-                                                            )
-                                                        }
-                                                        HorizontalDivider()
-                                                    }
-                                                }
                                             }
                                         }
-                                        if (menuPosition == 1) {
-                                            Text(
-                                                stringResource(R.string.menu_font_size_app),
-                                                modifier = Modifier.padding(start = 10.dp, top = 10.dp),
-                                                fontStyle = FontStyle.Italic,
-                                                textAlign = TextAlign.Center,
-                                                color = MaterialTheme.colorScheme.secondary,
-                                                fontSize = Settings.fontInterface.sp
-                                            )
-                                            Slider(
-                                                modifier = Modifier.padding(horizontal = 10.dp),
-                                                valueRange = 18f..58f,
-                                                steps = 10,
-                                                value = fontSize,
-                                                onValueChange = {
-                                                    k.edit {
-                                                        putFloat("font_biblia", it)
-                                                    }
-                                                    fontSize = it
+                                    }
+                                    if (menuPosition == 1) {
+                                        Text(
+                                            stringResource(R.string.menu_font_size_app),
+                                            modifier = Modifier.padding(start = 10.dp, top = 10.dp),
+                                            fontStyle = FontStyle.Italic,
+                                            textAlign = TextAlign.Center,
+                                            color = MaterialTheme.colorScheme.secondary,
+                                            fontSize = Settings.fontInterface.sp
+                                        )
+                                        Slider(
+                                            modifier = Modifier.padding(horizontal = 10.dp),
+                                            valueRange = 18f..58f,
+                                            steps = 10,
+                                            value = fontSize,
+                                            onValueChange = {
+                                                k.edit {
+                                                    putFloat("font_biblia", it)
                                                 }
-                                            )
-                                        }
+                                                fontSize = it
+                                            }
+                                        )
                                     }
                                 }
                             }

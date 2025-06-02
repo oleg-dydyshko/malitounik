@@ -2,12 +2,6 @@ package by.carkva_gazeta.malitounik
 
 import android.app.Activity
 import android.content.Context
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
@@ -35,6 +28,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -53,7 +47,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
@@ -78,7 +71,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Popup
 import androidx.core.content.edit
 import androidx.core.text.HtmlCompat
 import androidx.core.text.isDigitsOnly
@@ -265,100 +257,68 @@ fun SearchBible(
                     0.dp
                 )
         ) {
-            Popup(
-                alignment = Alignment.TopCenter,
-                onDismissRequest = {
-                    showDropdown = false
-                }
-            ) {
-                AnimatedVisibility(
-                    showDropdown,
-                    enter = slideInVertically(
-                        tween(
-                            durationMillis = 500,
-                            easing = LinearOutSlowInEasing
-                        )
-                    ),
-                    exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
+            if (showDropdown) {
+                ModalBottomSheet(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    onDismissRequest = {
+                        showDropdown = false
+                    }
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(
-                                shape = RoundedCornerShape(
-                                    bottomStart = 10.dp,
-                                    bottomEnd = 10.dp
-                                )
-                            )
-                            .background(MaterialTheme.colorScheme.onTertiary)
-                            .padding(start = 10.dp, top = 10.dp, end = 10.dp)
-                            .background(MaterialTheme.colorScheme.tertiary)
-                    ) {
-                        Column(modifier = Modifier.fillMaxWidth()) {
-                            if (perevod != Settings.PEREVODNADSAN) {
-                                DropdownMenuBox(onSearchStart = { searchSettings = true })
-                            }
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.clickable {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        if (perevod != Settings.PEREVODNADSAN) {
+                            DropdownMenuBox(onSearchStart = { searchSettings = true })
+                        }
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.clickable {
+                                isRegistr = !isRegistr
+                                k.edit {
+                                    putBoolean("pegistrbukv", isRegistr)
+                                }
+                                searchSettings = true
+                            }) {
+                            Checkbox(
+                                checked = !isRegistr,
+                                onCheckedChange = {
                                     isRegistr = !isRegistr
                                     k.edit {
                                         putBoolean("pegistrbukv", isRegistr)
                                     }
                                     searchSettings = true
-                                }) {
-                                Checkbox(
-                                    checked = !isRegistr,
-                                    onCheckedChange = {
-                                        isRegistr = !isRegistr
-                                        k.edit {
-                                            putBoolean("pegistrbukv", isRegistr)
-                                        }
-                                        searchSettings = true
-                                    }
-                                )
-                                Text(
-                                    stringResource(R.string.registr),
-                                    fontSize = Settings.fontInterface.sp,
-                                    color = MaterialTheme.colorScheme.secondary
-                                )
-                            }
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.clickable {
+                                }
+                            )
+                            Text(
+                                stringResource(R.string.registr),
+                                fontSize = Settings.fontInterface.sp,
+                                color = MaterialTheme.colorScheme.secondary
+                            )
+                        }
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.clickable {
+                                isDakladnaeSupadzenne = if (isDakladnaeSupadzenne == 0) 1
+                                else 0
+                                k.edit {
+                                    putInt("slovocalkam", isDakladnaeSupadzenne)
+                                }
+                                searchSettings = true
+                            }) {
+                            Checkbox(
+                                checked = isDakladnaeSupadzenne == 1,
+                                onCheckedChange = {
                                     isDakladnaeSupadzenne = if (isDakladnaeSupadzenne == 0) 1
                                     else 0
                                     k.edit {
                                         putInt("slovocalkam", isDakladnaeSupadzenne)
                                     }
                                     searchSettings = true
-                                }) {
-                                Checkbox(
-                                    checked = isDakladnaeSupadzenne == 1,
-                                    onCheckedChange = {
-                                        isDakladnaeSupadzenne = if (isDakladnaeSupadzenne == 0) 1
-                                        else 0
-                                        k.edit {
-                                            putInt("slovocalkam", isDakladnaeSupadzenne)
-                                        }
-                                        searchSettings = true
-                                    }
-                                )
-                                Text(
-                                    stringResource(R.string.dakladnae_supadzenne),
-                                    fontSize = Settings.fontInterface.sp,
-                                    color = MaterialTheme.colorScheme.secondary
-                                )
-                            }
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(MaterialTheme.colorScheme.onTertiary)
-                                    .clickable {
-                                        showDropdown = false
-                                    }) {
-                                Icon(modifier = Modifier.align(Alignment.End), painter = painterResource(R.drawable.keyboard_arrow_up), contentDescription = "", tint = PrimaryTextBlack)
-                            }
+                                }
+                            )
+                            Text(
+                                stringResource(R.string.dakladnae_supadzenne),
+                                fontSize = Settings.fontInterface.sp,
+                                color = MaterialTheme.colorScheme.secondary
+                            )
                         }
                     }
                 }

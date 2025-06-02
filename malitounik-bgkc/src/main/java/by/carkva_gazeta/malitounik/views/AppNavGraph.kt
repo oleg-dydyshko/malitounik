@@ -10,7 +10,6 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -49,6 +48,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -93,7 +93,6 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.Popup
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.view.WindowCompat
@@ -291,25 +290,12 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
     NavHost(
         navController = navController,
         startDestination = start,
-        enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(700)) },
-        exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(700)) },
-        popEnterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(700)) },
-        popExitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(700)) }
+        enterTransition = { fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing)) },
+        exitTransition = { fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing)) },
+        popEnterTransition = { fadeIn(tween(durationMillis = 1000, easing = LinearOutSlowInEasing)) },
+        popExitTransition = { fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing)) }
     ) {
-        composable(
-            AllDestinations.KALIANDAR,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.KALIANDAR) {
             Settings.destinations = AllDestinations.KALIANDAR
             MainConteiner(
                 navController = navController,
@@ -318,20 +304,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.AKAFIST_MENU,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.AKAFIST_MENU) {
             Settings.destinations = AllDestinations.AKAFIST_MENU
             MainConteiner(
                 navController = navController,
@@ -340,20 +313,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.RUJANEC_MENU,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.RUJANEC_MENU) {
             Settings.destinations = AllDestinations.RUJANEC_MENU
             MainConteiner(
                 navController = navController,
@@ -362,20 +322,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.MAE_NATATKI_MENU,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.MAE_NATATKI_MENU) {
             Settings.destinations = AllDestinations.MAE_NATATKI_MENU
             MainConteiner(
                 navController = navController,
@@ -384,20 +331,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.BOGASLUJBOVYIA_MENU,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.BOGASLUJBOVYIA_MENU) {
             Settings.destinations = AllDestinations.BOGASLUJBOVYIA_MENU
             MainConteiner(
                 navController = navController,
@@ -406,20 +340,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.MALITVY_MENU,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.MALITVY_MENU) {
             Settings.destinations = AllDestinations.MALITVY_MENU
             MainConteiner(
                 navController = navController,
@@ -428,20 +349,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.BIBLIA_SEMUXA,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.BIBLIA_SEMUXA) {
             Settings.destinations = AllDestinations.BIBLIA_SEMUXA
             MainConteiner(
                 navController = navController,
@@ -450,20 +358,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.BIBLIA_BOKUNA,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.BIBLIA_BOKUNA) {
             Settings.destinations = AllDestinations.BIBLIA_BOKUNA
             MainConteiner(
                 navController = navController,
@@ -472,20 +367,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.BIBLIA_NADSAN,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.BIBLIA_NADSAN) {
             Settings.destinations = AllDestinations.BIBLIA_NADSAN
             MainConteiner(
                 navController = navController,
@@ -494,20 +376,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.BIBLIA_CHARNIAUSKI,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.BIBLIA_CHARNIAUSKI) {
             Settings.destinations = AllDestinations.BIBLIA_CHARNIAUSKI
             MainConteiner(
                 navController = navController,
@@ -516,20 +385,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.BIBLIA_SINODAL,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.BIBLIA_SINODAL) {
             Settings.destinations = AllDestinations.BIBLIA_SINODAL
             MainConteiner(
                 navController = navController,
@@ -538,20 +394,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.KALIANDAR_YEAR,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.KALIANDAR_YEAR) {
             Settings.destinations = AllDestinations.KALIANDAR_YEAR
             MainConteiner(
                 navController = navController,
@@ -560,20 +403,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.VYBRANAE_LIST,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.VYBRANAE_LIST) {
             Settings.destinations = AllDestinations.VYBRANAE_LIST
             MainConteiner(
                 navController = navController,
@@ -582,20 +412,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.BIBLIJATEKA_NIADAUNIA,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.BIBLIJATEKA_NIADAUNIA) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_NIADAUNIA
             MainConteiner(
                 navController = navController,
@@ -604,20 +421,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.BIBLIJATEKA_SPEUNIKI,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.BIBLIJATEKA_SPEUNIKI) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_SPEUNIKI
             MainConteiner(
                 navController = navController,
@@ -626,20 +430,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.BIBLIJATEKA_GISTORYIA,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.BIBLIJATEKA_GISTORYIA) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_GISTORYIA
             MainConteiner(
                 navController = navController,
@@ -648,20 +439,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.BIBLIJATEKA_MALITOUNIKI,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.BIBLIJATEKA_MALITOUNIKI) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_MALITOUNIKI
             MainConteiner(
                 navController = navController,
@@ -670,20 +448,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA
             MainConteiner(
                 navController = navController,
@@ -692,20 +457,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU
             MainConteiner(
                 navController = navController,
@@ -714,20 +466,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.PIESNY_PRASLAULENNIA,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.PIESNY_PRASLAULENNIA) {
             Settings.destinations = AllDestinations.PIESNY_PRASLAULENNIA
             MainConteiner(
                 navController = navController,
@@ -736,20 +475,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.PIESNY_DA_BAGARODZICY,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.PIESNY_DA_BAGARODZICY) {
             Settings.destinations = AllDestinations.PIESNY_DA_BAGARODZICY
             MainConteiner(
                 navController = navController,
@@ -758,20 +484,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.PIESNY_ZA_BELARUS,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.PIESNY_ZA_BELARUS) {
             Settings.destinations = AllDestinations.PIESNY_ZA_BELARUS
             MainConteiner(
                 navController = navController,
@@ -780,20 +493,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.PIESNY_KALIADNYIA,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.PIESNY_KALIADNYIA) {
             Settings.destinations = AllDestinations.PIESNY_KALIADNYIA
             MainConteiner(
                 navController = navController,
@@ -802,20 +502,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.PIESNY_TAIZE,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.PIESNY_TAIZE) {
             Settings.destinations = AllDestinations.PIESNY_TAIZE
             MainConteiner(
                 navController = navController,
@@ -824,20 +511,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.UNDER_PADRYXTOUKA,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.UNDER_PADRYXTOUKA) {
             Bogaslujbovyia(navController, stringResource(R.string.spovedz), "padryxtouka_da_spovedzi.html")
         }
 
@@ -869,20 +543,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             SviatyiaView(navController, svity, position)
         }
 
-        composable(
-            AllDestinations.UNDER_PAMIATKA,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.UNDER_PAMIATKA) {
             Bogaslujbovyia(navController, stringResource(R.string.pamiatka), "pamiatka.html")
         }
 
@@ -894,20 +555,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             Bogaslujbovyia(navController, stringResource(R.string.help), "help.html")
         }
 
-        composable(
-            AllDestinations.UNDER_SVAITY_MUNU,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.UNDER_SVAITY_MUNU) {
             Settings.destinations = AllDestinations.UNDER_SVAITY_MUNU
             MainConteiner(
                 navController = navController,
@@ -916,20 +564,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.UNDER_PARAFII_BGKC,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.UNDER_PARAFII_BGKC) {
             Settings.destinations = AllDestinations.UNDER_PARAFII_BGKC
             MainConteiner(
                 navController = navController,
@@ -938,20 +573,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(
-            AllDestinations.UNDER_PASHALIA,
-            enterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            exitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popEnterTransition = {
-                fadeIn(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            },
-            popExitTransition = {
-                fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-            }) {
+        composable(AllDestinations.UNDER_PASHALIA) {
             Settings.destinations = AllDestinations.UNDER_PASHALIA
             MainConteiner(
                 navController = navController,
@@ -961,7 +583,8 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
         }
 
         composable(
-            AllDestinations.BIBLIJATEKA + "/{title}/{fileName}") { stackEntry ->
+            AllDestinations.BIBLIJATEKA + "/{title}/{fileName}"
+        ) { stackEntry ->
             val title = stackEntry.arguments?.getString("title") ?: ""
             val fileName = stackEntry.arguments?.getString("fileName") ?: ""
             Biblijateka(navController, title, fileName)
@@ -1850,23 +1473,13 @@ fun MainConteiner(
             bottomBar = {
                 if (!(currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.RUJANEC_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA || currentRoute == AllDestinations.UNDER_PARAFII_BGKC || currentRoute == AllDestinations.UNDER_SVAITY_MUNU || currentRoute.contains("BIBLIA", ignoreCase = true) || currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.MAE_NATATKI_MENU)) {
                     if (!searchText) {
-                        Popup(
-                            alignment = Alignment.BottomCenter,
-                            onDismissRequest = { showDropdown = false }
-                        ) {
-                            AnimatedVisibility(
-                                showDropdown,
-                                enter = fadeIn(
-                                    tween(
-                                        durationMillis = 500,
-                                        easing = LinearOutSlowInEasing
-                                    )
-                                ),
-                                exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
+                        if (showDropdown) {
+                            ModalBottomSheet(
+                                containerColor = MaterialTheme.colorScheme.background,
+                                onDismissRequest = { showDropdown = false }
                             ) {
                                 if (showDropdownMenuPos == 1) {
                                     KaliandarScreenMounth(
-                                        colorBlackboard = colorBlackboard,
                                         setPageCaliandar = { date ->
                                             showDropdown = false
                                             coroutineScope.launch {
@@ -1877,8 +1490,8 @@ fun MainConteiner(
                                                 ) lazyColumnState.scrollToItem(date)
                                                 else pagerState.scrollToPage(date)
                                             }
-                                        },
-                                        close = { showDropdown = false })
+                                        }
+                                    )
                                 }
                             }
                         }
