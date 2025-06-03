@@ -49,6 +49,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -1475,6 +1476,12 @@ fun MainConteiner(
                     if (!searchText) {
                         if (showDropdown) {
                             ModalBottomSheet(
+                                properties = ModalBottomSheetProperties(
+                                    shouldDismissOnBackPress = true,
+                                    isAppearanceLightStatusBars = isAppearanceLight,
+                                    isAppearanceLightNavigationBars = if (Settings.destinations == AllDestinations.KALIANDAR) isAppearanceLight
+                                    else !context.dzenNoch
+                                ),
                                 containerColor = MaterialTheme.colorScheme.background,
                                 onDismissRequest = { showDropdown = false }
                             ) {

@@ -52,6 +52,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -631,6 +632,7 @@ fun Bogaslujbovyia(
                     if (!iskniga) {
                         if (showDropdown) {
                             ModalBottomSheet(
+                                properties = ModalBottomSheetProperties(shouldDismissOnBackPress = true, isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false),
                                 containerColor = MaterialTheme.colorScheme.background,
                                 onDismissRequest = {
                                     if (menuPosition != 2) {
