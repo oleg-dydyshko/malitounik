@@ -65,6 +65,7 @@ import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -581,9 +582,11 @@ fun PadzeiaView(navController: NavHostController) {
                     Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
                 }
             }
+            val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
             if (showDropdown) {
                 ModalBottomSheet(
-                    properties = ModalBottomSheetProperties(shouldDismissOnBackPress = true, isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false),
+                    sheetState = sheetState,
+                    properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false),
                     containerColor = MaterialTheme.colorScheme.background,
                     onDismissRequest = { showDropdown = false }
                 ) {

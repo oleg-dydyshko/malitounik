@@ -644,7 +644,7 @@ fun CytanniList(
         bottomBar = {
             if (showDropdown) {
                 ModalBottomSheet(
-                    properties = ModalBottomSheetProperties(shouldDismissOnBackPress = true, isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false),
+                    properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false),
                     containerColor = MaterialTheme.colorScheme.background,
                     onDismissRequest = {
                         showDropdown = false

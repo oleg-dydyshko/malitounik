@@ -59,6 +59,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -1473,11 +1474,12 @@ fun MainConteiner(
             },
             bottomBar = {
                 if (!(currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.RUJANEC_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA || currentRoute == AllDestinations.UNDER_PARAFII_BGKC || currentRoute == AllDestinations.UNDER_SVAITY_MUNU || currentRoute.contains("BIBLIA", ignoreCase = true) || currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.MAE_NATATKI_MENU)) {
+                    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
                     if (!searchText) {
                         if (showDropdown) {
                             ModalBottomSheet(
+                                sheetState = sheetState,
                                 properties = ModalBottomSheetProperties(
-                                    shouldDismissOnBackPress = true,
                                     isAppearanceLightStatusBars = isAppearanceLight,
                                     isAppearanceLightNavigationBars = if (Settings.destinations == AllDestinations.KALIANDAR) isAppearanceLight
                                     else !context.dzenNoch
