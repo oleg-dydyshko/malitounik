@@ -324,7 +324,10 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                         }
 
                                         else -> {
-                                            navController.popBackStack()
+                                            if (!backPressHandled) {
+                                                backPressHandled = true
+                                                navController.popBackStack()
+                                            }
                                         }
                                     }
                                 },

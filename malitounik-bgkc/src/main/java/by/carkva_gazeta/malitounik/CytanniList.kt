@@ -231,9 +231,10 @@ fun CytanniList(
         mutableStateOf(
             when (biblia) {
                 Settings.CHYTANNI_MARANATA -> k.getBoolean("paralel_maranata", true)
-                Settings.CHYTANNI_BIBLIA -> if (perevodRoot != Settings.PEREVODNADSAN) k.getBoolean(
-                    "paralel_biblia", true
-                ) else false
+                Settings.CHYTANNI_BIBLIA -> {
+                    if (perevodRoot != Settings.PEREVODNADSAN) true
+                    else false
+                }
 
                 else -> false
             }
@@ -590,21 +591,23 @@ fun CytanniList(
                                     }
 
                                     else -> {
-                                        fullscreen = false
-                                        val prefEditors = k.edit()
-                                        if (biblia == Settings.CHYTANNI_BIBLIA) {
-                                            prefEditors.putString("bible_time_${prevodName}_kniga", knigaText)
-                                            prefEditors.putInt("bible_time_${prevodName}_glava", selectedIndex)
-                                            prefEditors.putInt(
-                                                "bible_time_${prevodName}_stix", listState[selectedIndex].firstVisibleItemIndex
-                                            )
+                                        if (!backPressHandled) {
+                                            backPressHandled = true
+                                            fullscreen = false
+                                            val prefEditors = k.edit()
+                                            if (biblia == Settings.CHYTANNI_BIBLIA) {
+                                                prefEditors.putString("bible_time_${prevodName}_kniga", knigaText)
+                                                prefEditors.putInt("bible_time_${prevodName}_glava", selectedIndex)
+                                                prefEditors.putInt(
+                                                    "bible_time_${prevodName}_stix", listState[selectedIndex].firstVisibleItemIndex
+                                                )
+                                            }
+                                            prefEditors.apply()
+                                            autoScrollJob?.cancel()
+                                            autoScrollTextVisableJob?.cancel()
+                                            actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                            navController.popBackStack()
                                         }
-                                        prefEditors.apply()
-                                        autoScrollJob?.cancel()
-                                        autoScrollTextVisableJob?.cancel()
-                                        backPressHandled = true
-                                        actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                                        navController.popBackStack()
                                     }
                                 }
                             }, content = {
@@ -869,25 +872,6 @@ fun CytanniList(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceAround
                             ) {
-                                if (!(biblia == Settings.CHYTANNI_LITURGICHNYIA || perevodRoot == Settings.PEREVODNADSAN || biblia == Settings.CHYTANNI_VYBRANAE)) {
-                                    IconButton(
-                                        onClick = {
-                                            isParallel = !isParallel
-                                            if (autoScrollSensor) autoScroll = true
-                                            k.edit {
-                                                if (biblia == Settings.CHYTANNI_BIBLIA) putBoolean(
-                                                    "paralel_biblia", isParallel
-                                                )
-                                                else putBoolean("paralel_maranata", isParallel)
-                                            }
-                                        }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.two_pager),
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.onSecondary
-                                        )
-                                    }
-                                }
                                 IconButton(
                                     onClick = {
                                         showDropdown = !showDropdown

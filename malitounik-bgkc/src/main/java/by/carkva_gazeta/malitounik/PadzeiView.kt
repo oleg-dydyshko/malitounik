@@ -346,6 +346,7 @@ fun PadzeiaView(navController: NavHostController) {
             }
         )
     }
+    var backPressHandled by remember { mutableStateOf(false) }
     var delitePadzia by remember { mutableStateOf(false) }
     var dialogContextMenu by remember { mutableStateOf(false) }
     if (dialogContextMenu) {
@@ -479,7 +480,10 @@ fun PadzeiaView(navController: NavHostController) {
                     } else {
                         IconButton(
                             onClick = {
-                                navController.popBackStack()
+                                if (!backPressHandled) {
+                                    backPressHandled = true
+                                    navController.popBackStack()
+                                }
                             },
                             content = {
                                 Icon(

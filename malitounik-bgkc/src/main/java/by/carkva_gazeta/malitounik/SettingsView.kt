@@ -131,6 +131,7 @@ fun SettingsView(navController: NavHostController) {
     var dialodLogin by rememberSaveable { mutableStateOf(false) }
     var dialodNotificatin by rememberSaveable { mutableStateOf(false) }
     var admin by remember { mutableStateOf(k.getBoolean("admin", false)) }
+    var backPressHandled by remember { mutableStateOf(false) }
     Settings.fontInterface = remember { getFontInterface(context) }
     if (dialodLogin) {
         DialogLogin { isLogin ->
@@ -232,7 +233,10 @@ fun SettingsView(navController: NavHostController) {
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            navController.popBackStack()
+                            if (!backPressHandled) {
+                                backPressHandled = true
+                                navController.popBackStack()
+                            }
                         },
                         content = {
                             Icon(
@@ -587,6 +591,37 @@ fun SettingsView(navController: NavHostController) {
                         maranafaState = it
                         k.edit {
                             putBoolean("maranafa", maranafaState)
+                        }
+                    }
+                )
+            }
+            var paralelState by remember { mutableStateOf(k.getBoolean("paralel_maranata", true)) }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .clickable {
+                        paralelState = !paralelState
+                        k.edit {
+                            putBoolean("paralel_maranata", paralelState)
+                        }
+                    }
+                    .padding(vertical = 5.dp)
+            ) {
+                Text(
+                    stringResource(R.string.paralel),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 10.dp),
+                    fontSize = (Settings.fontInterface - 2).sp,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+                Switch(
+                    modifier = Modifier.scale(0.8f),
+                    checked = paralelState,
+                    onCheckedChange = {
+                        paralelState = it
+                        k.edit {
+                            putBoolean("paralel_maranata", paralelState)
                         }
                     }
                 )
@@ -966,7 +1001,7 @@ fun SettingsView(navController: NavHostController) {
                         putInt("slovocalkam", 0)
                         putBoolean("admin", false)
                         putBoolean("adminDayInYear", false)
-                        putBoolean("paralel_biblia", true)
+                        putBoolean("paralel_maranata", true)
                     }
                     modeNotification = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
@@ -983,7 +1018,7 @@ fun SettingsView(navController: NavHostController) {
                     Settings.fontInterface = 22f
                     adminDayInYearState = false
                     sinoidalState = false
-                    maranafaState = false
+                    paralelState = false
                     modePkcSvaity = false
                     modePravasSvaity = false
                     modeGosudSvaity = false

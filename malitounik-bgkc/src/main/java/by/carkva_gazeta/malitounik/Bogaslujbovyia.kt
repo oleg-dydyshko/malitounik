@@ -581,7 +581,10 @@ fun Bogaslujbovyia(
                                         }
 
                                         else -> {
-                                            navController.popBackStack()
+                                            if (!backPressHandled) {
+                                                backPressHandled = true
+                                                navController.popBackStack()
+                                            }
                                         }
                                     }
                                 },

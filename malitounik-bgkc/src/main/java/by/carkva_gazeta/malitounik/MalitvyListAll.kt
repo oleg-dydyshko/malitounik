@@ -207,6 +207,7 @@ fun MalitvyListAll(
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
     var textFieldValueState by remember { mutableStateOf("") }
+    var backPressHandled by remember { mutableStateOf(false) }
     val collapsedState = remember(listPrynagodnyia) { listPrynagodnyia.map { true }.toMutableStateList() }
     Scaffold(
         topBar = {
@@ -281,7 +282,10 @@ fun MalitvyListAll(
                         })
                     } else {
                         IconButton(onClick = {
-                            navController.popBackStack()
+                            if (!backPressHandled) {
+                                backPressHandled = true
+                                navController.popBackStack()
+                            }
                         }, content = {
                             Icon(
                                 painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""

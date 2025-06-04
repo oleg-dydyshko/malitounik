@@ -145,6 +145,7 @@ fun SearchBible(
     var showDropdown by remember { mutableStateOf(false) }
     var isRegistr by remember { mutableStateOf(k.getBoolean("pegistrbukv", true)) }
     var isDakladnaeSupadzenne by remember { mutableIntStateOf(k.getInt("slovocalkam", 0)) }
+    var backPressHandled by remember { mutableStateOf(false) }
     val view = LocalView.current
     SideEffect {
         val window = (view.context as Activity).window
@@ -226,7 +227,10 @@ fun SearchBible(
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            navController.popBackStack()
+                            if (!backPressHandled) {
+                                backPressHandled = true
+                                navController.popBackStack()
+                            }
                         },
                         content = {
                             Icon(

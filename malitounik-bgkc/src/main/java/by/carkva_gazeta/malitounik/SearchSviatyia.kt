@@ -81,6 +81,7 @@ fun SearchSviatyia(navController: NavHostController) {
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     var textFieldLoaded by remember { mutableStateOf(false) }
+    var backPressHandled by remember { mutableStateOf(false) }
     var searshString by rememberSaveable { mutableStateOf("") }
     LaunchedEffect(searshString) {
         if (searshString.trim().length >= 3 && res.isEmpty()) {
@@ -178,7 +179,10 @@ fun SearchSviatyia(navController: NavHostController) {
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            navController.popBackStack()
+                            if (!backPressHandled) {
+                                backPressHandled = true
+                                navController.popBackStack()
+                            }
                         },
                         content = {
                             Icon(
