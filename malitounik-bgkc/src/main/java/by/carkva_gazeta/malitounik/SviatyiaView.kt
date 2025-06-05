@@ -15,8 +15,6 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -377,8 +375,8 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                 )
         ) {
             AnimatedVisibility(
-                imageFull, enter = scaleIn(tween(durationMillis = 500, easing = LinearOutSlowInEasing)),
-                exit = scaleOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
+                imageFull, enter = fadeIn(tween(durationMillis = 500, easing = LinearOutSlowInEasing)),
+                exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
             ) {
                 Column(
                     modifier = Modifier.fillMaxSize()

@@ -232,8 +232,7 @@ fun CytanniList(
             when (biblia) {
                 Settings.CHYTANNI_MARANATA -> k.getBoolean("paralel_maranata", true)
                 Settings.CHYTANNI_BIBLIA -> {
-                    if (perevodRoot != Settings.PEREVODNADSAN) true
-                    else false
+                    perevodRoot != Settings.PEREVODNADSAN
                 }
 
                 else -> false
@@ -594,15 +593,15 @@ fun CytanniList(
                                         if (!backPressHandled) {
                                             backPressHandled = true
                                             fullscreen = false
-                                            val prefEditors = k.edit()
-                                            if (biblia == Settings.CHYTANNI_BIBLIA) {
-                                                prefEditors.putString("bible_time_${prevodName}_kniga", knigaText)
-                                                prefEditors.putInt("bible_time_${prevodName}_glava", selectedIndex)
-                                                prefEditors.putInt(
-                                                    "bible_time_${prevodName}_stix", listState[selectedIndex].firstVisibleItemIndex
-                                                )
+                                            k.edit {
+                                                if (biblia == Settings.CHYTANNI_BIBLIA) {
+                                                    putString("bible_time_${prevodName}_kniga", knigaText)
+                                                    putInt("bible_time_${prevodName}_glava", selectedIndex)
+                                                    putInt(
+                                                        "bible_time_${prevodName}_stix", listState[selectedIndex].firstVisibleItemIndex
+                                                    )
+                                                }
                                             }
-                                            prefEditors.apply()
                                             autoScrollJob?.cancel()
                                             autoScrollTextVisableJob?.cancel()
                                             actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
