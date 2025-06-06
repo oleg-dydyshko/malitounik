@@ -635,6 +635,7 @@ fun Bogaslujbovyia(
                     if (!iskniga) {
                         if (showDropdown) {
                             ModalBottomSheet(
+                                modifier = Modifier.padding(horizontal = 10.dp),
                                 properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false),
                                 containerColor = MaterialTheme.colorScheme.background,
                                 onDismissRequest = {

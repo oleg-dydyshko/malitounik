@@ -589,6 +589,7 @@ fun PadzeiaView(navController: NavHostController) {
             val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
             if (showDropdown) {
                 ModalBottomSheet(
+                    modifier = Modifier.padding(horizontal = 10.dp),
                     sheetState = sheetState,
                     properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false),
                     containerColor = MaterialTheme.colorScheme.background,
