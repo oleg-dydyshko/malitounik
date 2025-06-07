@@ -906,17 +906,16 @@ fun MainConteiner(
     SideEffect {
         val window = (view.context as Activity).window
         WindowCompat.getInsetsController(window, view).apply {
-            isAppearanceLightStatusBars = when {
-                navigateIsSpecial -> {
-                    false
-                }
-                Settings.destinations == AllDestinations.KALIANDAR -> isAppearanceLight
-                else -> !context.dzenNoch
+            isAppearanceLightStatusBars = if (navigateIsSpecial) {
+                false
+            } else {
+                isAppearanceLight
             }
             isAppearanceLightNavigationBars = when {
                 navigateIsSpecial -> {
                     false
                 }
+
                 Settings.destinations == AllDestinations.KALIANDAR -> isAppearanceLight
                 else -> !context.dzenNoch
             }
@@ -1038,10 +1037,12 @@ fun MainConteiner(
                         navigateIsSpecial = true
                         navigationActions.navigateToPadryxtouka()
                     }
+
                     AllDestinations.UNDER_PAMIATKA -> {
                         navigateIsSpecial = true
                         navigationActions.navigateToPamiatka()
                     }
+
                     AllDestinations.UNDER_SVAITY_MUNU -> navigationActions.navigateToSviaty()
                     AllDestinations.UNDER_PARAFII_BGKC -> navigationActions.navigateToParafiiBgkc()
                     AllDestinations.UNDER_PASHALIA -> navigationActions.navigateToPashalia()
@@ -1310,7 +1311,7 @@ fun MainConteiner(
                     }
                     BottomAppBar(containerColor = tollBarColor) {
                         Row(
-                            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround
+                            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.CenterVertically
                         ) {
                             if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
                                 IconButton(onClick = {
@@ -1357,7 +1358,6 @@ fun MainConteiner(
                                 Text(
                                     text = Calendar.getInstance()[Calendar.DATE].toString(),
                                     modifier = Modifier
-                                        .padding(vertical = 10.dp)
                                         .clickable {
                                             showDropdownMenuPos = 1
                                             showDropdown = true
