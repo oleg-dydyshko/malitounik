@@ -229,7 +229,7 @@ fun Bogaslujbovyia(
                     while (true) {
                         delay(autoScrollSpeed.toLong())
                         scrollState.scrollBy(2f)
-                        AppNavGraphState.scrollValue = scrollState.value
+                        AppNavGraphState.setScrollValuePosition(title, scrollState.value)
                     }
                 }
             }
@@ -1013,7 +1013,7 @@ fun Bogaslujbovyia(
                         source: NestedScrollSource
                     ): Offset {
                         isScrollRun = true
-                        AppNavGraphState.scrollValue = scrollState.value
+                        AppNavGraphState.setScrollValuePosition(title, scrollState.value)
                         android.util.Log.d("Oleg", scrollState.value.toString())
                         return super.onPreScroll(available, source)
                     }
@@ -1085,7 +1085,7 @@ fun Bogaslujbovyia(
                             },
                             textLayoutResult = { layout ->
                                 coroutineScope.launch {
-                                    scrollState.scrollTo(AppNavGraphState.scrollValue)
+                                    scrollState.scrollTo(AppNavGraphState.getScrollValuePosition(title))
                                 }
                                 textLayout.value = layout
                             }

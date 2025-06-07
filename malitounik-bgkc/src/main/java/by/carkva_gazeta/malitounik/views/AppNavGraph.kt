@@ -170,15 +170,42 @@ import java.io.InputStreamReader
 import java.util.Calendar
 import kotlin.random.Random
 
+data class AppNavGraphStateScroll(val title: String, var scrollPosition: Int)
+
 object AppNavGraphState {
     var bibleItem by mutableStateOf(false)
     var biblijatekaItem by mutableStateOf(false)
     var piesnyItem by mutableStateOf(false)
     var underItem by mutableStateOf(false)
-    var scrollValue = 0
+    val scrollValueList = ArrayList<AppNavGraphStateScroll>()
     var bibleListPosition = -1
     var vybranaeListPosition = -1
     var setAlarm = true
+
+    fun getScrollValuePosition(title: String): Int {
+        var result = 0
+        for (i in scrollValueList.indices) {
+            if (title == scrollValueList[i].title) {
+                result = scrollValueList[i].scrollPosition
+                break
+            }
+        }
+        return result
+    }
+
+    fun setScrollValuePosition(title: String, position: Int) {
+        var result = false
+        for (i in scrollValueList.indices) {
+            if (title == scrollValueList[i].title) {
+                scrollValueList[i].scrollPosition = position
+                result = true
+                break
+            }
+        }
+        if (!result) {
+            scrollValueList.add(AppNavGraphStateScroll(title, position))
+        }
+    }
 
     fun getCytata(context: MainActivity): AnnotatedString {
         val text = openAssetsResources(context, "citata.txt")
