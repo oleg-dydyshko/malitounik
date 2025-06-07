@@ -901,13 +901,25 @@ fun MainConteiner(
         }
         context.intent = null
     }
+    var navigateIsSpecial by remember { mutableStateOf(false) }
     if (drawerState.isOpen) isAppearanceLight = !context.dzenNoch
     SideEffect {
         val window = (view.context as Activity).window
         WindowCompat.getInsetsController(window, view).apply {
-            isAppearanceLightStatusBars = isAppearanceLight
-            isAppearanceLightNavigationBars = if (Settings.destinations == AllDestinations.KALIANDAR) isAppearanceLight
-            else !context.dzenNoch
+            isAppearanceLightStatusBars = when {
+                navigateIsSpecial -> {
+                    false
+                }
+                Settings.destinations == AllDestinations.KALIANDAR -> isAppearanceLight
+                else -> !context.dzenNoch
+            }
+            isAppearanceLightNavigationBars = when {
+                navigateIsSpecial -> {
+                    false
+                }
+                Settings.destinations == AllDestinations.KALIANDAR -> isAppearanceLight
+                else -> !context.dzenNoch
+            }
         }
     }
     var sortedVybranae by remember {
@@ -1022,8 +1034,14 @@ fun MainConteiner(
                     AllDestinations.PIESNY_ZA_BELARUS -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_ZA_BELARUS)
                     AllDestinations.PIESNY_KALIADNYIA -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_KALIADNYIA)
                     AllDestinations.PIESNY_TAIZE -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_TAIZE)
-                    AllDestinations.UNDER_PADRYXTOUKA -> navigationActions.navigateToPadryxtouka()
-                    AllDestinations.UNDER_PAMIATKA -> navigationActions.navigateToPamiatka()
+                    AllDestinations.UNDER_PADRYXTOUKA -> {
+                        navigateIsSpecial = true
+                        navigationActions.navigateToPadryxtouka()
+                    }
+                    AllDestinations.UNDER_PAMIATKA -> {
+                        navigateIsSpecial = true
+                        navigationActions.navigateToPamiatka()
+                    }
                     AllDestinations.UNDER_SVAITY_MUNU -> navigationActions.navigateToSviaty()
                     AllDestinations.UNDER_PARAFII_BGKC -> navigationActions.navigateToParafiiBgkc()
                     AllDestinations.UNDER_PASHALIA -> navigationActions.navigateToPashalia()
@@ -1339,18 +1357,18 @@ fun MainConteiner(
                                 Text(
                                     text = Calendar.getInstance()[Calendar.DATE].toString(),
                                     modifier = Modifier
-                                        .padding(vertical = 7.dp)
+                                        .padding(vertical = 10.dp)
                                         .clickable {
                                             showDropdownMenuPos = 1
                                             showDropdown = true
                                         }
-                                        .clip(shape = RoundedCornerShape(5.dp))
-                                        .background(PrimaryTextBlack)
+                                        .clip(shape = RoundedCornerShape(3.dp))
+                                        .background(textTollBarColor)
                                         .padding(1.dp)
-                                        .clip(shape = RoundedCornerShape(5.dp))
+                                        .clip(shape = RoundedCornerShape(3.dp))
                                         .background(if (isToDay) Divider else StrogiPost)
-                                        .padding(horizontal = 10.dp, vertical = 5.dp),
-                                    fontSize = 18.sp,
+                                        .padding(horizontal = 5.dp),
+                                    fontSize = 14.sp,
                                     color = if (isToDay) PrimaryText else PrimaryTextBlack
                                 )
                             }

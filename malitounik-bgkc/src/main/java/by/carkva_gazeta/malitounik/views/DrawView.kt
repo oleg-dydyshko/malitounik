@@ -53,6 +53,10 @@ import by.carkva_gazeta.malitounik.WidgetRadyjoMaryia
 import by.carkva_gazeta.malitounik.ui.theme.BackgroundDrawelMenu
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun DrawView(
@@ -264,6 +268,12 @@ fun DrawView(
                     .fillMaxWidth()
                     .clickable {
                         AppNavGraphState.bibleItem = !AppNavGraphState.bibleItem
+                        if (AppNavGraphState.bibleItem && !AppNavGraphState.biblijatekaItem && !AppNavGraphState.piesnyItem && !AppNavGraphState.underItem) {
+                            CoroutineScope(Dispatchers.Main).launch {
+                                delay(100)
+                                drawerScrollStete.scrollTo(drawerScrollStete.maxValue)
+                            }
+                        }
                     },
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -295,9 +305,9 @@ fun DrawView(
             AnimatedVisibility(
                 AppNavGraphState.bibleItem, enter = fadeIn(
                     tween(
-                        durationMillis = 1000, easing = LinearOutSlowInEasing
+                        durationMillis = 500, easing = LinearOutSlowInEasing
                     )
-                ), exit = fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                ), exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
             ) {
                 Column {
                     NavigationDrawerItem(
@@ -548,6 +558,12 @@ fun DrawView(
                     .fillMaxWidth()
                     .clickable {
                         AppNavGraphState.biblijatekaItem = !AppNavGraphState.biblijatekaItem
+                        if (AppNavGraphState.biblijatekaItem && !AppNavGraphState.piesnyItem && !AppNavGraphState.underItem) {
+                            CoroutineScope(Dispatchers.Main).launch {
+                                delay(100)
+                                drawerScrollStete.scrollTo(drawerScrollStete.maxValue)
+                            }
+                        }
                     },
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -579,9 +595,9 @@ fun DrawView(
             AnimatedVisibility(
                 AppNavGraphState.biblijatekaItem, enter = fadeIn(
                     tween(
-                        durationMillis = 1000, easing = LinearOutSlowInEasing
+                        durationMillis = 500, easing = LinearOutSlowInEasing
                     )
-                ), exit = fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                ), exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
             ) {
                 Column {
                     NavigationDrawerItem(
@@ -737,6 +753,12 @@ fun DrawView(
                     .fillMaxWidth()
                     .clickable {
                         AppNavGraphState.piesnyItem = !AppNavGraphState.piesnyItem
+                        if (AppNavGraphState.piesnyItem && !AppNavGraphState.underItem) {
+                            CoroutineScope(Dispatchers.Main).launch {
+                                delay(100)
+                                drawerScrollStete.scrollTo(drawerScrollStete.maxValue)
+                            }
+                        }
                     },
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -768,9 +790,9 @@ fun DrawView(
             AnimatedVisibility(
                 AppNavGraphState.piesnyItem, enter = fadeIn(
                     tween(
-                        durationMillis = 1000, easing = LinearOutSlowInEasing
+                        durationMillis = 500, easing = LinearOutSlowInEasing
                     )
-                ), exit = fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                ), exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
             ) {
                 Column {
                     NavigationDrawerItem(
@@ -906,6 +928,12 @@ fun DrawView(
                     .fillMaxWidth()
                     .clickable {
                         AppNavGraphState.underItem = !AppNavGraphState.underItem
+                        if (AppNavGraphState.underItem) {
+                            CoroutineScope(Dispatchers.Main).launch {
+                                delay(100)
+                                drawerScrollStete.scrollTo(drawerScrollStete.maxValue)
+                            }
+                        }
                     },
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -937,9 +965,9 @@ fun DrawView(
             AnimatedVisibility(
                 AppNavGraphState.underItem, enter = fadeIn(
                     tween(
-                        durationMillis = 1000, easing = LinearOutSlowInEasing
+                        durationMillis = 500, easing = LinearOutSlowInEasing
                     )
-                ), exit = fadeOut(tween(durationMillis = 1000, easing = LinearOutSlowInEasing))
+                ), exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
             ) {
                 Column {
                     NavigationDrawerItem(
