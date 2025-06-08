@@ -228,7 +228,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                 sviatyiaListLocale.clear()
                                 sviatyiaListLocale.addAll(loadOpisanieSviatyia(context, year, mun, day))
                                 sviatyiaList.clear()
-                                sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, true, position))
+                                sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, false, position))
                             }
                             downloadOpisanieSviatyia(context, mun)
                             sviatyiaListLocale.clear()
