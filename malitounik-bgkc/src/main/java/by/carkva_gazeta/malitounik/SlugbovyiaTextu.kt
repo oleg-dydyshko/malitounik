@@ -2397,7 +2397,7 @@ class SlugbovyiaTextu {
         var day = 0
         val resultSlugba = datMinALL.filter {
             when (slugbaType) {
-                VIACZERNIA, VIACZERNIA_UVIECZARY -> it.sluzba == VIACZERNIA || it.sluzba == VIACZERNIA_Z_LITURHIJA
+                VIACZERNIA, VIACZERNIA_UVIECZARY -> it.sluzba == VIACZERNIA || it.sluzba == VIACZERNIA_UVIECZARY || it.sluzba == VIACZERNIA_Z_LITURHIJA
                 VIALHADZINY -> it.sluzba == VIALHADZINY || it.sluzba == VELIKODNYIAHADZINY || it.sluzba == HADZINA6
                 else -> it.sluzba == slugbaType
             }
