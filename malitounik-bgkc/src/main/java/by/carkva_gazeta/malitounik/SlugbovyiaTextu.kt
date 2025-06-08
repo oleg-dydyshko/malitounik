@@ -110,32 +110,32 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                14, "Нядзеля міраносіцаў", "bogashlugbovya/ndz_miranosicau_viaczernia_u_niadzielu.html", VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
+                14, "Нядзеля міраносіцаў", "bogashlugbovya/ndz_miranosicau_viaczernia_u_niadzielu.html", VIACZERNIA_UVIECZARY, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                15, "Панядзелак пасьля Нядзелі міраносіцаў увечары", "bogashlugbovya/ndz_miranosicau_01_viaczernia.html", VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
+                15, "Панядзелак пасьля Нядзелі міраносіцаў увечары", "bogashlugbovya/ndz_miranosicau_01_viaczernia.html", VIACZERNIA_UVIECZARY, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                16, "Аўторак пасьля Нядзелі міраносіцаў увечары", "bogashlugbovya/ndz_miranosicau_02_viaczernia.html", VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
+                16, "Аўторак пасьля Нядзелі міраносіцаў увечары", "bogashlugbovya/ndz_miranosicau_02_viaczernia.html", VIACZERNIA_UVIECZARY, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                17, "Серада пасьля Нядзелі міраносіцаў увечары", "bogashlugbovya/ndz_miranosicau_03_viaczernia.html", VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
+                17, "Серада пасьля Нядзелі міраносіцаў увечары", "bogashlugbovya/ndz_miranosicau_03_viaczernia.html", VIACZERNIA_UVIECZARY, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                18, "Чацьвер пасьля Нядзелі міраносіцаў увечары", "bogashlugbovya/ndz_miranosicau_04_viaczernia.html", VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
+                18, "Чацьвер пасьля Нядзелі міраносіцаў увечары", "bogashlugbovya/ndz_miranosicau_04_viaczernia.html", VIACZERNIA_UVIECZARY, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                19, "Пятніца пасьля Нядзелі міраносіцаў увечары", "bogashlugbovya/ndz_miranosicau_05_viaczernia.html", VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
+                19, "Пятніца пасьля Нядзелі міраносіцаў увечары", "bogashlugbovya/ndz_miranosicau_05_viaczernia.html", VIACZERNIA_UVIECZARY, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
@@ -175,7 +175,7 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                24, "Серада Паловы сьвята Пяцідзясятніцы ўвечары", "bogashlugbovya/palova_sviata_piacidziasiatnicy_viaczernia_u_sieradu.html", VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
+                24, "Палова сьвята Пяцідзясятніцы", "bogashlugbovya/palova_sviata_piacidziasiatnicy_viaczernia_u_sieradu.html", VIACZERNIA_UVIECZARY, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
@@ -255,7 +255,7 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                48, "Зыход Сьвятога Духа (Сёмуха)", "bogashlugbovya/zychod_sv_ducha_viaczernia_u_subotu.html", VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
+                48, "Зыход Сьвятога Духа (Сёмуха)", "bogashlugbovya/zychod_sv_ducha_viaczernia_u_subotu.html", VIACZERNIA_UVIECZARY, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
@@ -270,7 +270,7 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                49, "Панядзелак Сьвятога Духа", "bogashlugbovya/paniadzielak_sv_ducha_niadziela_uvieczary_viaczernia.html", VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
+                49, "Зыход Сьвятога Духа (Сёмуха)", "bogashlugbovya/paniadzielak_sv_ducha_niadziela_uvieczary_viaczernia.html", VIACZERNIA_UVIECZARY, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
@@ -280,22 +280,22 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                50, "Панядзелак Сьвятога Духа", "bogashlugbovya/paniadzielak_sv_ducha_uvieczary_viaczernia.html", VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
+                50, "Панядзелак Сьвятога Духа", "bogashlugbovya/paniadzielak_sv_ducha_uvieczary_viaczernia.html", VIACZERNIA_UVIECZARY, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                51, "Аўторак пасьля Сёмухі ўвечары", "bogashlugbovya/siomucha_02autorak_viaczernia.html", VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
+                51, "Аўторак пасьля Сёмухі ўвечары", "bogashlugbovya/siomucha_02autorak_viaczernia.html", VIACZERNIA_UVIECZARY, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                52, "Серада пасьля Сёмухі ўвечары", "bogashlugbovya/siomucha_03sierada_viaczernia.html", VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
+                52, "Серада пасьля Сёмухі ўвечары", "bogashlugbovya/siomucha_03sierada_viaczernia.html", VIACZERNIA_UVIECZARY, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                53, "Чацьвер пасьля Сёмухі ўвечары", "bogashlugbovya/siomucha_04czacvier_viaczernia.html", VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
+                53, "Чацьвер пасьля Сёмухі ўвечары", "bogashlugbovya/siomucha_04czacvier_viaczernia.html", VIACZERNIA_UVIECZARY, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
