@@ -100,6 +100,7 @@ class FilterBiblijatekaModel : ViewModel() {
 
 var biblijatekaJob: Job? = null
 
+@Suppress("DEPRECATION")
 @Composable
 fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerPadding: PaddingValues, searchText: Boolean, search: String) {
     val context = LocalContext.current
@@ -160,6 +161,15 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
                         AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU -> {
                             var newList = list.filter { it[4].toInt() == 5 } as ArrayList<ArrayList<String>>
                             bibliatekaList.addAll(newList)
+                            bibliatekaList.sortByDescending {
+                                val t1 = it[0].indexOf("(")
+                                val t2 = it[0].indexOf(")")
+                                if (t2 != -1) {
+                                    it[0].substring(t1 + 1, t2)
+                                } else {
+                                    it[0]
+                                }
+                            }
                         }
                     }
                 },

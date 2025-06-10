@@ -57,6 +57,7 @@ import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -107,6 +108,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import by.carkva_gazeta.malitounik.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik.ui.theme.Button
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.Post
@@ -115,6 +117,7 @@ import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
 import by.carkva_gazeta.malitounik.ui.theme.StrogiPost
+import by.carkva_gazeta.malitounik.ui.theme.Transporent
 import by.carkva_gazeta.malitounik.views.HtmlText
 import by.carkva_gazeta.malitounik.views.openAssetsResources
 import com.google.gson.Gson
@@ -646,7 +649,7 @@ fun CytanniList(
         bottomBar = {
             if (showDropdown) {
                 ModalBottomSheet(
-                    modifier = Modifier.padding(horizontal = 10.dp),
+                    scrimColor = Transporent,
                     properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false),
                     containerColor = MaterialTheme.colorScheme.background,
                     onDismissRequest = {
@@ -853,7 +856,7 @@ fun CytanniList(
                                         putFloat("font_biblia", it)
                                     }
                                     fontSize = it
-                                })
+                                }, colors = SliderDefaults.colors(inactiveTrackColor = Divider))
                         }
                     }
                 }
@@ -1025,8 +1028,10 @@ fun CytanniList(
                         state = lazyRowState
                     ) {
                         items(listState.size) { page ->
-                            val color = if (selectedIndex == page) Post
-                            else Divider
+                            val color = if (selectedIndex == page) BezPosta
+                            else Color.Unspecified
+                            val textColor = if (selectedIndex == page) PrimaryText
+                            else MaterialTheme.colorScheme.secondary
                             Text(
                                 (page + 1).toString(), modifier = Modifier
                                     .clickable {
@@ -1038,7 +1043,7 @@ fun CytanniList(
                                         width = 1.dp, color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(10.dp)
                                     )
                                     .background(color)
-                                    .padding(5.dp), color = PrimaryText, fontSize = Settings.fontInterface.sp)
+                                    .padding(5.dp), color = textColor, fontSize = Settings.fontInterface.sp)
                         }
                     }
                 }

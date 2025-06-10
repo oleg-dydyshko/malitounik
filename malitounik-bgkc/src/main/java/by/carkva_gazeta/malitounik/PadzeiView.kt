@@ -52,6 +52,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.RadioButton
@@ -108,6 +109,7 @@ import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik.ui.theme.Transporent
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
@@ -589,7 +591,7 @@ fun PadzeiaView(navController: NavHostController) {
             val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
             if (showDropdown) {
                 ModalBottomSheet(
-                    modifier = Modifier.padding(horizontal = 10.dp),
+                    scrimColor = Transporent,
                     sheetState = sheetState,
                     properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false),
                     containerColor = MaterialTheme.colorScheme.background,
@@ -908,7 +910,7 @@ fun AddPadzeia(
                     readOnly = true,
                     lineLimits = TextFieldLineLimits.SingleLine,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded2) },
-                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                    colors = ExposedDropdownMenuDefaults.textFieldColors(focusedTextColor = PrimaryText, unfocusedTextColor = PrimaryText, focusedContainerColor = Divider, unfocusedContainerColor = Divider, focusedTrailingIconColor = PrimaryText, unfocusedTrailingIconColor = PrimaryText),
                     textStyle = TextStyle(fontSize = Settings.fontInterface.sp),
                 )
                 ExposedDropdownMenu(
@@ -929,6 +931,7 @@ fun AddPadzeia(
                                 expanded2 = false
                             },
                             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                            colors = MenuDefaults.itemColors(textColor = PrimaryText)
                         )
                     }
                 }
@@ -984,7 +987,7 @@ fun AddPadzeia(
                     readOnly = true,
                     lineLimits = TextFieldLineLimits.SingleLine,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                    colors = ExposedDropdownMenuDefaults.textFieldColors(focusedTextColor = PrimaryText, unfocusedTextColor = PrimaryText, focusedContainerColor = Divider, unfocusedContainerColor = Divider, focusedTrailingIconColor = PrimaryText, unfocusedTrailingIconColor = PrimaryText),
                     textStyle = TextStyle(fontSize = Settings.fontInterface.sp)
                 )
                 ExposedDropdownMenu(
@@ -1005,6 +1008,7 @@ fun AddPadzeia(
                                 expanded = false
                             },
                             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                            colors = MenuDefaults.itemColors(textColor = PrimaryText)
                         )
                     }
                 }

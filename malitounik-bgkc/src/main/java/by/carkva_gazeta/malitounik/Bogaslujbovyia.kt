@@ -55,12 +55,14 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -113,10 +115,12 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik.ui.theme.Button
+import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.Post
 import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik.ui.theme.Transporent
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.HtmlText
 import by.carkva_gazeta.malitounik.views.findCaliandarToDay
@@ -635,14 +639,13 @@ fun Bogaslujbovyia(
                     if (!iskniga) {
                         if (showDropdown) {
                             ModalBottomSheet(
-                                modifier = Modifier.padding(horizontal = 10.dp),
+                                sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+                                scrimColor = Transporent,
                                 properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false),
                                 containerColor = MaterialTheme.colorScheme.background,
                                 onDismissRequest = {
-                                    if (menuPosition != 2) {
-                                        showDropdown = false
-                                        if (autoScrollSensor) autoScroll = true
-                                    }
+                                    showDropdown = false
+                                    if (autoScrollSensor) autoScroll = true
                                 }
                             ) {
                                 Column {
@@ -746,7 +749,7 @@ fun Bogaslujbovyia(
                                                     putFloat("font_biblia", it)
                                                 }
                                                 fontSize = it
-                                            }
+                                            }, colors = SliderDefaults.colors(inactiveTrackColor = Divider)
                                         )
                                     }
                                 }

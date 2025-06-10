@@ -38,7 +38,7 @@ fun ParafiiBGKC(navController: NavHostController, innerPadding: PaddingValues) {
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
-    val curyia = BogaslujbovyiaListData("Курыя Апостальскай Візітатуры БГКЦ", "parafii_bgkc/dzie_kuryja")
+    val curyia = BogaslujbovyiaListData("Курыя Апостальскай Візітатуры БГКЦ", "parafii_bgkc/dzie_kuryja.html")
     val listCent = ArrayList<BogaslujbovyiaListData>()
     val listUsx = ArrayList<BogaslujbovyiaListData>()
     val listZax = ArrayList<BogaslujbovyiaListData>()

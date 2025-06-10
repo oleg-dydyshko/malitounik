@@ -45,9 +45,11 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -459,7 +461,7 @@ fun SettingsView(navController: NavHostController) {
                     }
                     fontSizeInterface = it
                     Settings.fontInterface = it
-                })
+                }, colors = SliderDefaults.colors(inactiveTrackColor = Divider))
             var adminDayInYearState by remember { mutableStateOf(k.getBoolean("adminDayInYear", false)) }
             if (admin) {
                 Row(
@@ -784,9 +786,10 @@ fun SettingsView(navController: NavHostController) {
                     lineLimits = TextFieldLineLimits.SingleLine,
                     textStyle = TextStyle(fontSize = (Settings.fontInterface - 2).sp),
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSviaty) },
-                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                    colors = ExposedDropdownMenuDefaults.textFieldColors(focusedTextColor = PrimaryText, unfocusedTextColor = PrimaryText, focusedContainerColor = Divider, unfocusedContainerColor = Divider, focusedTrailingIconColor = PrimaryText, unfocusedTrailingIconColor = PrimaryText),
                 )
                 ExposedDropdownMenu(
+                    containerColor = Divider,
                     expanded = expandedSviaty,
                     onDismissRequest = { expandedSviaty = false },
                 ) {
@@ -801,6 +804,7 @@ fun SettingsView(navController: NavHostController) {
                                 }
                             },
                             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                            colors = MenuDefaults.itemColors(textColor = PrimaryText)
                         )
                     }
                 }

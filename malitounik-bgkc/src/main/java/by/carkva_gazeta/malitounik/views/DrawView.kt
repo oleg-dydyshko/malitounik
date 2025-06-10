@@ -106,7 +106,7 @@ fun DrawView(
                 Icon(
                     modifier = Modifier.size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
-                    contentDescription = null,
+                    contentDescription = "",
                     tint = MaterialTheme.colorScheme.primary
                 )
             },
@@ -131,7 +131,7 @@ fun DrawView(
                     modifier = Modifier.size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
+                    contentDescription = ""
                 )
             },
             shape = MaterialTheme.shapes.small,
@@ -155,7 +155,7 @@ fun DrawView(
                     modifier = Modifier.size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
+                    contentDescription = ""
                 )
             },
             shape = MaterialTheme.shapes.small,
@@ -179,7 +179,7 @@ fun DrawView(
                     modifier = Modifier.size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
+                    contentDescription = ""
                 )
             },
             shape = MaterialTheme.shapes.small,
@@ -203,7 +203,7 @@ fun DrawView(
                     modifier = Modifier.size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
+                    contentDescription = ""
                 )
             },
             shape = MaterialTheme.shapes.small,
@@ -227,7 +227,7 @@ fun DrawView(
                     modifier = Modifier.size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
+                    contentDescription = ""
                 )
             },
             shape = MaterialTheme.shapes.small,
@@ -251,7 +251,7 @@ fun DrawView(
                     modifier = Modifier.size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
+                    contentDescription = ""
                 )
             },
             shape = MaterialTheme.shapes.small,
@@ -266,6 +266,7 @@ fun DrawView(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(horizontal = 5.dp)
                     .clickable {
                         AppNavGraphState.bibleItem = !AppNavGraphState.bibleItem
                         if (AppNavGraphState.bibleItem && !AppNavGraphState.biblijatekaItem && !AppNavGraphState.piesnyItem && !AppNavGraphState.underItem) {
@@ -279,15 +280,15 @@ fun DrawView(
             ) {
                 Icon(
                     modifier = Modifier
-                        .padding(start = 21.dp, end = 2.dp)
+                        .padding(start = 16.dp, end = 2.dp)
                         .size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
+                    contentDescription = ""
                 )
                 Text(
                     modifier = Modifier
-                        .padding(10.dp)
+                        .padding(16.dp)
                         .weight(1f),
                     text = stringResource(id = R.string.bibliaAll),
                     fontSize = Settings.fontInterface.sp,
@@ -299,7 +300,7 @@ fun DrawView(
                         .size(22.dp, 22.dp),
                     painter = painterResource(if (AppNavGraphState.bibleItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
-                    contentDescription = null
+                    contentDescription = ""
                 )
             }
             AnimatedVisibility(
@@ -327,11 +328,11 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                contentDescription = ""
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -351,11 +352,11 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                contentDescription = ""
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -375,11 +376,11 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                contentDescription = ""
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -399,11 +400,11 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                contentDescription = ""
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp),
                         colors = navigationDrawerItemColors
                     )
                     if (k.getBoolean("sinoidal_bible", false)) {
@@ -424,11 +425,11 @@ fun DrawView(
                                     modifier = Modifier.size(12.dp, 12.dp),
                                     painter = painterResource(R.drawable.krest),
                                     tint = MaterialTheme.colorScheme.primary,
-                                    contentDescription = null
+                                    contentDescription = ""
                                 )
                             },
                             shape = MaterialTheme.shapes.small,
-                            modifier = Modifier.padding(horizontal = 5.dp),
+                            modifier = Modifier.padding(horizontal = 10.dp),
                             colors = navigationDrawerItemColors
                         )
                     }
@@ -445,11 +446,11 @@ fun DrawView(
                     .size(22.dp, 22.dp),
                 painter = painterResource(R.drawable.krest),
                 tint = MaterialTheme.colorScheme.primary,
-                contentDescription = null
+                contentDescription = ""
             )
             Text(
                 modifier = Modifier
-                    .padding(10.dp)
+                    .padding(16.dp)
                     .weight(1f),
                 text = stringResource(id = R.string.padie_maryia),
                 fontSize = Settings.fontInterface.sp,
@@ -540,7 +541,7 @@ fun DrawView(
                     modifier = Modifier.size(5.dp, 5.dp),
                     painter = painterResource(R.drawable.poiter),
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
+                    contentDescription = ""
                 )
                 Text(
                     Settings.titleRadioMaryia.value,
@@ -556,6 +557,7 @@ fun DrawView(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(horizontal = 5.dp)
                     .clickable {
                         AppNavGraphState.biblijatekaItem = !AppNavGraphState.biblijatekaItem
                         if (AppNavGraphState.biblijatekaItem && !AppNavGraphState.piesnyItem && !AppNavGraphState.underItem) {
@@ -569,15 +571,15 @@ fun DrawView(
             ) {
                 Icon(
                     modifier = Modifier
-                        .padding(start = 21.dp, end = 2.dp)
+                        .padding(start = 16.dp, end = 2.dp)
                         .size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
+                    contentDescription = ""
                 )
                 Text(
                     modifier = Modifier
-                        .padding(10.dp)
+                        .padding(16.dp)
                         .weight(1f),
                     text = stringResource(id = R.string.bibliateka_carkvy),
                     fontSize = Settings.fontInterface.sp,
@@ -589,7 +591,7 @@ fun DrawView(
                         .size(22.dp, 22.dp),
                     painter = painterResource(if (AppNavGraphState.biblijatekaItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
-                    contentDescription = null
+                    contentDescription = ""
                 )
             }
             AnimatedVisibility(
@@ -617,11 +619,11 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                contentDescription = ""
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -641,11 +643,11 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                contentDescription = ""
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -665,11 +667,11 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                contentDescription = ""
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -689,11 +691,11 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                contentDescription = ""
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -713,11 +715,11 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                contentDescription = ""
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -737,11 +739,11 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                contentDescription = ""
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp),
                         colors = navigationDrawerItemColors
                     )
                 }
@@ -751,6 +753,7 @@ fun DrawView(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(horizontal = 5.dp)
                     .clickable {
                         AppNavGraphState.piesnyItem = !AppNavGraphState.piesnyItem
                         if (AppNavGraphState.piesnyItem && !AppNavGraphState.underItem) {
@@ -764,15 +767,15 @@ fun DrawView(
             ) {
                 Icon(
                     modifier = Modifier
-                        .padding(start = 21.dp, end = 2.dp)
+                        .padding(start = 16.dp, end = 2.dp)
                         .size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
+                    contentDescription = ""
                 )
                 Text(
                     modifier = Modifier
-                        .padding(10.dp)
+                        .padding(16.dp)
                         .weight(1f),
                     text = stringResource(id = R.string.song),
                     fontSize = Settings.fontInterface.sp,
@@ -784,7 +787,7 @@ fun DrawView(
                         .size(22.dp, 22.dp),
                     painter = painterResource(if (AppNavGraphState.piesnyItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
-                    contentDescription = null
+                    contentDescription = ""
                 )
             }
             AnimatedVisibility(
@@ -812,11 +815,11 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                contentDescription = ""
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -836,11 +839,11 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                contentDescription = ""
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -860,11 +863,11 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                contentDescription = ""
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -884,11 +887,11 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                contentDescription = ""
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -908,7 +911,7 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                contentDescription = ""
                             )
                         },
                         shape = MaterialTheme.shapes.small,
@@ -926,6 +929,7 @@ fun DrawView(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(horizontal = 5.dp)
                     .clickable {
                         AppNavGraphState.underItem = !AppNavGraphState.underItem
                         if (AppNavGraphState.underItem) {
@@ -939,15 +943,15 @@ fun DrawView(
             ) {
                 Icon(
                     modifier = Modifier
-                        .padding(start = 21.dp, end = 2.dp)
+                        .padding(start = 16.dp, end = 2.dp)
                         .size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
+                    contentDescription = ""
                 )
                 Text(
                     modifier = Modifier
-                        .padding(10.dp)
+                        .padding(16.dp)
                         .weight(1f),
                     text = stringResource(R.string.other),
                     fontSize = Settings.fontInterface.sp,
@@ -959,7 +963,7 @@ fun DrawView(
                         .size(22.dp, 22.dp),
                     painter = painterResource(if (AppNavGraphState.underItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
-                    contentDescription = null
+                    contentDescription = ""
                 )
             }
             AnimatedVisibility(
@@ -987,11 +991,11 @@ fun DrawView(
                                 modifier = Modifier.size(5.dp, 5.dp),
                                 painter = painterResource(R.drawable.poiter),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                contentDescription = ""
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -1011,11 +1015,11 @@ fun DrawView(
                                 modifier = Modifier.size(5.dp, 5.dp),
                                 painter = painterResource(R.drawable.poiter),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                contentDescription = ""
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -1035,11 +1039,11 @@ fun DrawView(
                                 modifier = Modifier.size(5.dp, 5.dp),
                                 painter = painterResource(R.drawable.poiter),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                contentDescription = ""
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -1059,11 +1063,11 @@ fun DrawView(
                                 modifier = Modifier.size(5.dp, 5.dp),
                                 painter = painterResource(R.drawable.poiter),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                contentDescription = ""
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp),
                         colors = navigationDrawerItemColors
                     )
                     NavigationDrawerItem(
@@ -1083,11 +1087,11 @@ fun DrawView(
                                 modifier = Modifier.size(5.dp, 5.dp),
                                 painter = painterResource(R.drawable.poiter),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                contentDescription = ""
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp),
                         colors = navigationDrawerItemColors
                     )
                 }

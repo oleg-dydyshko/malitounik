@@ -50,7 +50,7 @@ class SlugbovyiaTextu {
     init {
         datMinALL.add(
             SlugbovyiaTextuData(
-                6, "Нядзеля Тамаша (Антыпасха)", "bogashlugbovya/ndz_tamasza_viaczernia_subota.html", VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
+                6, "Субота перад Нядзеляй Тамаша (Антыпасха) увечары", "bogashlugbovya/ndz_tamasza_viaczernia_subota.html", VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
@@ -95,7 +95,7 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                13, "Нядзеля міраносіцаў", "bogashlugbovya/ndz_miranosicau_viaczernia_u_subotu.html", VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
+                13, "Субота перад Нядзеляй міраносіцаў увечары", "bogashlugbovya/ndz_miranosicau_viaczernia_u_subotu.html", VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
@@ -140,7 +140,7 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                20, "Нядзеля расслабленага", "bogashlugbovya/ndz_rasslablenaha_viaczernia_u_subotu_vieczaram.html", VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
+                20, "Субота перад Нядзеляй расслабленага увечары", "bogashlugbovya/ndz_rasslablenaha_viaczernia_u_subotu_vieczaram.html", VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
@@ -165,7 +165,7 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                23, "Палова сьвята Пяцідзясятніцы", "bogashlugbovya/palova_sviata_piacidziasiatnicy_viaczernia_u_autorak.html", VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
+                23, "Аўторак перад Паловай сьвята Пяцідзясятніцы увечары", "bogashlugbovya/palova_sviata_piacidziasiatnicy_viaczernia_u_autorak.html", VIACZERNIA, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(
@@ -255,7 +255,7 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                48, "Зыход Сьвятога Духа (Сёмуха)", "bogashlugbovya/zychod_sv_ducha_viaczernia_u_subotu.html", VIACZERNIA_UVIECZARY, pasxa = true, mineia = MINEIA_KVETNAIA
+                48, "Субота перад Зыходам Сьвятога Духа (Сёмуха) увечары", "bogashlugbovya/zychod_sv_ducha_viaczernia_u_subotu.html", VIACZERNIA_UVIECZARY, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(

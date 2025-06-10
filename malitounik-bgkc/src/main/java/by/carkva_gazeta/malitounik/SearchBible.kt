@@ -28,6 +28,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.Scaffold
@@ -78,10 +79,12 @@ import androidx.core.text.isDigitsOnly
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
+import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryBlack
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik.ui.theme.Transporent
 import by.carkva_gazeta.malitounik.views.openAssetsResources
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -264,7 +267,7 @@ fun SearchBible(
         ) {
             if (showDropdown) {
                 ModalBottomSheet(
-                    modifier = Modifier.padding(horizontal = 10.dp),
+                    scrimColor = Transporent,
                     properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false),
                     containerColor = MaterialTheme.colorScheme.background,
                     onDismissRequest = {
@@ -404,7 +407,7 @@ fun DropdownMenuBox(
             readOnly = true,
             lineLimits = TextFieldLineLimits.SingleLine,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+            colors = ExposedDropdownMenuDefaults.textFieldColors(focusedTextColor = PrimaryText, unfocusedTextColor = PrimaryText, focusedContainerColor = Divider, unfocusedContainerColor = Divider, focusedTrailingIconColor = PrimaryText, unfocusedTrailingIconColor = PrimaryText),
         )
         ExposedDropdownMenu(
             expanded = expanded,
@@ -422,6 +425,7 @@ fun DropdownMenuBox(
                         onSearchStart()
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                    colors = MenuDefaults.itemColors(textColor = PrimaryText)
                 )
             }
         }
