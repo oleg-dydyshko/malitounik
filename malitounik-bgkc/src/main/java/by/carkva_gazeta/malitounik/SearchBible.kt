@@ -410,6 +410,7 @@ fun DropdownMenuBox(
             colors = ExposedDropdownMenuDefaults.textFieldColors(focusedTextColor = PrimaryText, unfocusedTextColor = PrimaryText, focusedContainerColor = Divider, unfocusedContainerColor = Divider, focusedTrailingIconColor = PrimaryText, unfocusedTrailingIconColor = PrimaryText),
         )
         ExposedDropdownMenu(
+            containerColor = Divider,
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {

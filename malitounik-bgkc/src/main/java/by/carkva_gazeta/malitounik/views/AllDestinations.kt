@@ -26,8 +26,8 @@ import by.carkva_gazeta.malitounik.views.AllDestinations.RUJANEC_MENU
 import by.carkva_gazeta.malitounik.views.AllDestinations.SEARCH_BIBLIA
 import by.carkva_gazeta.malitounik.views.AllDestinations.SEARCH_SVITYIA
 import by.carkva_gazeta.malitounik.views.AllDestinations.SETTINGS_VIEW
-import by.carkva_gazeta.malitounik.views.AllDestinations.SHTO_NOVAGA
 import by.carkva_gazeta.malitounik.views.AllDestinations.SVITYIA_VIEW
+import by.carkva_gazeta.malitounik.views.AllDestinations.UMOUNIA_ZNACHENNI
 import by.carkva_gazeta.malitounik.views.AllDestinations.UNDER_PADRYXTOUKA
 import by.carkva_gazeta.malitounik.views.AllDestinations.UNDER_PAMIATKA
 import by.carkva_gazeta.malitounik.views.AllDestinations.UNDER_PARAFII_BGKC
@@ -72,14 +72,13 @@ object AllDestinations {
     const val UNDER_SVAITY_MUNU = "Under_Svity_Menu"
     const val UNDER_PARAFII_BGKC = "Under_Parafii_Bgkc"
     const val UNDER_PASHALIA = "Under_Pashalia"
-    const val SHTO_NOVAGA = "Shto_Novaga"
+    const val UMOUNIA_ZNACHENNI = "Shto_Novaga"
     const val PRANAS = "PraNas"
     const val HELP = "Help"
     const val SEARCH_SVITYIA = "Search_Svityia"
     const val SETTINGS_VIEW = "Settings_View"
     const val PADZEI_VIEW = "Padzei_View"
     const val SVITYIA_VIEW = "Svityia_View"
-    const val LOG_VIEW = "Log_View"
 }
 
 class AppNavigationActions(private val navController: NavHostController, k: SharedPreferences) {
@@ -234,9 +233,9 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
         }
     }
 
-    fun navigateToShtoNovaga() {
-        navController.navigate(SHTO_NOVAGA) {
-            SHTO_NOVAGA
+    fun navigateToUmouniaZnachenni() {
+        navController.navigate(UMOUNIA_ZNACHENNI) {
+            UMOUNIA_ZNACHENNI
         }
     }
 

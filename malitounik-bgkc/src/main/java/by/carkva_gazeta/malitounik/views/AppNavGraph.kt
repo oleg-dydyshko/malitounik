@@ -58,7 +58,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -520,7 +519,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             PadzeiaView(navController)
         }
 
-        composable(AllDestinations.SHTO_NOVAGA) {
+        composable(AllDestinations.UMOUNIA_ZNACHENNI) {
             KaliandarScreenInfo(navController)
         }
 
@@ -991,11 +990,6 @@ fun MainConteiner(
     var searchText by rememberSaveable { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
-    var dialogUmounyiaZnachenni by remember { mutableStateOf(false) }
-    if (dialogUmounyiaZnachenni) {
-        dialogUmounyiaZnachenni = false
-        navigationActions.navigateToShtoNovaga()
-    }
     var textFieldValueState by remember { mutableStateOf("") }
     if (logView) {
         DialogLogProgramy {
@@ -1050,75 +1044,60 @@ fun MainConteiner(
     var dialogKniga by remember { mutableStateOf(false) }
     ModalNavigationDrawer(
         drawerContent = {
-        DrawView(
-            drawerScrollStete = drawerScrollStete,
-            route = currentRoute,
-            cytata = cytata,
-            navigateToRazdel = { razdzel ->
-                when (razdzel) {
-                    AllDestinations.KALIANDAR -> {
-                        if (k.getBoolean("caliandarList", false)) navigationActions.navigateToKaliandarYear()
-                        else navigationActions.navigateToKaliandar()
-                    }
+            DrawView(
+                drawerScrollStete = drawerScrollStete,
+                route = currentRoute,
+                cytata = cytata,
+                navigateToRazdel = { razdzel ->
+                    when (razdzel) {
+                        AllDestinations.KALIANDAR -> {
+                            if (k.getBoolean("caliandarList", false)) navigationActions.navigateToKaliandarYear()
+                            else navigationActions.navigateToKaliandar()
+                        }
 
-                    AllDestinations.BOGASLUJBOVYIA_MENU -> navigationActions.navigateToBogaslujbovyiaMenu()
-                    AllDestinations.MALITVY_MENU -> navigationActions.navigateToMalitvyMenu()
-                    AllDestinations.BIBLIA_SEMUXA -> navigationActions.navigateToBibliaSemuxa()
-                    AllDestinations.BIBLIA_BOKUNA -> navigationActions.navigateToBibliaBokuna()
-                    AllDestinations.BIBLIA_NADSAN -> navigationActions.navigateToBibliaNadsan()
-                    AllDestinations.BIBLIA_CHARNIAUSKI -> navigationActions.navigateToBibliaCharniauski()
-                    AllDestinations.BIBLIA_SINODAL -> navigationActions.navigateToBibliaSinodal()
-                    AllDestinations.VYBRANAE_LIST -> navigationActions.navigateToVybranaeList()
-                    AllDestinations.AKAFIST_MENU -> navigationActions.navigateToAkafistMenu()
-                    AllDestinations.RUJANEC_MENU -> navigationActions.navigateToRujanecMenu()
-                    AllDestinations.MAE_NATATKI_MENU -> navigationActions.navigateToMaeNatatkiMenu()
-                    AllDestinations.BIBLIJATEKA_NIADAUNIA -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_NIADAUNIA)
-                    AllDestinations.BIBLIJATEKA_MALITOUNIKI -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_MALITOUNIKI)
-                    AllDestinations.BIBLIJATEKA_GISTORYIA -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_GISTORYIA)
-                    AllDestinations.BIBLIJATEKA_SPEUNIKI -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_SPEUNIKI)
-                    AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU)
-                    AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA)
-                    AllDestinations.PIESNY_PRASLAULENNIA -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_PRASLAULENNIA)
-                    AllDestinations.PIESNY_DA_BAGARODZICY -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_DA_BAGARODZICY)
-                    AllDestinations.PIESNY_ZA_BELARUS -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_ZA_BELARUS)
-                    AllDestinations.PIESNY_KALIADNYIA -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_KALIADNYIA)
-                    AllDestinations.PIESNY_TAIZE -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_TAIZE)
-                    AllDestinations.UNDER_PADRYXTOUKA -> {
-                        navigateIsSpecial = true
-                        navigationActions.navigateToPadryxtouka()
-                    }
+                        AllDestinations.BOGASLUJBOVYIA_MENU -> navigationActions.navigateToBogaslujbovyiaMenu()
+                        AllDestinations.MALITVY_MENU -> navigationActions.navigateToMalitvyMenu()
+                        AllDestinations.BIBLIA_SEMUXA -> navigationActions.navigateToBibliaSemuxa()
+                        AllDestinations.BIBLIA_BOKUNA -> navigationActions.navigateToBibliaBokuna()
+                        AllDestinations.BIBLIA_NADSAN -> navigationActions.navigateToBibliaNadsan()
+                        AllDestinations.BIBLIA_CHARNIAUSKI -> navigationActions.navigateToBibliaCharniauski()
+                        AllDestinations.BIBLIA_SINODAL -> navigationActions.navigateToBibliaSinodal()
+                        AllDestinations.VYBRANAE_LIST -> navigationActions.navigateToVybranaeList()
+                        AllDestinations.AKAFIST_MENU -> navigationActions.navigateToAkafistMenu()
+                        AllDestinations.RUJANEC_MENU -> navigationActions.navigateToRujanecMenu()
+                        AllDestinations.MAE_NATATKI_MENU -> navigationActions.navigateToMaeNatatkiMenu()
+                        AllDestinations.BIBLIJATEKA_NIADAUNIA -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_NIADAUNIA)
+                        AllDestinations.BIBLIJATEKA_MALITOUNIKI -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_MALITOUNIKI)
+                        AllDestinations.BIBLIJATEKA_GISTORYIA -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_GISTORYIA)
+                        AllDestinations.BIBLIJATEKA_SPEUNIKI -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_SPEUNIKI)
+                        AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU)
+                        AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA)
+                        AllDestinations.PIESNY_PRASLAULENNIA -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_PRASLAULENNIA)
+                        AllDestinations.PIESNY_DA_BAGARODZICY -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_DA_BAGARODZICY)
+                        AllDestinations.PIESNY_ZA_BELARUS -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_ZA_BELARUS)
+                        AllDestinations.PIESNY_KALIADNYIA -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_KALIADNYIA)
+                        AllDestinations.PIESNY_TAIZE -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_TAIZE)
+                        AllDestinations.UNDER_PADRYXTOUKA -> {
+                            navigateIsSpecial = true
+                            navigationActions.navigateToPadryxtouka()
+                        }
 
-                    AllDestinations.UNDER_PAMIATKA -> {
-                        navigateIsSpecial = true
-                        navigationActions.navigateToPamiatka()
-                    }
+                        AllDestinations.UNDER_PAMIATKA -> {
+                            navigateIsSpecial = true
+                            navigationActions.navigateToPamiatka()
+                        }
 
-                    AllDestinations.UNDER_SVAITY_MUNU -> navigationActions.navigateToSviaty()
-                    AllDestinations.UNDER_PARAFII_BGKC -> navigationActions.navigateToParafiiBgkc()
-                    AllDestinations.UNDER_PASHALIA -> navigationActions.navigateToPashalia()
-                    AllDestinations.SETTINGS_VIEW -> {
-                        navigateIsSpecial = true
-                        navigationActions.navigateToSettingsView()
+                        AllDestinations.UNDER_SVAITY_MUNU -> navigationActions.navigateToSviaty()
+                        AllDestinations.UNDER_PARAFII_BGKC -> navigationActions.navigateToParafiiBgkc()
+                        AllDestinations.UNDER_PASHALIA -> navigationActions.navigateToPashalia()
                     }
-
-                    AllDestinations.HELP -> {
-                        navigateIsSpecial = true
-                        navigationActions.navigateToHelp()
+                    coroutineScope.launch {
+                        drawerState.close()
                     }
-
-                    AllDestinations.PRANAS -> {
-                        navigateIsSpecial = true
-                        navigationActions.navigateToPraNas()
-                    }
-
-                    AllDestinations.LOG_VIEW -> logView = true
-                }
-                coroutineScope.launch {
-                    drawerState.close()
-                }
-            },
-        )
-    }, drawerState = drawerState) {
+                },
+            )
+        }, drawerState = drawerState
+    ) {
         val col = MaterialTheme.colorScheme.onTertiary
         var tollBarColor by remember { mutableStateOf(col) }
         var textTollBarColor by remember { mutableStateOf(PrimaryTextBlack) }
@@ -1155,7 +1134,8 @@ fun MainConteiner(
             AllDestinations.BIBLIA_SINODAL -> stringResource(R.string.bsinaidal)
             else -> ""
         }
-        var expanded by remember { mutableStateOf(false) }
+        var expandedUp by remember { mutableStateOf(false) }
+        var expandedDown by remember { mutableStateOf(false) }
         Scaffold(topBar = {
             TopAppBar(
                 title = {
@@ -1227,7 +1207,7 @@ fun MainConteiner(
                         }
                         if (currentRoute.contains(AllDestinations.VYBRANAE_LIST) || currentRoute.contains(AllDestinations.MAE_NATATKI_MENU)) {
                             IconButton(onClick = {
-                                expanded = false
+                                expandedUp = false
                                 sortedVybranae = if (sortedVybranae == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
                                 else Settings.SORT_BY_ABC
                                 sortedNatatki = if (sortedNatatki == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
@@ -1274,14 +1254,43 @@ fun MainConteiner(
                                     painter = painterResource(R.drawable.search), tint = textTollBarColor, contentDescription = ""
                                 )
                             }
-                            if (k.getBoolean("admin", false)) {
-                                VerticalDivider()
-                                IconButton({
-                                    navigationActions.navigateToSearchBiblia(Settings.PEREVODSEMUXI, true)
-                                }) {
+                        }
+                        IconButton(onClick = { expandedUp = true }) {
+                            Icon(
+                                painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = textTollBarColor
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = expandedUp, onDismissRequest = { expandedUp = false }) {
+                            DropdownMenuItem(onClick = {
+                                expandedUp = false
+                                navigationActions.navigateToSettingsView()
+                            }, text = { Text(stringResource(R.string.tools_item), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.settings), contentDescription = ""
+                                )
+                            })
+                            if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
+                                DropdownMenuItem(onClick = {
+                                    expandedUp = false
+                                    navigationActions.navigateToUmouniaZnachenni()
+                                }, text = { Text(stringResource(R.string.symbols_menu), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                     Icon(
-                                        painter = painterResource(R.drawable.search), tint = textTollBarColor, contentDescription = ""
+                                        painter = painterResource(R.drawable.info), contentDescription = ""
                                     )
+                                })
+                            }
+                            if (k.getBoolean("admin", false)) {
+                                if (currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.RUJANEC_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA) {
+                                    HorizontalDivider()
+                                    DropdownMenuItem(onClick = {
+                                        expandedUp = false
+                                        navigationActions.navigateToSearchBiblia(Settings.PEREVODSEMUXI, true)
+                                    }, text = { Text(stringResource(R.string.searche_bogasluz_text), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.search), contentDescription = ""
+                                        )
+                                    })
                                 }
                             }
                         }
@@ -1315,11 +1324,11 @@ fun MainConteiner(
                     }
                     BottomAppBar(containerColor = tollBarColor) {
                         DropdownMenu(
-                            expanded = expanded, onDismissRequest = { expanded = false }) {
+                            expanded = expandedDown, onDismissRequest = { expandedDown = false }) {
                             if (k.getBoolean("admin", false)) {
                                 if (currentRoute.contains(AllDestinations.KALIANDAR) || currentRoute.contains("BIBLIJATEKA", ignoreCase = true)) {
                                     DropdownMenuItem(onClick = {
-                                        expanded = false
+                                        expandedDown = false
                                         if (context.checkmodulesAdmin()) {
                                             val intent = Intent()
                                             if (currentRoute.contains(AllDestinations.KALIANDAR)) {
@@ -1336,10 +1345,18 @@ fun MainConteiner(
                                         )
                                     })
                                 }
+                                DropdownMenuItem(onClick = {
+                                    expandedDown = false
+                                    logView = true
+                                }, text = { Text(stringResource(R.string.log_m), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.description), contentDescription = ""
+                                    )
+                                })
                                 HorizontalDivider()
                             }
                             DropdownMenuItem(onClick = {
-                                expanded = false
+                                expandedDown = false
                                 navigationActions.navigateToHelp()
                             }, text = { Text(stringResource(R.string.help), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                 Icon(
@@ -1347,19 +1364,11 @@ fun MainConteiner(
                                 )
                             })
                             DropdownMenuItem(onClick = {
-                                expanded = false
+                                expandedDown = false
                                 navigationActions.navigateToPraNas()
                             }, text = { Text(stringResource(R.string.pra_nas), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                 Icon(
                                     painter = painterResource(R.drawable.info), contentDescription = ""
-                                )
-                            })
-                            DropdownMenuItem(onClick = {
-                                expanded = false
-                                navigationActions.navigateToSettingsView()
-                            }, text = { Text(stringResource(R.string.tools_item), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                Icon(
-                                    painter = painterResource(R.drawable.settings), contentDescription = ""
                                 )
                             })
                         }
@@ -1367,21 +1376,13 @@ fun MainConteiner(
                             modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.CenterVertically
                         ) {
                             if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
-                                IconButton(onClick = { expanded = true }) {
+                                IconButton(onClick = { expandedDown = true }) {
                                     Icon(
                                         painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = textTollBarColor
                                     )
                                 }
                                 IconButton(onClick = {
-                                    expanded = false
-                                    dialogUmounyiaZnachenni = true
-                                }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.info), contentDescription = "", tint = textTollBarColor
-                                    )
-                                }
-                                IconButton(onClick = {
-                                    expanded = false
+                                    expandedDown = false
                                     navigationActions.navigateToSearchSvityia()
                                 }) {
                                     Icon(
@@ -1389,7 +1390,7 @@ fun MainConteiner(
                                     )
                                 }
                                 IconButton(onClick = {
-                                    expanded = false
+                                    expandedDown = false
                                     navigationActions.navigateToPadzeiView()
                                 }) {
                                     Icon(

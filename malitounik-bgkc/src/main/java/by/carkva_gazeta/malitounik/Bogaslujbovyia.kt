@@ -16,6 +16,8 @@ import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -757,6 +759,9 @@ fun Bogaslujbovyia(
                         }
                         BottomAppBar(containerColor = MaterialTheme.colorScheme.onTertiary) {
                             var expanded by remember { mutableStateOf(false) }
+                            val launcherShare = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                                if (autoScrollSensor) autoScroll = true
+                            }
                             DropdownMenu(
                                 expanded = expanded,
                                 onDismissRequest = { expanded = false }
@@ -898,17 +903,21 @@ fun Bogaslujbovyia(
                                     showDropdown = false
                                     autoScroll = false
                                     expanded = false
-                                    val sent = textLayout.value?.layoutInput?.text?.text
                                     val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                                    val isTextFound = textLayout.value?.layoutInput?.text?.text?.contains(clipboard.primaryClip?.getItemAt(0)?.text ?: "@#$") == true
+                                    val sent = if (isTextFound) clipboard.primaryClip?.getItemAt(0)?.text
+                                    else textLayout.value?.layoutInput?.text?.text
                                     sent?.let { shareText ->
-                                        val clip = ClipData.newPlainText(context.getString(R.string.copy_text), shareText)
-                                        clipboard.setPrimaryClip(clip)
+                                        if (!isTextFound) {
+                                            val clip = ClipData.newPlainText(context.getString(R.string.copy_text), shareText)
+                                            clipboard.setPrimaryClip(clip)
+                                            Toast.makeText(context, context.getString(R.string.copy), Toast.LENGTH_SHORT).show()
+                                        }
                                         val sendIntent = Intent(Intent.ACTION_SEND)
                                         sendIntent.putExtra(Intent.EXTRA_TEXT, shareText)
                                         sendIntent.putExtra(Intent.EXTRA_SUBJECT, title)
                                         sendIntent.type = "text/plain"
-                                        context.startActivity(Intent.createChooser(sendIntent, title))
-                                        Toast.makeText(context, context.getString(R.string.copy), Toast.LENGTH_SHORT).show()
+                                        launcherShare.launch(Intent.createChooser(sendIntent, title))
                                     }
                                 }) {
                                     Icon(
