@@ -1096,6 +1096,108 @@ fun DrawView(
                     )
                 }
             }
+            if (k.getBoolean("admin", false)) {
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 5.dp),
+                    color = MaterialTheme.colorScheme.secondary
+                )
+                NavigationDrawerItem(
+                    label = {
+                        Text(
+                            text = stringResource(id = R.string.tools_item),
+                            fontSize = Settings.fontInterface.sp,
+                            color = MaterialTheme.colorScheme.secondary,
+                        )
+                    },
+                    selected = route == AllDestinations.SETTINGS_VIEW,
+                    onClick = {
+                        navigateToRazdel(AllDestinations.SETTINGS_VIEW)
+                    },
+                    icon = {
+                        Icon(
+                            modifier = Modifier.size(22.dp, 22.dp),
+                            painter = painterResource(R.drawable.settings),
+                            tint = MaterialTheme.colorScheme.primary,
+                            contentDescription = ""
+                        )
+                    },
+                    shape = MaterialTheme.shapes.small,
+                    modifier = Modifier.padding(horizontal = 5.dp),
+                    colors = navigationDrawerItemColors
+                )
+                NavigationDrawerItem(
+                    label = {
+                        Text(
+                            text = stringResource(id = R.string.help),
+                            fontSize = Settings.fontInterface.sp,
+                            color = MaterialTheme.colorScheme.secondary,
+                        )
+                    },
+                    selected = route == AllDestinations.HELP,
+                    onClick = {
+                        navigateToRazdel(AllDestinations.HELP)
+                    },
+                    icon = {
+                        Icon(
+                            modifier = Modifier.size(22.dp, 22.dp),
+                            painter = painterResource(R.drawable.favorite),
+                            tint = MaterialTheme.colorScheme.primary,
+                            contentDescription = ""
+                        )
+                    },
+                    shape = MaterialTheme.shapes.small,
+                    modifier = Modifier.padding(horizontal = 5.dp),
+                    colors = navigationDrawerItemColors
+                )
+                NavigationDrawerItem(
+                    label = {
+                        Text(
+                            text = stringResource(id = R.string.pra_nas),
+                            fontSize = Settings.fontInterface.sp,
+                            color = MaterialTheme.colorScheme.secondary,
+                        )
+                    },
+                    selected = route == AllDestinations.PRANAS,
+                    onClick = {
+                        navigateToRazdel(AllDestinations.PRANAS)
+                    },
+                    icon = {
+                        Icon(
+                            modifier = Modifier.size(22.dp, 22.dp),
+                            painter = painterResource(R.drawable.info),
+                            tint = MaterialTheme.colorScheme.primary,
+                            contentDescription = ""
+                        )
+                    },
+                    shape = MaterialTheme.shapes.small,
+                    modifier = Modifier.padding(horizontal = 5.dp),
+                    colors = navigationDrawerItemColors
+                )
+                NavigationDrawerItem(
+                    label = {
+                        Text(
+                            text = stringResource(id = R.string.log_m),
+                            fontSize = Settings.fontInterface.sp,
+                            color = MaterialTheme.colorScheme.secondary,
+                        )
+                    },
+                    selected = route == AllDestinations.LOG_VIEW,
+                    onClick = {
+                        navigateToRazdel(AllDestinations.LOG_VIEW)
+                    },
+                    icon = {
+                        Icon(
+                            modifier = Modifier.size(22.dp, 22.dp),
+                            painter = painterResource(R.drawable.description),
+                            tint = MaterialTheme.colorScheme.primary,
+                            contentDescription = ""
+                        )
+                    },
+                    shape = MaterialTheme.shapes.small,
+                    modifier = Modifier.padding(horizontal = 5.dp),
+                    colors = navigationDrawerItemColors
+                )
+            }
         }
     }
 }
@@ -1109,14 +1211,18 @@ fun DrawerHeader(cytata: AnnotatedString) {
             .fillMaxWidth()
     ) {
         Text(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 10.dp),
             text = cytata,
             fontSize = (Settings.fontInterface - 2).sp,
             textAlign = TextAlign.End,
             fontStyle = FontStyle.Italic,
             color = SecondaryText,
         )
-        Icon(modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp), painter = painterResource(R.drawable.lahatyp), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+        Icon(modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 10.dp), painter = painterResource(R.drawable.lahatyp), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
         Icon(modifier = Modifier.fillMaxWidth(), painter = painterResource(R.drawable.lahatyp_apis), contentDescription = "", tint = MaterialTheme.colorScheme.secondary)
     }
 }

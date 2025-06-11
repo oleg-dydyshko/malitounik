@@ -417,14 +417,14 @@ fun DialogDelite(
                         shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
-                        Text(stringResource(R.string.cansel), fontSize = 18.sp)
+                        Text(stringResource(R.string.sabytie_no), fontSize = 18.sp)
                     }
                     TextButton(
                         onClick = { onConfirmation() },
                         shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
-                        Text(stringResource(R.string.ok), fontSize = 18.sp)
+                        Text(stringResource(R.string.sabytie_yes), fontSize = 18.sp)
                     }
                 }
             }

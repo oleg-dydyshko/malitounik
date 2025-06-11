@@ -58,6 +58,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -172,15 +173,36 @@ import kotlin.random.Random
 
 data class AppNavGraphStateScroll(val title: String, var scrollPosition: Int)
 
+data class AppNavGraphStateItems(val id: Int, var isExpandet: Boolean = false)
+
 object AppNavGraphState {
     var bibleItem by mutableStateOf(false)
     var biblijatekaItem by mutableStateOf(false)
     var piesnyItem by mutableStateOf(false)
     var underItem by mutableStateOf(false)
+    val itemsValue = ArrayList<AppNavGraphStateItems>()
     val scrollValueList = ArrayList<AppNavGraphStateScroll>()
     var bibleListPosition = -1
     var vybranaeListPosition = -1
     var setAlarm = true
+
+    fun setItemsValue(id: Int): Boolean {
+        var result = false
+        var find = false
+        for (i in itemsValue.indices) {
+            if (id == itemsValue[i].id) {
+                itemsValue[i].isExpandet = !itemsValue[i].isExpandet
+                result = itemsValue[i].isExpandet
+                find = true
+                break
+            }
+        }
+        if (!find) {
+            itemsValue.add(AppNavGraphStateItems(id, true))
+            result = true
+        }
+        return result
+    }
 
     fun getScrollValuePosition(title: String): Int {
         var result = 0
@@ -1074,6 +1096,22 @@ fun MainConteiner(
                     AllDestinations.UNDER_SVAITY_MUNU -> navigationActions.navigateToSviaty()
                     AllDestinations.UNDER_PARAFII_BGKC -> navigationActions.navigateToParafiiBgkc()
                     AllDestinations.UNDER_PASHALIA -> navigationActions.navigateToPashalia()
+                    AllDestinations.SETTINGS_VIEW -> {
+                        navigateIsSpecial = true
+                        navigationActions.navigateToSettingsView()
+                    }
+
+                    AllDestinations.HELP -> {
+                        navigateIsSpecial = true
+                        navigationActions.navigateToHelp()
+                    }
+
+                    AllDestinations.PRANAS -> {
+                        navigateIsSpecial = true
+                        navigationActions.navigateToPraNas()
+                    }
+
+                    AllDestinations.LOG_VIEW -> logView = true
                 }
                 coroutineScope.launch {
                     drawerState.close()
@@ -1236,6 +1274,16 @@ fun MainConteiner(
                                     painter = painterResource(R.drawable.search), tint = textTollBarColor, contentDescription = ""
                                 )
                             }
+                            if (k.getBoolean("admin", false)) {
+                                VerticalDivider()
+                                IconButton({
+                                    navigationActions.navigateToSearchBiblia(Settings.PEREVODSEMUXI, true)
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.search), tint = textTollBarColor, contentDescription = ""
+                                    )
+                                }
+                            }
                         }
                     }
                 }, colors = TopAppBarDefaults.topAppBarColors(tollBarColor)
@@ -1285,24 +1333,6 @@ fun MainConteiner(
                                     }, text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                         Icon(
                                             painter = painterResource(R.drawable.edit), contentDescription = ""
-                                        )
-                                    })
-                                }
-                                DropdownMenuItem(onClick = {
-                                    expanded = false
-                                    logView = true
-                                }, text = { Text(stringResource(R.string.log_m), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.description), contentDescription = ""
-                                    )
-                                })
-                                if (currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.RUJANEC_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA) {
-                                    DropdownMenuItem(onClick = {
-                                        expanded = false
-                                        navigationActions.navigateToSearchBiblia(Settings.PEREVODSEMUXI, true)
-                                    }, text = { Text(stringResource(R.string.searche_bogasluz_text), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.search), contentDescription = ""
                                         )
                                     })
                                 }

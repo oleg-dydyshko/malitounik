@@ -79,6 +79,7 @@ object AllDestinations {
     const val SETTINGS_VIEW = "Settings_View"
     const val PADZEI_VIEW = "Padzei_View"
     const val SVITYIA_VIEW = "Svityia_View"
+    const val LOG_VIEW = "Log_View"
 }
 
 class AppNavigationActions(private val navController: NavHostController, k: SharedPreferences) {
