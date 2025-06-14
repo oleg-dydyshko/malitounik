@@ -2,6 +2,7 @@
 
 package by.carkva_gazeta.malitounik
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -32,6 +33,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -51,6 +53,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -60,12 +63,14 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -110,6 +115,17 @@ fun MalitvyListAll(
 ) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+    val view = LocalView.current
+    SideEffect {
+        val window = (view.context as Activity).window
+        WindowCompat.getInsetsController(
+            window,
+            view
+        ).apply {
+            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = !(context as MainActivity).dzenNoch
+        }
+    }
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
@@ -208,7 +224,7 @@ fun MalitvyListAll(
     var textFieldLoaded by remember { mutableStateOf(false) }
     var textFieldValueState by remember { mutableStateOf("") }
     var backPressHandled by remember { mutableStateOf(false) }
-    val collapsedState = remember(listPrynagodnyia) { listPrynagodnyia.map { true }.toMutableStateList() }
+    val collapsedState = remember(listPrynagodnyia) { listPrynagodnyia.map { AppNavGraphState.setItemsValue(it.title, true) }.toMutableStateList() }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -334,6 +350,7 @@ fun MalitvyListAll(
                                 verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                                     .fillMaxWidth()
                                     .clickable {
+                                        AppNavGraphState.setItemsValue(dataItem.title)
                                         collapsedState[i] = !collapsed
                                     }) {
                                 Icon(

@@ -359,10 +359,10 @@ class Widget : AppWidgetProvider() {
         updateViews.setTextViewText(R.id.textDenNedeli, nedelName[nedel])
         if (nedel == 1) prazdnik(context, updateViews)
         val monthName = context.resources.getStringArray(R.array.meciac)
-        if (month == Calendar.OCTOBER) updateViews.setFloat(R.id.textMesiac, "setTextSize", 12f)
-        else updateViews.setFloat(R.id.textMesiac, "setTextSize", 14f)
-        if (nedel == Calendar.MONDAY) updateViews.setFloat(R.id.textDenNedeli, "setTextSize", 12f)
-        else updateViews.setFloat(R.id.textDenNedeli, "setTextSize", 14f)
+        /*if (month == Calendar.OCTOBER) updateViews.setFloat(R.id.textMesiac, "setTextSize", 14f)
+        else updateViews.setFloat(R.id.textMesiac, "setTextSize", 16f)
+        if (nedel == Calendar.MONDAY) updateViews.setFloat(R.id.textDenNedeli, "setTextSize", 14f)
+        else updateViews.setFloat(R.id.textDenNedeli, "setTextSize", 16f)*/
         updateViews.setTextViewText(R.id.textMesiac, monthName[month])
         appWidgetManager.updateAppWidget(widgetID, updateViews)
     }

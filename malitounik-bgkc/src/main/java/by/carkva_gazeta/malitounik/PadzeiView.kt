@@ -109,7 +109,6 @@ import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
-import by.carkva_gazeta.malitounik.ui.theme.Transporent
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
@@ -591,7 +590,7 @@ fun PadzeiaView(navController: NavHostController) {
             val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
             if (showDropdown) {
                 ModalBottomSheet(
-                    scrimColor = Transporent,
+                    scrimColor = Color.Transparent,
                     sheetState = sheetState,
                     properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false),
                     containerColor = MaterialTheme.colorScheme.background,

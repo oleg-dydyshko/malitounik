@@ -52,6 +52,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -84,7 +85,6 @@ import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryBlack
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
-import by.carkva_gazeta.malitounik.ui.theme.Transporent
 import by.carkva_gazeta.malitounik.views.openAssetsResources
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -267,7 +267,7 @@ fun SearchBible(
         ) {
             if (showDropdown) {
                 ModalBottomSheet(
-                    scrimColor = Transporent,
+                    scrimColor = Color.Transparent,
                     properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false),
                     containerColor = MaterialTheme.colorScheme.background,
                     onDismissRequest = {
@@ -275,7 +275,7 @@ fun SearchBible(
                     }
                 ) {
                     Column(modifier = Modifier.fillMaxWidth()) {
-                        if (perevod != Settings.PEREVODNADSAN) {
+                        if (!(perevod == Settings.PEREVODNADSAN || isBogaslujbovyiaSearch)) {
                             DropdownMenuBox(onSearchStart = { searchSettings = true })
                         }
                         Row(

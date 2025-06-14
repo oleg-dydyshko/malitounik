@@ -172,32 +172,35 @@ import kotlin.random.Random
 
 data class AppNavGraphStateScroll(val title: String, var scrollPosition: Int)
 
-data class AppNavGraphStateItems(val id: Int, var isExpandet: Boolean = false)
+data class AppNavGraphStateItems(val title: String, var isExpandet: Boolean = false)
 
 object AppNavGraphState {
     var bibleItem by mutableStateOf(false)
     var biblijatekaItem by mutableStateOf(false)
     var piesnyItem by mutableStateOf(false)
     var underItem by mutableStateOf(false)
+    var bottomSheetScaffoldIsVisible by mutableStateOf(false)
     val itemsValue = ArrayList<AppNavGraphStateItems>()
     val scrollValueList = ArrayList<AppNavGraphStateScroll>()
     var bibleListPosition = -1
     var vybranaeListPosition = -1
     var setAlarm = true
 
-    fun setItemsValue(id: Int): Boolean {
-        var result = false
+    fun setItemsValue(title: String, isInit: Boolean = false): Boolean {
+        var result = true
         var find = false
         for (i in itemsValue.indices) {
-            if (id == itemsValue[i].id) {
-                itemsValue[i].isExpandet = !itemsValue[i].isExpandet
+            if (title == itemsValue[i].title) {
+                if (!isInit) {
+                    itemsValue[i].isExpandet = !itemsValue[i].isExpandet
+                }
                 result = itemsValue[i].isExpandet
                 find = true
                 break
             }
         }
         if (!find) {
-            itemsValue.add(AppNavGraphStateItems(id, true))
+            itemsValue.add(AppNavGraphStateItems(title, true))
             result = true
         }
         return result
@@ -1281,7 +1284,7 @@ fun MainConteiner(
                                 })
                             }
                             if (k.getBoolean("admin", false)) {
-                                if (currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.RUJANEC_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA) {
+                                if (currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.RUJANEC_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU) {
                                     HorizontalDivider()
                                     DropdownMenuItem(onClick = {
                                         expandedUp = false
