@@ -12,8 +12,8 @@ android {
         applicationId = "by.carkva_gazeta.malitounik"
         minSdk = 21
         targetSdk = 36
-        versionCode = 442478
-        versionName = "5.98.0"
+        versionCode = 442479
+        versionName = "5.98.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -84,7 +84,7 @@ dependencies {
     //implementation(libs.androidx.documentfile)
     implementation(libs.androidx.paging.compose)
     implementation(libs.coil3)
-    //implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.glance.appwidget)
     //implementation(libs.jsoup)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

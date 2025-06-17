@@ -173,12 +173,6 @@ fun DialogWidgetConfig(
                         )
                     }
                 }
-                if (!isWidgetMun) {
-                    val intent = Intent(context, Widget::class.java)
-                    intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID)
-                    intent.putExtra("actionEndLoad", true)
-                    context.sendBroadcast(intent)
-                }
                 Row(
                     modifier = Modifier
                         .align(Alignment.End)

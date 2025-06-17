@@ -193,7 +193,9 @@ fun CytanniList(
             } else cytanne
         )
     }
+    var skipUtran by remember { mutableStateOf(position == -2) }
     var positionRemember by rememberSaveable { mutableIntStateOf(position) }
+    var utranEndPosition by remember { mutableIntStateOf(0) }
     val listState = remember { list }
     val coroutineScope = rememberCoroutineScope()
     val view = LocalView.current
@@ -1073,6 +1075,15 @@ fun CytanniList(
                         }
                     }
                 }
+                if (biblia == Settings.CHYTANNI_LITURGICHNYIA && skipUtran && utranEndPosition > 0) {
+                    LaunchedEffect(utranEndPosition) {
+                        coroutineScope.launch {
+                            listState[selectedIndex].scrollToItem(utranEndPosition)
+                            positionRemember = -1
+                            skipUtran = false
+                        }
+                    }
+                }
                 HorizontalPager(
                     pageSpacing = 10.dp, state = pagerState, flingBehavior = fling, verticalAlignment = Alignment.Top, userScrollEnabled = biblia == Settings.CHYTANNI_BIBLIA
                 ) { page ->
@@ -1106,6 +1117,15 @@ fun CytanniList(
                         isPerevodError = true
                     } else {
                         isPerevodError = false
+                    }
+                    if (skipUtran && !isPerevodError) {
+                        val tit = resultPage[0].title
+                        for (i in 0 until resultPage.size) {
+                            if (resultPage[i].title != tit) {
+                                utranEndPosition = i
+                                break
+                            }
+                        }
                     }
                     val selectState = remember(resultPage) { resultPage.map { false }.toMutableStateList() }
                     if (biblia == Settings.CHYTANNI_BIBLIA && !isPerevodError && perevodRoot != Settings.PEREVODNADSAN) {

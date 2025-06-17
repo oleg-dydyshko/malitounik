@@ -336,17 +336,6 @@ object Settings {
                 setAlarm(context, System.currentTimeMillis() + 120000L, pReset)
             }
         }
-        if (chin.getBoolean("WIDGET_ENABLED", false)) {
-            val cw = Calendar.getInstance()
-            intent = Intent(context, Widget::class.java)
-            intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-            pIntent = PendingIntent.getBroadcast(context, 50, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_NO_CREATE)
-            if (pIntent != null) {
-                cw.add(Calendar.DATE, 1)
-            }
-            pIntent = PendingIntent.getBroadcast(context, 50, intent, PendingIntent.FLAG_IMMUTABLE or 0)
-            setAlarm(context, mkTime(cw[Calendar.YEAR], cw[Calendar.MONTH], cw[Calendar.DAY_OF_MONTH]), pIntent)
-        }
         if (chin.getBoolean("WIDGET_RADYJO_MARYIA_ENABLED", false)) {
             val cw = Calendar.getInstance()
             intent = Intent(context, WidgetRadyjoMaryia::class.java)

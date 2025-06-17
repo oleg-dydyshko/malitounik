@@ -168,6 +168,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.InputStreamReader
 import java.util.Calendar
+import java.util.GregorianCalendar
 import kotlin.random.Random
 
 data class AppNavGraphStateScroll(val title: String, var scrollPosition: Int)
@@ -325,7 +326,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
     if (extras != null) {
         val widgetday = "widget_day"
         val widgetmun = "widget_mun"
-        if (extras.getBoolean(widgetmun, false) || extras.getBoolean(widgetday, false) || extras.getBoolean("sabytie", false)) {
+        if (extras.getBoolean(widgetmun, false) || extras.getString(widgetday, "") != "" || extras.getBoolean("sabytie", false)) {
             start = if (k.getBoolean("caliandarList", false)) AllDestinations.KALIANDAR_YEAR
             else AllDestinations.KALIANDAR
             Settings.destinations = start
@@ -589,7 +590,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             val context = LocalContext.current
             val resurs = stackEntry.arguments?.getString("resurs") ?: "bogashlugbovya_error.html"
             Bogaslujbovyia(
-                navController, title, resurs, navigateTo = { navigate ->
+                navController, title, resurs, navigateTo = { navigate, skipUtran ->
                     when (navigate) {
                         "error" -> {
                             navigationActions.navigateToBogaslujbovyia(context.getString(R.string.error_ch2), "bogashlugbovya_error.html")
@@ -612,8 +613,9 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
                             val titleCh = context.getString(
                                 R.string.czytanne3, data[1].toInt(), context.resources.getStringArray(R.array.meciac_smoll)[2]
                             )
+                            val skip = if (skipUtran) -2 else -1
                             navigationActions.navigateToCytanniList(
-                                titleCh, removeZnakiAndSlovy(data[9]), Settings.CHYTANNI_LITURGICHNYIA, Settings.PEREVODSEMUXI, -1
+                                titleCh, removeZnakiAndSlovy(data[9]), Settings.CHYTANNI_LITURGICHNYIA, Settings.PEREVODSEMUXI, skip
                             )
                         }
 
@@ -723,7 +725,7 @@ fun findCaliandarToDay(context: Context, isGlobal: Boolean = true): ArrayList<St
         Settings.data.addAll(gson.fromJson(builder, type))
     }
     var caliandarPosition = Settings.caliandarPosition
-    val calendar = Calendar.getInstance()
+    val calendar = GregorianCalendar(2025, 5, 15)// Calendar.getInstance()
     for (i in Settings.data.indices) {
         if (calendar[Calendar.DATE] == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
             caliandarPosition = i
@@ -910,7 +912,7 @@ fun MainConteiner(
                     } else pagerState.scrollToPage(caliandarPosition)
                 }
             }
-            if (extras.getBoolean(widgetday, false)) {
+            if (extras.getString(widgetday, "") != "") {
                 val calendar = Calendar.getInstance()
                 var caliandarPosition = Settings.caliandarPosition
                 for (i in Settings.data.indices) {

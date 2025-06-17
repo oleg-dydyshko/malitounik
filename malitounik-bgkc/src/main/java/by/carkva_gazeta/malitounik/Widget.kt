@@ -3,115 +3,283 @@ package by.carkva_gazeta.malitounik
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
-import android.appwidget.AppWidgetProvider
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
-import android.view.View
-import android.widget.RemoteViews
-import androidx.core.content.ContextCompat
-import androidx.core.content.edit
-import androidx.core.text.HtmlCompat
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.fromHtml
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.glance.GlanceId
+import androidx.glance.GlanceModifier
+import androidx.glance.GlanceTheme
+import androidx.glance.Image
+import androidx.glance.ImageProvider
+import androidx.glance.LocalContext
+import androidx.glance.action.ActionParameters
+import androidx.glance.action.actionParametersOf
+import androidx.glance.action.actionStartActivity
+import androidx.glance.action.clickable
+import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.GlanceAppWidgetReceiver
+import androidx.glance.appwidget.cornerRadius
+import androidx.glance.appwidget.provideContent
+import androidx.glance.appwidget.state.updateAppWidgetState
+import androidx.glance.background
+import androidx.glance.color.ColorProvider
+import androidx.glance.currentState
+import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
+import androidx.glance.layout.Column
+import androidx.glance.layout.Row
+import androidx.glance.layout.fillMaxSize
+import androidx.glance.layout.fillMaxWidth
+import androidx.glance.layout.padding
+import androidx.glance.layout.size
+import androidx.glance.state.GlanceStateDefinition
+import androidx.glance.state.PreferencesGlanceStateDefinition
+import androidx.glance.text.FontStyle
+import androidx.glance.text.FontWeight
+import androidx.glance.text.Text
+import androidx.glance.text.TextAlign
+import androidx.glance.text.TextStyle
+import by.carkva_gazeta.malitounik.ui.theme.BackgroundDark
+import by.carkva_gazeta.malitounik.ui.theme.BezPosta
+import by.carkva_gazeta.malitounik.ui.theme.Divider
+import by.carkva_gazeta.malitounik.ui.theme.Post
+import by.carkva_gazeta.malitounik.ui.theme.Primary
+import by.carkva_gazeta.malitounik.ui.theme.PrimaryBlack
+import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
+import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik.ui.theme.StrogiPost
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.Calendar
 
-class Widget : AppWidgetProvider() {
+class CaliandarWidget : GlanceAppWidget() {
+    override var stateDefinition: GlanceStateDefinition<*> = PreferencesGlanceStateDefinition
+
+    override suspend fun provideGlance(context: Context, id: GlanceId) {
+        provideContent {
+            val prefs = currentState<Preferences>()
+            val gson = Gson()
+            val type = TypeToken.getParameterized(
+                ArrayList::class.java,
+                String::class.java
+            ).type
+            val data = gson.fromJson<ArrayList<String>>(prefs[stringPreferencesKey("data")], type) ?: ArrayList<String>()
+            val dzenNoch = prefs[booleanPreferencesKey("dzenNoch")] == true
+            GlanceTheme {
+                Caliandar(data, dzenNoch)
+            }
+        }
+    }
+}
+
+private val destinationKey = ActionParameters.Key<String>("widget_day")
+
+@Composable
+private fun Caliandar(data: ArrayList<String>, dzenNoch: Boolean) {
+    val context = LocalContext.current
+    val rColorColorPrimaryText: Color
+    val rColorColorPrimary: Color
+    if (dzenNoch) {
+        rColorColorPrimary = PrimaryBlack
+        rColorColorPrimaryText = PrimaryTextBlack
+    } else {
+        rColorColorPrimary = Primary
+        rColorColorPrimaryText = PrimaryText
+    }
+    val month = data[2].toInt()
+    val monthName = context.resources.getStringArray(R.array.meciac)
+    val dayofmounth = data[1]
+    val nedel = data[0].toInt()
+    val nedelName = context.resources.getStringArray(R.array.dni_nedeli)
+    val colorBackground = when {
+        data[7].toInt() == 2 -> Post
+        data[7].toInt() == 1 -> BezPosta
+        data[7].toInt() == 3 -> StrogiPost
+        data[5].toInt() > 0 -> Primary
+        else -> Divider
+    }
+    val colorText = if (data[7].toInt() == 3 || data[5].toInt() > 0) PrimaryTextBlack
+    else PrimaryText
+    Box(
+        modifier = GlanceModifier.fillMaxSize().background(Color.Transparent)
+    ) {
+        Box(
+            modifier = GlanceModifier.background(if (dzenNoch) BackgroundDark else PrimaryTextBlack).cornerRadius(20.dp).clickable(actionStartActivity<MainActivity>(actionParametersOf(destinationKey to "widget_day")))
+        ) {
+            Column(
+                verticalAlignment = Alignment.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally, verticalAlignment = Alignment.Top, modifier = GlanceModifier.fillMaxWidth().background(colorBackground)) {
+                    Text(text = nedelName[nedel], style = TextStyle(color = ColorProvider(colorText, colorText), fontSize = 18.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Bold))
+                    Text(text = dayofmounth, style = TextStyle(color = ColorProvider(colorText, colorText), fontSize = 40.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Bold))
+                    Text(text = monthName[month], style = TextStyle(color = ColorProvider(colorText, colorText), fontSize = 18.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Bold))
+                }
+                Column(modifier = GlanceModifier.padding(start = 5.dp, end = 5.dp, bottom = 5.dp)) {
+                    if (data[6].isNotEmpty()) {
+                        if (data[5].toInt() == 1 || data[5].toInt() == 2) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Image(provider = ImageProvider(R.drawable.znaki_krest_v_kruge), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp))
+                                Text(modifier = GlanceModifier.padding(start = 5.dp), text = data[6], style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp, textAlign = TextAlign.Center, fontWeight = if (data[5].toInt() == 2) FontWeight.Normal else FontWeight.Bold))
+                            }
+                        } else {
+                            Text(text = data[6], style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp, textAlign = TextAlign.Center, fontWeight = if (data[5].toInt() == 2) FontWeight.Normal else FontWeight.Bold))
+                        }
+                    }
+                    if (data[8].isNotEmpty()) {
+                        Text(text = AnnotatedString.fromHtml(data[8]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp, textAlign = TextAlign.Center, fontStyle = FontStyle.Italic))
+                    }
+                    if (data[4].isNotEmpty()) {
+                        var icon = 0
+                        when (data[12].toInt()) {
+                            1 -> icon = R.drawable.znaki_krest
+                            3 -> icon = R.drawable.znaki_krest_v_polukruge
+                            4 -> icon = R.drawable.znaki_ttk
+                            5 -> icon = R.drawable.znaki_ttk_black
+                        }
+                        val svityia = data[4]
+                        if (svityia.contains("<font")) {
+                            if (svityia.contains("<strong>")) {
+                                if (svityia.contains("<br>")) {
+                                    val text = AnnotatedString.fromHtml(data[4]).toString()
+                                    val t1 = text.indexOf("\n")
+                                    if (icon != 0) {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp))
+                                            Text(modifier = GlanceModifier.padding(start = 5.dp), text = text.substring(0, t1), style = TextStyle(color = ColorProvider(Primary, PrimaryBlack), fontSize = 18.sp, fontWeight = FontWeight.Bold))
+                                        }
+                                        Text(text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
+                                    } else {
+                                        Text(text = text.substring(0, t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp, fontWeight = FontWeight.Bold))
+                                        Text(text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
+                                    }
+                                } else {
+                                    if (icon != 0) {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp))
+                                            Text(modifier = GlanceModifier.padding(start = 5.dp), text = AnnotatedString.fromHtml(data[4]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp, fontWeight = FontWeight.Bold))
+                                        }
+                                    } else {
+                                        Text(text = AnnotatedString.fromHtml(data[4]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp, fontWeight = FontWeight.Bold))
+                                    }
+                                }
+                            } else {
+                                if (svityia.contains("<br>")) {
+                                    val text = AnnotatedString.fromHtml(data[4]).toString()
+                                    val t1 = text.indexOf("\n")
+                                    if (icon != 0) {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp))
+                                            Text(modifier = GlanceModifier.padding(start = 5.dp), text = text.substring(0, t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp))
+                                        }
+                                        Text(text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
+                                    } else {
+                                        Text(text = text.substring(0, t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp))
+                                        Text(text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
+                                    }
+                                } else {
+                                    if (icon != 0) {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp))
+                                            Text(modifier = GlanceModifier.padding(start = 5.dp), text = AnnotatedString.fromHtml(data[4]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp))
+                                        }
+                                    } else {
+                                        Text(text = AnnotatedString.fromHtml(data[4]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp))
+                                    }
+                                }
+                            }
+                        } else {
+                            if (svityia.contains("<br>")) {
+                                val text = AnnotatedString.fromHtml(data[4]).toString()
+                                val t1 = text.indexOf("\n")
+                                if (icon != 0) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp))
+                                        Text(modifier = GlanceModifier.padding(start = 5.dp), text = text.substring(0, t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
+                                    }
+                                    Text(text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
+                                } else {
+                                    Text(text = text, style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
+                                }
+                            } else {
+                                if (icon != 0) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp))
+                                        Text(modifier = GlanceModifier.padding(start = 5.dp), text = AnnotatedString.fromHtml(data[4]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
+                                    }
+                                } else {
+                                    Text(text = AnnotatedString.fromHtml(data[4]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
+                                }
+                            }
+                        }
+                    }
+                }
+                if ((data[7].toInt() > 0 && nedel == Calendar.FRIDAY) || (data[7].toInt() == 3 && nedel != Calendar.SATURDAY && nedel != Calendar.SUNDAY)) {
+                    val post = when (data[7].toInt()) {
+                        1 -> context.resources.getString(R.string.No_post_n)
+                        3 -> context.resources.getString(R.string.Strogi_post_n)
+                        else -> context.resources.getString(R.string.Post)
+                    }
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalAlignment = Alignment.Bottom) {
+                        Row(modifier = GlanceModifier.fillMaxWidth().background(colorBackground), horizontalAlignment = Alignment.CenterHorizontally, verticalAlignment = Alignment.CenterVertically) {
+                            if (data[7].toInt() != 1) {
+                                Image(provider = ImageProvider(if (data[7].toInt() == 3) R.drawable.fishe_red_black else R.drawable.fishe), contentDescription = "", modifier = GlanceModifier.size(26.dp, 13.dp))
+                            }
+                            Text(modifier = GlanceModifier.padding(start = 10.dp), text = post, style = TextStyle(color = ColorProvider(colorText, colorText), fontSize = 18.sp, textAlign = TextAlign.Center))
+                        }
+                    }
+                }
+                if (data[20] != "0" && data[0].toInt() == Calendar.SUNDAY) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalAlignment = Alignment.Bottom) {
+                        Row(modifier = GlanceModifier.fillMaxWidth().background(Primary), horizontalAlignment = Alignment.CenterHorizontally, verticalAlignment = Alignment.CenterVertically) {
+                            Text(modifier = GlanceModifier.padding(start = 10.dp), text = "Тон ${data[20]}", style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 18.sp, textAlign = TextAlign.Center))
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+class Widget : GlanceAppWidgetReceiver() {
+
+    override val glanceAppWidget = CaliandarWidget()
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
-        for (widgetID in appWidgetIds) {
-            kaliandar(context, appWidgetManager, widgetID)
-        }
-    }
-
-    override fun onEnabled(context: Context) {
-        super.onEnabled(context)
-        val sp = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-        sp.edit { putBoolean("WIDGET_ENABLED", true) }
-        val intent = Intent(context, Widget::class.java)
-        intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val pIntent = PendingIntent.getBroadcast(context, 50, intent, PendingIntent.FLAG_IMMUTABLE or 0)
-        when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms() -> {
-                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
-            }
-
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
-            }
-
-            else -> {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
-            }
-        }
-    }
-
-    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
-        super.onDeleted(context, appWidgetIds)
-        context.getSharedPreferences("biblia", Context.MODE_PRIVATE).edit {
-            for (widgetID in appWidgetIds) {
-                remove("dzen_noch_widget_day$widgetID")
-            }
-        }
-    }
-
-    override fun onDisabled(context: Context) {
-        super.onDisabled(context)
-        val sp = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-        sp.edit {
-            for ((key) in sp.all) {
-                if (key.contains("dzen_noch_widget_day")) {
-                    remove(key)
+        CoroutineScope(Dispatchers.Main).launch {
+            val data = getDataKaliandar(context)
+            val manager = GlanceAppWidgetManager(context)
+            val widget = CaliandarWidget()
+            val glanceIds = manager.getGlanceIds(widget.javaClass)
+            glanceIds.forEach { glanceId ->
+                updateAppWidgetState(context, glanceId) {
+                    it[stringPreferencesKey("data")] = data
+                    val t1 = glanceId.toString().indexOf("=")
+                    val t2 = glanceId.toString().lastIndexOf(")")
+                    val id = if (t1 != -1 && t2 != -1) glanceId.toString().substring(t1 + 1, t2).toInt()
+                    else 1
+                    it[booleanPreferencesKey("dzenNoch")] = getBaseDzenNoch(context, id)
                 }
+                widget.update(context, glanceId)
             }
-            putBoolean("WIDGET_ENABLED", false)
-        }
-        val intent = Intent(context, Widget::class.java)
-        intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-        val pIntent = PendingIntent.getBroadcast(context, 50, intent, PendingIntent.FLAG_IMMUTABLE or 0)
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager.cancel(pIntent)
-    }
-
-    private fun mkTime(addDate: Int = 0): Long {
-        val calendar = Calendar.getInstance()
-        calendar.add(Calendar.DATE, addDate)
-        calendar.set(Calendar.HOUR_OF_DAY, 0)
-        calendar.set(Calendar.MINUTE, 0)
-        calendar.set(Calendar.SECOND, 0)
-        calendar.set(Calendar.MILLISECOND, 0)
-        return calendar.timeInMillis
-    }
-
-    override fun onReceive(context: Context, intent: Intent) {
-        super.onReceive(context, intent)
-        val appWidgetManager = AppWidgetManager.getInstance(context)
-        val widgetID = intent.extras?.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID) ?: AppWidgetManager.INVALID_APPWIDGET_ID
-        val extSettings = intent.extras?.getBoolean("settings", false) == true
-        if (extSettings) {
-            isSettingsCulling = true
-            val settings = Intent(context, WidgetConfig::class.java)
-            settings.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            settings.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID)
-            context.startActivity(settings)
-        }
-        if (intent.extras?.getBoolean("actionEndLoad", false) == true) {
-            isSettingsCulling = false
-        }
-        if (widgetID != AppWidgetManager.INVALID_APPWIDGET_ID) {
-            kaliandar(context, appWidgetManager, widgetID)
-        }
-        if (intent.action == AppWidgetManager.ACTION_APPWIDGET_UPDATE) {
-            val thisAppWidget = ComponentName(context.packageName, javaClass.name)
-            val ids = appWidgetManager.getAppWidgetIds(thisAppWidget)
-            onUpdate(context, appWidgetManager, ids)
             val intentUpdate = Intent(context, Widget::class.java)
             intentUpdate.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -132,18 +300,49 @@ class Widget : AppWidgetProvider() {
         }
     }
 
-    private fun prazdnik(context: Context, updateViews: RemoteViews) {
-        updateViews.setInt(R.id.textChislo, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorPrimary))
-        updateViews.setTextColor(R.id.textChislo, ContextCompat.getColor(context, R.color.colorWhite))
-        updateViews.setInt(R.id.textDenNedeli, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorPrimary))
-        updateViews.setInt(R.id.textMesiac, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorPrimary))
-        updateViews.setTextColor(R.id.textDenNedeli, ContextCompat.getColor(context, R.color.colorWhite))
-        updateViews.setTextColor(R.id.textMesiac, ContextCompat.getColor(context, R.color.colorWhite))
+    override fun onEnabled(context: Context) {
+        super.onEnabled(context)
+        val intent = Intent(context, Widget::class.java)
+        intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val pIntent = PendingIntent.getBroadcast(context, 50, intent, PendingIntent.FLAG_IMMUTABLE or 0)
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms() -> {
+                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
+            }
+
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
+            }
+
+            else -> {
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
+            }
+        }
     }
 
-    private fun getBaseDzenNoch(context: Context, widgetID: Int): Boolean {
+    override fun onDisabled(context: Context) {
+        super.onDisabled(context)
+        val intent = Intent(context, Widget::class.java)
+        intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+        val pIntent = PendingIntent.getBroadcast(context, 50, intent, PendingIntent.FLAG_IMMUTABLE or 0)
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.cancel(pIntent)
+    }
+
+    private fun mkTime(addDate: Int = 0): Long {
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.DATE, addDate)
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        return calendar.timeInMillis
+    }
+
+    private fun getBaseDzenNoch(context: Context, id: Int): Boolean {
         val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-        val modeNight = k.getInt("mode_night_widget_day$widgetID", Settings.MODE_NIGHT_SYSTEM)
+        val modeNight = k.getInt("mode_night_widget_day$id", Settings.MODE_NIGHT_SYSTEM)
         var dzenNoch = false
         when (modeNight) {
             Settings.MODE_NIGHT_SYSTEM -> {
@@ -162,11 +361,10 @@ class Widget : AppWidgetProvider() {
         return dzenNoch
     }
 
-    private fun kaliandar(context: Context, appWidgetManager: AppWidgetManager, widgetID: Int) {
-        val updateViews = RemoteViews(context.packageName, R.layout.widget)
+    private fun getDataKaliandar(context: Context): String {
         val calendar = Calendar.getInstance()
+        val gson = Gson()
         if (Settings.data.isEmpty()) {
-            val gson = Gson()
             val type = TypeToken.getParameterized(
                 ArrayList::class.java,
                 TypeToken.getParameterized(
@@ -189,185 +387,52 @@ class Widget : AppWidgetProvider() {
                 break
             }
         }
-        val data = Settings.data[kalPosition]
-        val dzenNoch = getBaseDzenNoch(context, widgetID)
-        val rColorColorPrimaryText: Int
-        val rColorColorPrimary: Int
-        if (dzenNoch) {
-            rColorColorPrimary = R.color.colorPrimary_black
-            rColorColorPrimaryText = R.color.colorWhite
-        } else {
-            rColorColorPrimary = R.color.colorPrimary
-            rColorColorPrimaryText = R.color.colorPrimary_text
-        }
-        val month = data[2].toInt()
-        val dayofmounth = data[1].toInt()
-        val nedel = data[0].toInt()
-        val intent = Intent(context, MainActivity::class.java)
-        val widgetDay = "widget_day"
-        intent.putExtra(widgetDay, true)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
-        val pIntent = PendingIntent.getActivity(context, 500, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-        updateViews.setOnClickPendingIntent(R.id.fullCaliandar, pIntent)
-        val settings = Intent(context, Widget::class.java)
-        settings.putExtra("settings", true)
-        settings.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID)
-        val pSsettings = PendingIntent.getBroadcast(context, 40 + widgetID, settings, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-        updateViews.setOnClickPendingIntent(R.id.settings, pSsettings)
-        if (dzenNoch) {
-            updateViews.setInt(R.id.Layout, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorbackground_material_dark))
-            updateViews.setTextColor(R.id.textSviatyia, ContextCompat.getColor(context, R.color.colorWhite))
-        } else {
-            updateViews.setInt(R.id.Layout, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorWhite))
-            updateViews.setTextColor(R.id.textSviatyia, ContextCompat.getColor(context, R.color.colorPrimary_text))
-        }
-        if (isSettingsCulling) {
-            if (dzenNoch) updateViews.setImageViewResource(R.id.imageView7, R.drawable.load_kalendar_black)
-            else updateViews.setImageViewResource(R.id.imageView7, R.drawable.load_kalendar)
-        } else {
-            if (dzenNoch) updateViews.setImageViewResource(R.id.imageView7, R.drawable.settings_widget)
-            else updateViews.setImageViewResource(R.id.imageView7, R.drawable.settings_black)
-        }
-        updateViews.setTextViewText(R.id.textPost, "Пост")
-        updateViews.setViewVisibility(R.id.textPost, View.GONE)
-        updateViews.setTextColor(R.id.textPost, ContextCompat.getColor(context, R.color.colorPrimary_text))
-        if (dzenNoch) updateViews.setImageViewResource(R.id.imageView4, R.drawable.fishe_whate) else updateViews.setImageViewResource(R.id.imageView4, R.drawable.fishe)
-        updateViews.setViewVisibility(R.id.imageView4, View.GONE)
-        updateViews.setViewVisibility(R.id.znakTipicona, View.GONE)
-        updateViews.setViewVisibility(R.id.textCviatyGlavnyia, View.GONE)
-        updateViews.setInt(R.id.textDenNedeli, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorDivider))
-        updateViews.setInt(R.id.textChislo, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorDivider))
-        updateViews.setInt(R.id.textMesiac, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorDivider))
-        updateViews.setTextColor(R.id.textChislo, ContextCompat.getColor(context, R.color.colorPrimary_text))
-        updateViews.setTextColor(R.id.textDenNedeli, ContextCompat.getColor(context, R.color.colorPrimary_text))
-        updateViews.setTextColor(R.id.textMesiac, ContextCompat.getColor(context, R.color.colorPrimary_text))
-        updateViews.setTextColor(R.id.textCviatyGlavnyia, ContextCompat.getColor(context, rColorColorPrimary))
-        updateViews.setViewVisibility(R.id.textSviatyia, View.GONE)
-        updateViews.setTextViewText(R.id.textChislo, dayofmounth.toString())
-        if (data[7].toInt() == 1) {
-            updateViews.setTextColor(R.id.textDenNedeli, ContextCompat.getColor(context, R.color.colorPrimary_text))
-            updateViews.setTextColor(R.id.textChislo, ContextCompat.getColor(context, R.color.colorPrimary_text))
-            updateViews.setTextColor(R.id.textMesiac, ContextCompat.getColor(context, R.color.colorPrimary_text))
-            updateViews.setInt(R.id.textDenNedeli, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorBezPosta))
-            updateViews.setInt(R.id.textChislo, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorBezPosta))
-            updateViews.setInt(R.id.textMesiac, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorBezPosta))
-        }
-        if (!(nedel == 1 || nedel == 7)) {
-            if (data[7].toInt() == 1) {
-                updateViews.setInt(R.id.textDenNedeli, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorBezPosta))
-                updateViews.setInt(R.id.textChislo, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorBezPosta))
-                updateViews.setInt(R.id.textMesiac, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorBezPosta))
-                if (nedel == 6) {
-                    updateViews.setTextViewText(R.id.textPost, "Посту няма")
-                    updateViews.setInt(R.id.textPost, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorBezPosta))
-                    updateViews.setViewVisibility(R.id.textPost, View.VISIBLE)
-                }
-            }
-        }
-        if (!(nedel == 1 || nedel == 7)) {
-            if (data[7].toInt() == 2) {
-                updateViews.setInt(R.id.textDenNedeli, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorPost))
-                updateViews.setInt(R.id.textChislo, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorPost))
-                updateViews.setInt(R.id.textMesiac, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorPost))
-            }
-        }
-        if (data[6].isNotEmpty()) {
-            val svita = data[6].replace("\n", "<br>")
-            if (data[5].contains("1")) updateViews.setTextViewText(R.id.textCviatyGlavnyia, HtmlCompat.fromHtml("<strong>$svita</strong>", HtmlCompat.FROM_HTML_MODE_LEGACY))
-            else updateViews.setTextViewText(R.id.textCviatyGlavnyia, HtmlCompat.fromHtml(svita, HtmlCompat.FROM_HTML_MODE_LEGACY))
-            updateViews.setViewVisibility(R.id.textCviatyGlavnyia, View.VISIBLE)
-        }
-        if (data[6].contains("Пачатак") || data[6].contains("Вялікі") || data[6].contains("Вялікая") || data[6].contains("ВЕЧАР") || data[6].contains("Палова")) {
-            updateViews.setTextColor(R.id.textCviatyGlavnyia, ContextCompat.getColor(context, rColorColorPrimaryText))
-            updateViews.setTextViewText(R.id.textCviatyGlavnyia, HtmlCompat.fromHtml(data[6], HtmlCompat.FROM_HTML_MODE_LEGACY))
-            updateViews.setViewVisibility(R.id.textCviatyGlavnyia, View.VISIBLE)
-        }
-        if (data[6].contains("Сьветл")) {
-            updateViews.setTextViewText(R.id.textCviatyGlavnyia, HtmlCompat.fromHtml("<strong>${data[6]}</strong>", HtmlCompat.FROM_HTML_MODE_LEGACY))
-        }
-        var dataSviatyia = ""
-        if (data[4].isNotEmpty()) {
-            dataSviatyia = data[4]
-        }
-        if (data[8] != "") {
-            dataSviatyia = data[8] + "<br>" + dataSviatyia
-        }
-        if (data[18] == "1") {
-            dataSviatyia = dataSviatyia + "<br><strong>" + context.getString(R.string.pamerlyia) + "</strong>"
-        }
-        if (dataSviatyia != "") {
-            if (dzenNoch) dataSviatyia = dataSviatyia.replace("#d00505", "#ff6666")
-            updateViews.setTextViewText(R.id.textSviatyia, HtmlCompat.fromHtml(dataSviatyia, HtmlCompat.FROM_HTML_MODE_LEGACY))
-            updateViews.setViewVisibility(R.id.textSviatyia, View.VISIBLE)
-        }
-        if (data[7].contains("2")) {
-            updateViews.setInt(R.id.textDenNedeli, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorPost))
-            updateViews.setInt(R.id.textChislo, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorPost))
-            updateViews.setInt(R.id.textMesiac, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorPost))
-            updateViews.setInt(R.id.textPost, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorPost))
-            if (nedel == 6) {
-                updateViews.setViewVisibility(R.id.textPost, View.VISIBLE)
-                updateViews.setViewVisibility(R.id.imageView4, View.VISIBLE)
-            }
-        } else if (data[7].contains("3")) {
-            updateViews.setInt(R.id.textDenNedeli, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorStrogiPost))
-            updateViews.setTextColor(R.id.textDenNedeli, ContextCompat.getColor(context, R.color.colorWhite))
-            updateViews.setInt(R.id.textChislo, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorStrogiPost))
-            updateViews.setTextColor(R.id.textChislo, ContextCompat.getColor(context, R.color.colorWhite))
-            updateViews.setInt(R.id.textMesiac, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorStrogiPost))
-            updateViews.setTextColor(R.id.textMesiac, ContextCompat.getColor(context, R.color.colorWhite))
-            updateViews.setTextViewText(R.id.textPost, "Строгі пост")
-            updateViews.setInt(R.id.textPost, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorStrogiPost))
-            updateViews.setTextColor(R.id.textPost, ContextCompat.getColor(context, R.color.colorWhite))
-            updateViews.setViewVisibility(R.id.textPost, View.VISIBLE)
-            updateViews.setViewVisibility(R.id.imageView4, View.VISIBLE)
-            if (dzenNoch) updateViews.setImageViewResource(R.id.imageView4, R.drawable.fishe_red_black) else updateViews.setImageViewResource(R.id.imageView4, R.drawable.fishe_red)
-        }
-        if (data[5].contains("1") || data[5].contains("2") || data[5].contains("3")) {
-            updateViews.setTextColor(R.id.textCviatyGlavnyia, ContextCompat.getColor(context, rColorColorPrimary))
-            prazdnik(context, updateViews)
-        }
-        when (data[12].toInt()) {
-            1 -> {
-                if (dzenNoch) updateViews.setImageViewResource(R.id.znakTipicona, R.drawable.znaki_krest_black) else updateViews.setImageViewResource(R.id.znakTipicona, R.drawable.znaki_krest)
-                updateViews.setViewVisibility(R.id.znakTipicona, View.VISIBLE)
-            }
-
-            2 -> {
-                var rDrawableZnakiKrestVKruge = R.drawable.znaki_krest_v_kruge
-                if (dzenNoch) rDrawableZnakiKrestVKruge = R.drawable.znaki_krest_v_kruge_black
-                updateViews.setImageViewResource(R.id.znakTipicona, rDrawableZnakiKrestVKruge)
-                updateViews.setViewVisibility(R.id.znakTipicona, View.VISIBLE)
-            }
-
-            3 -> {
-                if (dzenNoch) updateViews.setImageViewResource(R.id.znakTipicona, R.drawable.znaki_krest_v_polukruge_black) else updateViews.setImageViewResource(R.id.znakTipicona, R.drawable.znaki_krest_v_polukruge)
-                updateViews.setViewVisibility(R.id.znakTipicona, View.VISIBLE)
-            }
-
-            4 -> {
-                if (dzenNoch) updateViews.setImageViewResource(R.id.znakTipicona, R.drawable.znaki_ttk_black_black) else updateViews.setImageViewResource(R.id.znakTipicona, R.drawable.znaki_ttk)
-                updateViews.setViewVisibility(R.id.znakTipicona, View.VISIBLE)
-            }
-
-            5 -> {
-                if (dzenNoch) updateViews.setImageViewResource(R.id.znakTipicona, R.drawable.znaki_ttk_whate) else updateViews.setImageViewResource(R.id.znakTipicona, R.drawable.znaki_ttk_black)
-                updateViews.setViewVisibility(R.id.znakTipicona, View.VISIBLE)
-            }
-        }
-        val nedelName = context.resources.getStringArray(R.array.dni_nedeli)
-        updateViews.setTextViewText(R.id.textDenNedeli, nedelName[nedel])
-        if (nedel == 1) prazdnik(context, updateViews)
-        val monthName = context.resources.getStringArray(R.array.meciac)
-        /*if (month == Calendar.OCTOBER) updateViews.setFloat(R.id.textMesiac, "setTextSize", 14f)
-        else updateViews.setFloat(R.id.textMesiac, "setTextSize", 16f)
-        if (nedel == Calendar.MONDAY) updateViews.setFloat(R.id.textDenNedeli, "setTextSize", 14f)
-        else updateViews.setFloat(R.id.textDenNedeli, "setTextSize", 16f)*/
-        updateViews.setTextViewText(R.id.textMesiac, monthName[month])
-        appWidgetManager.updateAppWidget(widgetID, updateViews)
+        val type = TypeToken.getParameterized(
+            ArrayList::class.java,
+            String::class.java
+        ).type
+        return gson.toJson(Settings.data[kalPosition], type)
     }
 
-    companion object {
-        private var isSettingsCulling = false
+    override fun onReceive(context: Context, intent: Intent) {
+        super.onReceive(context, intent)
+        val widgetID = intent.extras?.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID) ?: AppWidgetManager.INVALID_APPWIDGET_ID
+        CoroutineScope(Dispatchers.Main).launch {
+            val data = getDataKaliandar(context)
+            val manager = GlanceAppWidgetManager(context)
+            val widget = CaliandarWidget()
+            val glanceIds = manager.getGlanceIds(widget.javaClass)
+            glanceIds.forEach { glanceId ->
+                updateAppWidgetState(context, glanceId) {
+                    it[stringPreferencesKey("data")] = data
+                    val t1 = glanceId.toString().indexOf("=")
+                    val t2 = glanceId.toString().lastIndexOf(")")
+                    val id = when {
+                        widgetID != AppWidgetManager.INVALID_APPWIDGET_ID -> widgetID
+                        t1 != -1 && t2 != -1 -> glanceId.toString().substring(t1 + 1, t2).toInt()
+                        else -> 1
+                    }
+                    it[booleanPreferencesKey("dzenNoch")] = getBaseDzenNoch(context, id)
+                }
+                widget.update(context, glanceId)
+            }
+        }
+        val intentUpdate = Intent(context, Widget::class.java)
+        intentUpdate.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val pIntent = PendingIntent.getBroadcast(context, 50, intentUpdate, PendingIntent.FLAG_IMMUTABLE or 0)
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms() -> {
+                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
+            }
+
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
+            }
+
+            else -> {
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
+            }
+        }
     }
 }
