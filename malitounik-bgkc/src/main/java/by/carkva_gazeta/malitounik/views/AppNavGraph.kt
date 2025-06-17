@@ -168,7 +168,6 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.InputStreamReader
 import java.util.Calendar
-import java.util.GregorianCalendar
 import kotlin.random.Random
 
 data class AppNavGraphStateScroll(val title: String, var scrollPosition: Int)
@@ -725,7 +724,7 @@ fun findCaliandarToDay(context: Context, isGlobal: Boolean = true): ArrayList<St
         Settings.data.addAll(gson.fromJson(builder, type))
     }
     var caliandarPosition = Settings.caliandarPosition
-    val calendar = GregorianCalendar(2025, 5, 15)// Calendar.getInstance()
+    val calendar = Calendar.getInstance()
     for (i in Settings.data.indices) {
         if (calendar[Calendar.DATE] == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
             caliandarPosition = i
