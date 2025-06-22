@@ -1,6 +1,5 @@
 package by.carkva_gazeta.malitounik
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -62,12 +61,6 @@ class WidgetRadyjoMaryiaProgram : ComponentActivity() {
                     DialogProgramRadoiMaryia(
                         onDismiss = { finish() }
                     )
-                    val intent = Intent(this, WidgetRadyjoMaryia::class.java)
-                    intent.putExtra(
-                        "action",
-                        ServiceRadyjoMaryia.WIDGET_RADYJO_MARYIA_PROGRAM_EXIT
-                    )
-                    sendBroadcast(intent)
                 }
             }
         }
@@ -180,7 +173,7 @@ fun DialogProgramRadoiMaryia(
                 )
                 if (progress) {
                     Box(modifier = Modifier.fillMaxWidth()) {
-                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                        CircularProgressIndicator(modifier = Modifier.padding(10.dp).align(Alignment.Center))
                     }
                 } else {
                     Text(

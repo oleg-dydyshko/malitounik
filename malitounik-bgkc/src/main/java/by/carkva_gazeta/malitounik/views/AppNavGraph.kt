@@ -325,7 +325,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
     if (extras != null) {
         val widgetday = "widget_day"
         val widgetmun = "widget_mun"
-        if (extras.getBoolean(widgetmun, false) || extras.getString(widgetday, "") != "" || extras.getBoolean("sabytie", false)) {
+        if (extras.getBoolean(widgetmun, false) || extras.getBoolean(widgetday, false) || extras.getBoolean("sabytie", false)) {
             start = if (k.getBoolean("caliandarList", false)) AllDestinations.KALIANDAR_YEAR
             else AllDestinations.KALIANDAR
             Settings.destinations = start
@@ -352,8 +352,15 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             )
         }
 
-        composable(AllDestinations.RUJANEC_MENU) {
-            Settings.destinations = AllDestinations.RUJANEC_MENU
+        composable(AllDestinations.LITURGIKON_MENU) {
+            Settings.destinations = AllDestinations.LITURGIKON_MENU
+            MainConteiner(
+                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+            )
+        }
+
+        composable(AllDestinations.CHASASLOU_MENU) {
+            Settings.destinations = AllDestinations.CHASASLOU_MENU
             MainConteiner(
                 navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
             )
@@ -911,7 +918,7 @@ fun MainConteiner(
                     } else pagerState.scrollToPage(caliandarPosition)
                 }
             }
-            if (extras.getString(widgetday, "") != "") {
+            if (extras.getBoolean(widgetday, false)) {
                 val calendar = Calendar.getInstance()
                 var caliandarPosition = Settings.caliandarPosition
                 for (i in Settings.data.indices) {
@@ -1068,7 +1075,8 @@ fun MainConteiner(
                         AllDestinations.BIBLIA_SINODAL -> navigationActions.navigateToBibliaSinodal()
                         AllDestinations.VYBRANAE_LIST -> navigationActions.navigateToVybranaeList()
                         AllDestinations.AKAFIST_MENU -> navigationActions.navigateToAkafistMenu()
-                        AllDestinations.RUJANEC_MENU -> navigationActions.navigateToRujanecMenu()
+                        AllDestinations.LITURGIKON_MENU -> navigationActions.navigateToLiturgikonMenu()
+                        AllDestinations.CHASASLOU_MENU -> navigationActions.navigateToChasaslouMenu()
                         AllDestinations.MAE_NATATKI_MENU -> navigationActions.navigateToMaeNatatkiMenu()
                         AllDestinations.BIBLIJATEKA_NIADAUNIA -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_NIADAUNIA)
                         AllDestinations.BIBLIJATEKA_MALITOUNIKI -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_MALITOUNIKI)
@@ -1089,6 +1097,14 @@ fun MainConteiner(
                         AllDestinations.UNDER_PAMIATKA -> {
                             navigateIsSpecial = true
                             navigationActions.navigateToPamiatka()
+                        }
+                        AllDestinations.PRANAS -> {
+                            navigateIsSpecial = true
+                            navigationActions.navigateToPraNas()
+                        }
+                        AllDestinations.HELP -> {
+                            navigateIsSpecial = true
+                            navigationActions.navigateToHelp()
                         }
 
                         AllDestinations.UNDER_SVAITY_MUNU -> navigationActions.navigateToSviaty()
@@ -1111,9 +1127,10 @@ fun MainConteiner(
         title = when (currentRoute) {
             AllDestinations.KALIANDAR -> stringResource(R.string.kaliandar2)
             AllDestinations.KALIANDAR_YEAR -> stringResource(R.string.kaliandar2)
-            AllDestinations.BOGASLUJBOVYIA_MENU -> stringResource(R.string.liturgikon)
+            AllDestinations.BOGASLUJBOVYIA_MENU -> stringResource(R.string.bogaslugbovyia_teksty)
             AllDestinations.AKAFIST_MENU -> stringResource(R.string.akafisty)
-            AllDestinations.RUJANEC_MENU -> stringResource(R.string.ruzanec)
+            AllDestinations.CHASASLOU_MENU -> stringResource(R.string.chasaslou)
+            AllDestinations.LITURGIKON_MENU -> stringResource(R.string.liturgikon)
             AllDestinations.MALITVY_MENU -> stringResource(R.string.malitvy)
             AllDestinations.VYBRANAE_LIST -> stringResource(R.string.MenuVybranoe)
             AllDestinations.MAE_NATATKI_MENU -> stringResource(R.string.maje_natatki)
@@ -1139,7 +1156,6 @@ fun MainConteiner(
             else -> ""
         }
         var expandedUp by remember { mutableStateOf(false) }
-        var expandedDown by remember { mutableStateOf(false) }
         Scaffold(topBar = {
             TopAppBar(
                 title = {
@@ -1250,7 +1266,7 @@ fun MainConteiner(
                                 )
                             }
                         }
-                        if (currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.RUJANEC_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA) {
+                        if (currentRoute == AllDestinations.LITURGIKON_MENU || currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.CHASASLOU_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA) {
                             IconButton({
                                 searchText = true
                             }) {
@@ -1285,8 +1301,27 @@ fun MainConteiner(
                                 })
                             }
                             if (k.getBoolean("admin", false)) {
-                                if (currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.RUJANEC_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU) {
-                                    HorizontalDivider()
+                                HorizontalDivider()
+                                if (currentRoute.contains(AllDestinations.KALIANDAR) || currentRoute.contains("BIBLIJATEKA", ignoreCase = true)) {
+                                    DropdownMenuItem(onClick = {
+                                        expandedUp = false
+                                        if (context.checkmodulesAdmin()) {
+                                            val intent = Intent()
+                                            if (currentRoute.contains(AllDestinations.KALIANDAR)) {
+                                                intent.setClassName(context, "by.carkva_gazeta.admin.Sviatyia")
+                                                intent.putExtra("dayOfYear", Settings.data[Settings.caliandarPosition][24].toInt())
+                                            } else {
+                                                intent.setClassName(context, "by.carkva_gazeta.admin.BibliatekaList")
+                                            }
+                                            context.startActivity(intent)
+                                        }
+                                    }, text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.edit), contentDescription = ""
+                                        )
+                                    })
+                                }
+                                if (currentRoute == AllDestinations.LITURGIKON_MENU || currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.CHASASLOU_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU) {
                                     DropdownMenuItem(onClick = {
                                         expandedUp = false
                                         navigationActions.navigateToSearchBiblia(Settings.PEREVODSEMUXI, true)
@@ -1296,13 +1331,21 @@ fun MainConteiner(
                                         )
                                     })
                                 }
+                                DropdownMenuItem(onClick = {
+                                    expandedUp = false
+                                    logView = true
+                                }, text = { Text(stringResource(R.string.log_m), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.description), contentDescription = ""
+                                    )
+                                })
                             }
                         }
                     }
                 }, colors = TopAppBarDefaults.topAppBarColors(tollBarColor)
             )
         }, bottomBar = {
-            if (!(currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.RUJANEC_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA || currentRoute == AllDestinations.UNDER_PARAFII_BGKC || currentRoute == AllDestinations.UNDER_SVAITY_MUNU || currentRoute.contains("BIBLIA", ignoreCase = true) || currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.MAE_NATATKI_MENU)) {
+            if (!(currentRoute == AllDestinations.LITURGIKON_MENU || currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.CHASASLOU_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA || currentRoute == AllDestinations.UNDER_PARAFII_BGKC || currentRoute == AllDestinations.UNDER_SVAITY_MUNU || currentRoute.contains("BIBLIA", ignoreCase = true) || currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.MAE_NATATKI_MENU)) {
                 val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
                 if (!searchText) {
                     if (showDropdown) {
@@ -1327,66 +1370,11 @@ fun MainConteiner(
                         }
                     }
                     BottomAppBar(containerColor = tollBarColor) {
-                        DropdownMenu(
-                            expanded = expandedDown, onDismissRequest = { expandedDown = false }) {
-                            if (k.getBoolean("admin", false)) {
-                                if (currentRoute.contains(AllDestinations.KALIANDAR) || currentRoute.contains("BIBLIJATEKA", ignoreCase = true)) {
-                                    DropdownMenuItem(onClick = {
-                                        expandedDown = false
-                                        if (context.checkmodulesAdmin()) {
-                                            val intent = Intent()
-                                            if (currentRoute.contains(AllDestinations.KALIANDAR)) {
-                                                intent.setClassName(context, "by.carkva_gazeta.admin.Sviatyia")
-                                                intent.putExtra("dayOfYear", Settings.data[Settings.caliandarPosition][24].toInt())
-                                            } else {
-                                                intent.setClassName(context, "by.carkva_gazeta.admin.BibliatekaList")
-                                            }
-                                            context.startActivity(intent)
-                                        }
-                                    }, text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.edit), contentDescription = ""
-                                        )
-                                    })
-                                }
-                                DropdownMenuItem(onClick = {
-                                    expandedDown = false
-                                    logView = true
-                                }, text = { Text(stringResource(R.string.log_m), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.description), contentDescription = ""
-                                    )
-                                })
-                                HorizontalDivider()
-                            }
-                            DropdownMenuItem(onClick = {
-                                expandedDown = false
-                                navigationActions.navigateToHelp()
-                            }, text = { Text(stringResource(R.string.help), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                Icon(
-                                    painter = painterResource(R.drawable.favorite), contentDescription = ""
-                                )
-                            })
-                            DropdownMenuItem(onClick = {
-                                expandedDown = false
-                                navigationActions.navigateToPraNas()
-                            }, text = { Text(stringResource(R.string.pra_nas), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                Icon(
-                                    painter = painterResource(R.drawable.info), contentDescription = ""
-                                )
-                            })
-                        }
                         Row(
                             modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.CenterVertically
                         ) {
                             if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
-                                IconButton(onClick = { expandedDown = true }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = textTollBarColor
-                                    )
-                                }
                                 IconButton(onClick = {
-                                    expandedDown = false
                                     navigationActions.navigateToSearchSvityia()
                                 }) {
                                     Icon(
@@ -1394,7 +1382,6 @@ fun MainConteiner(
                                     )
                                 }
                                 IconButton(onClick = {
-                                    expandedDown = false
                                     navigationActions.navigateToPadzeiView()
                                 }) {
                                     Icon(
@@ -1575,8 +1562,12 @@ fun MainConteiner(
                         Pashalia(navController, innerPadding, searchText, textFieldValueState)
                     }
 
-                    AllDestinations.RUJANEC_MENU -> BogaslujbovyiaMenu(
-                        navController, innerPadding, Settings.MENU_RUJANEC, searchText, textFieldValueState
+                    AllDestinations.CHASASLOU_MENU -> BogaslujbovyiaMenu(
+                        navController, innerPadding, Settings.MENU_CHASASLOU, searchText, textFieldValueState
+                    )
+
+                    AllDestinations.LITURGIKON_MENU -> BogaslujbovyiaMenu(
+                        navController, innerPadding, Settings.MENU_LITURGIKON, searchText, textFieldValueState
                     )
 
                     AllDestinations.MAE_NATATKI_MENU -> {

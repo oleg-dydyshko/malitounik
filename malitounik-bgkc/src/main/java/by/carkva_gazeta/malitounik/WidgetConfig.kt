@@ -1,6 +1,5 @@
 package by.carkva_gazeta.malitounik
 
-import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -41,22 +40,15 @@ import by.carkva_gazeta.malitounik.ui.theme.MalitounikTheme
 
 
 class WidgetConfig : ComponentActivity() {
-    private var widgetID = AppWidgetManager.INVALID_APPWIDGET_ID
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        widgetID = intent.extras?.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID) ?: AppWidgetManager.INVALID_APPWIDGET_ID
-        if (widgetID == AppWidgetManager.INVALID_APPWIDGET_ID) {
-            finish()
-        }
         setResult(RESULT_OK)
         setContent {
             MalitounikTheme {
                 DialogWidgetConfig(
                     isWidgetMun = false,
-                    widgetID = widgetID,
                     onConfirmRequest = {
                         val resultValue = Intent(this, Widget::class.java)
-                        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID)
                         setResult(RESULT_OK, resultValue)
                         sendBroadcast(resultValue)
                         finish()
@@ -72,7 +64,6 @@ class WidgetConfig : ComponentActivity() {
 @Composable
 fun DialogWidgetConfig(
     isWidgetMun: Boolean,
-    widgetID: Int,
     onConfirmRequest: () -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -80,8 +71,8 @@ fun DialogWidgetConfig(
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var modeNight by remember {
         mutableIntStateOf(
-            if (isWidgetMun) k.getInt("mode_night_widget_mun$widgetID", Settings.MODE_NIGHT_SYSTEM)
-            else k.getInt("mode_night_widget_day$widgetID", Settings.MODE_NIGHT_SYSTEM)
+            if (isWidgetMun) k.getInt("mode_night_widget_mun", Settings.MODE_NIGHT_SYSTEM)
+            else k.getInt("mode_night_widget_day", Settings.MODE_NIGHT_SYSTEM)
         )
     }
     Dialog(onDismissRequest = { onDismiss() }) {
@@ -189,8 +180,8 @@ fun DialogWidgetConfig(
                     TextButton(
                         onClick = {
                             k.edit {
-                                if (isWidgetMun) putInt("mode_night_widget_mun$widgetID", modeNight)
-                                else putInt("mode_night_widget_day$widgetID", modeNight)
+                                if (isWidgetMun) putInt("mode_night_widget_mun", modeNight)
+                                else putInt("mode_night_widget_day", modeNight)
                             }
                             onConfirmRequest()
                         },

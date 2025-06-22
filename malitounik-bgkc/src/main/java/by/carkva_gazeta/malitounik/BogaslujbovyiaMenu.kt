@@ -82,6 +82,8 @@ fun BogaslujbovyiaMenu(
         listAll.addAll(getBogaslujbovyia())
         listAll.addAll(getMalitvy())
         listAll.addAll(getAkafist())
+        listAll.addAll(getLiturgikon())
+        listAll.addAll(getChasaslou())
         listAll.addAll(getRujanec())
         listAll.addAll(getAktoix())
         listAll.addAll(getViachernia())
@@ -107,7 +109,8 @@ fun BogaslujbovyiaMenu(
             Settings.MENU_BOGASLUJBOVYIA -> getBogaslujbovyia()
             Settings.MENU_MALITVY -> getMalitvy()
             Settings.MENU_AKAFIST -> getAkafist()
-            Settings.MENU_RUJANEC -> getRujanec()
+            Settings.MENU_CHASASLOU -> getChasaslou()
+            Settings.MENU_LITURGIKON -> getLiturgikon()
             else -> ArrayList()
         }
         if (menuItem == Settings.MENU_BOGASLUJBOVYIA) {
@@ -171,11 +174,6 @@ fun BogaslujbovyiaMenu(
                                     folderList[index], Settings.MENU_TRYEDZ
                                 )
                             }
-                            if (folderList[index] == "ЧАСАСЛОЎ") {
-                                navigationActions.navigateToMalitvyListAll(
-                                    folderList[index], Settings.MENU_CHASASLOU
-                                )
-                            }
                         }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
@@ -213,6 +211,29 @@ fun BogaslujbovyiaMenu(
             }
             HorizontalDivider()
         }
+        if (!searchText && menuItem == Settings.MENU_CHASASLOU) {
+            item {
+                Row(
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .clickable {
+                            navigationActions.navigateToMalitvyListAll(
+                                "ВЯЧЭРНЯ", Settings.MENU_VIACHERNIA
+                            )
+                        }, verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = null
+                    )
+                    Text(
+                        "ВЯЧЭРНЯ", modifier = Modifier
+                            .fillMaxSize()
+                            .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                    )
+                }
+                HorizontalDivider()
+            }
+        }
         if (!searchText && menuItem == Settings.MENU_MALITVY) {
             item {
                 val title = stringResource(R.string.prynagodnyia)
@@ -236,11 +257,64 @@ fun BogaslujbovyiaMenu(
                 }
                 HorizontalDivider()
             }
+            item {
+                val title = stringResource(R.string.ruzanec)
+                Row(
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .clickable {
+                            navigationActions.navigateToMalitvyListAll(
+                                title, Settings.MENU_MALITVY_RUJANEC
+                            )
+                        }, verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = null
+                    )
+                    Text(
+                        title.uppercase(), modifier = Modifier
+                            .fillMaxSize()
+                            .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                    )
+                }
+                HorizontalDivider()
+            }
         }
         item {
             Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
         }
     }
+}
+
+fun getLiturgikon(): ArrayList<BogaslujbovyiaListData> {
+    val list = ArrayList<BogaslujbovyiaListData>()
+    list.add(
+        BogaslujbovyiaListData(
+            "Боская Літургія сьв. Яна Залатавуснага", "bogashlugbovya/lit_jana_zalatavusnaha.html"
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Боская Літургія ў Велікодны перыяд", "bogashlugbovya/lit_jan_zalat_vielikodn.html"
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Боская Літургія сьв. Васіля Вялікага", "bogashlugbovya/lit_vasila_vialikaha.html"
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Літургія раней асьвячаных дароў", "bogashlugbovya/lit_raniej_asviaczanych_darou.html"
+        )
+    )
+    list.add(BogaslujbovyiaListData("Абедніца", "bogashlugbovya/abiednica.html"))
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+        list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+    } else {
+        list.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
+    }
+    return list
 }
 
 fun getAkafist(): ArrayList<BogaslujbovyiaListData> {
@@ -285,30 +359,9 @@ fun getBogaslujbovyia(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
-            "Боская Літургія сьв. Яна Залатавуснага", "bogashlugbovya/lit_jana_zalatavusnaha.html"
-        )
-    )
-    list.add(
-        BogaslujbovyiaListData(
-            "Боская Літургія ў Велікодны перыяд", "bogashlugbovya/lit_jan_zalat_vielikodn.html"
-        )
-    )
-    list.add(
-        BogaslujbovyiaListData(
-            "Боская Літургія сьв. Васіля Вялікага", "bogashlugbovya/lit_vasila_vialikaha.html"
-        )
-    )
-    list.add(
-        BogaslujbovyiaListData(
-            "Літургія раней асьвячаных дароў", "bogashlugbovya/lit_raniej_asviaczanych_darou.html"
-        )
-    )
-    list.add(
-        BogaslujbovyiaListData(
             "Набажэнства ў гонар Маці Божай Нястомнай Дапамогі", "bogashlugbovya/nabazenstva_maci_bozaj_niast_dap.html"
         )
     )
-    list.add(BogaslujbovyiaListData("Абедніца", "bogashlugbovya/abiednica.html"))
     list.add(
         BogaslujbovyiaListData(
             "Малебны канон Найсьвяцейшай Багародзіцы", "bogashlugbovya/kanon_malebny_baharodzicy.html"

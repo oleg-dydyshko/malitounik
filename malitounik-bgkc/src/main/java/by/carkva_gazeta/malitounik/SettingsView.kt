@@ -762,50 +762,52 @@ fun SettingsView(navController: NavHostController) {
                     )
                 }
             }
-            Text(
-                stringResource(R.string.pavedamiс_title),
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.secondary,
-                fontSize = (Settings.fontInterface - 2).sp
-            )
             val dataTimes = ArrayList<DataTime>()
             for (i in 6..17) {
                 dataTimes.add(DataTime(stringResource(R.string.pavedamic, i), i))
             }
-            var expandedSviaty by remember { mutableStateOf(false) }
             val textFieldNotificstionState = rememberTextFieldState(dataTimes[k.getInt("timeNotification", 2)].string)
-            ExposedDropdownMenuBox(
-                modifier = Modifier.padding(vertical = 10.dp),
-                expanded = expandedSviaty,
-                onExpandedChange = { expandedSviaty = it },
-            ) {
-                TextField(
-                    modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-                    state = textFieldNotificstionState,
-                    readOnly = true,
-                    lineLimits = TextFieldLineLimits.SingleLine,
-                    textStyle = TextStyle(fontSize = (Settings.fontInterface - 2).sp),
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSviaty) },
-                    colors = ExposedDropdownMenuDefaults.textFieldColors(focusedTextColor = PrimaryText, unfocusedTextColor = PrimaryText, focusedContainerColor = Divider, unfocusedContainerColor = Divider, focusedTrailingIconColor = PrimaryText, unfocusedTrailingIconColor = PrimaryText),
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    stringResource(R.string.pavedamiс_title),
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontSize = (Settings.fontInterface - 2).sp
                 )
-                ExposedDropdownMenu(
-                    containerColor = Divider,
+                var expandedSviaty by remember { mutableStateOf(false) }
+                ExposedDropdownMenuBox(
+                    modifier = Modifier.padding(10.dp),
                     expanded = expandedSviaty,
-                    onDismissRequest = { expandedSviaty = false },
+                    onExpandedChange = { expandedSviaty = it },
                 ) {
-                    dataTimes.forEachIndexed { index, option ->
-                        DropdownMenuItem(
-                            text = { Text(text = option.string, fontSize = (Settings.fontInterface - 2).sp) },
-                            onClick = {
-                                textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option.string)
-                                expandedSviaty = false
-                                k.edit {
-                                    putInt("timeNotification", index)
-                                }
-                            },
-                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                            colors = MenuDefaults.itemColors(textColor = PrimaryText)
-                        )
+                    TextField(
+                        modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+                        state = textFieldNotificstionState,
+                        readOnly = true,
+                        lineLimits = TextFieldLineLimits.SingleLine,
+                        textStyle = TextStyle(fontSize = (Settings.fontInterface - 2).sp),
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSviaty) },
+                        colors = ExposedDropdownMenuDefaults.textFieldColors(focusedTextColor = PrimaryText, unfocusedTextColor = PrimaryText, focusedContainerColor = Divider, unfocusedContainerColor = Divider, focusedTrailingIconColor = PrimaryText, unfocusedTrailingIconColor = PrimaryText),
+                    )
+                    ExposedDropdownMenu(
+                        containerColor = Divider,
+                        expanded = expandedSviaty,
+                        onDismissRequest = { expandedSviaty = false },
+                    ) {
+                        dataTimes.forEachIndexed { index, option ->
+                            DropdownMenuItem(
+                                text = { Text(text = option.string, fontSize = (Settings.fontInterface - 2).sp) },
+                                onClick = {
+                                    textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option.string)
+                                    expandedSviaty = false
+                                    k.edit {
+                                        putInt("timeNotification", index)
+                                    }
+                                },
+                                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                                colors = MenuDefaults.itemColors(textColor = PrimaryText)
+                            )
+                        }
                     }
                 }
             }

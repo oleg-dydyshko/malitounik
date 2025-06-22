@@ -140,9 +140,10 @@ object Settings {
     const val MENU_TRYEDZ_POSNAIA_5 = 121
     const val MENU_TRYEDZ_POSNAIA_6 = 122
     const val MENU_CHASASLOU = 123
-    const val MENU_AKAFIST = 123
-    const val MENU_RUJANEC = 124
-    const val MENU_MAE_NATATKI = 125
+    const val MENU_AKAFIST = 124
+    const val MENU_MALITVY_RUJANEC = 125
+    const val MENU_MAE_NATATKI = 126
+    const val MENU_LITURGIKON = 127
     var bibleTime = false
     var bibleTimeList = false
     var destinations = AllDestinations.KALIANDAR

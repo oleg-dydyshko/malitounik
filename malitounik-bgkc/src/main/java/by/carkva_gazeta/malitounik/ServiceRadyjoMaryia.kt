@@ -15,6 +15,7 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
+import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
@@ -30,7 +31,6 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.Timer
 import java.util.TimerTask
-import androidx.core.net.toUri
 
 
 class ServiceRadyjoMaryia : Service() {
@@ -40,11 +40,9 @@ class ServiceRadyjoMaryia : Service() {
     }
 
     companion object {
-        const val PLAY_PAUSE = 1
-        const val STOP = 2
-        const val PLAYING_RADIO_MARIA_STATE_READY = 10
-        const val WIDGET_RADYJO_MARYIA_PROGRAM = 20
-        const val WIDGET_RADYJO_MARYIA_PROGRAM_EXIT = 30
+        const val START = 1
+        const val PLAY_PAUSE = 2
+        const val STOP = 3
         var isServiceRadioMaryiaRun = false
         var isPlayingRadyjoMaryia = false
         var titleRadyjoMaryia = ""
@@ -74,15 +72,26 @@ class ServiceRadyjoMaryia : Service() {
         listener = serviceRadyjoMaryiaListener
     }
 
+    private fun setDataToWidget(action: Int, isPlaying: Boolean, title: String) {
+        val sp = getSharedPreferences("biblia", MODE_PRIVATE)
+        if (sp.getBoolean("WIDGET_RADYJO_MARYIA_ENABLED", false)) {
+            val intent = Intent(this@ServiceRadyjoMaryia, WidgetRadyjoMaryia::class.java)
+            intent.putExtra("action", action)
+            intent.putExtra("isPlaying", isPlaying)
+            intent.putExtra("title", title)
+            sendBroadcast(intent)
+        }
+    }
+
     private fun initRadioMaria() {
         player = ExoPlayer.Builder(this).build().apply {
-            setMediaItem(MediaItem.fromUri("https://server.radiorm.by:8443/live".toUri()))
+            setMediaItem(MediaItem.fromUri("https://server.radiorm.by:8443/aac".toUri()))
             prepare()
             addListener(object : Player.Listener {
 
                 override fun onPlayerError(error: PlaybackException) {
                     stopServiceRadioMaria(true)
-                    val intent = Intent(Intent.ACTION_VIEW, "https://server.radiorm.by:8443/live".toUri())
+                    val intent = Intent(Intent.ACTION_VIEW, "https://server.radiorm.by:8443/aac".toUri())
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     startActivity(intent)
                 }
@@ -96,12 +105,7 @@ class ServiceRadyjoMaryia : Service() {
                         }
                         ServiceCompat.startForeground(this@ServiceRadyjoMaryia, 300, setRadioNotification(), flag)
                         listener?.playingRadioMariaStateReady()
-                        val sp = getSharedPreferences("biblia", MODE_PRIVATE)
-                        if (sp.getBoolean("WIDGET_RADYJO_MARYIA_ENABLED", false)) {
-                            val intent = Intent(this@ServiceRadyjoMaryia, WidgetRadyjoMaryia::class.java)
-                            intent.putExtra("action", PLAYING_RADIO_MARIA_STATE_READY)
-                            sendBroadcast(intent)
-                        }
+                        setDataToWidget(PLAY_PAUSE, isPlaying, titleRadyjoMaryia)
                         isPlaybackStateReady = true
                     }
                 }
@@ -120,12 +124,7 @@ class ServiceRadyjoMaryia : Service() {
         stopPlay()
         stopSelf()
         isServiceRadioMaryiaRun = false
-        val sp = getSharedPreferences("biblia", MODE_PRIVATE)
-        if (sp.getBoolean("WIDGET_RADYJO_MARYIA_ENABLED", false)) {
-            val intent = Intent(this@ServiceRadyjoMaryia, WidgetRadyjoMaryia::class.java)
-            intent.putExtra("isError", isError)
-            sendBroadcast(intent)
-        }
+        setDataToWidget(STOP, false, "")
         listener?.setTitleRadioMaryia("")
         listener?.unBinding()
         isPlaybackStateReady = false
@@ -194,10 +193,7 @@ class ServiceRadyjoMaryia : Service() {
         if (action == PLAY_PAUSE) {
             playOrPause()
             if (isPlaybackStateReady) {
-                val sp = getSharedPreferences("biblia", MODE_PRIVATE)
-                if (sp.getBoolean("WIDGET_RADYJO_MARYIA_ENABLED", false)) {
-                    sendBroadcast(Intent(this, WidgetRadyjoMaryia::class.java))
-                }
+                setDataToWidget(PLAY_PAUSE, isPlaying, titleRadyjoMaryia)
             }
             listener?.playingRadioMaria(isPlaying)
         } else {
@@ -240,10 +236,7 @@ class ServiceRadyjoMaryia : Service() {
                                             0
                                         }
                                         ServiceCompat.startForeground(this@ServiceRadyjoMaryia, 300, setRadioNotification(), flag)
-                                        val sp = getSharedPreferences("biblia", MODE_PRIVATE)
-                                        if (sp.getBoolean("WIDGET_RADYJO_MARYIA_ENABLED", false)) {
-                                            sendBroadcast(Intent(this@ServiceRadyjoMaryia, WidgetRadyjoMaryia::class.java))
-                                        }
+                                        setDataToWidget(PLAY_PAUSE, isPlaying, titleRadyjoMaryia)
                                         listener?.setTitleRadioMaryia(titleRadyjoMaryia)
                                     }
                                 }
@@ -299,6 +292,7 @@ class ServiceRadyjoMaryia : Service() {
                 pendingIntent = PendingIntent.getService(this, PLAY_PAUSE, action, flags)
                 return pendingIntent
             }
+
             STOP -> {
                 action.putExtra("action", STOP)
                 action.component = serviceName

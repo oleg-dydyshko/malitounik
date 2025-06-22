@@ -3,42 +3,401 @@ package by.carkva_gazeta.malitounik
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
-import android.appwidget.AppWidgetProvider
+import android.appwidget.AppWidgetProviderInfo
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
-import android.graphics.Typeface
 import android.os.Build
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.StyleSpan
-import android.view.View
-import android.widget.RemoteViews
-import androidx.core.content.ContextCompat
-import androidx.core.content.edit
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.glance.ColorFilter
+import androidx.glance.GlanceId
+import androidx.glance.GlanceModifier
+import androidx.glance.GlanceTheme
+import androidx.glance.Image
+import androidx.glance.ImageProvider
+import androidx.glance.action.Action
+import androidx.glance.action.ActionParameters
+import androidx.glance.action.actionParametersOf
+import androidx.glance.action.actionStartActivity
+import androidx.glance.action.clickable
+import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.GlanceAppWidgetReceiver
+import androidx.glance.appwidget.action.ActionCallback
+import androidx.glance.appwidget.action.actionRunCallback
+import androidx.glance.appwidget.compose
+import androidx.glance.appwidget.provideContent
+import androidx.glance.appwidget.state.updateAppWidgetState
+import androidx.glance.background
+import androidx.glance.color.ColorProvider
+import androidx.glance.currentState
+import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
+import androidx.glance.layout.Column
+import androidx.glance.layout.Row
+import androidx.glance.layout.fillMaxWidth
+import androidx.glance.layout.padding
+import androidx.glance.layout.size
+import androidx.glance.state.GlanceStateDefinition
+import androidx.glance.state.PreferencesGlanceStateDefinition
+import androidx.glance.text.FontWeight
+import androidx.glance.text.Text
+import androidx.glance.text.TextAlign
+import androidx.glance.text.TextDecoration
+import androidx.glance.text.TextStyle
+import by.carkva_gazeta.malitounik.UpdateDataClickActionCallback.Companion.getClickTypeActionParameterKey
+import by.carkva_gazeta.malitounik.ui.theme.BackgroundDark
+import by.carkva_gazeta.malitounik.ui.theme.BezPosta
+import by.carkva_gazeta.malitounik.ui.theme.Divider
+import by.carkva_gazeta.malitounik.ui.theme.Post
+import by.carkva_gazeta.malitounik.ui.theme.Primary
+import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
+import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
+import by.carkva_gazeta.malitounik.ui.theme.StrogiPost
+import by.carkva_gazeta.malitounik.ui.theme.TitleCalendarMounth
+import by.carkva_gazeta.malitounik.views.findCaliandarToDay
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.Calendar
 import java.util.GregorianCalendar
 
-class WidgetMun : AppWidgetProvider() {
-    private val munPlus = "mun_plus"
-    private val munMinus = "mun_minus"
+class CaliandarWidgetMun : GlanceAppWidget() {
+    override var stateDefinition: GlanceStateDefinition<*> = PreferencesGlanceStateDefinition
 
-    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
-        super.onUpdate(context, appWidgetManager, appWidgetIds)
-        for (widgetID in appWidgetIds) {
-            mun(context, appWidgetManager, widgetID)
+    override suspend fun provideGlance(context: Context, id: GlanceId) {
+        provideContent {
+            GlanceTheme {
+                CalendarMun(context)
+            }
+        }
+    }
+}
+
+class UpdateDataClickActionCallback : ActionCallback {
+    companion object {
+        const val TYPE_PLUS = 1
+        const val TYPE_MINUS = 2
+
+        fun getClickTypeActionParameterKey(): ActionParameters.Key<Int> {
+            return ActionParameters.Key("position")
         }
     }
 
-    private fun getBaseDzenNoch(context: Context, widgetID: Int): Boolean {
+    override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
+        val clickType = requireNotNull(parameters[getClickTypeActionParameterKey()])
+        updateAppWidgetState(context, PreferencesGlanceStateDefinition, glanceId) {
+            var position = it[intPreferencesKey("position")] ?: Settings.caliandarPosition
+            when (clickType) {
+                TYPE_PLUS -> {
+                    position = getDataKaliandar(context, 1, position)
+                }
+
+                TYPE_MINUS -> {
+                    position = getDataKaliandar(context, -1, position)
+                }
+            }
+            it.toMutablePreferences().apply {
+                this[intPreferencesKey("position")] = position
+            }
+        }
+        val reset = Intent(context, WidgetMun::class.java)
+        reset.action = Settings.RESET_WIDGET_MUN
+        val pReset = PendingIntent.getBroadcast(context, 257, reset, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.cancel(pReset)
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms() -> {
+                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 120000, pReset)
+            }
+
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 120000, pReset)
+            }
+
+            else -> {
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 120000, pReset)
+            }
+        }
+        CaliandarWidgetMun().update(context, glanceId)
+    }
+}
+
+private fun getImageActionCallback(clickType: Int): Action {
+    return actionRunCallback<UpdateDataClickActionCallback>(
+        actionParametersOf(
+            getClickTypeActionParameterKey() to clickType
+        )
+    )
+}
+
+private fun getDataKaliandar(context: Context, date: Int, position: Int): Int {
+    if (Settings.data.isEmpty()) {
+        val gson = Gson()
+        val type = TypeToken.getParameterized(
+            ArrayList::class.java,
+            TypeToken.getParameterized(
+                ArrayList::class.java,
+                String::class.java
+            ).type
+        ).type
+        val inputStream = context.resources.openRawResource(R.raw.caliandar)
+        val isr = InputStreamReader(inputStream)
+        val reader = BufferedReader(isr)
+        val builder = reader.use {
+            it.readText()
+        }
+        Settings.data.addAll(gson.fromJson(builder, type))
+    }
+    val oldData = Settings.data[position]
+    var newPosition = position
+    val calendar = if (date == 0) Calendar.getInstance() as GregorianCalendar
+    else GregorianCalendar(oldData[3].toInt(), oldData[2].toInt(), oldData[1].toInt())
+    calendar.add(Calendar.MONTH, date)
+    for (i in 0 until Settings.data.size) {
+        if ((calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt())) {
+            newPosition = Settings.data[i][25].toInt()
+            break
+        }
+    }
+    return newPosition
+}
+
+@Composable
+fun CalendarMun(context: Context) {
+    val prefs = currentState<Preferences>()
+    val position = prefs[intPreferencesKey("position")] ?: findCaliandarToDay(context, false)[25].toInt()
+    val dzenNoch = prefs[booleanPreferencesKey("dzenNoch")] == true
+    val data = Settings.data
+    val mun = data[position][2].toInt()
+    val year = data[position][3].toInt()
+    val c = Calendar.getInstance()
+    val munTudey = mun == c[Calendar.MONTH] && year == c[Calendar.YEAR]
+    val calendarFull = GregorianCalendar(year, mun, 1)
+    val wik = calendarFull[Calendar.DAY_OF_WEEK]
+    val munAll = calendarFull.getActualMaximum(Calendar.DAY_OF_MONTH)
+    calendarFull.add(Calendar.MONTH, -1)
+    val oldMunAktual = calendarFull.getActualMaximum(Calendar.DAY_OF_MONTH)
+    var oldDay = oldMunAktual - wik + 1
+    var day: String
+    var i = 0
+    var newDay = 0
+    var end = 42
+    if (42 - (munAll + wik) >= 6) {
+        end -= 7
+    }
+    if (munAll + wik == 29) {
+        end -= 7
+    }
+    val monthName = context.resources.getStringArray(R.array.meciac2)
+    var e = 1
+    val destinationKey = ActionParameters.Key<Boolean>("widget_mun")
+    val destinationValue = ActionParameters.Key<Int>("position")
+    Column(modifier = GlanceModifier.background(if (dzenNoch) BackgroundDark else PrimaryTextBlack).padding(15.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier = GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            if (!(Settings.GET_CALIANDAR_YEAR_MIN == year && mun == Calendar.JANUARY)) {
+                Box(modifier = GlanceModifier.padding(10.dp).clickable(getImageActionCallback(UpdateDataClickActionCallback.TYPE_MINUS))) {
+                    Image(
+                        modifier = GlanceModifier.size(24.dp, 24.dp), provider = ImageProvider(R.drawable.levo_catedra_blak_31), contentDescription = "", colorFilter = ColorFilter.tint(if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText))
+                    )
+                }
+            }
+            Text(
+                text = if (c[Calendar.YEAR] == year) monthName[mun] else monthName[mun].plus(", ").plus(year),
+                modifier = GlanceModifier.defaultWeight(),
+                style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp, textAlign = TextAlign.Center, fontWeight = if (munTudey) FontWeight.Bold else FontWeight.Normal)
+            )
+            if (!(Settings.GET_CALIANDAR_YEAR_MAX == year && mun == Calendar.DECEMBER)) {
+                Box(modifier = GlanceModifier.padding(10.dp).clickable(getImageActionCallback(UpdateDataClickActionCallback.TYPE_PLUS))) {
+                    Image(
+                        modifier = GlanceModifier.size(24.dp, 24.dp), provider = ImageProvider(R.drawable.pravo_catedra_blak_31), contentDescription = "", colorFilter = ColorFilter.tint(if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText))
+                    )
+                }
+            }
+        }
+        Row(modifier = GlanceModifier.fillMaxWidth()) {
+            Text(
+                text = context.getString(R.string.ndz),
+                modifier = GlanceModifier
+                    .defaultWeight()
+                    .background(Primary)
+                    .padding(10.dp),
+                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 18.sp, textAlign = TextAlign.Center)
+            )
+            Text(
+                text = context.getString(R.string.pn),
+                modifier = GlanceModifier
+                    .defaultWeight()
+                    .background(TitleCalendarMounth)
+                    .padding(10.dp),
+                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 18.sp, textAlign = TextAlign.Center)
+            )
+            Text(
+                text = context.getString(R.string.au),
+                modifier = GlanceModifier
+                    .defaultWeight()
+                    .background(TitleCalendarMounth)
+                    .padding(10.dp),
+                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 18.sp, textAlign = TextAlign.Center)
+            )
+            Text(
+                text = context.getString(R.string.sp),
+                modifier = GlanceModifier
+                    .defaultWeight()
+                    .background(TitleCalendarMounth)
+                    .padding(10.dp),
+                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 18.sp, textAlign = TextAlign.Center)
+            )
+            Text(
+                text = context.getString(R.string.ch),
+                modifier = GlanceModifier
+                    .defaultWeight()
+                    .background(TitleCalendarMounth)
+                    .padding(10.dp),
+                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 18.sp, textAlign = TextAlign.Center)
+            )
+            Text(
+                text = context.getString(R.string.pt),
+                modifier = GlanceModifier
+                    .defaultWeight()
+                    .background(TitleCalendarMounth)
+                    .padding(10.dp),
+                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 18.sp, textAlign = TextAlign.Center)
+            )
+            Text(
+                text = context.getString(R.string.sb),
+                modifier = GlanceModifier
+                    .defaultWeight()
+                    .background(TitleCalendarMounth)
+                    .padding(10.dp),
+                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 18.sp, textAlign = TextAlign.Center)
+            )
+        }
+        (1..end / 7).forEach {
+            Row(modifier = GlanceModifier.fillMaxWidth()) {
+                (1..7).forEach {
+                    if (e < wik) {
+                        oldDay++
+                        day = "start"
+                    } else if (e < munAll + wik) {
+                        i++
+                        day = i.toString()
+                    } else {
+                        newDay++
+                        day = "end"
+                        i = 0
+                    }
+                    when (day) {
+                        "start" -> {
+                            val fon = if (e == 1) BezPosta
+                            else Divider
+                            Text(
+                                oldDay.toString(),
+                                modifier = GlanceModifier
+                                    .defaultWeight()
+                                    .background(fon)
+                                    .padding(10.dp),
+                                style = TextStyle(color = ColorProvider(SecondaryText, SecondaryText), fontSize = 18.sp, textAlign = TextAlign.Center)
+                            )
+                        }
+
+                        "end" -> {
+                            Text(
+                                newDay.toString(),
+                                modifier = GlanceModifier
+                                    .defaultWeight()
+                                    .background(Divider)
+                                    .padding(10.dp),
+                                style = TextStyle(color = ColorProvider(SecondaryText, SecondaryText), fontSize = 18.sp, textAlign = TextAlign.Center)
+                            )
+                        }
+
+                        else -> {
+                            val bold =
+                                if (data[position + i - 1][4].contains("<font color=#d00505><strong>") || data[position + i - 1][5].toInt() == 1 || data[position + i - 1][5].toInt() == 3) FontWeight.Bold
+                                else FontWeight.Normal
+                            val color =
+                                if (data[position + i - 1][5].toInt() == 1 || data[position + i - 1][5].toInt() == 2) Primary
+                                else if (data[position + i - 1][5].toInt() == 3 || data[position + i - 1][7].toInt() == 1) BezPosta
+                                else if (data[position + i - 1][7].toInt() == 2) Post
+                                else if (data[position + i - 1][7].toInt() == 3) StrogiPost
+                                else Divider
+                            val color2 =
+                                if (data[position + i - 1][5].toInt() == 1 || data[position + i - 1][5].toInt() == 2 || data[position + i - 1][7].toInt() == 3) PrimaryTextBlack
+                                else PrimaryText
+                            val clickPos = position + i - 1
+                            Text(
+                                day,
+                                modifier = GlanceModifier
+                                    .clickable(actionStartActivity<MainActivity>(actionParametersOf(destinationKey to true, destinationValue to clickPos)))
+                                    .defaultWeight()
+                                    .background(color)
+                                    .padding(10.dp),
+                                style = TextStyle(color = ColorProvider(color2, color2), fontSize = 18.sp, textAlign = TextAlign.Center, fontWeight = bold, textDecoration = if (c[Calendar.DAY_OF_MONTH] == i && munTudey) TextDecoration.Underline else TextDecoration.None)
+                            )
+                        }
+                    }
+                    e++
+                }
+            }
+        }
+    }
+}
+
+class WidgetMun : GlanceAppWidgetReceiver() {
+    private val munPlus = "mun_plus"
+    private val munMinus = "mun_minus"
+
+    override val glanceAppWidget = CaliandarWidgetMun()
+
+    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+        super.onUpdate(context, appWidgetManager, appWidgetIds)
+        CoroutineScope(Dispatchers.Main).launch {
+            val manager = GlanceAppWidgetManager(context)
+            val widget = CaliandarWidgetMun()
+            val glanceIds = manager.getGlanceIds(widget.javaClass)
+            glanceIds.forEach { glanceId ->
+                updateAppWidgetState(context, glanceId) {
+                    it[booleanPreferencesKey("dzenNoch")] = getBaseDzenNoch(context)
+                    it[intPreferencesKey("position")] = getDataKaliandar(context, 0, Settings.caliandarPosition)
+                }
+                widget.update(context, glanceId)
+            }
+            val intent = Intent(context, WidgetMun::class.java)
+            intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val pIntent = PendingIntent.getBroadcast(context, 60, intent, PendingIntent.FLAG_IMMUTABLE or 0)
+            when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms() -> {
+                    alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
+                }
+
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
+                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
+                }
+
+                else -> {
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
+                }
+            }
+        }
+    }
+
+    private fun getBaseDzenNoch(context: Context): Boolean {
         val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-        val modeNight = k.getInt("mode_night_widget_mun$widgetID", Settings.MODE_NIGHT_SYSTEM)
+        val modeNight = k.getInt("mode_night_widget_mun", Settings.MODE_NIGHT_SYSTEM)
         var dzenNoch = false
         when (modeNight) {
             Settings.MODE_NIGHT_SYSTEM -> {
@@ -59,8 +418,6 @@ class WidgetMun : AppWidgetProvider() {
 
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
-        val chin = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-        chin.edit { putBoolean("WIDGET_MUN_ENABLED", true) }
         val intent = Intent(context, WidgetMun::class.java)
         intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -69,9 +426,11 @@ class WidgetMun : AppWidgetProvider() {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms() -> {
                 alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
             }
+
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
             }
+
             else -> {
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
             }
@@ -80,17 +439,6 @@ class WidgetMun : AppWidgetProvider() {
 
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
-        val chin = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-        chin.edit {
-            for ((key, value) in chin.all) {
-                if (key.contains("WIDGET")) {
-                    if (value is Int) {
-                        remove(key)
-                    }
-                }
-            }
-            putBoolean("WIDGET_MUN_ENABLED", false)
-        }
         val intent = Intent(context, WidgetMun::class.java)
         intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
         val pIntent = PendingIntent.getBroadcast(context, 60, intent, PendingIntent.FLAG_IMMUTABLE or 0)
@@ -100,16 +448,6 @@ class WidgetMun : AppWidgetProvider() {
         val pReset = PendingIntent.getBroadcast(context, 257, reset, PendingIntent.FLAG_IMMUTABLE or 0)
         alarmManager.cancel(pIntent)
         alarmManager.cancel(pReset)
-    }
-
-    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
-        super.onDeleted(context, appWidgetIds)
-        context.getSharedPreferences("biblia", Context.MODE_PRIVATE).edit {
-            for (widgetID in appWidgetIds) {
-                remove("WIDGET$widgetID")
-                remove("WIDGETYEAR$widgetID")
-            }
-        }
     }
 
     private fun mkTime(addDate: Int = 0): Long {
@@ -124,23 +462,30 @@ class WidgetMun : AppWidgetProvider() {
 
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
-        val c = Calendar.getInstance()
-        val chin = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-        val widgetID = intent.extras?.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID) ?: AppWidgetManager.INVALID_APPWIDGET_ID
-        if (widgetID != AppWidgetManager.INVALID_APPWIDGET_ID) {
-            mun(context, AppWidgetManager.getInstance(context), widgetID)
-        }
-        if (intent.action == AppWidgetManager.ACTION_APPWIDGET_UPDATE) {
-            val thisAppWidget = ComponentName(context.packageName, javaClass.name)
-            val appWidgetManager = AppWidgetManager.getInstance(context)
-            val ids = appWidgetManager.getAppWidgetIds(thisAppWidget)
-            chin.edit {
-                for (i in ids) {
-                    putInt("WIDGET$i", c[Calendar.MONTH])
-                    putInt("WIDGETYEAR$i", c[Calendar.YEAR])
+        CoroutineScope(Dispatchers.Main).launch {
+            val manager = GlanceAppWidgetManager(context)
+            val widget = CaliandarWidgetMun()
+            val glanceIds = manager.getGlanceIds(widget.javaClass)
+            glanceIds.forEach { glanceId ->
+                updateAppWidgetState(context, glanceId) {
+                    it[booleanPreferencesKey("dzenNoch")] = getBaseDzenNoch(context)
+                    it[intPreferencesKey("position")] = getDataKaliandar(context, 0, it[intPreferencesKey("position")] ?: findCaliandarToDay(context, false)[25].toInt())
+                    if (intent.action == munPlus) {
+                        it[intPreferencesKey("position")] = getDataKaliandar(context, 1, it[intPreferencesKey("position")] ?: findCaliandarToDay(context, false)[25].toInt())
+                    }
+                    if (intent.action == munMinus) {
+                        it[intPreferencesKey("position")] = getDataKaliandar(context, -1, it[intPreferencesKey("position")] ?: findCaliandarToDay(context, false)[25].toInt())
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                        AppWidgetManager.getInstance(context).setWidgetPreview(
+                            ComponentName(context, WidgetMun::class.java),
+                            AppWidgetProviderInfo.WIDGET_CATEGORY_HOME_SCREEN,
+                            CaliandarWidgetMun().compose(context = context)
+                        )
+                    }
                 }
+                widget.update(context, glanceId)
             }
-            onUpdate(context, appWidgetManager, ids)
             val intentUpdate = Intent(context, WidgetMun::class.java)
             intentUpdate.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -149,320 +494,15 @@ class WidgetMun : AppWidgetProvider() {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms() -> {
                     alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
                 }
+
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
                     alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
                 }
+
                 else -> {
                     alarmManager.setExact(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
                 }
             }
         }
-        if (intent.action == Settings.RESET_WIDGET_MUN) {
-            val thisAppWidget = ComponentName(context.packageName, javaClass.name)
-            val appWidgetManager = AppWidgetManager.getInstance(context)
-            val ids = appWidgetManager.getAppWidgetIds(thisAppWidget)
-            chin.edit {
-                for (i in ids) {
-                    putInt("WIDGET$i", c[Calendar.MONTH])
-                    putInt("WIDGETYEAR$i", c[Calendar.YEAR])
-                }
-            }
-            onUpdate(context, appWidgetManager, ids)
-        }
-        if (intent.action == munPlus || intent.action == munMinus) {
-            val mAppWidgetId = intent.extras?.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID) ?: AppWidgetManager.INVALID_APPWIDGET_ID
-            if (mAppWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-                var tekmun = chin.getInt("WIDGET$mAppWidgetId", c[Calendar.MONTH])
-                var tekyear = chin.getInt("WIDGETYEAR$mAppWidgetId", c[Calendar.YEAR])
-                chin.edit {
-                    if (intent.action == munPlus) {
-                        if (tekmun < 11) putInt("WIDGET$mAppWidgetId", ++tekmun)
-                        else {
-                            putInt("WIDGET$mAppWidgetId", 0)
-                            putInt("WIDGETYEAR$mAppWidgetId", ++tekyear)
-                        }
-                    } else {
-                        if (tekmun > 0) putInt("WIDGET$mAppWidgetId", --tekmun)
-                        else {
-                            putInt("WIDGET$mAppWidgetId", 11)
-                            putInt("WIDGETYEAR$mAppWidgetId", --tekyear)
-                        }
-                    }
-                }
-                val reset = Intent(context, WidgetMun::class.java)
-                reset.action = Settings.RESET_WIDGET_MUN
-                reset.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId)
-                val pReset = PendingIntent.getBroadcast(context, 257, reset, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-                val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                alarmManager.cancel(pReset)
-                when {
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms() -> {
-                        alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 120000, pReset)
-                    }
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-                        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 120000, pReset)
-                    }
-                    else -> {
-                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 120000, pReset)
-                    }
-                }
-                mun(context, AppWidgetManager.getInstance(context), mAppWidgetId)
-            }
-        }
-    }
-
-    private fun idView(position: Int): Int {
-        var view = R.id.button1a
-        when (position) {
-            1 -> view = R.id.button1a
-            2 -> view = R.id.button2a
-            3 -> view = R.id.button3a
-            4 -> view = R.id.button4a
-            5 -> view = R.id.button5a
-            6 -> view = R.id.button6a
-            7 -> view = R.id.button7a
-            8 -> view = R.id.button8a
-            9 -> view = R.id.button9a
-            10 -> view = R.id.button10a
-            11 -> view = R.id.button11a
-            12 -> view = R.id.button12a
-            13 -> view = R.id.button13a
-            14 -> view = R.id.button14a
-            15 -> view = R.id.button15a
-            16 -> view = R.id.button16a
-            17 -> view = R.id.button17a
-            18 -> view = R.id.button18a
-            19 -> view = R.id.button19a
-            20 -> view = R.id.button20a
-            21 -> view = R.id.button21a
-            22 -> view = R.id.button22a
-            23 -> view = R.id.button23a
-            24 -> view = R.id.button24a
-            25 -> view = R.id.button25a
-            26 -> view = R.id.button26a
-            27 -> view = R.id.button27a
-            28 -> view = R.id.button28a
-            29 -> view = R.id.button29a
-            30 -> view = R.id.button30a
-            31 -> view = R.id.button31a
-            32 -> view = R.id.button32a
-            33 -> view = R.id.button33a
-            34 -> view = R.id.button34a
-            35 -> view = R.id.button35a
-            36 -> view = R.id.button36a
-            37 -> view = R.id.button37a
-            38 -> view = R.id.button38a
-            39 -> view = R.id.button39a
-            40 -> view = R.id.button40a
-            41 -> view = R.id.button41a
-            42 -> view = R.id.button42a
-        }
-        return view
-    }
-
-    private fun mun(context: Context, appWidgetManager: AppWidgetManager, widgetID: Int) {
-        val updateViews = RemoteViews(context.packageName, R.layout.widget_mun)
-        val chin = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-        val c = Calendar.getInstance()
-        val cYear = Settings.GET_CALIANDAR_YEAR_MAX
-        val tecmun = chin.getInt("WIDGET$widgetID", c[Calendar.MONTH])
-        val tecyear = chin.getInt("WIDGETYEAR$widgetID", Settings.GET_CALIANDAR_YEAR_MAX)
-        val monthName = context.resources.getStringArray(R.array.meciac2)
-        if (tecyear == c[Calendar.YEAR]) {
-            val spannableString = SpannableString(monthName[tecmun])
-            spannableString.setSpan(StyleSpan(Typeface.BOLD), 0, spannableString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            if (tecmun == c[Calendar.MONTH] && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) updateViews.setTextViewText(R.id.Mun_widget, spannableString)
-            else updateViews.setTextViewText(R.id.Mun_widget, monthName[tecmun])
-        } else {
-            updateViews.setTextViewText(R.id.Mun_widget, monthName[tecmun] + ", " + tecyear)
-        }
-        if (cYear == tecyear && tecmun == 11) updateViews.setViewVisibility(R.id.imageButton2, View.INVISIBLE)
-        else updateViews.setViewVisibility(R.id.imageButton2, View.VISIBLE)
-        if (Settings.GET_CALIANDAR_YEAR_MIN == tecyear && tecmun == 0) updateViews.setViewVisibility(R.id.imageButton, View.INVISIBLE)
-        else updateViews.setViewVisibility(R.id.imageButton, View.VISIBLE)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val dzenNoch = getBaseDzenNoch(context, widgetID)
-            if (dzenNoch) {
-                updateViews.setTextColor(R.id.Mun_widget, ContextCompat.getColor(context, R.color.colorWhite))
-                updateViews.setInt(R.id.root, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorbackground_material_dark))
-                updateViews.setImageViewResource(R.id.imageButton, R.drawable.levo_catedra_31)
-                updateViews.setImageViewResource(R.id.imageButton2, R.drawable.pravo_catedra_31)
-            } else {
-                updateViews.setTextColor(R.id.Mun_widget, ContextCompat.getColor(context, R.color.colorPrimary_text))
-                updateViews.setInt(R.id.root, "setBackgroundColor", ContextCompat.getColor(context, R.color.colorWhite))
-                updateViews.setImageViewResource(R.id.imageButton, R.drawable.levo_catedra_blak_31)
-                updateViews.setImageViewResource(R.id.imageButton2, R.drawable.pravo_catedra_blak_31)
-            }
-        }
-        val updateIntent = Intent(context, WidgetMun::class.java)
-        updateIntent.action = munPlus
-        updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID)
-        val pIntentButton2 = PendingIntent.getBroadcast(context, widgetID, updateIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-        updateViews.setOnClickPendingIntent(R.id.imageButton2, pIntentButton2)
-        val countIntent = Intent(context, WidgetMun::class.java)
-        countIntent.action = munMinus
-        countIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID)
-        val pIntentButton = PendingIntent.getBroadcast(context, widgetID, countIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-        updateViews.setOnClickPendingIntent(R.id.imageButton, pIntentButton)
-        updateViews.setViewVisibility(R.id.nedel5, View.VISIBLE)
-        updateViews.setViewVisibility(R.id.nedel6, View.VISIBLE)
-        val month = chin.getInt("WIDGET$widgetID", c[Calendar.MONTH])
-        val year = chin.getInt("WIDGETYEAR$widgetID", c[Calendar.YEAR])
-        if (Settings.data.isEmpty()) {
-            val gson = Gson()
-            val type = TypeToken.getParameterized(
-                ArrayList::class.java,
-                TypeToken.getParameterized(
-                    ArrayList::class.java,
-                    String::class.java
-                ).type
-            ).type
-            val inputStream = context.resources.openRawResource(R.raw.caliandar)
-            val isr = InputStreamReader(inputStream)
-            val reader = BufferedReader(isr)
-            val builder = reader.use {
-                it.readText()
-            }
-            Settings.data.addAll(gson.fromJson(builder, type))
-        }
-        val data = ArrayList<ArrayList<String>>()
-        for (i in Settings.data.indices) {
-            if (month == Settings.data[i][2].toInt() && year == Settings.data[i][3].toInt()) {
-                data.add(Settings.data[i])
-            }
-        }
-        val calendarFull = GregorianCalendar(year, month, 1)
-        var munTudey = false
-        if (month == c[Calendar.MONTH] && year == c[Calendar.YEAR]) munTudey = true
-        val wik = calendarFull[Calendar.DAY_OF_WEEK]
-        val munAll = calendarFull.getActualMaximum(Calendar.DAY_OF_MONTH)
-        val munActual = c[Calendar.DAY_OF_MONTH]
-        calendarFull.add(Calendar.MONTH, -1)
-        val oldMunAktual = calendarFull.getActualMaximum(Calendar.DAY_OF_MONTH)
-        val mouthOld = calendarFull[Calendar.MONTH]
-        var oldDay = oldMunAktual - wik + 1
-        calendarFull.add(Calendar.MONTH, 2)
-        val mouthNew = calendarFull[Calendar.MONTH]
-        var day: String
-        var i = 0
-        var newDay = 0
-        var nopost = false
-        var post = false
-        var strogiPost = false
-        for (e in 1..42) {
-            var denNedeli: Int
-            if (e < wik) {
-                ++oldDay
-                day = "start"
-            } else if (e < munAll + wik) {
-                i++
-                day = i.toString()
-                val calendarPost = GregorianCalendar(year, month, i)
-                denNedeli = calendarPost[Calendar.DAY_OF_WEEK]
-                nopost = data[i - 1][7].contains("1")
-                post = data[i - 1][7].contains("2")
-                strogiPost = data[i - 1][7].contains("3")
-                if (denNedeli == 1) nopost = false
-            } else {
-                ++newDay
-                day = "end"
-            }
-            if (42 - (munAll + wik) >= 6) {
-                updateViews.setViewVisibility(R.id.nedel6, View.GONE)
-            }
-            if (munAll + wik == 29) {
-                updateViews.setViewVisibility(R.id.nedel5, View.GONE)
-            }
-            val calendarPost = GregorianCalendar(year, month, i)
-            val widgetMun = "widget_mun"
-            val dayIntent = Intent(context, MainActivity::class.java)
-            dayIntent.putExtra(widgetMun, true)
-            when (day) {
-                "start" -> {
-                    val position = data[0][25].toInt() - (wik - e)
-                    dayIntent.putExtra("position", position)
-                    dayIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    val code = year.toString() + "" + mouthOld + "" + oldDay
-                    val pIntent = PendingIntent.getActivity(context, code.toInt(), dayIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-                    updateViews.setOnClickPendingIntent(idView(e), pIntent)
-                    updateViews.setTextViewText(idView(e), oldDay.toString())
-                    if (e == 1) updateViews.setInt(idView(e), "setBackgroundResource", R.drawable.calendar_bez_posta)
-                    else updateViews.setInt(idView(e), "setBackgroundResource", R.drawable.calendar_day)
-                    updateViews.setTextColor(idView(e), ContextCompat.getColor(context, R.color.colorSecondary_text))
-                }
-                "end" -> {
-                    val position = data[data.size - 1][25].toInt() + newDay
-                    dayIntent.putExtra("position", position)
-                    dayIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    val code = year.toString() + "" + mouthNew + "" + newDay
-                    val pIntent = PendingIntent.getActivity(context, code.toInt(), dayIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-                    updateViews.setOnClickPendingIntent(idView(e), pIntent)
-                    updateViews.setTextColor(idView(e), ContextCompat.getColor(context, R.color.colorSecondary_text))
-                    updateViews.setInt(idView(e), "setBackgroundResource", R.drawable.calendar_day)
-                    updateViews.setTextViewText(idView(e), newDay.toString())
-                }
-                else -> {
-                    updateViews.setTextViewText(idView(e), i.toString())
-                    if (data[i - 1][5].contains("1")) {
-                        if (munActual == i && munTudey) {
-                            updateViews.setInt(idView(e), "setBackgroundResource", R.drawable.calendar_red_today)
-                        } else {
-                            updateViews.setInt(idView(e), "setBackgroundResource", R.drawable.calendar_red)
-                        }
-                        updateViews.setTextColor(idView(e), ContextCompat.getColor(context, R.color.colorWhite))
-                    } else if (data[i - 1][5].contains("2")) {
-                        if (munActual == i && munTudey) {
-                            updateViews.setInt(idView(e), "setBackgroundResource", R.drawable.calendar_red_today)
-                        } else {
-                            updateViews.setInt(idView(e), "setBackgroundResource", R.drawable.calendar_red)
-                        }
-                        updateViews.setTextColor(idView(e), ContextCompat.getColor(context, R.color.colorWhite))
-                    } else {
-                        if (nopost) {
-                            if (munActual == i && munTudey) updateViews.setInt(idView(e), "setBackgroundResource", R.drawable.calendar_bez_posta_today)
-                            else updateViews.setInt(idView(e), "setBackgroundResource", R.drawable.calendar_bez_posta)
-                            updateViews.setTextColor(idView(e), ContextCompat.getColor(context, R.color.colorPrimary_text))
-                        }
-                        if (post) {
-                            if (munActual == i && munTudey) updateViews.setInt(idView(e), "setBackgroundResource", R.drawable.calendar_post_today)
-                            else updateViews.setInt(idView(e), "setBackgroundResource", R.drawable.calendar_post)
-                            updateViews.setTextColor(idView(e), ContextCompat.getColor(context, R.color.colorPrimary_text))
-                        }
-                        if (strogiPost) {
-                            if (munActual == i && munTudey) {
-                                updateViews.setInt(idView(e), "setBackgroundResource", R.drawable.calendar_strogi_post_today)
-                            } else {
-                                updateViews.setInt(idView(e), "setBackgroundResource", R.drawable.calendar_strogi_post)
-                            }
-                            updateViews.setTextColor(idView(e), ContextCompat.getColor(context, R.color.colorWhite))
-                        }
-                        if (!nopost && !post && !strogiPost) {
-                            denNedeli = calendarPost[Calendar.DAY_OF_WEEK]
-                            if (denNedeli == 1) {
-                                if (munActual == i && munTudey) updateViews.setInt(idView(e), "setBackgroundResource", R.drawable.calendar_bez_posta_today)
-                                else updateViews.setInt(idView(e), "setBackgroundResource", R.drawable.calendar_bez_posta)
-                                updateViews.setTextColor(idView(e), ContextCompat.getColor(context, R.color.colorPrimary))
-                            } else {
-                                if (munActual == i && munTudey) updateViews.setInt(idView(e), "setBackgroundResource", R.drawable.calendar_day_today)
-                                else updateViews.setInt(idView(e), "setBackgroundResource", R.drawable.calendar_day)
-                                updateViews.setTextColor(idView(e), ContextCompat.getColor(context, R.color.colorPrimary_text))
-                            }
-                        }
-                    }
-                    if (data[i - 1][4].contains("<font color=#d00505><strong>")) {
-                        val spannableString = SpannableString(i.toString())
-                        spannableString.setSpan(StyleSpan(Typeface.BOLD), 0, spannableString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                        updateViews.setTextViewText(idView(e), spannableString)
-                    }
-                    val position = data[i - 1][25].toInt()
-                    dayIntent.putExtra("position", position)
-                    dayIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    val code = year.toString() + "" + month + "" + i
-                    val pIntent = PendingIntent.getActivity(context, code.toInt(), dayIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-                    updateViews.setOnClickPendingIntent(idView(e), pIntent)
-                }
-            }
-        }
-        appWidgetManager.updateAppWidget(widgetID, updateViews)
     }
 }

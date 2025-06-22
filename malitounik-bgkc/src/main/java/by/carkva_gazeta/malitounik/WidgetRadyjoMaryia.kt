@@ -1,31 +1,189 @@
 package by.carkva_gazeta.malitounik
 
-import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
-import android.appwidget.AppWidgetProvider
+import android.appwidget.AppWidgetProviderInfo
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.os.Build
-import android.view.View
-import android.widget.RemoteViews
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.glance.ColorFilter
+import androidx.glance.GlanceId
+import androidx.glance.GlanceModifier
+import androidx.glance.GlanceTheme
+import androidx.glance.Image
+import androidx.glance.ImageProvider
+import androidx.glance.action.Action
+import androidx.glance.action.ActionParameters
+import androidx.glance.action.actionParametersOf
+import androidx.glance.action.clickable
+import androidx.glance.appwidget.CircularProgressIndicator
+import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.GlanceAppWidgetReceiver
+import androidx.glance.appwidget.action.ActionCallback
+import androidx.glance.appwidget.action.actionRunCallback
+import androidx.glance.appwidget.compose
+import androidx.glance.appwidget.provideContent
+import androidx.glance.appwidget.state.updateAppWidgetState
+import androidx.glance.background
+import androidx.glance.color.ColorProvider
+import androidx.glance.currentState
+import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
+import androidx.glance.layout.Column
+import androidx.glance.layout.Row
+import androidx.glance.layout.fillMaxWidth
+import androidx.glance.layout.padding
+import androidx.glance.layout.size
+import androidx.glance.state.GlanceStateDefinition
+import androidx.glance.state.PreferencesGlanceStateDefinition
+import androidx.glance.text.Text
+import androidx.glance.text.TextStyle
+import by.carkva_gazeta.malitounik.RadyjoMaryiaClickActionCallback.Companion.getClickTypeActionParameterKey
+import by.carkva_gazeta.malitounik.Settings.isNetworkAvailable
+import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik.ui.theme.RadyjoMaryia
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class WidgetRadyjoMaryia : AppWidgetProvider() {
+class GlanceWidgetRadyjoMaryia : GlanceAppWidget() {
+    override var stateDefinition: GlanceStateDefinition<*> = PreferencesGlanceStateDefinition
 
-    companion object {
-        private var isFirstRun = false
-        private var isProgram = false
-        private var isError = false
+    override suspend fun provideGlance(context: Context, id: GlanceId) {
+        provideContent {
+            GlanceTheme {
+                RadyjoMaryia(context)
+            }
+        }
     }
+}
+
+class RadyjoMaryiaClickActionCallback : ActionCallback {
+    companion object {
+        const val TYPE_PROGRAM = 1
+        const val TYPE_PLAY_PAUSE = 2
+        const val TYPE_STOP = 3
+
+        fun getClickTypeActionParameterKey(): ActionParameters.Key<Int> {
+            return ActionParameters.Key("action")
+        }
+    }
+
+    override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
+        val clickType = requireNotNull(parameters[getClickTypeActionParameterKey()])
+        if (clickType == TYPE_PROGRAM) {
+            withContext(Dispatchers.Main) {
+                val intent2 = Intent(context, WidgetRadyjoMaryiaProgram::class.java)
+                intent2.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                context.startActivity(intent2)
+            }
+            return
+        }
+        updateAppWidgetState(context, PreferencesGlanceStateDefinition, glanceId) {
+            var action = it[intPreferencesKey("action")] ?: TYPE_STOP
+            when (clickType) {
+                TYPE_PLAY_PAUSE -> {
+                    if (isNetworkAvailable(context)) {
+                        if (!ServiceRadyjoMaryia.isServiceRadioMaryiaRun) {
+                            action = ServiceRadyjoMaryia.START
+                        }
+                        val intent2 = Intent(context, ServiceRadyjoMaryia::class.java)
+                        intent2.putExtra("action", ServiceRadyjoMaryia.PLAY_PAUSE)
+                        ContextCompat.startForegroundService(context, intent2)
+                    } else {
+                        val intent3 = Intent(context, WidgetRadyjoMaryiaProgram::class.java)
+                        intent3.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        intent3.putExtra("checkInternet", true)
+                        context.startActivity(intent3)
+                    }
+                }
+
+                TYPE_STOP -> {
+                    if (ServiceRadyjoMaryia.isServiceRadioMaryiaRun) {
+                        val intent2 = Intent(context, ServiceRadyjoMaryia::class.java)
+                        intent2.putExtra("action", ServiceRadyjoMaryia.STOP)
+                        ContextCompat.startForegroundService(context, intent2)
+                    }
+                    action = TYPE_STOP
+                }
+            }
+            it.toMutablePreferences().apply {
+                this[intPreferencesKey("action")] = action
+            }
+        }
+        GlanceWidgetRadyjoMaryia().update(context, glanceId)
+    }
+}
+
+private fun getRadyjoMaryiaActionCallback(clickType: Int): Action {
+    return actionRunCallback<RadyjoMaryiaClickActionCallback>(
+        actionParametersOf(
+            getClickTypeActionParameterKey() to clickType
+        )
+    )
+}
+
+@Composable
+fun RadyjoMaryia(context: Context) {
+    val prefs = currentState<Preferences>()
+    var title = prefs[stringPreferencesKey("title")] ?: context.getString(R.string.padie_maryia_s)
+    var action = prefs[intPreferencesKey("action")] ?: ServiceRadyjoMaryia.STOP
+    val isPlaying = prefs[booleanPreferencesKey("isPlaying")] == true
+    Row(modifier = GlanceModifier.fillMaxWidth().background(RadyjoMaryia), verticalAlignment = Alignment.CenterVertically) {
+        Column(modifier = GlanceModifier.defaultWeight()) {
+            Text(
+                title,
+                modifier = GlanceModifier
+                    .defaultWeight()
+                    .padding(10.dp),
+                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 18.sp),
+                maxLines = 1
+            )
+            Row(modifier = GlanceModifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                Box(modifier = GlanceModifier.padding(10.dp).clickable(getRadyjoMaryiaActionCallback(RadyjoMaryiaClickActionCallback.TYPE_PROGRAM))) {
+                    Image(
+                        modifier = GlanceModifier.size(24.dp, 24.dp), provider = ImageProvider(R.drawable.programm_rado_maria2), contentDescription = "", colorFilter = ColorFilter.tint(ColorProvider(PrimaryTextBlack, PrimaryTextBlack))
+                    )
+                }
+                if (action == ServiceRadyjoMaryia.START) {
+                    CircularProgressIndicator(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack))
+                } else {
+                    Box(modifier = GlanceModifier.padding(10.dp).clickable(getRadyjoMaryiaActionCallback(RadyjoMaryiaClickActionCallback.TYPE_PLAY_PAUSE))) {
+                        Image(
+                            modifier = GlanceModifier.size(24.dp, 24.dp), provider = if (isPlaying) ImageProvider(R.drawable.pause3) else ImageProvider(R.drawable.play3), contentDescription = "", colorFilter = ColorFilter.tint(ColorProvider(PrimaryTextBlack, PrimaryTextBlack))
+                        )
+                    }
+                }
+                Box(modifier = GlanceModifier.padding(10.dp).clickable(getRadyjoMaryiaActionCallback(RadyjoMaryiaClickActionCallback.TYPE_STOP))) {
+                    Image(
+                        modifier = GlanceModifier.size(24.dp, 24.dp), provider = ImageProvider(R.drawable.stop3), contentDescription = "", colorFilter = ColorFilter.tint(ColorProvider(PrimaryTextBlack, PrimaryTextBlack))
+                    )
+                }
+            }
+        }
+        Image(modifier = GlanceModifier.size(75.dp, 75.dp), provider = ImageProvider(R.drawable.maria), contentDescription = "")
+    }
+}
+
+class WidgetRadyjoMaryia : GlanceAppWidgetReceiver() {
+
+    override val glanceAppWidget = GlanceWidgetRadyjoMaryia()
 
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
         val sp = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-        sp.edit { putBoolean("WIDGET_RADYJO_MARYIA_ENABLED", true)}
+        sp.edit { putBoolean("WIDGET_RADYJO_MARYIA_ENABLED", true) }
     }
 
     override fun onDisabled(context: Context) {
@@ -36,165 +194,29 @@ class WidgetRadyjoMaryia : AppWidgetProvider() {
 
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
-        val extra = intent.extras?.getInt("action", 0) ?: 0
-        isError = intent.extras?.getBoolean("isError", false) == true
-        if (ServiceRadyjoMaryia.isServiceRadioMaryiaRun && extra == ServiceRadyjoMaryia.STOP) {
-            val intent2 = Intent(context, ServiceRadyjoMaryia::class.java)
-            intent2.putExtra("action", ServiceRadyjoMaryia.STOP)
-            ContextCompat.startForegroundService(context, intent2)
-        }
-        val isInternet = isNetworkAvailable(context)
-        if (extra == ServiceRadyjoMaryia.PLAY_PAUSE) {
-            if (isInternet) {
-                if (!ServiceRadyjoMaryia.isServiceRadioMaryiaRun) {
-                    isFirstRun = true
+        val action = intent.extras?.getInt("action", ServiceRadyjoMaryia.STOP) ?: ServiceRadyjoMaryia.STOP
+        val title = intent.extras?.getString("title", "") ?: ""
+        val isPlaying = intent.extras?.getBoolean("isPlaying", false) == true
+        CoroutineScope(Dispatchers.Main).launch {
+            val manager = GlanceAppWidgetManager(context)
+            val widget = GlanceWidgetRadyjoMaryia()
+            val glanceIds = manager.getGlanceIds(widget.javaClass)
+            glanceIds.forEach { glanceId ->
+                updateAppWidgetState(context, glanceId) {
+                    it[stringPreferencesKey("title")] = if (title != "") title
+                    else context.getString(R.string.padie_maryia_s)
+                    it[intPreferencesKey("action")] = action
+                    it[booleanPreferencesKey("isPlaying")] = isPlaying
                 }
-                val intent2 = Intent(context, ServiceRadyjoMaryia::class.java)
-                intent2.putExtra("action", ServiceRadyjoMaryia.PLAY_PAUSE)
-                ContextCompat.startForegroundService(context, intent2)
-            } else {
-                val intent3 = Intent(context, WidgetRadyjoMaryiaProgram::class.java)
-                intent3.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                intent3.putExtra("checkInternet", true)
-                context.startActivity(intent3)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                    AppWidgetManager.getInstance(context).setWidgetPreview(
+                        ComponentName(context, WidgetRadyjoMaryia::class.java),
+                        AppWidgetProviderInfo.WIDGET_CATEGORY_HOME_SCREEN,
+                        GlanceWidgetRadyjoMaryia().compose(context = context)
+                    )
+                }
+                widget.update(context, glanceId)
             }
         }
-        if (extra == ServiceRadyjoMaryia.WIDGET_RADYJO_MARYIA_PROGRAM) {
-            if (isInternet) {
-                isProgram = true
-                val intent2 = Intent(context, WidgetRadyjoMaryiaProgram::class.java)
-                intent2.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                context.startActivity(intent2)
-            } else {
-                val intent3 = Intent(context, WidgetRadyjoMaryiaProgram::class.java)
-                intent3.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                intent3.putExtra("checkInternet", true)
-                context.startActivity(intent3)
-            }
-        }
-        if (extra == ServiceRadyjoMaryia.WIDGET_RADYJO_MARYIA_PROGRAM_EXIT) {
-            isProgram = false
-        }
-        if (extra == ServiceRadyjoMaryia.PLAYING_RADIO_MARIA_STATE_READY) {
-            isFirstRun = false
-        }
-        update(context)
-    }
-
-    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
-        super.onUpdate(context, appWidgetManager, appWidgetIds)
-        for (widgetID in appWidgetIds) {
-            radyjoMaryia(context, appWidgetManager, widgetID)
-        }
-    }
-
-    private fun radyjoMaryia(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
-        val updateViews = RemoteViews(context.packageName, R.layout.widget_radyjo_maryia)
-        val intent = Intent(context, WidgetRadyjoMaryia::class.java)
-        intent.putExtra("action", ServiceRadyjoMaryia.PLAY_PAUSE)
-        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        } else {
-            PendingIntent.FLAG_UPDATE_CURRENT
-        }
-        val pIntent = PendingIntent.getBroadcast(context, ServiceRadyjoMaryia.PLAY_PAUSE, intent, flags)
-        updateViews.setOnClickPendingIntent(R.id.play, pIntent)
-        val intent2 = Intent(context, WidgetRadyjoMaryia::class.java)
-        intent2.putExtra("action", ServiceRadyjoMaryia.STOP)
-        val pIntent2 = PendingIntent.getBroadcast(context, ServiceRadyjoMaryia.STOP, intent2, flags)
-        updateViews.setOnClickPendingIntent(R.id.stop, pIntent2)
-        val intent3 = Intent(context, WidgetRadyjoMaryia::class.java)
-        intent3.putExtra("action", ServiceRadyjoMaryia.WIDGET_RADYJO_MARYIA_PROGRAM)
-        val pIntent3 = PendingIntent.getBroadcast(context, ServiceRadyjoMaryia.WIDGET_RADYJO_MARYIA_PROGRAM, intent3, flags)
-        updateViews.setOnClickPendingIntent(R.id.program, pIntent3)
-        if (isFirstRun) {
-            updateViews.setImageViewResource(R.id.play, R.drawable.load)
-        } else if (ServiceRadyjoMaryia.isServiceRadioMaryiaRun) {
-            if (ServiceRadyjoMaryia.isPlayingRadyjoMaryia) {
-                updateViews.setImageViewResource(R.id.play, R.drawable.pause3)
-            } else {
-                updateViews.setImageViewResource(R.id.play, R.drawable.play3)
-            }
-            val title = if (ServiceRadyjoMaryia.titleRadyjoMaryia != "") ServiceRadyjoMaryia.titleRadyjoMaryia
-            else context.getString(R.string.padie_maryia_s)
-            updateViews.setTextViewText(R.id.textView, title)
-        } else {
-            updateViews.setTextViewText(R.id.textView, context.getString(R.string.padie_maryia_s))
-            updateViews.setImageViewResource(R.id.play, R.drawable.play3)
-        }
-        if (isProgram) {
-            updateViews.setImageViewResource(R.id.program, R.drawable.load)
-        } else {
-            updateViews.setImageViewResource(R.id.program, R.drawable.programm_rado_maria2)
-        }
-        if (isError) {
-            updateViews.setTextViewText(R.id.textView, context.getString(R.string.padie_maryia_s))
-            updateViews.setImageViewResource(R.id.play, R.drawable.play3)
-            updateViews.setImageViewResource(R.id.program, R.drawable.programm_rado_maria2)
-        }
-        updateViews.setViewVisibility(R.id.stop, View.VISIBLE)
-        updateViews.setViewVisibility(R.id.play, View.VISIBLE)
-        updateViews.setViewVisibility(R.id.program, View.VISIBLE)
-        appWidgetManager.updateAppWidget(appWidgetId, updateViews)
-    }
-
-    private fun update(context: Context) {
-        val thisAppWidget = ComponentName(context.packageName, javaClass.name)
-        val appWidgetManager = AppWidgetManager.getInstance(context)
-        val ids = appWidgetManager.getAppWidgetIds(thisAppWidget)
-        onUpdate(context, appWidgetManager, ids)
-    }
-
-    @Suppress("DEPRECATION")
-    private fun isNetworkAvailable(context: Context, typeTransport: Int = Settings.TRANSPORT_ALL): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val nw = connectivityManager.activeNetwork ?: return false
-            val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
-            when (typeTransport) {
-                Settings.TRANSPORT_CELLULAR -> {
-                    if (actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) return true
-                }
-
-                Settings.TRANSPORT_WIFI -> {
-                    if (actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) return true
-                }
-
-                Settings.TRANSPORT_ALL -> {
-                    return when {
-                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_VPN) -> true
-                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-                        else -> false
-                    }
-                }
-            }
-        } else {
-            val activeNetwork = connectivityManager.activeNetworkInfo ?: return false
-            if (activeNetwork.isConnectedOrConnecting) {
-                when (typeTransport) {
-                    Settings.TRANSPORT_CELLULAR -> {
-                        if (activeNetwork.type == ConnectivityManager.TYPE_MOBILE) return true
-                    }
-
-                    Settings.TRANSPORT_WIFI -> {
-                        if (activeNetwork.type == ConnectivityManager.TYPE_WIFI) return true
-                    }
-
-                    Settings.TRANSPORT_ALL -> {
-                        return when (activeNetwork.type) {
-                            ConnectivityManager.TYPE_WIFI -> true
-                            ConnectivityManager.TYPE_MOBILE -> true
-                            ConnectivityManager.TYPE_VPN -> true
-                            ConnectivityManager.TYPE_ETHERNET -> true
-                            else -> false
-                        }
-                    }
-                }
-            }
-        }
-        return false
     }
 }

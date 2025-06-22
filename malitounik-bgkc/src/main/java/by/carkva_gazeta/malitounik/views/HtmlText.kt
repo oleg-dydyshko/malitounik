@@ -404,7 +404,7 @@ fun HtmlText(
         modifier = modifier,
         text = searchText.ifEmpty { annotatedString },
         fontSize = fontSize,
-        lineHeight = fontSize * 1.2f,
+        lineHeight = fontSize * 1.15f,
         textAlign = textAlign,
         onTextLayout = { layout ->
             textLayout.value = layout

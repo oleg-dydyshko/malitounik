@@ -322,62 +322,33 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                                     val bold =
                                         if (Settings.data[calPas + i - 1][4].contains("<font color=#d00505><strong>") || Settings.data[calPas + i - 1][5].toInt() == 1 || Settings.data[calPas + i - 1][5].toInt() == 3) FontWeight.Bold
                                         else FontWeight.Normal
-                                    if (c[Calendar.DAY_OF_MONTH] == i && munTudey) {
-                                        val color =
-                                            if (Settings.data[calPas + i - 1][5].toInt() == 1 || Settings.data[calPas + i - 1][5].toInt() == 2) Primary
-                                            else if (Settings.data[calPas + i - 1][5].toInt() == 3 || Settings.data[calPas + i - 1][7].toInt() == 1) BezPosta
-                                            else if (Settings.data[calPas + i - 1][7].toInt() == 2) Post
-                                            else if (Settings.data[calPas + i - 1][7].toInt() == 3) StrogiPost
-                                            else Divider
-                                        val color2 =
-                                            if (Settings.data[calPas + i - 1][5].toInt() == 1 || Settings.data[calPas + i - 1][5].toInt() == 2 || Settings.data[calPas + i - 1][7].toInt() == 3) PrimaryTextBlack
-                                            else PrimaryText
-                                        val clickPos = calPas + i - 1
-                                        Text(
-                                            day,
-                                            modifier = Modifier
-                                                .weight(1f)
-                                                .clickable {
-                                                    Settings.caliandarPosition = clickPos
-                                                    setPageCaliandar(clickPos)
-                                                }
-                                                .padding(1.dp)
-                                                .background(PrimaryDark)
-                                                .padding(5.dp)
-                                                .background(color),
-                                            textAlign = TextAlign.Center,
-                                            fontWeight = bold,
-                                            color = color2,
-                                            fontSize = Settings.fontInterface.sp
-                                        )
-                                    } else {
-                                        val color =
-                                            if (Settings.data[calPas + i - 1][5].toInt() == 1 || Settings.data[calPas + i - 1][5].toInt() == 2) Primary
-                                            else if (Settings.data[calPas + i - 1][5].toInt() == 3 || Settings.data[calPas + i - 1][7].toInt() == 1) BezPosta
-                                            else if (Settings.data[calPas + i - 1][7].toInt() == 2) Post
-                                            else if (Settings.data[calPas + i - 1][7].toInt() == 3) StrogiPost
-                                            else Divider
-                                        val color2 =
-                                            if (Settings.data[calPas + i - 1][5].toInt() == 1 || Settings.data[calPas + i - 1][5].toInt() == 2 || Settings.data[calPas + i - 1][7].toInt() == 3) PrimaryTextBlack
-                                            else PrimaryText
-                                        val clickPos = calPas + i - 1
-                                        Text(
-                                            day,
-                                            modifier = Modifier
-                                                .weight(1f)
-                                                .clickable {
-                                                    Settings.caliandarPosition = clickPos
-                                                    setPageCaliandar(clickPos)
-                                                }
-                                                .padding(1.dp)
-                                                .background(color)
-                                                .padding(5.dp),
-                                            textAlign = TextAlign.Center,
-                                            fontWeight = bold,
-                                            color = color2,
-                                            fontSize = Settings.fontInterface.sp
-                                        )
-                                    }
+                                    val color =
+                                        if (Settings.data[calPas + i - 1][5].toInt() == 1 || Settings.data[calPas + i - 1][5].toInt() == 2) Primary
+                                        else if (Settings.data[calPas + i - 1][5].toInt() == 3 || Settings.data[calPas + i - 1][7].toInt() == 1) BezPosta
+                                        else if (Settings.data[calPas + i - 1][7].toInt() == 2) Post
+                                        else if (Settings.data[calPas + i - 1][7].toInt() == 3) StrogiPost
+                                        else Divider
+                                    val color2 =
+                                        if (Settings.data[calPas + i - 1][5].toInt() == 1 || Settings.data[calPas + i - 1][5].toInt() == 2 || Settings.data[calPas + i - 1][7].toInt() == 3) PrimaryTextBlack
+                                        else PrimaryText
+                                    val clickPos = calPas + i - 1
+                                    Text(
+                                        day,
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .clickable {
+                                                Settings.caliandarPosition = clickPos
+                                                setPageCaliandar(clickPos)
+                                            }
+                                            .padding(1.dp)
+                                            .background(if (c[Calendar.DAY_OF_MONTH] == i && munTudey) PrimaryDark else color)
+                                            .padding(5.dp)
+                                            .background(color),
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = bold,
+                                        color = color2,
+                                        fontSize = Settings.fontInterface.sp
+                                    )
                                 }
                             }
                             e++

@@ -22,7 +22,7 @@
     <string name="data_search">ВЫБЯРЫЦЕ РАЗЬДЗЕЛ</string>
     <string name="razdzel">Разьдзел</string>
     <string name="psalom">Псальма</string>
-    <string name="liturgikon">БОГАСЛУЖБОВЫЯ ТЭКСТЫ</string>
+    <string name="bogaslugbovyia_teksty">БОГАСЛУЖБОВЫЯ ТЭКСТЫ</string>
     <string name="malitvy">МАЛІТВЫ</string>
     <string name="akafisty">АКАФІСТЫ</string>
     <string name="other">ІНШАЕ</string>
@@ -737,17 +737,18 @@
         <item>МІНЭЯ АГУЛЬНАЯ</item>
         <item>АКТОІХ</item>
         <item>ТРЭБНІК</item>
-        <item>ЧАСАСЛОЎ</item>
     </array>
     <string name="open_in">Адчыніць у&#8230;</string>
     <string name="admin_cyrylic_no_support">Кірыліца не падтрымліваецца</string>
     <string name="searh_sviatyia_result">Знойдзена %1$d</string>
-    <string name="clear_chash">Ачыстка кэша</string>
+    <string name="clear_chash">Ачыстка кэшу</string>
     <string name="clear_chash_opis">Пры неабходнасці, файлы будуць спампаваныя зноў.</string>
     <string-array name="admin_svity_data">
         <item>Ад пачатку года</item>
         <item>Ад Пасхі</item>
         <item>Іншае</item>
     </string-array>
+    <string name="chasaslou">ЧАСАСЛОЎ</string>
+    <string name="liturgikon">ЛІТУРГІКОН</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

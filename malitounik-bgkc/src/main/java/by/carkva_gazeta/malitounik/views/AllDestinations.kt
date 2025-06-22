@@ -13,16 +13,17 @@ import by.carkva_gazeta.malitounik.views.AllDestinations.BIBLIA_SINODAL
 import by.carkva_gazeta.malitounik.views.AllDestinations.BIBLIJATEKA
 import by.carkva_gazeta.malitounik.views.AllDestinations.BOGASLUJBOVYIA
 import by.carkva_gazeta.malitounik.views.AllDestinations.BOGASLUJBOVYIA_MENU
+import by.carkva_gazeta.malitounik.views.AllDestinations.CHASASLOU_MENU
 import by.carkva_gazeta.malitounik.views.AllDestinations.CYTANNI_LIST
 import by.carkva_gazeta.malitounik.views.AllDestinations.HELP
 import by.carkva_gazeta.malitounik.views.AllDestinations.KALIANDAR
 import by.carkva_gazeta.malitounik.views.AllDestinations.KALIANDAR_YEAR
+import by.carkva_gazeta.malitounik.views.AllDestinations.LITURGIKON_MENU
 import by.carkva_gazeta.malitounik.views.AllDestinations.MAE_NATATKI_MENU
 import by.carkva_gazeta.malitounik.views.AllDestinations.MALITVY_LIST_ALL
 import by.carkva_gazeta.malitounik.views.AllDestinations.MALITVY_MENU
 import by.carkva_gazeta.malitounik.views.AllDestinations.PADZEI_VIEW
 import by.carkva_gazeta.malitounik.views.AllDestinations.PRANAS
-import by.carkva_gazeta.malitounik.views.AllDestinations.RUJANEC_MENU
 import by.carkva_gazeta.malitounik.views.AllDestinations.SEARCH_BIBLIA
 import by.carkva_gazeta.malitounik.views.AllDestinations.SEARCH_SVITYIA
 import by.carkva_gazeta.malitounik.views.AllDestinations.SETTINGS_VIEW
@@ -53,7 +54,7 @@ object AllDestinations {
     const val VYBRANAE_LIST = "Bybranae_List"
     const val SEARCH_BIBLIA = "Search_Biblia"
     const val AKAFIST_MENU = "Akafist_Menu"
-    const val RUJANEC_MENU = "Rujanec_Menu"
+    const val CHASASLOU_MENU = "Chasaslou_Menu"
     const val MAE_NATATKI_MENU = "Mae_Natatki_Menu"
     const val BIBLIJATEKA = "Biblijateka"
     const val BIBLIJATEKA_NIADAUNIA = "Biblijateka_Naidaunia"
@@ -79,6 +80,7 @@ object AllDestinations {
     const val SETTINGS_VIEW = "Settings_View"
     const val PADZEI_VIEW = "Padzei_View"
     const val SVITYIA_VIEW = "Svityia_View"
+    const val LITURGIKON_MENU = "Liturgikon_Menu"
 }
 
 class AppNavigationActions(private val navController: NavHostController, k: SharedPreferences) {
@@ -117,13 +119,23 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
         edit.apply()
     }
 
-    fun navigateToRujanecMenu() {
-        navController.navigate(RUJANEC_MENU) {
-            popUpTo(navController.currentBackStackEntry?.destination?.route ?: RUJANEC_MENU) {
+    fun navigateToChasaslouMenu() {
+        navController.navigate(CHASASLOU_MENU) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: CHASASLOU_MENU) {
                 inclusive = true
             }
         }
-        edit.putString("navigate", RUJANEC_MENU)
+        edit.putString("navigate", CHASASLOU_MENU)
+        edit.apply()
+    }
+
+    fun navigateToLiturgikonMenu() {
+        navController.navigate(LITURGIKON_MENU) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: LITURGIKON_MENU) {
+                inclusive = true
+            }
+        }
+        edit.putString("navigate", LITURGIKON_MENU)
         edit.apply()
     }
 

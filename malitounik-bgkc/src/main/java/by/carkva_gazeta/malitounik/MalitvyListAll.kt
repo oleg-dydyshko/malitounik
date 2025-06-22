@@ -209,8 +209,8 @@ fun MalitvyListAll(
         Settings.MENU_MINEIA_AGULNAIA -> getMineiaAgulnaia()
         Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH -> getMineiaMesiachnaiaMounth()
         Settings.MENU_TRYEDZ -> getTtyedz()
-        Settings.MENU_CHASASLOU -> getChasaslou()
         Settings.MENU_TRYEDZ_POSNAIA -> getTtyedzPosnaia()
+        Settings.MENU_MALITVY_RUJANEC -> getRujanec()
         Settings.MENU_TRYEDZ_POSNAIA_1 -> getTtyedzPosnaia(Settings.MENU_TRYEDZ_POSNAIA_1)
         Settings.MENU_TRYEDZ_POSNAIA_2 -> getTtyedzPosnaia(Settings.MENU_TRYEDZ_POSNAIA_2)
         Settings.MENU_TRYEDZ_POSNAIA_3 -> getTtyedzPosnaia(Settings.MENU_TRYEDZ_POSNAIA_3)
@@ -467,29 +467,6 @@ fun MalitvyListAll(
                         }
                     }
                 } else {
-                    if (menuItem == Settings.MENU_CHASASLOU) {
-                        item {
-                            Row(
-                                modifier = Modifier
-                                    .padding(start = 10.dp)
-                                    .clickable {
-                                        navigationActions.navigateToMalitvyListAll(
-                                            "ВЯЧЭРНЯ", Settings.MENU_VIACHERNIA
-                                        )
-                                    }, verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = null
-                                )
-                                Text(
-                                    "ВЯЧЭРНЯ", modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                                )
-                            }
-                            HorizontalDivider()
-                        }
-                    }
                     items(list.size) { index ->
                         Row(
                             modifier = Modifier

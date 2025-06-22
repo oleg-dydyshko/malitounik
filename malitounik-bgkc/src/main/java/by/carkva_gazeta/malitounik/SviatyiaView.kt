@@ -52,6 +52,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -358,6 +359,23 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                 contentDescription = "",
                                 tint = MaterialTheme.colorScheme.onSecondary
                             )
+                        }
+                        if (k.getBoolean("admin", false)) {
+                            VerticalDivider()
+                            IconButton(onClick = {
+                                if ((context as MainActivity).checkmodulesAdmin()) {
+                                    val intent = Intent()
+                                    intent.setClassName(context, "by.carkva_gazeta.admin.Sviatyia")
+                                    intent.putExtra("dayOfYear", Settings.data[Settings.caliandarPosition][24].toInt())
+                                    context.startActivity(intent)
+                                }
+                            }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.edit),
+                                    contentDescription = "",
+                                    tint = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)

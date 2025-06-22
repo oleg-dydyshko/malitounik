@@ -3,6 +3,8 @@ package by.carkva_gazeta.malitounik
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
+import android.appwidget.AppWidgetProviderInfo
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -16,7 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
@@ -30,6 +33,7 @@ import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
+import androidx.glance.appwidget.compose
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
 import androidx.glance.appwidget.state.updateAppWidgetState
@@ -60,6 +64,7 @@ import by.carkva_gazeta.malitounik.ui.theme.PrimaryBlack
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.StrogiPost
+import by.carkva_gazeta.malitounik.views.findCaliandarToDay
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
@@ -74,25 +79,19 @@ class CaliandarWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
-            val prefs = currentState<Preferences>()
-            val gson = Gson()
-            val type = TypeToken.getParameterized(
-                ArrayList::class.java,
-                String::class.java
-            ).type
-            val data = gson.fromJson<ArrayList<String>>(prefs[stringPreferencesKey("data")], type) ?: ArrayList<String>()
-            val dzenNoch = prefs[booleanPreferencesKey("dzenNoch")] == true
             GlanceTheme {
-                Caliandar(data, dzenNoch)
+                Caliandar()
             }
         }
     }
 }
 
-private val destinationKey = ActionParameters.Key<String>("widget_day")
-
 @Composable
-private fun Caliandar(data: ArrayList<String>, dzenNoch: Boolean) {
+private fun Caliandar() {
+    val prefs = currentState<Preferences>()
+    val position = prefs[intPreferencesKey("position_widget_day")] ?: findCaliandarToDay(LocalContext.current, false)[25].toInt()
+    val dzenNoch = prefs[booleanPreferencesKey("dzenNoch")] == true
+    val data = Settings.data[position]
     val context = LocalContext.current
     val rColorColorPrimaryText: Color
     val rColorColorPrimary: Color
@@ -117,11 +116,12 @@ private fun Caliandar(data: ArrayList<String>, dzenNoch: Boolean) {
     }
     val colorText = if (data[7].toInt() == 3 || data[5].toInt() > 0) PrimaryTextBlack
     else PrimaryText
+    val destinationKey = ActionParameters.Key<Boolean>("widget_day")
     Box(
         modifier = GlanceModifier.fillMaxSize().background(Color.Transparent)
     ) {
         Box(
-            modifier = GlanceModifier.background(if (dzenNoch) BackgroundDark else PrimaryTextBlack).cornerRadius(20.dp).clickable(actionStartActivity<MainActivity>(actionParametersOf(destinationKey to "widget_day")))
+            modifier = GlanceModifier.background(if (dzenNoch) BackgroundDark else PrimaryTextBlack).cornerRadius(20.dp).clickable(actionStartActivity<MainActivity>(actionParametersOf(destinationKey to true)))
         ) {
             Column(
                 verticalAlignment = Alignment.Top,
@@ -136,7 +136,7 @@ private fun Caliandar(data: ArrayList<String>, dzenNoch: Boolean) {
                     if (data[6].isNotEmpty()) {
                         if (data[5].toInt() == 1 || data[5].toInt() == 2) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Image(provider = ImageProvider(R.drawable.znaki_krest_v_kruge), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp))
+                                Image(provider = ImageProvider(R.drawable.znaki_krest_v_kruge), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = ColorFilter.tint(if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary)))
                                 Text(modifier = GlanceModifier.padding(start = 5.dp), text = data[6], style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp, textAlign = TextAlign.Center, fontWeight = if (data[5].toInt() == 2) FontWeight.Normal else FontWeight.Bold))
                             }
                         } else {
@@ -155,6 +155,8 @@ private fun Caliandar(data: ArrayList<String>, dzenNoch: Boolean) {
                             5 -> icon = R.drawable.znaki_ttk_black
                         }
                         val svityia = data[4]
+                        val colorFilter = if (data[12].toInt() == 5) ColorFilter.tint(if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText))
+                        else ColorFilter.tint(if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary))
                         if (svityia.contains("<font")) {
                             if (svityia.contains("<strong>")) {
                                 if (svityia.contains("<br>")) {
@@ -162,7 +164,7 @@ private fun Caliandar(data: ArrayList<String>, dzenNoch: Boolean) {
                                     val t1 = text.indexOf("\n")
                                     if (icon != 0) {
                                         Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp))
+                                            Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
                                             Text(modifier = GlanceModifier.padding(start = 5.dp), text = text.substring(0, t1), style = TextStyle(color = ColorProvider(Primary, PrimaryBlack), fontSize = 18.sp, fontWeight = FontWeight.Bold))
                                         }
                                         Text(text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
@@ -173,7 +175,7 @@ private fun Caliandar(data: ArrayList<String>, dzenNoch: Boolean) {
                                 } else {
                                     if (icon != 0) {
                                         Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp))
+                                            Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
                                             Text(modifier = GlanceModifier.padding(start = 5.dp), text = AnnotatedString.fromHtml(data[4]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp, fontWeight = FontWeight.Bold))
                                         }
                                     } else {
@@ -186,7 +188,7 @@ private fun Caliandar(data: ArrayList<String>, dzenNoch: Boolean) {
                                     val t1 = text.indexOf("\n")
                                     if (icon != 0) {
                                         Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp))
+                                            Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
                                             Text(modifier = GlanceModifier.padding(start = 5.dp), text = text.substring(0, t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp))
                                         }
                                         Text(text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
@@ -197,7 +199,7 @@ private fun Caliandar(data: ArrayList<String>, dzenNoch: Boolean) {
                                 } else {
                                     if (icon != 0) {
                                         Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp))
+                                            Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
                                             Text(modifier = GlanceModifier.padding(start = 5.dp), text = AnnotatedString.fromHtml(data[4]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp))
                                         }
                                     } else {
@@ -211,7 +213,7 @@ private fun Caliandar(data: ArrayList<String>, dzenNoch: Boolean) {
                                 val t1 = text.indexOf("\n")
                                 if (icon != 0) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp))
+                                        Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
                                         Text(modifier = GlanceModifier.padding(start = 5.dp), text = text.substring(0, t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
                                     }
                                     Text(text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
@@ -221,7 +223,7 @@ private fun Caliandar(data: ArrayList<String>, dzenNoch: Boolean) {
                             } else {
                                 if (icon != 0) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp))
+                                        Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
                                         Text(modifier = GlanceModifier.padding(start = 5.dp), text = AnnotatedString.fromHtml(data[4]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
                                     }
                                 } else {
@@ -265,18 +267,14 @@ class Widget : GlanceAppWidgetReceiver() {
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
         CoroutineScope(Dispatchers.Main).launch {
-            val data = getDataKaliandar(context)
+            val position = getDataKaliandar(context)
             val manager = GlanceAppWidgetManager(context)
             val widget = CaliandarWidget()
             val glanceIds = manager.getGlanceIds(widget.javaClass)
             glanceIds.forEach { glanceId ->
                 updateAppWidgetState(context, glanceId) {
-                    it[stringPreferencesKey("data")] = data
-                    val t1 = glanceId.toString().indexOf("=")
-                    val t2 = glanceId.toString().lastIndexOf(")")
-                    val id = if (t1 != -1 && t2 != -1) glanceId.toString().substring(t1 + 1, t2).toInt()
-                    else 1
-                    it[booleanPreferencesKey("dzenNoch")] = getBaseDzenNoch(context, id)
+                    it[intPreferencesKey("position_widget_day")] = position
+                    it[booleanPreferencesKey("dzenNoch")] = getBaseDzenNoch(context)
                 }
                 widget.update(context, glanceId)
             }
@@ -340,9 +338,9 @@ class Widget : GlanceAppWidgetReceiver() {
         return calendar.timeInMillis
     }
 
-    private fun getBaseDzenNoch(context: Context, id: Int): Boolean {
+    private fun getBaseDzenNoch(context: Context): Boolean {
         val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-        val modeNight = k.getInt("mode_night_widget_day$id", Settings.MODE_NIGHT_SYSTEM)
+        val modeNight = k.getInt("mode_night_widget_day", Settings.MODE_NIGHT_SYSTEM)
         var dzenNoch = false
         when (modeNight) {
             Settings.MODE_NIGHT_SYSTEM -> {
@@ -361,7 +359,7 @@ class Widget : GlanceAppWidgetReceiver() {
         return dzenNoch
     }
 
-    private fun getDataKaliandar(context: Context): String {
+    private fun getDataKaliandar(context: Context): Int {
         val calendar = Calendar.getInstance()
         val gson = Gson()
         if (Settings.data.isEmpty()) {
@@ -387,32 +385,27 @@ class Widget : GlanceAppWidgetReceiver() {
                 break
             }
         }
-        val type = TypeToken.getParameterized(
-            ArrayList::class.java,
-            String::class.java
-        ).type
-        return gson.toJson(Settings.data[kalPosition], type)
+        return kalPosition
     }
 
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
-        val widgetID = intent.extras?.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID) ?: AppWidgetManager.INVALID_APPWIDGET_ID
         CoroutineScope(Dispatchers.Main).launch {
-            val data = getDataKaliandar(context)
+            val position = getDataKaliandar(context)
             val manager = GlanceAppWidgetManager(context)
             val widget = CaliandarWidget()
             val glanceIds = manager.getGlanceIds(widget.javaClass)
             glanceIds.forEach { glanceId ->
                 updateAppWidgetState(context, glanceId) {
-                    it[stringPreferencesKey("data")] = data
-                    val t1 = glanceId.toString().indexOf("=")
-                    val t2 = glanceId.toString().lastIndexOf(")")
-                    val id = when {
-                        widgetID != AppWidgetManager.INVALID_APPWIDGET_ID -> widgetID
-                        t1 != -1 && t2 != -1 -> glanceId.toString().substring(t1 + 1, t2).toInt()
-                        else -> 1
-                    }
-                    it[booleanPreferencesKey("dzenNoch")] = getBaseDzenNoch(context, id)
+                    it[intPreferencesKey("position_widget_day")] = position
+                    it[booleanPreferencesKey("dzenNoch")] = getBaseDzenNoch(context)
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                    AppWidgetManager.getInstance(context).setWidgetPreview(
+                        ComponentName(context, Widget::class.java),
+                        AppWidgetProviderInfo.WIDGET_CATEGORY_HOME_SCREEN,
+                        CaliandarWidget().compose(context = context)
+                    )
                 }
                 widget.update(context, glanceId)
             }
