@@ -386,7 +386,10 @@ fun bibleCount(kniga: Int, perevod: String): Int {
         10 -> 22
         11 -> 25
         12 -> 29
-        13 -> 37
+        13 -> {
+            if (perevod == Settings.PEREVODSINOIDAL) 37
+            else 36
+        }
         14 -> 10
         15 -> 13
         16 -> 9

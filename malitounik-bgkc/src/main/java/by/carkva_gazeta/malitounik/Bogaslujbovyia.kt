@@ -48,8 +48,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Card
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -68,6 +66,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -785,6 +784,36 @@ fun Bogaslujbovyia(
                                         )
                                     }
                                 }
+                                if (k.getBoolean("admin", false)) {
+                                    VerticalDivider()
+                                    IconButton(onClick = {
+                                        showDropdown = false
+                                        autoScroll = false
+                                        if ((context as MainActivity).checkmodulesAdmin()) {
+                                            val intent = Intent()
+                                            intent.setClassName(context, "by.carkva_gazeta.admin.PasochnicaList")
+                                            val t1 = resursEncode.lastIndexOf("/")
+                                            val t2 = resursEncode.lastIndexOf(".")
+                                            val resursAdmin = if (t1 != -1) {
+                                                if (t2 != -1) resursEncode.substring(t1 + 1, t2)
+                                                else resursEncode.substring(t1 + 1)
+                                            } else {
+                                                if (t2 != -1) resursEncode.substring(0, t2)
+                                                else resursEncode
+                                            }
+                                            intent.putExtra("resours", resursAdmin)
+                                            intent.putExtra("title", title)
+                                            intent.putExtra("text", htmlText.replace("#ff6666", "#d00505", true))
+                                            context.startActivity(intent)
+                                        }
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.edit),
+                                            contentDescription = "",
+                                            tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
+                                }
                             }
                         },
                         colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
@@ -836,107 +865,52 @@ fun Bogaslujbovyia(
                                 }
                             }
                             BottomAppBar(containerColor = MaterialTheme.colorScheme.onTertiary) {
-                                var expanded by remember { mutableStateOf(false) }
                                 val launcherShare = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                                     if (autoScrollSensor) autoScroll = true
-                                }
-                                DropdownMenu(
-                                    expanded = expanded,
-                                    onDismissRequest = { expanded = false }
-                                ) {
-                                    if (k.getBoolean("admin", false)) {
-                                        DropdownMenuItem(
-                                            onClick = {
-                                                showDropdown = false
-                                                autoScroll = false
-                                                expanded = false
-                                                if ((context as MainActivity).checkmodulesAdmin()) {
-                                                    val intent = Intent()
-                                                    intent.setClassName(context, "by.carkva_gazeta.admin.PasochnicaList")
-                                                    val t1 = resursEncode.lastIndexOf("/")
-                                                    val t2 = resursEncode.lastIndexOf(".")
-                                                    val resursAdmin = if (t1 != -1) {
-                                                        if (t2 != -1) resursEncode.substring(t1 + 1, t2)
-                                                        else resursEncode.substring(t1 + 1)
-                                                    } else {
-                                                        if (t2 != -1) resursEncode.substring(0, t2)
-                                                        else resursEncode
-                                                    }
-                                                    intent.putExtra("resours", resursAdmin)
-                                                    intent.putExtra("title", title)
-                                                    intent.putExtra("text", htmlText.replace("#ff6666", "#d00505", true))
-                                                    context.startActivity(intent)
-                                                }
-                                            },
-                                            text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) },
-                                            trailingIcon = {
-                                                Icon(
-                                                    painter = painterResource(R.drawable.edit),
-                                                    contentDescription = ""
-                                                )
-                                            }
-                                        )
-                                    }
-                                    HorizontalDivider()
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            showDropdown = !showDropdown
-                                            autoScroll = false
-                                            expanded = false
-                                        },
-                                        text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) },
-                                        trailingIcon = {
-                                            Icon(
-                                                painter = painterResource(R.drawable.format_size),
-                                                contentDescription = ""
-                                            )
-                                        }
-                                    )
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            showDropdown = false
-                                            autoScroll = false
-                                            expanded = false
-                                            val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-                                            val isTextFound = textLayout.value?.layoutInput?.text?.text?.contains(clipboard.primaryClip?.getItemAt(0)?.text ?: "@#$") == true
-                                            val sent = if (isTextFound) clipboard.primaryClip?.getItemAt(0)?.text
-                                            else textLayout.value?.layoutInput?.text?.text
-                                            sent?.let { shareText ->
-                                                if (!isTextFound) {
-                                                    val clip = ClipData.newPlainText(context.getString(R.string.copy_text), shareText)
-                                                    clipboard.setPrimaryClip(clip)
-                                                    Toast.makeText(context, context.getString(R.string.copy), Toast.LENGTH_SHORT).show()
-                                                }
-                                                val sendIntent = Intent(Intent.ACTION_SEND)
-                                                sendIntent.putExtra(Intent.EXTRA_TEXT, shareText)
-                                                sendIntent.putExtra(Intent.EXTRA_SUBJECT, title)
-                                                sendIntent.type = "text/plain"
-                                                launcherShare.launch(Intent.createChooser(sendIntent, title))
-                                            }
-                                        },
-                                        text = { Text(stringResource(R.string.share), fontSize = (Settings.fontInterface - 2).sp) },
-                                        trailingIcon = {
-                                            Icon(
-                                                painter = painterResource(R.drawable.share),
-                                                contentDescription = ""
-                                            )
-                                        }
-                                    )
                                 }
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceAround
                                 ) {
-                                    IconButton(
-                                        onClick = { expanded = true }) {
+                                    IconButton(onClick = {
+                                        showDropdown = !showDropdown
+                                        autoScroll = false
+                                        if (autoScrollSensor) autoScroll = true
+                                    }) {
                                         Icon(
-                                            painter = painterResource(R.drawable.more_vert),
+                                            painter = painterResource(R.drawable.format_size),
                                             contentDescription = "",
                                             tint = MaterialTheme.colorScheme.onSecondary
                                         )
                                     }
                                     IconButton(onClick = {
-                                        expanded = false
+                                        showDropdown = false
+                                        autoScroll = false
+                                        if (autoScrollSensor) autoScroll = true
+                                        val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                                        val isTextFound = textLayout.value?.layoutInput?.text?.text?.contains(clipboard.primaryClip?.getItemAt(0)?.text ?: "@#$") == true
+                                        val sent = if (isTextFound) clipboard.primaryClip?.getItemAt(0)?.text
+                                        else textLayout.value?.layoutInput?.text?.text
+                                        sent?.let { shareText ->
+                                            if (!isTextFound) {
+                                                val clip = ClipData.newPlainText(context.getString(R.string.copy_text), shareText)
+                                                clipboard.setPrimaryClip(clip)
+                                                Toast.makeText(context, context.getString(R.string.copy), Toast.LENGTH_SHORT).show()
+                                            }
+                                            val sendIntent = Intent(Intent.ACTION_SEND)
+                                            sendIntent.putExtra(Intent.EXTRA_TEXT, shareText)
+                                            sendIntent.putExtra(Intent.EXTRA_SUBJECT, title)
+                                            sendIntent.type = "text/plain"
+                                            launcherShare.launch(Intent.createChooser(sendIntent, title))
+                                        }
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.share),
+                                            contentDescription = "",
+                                            tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
+                                    IconButton(onClick = {
                                         if (autoScrollSensor) autoScroll = true
                                         searchText = true
                                     }) {
@@ -947,7 +921,6 @@ fun Bogaslujbovyia(
                                         )
                                     }
                                     IconButton(onClick = {
-                                        expanded = false
                                         if (autoScrollSensor) autoScroll = true
                                         fullscreen = true
                                     }) {
@@ -958,7 +931,6 @@ fun Bogaslujbovyia(
                                         )
                                     }
                                     IconButton(onClick = {
-                                        expanded = false
                                         saveVybranoe = true
                                     }) {
                                         val icon = if (isVybranoe) painterResource(R.drawable.stars)
