@@ -75,7 +75,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                     }
                 }
                 if (!check) {
-                    binding.sviaty.setText("<font color=\"#d00505\"><strong>${caliandarArrayList[6]}</strong></font><p>")
+                    binding.sviaty.setText("<font color=\"#d00505\"><strong>${caliandarArrayList[6]}</strong></font><br><br>")
                     binding.sviaty.visibility = View.VISIBLE
                     binding.spinnerIsPasxa.visibility = View.VISIBLE
                 }
@@ -124,7 +124,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
         binding.actionBold.setOnClickListener(this)
         binding.actionEm.setOnClickListener(this)
         binding.actionRed.setOnClickListener(this)
-        binding.actionP.setOnClickListener(this)
+        binding.actionBr.setOnClickListener(this)
         binding.sviaty.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) edittext = v as? AppCompatEditText
         }
@@ -370,17 +370,17 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                 it.setText(build)
                 it.setSelection(endSelect + 29)
             }
-            if (id == R.id.action_p) {
+            if (id == R.id.action_br) {
                 val endSelect = it.selectionEnd
                 val text = it.text.toString()
                 val build = with(StringBuilder()) {
                     append(text.substring(0, endSelect))
-                    append("<p>")
+                    append("<br>")
                     append(text.substring(endSelect))
                     toString()
                 }
                 it.setText(build)
-                it.setSelection(endSelect + 3)
+                it.setSelection(endSelect + 4)
             }
         }
     }

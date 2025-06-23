@@ -121,7 +121,7 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
         binding.actionBold.setOnClickListener(this)
         binding.actionEm.setOnClickListener(this)
         binding.actionRed.setOnClickListener(this)
-        binding.actionP.setOnClickListener(this)
+        binding.actionBr.setOnClickListener(this)
         binding.imageViewLeft.setOnClickListener(this)
         binding.imageViewRight.setOnClickListener(this)
         setDate()
@@ -305,7 +305,7 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
             } else {
                 var textApisanne = binding.apisanne.text.toString()
                 if (textApisanne.contains("<!--image-->")) {
-                    textApisanne = textApisanne.replace("<!--image-->", "<p>")
+                    textApisanne = textApisanne.replace("<!--image-->", "<br><br>")
                 }
                 binding.preView.text = HtmlCompat.fromHtml(textApisanne, HtmlCompat.FROM_HTML_MODE_LEGACY).trim()
                 binding.scrollpreView.visibility = View.VISIBLE
@@ -387,17 +387,17 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
             binding.apisanne.setText(build)
             binding.apisanne.setSelection(endSelect + 29)
         }
-        if (id == R.id.action_p) {
+        if (id == R.id.action_br) {
             val endSelect = binding.apisanne.selectionEnd
             val text = binding.apisanne.text.toString()
             val build = with(StringBuilder()) {
                 append(text.substring(0, endSelect))
-                append("<p>")
+                append("<br>")
                 append(text.substring(endSelect))
                 toString()
             }
             binding.apisanne.setText(build)
-            binding.apisanne.setSelection(endSelect + 3)
+            binding.apisanne.setSelection(endSelect + 4)
         }
     }
 

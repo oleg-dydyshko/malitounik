@@ -333,7 +333,6 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
         binding.actionBold.setOnClickListener(this)
         binding.actionEm.setOnClickListener(this)
         binding.actionRed.setOnClickListener(this)
-        binding.actionP.setOnClickListener(this)
         binding.actionA.setOnClickListener(this)
         binding.actionBr.setOnClickListener(this)
         binding.actionBack.setOnClickListener(this)
@@ -383,7 +382,6 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                 intent.extras?.getBoolean("backcopy", false) == true -> {
                     if (isHTML) {
                         binding.apisanne.setText(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
-                        binding.actionP.visibility = View.GONE
                         binding.actionBr.visibility = View.GONE
                     } else {
                         binding.apisanne.setText(text)
@@ -395,7 +393,6 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                 }
 
                 else -> {
-                    binding.actionP.visibility = View.VISIBLE
                     binding.actionBr.visibility = View.VISIBLE
                     intent.removeExtra("newFile")
                 }
@@ -735,10 +732,8 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                 isHTML = result.contains("<!DOCTYPE HTML>", ignoreCase = true)
                 if (isHTML) {
                     binding.apisanne.setText(HtmlCompat.fromHtml(result, HtmlCompat.FROM_HTML_MODE_COMPACT))
-                    binding.actionP.visibility = View.GONE
                     binding.actionBr.visibility = View.GONE
                 } else {
-                    binding.actionP.visibility = View.VISIBLE
                     binding.actionBr.visibility = View.VISIBLE
                     binding.apisanne.setText(result)
                 }
@@ -749,7 +744,6 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
             isHTML = content.contains("<!DOCTYPE HTML>", ignoreCase = true)
             if (isHTML) {
                 binding.apisanne.setText(HtmlCompat.fromHtml(content, HtmlCompat.FROM_HTML_MODE_COMPACT))
-                binding.actionP.visibility = View.GONE
                 binding.actionBr.visibility = View.GONE
             } else {
                 binding.apisanne.setText(content)
@@ -1056,7 +1050,6 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
     private fun convertView(text: Editable?) {
         if (isHTML) {
             binding.apisanne.setText(HtmlCompat.fromHtml(text.toString(), HtmlCompat.FROM_HTML_MODE_COMPACT))
-            binding.actionP.visibility = View.GONE
             binding.actionBr.visibility = View.GONE
             if (history.size > 1) {
                 binding.actionBack.visibility = View.VISIBLE
@@ -1074,7 +1067,6 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                 result = clearBold(result)
                 result = clearEm(result)
                 binding.apisanne.setText(result)
-                binding.actionP.visibility = View.VISIBLE
                 binding.actionBr.visibility = View.VISIBLE
                 binding.actionBack.visibility = View.GONE
             }
@@ -1223,19 +1215,6 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
             }
             binding.apisanne.setText(build)
             binding.apisanne.setSelection(endSelect + 4)
-            addHistory(binding.apisanne.text, binding.apisanne.selectionEnd)
-        }
-        if (id == R.id.action_p) {
-            val endSelect = binding.apisanne.selectionEnd
-            val text = binding.apisanne.text.toString()
-            val build = with(StringBuilder()) {
-                append(text.substring(0, endSelect))
-                append("<p>")
-                append(text.substring(endSelect))
-                toString()
-            }
-            binding.apisanne.setText(build)
-            binding.apisanne.setSelection(endSelect + 3)
             addHistory(binding.apisanne.text, binding.apisanne.selectionEnd)
         }
         if (id == R.id.action_a) {

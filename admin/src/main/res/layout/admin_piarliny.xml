@@ -116,7 +116,7 @@
             app:srcCompat="@drawable/red_menu" />
 
         <ImageView
-            android:id="@+id/action_p"
+            android:id="@+id/action_br"
             android:layout_width="28sp"
             android:layout_height="28sp"
             android:layout_marginStart="10sp"
@@ -126,6 +126,6 @@
             android:layout_marginRight="10sp"
             android:layout_marginBottom="5sp"
             android:contentDescription="@string/empty"
-            app:srcCompat="@drawable/p_menu" />
+            app:srcCompat="@drawable/br_menu" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

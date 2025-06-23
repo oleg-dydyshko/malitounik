@@ -115,7 +115,7 @@ class Piarliny : BaseActivity(), View.OnClickListener, DialogDelite.DialogDelite
         binding.actionBold.setOnClickListener(this)
         binding.actionEm.setOnClickListener(this)
         binding.actionRed.setOnClickListener(this)
-        binding.actionP.setOnClickListener(this)
+        binding.actionBr.setOnClickListener(this)
 
         urlJob = CoroutineScope(Dispatchers.Main).launch {
             binding.progressBar2.visibility = View.VISIBLE
@@ -342,17 +342,17 @@ class Piarliny : BaseActivity(), View.OnClickListener, DialogDelite.DialogDelite
             binding.addPiarliny.setText(build)
             binding.addPiarliny.setSelection(endSelect + 29)
         }
-        if (id == R.id.action_p) {
+        if (id == R.id.action_br) {
             val endSelect = binding.addPiarliny.selectionEnd
             val text = binding.addPiarliny.text.toString()
             val build = with(StringBuilder()) {
                 append(text.substring(0, endSelect))
-                append("<p>")
+                append("<br>")
                 append(text.substring(endSelect))
                 toString()
             }
             binding.addPiarliny.setText(build)
-            binding.addPiarliny.setSelection(endSelect + 3)
+            binding.addPiarliny.setSelection(endSelect + 4)
         }
     }
 

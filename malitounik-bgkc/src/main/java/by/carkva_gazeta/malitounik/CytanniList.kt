@@ -525,454 +525,437 @@ fun CytanniList(
             dialogRazdel = false
         }
     }
-    Scaffold(
-        topBar = {
-            AnimatedVisibility(
-                !fullscreen, enter = fadeIn(
-                    tween(
-                        durationMillis = 500, easing = LinearOutSlowInEasing
-                    )
-                ), exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
-            ) {
-                TopAppBar(
-                    title = {
-                        if (!isSelectMode) {
-                            Column {
-                                if (!isParallelVisable) {
-                                    Text(
-                                        modifier = Modifier.clickable {
-                                            maxLine.intValue = Int.MAX_VALUE
-                                            coroutineScope.launch {
-                                                delay(5000L)
-                                                maxLine.intValue = 1
-                                            }
-                                        }, text = titleBible.uppercase(), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
-                                    )
-                                    Text(
-                                        modifier = Modifier.clickable {
-                                            maxLine.intValue = Int.MAX_VALUE
-                                            coroutineScope.launch {
-                                                delay(5000L)
-                                                maxLine.intValue = 1
-                                            }
-                                        }, text = subTitle, color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
-                                    )
-                                } else {
-                                    Text(
-                                        modifier = Modifier.clickable {
-                                            maxLine.intValue = Int.MAX_VALUE
-                                            coroutineScope.launch {
-                                                delay(5000L)
-                                                maxLine.intValue = 1
-                                            }
-                                        }, text = stringResource(R.string.paralel), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
-                                    )
-                                }
-                            }
-                        }
-                    },
-
-                    navigationIcon = {
-                        if (isSelectMode || isParallelVisable) {
-                            IconButton(onClick = {
-                                if (isSelectMode) {
-                                    if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
-                                    isSelectMode = false
-                                } else isParallelVisable = false
-                            }, content = {
-                                Icon(
-                                    painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
-                                )
-                            })
-                        } else {
-                            IconButton(onClick = {
-                                when {
-                                    isParallelVisable -> isParallelVisable = false
-                                    showDropdown -> {
-                                        showDropdown = false
-                                        if (autoScrollSensor) autoScroll = true
-                                    }
-
-                                    else -> {
-                                        if (!backPressHandled) {
-                                            backPressHandled = true
-                                            fullscreen = false
-                                            k.edit {
-                                                if (biblia == Settings.CHYTANNI_BIBLIA) {
-                                                    putString("bible_time_${prevodName}_kniga", knigaText)
-                                                    putInt("bible_time_${prevodName}_glava", selectedIndex)
-                                                    putInt(
-                                                        "bible_time_${prevodName}_stix", listState[selectedIndex].firstVisibleItemIndex
-                                                    )
-                                                }
-                                            }
-                                            autoScrollJob?.cancel()
-                                            autoScrollTextVisableJob?.cancel()
-                                            actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                                            navController.popBackStack()
-                                        }
-                                    }
-                                }
-                            }, content = {
-                                Icon(
-                                    painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
-                                )
-                            })
-                        }
-                    }, actions = {
-                        if (isSelectMode) {
-                            IconButton(onClick = {
-                                isSelectAll = true
-                            }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.select_all), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                            }
-                            IconButton(onClick = {
-                                isCopyMode = true
-                            }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.content_copy), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                            }
-                            IconButton(onClick = {
-                                isShareMode = true
-                            }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.share), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                            }
-                        }
-                    }, colors = TopAppBarDefaults.topAppBarColors(containerColor = colorTollBar)
+    Scaffold(topBar = {
+        AnimatedVisibility(
+            !fullscreen, enter = fadeIn(
+                tween(
+                    durationMillis = 500, easing = LinearOutSlowInEasing
                 )
-            }
-        },
-        bottomBar = {
-            if (showDropdown) {
-                ModalBottomSheet(
-                    scrimColor = Color.Transparent,
-                    properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false),
-                    containerColor = MaterialTheme.colorScheme.background,
-                    onDismissRequest = {
-                        showDropdown = false
-                        if (autoScrollSensor) autoScroll = true
-                    }) {
+            ), exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
+        ) {
+            TopAppBar(
+                title = {
+                if (!isSelectMode) {
                     Column {
-                        if (menuPosition == 2) {
-                            Column(Modifier.selectableGroup()) {
-                                if (isPerevodError) {
-                                    Text(
-                                        stringResource(R.string.biblia_error), modifier = Modifier.padding(start = 10.dp, top = 10.dp), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.primary, fontSize = Settings.fontInterface.sp
-                                    )
+                        if (!isParallelVisable) {
+                            Text(
+                                modifier = Modifier.clickable {
+                                    maxLine.intValue = Int.MAX_VALUE
+                                    coroutineScope.launch {
+                                        delay(5000L)
+                                        maxLine.intValue = 1
+                                    }
+                                }, text = titleBible.uppercase(), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
+                            )
+                            Text(
+                                modifier = Modifier.clickable {
+                                    maxLine.intValue = Int.MAX_VALUE
+                                    coroutineScope.launch {
+                                        delay(5000L)
+                                        maxLine.intValue = 1
+                                    }
+                                }, text = subTitle, color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
+                            )
+                        } else {
+                            Text(
+                                modifier = Modifier.clickable {
+                                    maxLine.intValue = Int.MAX_VALUE
+                                    coroutineScope.launch {
+                                        delay(5000L)
+                                        maxLine.intValue = 1
+                                    }
+                                }, text = stringResource(R.string.paralel), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
+                            )
+                        }
+                    }
+                }
+            },
+
+                navigationIcon = {
+                    if (isSelectMode || isParallelVisable) {
+                        IconButton(onClick = {
+                            if (isSelectMode) {
+                                if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
+                                isSelectMode = false
+                            } else isParallelVisable = false
+                        }, content = {
+                            Icon(
+                                painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                            )
+                        })
+                    } else {
+                        IconButton(onClick = {
+                            when {
+                                isParallelVisable -> isParallelVisable = false
+                                showDropdown -> {
+                                    showDropdown = false
+                                    if (autoScrollSensor) autoScroll = true
                                 }
-                                Text(
-                                    stringResource(R.string.perevody), modifier = Modifier.padding(start = 10.dp, top = 10.dp), textAlign = TextAlign.Center, fontStyle = FontStyle.Italic, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                                )
-                                val edit = k.edit()
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            cytanniListItemData.value.clear()
-                                            selectOldPerevod = perevod
-                                            perevod = Settings.PEREVODSEMUXI
-                                            initVybranoe = true
-                                            selectPerevod = true
-                                            if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
-                                                "perevodMaranata", perevod
-                                            )
-                                            if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
-                                                "perevod", perevod
-                                            )
-                                            edit.apply()
-                                        }, verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    RadioButton(
-                                        selected = perevod == Settings.PEREVODSEMUXI, onClick = {
-                                            cytanniListItemData.value.clear()
-                                            selectOldPerevod = perevod
-                                            perevod = Settings.PEREVODSEMUXI
-                                            initVybranoe = true
-                                            selectPerevod = true
-                                            if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
-                                                "perevodMaranata", perevod
-                                            )
-                                            if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
-                                                "perevod", perevod
-                                            )
-                                            edit.apply()
-                                        })
-                                    Text(
-                                        stringResource(R.string.title_biblia2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                                    )
-                                }
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            cytanniListItemData.value.clear()
-                                            selectOldPerevod = perevod
-                                            perevod = Settings.PEREVODBOKUNA
-                                            initVybranoe = true
-                                            selectPerevod = true
-                                            if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
-                                                "perevodMaranata", perevod
-                                            )
-                                            if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
-                                                "perevod", perevod
-                                            )
-                                            edit.apply()
-                                        }, verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    RadioButton(
-                                        selected = perevod == Settings.PEREVODBOKUNA, onClick = {
-                                            cytanniListItemData.value.clear()
-                                            selectOldPerevod = perevod
-                                            perevod = Settings.PEREVODBOKUNA
-                                            initVybranoe = true
-                                            selectPerevod = true
-                                            if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
-                                                "perevodMaranata", perevod
-                                            )
-                                            if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
-                                                "perevod", perevod
-                                            )
-                                            edit.apply()
-                                        })
-                                    Text(
-                                        stringResource(R.string.title_biblia_bokun2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                                    )
-                                }
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            cytanniListItemData.value.clear()
-                                            selectOldPerevod = perevod
-                                            perevod = Settings.PEREVODCARNIAUSKI
-                                            initVybranoe = true
-                                            selectPerevod = true
-                                            if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
-                                                "perevodMaranata", perevod
-                                            )
-                                            if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
-                                                "perevod", perevod
-                                            )
-                                            edit.apply()
-                                        }, verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    RadioButton(
-                                        selected = perevod == Settings.PEREVODCARNIAUSKI, onClick = {
-                                            cytanniListItemData.value.clear()
-                                            selectOldPerevod = perevod
-                                            perevod = Settings.PEREVODCARNIAUSKI
-                                            initVybranoe = true
-                                            selectPerevod = true
-                                            if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
-                                                "perevodMaranata", perevod
-                                            )
-                                            if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
-                                                "perevod", perevod
-                                            )
-                                            edit.apply()
-                                        })
-                                    Text(
-                                        stringResource(R.string.title_biblia_charniauski2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                                    )
-                                }
-                                if (biblia == Settings.CHYTANNI_BIBLIA || biblia == Settings.CHYTANNI_VYBRANAE) {
-                                    val kniga = knigaBiblii(knigaText)
-                                    if (kniga == 21) {
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .clickable {
-                                                    cytanniListItemData.value.clear()
-                                                    selectOldPerevod = perevod
-                                                    perevod = Settings.PEREVODNADSAN
-                                                    initVybranoe = true
-                                                    selectPerevod = true
-                                                }, verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            RadioButton(
-                                                selected = perevod == Settings.PEREVODNADSAN, onClick = {
-                                                    cytanniListItemData.value.clear()
-                                                    selectOldPerevod = perevod
-                                                    perevod = Settings.PEREVODNADSAN
-                                                    initVybranoe = true
-                                                    selectPerevod = true
-                                                })
-                                            Text(
-                                                stringResource(R.string.title_psalter), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                                            )
+
+                                else -> {
+                                    if (!backPressHandled) {
+                                        backPressHandled = true
+                                        fullscreen = false
+                                        k.edit {
+                                            if (biblia == Settings.CHYTANNI_BIBLIA) {
+                                                putString("bible_time_${prevodName}_kniga", knigaText)
+                                                putInt("bible_time_${prevodName}_glava", selectedIndex)
+                                                putInt(
+                                                    "bible_time_${prevodName}_stix", listState[selectedIndex].firstVisibleItemIndex
+                                                )
+                                            }
                                         }
+                                        autoScrollJob?.cancel()
+                                        autoScrollTextVisableJob?.cancel()
+                                        actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                        navController.popBackStack()
                                     }
                                 }
-                                if (biblia != Settings.CHYTANNI_LITURGICHNYIA) {
+                            }
+                        }, content = {
+                            Icon(
+                                painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                            )
+                        })
+                    }
+                }, actions = {
+                    if (isSelectMode) {
+                        IconButton(onClick = {
+                            isSelectAll = true
+                        }) {
+                            Icon(
+                                painter = painterResource(R.drawable.select_all), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                            )
+                        }
+                        IconButton(onClick = {
+                            isCopyMode = true
+                        }) {
+                            Icon(
+                                painter = painterResource(R.drawable.content_copy), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                            )
+                        }
+                        IconButton(onClick = {
+                            isShareMode = true
+                        }) {
+                            Icon(
+                                painter = painterResource(R.drawable.share), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                            )
+                        }
+                    }
+                }, colors = TopAppBarDefaults.topAppBarColors(containerColor = colorTollBar)
+            )
+        }
+    }, bottomBar = {
+        if (showDropdown) {
+            ModalBottomSheet(
+                scrimColor = Color.Transparent, properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false), containerColor = MaterialTheme.colorScheme.background, onDismissRequest = {
+                    showDropdown = false
+                    if (autoScrollSensor) autoScroll = true
+                }) {
+                Column {
+                    if (menuPosition == 2) {
+                        Column(Modifier.selectableGroup()) {
+                            if (isPerevodError) {
+                                Text(
+                                    stringResource(R.string.biblia_error), modifier = Modifier.padding(start = 10.dp, top = 10.dp), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.primary, fontSize = Settings.fontInterface.sp
+                                )
+                            }
+                            Text(
+                                stringResource(R.string.perevody), modifier = Modifier.padding(start = 10.dp, top = 10.dp), textAlign = TextAlign.Center, fontStyle = FontStyle.Italic, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                            )
+                            val edit = k.edit()
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        cytanniListItemData.value.clear()
+                                        selectOldPerevod = perevod
+                                        perevod = Settings.PEREVODSEMUXI
+                                        initVybranoe = true
+                                        selectPerevod = true
+                                        if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
+                                            "perevodMaranata", perevod
+                                        )
+                                        if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
+                                            "perevod", perevod
+                                        )
+                                        edit.apply()
+                                    }, verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = perevod == Settings.PEREVODSEMUXI, onClick = {
+                                        cytanniListItemData.value.clear()
+                                        selectOldPerevod = perevod
+                                        perevod = Settings.PEREVODSEMUXI
+                                        initVybranoe = true
+                                        selectPerevod = true
+                                        if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
+                                            "perevodMaranata", perevod
+                                        )
+                                        if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
+                                            "perevod", perevod
+                                        )
+                                        edit.apply()
+                                    })
+                                Text(
+                                    stringResource(R.string.title_biblia2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                                )
+                            }
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        cytanniListItemData.value.clear()
+                                        selectOldPerevod = perevod
+                                        perevod = Settings.PEREVODBOKUNA
+                                        initVybranoe = true
+                                        selectPerevod = true
+                                        if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
+                                            "perevodMaranata", perevod
+                                        )
+                                        if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
+                                            "perevod", perevod
+                                        )
+                                        edit.apply()
+                                    }, verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = perevod == Settings.PEREVODBOKUNA, onClick = {
+                                        cytanniListItemData.value.clear()
+                                        selectOldPerevod = perevod
+                                        perevod = Settings.PEREVODBOKUNA
+                                        initVybranoe = true
+                                        selectPerevod = true
+                                        if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
+                                            "perevodMaranata", perevod
+                                        )
+                                        if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
+                                            "perevod", perevod
+                                        )
+                                        edit.apply()
+                                    })
+                                Text(
+                                    stringResource(R.string.title_biblia_bokun2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                                )
+                            }
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        cytanniListItemData.value.clear()
+                                        selectOldPerevod = perevod
+                                        perevod = Settings.PEREVODCARNIAUSKI
+                                        initVybranoe = true
+                                        selectPerevod = true
+                                        if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
+                                            "perevodMaranata", perevod
+                                        )
+                                        if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
+                                            "perevod", perevod
+                                        )
+                                        edit.apply()
+                                    }, verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = perevod == Settings.PEREVODCARNIAUSKI, onClick = {
+                                        cytanniListItemData.value.clear()
+                                        selectOldPerevod = perevod
+                                        perevod = Settings.PEREVODCARNIAUSKI
+                                        initVybranoe = true
+                                        selectPerevod = true
+                                        if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
+                                            "perevodMaranata", perevod
+                                        )
+                                        if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
+                                            "perevod", perevod
+                                        )
+                                        edit.apply()
+                                    })
+                                Text(
+                                    stringResource(R.string.title_biblia_charniauski2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                                )
+                            }
+                            if (biblia == Settings.CHYTANNI_BIBLIA || biblia == Settings.CHYTANNI_VYBRANAE) {
+                                val kniga = knigaBiblii(knigaText)
+                                if (kniga == 21) {
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .clickable {
                                                 cytanniListItemData.value.clear()
                                                 selectOldPerevod = perevod
-                                                perevod = Settings.PEREVODSINOIDAL
+                                                perevod = Settings.PEREVODNADSAN
                                                 initVybranoe = true
                                                 selectPerevod = true
-                                                if (biblia == Settings.CHYTANNI_MARANATA) {
-                                                    edit.putString(
-                                                        "perevodMaranata", perevod
-                                                    )
-                                                }
-                                                edit.apply()
                                             }, verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         RadioButton(
-                                            selected = perevod == Settings.PEREVODSINOIDAL, onClick = {
+                                            selected = perevod == Settings.PEREVODNADSAN, onClick = {
                                                 cytanniListItemData.value.clear()
                                                 selectOldPerevod = perevod
-                                                perevod = Settings.PEREVODSINOIDAL
+                                                perevod = Settings.PEREVODNADSAN
                                                 initVybranoe = true
                                                 selectPerevod = true
-                                                if (biblia == Settings.CHYTANNI_MARANATA) {
-                                                    edit.putString(
-                                                        "perevodMaranata", perevod
-                                                    )
-                                                }
-                                                edit.apply()
                                             })
                                         Text(
-                                            stringResource(R.string.bsinaidal2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                                            stringResource(R.string.title_psalter), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                                         )
                                     }
                                 }
                             }
+                            if (biblia != Settings.CHYTANNI_LITURGICHNYIA) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            cytanniListItemData.value.clear()
+                                            selectOldPerevod = perevod
+                                            perevod = Settings.PEREVODSINOIDAL
+                                            initVybranoe = true
+                                            selectPerevod = true
+                                            if (biblia == Settings.CHYTANNI_MARANATA) {
+                                                edit.putString(
+                                                    "perevodMaranata", perevod
+                                                )
+                                            }
+                                            edit.apply()
+                                        }, verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    RadioButton(
+                                        selected = perevod == Settings.PEREVODSINOIDAL, onClick = {
+                                            cytanniListItemData.value.clear()
+                                            selectOldPerevod = perevod
+                                            perevod = Settings.PEREVODSINOIDAL
+                                            initVybranoe = true
+                                            selectPerevod = true
+                                            if (biblia == Settings.CHYTANNI_MARANATA) {
+                                                edit.putString(
+                                                    "perevodMaranata", perevod
+                                                )
+                                            }
+                                            edit.apply()
+                                        })
+                                    Text(
+                                        stringResource(R.string.bsinaidal2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                                    )
+                                }
+                            }
                         }
-                        if (menuPosition == 1) {
-                            Text(
-                                stringResource(R.string.menu_font_size_app), modifier = Modifier.padding(start = 10.dp, top = 10.dp), fontStyle = FontStyle.Italic, textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                            )
-                            Slider(
-                                modifier = Modifier.padding(horizontal = 10.dp), valueRange = 18f..58f, steps = 10, value = fontSize, onValueChange = {
-                                    k.edit {
-                                        putFloat("font_biblia", it)
-                                    }
-                                    fontSize = it
-                                }, colors = SliderDefaults.colors(inactiveTrackColor = Divider))
-                        }
+                    }
+                    if (menuPosition == 1) {
+                        Text(
+                            stringResource(R.string.menu_font_size_app), modifier = Modifier.padding(start = 10.dp, top = 10.dp), fontStyle = FontStyle.Italic, textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                        )
+                        Slider(
+                            modifier = Modifier.padding(horizontal = 10.dp), valueRange = 18f..58f, steps = 10, value = fontSize, onValueChange = {
+                            k.edit {
+                                putFloat("font_biblia", it)
+                            }
+                            fontSize = it
+                        }, colors = SliderDefaults.colors(inactiveTrackColor = Divider))
                     }
                 }
             }
-            if (!isSelectMode) {
-                if (!isParallelVisable) {
-                    AnimatedVisibility(
-                        !fullscreen, enter = fadeIn(
-                            tween(
-                                durationMillis = 500, easing = LinearOutSlowInEasing
-                            )
-                        ), exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
-                    ) {
-                        BottomAppBar(containerColor = colorTollBar) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceAround
-                            ) {
-                                IconButton(
-                                    onClick = {
-                                        showDropdown = !showDropdown
-                                        autoScroll = false
-                                        menuPosition = 1
-                                    }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.format_size),
-                                        contentDescription = "",
-                                        tint = MaterialTheme.colorScheme.onSecondary
-                                    )
-                                }
-                                IconButton(
-                                    onClick = {
-                                        showDropdown = !showDropdown
-                                        autoScroll = false
-                                        menuPosition = 2
-                                    }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.book_red),
-                                        contentDescription = "",
-                                        tint = MaterialTheme.colorScheme.onSecondary
-                                    )
-                                }
-                                IconButton(
-                                    onClick = {
-                                        if (autoScrollSensor) autoScroll = true
-                                        fullscreen = true
-                                    }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.fullscreen),
-                                        contentDescription = "",
-                                        tint = MaterialTheme.colorScheme.onSecondary
-                                    )
-                                }
-                                if (biblia == Settings.CHYTANNI_BIBLIA && listState.size - 1 > 1) {
-                                    IconButton(
-                                        onClick = {
-                                            autoScroll = false
-                                            dialogRazdel = true
-                                        }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.apps),
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.onSecondary
-                                        )
-                                    }
-                                }
-                                if (biblia == Settings.CHYTANNI_BIBLIA) {
-                                    IconButton(
-                                        onClick = {
-                                            saveVybranoe = true
-                                        }) {
-                                        val icon = if (isVybranoe) painterResource(R.drawable.stars)
-                                        else painterResource(R.drawable.star)
-                                        Icon(
-                                            painter = icon,
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.onSecondary
-                                        )
-                                    }
-                                }
-                                if (!isParallelVisable) {
-                                    if (listState[selectedIndex].canScrollForward) {
-                                        val iconAutoScroll = if (autoScrollSensor) painterResource(R.drawable.stop_circle)
-                                        else painterResource(R.drawable.play_circle)
-                                        IconButton(onClick = {
-                                            autoScroll = !autoScroll
-                                            autoScrollSensor = !autoScrollSensor
-                                            if (autoScrollSensor) actyvity.window.addFlags(
-                                                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                                            )
-                                            else actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                                        }) {
-                                            Icon(
-                                                iconAutoScroll, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                            )
-                                        }
-                                    } else if (listState[selectedIndex].canScrollBackward) {
-                                        IconButton(onClick = {
-                                            isUpList = true
-                                        }) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.arrow_upward), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                            )
-                                        }
-                                    }
-                                } else {
+        }
+        if (!isSelectMode) {
+            if (!isParallelVisable) {
+                AnimatedVisibility(
+                    !fullscreen, enter = fadeIn(
+                        tween(
+                            durationMillis = 500, easing = LinearOutSlowInEasing
+                        )
+                    ), exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
+                ) {
+                    BottomAppBar(containerColor = colorTollBar) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround
+                        ) {
+                            IconButton(
+                                onClick = {
+                                    showDropdown = !showDropdown
                                     autoScroll = false
+                                    menuPosition = 1
+                                }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.format_size), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
+                            IconButton(
+                                onClick = {
+                                    showDropdown = !showDropdown
+                                    autoScroll = false
+                                    menuPosition = 2
+                                }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.book_red), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
+                            IconButton(
+                                onClick = {
+                                    if (autoScrollSensor) autoScroll = true
+                                    fullscreen = true
+                                }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.fullscreen), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
+                            if (biblia == Settings.CHYTANNI_BIBLIA && listState.size - 1 > 1) {
+                                IconButton(
+                                    onClick = {
+                                        autoScroll = false
+                                        dialogRazdel = true
+                                    }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.apps), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    )
                                 }
+                            }
+                            if (biblia == Settings.CHYTANNI_BIBLIA) {
+                                IconButton(
+                                    onClick = {
+                                        saveVybranoe = true
+                                    }) {
+                                    val icon = if (isVybranoe) painterResource(R.drawable.stars)
+                                    else painterResource(R.drawable.star)
+                                    Icon(
+                                        painter = icon, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
+                            }
+                            if (!isParallelVisable) {
+                                if (listState[selectedIndex].canScrollForward) {
+                                    val iconAutoScroll = if (autoScrollSensor) painterResource(R.drawable.stop_circle)
+                                    else painterResource(R.drawable.play_circle)
+                                    IconButton(onClick = {
+                                        autoScroll = !autoScroll
+                                        autoScrollSensor = !autoScrollSensor
+                                        if (autoScrollSensor) actyvity.window.addFlags(
+                                            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                        )
+                                        else actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                    }) {
+                                        Icon(
+                                            iconAutoScroll, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
+                                } else if (listState[selectedIndex].canScrollBackward) {
+                                    IconButton(onClick = {
+                                        isUpList = true
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.arrow_upward), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
+                                }
+                            } else {
+                                autoScroll = false
                             }
                         }
                     }
                 }
             }
         }
-    ) { innerPadding ->
+    }) { innerPadding ->
         Box(
             modifier = Modifier.padding(
                 innerPadding.calculateStartPadding(LayoutDirection.Ltr), if (fullscreen) 0.dp else innerPadding.calculateTopPadding(), innerPadding.calculateEndPadding(LayoutDirection.Rtl), 0.dp
@@ -1033,18 +1016,17 @@ fun CytanniList(
                             else Color.Unspecified
                             val textColor = if (selectedIndex == page) PrimaryText
                             else MaterialTheme.colorScheme.secondary
-                            Text(
-                                (page + 1).toString(), modifier = Modifier
-                                    .clickable {
-                                        selectedIndex = page
-                                    }
-                                    .padding(10.dp)
-                                    .clip(shape = RoundedCornerShape(10.dp))
-                                    .border(
-                                        width = 1.dp, color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(10.dp)
-                                    )
-                                    .background(color)
-                                    .padding(5.dp), color = textColor, fontSize = Settings.fontInterface.sp)
+                            Text((page + 1).toString(), modifier = Modifier
+                                .clickable {
+                                    selectedIndex = page
+                                }
+                                .padding(10.dp)
+                                .clip(shape = RoundedCornerShape(10.dp))
+                                .border(
+                                    width = 1.dp, color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(10.dp)
+                                )
+                                .background(color)
+                                .padding(5.dp), color = textColor, fontSize = Settings.fontInterface.sp)
                         }
                     }
                 }
@@ -1193,22 +1175,21 @@ fun CytanniList(
                         isSelectMode = false
                         if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
                     }
-                    LazyColumn(
-                        Modifier
-                            .pointerInput(PointerEventType.Press) {
-                                awaitPointerEventScope {
-                                    while (true) {
-                                        val event = awaitPointerEvent()
-                                        if (event.type == PointerEventType.Press) {
-                                            autoScroll = false
-                                        }
-                                        if (autoScrollSensor && event.type == PointerEventType.Release && !isScrollRun) {
-                                            autoScroll = true
-                                        }
+                    LazyColumn(Modifier
+                        .pointerInput(PointerEventType.Press) {
+                            awaitPointerEventScope {
+                                while (true) {
+                                    val event = awaitPointerEvent()
+                                    if (event.type == PointerEventType.Press) {
+                                        autoScroll = false
+                                    }
+                                    if (autoScrollSensor && event.type == PointerEventType.Release && !isScrollRun) {
+                                        autoScroll = true
                                     }
                                 }
                             }
-                            .nestedScroll(nestedScrollConnection), state = listState[page]) {
+                        }
+                        .nestedScroll(nestedScrollConnection), state = listState[page]) {
                         items(resultPage.size, key = { index -> resultPage[index].id }) { index ->
                             if (index == 0) {
                                 Spacer(Modifier.padding(top = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp))
@@ -1230,45 +1211,39 @@ fun CytanniList(
                             }
                             HtmlText(
                                 modifier = if (!autoScrollSensor && !showDropdown) {
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .pointerInput(Unit) {
-                                            detectTapGestures(
-                                                onTap = {
-                                                    if (!isSelectMode && isParallel && resultPage[index].parallel != "+-+") {
-                                                        isParallelVisable = true
-                                                        paralelChtenia = resultPage[index].parallel
-                                                    }
-                                                    if (isSelectMode) {
-                                                        selectState[index] = !selectState[index]
-                                                    }
-                                                },
-                                                onLongPress = {
-                                                    if (!fullscreen) {
-                                                        isSelectMode = true
-                                                        actyvity.removelightSensor()
-                                                        selectState[index] = !selectState[index]
-                                                    }
-                                                },
-                                                onDoubleTap = {
-                                                    fullscreen = !fullscreen
-                                                }
-                                            )
-                                        }
-                                } else {
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .pointerInput(Unit) {
-                                            detectTapGestures(
-                                                onDoubleTap = {
-                                                    fullscreen = !fullscreen
-                                                }
-                                            )
-                                        }
-                                }
+                                Modifier
+                                    .fillMaxWidth()
+                                    .pointerInput(Unit) {
+                                        detectTapGestures(onTap = {
+                                            if (!isSelectMode && isParallel && resultPage[index].parallel != "+-+") {
+                                                isParallelVisable = true
+                                                paralelChtenia = resultPage[index].parallel
+                                            }
+                                            if (isSelectMode) {
+                                                selectState[index] = !selectState[index]
+                                            }
+                                        }, onLongPress = {
+                                            if (!fullscreen) {
+                                                isSelectMode = true
+                                                actyvity.removelightSensor()
+                                                selectState[index] = !selectState[index]
+                                            }
+                                        }, onDoubleTap = {
+                                            fullscreen = !fullscreen
+                                        })
+                                    }
+                            } else {
+                                Modifier
+                                    .fillMaxWidth()
+                                    .pointerInput(Unit) {
+                                        detectTapGestures(
+                                            onDoubleTap = {
+                                                fullscreen = !fullscreen
+                                            })
+                                    }
+                            }
                                     .padding(horizontal = 10.dp)
-                                    .background(if (selectState[index]) Post else Color.Unspecified), text = resultPage[index].text, fontSize = fontSize.sp, color = if (selectState[index]) PrimaryText else MaterialTheme.colorScheme.secondary
-                            )
+                                    .background(if (selectState[index]) Post else Color.Unspecified), text = resultPage[index].text, fontSize = fontSize.sp, color = if (selectState[index]) PrimaryText else MaterialTheme.colorScheme.secondary)
                             if (isParallel && resultPage[index].parallel != "+-+") {
                                 Text(
                                     text = resultPage[index].parallel, modifier = Modifier
@@ -1415,11 +1390,7 @@ fun CytanniList(
 
 @Composable
 fun DialogRazdzel(
-    listState: ArrayList<LazyListState>,
-    autoScrollSensor: Boolean,
-    setSelectedIndex: (Int) -> Unit,
-    setAutoScroll: (Boolean) -> Unit,
-    onDismiss: () -> Unit
+    listState: ArrayList<LazyListState>, autoScrollSensor: Boolean, setSelectedIndex: (Int) -> Unit, setAutoScroll: (Boolean) -> Unit, onDismiss: () -> Unit
 ) {
     Dialog(onDismissRequest = { onDismiss() }) {
         Card(
@@ -1436,8 +1407,7 @@ fun DialogRazdzel(
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
                 LazyVerticalGrid(
-                    modifier = Modifier.weight(1f),
-                    columns = GridCells.Adaptive(60.dp)
+                    modifier = Modifier.weight(1f), columns = GridCells.Adaptive(60.dp)
                 ) {
                     items(listState.size) { item ->
                         Box(
@@ -1469,8 +1439,7 @@ fun DialogRazdzel(
                 ) {
                     Column {
                         TextButton(
-                            onClick = { onDismiss() },
-                            shape = MaterialTheme.shapes.small
+                            onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
                         ) {
                             Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                             Text(stringResource(R.string.cansel), fontSize = 18.sp)
@@ -1582,7 +1551,7 @@ fun getBible(
                                 perevodNew = Settings.PEREVODSINOIDAL
                                 kniga = getRealBook(knigiBiblii, perevodNew)
                             }
-                            if (biblia != Settings.CHYTANNI_LITURGICHNYIA && (knigiBiblii == 21 && glavaEnd == 151 && (perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODBOKUNA))) {
+                            if (biblia != Settings.CHYTANNI_LITURGICHNYIA && (knigiBiblii == 21 && glava == 151 && (perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODBOKUNA))) {
                                 perevodNew = Settings.PEREVODSINOIDAL
                                 kniga = getRealBook(knigiBiblii, perevodNew)
                             }
@@ -1590,16 +1559,16 @@ fun getBible(
                                 perevodNew = Settings.PEREVODCARNIAUSKI
                                 kniga = getRealBook(knigiBiblii, perevodNew)
                             }
+                            if (biblia != Settings.CHYTANNI_LITURGICHNYIA && (knigiBiblii == 13 && glava == 37 && perevod != Settings.PEREVODSINOIDAL)) {
+                                perevodNew = Settings.PEREVODSINOIDAL
+                                kniga = getRealBook(knigiBiblii, perevodNew)
+                            }
                         }
                         try {
                             val textBible = if (styxStart == 0 && styxEnd == 0) {
-                                biblia(
-                                    context, knigiBiblii, glava, glava, styxStart, styxEnd, perevodNew
-                                )
+                                biblia(context, knigiBiblii, glava, glava, styxStart, styxEnd, perevodNew)
                             } else {
-                                biblia(
-                                    context, knigiBiblii, glavaStart, glavaEnd, styxStart, styxEnd, perevodNew
-                                )
+                                biblia(context, knigiBiblii, glavaStart, glavaEnd, styxStart, styxEnd, perevodNew)
                             }
                             if (run) {
                                 if (!(styxStart == 0 && styxEnd == 0)) run = false
@@ -1628,22 +1597,19 @@ fun getBible(
                                                 result.add(
                                                     CytanniListData(
                                                         id, "${
-                                                            getNameBook(
-                                                                context, kniga, perevodNew, knigiBiblii >= 50
-                                                            )
-                                                        } $glava",
-                                                        if (biblia == Settings.CHYTANNI_LITURGICHNYIA) {
-                                                            val eGlavy = knigaStyxi.ifEmpty { glava.toString() }
-                                                            "<strong><br>" + getNameBook(
-                                                                context, kniga, perevodNew, knigiBiblii >= 50
-                                                            ) + " $eGlavy<strong><br>"
-                                                        } else {
-                                                            "<strong><br>" + getNameBook(
-                                                                context, kniga, perevodNew, knigiBiblii >= 50
-                                                            ) + " $glava<strong><br>"
-                                                        }
+                                                    getNameBook(
+                                                        context, kniga, perevodNew, knigiBiblii >= 50
                                                     )
-                                                )
+                                                } $glava", if (biblia == Settings.CHYTANNI_LITURGICHNYIA) {
+                                                    val eGlavy = knigaStyxi.ifEmpty { glava.toString() }
+                                                    "<strong><br>" + getNameBook(
+                                                        context, kniga, perevodNew, knigiBiblii >= 50
+                                                    ) + " $eGlavy<strong><br>"
+                                                } else {
+                                                    "<strong><br>" + getNameBook(
+                                                        context, kniga, perevodNew, knigiBiblii >= 50
+                                                    ) + " $glava<strong><br>"
+                                                }))
                                             }
                                         }
                                         id++

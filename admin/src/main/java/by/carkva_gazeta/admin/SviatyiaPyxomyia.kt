@@ -71,7 +71,7 @@ class SviatyiaPyxomyia : BaseActivity(), View.OnClickListener, DialogEditImage.D
         binding.actionBold.setOnClickListener(this)
         binding.actionEm.setOnClickListener(this)
         binding.actionRed.setOnClickListener(this)
-        binding.actionP.setOnClickListener(this)
+        binding.actionBr.setOnClickListener(this)
         binding.sviaty.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) edittext = v as? AppCompatEditText
         }
@@ -276,17 +276,17 @@ class SviatyiaPyxomyia : BaseActivity(), View.OnClickListener, DialogEditImage.D
                 it.setText(build)
                 it.setSelection(endSelect + 29)
             }
-            if (id == R.id.action_p) {
+            if (id == R.id.action_br) {
                 val endSelect = it.selectionEnd
                 val text = it.text.toString()
                 val build = with(StringBuilder()) {
                     append(text.substring(0, endSelect))
-                    append("<p>")
+                    append("<br>")
                     append(text.substring(endSelect))
                     toString()
                 }
                 it.setText(build)
-                it.setSelection(endSelect + 3)
+                it.setSelection(endSelect + 4)
             }
         }
     }
