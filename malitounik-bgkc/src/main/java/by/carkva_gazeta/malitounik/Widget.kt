@@ -415,8 +415,12 @@ class Widget : GlanceAppWidgetReceiver() {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val pIntent = PendingIntent.getBroadcast(context, 50, intentUpdate, PendingIntent.FLAG_IMMUTABLE or 0)
         when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms() -> {
-                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+                if (alarmManager.canScheduleExactAlarms()) {
+                    alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
+                } else {
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
+                }
             }
 
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {

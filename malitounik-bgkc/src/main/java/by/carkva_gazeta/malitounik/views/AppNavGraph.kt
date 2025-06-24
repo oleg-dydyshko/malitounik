@@ -860,6 +860,41 @@ fun MainConteiner(
     var isProgressVisable by remember { mutableStateOf(false) }
     var progressApp by remember { mutableFloatStateOf(0f) }
     var appUpdate by remember { mutableStateOf(false) }
+    /*var download  by remember { mutableStateOf(true) }
+    if (download) {
+        if (File("${context.filesDir}/sviatyja/").exists()) {
+            val zip = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "MalitounikSvityiaApis.zip")
+            val out = ZipOutputStream(BufferedOutputStream(FileOutputStream(zip)))
+            val buffer = ByteArray(1024)
+            for (mun in 1..12) {
+                val file = File("${context.filesDir}/sviatyja/opisanie$mun.json")
+                if (file.exists()) {
+                    val fi = FileInputStream(file)
+                    val origin = BufferedInputStream(fi)
+                    try {
+                        val entry = ZipEntry(file.name)
+                        out.putNextEntry(entry)
+                        while (true) {
+                            val len = fi.read(buffer)
+                            if (len <= 0) break
+                            out.write(buffer, 0, len)
+                        }
+                    } catch (_: Throwable) {
+                    } finally {
+                        origin.close()
+                    }
+                }
+            }
+            out.closeEntry()
+            out.close()
+            val sendIntent = Intent(Intent.ACTION_SEND)
+            sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "by.carkva_gazeta.malitounik.fileprovider", zip))
+            sendIntent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.set_log_file))
+            sendIntent.type = "application/zip"
+            context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.set_log_file)))
+        }
+        download = false
+    }*/
     if (appUpdate) {
         CheckUpdateMalitounik(onDownloadComplet = {
             isInstallApp = true
@@ -943,9 +978,10 @@ fun MainConteiner(
                 val year = extras.getInt("year")
                 calendar.set(Calendar.DAY_OF_YEAR, chyt)
                 calendar.set(Calendar.YEAR, year)
+                var svitaPosition = Settings.caliandarPosition
                 for (i in Settings.data.indices) {
                     if (calendar[Calendar.DAY_OF_YEAR] == Settings.data[i][24].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
-                        Settings.caliandarPosition = i
+                        svitaPosition = i
                         break
                     }
                 }
@@ -953,8 +989,8 @@ fun MainConteiner(
                     if (k.getBoolean(
                             "caliandarList", false
                         )
-                    ) lazyColumnState.scrollToItem(Settings.caliandarPosition)
-                    else pagerState.scrollToPage(Settings.caliandarPosition)
+                    ) lazyColumnState.scrollToItem(svitaPosition)
+                    else pagerState.scrollToPage(svitaPosition)
                 }
             }
         }

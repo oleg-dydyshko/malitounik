@@ -63,7 +63,6 @@ import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
 import by.carkva_gazeta.malitounik.ui.theme.StrogiPost
 import by.carkva_gazeta.malitounik.ui.theme.TitleCalendarMounth
-import by.carkva_gazeta.malitounik.views.findCaliandarToDay
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
@@ -143,6 +142,33 @@ private fun getImageActionCallback(clickType: Int): Action {
     )
 }
 
+private fun findDefaultCaliandarMun(context: Context): Int {
+    if (Settings.data.isEmpty()) {
+        val gson = Gson()
+        val type = TypeToken.getParameterized(
+            ArrayList::class.java, TypeToken.getParameterized(
+                ArrayList::class.java, String::class.java
+            ).type
+        ).type
+        val inputStream = context.resources.openRawResource(R.raw.caliandar)
+        val isr = InputStreamReader(inputStream)
+        val reader = BufferedReader(isr)
+        val builder = reader.use {
+            it.readText()
+        }
+        Settings.data.addAll(gson.fromJson(builder, type))
+    }
+    var caliandarPosition = Settings.caliandarPosition
+    val calendar = Calendar.getInstance()
+    for (i in Settings.data.indices) {
+        if (1 == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
+            caliandarPosition = i
+            break
+        }
+    }
+    return caliandarPosition
+}
+
 private fun getDataKaliandar(context: Context, date: Int, position: Int): Int {
     if (Settings.data.isEmpty()) {
         val gson = Gson()
@@ -178,7 +204,7 @@ private fun getDataKaliandar(context: Context, date: Int, position: Int): Int {
 @Composable
 fun CalendarMun(context: Context) {
     val prefs = currentState<Preferences>()
-    val position = prefs[intPreferencesKey("position")] ?: findCaliandarToDay(context, false)[25].toInt()
+    val position = prefs[intPreferencesKey("position")] ?: findDefaultCaliandarMun(context)
     val dzenNoch = prefs[booleanPreferencesKey("dzenNoch")] == true
     val data = Settings.data
     val mun = data[position][2].toInt()
@@ -469,12 +495,12 @@ class WidgetMun : GlanceAppWidgetReceiver() {
             glanceIds.forEach { glanceId ->
                 updateAppWidgetState(context, glanceId) {
                     it[booleanPreferencesKey("dzenNoch")] = getBaseDzenNoch(context)
-                    it[intPreferencesKey("position")] = getDataKaliandar(context, 0, it[intPreferencesKey("position")] ?: findCaliandarToDay(context, false)[25].toInt())
+                    it[intPreferencesKey("position")] = getDataKaliandar(context, 0, it[intPreferencesKey("position")] ?: findDefaultCaliandarMun(context))
                     if (intent.action == munPlus) {
-                        it[intPreferencesKey("position")] = getDataKaliandar(context, 1, it[intPreferencesKey("position")] ?: findCaliandarToDay(context, false)[25].toInt())
+                        it[intPreferencesKey("position")] = getDataKaliandar(context, 1, it[intPreferencesKey("position")] ?: findDefaultCaliandarMun(context))
                     }
                     if (intent.action == munMinus) {
-                        it[intPreferencesKey("position")] = getDataKaliandar(context, -1, it[intPreferencesKey("position")] ?: findCaliandarToDay(context, false)[25].toInt())
+                        it[intPreferencesKey("position")] = getDataKaliandar(context, -1, it[intPreferencesKey("position")] ?: findDefaultCaliandarMun(context))
                     }
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
                         AppWidgetManager.getInstance(context).setWidgetPreview(
@@ -491,8 +517,12 @@ class WidgetMun : GlanceAppWidgetReceiver() {
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             val pIntent = PendingIntent.getBroadcast(context, 60, intentUpdate, PendingIntent.FLAG_IMMUTABLE or 0)
             when {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms() -> {
-                    alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+                    if (alarmManager.canScheduleExactAlarms()) {
+                        alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
+                    } else {
+                        alarmManager.set(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
+                    }
                 }
 
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
