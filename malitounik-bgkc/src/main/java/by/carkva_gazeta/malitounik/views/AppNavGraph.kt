@@ -257,7 +257,7 @@ object AppNavGraphState {
 }
 
 fun openAssetsResources(context: Context, fileName: String): String {
-    var result = ""
+    var result: String
     try {
         val inputStream = context.assets.open(fileName)
         val isr = InputStreamReader(inputStream)
@@ -677,7 +677,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             else 1
             if (count != cytanniListState.size) {
                 cytanniListState.clear()
-                (0 until count).forEach {
+                (0 until count).forEach { _ ->
                     cytanniListState.add(rememberLazyListState())
                 }
             }
@@ -860,41 +860,6 @@ fun MainConteiner(
     var isProgressVisable by remember { mutableStateOf(false) }
     var progressApp by remember { mutableFloatStateOf(0f) }
     var appUpdate by remember { mutableStateOf(false) }
-    /*var download  by remember { mutableStateOf(true) }
-    if (download) {
-        if (File("${context.filesDir}/sviatyja/").exists()) {
-            val zip = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "MalitounikSvityiaApis.zip")
-            val out = ZipOutputStream(BufferedOutputStream(FileOutputStream(zip)))
-            val buffer = ByteArray(1024)
-            for (mun in 1..12) {
-                val file = File("${context.filesDir}/sviatyja/opisanie$mun.json")
-                if (file.exists()) {
-                    val fi = FileInputStream(file)
-                    val origin = BufferedInputStream(fi)
-                    try {
-                        val entry = ZipEntry(file.name)
-                        out.putNextEntry(entry)
-                        while (true) {
-                            val len = fi.read(buffer)
-                            if (len <= 0) break
-                            out.write(buffer, 0, len)
-                        }
-                    } catch (_: Throwable) {
-                    } finally {
-                        origin.close()
-                    }
-                }
-            }
-            out.closeEntry()
-            out.close()
-            val sendIntent = Intent(Intent.ACTION_SEND)
-            sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "by.carkva_gazeta.malitounik.fileprovider", zip))
-            sendIntent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.set_log_file))
-            sendIntent.type = "application/zip"
-            context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.set_log_file)))
-        }
-        download = false
-    }*/
     if (appUpdate) {
         CheckUpdateMalitounik(onDownloadComplet = {
             isInstallApp = true
@@ -1134,10 +1099,12 @@ fun MainConteiner(
                             navigateIsSpecial = true
                             navigationActions.navigateToPamiatka()
                         }
+
                         AllDestinations.PRANAS -> {
                             navigateIsSpecial = true
                             navigationActions.navigateToPraNas()
                         }
+
                         AllDestinations.HELP -> {
                             navigateIsSpecial = true
                             navigationActions.navigateToHelp()
@@ -1160,6 +1127,7 @@ fun MainConteiner(
         var title by rememberSaveable {
             mutableStateOf("")
         }
+        var isBottomBar by remember { mutableStateOf(k.getBoolean("bottomBar", false)) }
         title = when (currentRoute) {
             AllDestinations.KALIANDAR -> stringResource(R.string.kaliandar2)
             AllDestinations.KALIANDAR_YEAR -> stringResource(R.string.kaliandar2)
@@ -1252,6 +1220,41 @@ fun MainConteiner(
                     }
                 }, actions = {
                     if (!searchText) {
+                        if (!isBottomBar && (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR)) {
+                            Text(
+                                text = Calendar.getInstance()[Calendar.DATE].toString(),
+                                modifier = Modifier
+                                    .clickable {
+                                        showDropdownMenuPos = 1
+                                        showDropdown = true
+                                    }
+                                    .clip(shape = RoundedCornerShape(3.dp))
+                                    .background(textTollBarColor)
+                                    .padding(1.dp)
+                                    .clip(shape = RoundedCornerShape(3.dp))
+                                    .background(if (isToDay) Divider else StrogiPost)
+                                    .padding(horizontal = 5.dp),
+                                fontSize = 14.sp,
+                                color = if (isToDay) PrimaryText else PrimaryTextBlack
+                            )
+                            IconButton(onClick = {
+                                k.edit {
+                                    if (k.getBoolean("caliandarList", false)) {
+                                        navigationActions.navigateToKaliandar()
+                                        putBoolean("caliandarList", false)
+                                    } else {
+                                        putBoolean("caliandarList", true)
+                                        navigationActions.navigateToKaliandarYear()
+                                    }
+                                }
+                            }) {
+                                val icon = if (k.getBoolean("caliandarList", false)) painterResource(R.drawable.calendar_today)
+                                else painterResource(R.drawable.list)
+                                Icon(
+                                    painter = icon, contentDescription = "", tint = textTollBarColor
+                                )
+                            }
+                        }
                         if (currentRoute == AllDestinations.MAE_NATATKI_MENU) {
                             IconButton({
                                 addFileNatatki = true
@@ -1335,6 +1338,24 @@ fun MainConteiner(
                                         painter = painterResource(R.drawable.info), contentDescription = ""
                                     )
                                 })
+                                if (!isBottomBar) {
+                                    DropdownMenuItem(onClick = {
+                                        expandedUp = false
+                                        navigationActions.navigateToPadzeiView()
+                                    }, text = { Text(stringResource(R.string.sabytie), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.event), contentDescription = ""
+                                        )
+                                    })
+                                    DropdownMenuItem(onClick = {
+                                        expandedUp = false
+                                        navigationActions.navigateToSearchSvityia()
+                                    }, text = { Text(stringResource(R.string.poshuk), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.search), contentDescription = ""
+                                        )
+                                    })
+                                }
                             }
                             if (k.getBoolean("admin", false)) {
                                 HorizontalDivider()
@@ -1405,58 +1426,60 @@ fun MainConteiner(
                             }
                         }
                     }
-                    BottomAppBar(containerColor = tollBarColor) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
-                                IconButton(onClick = {
-                                    navigationActions.navigateToSearchSvityia()
-                                }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.search), contentDescription = "", tint = textTollBarColor
-                                    )
-                                }
-                                IconButton(onClick = {
-                                    navigationActions.navigateToPadzeiView()
-                                }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.event), contentDescription = "", tint = textTollBarColor
-                                    )
-                                }
-                                IconButton({
-                                    k.edit {
-                                        if (k.getBoolean("caliandarList", false)) {
-                                            navigationActions.navigateToKaliandar()
-                                            putBoolean("caliandarList", false)
-                                        } else {
-                                            putBoolean("caliandarList", true)
-                                            navigationActions.navigateToKaliandarYear()
-                                        }
+                    if (isBottomBar) {
+                        BottomAppBar(containerColor = tollBarColor) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
+                                    IconButton(onClick = {
+                                        navigationActions.navigateToSearchSvityia()
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.search), contentDescription = "", tint = textTollBarColor
+                                        )
                                     }
-                                }) {
-                                    val icon = if (k.getBoolean("caliandarList", false)) painterResource(R.drawable.calendar_today)
-                                    else painterResource(R.drawable.list)
-                                    Icon(
-                                        painter = icon, tint = textTollBarColor, contentDescription = ""
+                                    IconButton(onClick = {
+                                        navigationActions.navigateToPadzeiView()
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.event), contentDescription = "", tint = textTollBarColor
+                                        )
+                                    }
+                                    IconButton({
+                                        k.edit {
+                                            if (k.getBoolean("caliandarList", false)) {
+                                                navigationActions.navigateToKaliandar()
+                                                putBoolean("caliandarList", false)
+                                            } else {
+                                                putBoolean("caliandarList", true)
+                                                navigationActions.navigateToKaliandarYear()
+                                            }
+                                        }
+                                    }) {
+                                        val icon = if (k.getBoolean("caliandarList", false)) painterResource(R.drawable.calendar_today)
+                                        else painterResource(R.drawable.list)
+                                        Icon(
+                                            painter = icon, tint = textTollBarColor, contentDescription = ""
+                                        )
+                                    }
+                                    Text(
+                                        text = Calendar.getInstance()[Calendar.DATE].toString(),
+                                        modifier = Modifier
+                                            .clickable {
+                                                showDropdownMenuPos = 1
+                                                showDropdown = true
+                                            }
+                                            .clip(shape = RoundedCornerShape(3.dp))
+                                            .background(textTollBarColor)
+                                            .padding(1.dp)
+                                            .clip(shape = RoundedCornerShape(3.dp))
+                                            .background(if (isToDay) Divider else StrogiPost)
+                                            .padding(horizontal = 5.dp),
+                                        fontSize = 14.sp,
+                                        color = if (isToDay) PrimaryText else PrimaryTextBlack
                                     )
                                 }
-                                Text(
-                                    text = Calendar.getInstance()[Calendar.DATE].toString(),
-                                    modifier = Modifier
-                                        .clickable {
-                                            showDropdownMenuPos = 1
-                                            showDropdown = true
-                                        }
-                                        .clip(shape = RoundedCornerShape(3.dp))
-                                        .background(textTollBarColor)
-                                        .padding(1.dp)
-                                        .clip(shape = RoundedCornerShape(3.dp))
-                                        .background(if (isToDay) Divider else StrogiPost)
-                                        .padding(horizontal = 5.dp),
-                                    fontSize = 14.sp,
-                                    color = if (isToDay) PrimaryText else PrimaryTextBlack
-                                )
                             }
                         }
                     }

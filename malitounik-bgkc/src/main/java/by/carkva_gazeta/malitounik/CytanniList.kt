@@ -48,6 +48,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -291,6 +293,7 @@ fun CytanniList(
     }
     var selectPerevod by remember { mutableStateOf(false) }
     var selectOldPerevod by remember { mutableStateOf(perevod) }
+    var isBottomBar by remember { mutableStateOf(k.getBoolean("bottomBar", false)) }
     if (Settings.bibleTimeList) {
         Settings.bibleTimeList = false
         LaunchedEffect(Unit) {
@@ -372,7 +375,7 @@ fun CytanniList(
         }
         if (perevod == Settings.PEREVODCARNIAUSKI) {
             if (knigaBiblii(knigaText) == 30) {
-                (1..5).forEach {
+                (1..5).forEach { _ ->
                     listState.add(rememberLazyListState())
                 }
                 selectedIndex = 5
@@ -535,42 +538,41 @@ fun CytanniList(
         ) {
             TopAppBar(
                 title = {
-                if (!isSelectMode) {
-                    Column {
-                        if (!isParallelVisable) {
-                            Text(
-                                modifier = Modifier.clickable {
-                                    maxLine.intValue = Int.MAX_VALUE
-                                    coroutineScope.launch {
-                                        delay(5000L)
-                                        maxLine.intValue = 1
-                                    }
-                                }, text = titleBible.uppercase(), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
-                            )
-                            Text(
-                                modifier = Modifier.clickable {
-                                    maxLine.intValue = Int.MAX_VALUE
-                                    coroutineScope.launch {
-                                        delay(5000L)
-                                        maxLine.intValue = 1
-                                    }
-                                }, text = subTitle, color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
-                            )
-                        } else {
-                            Text(
-                                modifier = Modifier.clickable {
-                                    maxLine.intValue = Int.MAX_VALUE
-                                    coroutineScope.launch {
-                                        delay(5000L)
-                                        maxLine.intValue = 1
-                                    }
-                                }, text = stringResource(R.string.paralel), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
-                            )
+                    if (!isSelectMode) {
+                        Column {
+                            if (!isParallelVisable) {
+                                Text(
+                                    modifier = Modifier.clickable {
+                                        maxLine.intValue = Int.MAX_VALUE
+                                        coroutineScope.launch {
+                                            delay(5000L)
+                                            maxLine.intValue = 1
+                                        }
+                                    }, text = titleBible.uppercase(), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
+                                )
+                                Text(
+                                    modifier = Modifier.clickable {
+                                        maxLine.intValue = Int.MAX_VALUE
+                                        coroutineScope.launch {
+                                            delay(5000L)
+                                            maxLine.intValue = 1
+                                        }
+                                    }, text = subTitle, color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
+                                )
+                            } else {
+                                Text(
+                                    modifier = Modifier.clickable {
+                                        maxLine.intValue = Int.MAX_VALUE
+                                        coroutineScope.launch {
+                                            delay(5000L)
+                                            maxLine.intValue = 1
+                                        }
+                                    }, text = stringResource(R.string.paralel), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
+                                )
+                            }
                         }
                     }
-                }
-            },
-
+                },
                 navigationIcon = {
                     if (isSelectMode || isParallelVisable) {
                         IconButton(onClick = {
@@ -640,6 +642,98 @@ fun CytanniList(
                             Icon(
                                 painter = painterResource(R.drawable.share), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                             )
+                        }
+                    } else {
+                        if (!isBottomBar) {
+                            var expandedUp by remember { mutableStateOf(false) }
+                            if (listState[selectedIndex].canScrollForward) {
+                                val iconAutoScroll =
+                                    if (autoScrollSensor) painterResource(R.drawable.stop_circle)
+                                    else painterResource(R.drawable.play_circle)
+                                IconButton(onClick = {
+                                    autoScroll = !autoScroll
+                                    autoScrollSensor = !autoScrollSensor
+                                    if (autoScrollSensor) actyvity.window.addFlags(
+                                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                    )
+                                    else actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                }) {
+                                    Icon(
+                                        iconAutoScroll,
+                                        contentDescription = "",
+                                        tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
+                            } else if (listState[selectedIndex].canScrollBackward) {
+                                IconButton(onClick = {
+                                    isUpList = true
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.arrow_upward),
+                                        contentDescription = "",
+                                        tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
+                            }
+                            IconButton(onClick = { expandedUp = true }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
+                            DropdownMenu(
+                                expanded = expandedUp, onDismissRequest = { expandedUp = false }) {
+                                if (biblia == Settings.CHYTANNI_BIBLIA) {
+                                    DropdownMenuItem(onClick = {
+                                        expandedUp = false
+                                        saveVybranoe = true
+                                    }, text = { Text(stringResource(if (isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                        val icon = if (isVybranoe) painterResource(R.drawable.stars)
+                                        else painterResource(R.drawable.star)
+                                        Icon(
+                                            painter = icon, contentDescription = ""
+                                        )
+                                    })
+                                }
+                                if (biblia == Settings.CHYTANNI_BIBLIA && listState.size - 1 > 1) {
+                                    DropdownMenuItem(onClick = {
+                                        expandedUp = false
+                                        dialogRazdel = true
+                                        autoScroll = false
+                                    }, text = { Text(stringResource(R.string.pazdel), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.apps), contentDescription = ""
+                                        )
+                                    })
+                                }
+                                DropdownMenuItem(onClick = {
+                                    expandedUp = false
+                                    fullscreen = true
+                                }, text = { Text(stringResource(R.string.fullscreen), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.fullscreen), contentDescription = ""
+                                    )
+                                })
+                                DropdownMenuItem(onClick = {
+                                    expandedUp = false
+                                    showDropdown = !showDropdown
+                                    autoScroll = false
+                                    menuPosition = 2
+                                }, text = { Text(stringResource(R.string.perevody), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.book_red), contentDescription = ""
+                                    )
+                                })
+                                DropdownMenuItem(onClick = {
+                                    expandedUp = false
+                                    showDropdown = !showDropdown
+                                    autoScroll = false
+                                    menuPosition = 1
+                                }, text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.format_size), contentDescription = ""
+                                    )
+                                })
+                            }
                         }
                     }
                 }, colors = TopAppBarDefaults.topAppBarColors(containerColor = colorTollBar)
@@ -848,17 +942,18 @@ fun CytanniList(
                         )
                         Slider(
                             modifier = Modifier.padding(horizontal = 10.dp), valueRange = 18f..58f, steps = 10, value = fontSize, onValueChange = {
-                            k.edit {
-                                putFloat("font_biblia", it)
-                            }
-                            fontSize = it
-                        }, colors = SliderDefaults.colors(inactiveTrackColor = Divider))
+                                k.edit {
+                                    putFloat("font_biblia", it)
+                                }
+                                fontSize = it
+                            }, colors = SliderDefaults.colors(inactiveTrackColor = Divider)
+                        )
                     }
                 }
             }
         }
         if (!isSelectMode) {
-            if (!isParallelVisable) {
+            if (isBottomBar && !isParallelVisable) {
                 AnimatedVisibility(
                     !fullscreen, enter = fadeIn(
                         tween(
@@ -892,7 +987,6 @@ fun CytanniList(
                             }
                             IconButton(
                                 onClick = {
-                                    if (autoScrollSensor) autoScroll = true
                                     fullscreen = true
                                 }) {
                                 Icon(
@@ -1016,17 +1110,18 @@ fun CytanniList(
                             else Color.Unspecified
                             val textColor = if (selectedIndex == page) PrimaryText
                             else MaterialTheme.colorScheme.secondary
-                            Text((page + 1).toString(), modifier = Modifier
-                                .clickable {
-                                    selectedIndex = page
-                                }
-                                .padding(10.dp)
-                                .clip(shape = RoundedCornerShape(10.dp))
-                                .border(
-                                    width = 1.dp, color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(10.dp)
-                                )
-                                .background(color)
-                                .padding(5.dp), color = textColor, fontSize = Settings.fontInterface.sp)
+                            Text(
+                                (page + 1).toString(), modifier = Modifier
+                                    .clickable {
+                                        selectedIndex = page
+                                    }
+                                    .padding(10.dp)
+                                    .clip(shape = RoundedCornerShape(10.dp))
+                                    .border(
+                                        width = 1.dp, color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(10.dp)
+                                    )
+                                    .background(color)
+                                    .padding(5.dp), color = textColor, fontSize = Settings.fontInterface.sp)
                         }
                     }
                 }
@@ -1175,21 +1270,22 @@ fun CytanniList(
                         isSelectMode = false
                         if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
                     }
-                    LazyColumn(Modifier
-                        .pointerInput(PointerEventType.Press) {
-                            awaitPointerEventScope {
-                                while (true) {
-                                    val event = awaitPointerEvent()
-                                    if (event.type == PointerEventType.Press) {
-                                        autoScroll = false
-                                    }
-                                    if (autoScrollSensor && event.type == PointerEventType.Release && !isScrollRun) {
-                                        autoScroll = true
+                    LazyColumn(
+                        Modifier
+                            .pointerInput(PointerEventType.Press) {
+                                awaitPointerEventScope {
+                                    while (true) {
+                                        val event = awaitPointerEvent()
+                                        if (event.type == PointerEventType.Press) {
+                                            autoScroll = false
+                                        }
+                                        if (autoScrollSensor && event.type == PointerEventType.Release && !isScrollRun) {
+                                            autoScroll = true
+                                        }
                                     }
                                 }
                             }
-                        }
-                        .nestedScroll(nestedScrollConnection), state = listState[page]) {
+                            .nestedScroll(nestedScrollConnection), state = listState[page]) {
                         items(resultPage.size, key = { index -> resultPage[index].id }) { index ->
                             if (index == 0) {
                                 Spacer(Modifier.padding(top = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp))
@@ -1211,37 +1307,37 @@ fun CytanniList(
                             }
                             HtmlText(
                                 modifier = if (!autoScrollSensor && !showDropdown) {
-                                Modifier
-                                    .fillMaxWidth()
-                                    .pointerInput(Unit) {
-                                        detectTapGestures(onTap = {
-                                            if (!isSelectMode && isParallel && resultPage[index].parallel != "+-+") {
-                                                isParallelVisable = true
-                                                paralelChtenia = resultPage[index].parallel
-                                            }
-                                            if (isSelectMode) {
-                                                selectState[index] = !selectState[index]
-                                            }
-                                        }, onLongPress = {
-                                            if (!fullscreen) {
-                                                isSelectMode = true
-                                                actyvity.removelightSensor()
-                                                selectState[index] = !selectState[index]
-                                            }
-                                        }, onDoubleTap = {
-                                            fullscreen = !fullscreen
-                                        })
-                                    }
-                            } else {
-                                Modifier
-                                    .fillMaxWidth()
-                                    .pointerInput(Unit) {
-                                        detectTapGestures(
-                                            onDoubleTap = {
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .pointerInput(Unit) {
+                                            detectTapGestures(onTap = {
+                                                if (!isSelectMode && isParallel && resultPage[index].parallel != "+-+") {
+                                                    isParallelVisable = true
+                                                    paralelChtenia = resultPage[index].parallel
+                                                }
+                                                if (isSelectMode) {
+                                                    selectState[index] = !selectState[index]
+                                                }
+                                            }, onLongPress = {
+                                                if (!fullscreen) {
+                                                    isSelectMode = true
+                                                    actyvity.removelightSensor()
+                                                    selectState[index] = !selectState[index]
+                                                }
+                                            }, onDoubleTap = {
                                                 fullscreen = !fullscreen
                                             })
-                                    }
-                            }
+                                        }
+                                } else {
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .pointerInput(Unit) {
+                                            detectTapGestures(
+                                                onDoubleTap = {
+                                                    fullscreen = !fullscreen
+                                                })
+                                        }
+                                }
                                     .padding(horizontal = 10.dp)
                                     .background(if (selectState[index]) Post else Color.Unspecified), text = resultPage[index].text, fontSize = fontSize.sp, color = if (selectState[index]) PrimaryText else MaterialTheme.colorScheme.secondary)
                             if (isParallel && resultPage[index].parallel != "+-+") {
@@ -1597,19 +1693,19 @@ fun getBible(
                                                 result.add(
                                                     CytanniListData(
                                                         id, "${
-                                                    getNameBook(
-                                                        context, kniga, perevodNew, knigiBiblii >= 50
-                                                    )
-                                                } $glava", if (biblia == Settings.CHYTANNI_LITURGICHNYIA) {
-                                                    val eGlavy = knigaStyxi.ifEmpty { glava.toString() }
-                                                    "<strong><br>" + getNameBook(
-                                                        context, kniga, perevodNew, knigiBiblii >= 50
-                                                    ) + " $eGlavy<strong><br>"
-                                                } else {
-                                                    "<strong><br>" + getNameBook(
-                                                        context, kniga, perevodNew, knigiBiblii >= 50
-                                                    ) + " $glava<strong><br>"
-                                                }))
+                                                            getNameBook(
+                                                                context, kniga, perevodNew, knigiBiblii >= 50
+                                                            )
+                                                        } $glava", if (biblia == Settings.CHYTANNI_LITURGICHNYIA) {
+                                                            val eGlavy = knigaStyxi.ifEmpty { glava.toString() }
+                                                            "<strong><br>" + getNameBook(
+                                                                context, kniga, perevodNew, knigiBiblii >= 50
+                                                            ) + " $eGlavy<strong><br>"
+                                                        } else {
+                                                            "<strong><br>" + getNameBook(
+                                                                context, kniga, perevodNew, knigiBiblii >= 50
+                                                            ) + " $glava<strong><br>"
+                                                        }))
                                             }
                                         }
                                         id++

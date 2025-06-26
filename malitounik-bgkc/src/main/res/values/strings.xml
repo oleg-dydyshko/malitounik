@@ -30,6 +30,8 @@
     <string name="czytanne3">Чытаньне, за %1$d %2$s</string>
     <string name="czytanne2">Чытаньні</string>
     <string name="menu_font_size_app">Выбраць памер шрыфту</string>
+    <string name="pazdel">Выбраць разьдзел</string>
+    <string name="settings_battom_panel">Ніжняя панэль</string>
     <string name="apav_only">Толькі абавязковыя сьвяты</string>
     <string name="apav_all">Усе сьвяты</string>
     <string name="apav_no">Без апавяшчэньняў</string>
@@ -157,6 +159,8 @@
     <string name="vybor_year">ГОД</string>
     <string name="copy">Скапіявана</string>
     <string name="delite_all_natatki">Вы сапраўды жадаеце выдаліць усе нататкі?</string>
+    <string name="vybranae_add">Дадаць у Выбранае</string>
+    <string name="vybranae_remove">Выдаліць з Выбранага</string>
     <string name="get_date">Выберыце дату</string>
     <string name="title_psalter">ПСАЛТЫР (пераклад А. Надсана)</string>
     <string name="title_psalter_privila">Правілы чытаньня Псалтыра</string>

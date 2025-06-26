@@ -48,6 +48,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -153,7 +155,6 @@ fun Bogaslujbovyia(
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var fontSize by remember { mutableFloatStateOf(k.getFloat("font_biblia", 22F)) }
     val vybranoeList = remember { ArrayList<VybranaeDataAll>() }
-    var initVybranoe by remember { mutableStateOf(true) }
     var showDropdown by remember { mutableStateOf(false) }
     var fullscreen by rememberSaveable { mutableStateOf(false) }
     var isVybranoe by remember { mutableStateOf(false) }
@@ -176,13 +177,10 @@ fun Bogaslujbovyia(
     val type =
         TypeToken.getParameterized(ArrayList::class.java, VybranaeDataAll::class.java).type
     val file = File("${LocalContext.current.filesDir}/vybranoe_all.json")
-    if (initVybranoe) {
-        vybranoeList.clear()
-        if (file.exists()) {
-            vybranoeList.addAll(gson.fromJson(file.readText(), type))
-        }
-        initVybranoe = false
+    if (file.exists() && vybranoeList.isEmpty()) {
+        vybranoeList.addAll(gson.fromJson(file.readText(), type))
     }
+    var isBottomBar by remember { mutableStateOf(k.getBoolean("bottomBar", false)) }
     LaunchedEffect(Unit) {
         coroutineScope.launch {
             isVybranoe = false
@@ -607,6 +605,10 @@ fun Bogaslujbovyia(
         }
     ) { innerPadding ->
         paddingValues = innerPadding
+        val launcherShare = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (autoScrollSensor) autoScroll = true
+        }
+        var expandedUp by remember { mutableStateOf(false) }
         Scaffold(
             topBar = {
                 AnimatedVisibility(
@@ -783,9 +785,138 @@ fun Bogaslujbovyia(
                                             tint = MaterialTheme.colorScheme.onSecondary
                                         )
                                     }
+                                    if (k.getBoolean("admin", false) && isBottomBar) {
+                                        VerticalDivider()
+                                    }
                                 }
-                                if (k.getBoolean("admin", false)) {
-                                    VerticalDivider()
+                                if (!isBottomBar) {
+                                    if (scrollState.canScrollForward) {
+                                        val iconAutoScroll =
+                                            if (autoScrollSensor) painterResource(R.drawable.stop_circle)
+                                            else painterResource(R.drawable.play_circle)
+                                        IconButton(onClick = {
+                                            autoScroll = !autoScroll
+                                            autoScrollSensor = !autoScrollSensor
+                                            if (autoScrollSensor) actyvity.window.addFlags(
+                                                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                            )
+                                            else actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                        }) {
+                                            Icon(
+                                                iconAutoScroll,
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.onSecondary
+                                            )
+                                        }
+                                    } else if (scrollState.canScrollBackward) {
+                                        IconButton(onClick = {
+                                            isUpList = true
+                                        }) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.arrow_upward),
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.onSecondary
+                                            )
+                                        }
+                                    }
+                                    IconButton(onClick = { expandedUp = true }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
+                                    DropdownMenu(
+                                        expanded = expandedUp, onDismissRequest = { expandedUp = false }) {
+                                        DropdownMenuItem(onClick = {
+                                            expandedUp = false
+                                            saveVybranoe = true
+                                        }, text = { Text(stringResource(if (isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                            val icon = if (isVybranoe) painterResource(R.drawable.stars)
+                                            else painterResource(R.drawable.star)
+                                            Icon(
+                                                painter = icon, contentDescription = ""
+                                            )
+                                        })
+                                        DropdownMenuItem(onClick = {
+                                            expandedUp = false
+                                            autoScroll = false
+                                            if (autoScrollSensor) autoScroll = true
+                                            val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                                            val isTextFound = textLayout.value?.layoutInput?.text?.text?.contains(clipboard.primaryClip?.getItemAt(0)?.text ?: "@#$") == true
+                                            val sent = if (isTextFound) clipboard.primaryClip?.getItemAt(0)?.text
+                                            else textLayout.value?.layoutInput?.text?.text
+                                            sent?.let { shareText ->
+                                                if (!isTextFound) {
+                                                    val clip = ClipData.newPlainText(context.getString(R.string.copy_text), shareText)
+                                                    clipboard.setPrimaryClip(clip)
+                                                    Toast.makeText(context, context.getString(R.string.copy), Toast.LENGTH_SHORT).show()
+                                                }
+                                                val sendIntent = Intent(Intent.ACTION_SEND)
+                                                sendIntent.putExtra(Intent.EXTRA_TEXT, shareText)
+                                                sendIntent.putExtra(Intent.EXTRA_SUBJECT, title)
+                                                sendIntent.type = "text/plain"
+                                                launcherShare.launch(Intent.createChooser(sendIntent, title))
+                                            }
+                                        }, text = { Text(stringResource(R.string.share), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.share), contentDescription = ""
+                                            )
+                                        })
+                                        DropdownMenuItem(onClick = {
+                                            expandedUp = false
+                                            fullscreen = true
+                                        }, text = { Text(stringResource(R.string.fullscreen), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.fullscreen), contentDescription = ""
+                                            )
+                                        })
+                                        DropdownMenuItem(onClick = {
+                                            expandedUp = false
+                                            searchText = true
+                                        }, text = { Text(stringResource(R.string.searche_text), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.search), contentDescription = ""
+                                            )
+                                        })
+                                        DropdownMenuItem(onClick = {
+                                            expandedUp = false
+                                            showDropdown = !showDropdown
+                                            autoScroll = false
+                                        }, text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.format_size), contentDescription = ""
+                                            )
+                                        })
+                                        if (k.getBoolean("admin", false)) {
+                                            HorizontalDivider()
+                                            DropdownMenuItem(onClick = {
+                                                expandedUp = false
+                                                autoScroll = false
+                                                if ((context as MainActivity).checkmodulesAdmin()) {
+                                                    val intent = Intent()
+                                                    intent.setClassName(context, "by.carkva_gazeta.admin.PasochnicaList")
+                                                    val t1 = resursEncode.lastIndexOf("/")
+                                                    val t2 = resursEncode.lastIndexOf(".")
+                                                    val resursAdmin = if (t1 != -1) {
+                                                        if (t2 != -1) resursEncode.substring(t1 + 1, t2)
+                                                        else resursEncode.substring(t1 + 1)
+                                                    } else {
+                                                        if (t2 != -1) resursEncode.substring(0, t2)
+                                                        else resursEncode
+                                                    }
+                                                    intent.putExtra("resours", resursAdmin)
+                                                    intent.putExtra("title", title)
+                                                    intent.putExtra("text", htmlText.replace("#ff6666", "#d00505", true))
+                                                    context.startActivity(intent)
+                                                }
+                                            }, text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                                Icon(
+                                                    painter = painterResource(R.drawable.edit), contentDescription = ""
+                                                )
+                                            })
+                                        }
+                                    }
+                                }
+                                if (k.getBoolean("admin", false) && isBottomBar) {
                                     IconButton(onClick = {
                                         showDropdown = false
                                         autoScroll = false
@@ -864,110 +995,106 @@ fun Bogaslujbovyia(
                                     }
                                 }
                             }
-                            BottomAppBar(containerColor = MaterialTheme.colorScheme.onTertiary) {
-                                val launcherShare = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                                    if (autoScrollSensor) autoScroll = true
-                                }
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceAround
-                                ) {
-                                    IconButton(onClick = {
-                                        showDropdown = !showDropdown
-                                        autoScroll = false
-                                        if (autoScrollSensor) autoScroll = true
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.format_size),
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.onSecondary
-                                        )
-                                    }
-                                    IconButton(onClick = {
-                                        showDropdown = false
-                                        autoScroll = false
-                                        if (autoScrollSensor) autoScroll = true
-                                        val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-                                        val isTextFound = textLayout.value?.layoutInput?.text?.text?.contains(clipboard.primaryClip?.getItemAt(0)?.text ?: "@#$") == true
-                                        val sent = if (isTextFound) clipboard.primaryClip?.getItemAt(0)?.text
-                                        else textLayout.value?.layoutInput?.text?.text
-                                        sent?.let { shareText ->
-                                            if (!isTextFound) {
-                                                val clip = ClipData.newPlainText(context.getString(R.string.copy_text), shareText)
-                                                clipboard.setPrimaryClip(clip)
-                                                Toast.makeText(context, context.getString(R.string.copy), Toast.LENGTH_SHORT).show()
+                            if (isBottomBar) {
+                                BottomAppBar(containerColor = MaterialTheme.colorScheme.onTertiary) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceAround
+                                    ) {
+                                        IconButton(onClick = {
+                                            showDropdown = !showDropdown
+                                            autoScroll = false
+                                        }) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.format_size),
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.onSecondary
+                                            )
+                                        }
+                                        IconButton(onClick = {
+                                            showDropdown = false
+                                            autoScroll = false
+                                            if (autoScrollSensor) autoScroll = true
+                                            val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                                            val isTextFound = textLayout.value?.layoutInput?.text?.text?.contains(clipboard.primaryClip?.getItemAt(0)?.text ?: "@#$") == true
+                                            val sent = if (isTextFound) clipboard.primaryClip?.getItemAt(0)?.text
+                                            else textLayout.value?.layoutInput?.text?.text
+                                            sent?.let { shareText ->
+                                                if (!isTextFound) {
+                                                    val clip = ClipData.newPlainText(context.getString(R.string.copy_text), shareText)
+                                                    clipboard.setPrimaryClip(clip)
+                                                    Toast.makeText(context, context.getString(R.string.copy), Toast.LENGTH_SHORT).show()
+                                                }
+                                                val sendIntent = Intent(Intent.ACTION_SEND)
+                                                sendIntent.putExtra(Intent.EXTRA_TEXT, shareText)
+                                                sendIntent.putExtra(Intent.EXTRA_SUBJECT, title)
+                                                sendIntent.type = "text/plain"
+                                                launcherShare.launch(Intent.createChooser(sendIntent, title))
                                             }
-                                            val sendIntent = Intent(Intent.ACTION_SEND)
-                                            sendIntent.putExtra(Intent.EXTRA_TEXT, shareText)
-                                            sendIntent.putExtra(Intent.EXTRA_SUBJECT, title)
-                                            sendIntent.type = "text/plain"
-                                            launcherShare.launch(Intent.createChooser(sendIntent, title))
-                                        }
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.share),
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.onSecondary
-                                        )
-                                    }
-                                    IconButton(onClick = {
-                                        if (autoScrollSensor) autoScroll = true
-                                        searchText = true
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.search),
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.onSecondary
-                                        )
-                                    }
-                                    IconButton(onClick = {
-                                        if (autoScrollSensor) autoScroll = true
-                                        fullscreen = true
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.fullscreen),
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.onSecondary
-                                        )
-                                    }
-                                    IconButton(onClick = {
-                                        saveVybranoe = true
-                                    }) {
-                                        val icon = if (isVybranoe) painterResource(R.drawable.stars)
-                                        else painterResource(R.drawable.star)
-                                        Icon(
-                                            painter = icon,
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.onSecondary
-                                        )
-                                    }
-                                    if (scrollState.canScrollForward) {
-                                        val iconAutoScroll =
-                                            if (autoScrollSensor) painterResource(R.drawable.stop_circle)
-                                            else painterResource(R.drawable.play_circle)
-                                        IconButton(onClick = {
-                                            autoScroll = !autoScroll
-                                            autoScrollSensor = !autoScrollSensor
-                                            if (autoScrollSensor) actyvity.window.addFlags(
-                                                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                                            )
-                                            else actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                                         }) {
                                             Icon(
-                                                iconAutoScroll,
+                                                painter = painterResource(R.drawable.share),
                                                 contentDescription = "",
                                                 tint = MaterialTheme.colorScheme.onSecondary
                                             )
                                         }
-                                    } else if (scrollState.canScrollBackward) {
                                         IconButton(onClick = {
-                                            isUpList = true
+                                            searchText = true
                                         }) {
                                             Icon(
-                                                painter = painterResource(R.drawable.arrow_upward),
+                                                painter = painterResource(R.drawable.search),
                                                 contentDescription = "",
                                                 tint = MaterialTheme.colorScheme.onSecondary
                                             )
+                                        }
+                                        IconButton(onClick = {
+                                            fullscreen = true
+                                        }) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.fullscreen),
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.onSecondary
+                                            )
+                                        }
+                                        IconButton(onClick = {
+                                            saveVybranoe = true
+                                        }) {
+                                            val icon = if (isVybranoe) painterResource(R.drawable.stars)
+                                            else painterResource(R.drawable.star)
+                                            Icon(
+                                                painter = icon,
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.onSecondary
+                                            )
+                                        }
+                                        if (scrollState.canScrollForward) {
+                                            val iconAutoScroll =
+                                                if (autoScrollSensor) painterResource(R.drawable.stop_circle)
+                                                else painterResource(R.drawable.play_circle)
+                                            IconButton(onClick = {
+                                                autoScroll = !autoScroll
+                                                autoScrollSensor = !autoScrollSensor
+                                                if (autoScrollSensor) actyvity.window.addFlags(
+                                                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                                )
+                                                else actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                            }) {
+                                                Icon(
+                                                    iconAutoScroll,
+                                                    contentDescription = "",
+                                                    tint = MaterialTheme.colorScheme.onSecondary
+                                                )
+                                            }
+                                        } else if (scrollState.canScrollBackward) {
+                                            IconButton(onClick = {
+                                                isUpList = true
+                                            }) {
+                                                Icon(
+                                                    painter = painterResource(R.drawable.arrow_upward),
+                                                    contentDescription = "",
+                                                    tint = MaterialTheme.colorScheme.onSecondary
+                                                )
+                                            }
                                         }
                                     }
                                 }
@@ -995,7 +1122,6 @@ fun Bogaslujbovyia(
                         ): Offset {
                             isScrollRun = true
                             AppNavGraphState.setScrollValuePosition(title, scrollState.value)
-                            android.util.Log.d("Oleg", scrollState.value.toString())
                             return super.onPreScroll(available, source)
                         }
 

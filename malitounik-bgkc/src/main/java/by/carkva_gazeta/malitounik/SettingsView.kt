@@ -120,8 +120,7 @@ fun SettingsView(navController: NavHostController) {
     SideEffect {
         val window = (view.context as Activity).window
         WindowCompat.getInsetsController(
-            window,
-            view
+            window, view
         ).apply {
             isAppearanceLightStatusBars = false
             isAppearanceLightNavigationBars = !(context as MainActivity).dzenNoch
@@ -216,66 +215,49 @@ fun SettingsView(navController: NavHostController) {
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        modifier = Modifier.clickable {
-                            maxLine.intValue = Int.MAX_VALUE
-                            coroutineScope.launch {
-                                delay(5000L)
-                                maxLine.intValue = 1
-                            }
-                        },
-                        text = stringResource(R.string.tools_item).uppercase(),
-                        color = MaterialTheme.colorScheme.onSecondary,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = Settings.fontInterface.sp,
-                        maxLines = maxLine.intValue,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            if (!backPressHandled) {
-                                backPressHandled = true
-                                navController.popBackStack()
-                            }
-                        },
-                        content = {
-                            Icon(
-                                painter = painterResource(R.drawable.arrow_back),
-                                tint = MaterialTheme.colorScheme.onSecondary,
-                                contentDescription = ""
-                            )
-                        })
-                },
-                actions = {
-                    if (admin) {
-                        IconButton(onClick = {
-                            admin = false
-                            k.edit {
-                                putBoolean("admin", false)
-                            }
-                        }) {
-                            Icon(
-                                painter = painterResource(R.drawable.logout), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                            )
+                Text(
+                    modifier = Modifier.clickable {
+                        maxLine.intValue = Int.MAX_VALUE
+                        coroutineScope.launch {
+                            delay(5000L)
+                            maxLine.intValue = 1
                         }
+                    }, text = stringResource(R.string.tools_item).uppercase(), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, fontSize = Settings.fontInterface.sp, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis
+                )
+            }, navigationIcon = {
+                IconButton(onClick = {
+                    if (!backPressHandled) {
+                        backPressHandled = true
+                        navController.popBackStack()
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
+                }, content = {
+                    Icon(
+                        painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                    )
+                })
+            }, actions = {
+                if (admin) {
+                    IconButton(onClick = {
+                        admin = false
+                        k.edit {
+                            putBoolean("admin", false)
+                        }
+                    }) {
+                        Icon(
+                            painter = painterResource(R.drawable.logout), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                        )
+                    }
+                }
+            }, colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
             )
-        }
-    ) { innerPadding ->
+        }) { innerPadding ->
         val interactionSourse = remember { MutableInteractionSource() }
         var adminItemCount by remember { mutableIntStateOf(0) }
         var adminClickTime by remember { mutableLongStateOf(0) }
         Column(
             modifier = Modifier
                 .padding(
-                    innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                    innerPadding.calculateTopPadding(),
-                    innerPadding.calculateEndPadding(LayoutDirection.Rtl),
-                    0.dp
+                    innerPadding.calculateStartPadding(LayoutDirection.Ltr), innerPadding.calculateTopPadding(), innerPadding.calculateEndPadding(LayoutDirection.Rtl), 0.dp
                 )
                 .padding(10.dp)
                 .fillMaxSize()
@@ -285,8 +267,7 @@ fun SettingsView(navController: NavHostController) {
                 modifier = Modifier
                     .padding(top = 10.dp)
                     .clickable(
-                        interactionSource = interactionSourse,
-                        indication = null
+                        interactionSource = interactionSourse, indication = null
                     ) {
                         if (SystemClock.elapsedRealtime() - adminClickTime < 2000) {
                             adminItemCount++
@@ -297,14 +278,10 @@ fun SettingsView(navController: NavHostController) {
                         if (adminItemCount == 7) {
                             dialodLogin = true
                         }
-                    },
-                text = stringResource(R.string.vygliad),
-                fontSize = (Settings.fontInterface - 2).sp,
-                color = MaterialTheme.colorScheme.primary
+                    }, text = stringResource(R.string.vygliad), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.primary
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
-            Column(Modifier.selectableGroup())
-            {
+            Column(Modifier.selectableGroup()) {
                 val actyvity = LocalActivity.current as MainActivity
                 val isSystemInDarkTheme = isSystemInDarkTheme()
                 val edit = k.edit()
@@ -314,35 +291,27 @@ fun SettingsView(navController: NavHostController) {
                         .clickable {
                             modeNight = Settings.MODE_NIGHT_SYSTEM
                             edit.putInt(
-                                "mode_night",
-                                Settings.MODE_NIGHT_SYSTEM
+                                "mode_night", Settings.MODE_NIGHT_SYSTEM
                             )
                             edit.apply()
                             actyvity.dzenNoch = isSystemInDarkTheme
                             (context as MainActivity).removelightSensor()
                             if (context.checkDzenNoch != context.dzenNoch) actyvity.recreate()
-                        },
-                    verticalAlignment = Alignment.CenterVertically
+                        }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(
-                        selected = modeNight == Settings.MODE_NIGHT_SYSTEM,
-                        onClick = {
+                        selected = modeNight == Settings.MODE_NIGHT_SYSTEM, onClick = {
                             modeNight = Settings.MODE_NIGHT_SYSTEM
                             edit.putInt(
-                                "mode_night",
-                                Settings.MODE_NIGHT_SYSTEM
+                                "mode_night", Settings.MODE_NIGHT_SYSTEM
                             )
                             edit.apply()
                             actyvity.dzenNoch = isSystemInDarkTheme
                             (context as MainActivity).removelightSensor()
                             if (context.checkDzenNoch != context.dzenNoch) actyvity.recreate()
-                        }
-                    )
+                        })
                     Text(
-                        stringResource(R.string.system),
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = (Settings.fontInterface - 2).sp
+                        stringResource(R.string.system), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp
                     )
                 }
                 Row(
@@ -355,25 +324,19 @@ fun SettingsView(navController: NavHostController) {
                             actyvity.dzenNoch = false
                             (context as MainActivity).removelightSensor()
                             if (context.checkDzenNoch != context.dzenNoch) actyvity.recreate()
-                        },
-                    verticalAlignment = Alignment.CenterVertically
+                        }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(
-                        selected = modeNight == Settings.MODE_NIGHT_NO,
-                        onClick = {
+                        selected = modeNight == Settings.MODE_NIGHT_NO, onClick = {
                             modeNight = Settings.MODE_NIGHT_NO
                             edit.putInt("mode_night", Settings.MODE_NIGHT_NO)
                             edit.apply()
                             actyvity.dzenNoch = false
                             (context as MainActivity).removelightSensor()
                             if (context.checkDzenNoch != context.dzenNoch) actyvity.recreate()
-                        }
-                    )
+                        })
                     Text(
-                        stringResource(R.string.day),
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = (Settings.fontInterface - 2).sp
+                        stringResource(R.string.day), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp
                     )
                 }
                 Row(
@@ -382,35 +345,27 @@ fun SettingsView(navController: NavHostController) {
                         .clickable {
                             modeNight = Settings.MODE_NIGHT_YES
                             edit.putInt(
-                                "mode_night",
-                                Settings.MODE_NIGHT_YES
+                                "mode_night", Settings.MODE_NIGHT_YES
                             )
                             edit.apply()
                             actyvity.dzenNoch = true
                             (context as MainActivity).removelightSensor()
                             if (context.checkDzenNoch != context.dzenNoch) actyvity.recreate()
-                        },
-                    verticalAlignment = Alignment.CenterVertically
+                        }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(
-                        selected = modeNight == Settings.MODE_NIGHT_YES,
-                        onClick = {
+                        selected = modeNight == Settings.MODE_NIGHT_YES, onClick = {
                             modeNight = Settings.MODE_NIGHT_YES
                             edit.putInt(
-                                "mode_night",
-                                Settings.MODE_NIGHT_YES
+                                "mode_night", Settings.MODE_NIGHT_YES
                             )
                             edit.apply()
                             actyvity.dzenNoch = true
                             (context as MainActivity).removelightSensor()
                             if (context.checkDzenNoch != context.dzenNoch) actyvity.recreate()
-                        }
-                    )
+                        })
                     Text(
-                        stringResource(R.string.widget_day_d_n),
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = (Settings.fontInterface - 2).sp
+                        stringResource(R.string.widget_day_d_n), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp
                     )
                 }
                 Row(
@@ -419,77 +374,80 @@ fun SettingsView(navController: NavHostController) {
                         .clickable {
                             modeNight = Settings.MODE_NIGHT_AUTO
                             edit.putInt(
-                                "mode_night",
-                                Settings.MODE_NIGHT_AUTO
+                                "mode_night", Settings.MODE_NIGHT_AUTO
                             )
                             edit.apply()
                             (context as MainActivity).setlightSensor()
-                        },
-                    verticalAlignment = Alignment.CenterVertically
+                        }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(
-                        selected = modeNight == Settings.MODE_NIGHT_AUTO,
-                        onClick = {
+                        selected = modeNight == Settings.MODE_NIGHT_AUTO, onClick = {
                             modeNight = Settings.MODE_NIGHT_AUTO
                             edit.putInt(
-                                "mode_night",
-                                Settings.MODE_NIGHT_AUTO
+                                "mode_night", Settings.MODE_NIGHT_AUTO
                             )
                             edit.apply()
                             (context as MainActivity).setlightSensor()
-                        }
-                    )
+                        })
                     Text(
-                        stringResource(R.string.auto_widget_day_d_n),
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = (Settings.fontInterface - 2).sp
+                        stringResource(R.string.auto_widget_day_d_n), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp
                     )
                 }
             }
             var fontSizeInterface by remember { mutableFloatStateOf(k.getFloat("fontSizeInterface", 20f)) }
             Text(
-                stringResource(R.string.settengs_font_size_app),
-                fontStyle = FontStyle.Italic,
-                fontSize = (Settings.fontInterface - 2).sp,
-                color = MaterialTheme.colorScheme.secondary
+                stringResource(R.string.settengs_font_size_app), fontStyle = FontStyle.Italic, fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
             )
             Slider(
                 valueRange = 18f..26f, steps = 4, value = fontSizeInterface, onValueChange = {
+                k.edit {
+                    putFloat("fontSizeInterface", it)
+                }
+                fontSizeInterface = it
+                Settings.fontInterface = it
+            }, colors = SliderDefaults.colors(inactiveTrackColor = Divider))
+            var buttomBar by remember { mutableStateOf(k.getBoolean("bottomBar", false)) }
+            Row(
+                verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable {
+                    buttomBar = !buttomBar
                     k.edit {
-                        putFloat("fontSizeInterface", it)
+                        putBoolean("bottomBarr", buttomBar)
                     }
-                    fontSizeInterface = it
-                    Settings.fontInterface = it
-                }, colors = SliderDefaults.colors(inactiveTrackColor = Divider))
+                }) {
+                Text(
+                    stringResource(R.string.settings_battom_panel), modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                )
+                Switch(
+                    modifier = Modifier.scale(0.8f), checked = buttomBar, onCheckedChange = {
+                        buttomBar = it
+                        k.edit {
+                            putBoolean("bottomBar", buttomBar)
+                        }
+                    })
+            }
             var adminDayInYearState by remember { mutableStateOf(k.getBoolean("adminDayInYear", false)) }
             if (admin) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable {
+                    verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable {
                         adminDayInYearState = !adminDayInYearState
                         k.edit {
                             putBoolean("adminDayInYear", adminDayInYearState)
                         }
                     }) {
                     Text(
-                        stringResource(R.string.admin_day_in_year),
-                        modifier = Modifier
+                        stringResource(R.string.admin_day_in_year), modifier = Modifier
                             .weight(1f)
-                            .padding(end = 10.dp),
-                        fontSize = (Settings.fontInterface - 2).sp,
-                        color = MaterialTheme.colorScheme.secondary
+                            .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
                     )
                     Switch(
-                        modifier = Modifier.scale(0.8f),
-                        checked = adminDayInYearState,
-                        onCheckedChange = {
+                        modifier = Modifier.scale(0.8f), checked = adminDayInYearState, onCheckedChange = {
                             adminDayInYearState = it
                             k.edit {
                                 putBoolean("adminDayInYear", adminDayInYearState)
                             }
-                        }
-                    )
+                        })
                 }
                 TextButton(
                     onClick = {
@@ -513,131 +471,91 @@ fun SettingsView(navController: NavHostController) {
                             })
                             module.downloadDynamicModule("admin")
                         }
-                    },
-                    modifier = Modifier
+                    }, modifier = Modifier
                         .align(Alignment.CenterHorizontally)
-                        .padding(5.dp),
-                    colors = ButtonColors(
-                        Divider,
-                        Color.Unspecified,
-                        Color.Unspecified,
-                        Color.Unspecified
-                    ),
-                    shape = MaterialTheme.shapes.small
+                        .padding(5.dp), colors = ButtonColors(
+                        Divider, Color.Unspecified, Color.Unspecified, Color.Unspecified
+                    ), shape = MaterialTheme.shapes.small
                 ) {
                     Text(stringResource(R.string.site_admin), fontSize = (Settings.fontInterface - 2).sp, color = PrimaryText)
                 }
             }
             Text(
-                modifier = Modifier.padding(top = 20.dp),
-                text = stringResource(R.string.biblia),
-                fontSize = (Settings.fontInterface - 2).sp,
-                color = MaterialTheme.colorScheme.primary
+                modifier = Modifier.padding(top = 20.dp), text = stringResource(R.string.biblia), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.primary
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
             var sinoidalState by remember { mutableStateOf(k.getBoolean("sinoidal_bible", false)) }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .clickable {
-                        sinoidalState = !sinoidalState
-                        k.edit {
-                            putBoolean("sinoidal_bible", sinoidalState)
-                        }
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                .clickable {
+                    sinoidalState = !sinoidalState
+                    k.edit {
+                        putBoolean("sinoidal_bible", sinoidalState)
                     }
-                    .padding(vertical = 5.dp)
-            ) {
+                }
+                .padding(vertical = 5.dp)) {
                 Text(
-                    stringResource(R.string.bsinaidal),
-                    modifier = Modifier
+                    stringResource(R.string.bsinaidal), modifier = Modifier
                         .weight(1f)
-                        .padding(end = 10.dp),
-                    fontSize = (Settings.fontInterface - 2).sp,
-                    color = MaterialTheme.colorScheme.secondary
+                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
-                    modifier = Modifier.scale(0.8f),
-                    checked = sinoidalState,
-                    onCheckedChange = {
+                    modifier = Modifier.scale(0.8f), checked = sinoidalState, onCheckedChange = {
                         sinoidalState = it
                         k.edit {
                             putBoolean("sinoidal_bible", sinoidalState)
                         }
-                    }
-                )
+                    })
             }
             var maranafaState by remember { mutableStateOf(k.getBoolean("maranafa", false)) }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .clickable {
-                        maranafaState = !maranafaState
-                        k.edit {
-                            putBoolean("maranafa", maranafaState)
-                        }
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                .clickable {
+                    maranafaState = !maranafaState
+                    k.edit {
+                        putBoolean("maranafa", maranafaState)
                     }
-                    .padding(vertical = 5.dp)
-            ) {
+                }
+                .padding(vertical = 5.dp)) {
                 Text(
-                    stringResource(R.string.maranata_opis),
-                    modifier = Modifier
+                    stringResource(R.string.maranata_opis), modifier = Modifier
                         .weight(1f)
-                        .padding(end = 10.dp),
-                    fontSize = (Settings.fontInterface - 2).sp,
-                    color = MaterialTheme.colorScheme.secondary
+                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
-                    modifier = Modifier.scale(0.8f),
-                    checked = maranafaState,
-                    onCheckedChange = {
+                    modifier = Modifier.scale(0.8f), checked = maranafaState, onCheckedChange = {
                         maranafaState = it
                         k.edit {
                             putBoolean("maranafa", maranafaState)
                         }
-                    }
-                )
+                    })
             }
             var paralelState by remember { mutableStateOf(k.getBoolean("paralel_maranata", true)) }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .clickable {
-                        paralelState = !paralelState
-                        k.edit {
-                            putBoolean("paralel_maranata", paralelState)
-                        }
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                .clickable {
+                    paralelState = !paralelState
+                    k.edit {
+                        putBoolean("paralel_maranata", paralelState)
                     }
-                    .padding(vertical = 5.dp)
-            ) {
+                }
+                .padding(vertical = 5.dp)) {
                 Text(
-                    stringResource(R.string.paralel),
-                    modifier = Modifier
+                    stringResource(R.string.paralel), modifier = Modifier
                         .weight(1f)
-                        .padding(end = 10.dp),
-                    fontSize = (Settings.fontInterface - 2).sp,
-                    color = MaterialTheme.colorScheme.secondary
+                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
-                    modifier = Modifier.scale(0.8f),
-                    checked = paralelState,
-                    onCheckedChange = {
+                    modifier = Modifier.scale(0.8f), checked = paralelState, onCheckedChange = {
                         paralelState = it
                         k.edit {
                             putBoolean("paralel_maranata", paralelState)
                         }
-                    }
-                )
+                    })
             }
             Text(
-                modifier = Modifier.padding(top = 20.dp),
-                text = stringResource(R.string.sviaty_notifi),
-                fontSize = (Settings.fontInterface - 2).sp,
-                color = MaterialTheme.colorScheme.primary
+                modifier = Modifier.padding(top = 20.dp), text = stringResource(R.string.sviaty_notifi), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.primary
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
             var modeNotification by remember { mutableIntStateOf(k.getInt("notification", Settings.NOTIFICATION_SVIATY_FULL)) }
-            Column(Modifier.selectableGroup())
-            {
+            Column(Modifier.selectableGroup()) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -656,12 +574,10 @@ fun SettingsView(navController: NavHostController) {
                             } else {
                                 setNotificationOnly(context)
                             }
-                        },
-                    verticalAlignment = Alignment.CenterVertically
+                        }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(
-                        selected = modeNotification == Settings.NOTIFICATION_SVIATY_ONLY,
-                        onClick = {
+                        selected = modeNotification == Settings.NOTIFICATION_SVIATY_ONLY, onClick = {
                             modeNotification = Settings.NOTIFICATION_SVIATY_ONLY
                             k.edit {
                                 putInt("notification", modeNotification)
@@ -676,13 +592,9 @@ fun SettingsView(navController: NavHostController) {
                             } else {
                                 setNotificationOnly(context)
                             }
-                        }
-                    )
+                        })
                     Text(
-                        stringResource(R.string.apav_only),
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = (Settings.fontInterface - 2).sp
+                        stringResource(R.string.apav_only), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp
                     )
                 }
                 Row(
@@ -703,12 +615,10 @@ fun SettingsView(navController: NavHostController) {
                             } else {
                                 setNotificationFull(context)
                             }
-                        },
-                    verticalAlignment = Alignment.CenterVertically
+                        }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(
-                        selected = modeNotification == Settings.NOTIFICATION_SVIATY_FULL,
-                        onClick = {
+                        selected = modeNotification == Settings.NOTIFICATION_SVIATY_FULL, onClick = {
                             modeNotification = Settings.NOTIFICATION_SVIATY_FULL
                             k.edit {
                                 putInt("notification", modeNotification)
@@ -723,13 +633,9 @@ fun SettingsView(navController: NavHostController) {
                             } else {
                                 setNotificationFull(context)
                             }
-                        }
-                    )
+                        })
                     Text(
-                        stringResource(R.string.apav_all),
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = (Settings.fontInterface - 2).sp
+                        stringResource(R.string.apav_all), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp
                     )
                 }
                 Row(
@@ -741,24 +647,18 @@ fun SettingsView(navController: NavHostController) {
                                 putInt("notification", modeNotification)
                             }
                             setNotificationNon(context)
-                        },
-                    verticalAlignment = Alignment.CenterVertically
+                        }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(
-                        selected = modeNotification == Settings.NOTIFICATION_SVIATY_NONE,
-                        onClick = {
+                        selected = modeNotification == Settings.NOTIFICATION_SVIATY_NONE, onClick = {
                             modeNotification = Settings.NOTIFICATION_SVIATY_NONE
                             k.edit {
                                 putInt("notification", modeNotification)
                             }
                             setNotificationNon(context)
-                        }
-                    )
+                        })
                     Text(
-                        stringResource(R.string.apav_no),
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = (Settings.fontInterface - 2).sp
+                        stringResource(R.string.apav_no), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp
                     )
                 }
             }
@@ -769,10 +669,7 @@ fun SettingsView(navController: NavHostController) {
             val textFieldNotificstionState = rememberTextFieldState(dataTimes[k.getInt("timeNotification", 2)].string)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    stringResource(R.string.pavedamiс_title),
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontSize = (Settings.fontInterface - 2).sp
+                    stringResource(R.string.pavedamiс_title), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp
                 )
                 var expandedSviaty by remember { mutableStateOf(false) }
                 ExposedDropdownMenuBox(
@@ -796,16 +693,13 @@ fun SettingsView(navController: NavHostController) {
                     ) {
                         dataTimes.forEachIndexed { index, option ->
                             DropdownMenuItem(
-                                text = { Text(text = option.string, fontSize = (Settings.fontInterface - 2).sp) },
-                                onClick = {
-                                    textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option.string)
-                                    expandedSviaty = false
-                                    k.edit {
-                                        putInt("timeNotification", index)
-                                    }
-                                },
-                                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                                colors = MenuDefaults.itemColors(textColor = PrimaryText)
+                                text = { Text(text = option.string, fontSize = (Settings.fontInterface - 2).sp) }, onClick = {
+                                textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option.string)
+                                expandedSviaty = false
+                                k.edit {
+                                    putInt("timeNotification", index)
+                                }
+                            }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding, colors = MenuDefaults.itemColors(textColor = PrimaryText)
                             )
                         }
                     }
@@ -829,148 +723,104 @@ fun SettingsView(navController: NavHostController) {
                                 toast.show()
                             }
                         }
-                    },
-                    colors = ButtonColors(
-                        Divider,
-                        Color.Unspecified,
-                        Color.Unspecified,
-                        Color.Unspecified
-                    ),
-                    shape = MaterialTheme.shapes.small
+                    }, colors = ButtonColors(
+                        Divider, Color.Unspecified, Color.Unspecified, Color.Unspecified
+                    ), shape = MaterialTheme.shapes.small
                 ) {
                     Text(stringResource(R.string.settings_notifi_sviata), fontSize = (Settings.fontInterface - 2).sp, color = PrimaryText)
                 }
             }
             Text(
-                modifier = Modifier.padding(top = 20.dp),
-                text = stringResource(R.string.sviaty_under),
-                fontSize = (Settings.fontInterface - 2).sp,
-                color = MaterialTheme.colorScheme.primary
+                modifier = Modifier.padding(top = 20.dp), text = stringResource(R.string.sviaty_under), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.primary
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
             var modePkcSvaity by remember { mutableStateOf(k.getBoolean("s_pkc", false)) }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .clickable {
-                        modePkcSvaity = !modePkcSvaity
-                        k.edit {
-                            putBoolean("s_pkc", modePkcSvaity)
-                        }
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                .clickable {
+                    modePkcSvaity = !modePkcSvaity
+                    k.edit {
+                        putBoolean("s_pkc", modePkcSvaity)
                     }
-                    .padding(vertical = 5.dp)
-            ) {
+                }
+                .padding(vertical = 5.dp)) {
                 Text(
-                    stringResource(R.string.pkc),
-                    modifier = Modifier
+                    stringResource(R.string.pkc), modifier = Modifier
                         .weight(1f)
-                        .padding(end = 10.dp),
-                    fontSize = (Settings.fontInterface - 2).sp,
-                    color = MaterialTheme.colorScheme.secondary
+                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
-                    modifier = Modifier.scale(0.8f),
-                    checked = modePkcSvaity,
-                    onCheckedChange = {
+                    modifier = Modifier.scale(0.8f), checked = modePkcSvaity, onCheckedChange = {
                         modePkcSvaity = it
                         k.edit {
                             putBoolean("s_pkc", modePkcSvaity)
                         }
-                    }
-                )
+                    })
             }
             var modePravasSvaity by remember { mutableStateOf(k.getBoolean("s_pravas", false)) }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .clickable {
-                        modePravasSvaity = !modePravasSvaity
-                        k.edit {
-                            putBoolean("s_pravas", modePravasSvaity)
-                        }
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                .clickable {
+                    modePravasSvaity = !modePravasSvaity
+                    k.edit {
+                        putBoolean("s_pravas", modePravasSvaity)
                     }
-                    .padding(vertical = 5.dp)
-            ) {
+                }
+                .padding(vertical = 5.dp)) {
                 Text(
-                    stringResource(R.string.sviaty_ulian),
-                    modifier = Modifier
+                    stringResource(R.string.sviaty_ulian), modifier = Modifier
                         .weight(1f)
-                        .padding(end = 10.dp),
-                    fontSize = (Settings.fontInterface - 2).sp,
-                    color = MaterialTheme.colorScheme.secondary
+                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
-                    modifier = Modifier.scale(0.8f),
-                    checked = modePravasSvaity,
-                    onCheckedChange = {
+                    modifier = Modifier.scale(0.8f), checked = modePravasSvaity, onCheckedChange = {
                         modePravasSvaity = it
                         k.edit {
                             putBoolean("s_pravas", modePravasSvaity)
                         }
-                    }
-                )
+                    })
             }
             var modeGosudSvaity by remember { mutableStateOf(k.getBoolean("s_gosud", false)) }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .clickable {
-                        modeGosudSvaity = !modeGosudSvaity
-                        k.edit {
-                            putBoolean("s_gosud", modeGosudSvaity)
-                        }
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                .clickable {
+                    modeGosudSvaity = !modeGosudSvaity
+                    k.edit {
+                        putBoolean("s_gosud", modeGosudSvaity)
                     }
-                    .padding(vertical = 5.dp)
-            ) {
+                }
+                .padding(vertical = 5.dp)) {
                 Text(
-                    stringResource(R.string.sviaty_dziar),
-                    modifier = Modifier
+                    stringResource(R.string.sviaty_dziar), modifier = Modifier
                         .weight(1f)
-                        .padding(end = 10.dp),
-                    fontSize = (Settings.fontInterface - 2).sp,
-                    color = MaterialTheme.colorScheme.secondary
+                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
-                    modifier = Modifier.scale(0.8f),
-                    checked = modeGosudSvaity,
-                    onCheckedChange = {
+                    modifier = Modifier.scale(0.8f), checked = modeGosudSvaity, onCheckedChange = {
                         modeGosudSvaity = it
                         k.edit {
                             putBoolean("s_gosud", modeGosudSvaity)
                         }
-                    }
-                )
+                    })
             }
             var modePafesiiSvaity by remember { mutableStateOf(k.getBoolean("s_pafesii", false)) }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .clickable {
-                        modePafesiiSvaity = !modePafesiiSvaity
-                        k.edit {
-                            putBoolean("s_pafesii", modePafesiiSvaity)
-                        }
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                .clickable {
+                    modePafesiiSvaity = !modePafesiiSvaity
+                    k.edit {
+                        putBoolean("s_pafesii", modePafesiiSvaity)
                     }
-                    .padding(vertical = 5.dp)
-            ) {
+                }
+                .padding(vertical = 5.dp)) {
                 Text(
-                    stringResource(R.string.sviaty_pfes),
-                    modifier = Modifier
+                    stringResource(R.string.sviaty_pfes), modifier = Modifier
                         .weight(1f)
-                        .padding(end = 10.dp),
-                    fontSize = (Settings.fontInterface - 2).sp,
-                    color = MaterialTheme.colorScheme.secondary
+                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
-                    modifier = Modifier.scale(0.8f),
-                    checked = modePafesiiSvaity,
-                    onCheckedChange = {
+                    modifier = Modifier.scale(0.8f), checked = modePafesiiSvaity, onCheckedChange = {
                         modePafesiiSvaity = it
                         k.edit {
                             putBoolean("s_pafesii", modePafesiiSvaity)
                         }
-                    }
-                )
+                    })
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
             TextButton(
@@ -1032,34 +882,22 @@ fun SettingsView(navController: NavHostController) {
                     textFieldNotificstionState.setTextAndPlaceCursorAtEnd(dataTimes[k.getInt("timeNotification", 2)].string)
                     if ((context as MainActivity).checkDzenNoch != context.dzenNoch) context.recreate()
                     else setNotificationFull(context)
-                },
-                modifier = Modifier
+                }, modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(5.dp),
-                colors = ButtonColors(
-                    Primary,
-                    Color.Unspecified,
-                    Color.Unspecified,
-                    Color.Unspecified
-                ),
-                shape = MaterialTheme.shapes.small
+                    .padding(5.dp), colors = ButtonColors(
+                    Primary, Color.Unspecified, Color.Unspecified, Color.Unspecified
+                ), shape = MaterialTheme.shapes.small
             ) {
                 Text(stringResource(R.string.settings_default), fontSize = (Settings.fontInterface - 2).sp, color = PrimaryTextBlack)
             }
             TextButton(
                 onClick = {
                     dialodClearChache = true
-                },
-                modifier = Modifier
+                }, modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(5.dp),
-                colors = ButtonColors(
-                    Divider,
-                    Color.Unspecified,
-                    Color.Unspecified,
-                    Color.Unspecified
-                ),
-                shape = MaterialTheme.shapes.small
+                    .padding(5.dp), colors = ButtonColors(
+                    Divider, Color.Unspecified, Color.Unspecified, Color.Unspecified
+                ), shape = MaterialTheme.shapes.small
             ) {
                 Text(stringResource(R.string.clear_chash), fontSize = (Settings.fontInterface - 2).sp, color = PrimaryText)
             }
@@ -1070,8 +908,7 @@ fun SettingsView(navController: NavHostController) {
 
 @Composable
 fun DialogClearChash(
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit
+    onConfirm: () -> Unit, onDismiss: () -> Unit
 ) {
     Dialog(onDismissRequest = { onDismiss() }) {
         Card(
@@ -1088,8 +925,7 @@ fun DialogClearChash(
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
                 Column(
-                    modifier = Modifier
-                        .padding(10.dp)
+                    modifier = Modifier.padding(10.dp)
                 ) {
                     Text(
                         text = stringResource(R.string.clear_chash_opis), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
@@ -1102,15 +938,13 @@ fun DialogClearChash(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() },
-                        shape = MaterialTheme.shapes.small
+                        onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
-                        onClick = { onConfirm() },
-                        shape = MaterialTheme.shapes.small
+                        onClick = { onConfirm() }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.delete), contentDescription = "")
                         Text(stringResource(R.string.delite), fontSize = 18.sp)
@@ -1145,29 +979,19 @@ fun DialogLogin(
                 Column(
                     modifier = Modifier.padding(10.dp)
                 ) {
-                    TextField(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        value = login,
-                        onValueChange = { newText ->
-                            login = newText
-                        },
-                        singleLine = true,
-                        textStyle = TextStyle(fontSize = (Settings.fontInterface - 2).sp),
-                        trailingIcon = {
-                            if (login.isNotEmpty()) {
-                                IconButton(onClick = {
-                                    login = ""
-                                }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.close),
-                                        contentDescription = "",
-                                        tint = MaterialTheme.colorScheme.onSecondary
-                                    )
-                                }
+                    TextField(modifier = Modifier.fillMaxWidth(), value = login, onValueChange = { newText ->
+                        login = newText
+                    }, singleLine = true, textStyle = TextStyle(fontSize = (Settings.fontInterface - 2).sp), trailingIcon = {
+                        if (login.isNotEmpty()) {
+                            IconButton(onClick = {
+                                login = ""
+                            }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                )
                             }
                         }
-                    )
+                    })
                     TextField(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -1182,16 +1006,14 @@ fun DialogLogin(
                             if (showPassword) {
                                 IconButton(onClick = { showPassword = false }) {
                                     Icon(
-                                        painter = painterResource(R.drawable.visibility),
-                                        contentDescription = "hide_password"
+                                        painter = painterResource(R.drawable.visibility), contentDescription = "hide_password"
                                     )
                                 }
                             } else {
                                 IconButton(
                                     onClick = { showPassword = true }) {
                                     Icon(
-                                        painter = painterResource(R.drawable.visibility_off),
-                                        contentDescription = "hide_password"
+                                        painter = painterResource(R.drawable.visibility_off), contentDescription = "hide_password"
                                     )
                                 }
                             }
@@ -1211,8 +1033,7 @@ fun DialogLogin(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onLogin(login.trim() == "Царква" && password.trim() == "Дворнікава63") },
-                        shape = MaterialTheme.shapes.small
+                        onClick = { onLogin(login.trim() == "Царква" && password.trim() == "Дворнікава63") }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
                         Text(stringResource(R.string.ok), fontSize = 18.sp)
@@ -1225,8 +1046,7 @@ fun DialogLogin(
 
 @Composable
 fun DialogNotification(
-    onDismiss: () -> Unit,
-    onConfirm: () -> Unit
+    onDismiss: () -> Unit, onConfirm: () -> Unit
 ) {
     Dialog(onDismissRequest = { onDismiss() }) {
         Card(
@@ -1243,8 +1063,7 @@ fun DialogNotification(
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
                 Column(
-                    modifier = Modifier
-                        .padding(10.dp)
+                    modifier = Modifier.padding(10.dp)
                 ) {
                     Text(
                         text = stringResource(R.string.help_notifications_api33), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
@@ -1257,15 +1076,13 @@ fun DialogNotification(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onConfirm() },
-                        shape = MaterialTheme.shapes.small
+                        onClick = { onConfirm() }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
-                        onClick = { onDismiss() },
-                        shape = MaterialTheme.shapes.small
+                        onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
                         Text(stringResource(R.string.dazvolic), fontSize = 18.sp)
