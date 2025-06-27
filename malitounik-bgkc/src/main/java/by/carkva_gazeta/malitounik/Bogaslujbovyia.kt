@@ -819,6 +819,19 @@ fun Bogaslujbovyia(
                                             )
                                         }
                                     }
+                                    if (listResource.isEmpty()) {
+                                        IconButton(onClick = {
+                                            saveVybranoe = true
+                                        }) {
+                                            val icon = if (isVybranoe) painterResource(R.drawable.stars)
+                                            else painterResource(R.drawable.star)
+                                            Icon(
+                                                painter = icon,
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.onSecondary
+                                            )
+                                        }
+                                    }
                                     IconButton(onClick = { expandedUp = true }) {
                                         Icon(
                                             painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
@@ -826,16 +839,18 @@ fun Bogaslujbovyia(
                                     }
                                     DropdownMenu(
                                         expanded = expandedUp, onDismissRequest = { expandedUp = false }) {
-                                        DropdownMenuItem(onClick = {
-                                            expandedUp = false
-                                            saveVybranoe = true
-                                        }, text = { Text(stringResource(if (isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                            val icon = if (isVybranoe) painterResource(R.drawable.stars)
-                                            else painterResource(R.drawable.star)
-                                            Icon(
-                                                painter = icon, contentDescription = ""
-                                            )
-                                        })
+                                        if (listResource.isNotEmpty()) {
+                                            DropdownMenuItem(onClick = {
+                                                expandedUp = false
+                                                saveVybranoe = true
+                                            }, text = { Text(stringResource(if (isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                                val icon = if (isVybranoe) painterResource(R.drawable.stars)
+                                                else painterResource(R.drawable.star)
+                                                Icon(
+                                                    painter = icon, contentDescription = ""
+                                                )
+                                            })
+                                        }
                                         DropdownMenuItem(onClick = {
                                             expandedUp = false
                                             autoScroll = false

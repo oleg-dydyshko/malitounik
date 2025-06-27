@@ -408,7 +408,7 @@ fun SettingsView(navController: NavHostController) {
             }, colors = SliderDefaults.colors(inactiveTrackColor = Divider))
             var buttomBar by remember { mutableStateOf(k.getBoolean("bottomBar", false)) }
             Row(
-                verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable {
+                verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 10.dp).clickable {
                     buttomBar = !buttomBar
                     k.edit {
                         putBoolean("bottomBarr", buttomBar)
@@ -430,7 +430,7 @@ fun SettingsView(navController: NavHostController) {
             var adminDayInYearState by remember { mutableStateOf(k.getBoolean("adminDayInYear", false)) }
             if (admin) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable {
+                    verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 10.dp).clickable {
                         adminDayInYearState = !adminDayInYearState
                         k.edit {
                             putBoolean("adminDayInYear", adminDayInYearState)
@@ -858,6 +858,7 @@ fun SettingsView(navController: NavHostController) {
                         putBoolean("admin", false)
                         putBoolean("adminDayInYear", false)
                         putBoolean("paralel_maranata", true)
+                        putBoolean("bottomBar", false)
                     }
                     modeNotification = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
