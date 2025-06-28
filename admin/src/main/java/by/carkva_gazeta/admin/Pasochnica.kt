@@ -330,6 +330,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
         binding = AdminPasochnicaBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.apisanne.addTextChangedListener(textWatcher)
+        binding.apisanne.textSize = k.getFloat("font_biblia", 22F)
         binding.actionBold.setOnClickListener(this)
         binding.actionEm.setOnClickListener(this)
         binding.actionRed.setOnClickListener(this)

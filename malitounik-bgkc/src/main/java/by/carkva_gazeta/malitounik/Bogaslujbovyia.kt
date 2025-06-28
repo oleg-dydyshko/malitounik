@@ -6,13 +6,9 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
-import android.graphics.Bitmap
 import android.print.PrintAttributes
 import android.print.PrintManager
-import android.view.ViewGroup
 import android.view.WindowManager
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
@@ -115,7 +111,6 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.edit
 import androidx.core.view.WindowCompat
@@ -248,7 +243,6 @@ fun Bogaslujbovyia(
     var backPressHandled by remember { mutableStateOf(false) }
     var iskniga by remember { mutableStateOf(false) }
     var bottomSheetScaffoldIsVisible by remember { mutableStateOf(AppNavGraphState.bottomSheetScaffoldIsVisible) }
-    var isWebViewVisible by remember { mutableStateOf(false) }
     val actyvity = LocalActivity.current as MainActivity
     if (autoScrollSensor) {
         actyvity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -422,7 +416,6 @@ fun Bogaslujbovyia(
     if (isDialogNoWIFIVisable) {
         DialogNoWiFI(
             onDismiss = {
-                isWebViewVisible = true
                 isDialogNoWIFIVisable = false
             },
             onConfirmation = {
@@ -436,31 +429,6 @@ fun Bogaslujbovyia(
                     inProcess = {
                     })
                 isDialogNoWIFIVisable = false
-            }
-        )
-    }
-    if (isWebViewVisible) {
-        AndroidView(
-            factory = {
-                WebView(it).apply {
-                    this.layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-                    )
-                    this.loadDataWithBaseURL(null, htmlText, "text/HTML", "UTF-8", null)
-                    this.webViewClient = object : WebViewClient() {
-                        override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                        }
-
-                        override fun onPageFinished(view: WebView, url: String) {
-                            val printAdapter = view.createPrintDocumentAdapter(title)
-                            val printAttributes = PrintAttributes.Builder().setMediaSize(PrintAttributes.MediaSize.ISO_A4).build()
-                            val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
-                            printManager.print(htmlText, printAdapter, printAttributes)
-                            isWebViewVisible = false
-                        }
-                    }
-                }
             }
         )
     }

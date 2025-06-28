@@ -60,8 +60,7 @@
             android:layout_marginLeft="10sp"
             android:layout_marginEnd="10sp"
             android:layout_marginRight="10sp"
-            android:layout_marginBottom="10sp"
-            android:textSize="22.sp" />
+            android:layout_marginBottom="10sp" />
     </by.carkva_gazeta.admin.InteractiveScrollView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
