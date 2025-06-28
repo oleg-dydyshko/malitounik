@@ -481,7 +481,7 @@ fun SettingsView(navController: NavHostController) {
                 }
             }
             Text(
-                modifier = Modifier.padding(top = 20.dp), text = stringResource(R.string.biblia), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.primary
+                modifier = Modifier.padding(top = 10.dp), text = stringResource(R.string.biblia), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.primary
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
             var sinoidalState by remember { mutableStateOf(k.getBoolean("sinoidal_bible", false)) }

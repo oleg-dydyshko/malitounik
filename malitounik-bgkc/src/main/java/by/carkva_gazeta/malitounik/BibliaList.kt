@@ -489,16 +489,13 @@ fun setStaryZapavet(list: Array<String>, perevod: String): ArrayList<BibliaList>
     result.add(BibliaList(list[10], "3 Цар", 22))
     result.add(BibliaList(list[11], "4 Цар", 25))
     result.add(BibliaList(list[12], "1 Лет", 29))
-    result.add(BibliaList(list[13], "2 Лет", 37))
+    result.add(BibliaList(list[13], "2 Лет", bibleCount(knigaBiblii("2 Лет"), perevod)))
     result.add(BibliaList(list[14], "1 Эзд", 10))
     result.add(BibliaList(list[15], "Нээм", 13))
     if (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODCARNIAUSKI) {
         result.add(BibliaList(list[16], "Эст", 10))
         result.add(BibliaList(list[17], "Ёва", 42))
-        if (perevod == Settings.PEREVODSEMUXI)
-            result.add(BibliaList(list[18], "Пс", 151))
-        else
-            result.add(BibliaList(list[18], "Пс", 150))
+        result.add(BibliaList(list[18], "Пс", bibleCount(knigaBiblii("Пс"), perevod)))
         result.add(BibliaList(list[19], "Высл", 31))
         result.add(BibliaList(list[20], "Экл", 12))
         result.add(BibliaList(list[21], "Псн", 8))

@@ -155,6 +155,7 @@ object Settings {
     var titleRadioMaryia = mutableStateOf("")
     var isPlayRadyjoMaryia = mutableStateOf(false)
     var isProgressVisableRadyjoMaryia = mutableStateOf(false)
+    val textFieldValueState = mutableStateOf("")
 
     @Suppress("DEPRECATION")
     fun isNetworkAvailable(context: Context, typeTransport: Int = TRANSPORT_ALL): Boolean {

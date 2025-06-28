@@ -670,9 +670,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
                 )
             }
             val count = if (biblia == Settings.CHYTANNI_BIBLIA) remember {
-                bibleCount(
-                    knigaBiblii(knigaText), perevod
-                )
+                bibleCount(knigaBiblii(knigaText), perevod)
             }
             else 1
             if (count != cytanniListState.size) {
@@ -1002,7 +1000,7 @@ fun MainConteiner(
     var searchText by rememberSaveable { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
-    var textFieldValueState by remember { mutableStateOf("") }
+    var textFieldValueState by remember { Settings.textFieldValueState }
     if (logView) {
         DialogLogProgramy {
             logView = false
@@ -1185,20 +1183,24 @@ fun MainConteiner(
                                 edit = edit.replace("Щ", "Ў")
                                 edit = edit.replace("ъ", "'")
                                 textFieldValueState = edit
+                                Settings.textFieldValueState.value = textFieldValueState
                             }, singleLine = true, leadingIcon = {
                                 Icon(
                                     painter = painterResource(R.drawable.search), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
                                 )
                             }, trailingIcon = {
                                 if (textFieldValueState.isNotEmpty()) {
-                                    IconButton(onClick = { textFieldValueState = "" }) {
+                                    IconButton(onClick = {
+                                        textFieldValueState = ""
+                                        Settings.textFieldValueState.value = ""
+                                    }) {
                                         Icon(
                                             painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                         )
                                     }
                                 }
                             }, colors = TextFieldDefaults.colors(
-                                focusedContainerColor = MaterialTheme.colorScheme.onTertiary, unfocusedContainerColor = MaterialTheme.colorScheme.onTertiary, focusedTextColor = PrimaryTextBlack, focusedIndicatorColor = PrimaryTextBlack, unfocusedIndicatorColor = PrimaryTextBlack, cursorColor = PrimaryTextBlack
+                                focusedContainerColor = MaterialTheme.colorScheme.onTertiary, unfocusedContainerColor = MaterialTheme.colorScheme.onTertiary, focusedTextColor = PrimaryTextBlack, unfocusedTextColor = PrimaryTextBlack, focusedIndicatorColor = PrimaryTextBlack, unfocusedIndicatorColor = PrimaryTextBlack, cursorColor = PrimaryTextBlack
                             ), textStyle = TextStyle(fontSize = TextUnit(Settings.fontInterface, TextUnitType.Sp))
                         )
                     }
