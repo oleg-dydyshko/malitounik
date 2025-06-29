@@ -242,8 +242,8 @@ fun Bogaslujbovyia(
     }
     var searchTextResult by remember { mutableStateOf(AnnotatedString("")) }
     var backPressHandled by remember { mutableStateOf(false) }
-    var iskniga by remember { mutableStateOf(false) }
-    var bottomSheetScaffoldIsVisible by remember { mutableStateOf(AppNavGraphState.bottomSheetScaffoldIsVisible) }
+    var iskniga by rememberSaveable { mutableStateOf(false) }
+    var bottomSheetScaffoldIsVisible by rememberSaveable { mutableStateOf(AppNavGraphState.bottomSheetScaffoldIsVisible) }
     val actyvity = LocalActivity.current as MainActivity
     if (autoScrollSensor) {
         actyvity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -328,8 +328,8 @@ fun Bogaslujbovyia(
     }
     var findBack by remember { mutableStateOf(false) }
     var findForward by remember { mutableStateOf(false) }
-    var subTitle by remember { mutableStateOf("") }
-    var subText by remember { mutableStateOf("") }
+    var subTitle by rememberSaveable { mutableStateOf("") }
+    var subText by rememberSaveable { mutableStateOf("") }
     val result = remember { mutableStateListOf<ArrayList<Int>>() }
     var resultPosition by remember { mutableIntStateOf(0) }
     val textLayout = remember { mutableStateOf<TextLayoutResult?>(null) }
@@ -456,11 +456,13 @@ fun Bogaslujbovyia(
     }
     LaunchedEffect(bottomSheetScaffoldIsVisible) {
         if (listResource.isNotEmpty()) {
-            coroutineScope.launch {
-                if (bottomSheetScaffoldIsVisible) {
-                    bottomSheetScaffoldState.bottomSheetState.show()
-                } else {
-                    bottomSheetScaffoldState.bottomSheetState.hide()
+            if (!iskniga) {
+                coroutineScope.launch {
+                    if (bottomSheetScaffoldIsVisible) {
+                        bottomSheetScaffoldState.bottomSheetState.show()
+                    } else {
+                        bottomSheetScaffoldState.bottomSheetState.hide()
+                    }
                 }
             }
         } else {
@@ -685,6 +687,7 @@ fun Bogaslujbovyia(
                                             iskniga = false
                                         } else {
                                             searchText = false
+                                            searshString = ""
                                             searchTextResult = AnnotatedString("")
                                         }
                                         if (autoScrollSensor) autoScroll = true

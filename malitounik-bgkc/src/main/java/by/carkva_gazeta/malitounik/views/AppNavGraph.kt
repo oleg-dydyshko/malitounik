@@ -634,16 +634,6 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
                                 titleCh, removeZnakiAndSlovy(data[10]), Settings.CHYTANNI_LITURGICHNYIA, Settings.PEREVODSEMUXI, -1
                             )
                         }
-
-                        "cytannedop" -> {
-                            val data = findCaliandarToDay(context)
-                            val titleCh = context.getString(
-                                R.string.czytanne3, data[1].toInt(), context.resources.getStringArray(R.array.meciac_smoll)[2]
-                            )
-                            navigationActions.navigateToCytanniList(
-                                titleCh, removeZnakiAndSlovy(data[11]), Settings.CHYTANNI_LITURGICHNYIA, Settings.PEREVODSEMUXI, -1
-                            )
-                        }
                     }
                 })
         }
