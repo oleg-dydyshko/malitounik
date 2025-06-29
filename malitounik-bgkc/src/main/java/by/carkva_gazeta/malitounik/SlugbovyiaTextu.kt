@@ -2420,12 +2420,12 @@ class SlugbovyiaTextu {
             if (data[0].toInt() == Calendar.SUNDAY && data[20] != "0") {
                 val list = getTraparyKandakiNiadzelnyia()
                 val ton = data[20].toInt() - 1
-                resultDay.add(SlugbovyiaTextuData(day, list[ton].title, list[ton].resurs.toString(), LITURHIJA))
+                resultDay.add(SlugbovyiaTextuData(day, list[ton].title, list[ton].resource, LITURHIJA))
             }
             if (data[0].toInt() != Calendar.SUNDAY) {
                 val list = getTraparyKandakiShtodzennyia()
                 val dzenNedeli = data[0].toInt() - 2
-                resultDay.add(SlugbovyiaTextuData(day, list[dzenNedeli].title, list[dzenNedeli].resurs.toString(), LITURHIJA))
+                resultDay.add(SlugbovyiaTextuData(day, list[dzenNedeli].title, list[dzenNedeli].resource, LITURHIJA))
             }
         }
         return resultDay
@@ -2556,7 +2556,7 @@ class SlugbovyiaTextu {
                             calendar.get(Calendar.YEAR), Calendar.DECEMBER, 30
                         )
                         else calendar.set(calendar.get(Calendar.YEAR) - 1, Calendar.DECEMBER, 30)
-                        (1..7).forEach {
+                        (1..7).forEach { _ ->
                             val wik = calendar.get(Calendar.DAY_OF_WEEK)
                             if (wik == Calendar.SUNDAY) {
                                 realDay = calendar.get(Calendar.DAY_OF_YEAR)

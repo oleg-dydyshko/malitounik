@@ -15,11 +15,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -291,64 +294,66 @@ fun DialogMyNatatki(
                         )
                     }
                 }
-                if (editMode) {
-                    TextField(
-                        modifier = Modifier
-                            .focusRequester(focusRequester)
-                            .onGloballyPositioned {
-                                if (!textFieldLoaded) {
-                                    focusRequester.requestFocus()
-                                    textFieldLoaded = true
-                                }
+                Column(modifier = Modifier.imePadding().verticalScroll(rememberScrollState())) {
+                    if (editMode) {
+                        TextField(
+                            modifier = Modifier
+                                .focusRequester(focusRequester)
+                                .onGloballyPositioned {
+                                    if (!textFieldLoaded) {
+                                        focusRequester.requestFocus()
+                                        textFieldLoaded = true
+                                    }
+                                },
+                            placeholder = { Text(stringResource(R.string.natatka), fontSize = Settings.fontInterface.sp) },
+                            value = textFieldValueState,
+                            onValueChange = {
+                                textFieldValueState = it
                             },
-                        placeholder = { Text(stringResource(R.string.natatka), fontSize = Settings.fontInterface.sp) },
-                        value = textFieldValueState,
-                        onValueChange = {
-                            textFieldValueState = it
-                        },
-                        textStyle = TextStyle(fontSize = Settings.fontInterface.sp)
-                    )
-                } else {
-                    SelectionContainer {
-                        Text(modifier = Modifier.padding(10.dp), text = textFieldValueState.text, fontSize = Settings.fontInterface.sp)
-                    }
-                }
-                Row(
-                    modifier = Modifier
-                        .align(Alignment.End)
-                        .padding(horizontal = 8.dp, vertical = 2.dp),
-                    horizontalArrangement = Arrangement.End,
-                ) {
-                    TextButton(
-                        onClick = {
-                            if (editMode) {
-                                onDismiss()
-                                if (k?.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
-                            } else editMode = true
-                        }
-                    ) {
-                        if (editMode) {
-                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
-                            Text(stringResource(R.string.cansel), fontSize = 18.sp)
-                        } else {
-                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.edit), contentDescription = "")
-                            Text(stringResource(R.string.redagaktirovat), fontSize = 18.sp)
+                            textStyle = TextStyle(fontSize = Settings.fontInterface.sp)
+                        )
+                    } else {
+                        SelectionContainer {
+                            Text(modifier = Modifier.padding(10.dp), text = textFieldValueState.text, fontSize = Settings.fontInterface.sp)
                         }
                     }
-                    TextButton(
-                        onClick = {
-                            if (editMode) {
-                                onConfirmation(editTitle, textFieldValueState.text)
-                                if (k?.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
-                            } else onDismiss()
-                        }
+                    Row(
+                        modifier = Modifier
+                            .align(Alignment.End)
+                            .padding(horizontal = 8.dp, vertical = 2.dp),
+                        horizontalArrangement = Arrangement.End,
                     ) {
-                        if (editMode) {
-                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.save), contentDescription = "")
-                            Text(stringResource(R.string.save_sabytie), fontSize = 18.sp)
-                        } else {
-                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
-                            Text(stringResource(R.string.close), fontSize = 18.sp)
+                        TextButton(
+                            onClick = {
+                                if (editMode) {
+                                    onDismiss()
+                                    if (k?.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
+                                } else editMode = true
+                            }
+                        ) {
+                            if (editMode) {
+                                Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                                Text(stringResource(R.string.cansel), fontSize = 18.sp)
+                            } else {
+                                Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.edit), contentDescription = "")
+                                Text(stringResource(R.string.redagaktirovat), fontSize = 18.sp)
+                            }
+                        }
+                        TextButton(
+                            onClick = {
+                                if (editMode) {
+                                    onConfirmation(editTitle, textFieldValueState.text)
+                                    if (k?.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
+                                } else onDismiss()
+                            }
+                        ) {
+                            if (editMode) {
+                                Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.save), contentDescription = "")
+                                Text(stringResource(R.string.save_sabytie), fontSize = 18.sp)
+                            } else {
+                                Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                                Text(stringResource(R.string.close), fontSize = 18.sp)
+                            }
                         }
                     }
                 }

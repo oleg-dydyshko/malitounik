@@ -488,7 +488,7 @@ fun bogashlugbovya(context: Context, poshuk: String, secondRun: Boolean = false)
     for (i in 0 until bogaslugbovyiaListAll.size) {
         if (searchJob?.isActive == false) break
         var nazva = context.getString(R.string.error_ch)
-        val bibleline = openAssetsResources(context, bogaslugbovyiaListAll[i].resurs)
+        val bibleline = openAssetsResources(context, bogaslugbovyiaListAll[i].resource)
         val t1 = bibleline.indexOf("<strong>")
         if (t1 != -1) {
             val t2 = bibleline.indexOf("</strong>", t1 + 8)
@@ -500,7 +500,7 @@ fun bogashlugbovya(context: Context, poshuk: String, secondRun: Boolean = false)
         if (poshuk2.isEmpty()) continue
         val span = AnnotatedString.Builder()
         span.append(nazva)
-        seashpost.add(SearchBibleItem(nazva, 0, 0, bogaslugbovyiaListAll[i].resurs, span))
+        seashpost.add(SearchBibleItem(nazva, 0, 0, bogaslugbovyiaListAll[i].resource, span))
     }
     return seashpost
 }

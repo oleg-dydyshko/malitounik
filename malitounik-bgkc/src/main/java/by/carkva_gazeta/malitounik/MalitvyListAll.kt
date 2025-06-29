@@ -388,7 +388,7 @@ fun MalitvyListAll(
                                     }
                                     val arrayList = ArrayList<MineiaList>()
                                     list.forEach {
-                                        arrayList.add(MineiaList(0, 0, it.title, it.title, it.resurs, 0))
+                                        arrayList.add(MineiaList(0, 0, it.title, it.title, it.resource, 0))
                                     }
                                     arrayList
                                 }
@@ -475,7 +475,7 @@ fun MalitvyListAll(
                                 .clickable {
                                     when (menuItem) {
                                         Settings.MENU_TRYEDZ_POSNAIA -> {
-                                            when (list[index].resurs) {
+                                            when (list[index].resource) {
                                                 "1" -> {
                                                     navigationActions.navigateToMalitvyListAll(
                                                         title, Settings.MENU_TRYEDZ_POSNAIA_1, list[index].title
@@ -515,7 +515,7 @@ fun MalitvyListAll(
                                         }
 
                                         Settings.MENU_TRYEDZ -> {
-                                            when (list[index].resurs) {
+                                            when (list[index].resource) {
                                                 "10" -> {
                                                     navigationActions.navigateToMalitvyListAll(
                                                         title, Settings.MENU_TRYEDZ_POSNAIA, list[index].title
@@ -550,7 +550,7 @@ fun MalitvyListAll(
 
                                         else -> {
                                             navigationActions.navigateToBogaslujbovyia(
-                                                list[index].title, list[index].resurs
+                                                list[index].title, list[index].resource
                                             )
                                         }
                                     }
@@ -649,7 +649,7 @@ fun PynagodnyiaList(prynagodnyaList: ArrayList<BogaslujbovyiaListData>, navigati
                         .padding(start = 10.dp)
                         .clickable {
                             navigationActions.navigateToBogaslujbovyia(
-                                prynagodnyaList[index].title, prynagodnyaList[index].resurs
+                                prynagodnyaList[index].title, prynagodnyaList[index].resource
                             )
                         }, verticalAlignment = Alignment.CenterVertically
                 ) {

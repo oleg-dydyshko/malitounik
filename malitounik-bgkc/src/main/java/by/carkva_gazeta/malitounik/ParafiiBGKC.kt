@@ -82,7 +82,7 @@ fun ParafiiBGKC(navController: NavHostController, innerPadding: PaddingValues) {
                     .padding(start = 10.dp)
                     .clickable {
                         navigationActions.navigateToBogaslujbovyia(
-                            curyia.title, curyia.resurs
+                            curyia.title, curyia.resource
                         )
                     }, verticalAlignment = Alignment.CenterVertically
             ) {
@@ -132,7 +132,7 @@ fun ParafiiBGKC(navController: NavHostController, innerPadding: PaddingValues) {
                             .padding(start = 30.dp)
                             .clickable {
                                 navigationActions.navigateToBogaslujbovyia(
-                                    dataItem.list[index].title, dataItem.list[index].resurs
+                                    dataItem.list[index].title, dataItem.list[index].resource
                                 )
                             }, verticalAlignment = Alignment.CenterVertically
                     ) {

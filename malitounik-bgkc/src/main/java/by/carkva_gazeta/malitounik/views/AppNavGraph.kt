@@ -614,14 +614,14 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
                             navigationActions.navigateToBogaslujbovyia("Дабравешчаньне Найсьвяцейшай Багародзіцы", "bogashlugbovya/mm_25_03_dabravieszczannie_viaczernia_z_liturhijaj.html")
                         }
 
-                        "cytanne" -> {
+                        "cytanne", "cytannedop" -> {
                             val data = findCaliandarToDay(context)
                             val titleCh = context.getString(
                                 R.string.czytanne3, data[1].toInt(), context.resources.getStringArray(R.array.meciac_smoll)[2]
                             )
                             val skip = if (skipUtran) -2 else -1
                             navigationActions.navigateToCytanniList(
-                                titleCh, removeZnakiAndSlovy(data[9]), Settings.CHYTANNI_LITURGICHNYIA, Settings.PEREVODSEMUXI, skip
+                                titleCh, removeZnakiAndSlovy(if (navigate == "cytanne") data[9] else data[11]), Settings.CHYTANNI_LITURGICHNYIA, Settings.PEREVODSEMUXI, skip
                             )
                         }
 

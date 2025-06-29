@@ -127,7 +127,7 @@ fun KaliandarScreen(
                             .align(Alignment.CenterHorizontally)
                             .clickable {
                                 val trapary = getTraparyKandakiNiadzelnyia()
-                                navigateToBogaslujbovyia(trapary[data[20].toInt() - 1].title, trapary[data[20].toInt() - 1].resurs)
+                                navigateToBogaslujbovyia(trapary[data[20].toInt() - 1].title, trapary[data[20].toInt() - 1].resource)
                             }, text = "Тон ${data[20]}", textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.primary, fontSize = Settings.fontInterface.sp
                     )
                 } else if (data[7].toInt() > 0) {

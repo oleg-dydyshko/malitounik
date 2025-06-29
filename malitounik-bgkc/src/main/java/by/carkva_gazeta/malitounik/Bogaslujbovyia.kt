@@ -166,6 +166,7 @@ fun Bogaslujbovyia(
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
     var searshString by rememberSaveable { mutableStateOf("") }
+    var adminResourceEditPosition by remember { mutableIntStateOf(0) }
     val scrollState = rememberScrollState()
     val scrollStateDop = rememberScrollState()
     val gson = Gson()
@@ -480,6 +481,7 @@ fun Bogaslujbovyia(
                                 .fillMaxWidth()
                                 .padding(10.dp)
                                 .clickable {
+                                    adminResourceEditPosition = i
                                     subTitle = listResource[i].title
                                     subText = openAssetsResources(context, listResource[i].resource)
                                     iskniga = true
@@ -510,7 +512,6 @@ fun Bogaslujbovyia(
                     }
                     if (cytanneVisable) {
                         var skipUtran = false
-                        val chytanneList = ArrayList<BogaslujbovyiaListData>()
                         if (data[9].isNotEmpty()) {
                             var chtenie = data[9]
                             if (isLiturgia && chtenie.contains("На ютрані", ignoreCase = true)) {
@@ -522,16 +523,27 @@ fun Bogaslujbovyia(
                                 val t1 = chtenie.indexOf("\n")
                                 if (t1 != -1) chtenie = chtenie.substring(0, t1)
                             }
-                            chytanneList.add(BogaslujbovyiaListData(chtenie, "9"))
+                            listResource.add(SlugbovyiaTextuData(0, chtenie, "9", SlugbovyiaTextu.LITURHIJA))
                         }
                         if (data[10].isNotEmpty()) {
-                            chytanneList.add(BogaslujbovyiaListData(data[10], "10"))
+                            listResource.add(SlugbovyiaTextuData(0, data[10], "10", SlugbovyiaTextu.LITURHIJA))
                         }
                         if (data[11].isNotEmpty()) {
-                            chytanneList.add(BogaslujbovyiaListData(data[11], "11"))
+                            var chtenie = data[11]
+                            if (isLiturgia && chtenie.contains("На ютрані", ignoreCase = true)) {
+                                val t1 = chtenie.indexOf("\n")
+                                if (t1 != -1) chtenie = chtenie.substring(t1 + 1)
+                                skipUtran = true
+                            }
+                            if (isUtran && chtenie.contains("На ютрані", ignoreCase = true)) {
+                                val t1 = chtenie.indexOf("\n")
+                                if (t1 != -1) chtenie = chtenie.substring(0, t1)
+                            }
+                            listResource.add(SlugbovyiaTextuData(0, chtenie, "11", SlugbovyiaTextu.LITURHIJA))
                         }
-                        for (i in chytanneList.indices) {
-                            val navigate = when (chytanneList[i].resurs) {
+                        for (i in listResource.indices) {
+                            if (!(listResource[i].resource == "9" || listResource[i].resource == "10" || listResource[i].resource == "11")) continue
+                            val navigate = when (listResource[i].resource) {
                                 "10" -> "cytannesvityx"
                                 "11" -> "cytannedop"
                                 else -> "cytanne"
@@ -558,7 +570,7 @@ fun Bogaslujbovyia(
                                 )
                                 Text(
                                     modifier = Modifier.padding(start = 10.dp),
-                                    text = chytanneList[i].title,
+                                    text = listResource[i].title,
                                     fontSize = Settings.fontInterface.sp,
                                     maxLines = 2,
                                     overflow = TextOverflow.Ellipsis,
@@ -739,7 +751,7 @@ fun Bogaslujbovyia(
                                     )
                                 }
                             } else {
-                                if (listResource.isNotEmpty()) {
+                                if (!iskniga && listResource.isNotEmpty()) {
                                     IconButton(onClick = {
                                         showDropdown = false
                                         coroutineScope.launch {
@@ -757,7 +769,7 @@ fun Bogaslujbovyia(
                                         VerticalDivider()
                                     }
                                 }
-                                if (!isBottomBar) {
+                                if (!iskniga && !isBottomBar) {
                                     if (scrollState.canScrollForward) {
                                         val iconAutoScroll =
                                             if (autoScrollSensor) painterResource(R.drawable.stop_circle)
@@ -877,18 +889,20 @@ fun Bogaslujbovyia(
                                                 if ((context as MainActivity).checkmodulesAdmin()) {
                                                     val intent = Intent()
                                                     intent.setClassName(context, "by.carkva_gazeta.admin.PasochnicaList")
-                                                    val t1 = resursEncode.lastIndexOf("/")
-                                                    val t2 = resursEncode.lastIndexOf(".")
+                                                    val resAminEdit = if (iskniga) listResource[adminResourceEditPosition].resource
+                                                    else resursEncode
+                                                    val t1 = resAminEdit.lastIndexOf("/")
+                                                    val t2 = resAminEdit.lastIndexOf(".")
                                                     val resursAdmin = if (t1 != -1) {
-                                                        if (t2 != -1) resursEncode.substring(t1 + 1, t2)
-                                                        else resursEncode.substring(t1 + 1)
+                                                        if (t2 != -1) resAminEdit.substring(t1 + 1, t2)
+                                                        else resAminEdit.substring(t1 + 1)
                                                     } else {
-                                                        if (t2 != -1) resursEncode.substring(0, t2)
-                                                        else resursEncode
+                                                        if (t2 != -1) resAminEdit.substring(0, t2)
+                                                        else resAminEdit
                                                     }
                                                     intent.putExtra("resours", resursAdmin)
-                                                    intent.putExtra("title", title)
-                                                    intent.putExtra("text", htmlText.replace("#ff6666", "#d00505", true))
+                                                    intent.putExtra("title", if (iskniga) listResource[adminResourceEditPosition].title else title)
+                                                    intent.putExtra("text", if (iskniga) subText else htmlText.replace("#ff6666", "#d00505", true))
                                                     context.startActivity(intent)
                                                 }
                                             }, text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
@@ -899,25 +913,27 @@ fun Bogaslujbovyia(
                                         }
                                     }
                                 }
-                                if (k.getBoolean("admin", false) && isBottomBar) {
+                                if (k.getBoolean("admin", false) && (isBottomBar || iskniga)) {
                                     IconButton(onClick = {
                                         showDropdown = false
                                         autoScroll = false
                                         if ((context as MainActivity).checkmodulesAdmin()) {
                                             val intent = Intent()
                                             intent.setClassName(context, "by.carkva_gazeta.admin.PasochnicaList")
-                                            val t1 = resursEncode.lastIndexOf("/")
-                                            val t2 = resursEncode.lastIndexOf(".")
+                                            val resAminEdit = if (iskniga) listResource[adminResourceEditPosition].resource
+                                            else resursEncode
+                                            val t1 = resAminEdit.lastIndexOf("/")
+                                            val t2 = resAminEdit.lastIndexOf(".")
                                             val resursAdmin = if (t1 != -1) {
-                                                if (t2 != -1) resursEncode.substring(t1 + 1, t2)
-                                                else resursEncode.substring(t1 + 1)
+                                                if (t2 != -1) resAminEdit.substring(t1 + 1, t2)
+                                                else resAminEdit.substring(t1 + 1)
                                             } else {
-                                                if (t2 != -1) resursEncode.substring(0, t2)
-                                                else resursEncode
+                                                if (t2 != -1) resAminEdit.substring(0, t2)
+                                                else resAminEdit
                                             }
                                             intent.putExtra("resours", resursAdmin)
-                                            intent.putExtra("title", title)
-                                            intent.putExtra("text", htmlText.replace("#ff6666", "#d00505", true))
+                                            intent.putExtra("title", if (iskniga) listResource[adminResourceEditPosition].title else title)
+                                            intent.putExtra("text",  if (iskniga) subText else htmlText.replace("#ff6666", "#d00505", true))
                                             context.startActivity(intent)
                                         }
                                     }) {

@@ -195,7 +195,7 @@ fun BogaslujbovyiaMenu(
                     .clickable {
                         if (menuItem != Settings.MENU_MAE_NATATKI) {
                             navigationActions.navigateToBogaslujbovyia(
-                                filteredItems[index].title, filteredItems[index].resurs
+                                filteredItems[index].title, filteredItems[index].resource
                             )
                         }
                     }, verticalAlignment = Alignment.CenterVertically
@@ -390,4 +390,4 @@ fun getBogaslujbovyia(): ArrayList<BogaslujbovyiaListData> {
     return list
 }
 
-data class BogaslujbovyiaListData(val title: String, val resurs: String)
+data class BogaslujbovyiaListData(val title: String, val resource: String)
