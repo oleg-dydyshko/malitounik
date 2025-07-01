@@ -57,7 +57,7 @@ class FilterBogaslujbovyiaListModel {
 
 @Composable
 fun BogaslujbovyiaMenu(
-    navController: NavHostController, innerPadding: PaddingValues, menuItem: Int, searchText: Boolean, search: String
+    navController: NavHostController, innerPadding: PaddingValues, menuItem: Int, searchText: Boolean
 ) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
@@ -103,7 +103,7 @@ fun BogaslujbovyiaMenu(
             listAll.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
         }
         viewModel.addAllItemList(listAll)
-        viewModel.filterItem(search)
+        viewModel.filterItem(Settings.textFieldValueState.value)
     } else {
         val listAll = when (menuItem) {
             Settings.MENU_BOGASLUJBOVYIA -> getBogaslujbovyia()

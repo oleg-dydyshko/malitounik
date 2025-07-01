@@ -754,5 +754,7 @@
     </string-array>
     <string name="chasaslou">ЧАСАСЛОЎ</string>
     <string name="liturgikon">ЛІТУРГІКОН</string>
+    <string name="share_help">Каб падзяліцца часткай тэксту, скапіруйце яго ў буфер абмену, інакш будзе дзеліцца ўсім тэкстам.</string>
+    <string name="not_show">Больш не паказваць</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

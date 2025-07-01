@@ -21,11 +21,16 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
@@ -77,15 +82,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -129,7 +140,6 @@ import by.carkva_gazeta.malitounik.Pashalia
 import by.carkva_gazeta.malitounik.PiesnyList
 import by.carkva_gazeta.malitounik.R
 import by.carkva_gazeta.malitounik.SearchBible
-import by.carkva_gazeta.malitounik.SearchSviatyia
 import by.carkva_gazeta.malitounik.Settings
 import by.carkva_gazeta.malitounik.Settings.isNetworkAvailable
 import by.carkva_gazeta.malitounik.SettingsView
@@ -139,7 +149,11 @@ import by.carkva_gazeta.malitounik.VybranaeList
 import by.carkva_gazeta.malitounik.bibleCount
 import by.carkva_gazeta.malitounik.formatFigureTwoPlaces
 import by.carkva_gazeta.malitounik.knigaBiblii
+import by.carkva_gazeta.malitounik.rawAsset
 import by.carkva_gazeta.malitounik.removeZnakiAndSlovy
+import by.carkva_gazeta.malitounik.searchJob
+import by.carkva_gazeta.malitounik.searchList
+import by.carkva_gazeta.malitounik.searchListSvityia
 import by.carkva_gazeta.malitounik.setNotificationNon
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik.ui.theme.Divider
@@ -162,7 +176,9 @@ import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileNotFoundException
@@ -515,10 +531,6 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
 
         composable(AllDestinations.UNDER_PADRYXTOUKA) {
             Bogaslujbovyia(navController, stringResource(R.string.spovedz), "padryxtouka_da_spovedzi.html")
-        }
-
-        composable(AllDestinations.SEARCH_SVITYIA) {
-            SearchSviatyia(navController)
         }
 
         composable(AllDestinations.SETTINGS_VIEW) {
@@ -990,7 +1002,6 @@ fun MainConteiner(
     var searchText by rememberSaveable { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
-    var textFieldValueState by remember { Settings.textFieldValueState }
     if (logView) {
         DialogLogProgramy {
             logView = false
@@ -1049,6 +1060,11 @@ fun MainConteiner(
                 route = currentRoute,
                 cytata = cytata,
                 navigateToRazdel = { razdzel ->
+                    if (razdzel == AllDestinations.KALIANDAR || razdzel == AllDestinations.KALIANDAR_YEAR) {
+                        searchListSvityia.clear()
+                        Settings.textFieldValueState.value = ""
+                        Settings.textFieldValueLatest.value = ""
+                    }
                     when (razdzel) {
                         AllDestinations.KALIANDAR -> {
                             if (k.getBoolean("caliandarList", false)) navigationActions.navigateToKaliandarYear()
@@ -1057,11 +1073,36 @@ fun MainConteiner(
 
                         AllDestinations.BOGASLUJBOVYIA_MENU -> navigationActions.navigateToBogaslujbovyiaMenu()
                         AllDestinations.MALITVY_MENU -> navigationActions.navigateToMalitvyMenu()
-                        AllDestinations.BIBLIA_SEMUXA -> navigationActions.navigateToBibliaSemuxa()
-                        AllDestinations.BIBLIA_BOKUNA -> navigationActions.navigateToBibliaBokuna()
-                        AllDestinations.BIBLIA_NADSAN -> navigationActions.navigateToBibliaNadsan()
-                        AllDestinations.BIBLIA_CHARNIAUSKI -> navigationActions.navigateToBibliaCharniauski()
-                        AllDestinations.BIBLIA_SINODAL -> navigationActions.navigateToBibliaSinodal()
+                        AllDestinations.BIBLIA_SEMUXA -> {
+                            searchList.clear()
+                            Settings.textFieldValueState.value = ""
+                            Settings.textFieldValueLatest.value = ""
+                            navigationActions.navigateToBibliaSemuxa()
+                        }
+                        AllDestinations.BIBLIA_BOKUNA -> {
+                            searchList.clear()
+                            Settings.textFieldValueState.value = ""
+                            Settings.textFieldValueLatest.value = ""
+                            navigationActions.navigateToBibliaBokuna()
+                        }
+                        AllDestinations.BIBLIA_NADSAN -> {
+                            searchList.clear()
+                            Settings.textFieldValueState.value = ""
+                            Settings.textFieldValueLatest.value = ""
+                            navigationActions.navigateToBibliaNadsan()
+                        }
+                        AllDestinations.BIBLIA_CHARNIAUSKI -> {
+                            searchList.clear()
+                            Settings.textFieldValueState.value = ""
+                            Settings.textFieldValueLatest.value = ""
+                            navigationActions.navigateToBibliaCharniauski()
+                        }
+                        AllDestinations.BIBLIA_SINODAL -> {
+                            searchList.clear()
+                            Settings.textFieldValueState.value = ""
+                            Settings.textFieldValueLatest.value = ""
+                            navigationActions.navigateToBibliaSinodal()
+                        }
                         AllDestinations.VYBRANAE_LIST -> navigationActions.navigateToVybranaeList()
                         AllDestinations.AKAFIST_MENU -> navigationActions.navigateToAkafistMenu()
                         AllDestinations.LITURGIKON_MENU -> navigationActions.navigateToLiturgikonMenu()
@@ -1148,6 +1189,7 @@ fun MainConteiner(
             else -> ""
         }
         var expandedUp by remember { mutableStateOf(false) }
+        val searchBibleState = rememberLazyListState()
         Scaffold(topBar = {
             TopAppBar(
                 title = {
@@ -1165,32 +1207,30 @@ fun MainConteiner(
                                         focusRequester.requestFocus()
                                         textFieldLoaded = true
                                     }
-                                }, value = textFieldValueState, onValueChange = { newText ->
+                                }, value = Settings.textFieldValueState.value, onValueChange = { newText ->
                                 var edit = newText
                                 edit = edit.replace("и", "і")
                                 edit = edit.replace("щ", "ў")
                                 edit = edit.replace("И", "І")
                                 edit = edit.replace("Щ", "Ў")
                                 edit = edit.replace("ъ", "'")
-                                textFieldValueState = edit
-                                Settings.textFieldValueState.value = textFieldValueState
+                                Settings.textFieldValueState.value = edit
                             }, singleLine = true, leadingIcon = {
                                 Icon(
-                                    painter = painterResource(R.drawable.search), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                                    painter = painterResource(R.drawable.search), tint = textTollBarColor, contentDescription = ""
                                 )
                             }, trailingIcon = {
-                                if (textFieldValueState.isNotEmpty()) {
+                                if (Settings.textFieldValueState.value.isNotEmpty()) {
                                     IconButton(onClick = {
-                                        textFieldValueState = ""
                                         Settings.textFieldValueState.value = ""
                                     }) {
                                         Icon(
-                                            painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                            painter = painterResource(R.drawable.close), contentDescription = "", tint = textTollBarColor
                                         )
                                     }
                                 }
                             }, colors = TextFieldDefaults.colors(
-                                focusedContainerColor = MaterialTheme.colorScheme.onTertiary, unfocusedContainerColor = MaterialTheme.colorScheme.onTertiary, focusedTextColor = PrimaryTextBlack, unfocusedTextColor = PrimaryTextBlack, focusedIndicatorColor = PrimaryTextBlack, unfocusedIndicatorColor = PrimaryTextBlack, cursorColor = PrimaryTextBlack
+                                focusedContainerColor = tollBarColor, unfocusedContainerColor = tollBarColor, focusedTextColor = textTollBarColor, unfocusedTextColor = textTollBarColor, focusedIndicatorColor = textTollBarColor, unfocusedIndicatorColor = textTollBarColor, cursorColor = textTollBarColor
                             ), textStyle = TextStyle(fontSize = TextUnit(Settings.fontInterface, TextUnitType.Sp))
                         )
                     }
@@ -1200,7 +1240,7 @@ fun MainConteiner(
                             searchText = false
                         }, content = {
                             Icon(
-                                painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                                painter = painterResource(R.drawable.close), tint = textTollBarColor, contentDescription = ""
                             )
                         })
                     } else {
@@ -1297,7 +1337,7 @@ fun MainConteiner(
                                 )
                             }
                         }
-                        if (currentRoute == AllDestinations.LITURGIKON_MENU || currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.CHASASLOU_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA) {
+                        if (currentRoute == AllDestinations.LITURGIKON_MENU || currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.CHASASLOU_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA || currentRoute.contains("BIBLIA", ignoreCase = true)) {
                             IconButton({
                                 searchText = true
                             }) {
@@ -1341,7 +1381,7 @@ fun MainConteiner(
                                     })
                                     DropdownMenuItem(onClick = {
                                         expandedUp = false
-                                        navigationActions.navigateToSearchSvityia()
+                                        searchText = true
                                     }, text = { Text(stringResource(R.string.poshuk), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                         Icon(
                                             painter = painterResource(R.drawable.search), contentDescription = ""
@@ -1425,7 +1465,7 @@ fun MainConteiner(
                             ) {
                                 if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
                                     IconButton(onClick = {
-                                        navigationActions.navigateToSearchSvityia()
+                                        searchText = true
                                     }) {
                                         Icon(
                                             painter = painterResource(R.drawable.search), contentDescription = "", tint = textTollBarColor
@@ -1557,68 +1597,77 @@ fun MainConteiner(
                                 }
                             }
                         }
-                        HorizontalPager(
-                            pageSpacing = 10.dp, state = pagerState, flingBehavior = fling, verticalAlignment = Alignment.Top, modifier = Modifier.padding(10.dp)
-                        ) { page ->
-                            KaliandarScreen(page, innerPadding, navigateToCytanneList = { title, chytanne, biblia ->
-                                navigationActions.navigateToCytanniList(
-                                    title, chytanne, biblia, Settings.PEREVODSEMUXI, -1
-                                )
-                            }, navigateToSvityiaView = { svity, position ->
-                                navigationActions.navigateToSvityiaView(svity, position)
-                            }, navigateToBogaslujbovyia = { title, resurs ->
-                                navigationActions.navigateToBogaslujbovyia(title, resurs)
-                            }, navigateToKniga = {
-                                dialogKniga = true
+                        if (searchText) {
+                            SearchSviatyia(lazyColumnState, innerPadding, setCaliandarPage = {
+                                coroutineScope.launch {
+                                    pagerState.scrollToPage(Settings.caliandarPosition)
+                                }
+                                searchText = false
                             })
+                        } else {
+                            HorizontalPager(
+                                pageSpacing = 10.dp, state = pagerState, flingBehavior = fling, verticalAlignment = Alignment.Top, modifier = Modifier.padding(10.dp)
+                            ) { page ->
+                                KaliandarScreen(page, innerPadding, navigateToCytanneList = { title, chytanne, biblia ->
+                                    navigationActions.navigateToCytanniList(
+                                        title, chytanne, biblia, Settings.PEREVODSEMUXI, -1
+                                    )
+                                }, navigateToSvityiaView = { svity, position ->
+                                    navigationActions.navigateToSvityiaView(svity, position)
+                                }, navigateToBogaslujbovyia = { title, resurs ->
+                                    navigationActions.navigateToBogaslujbovyia(title, resurs)
+                                }, navigateToKniga = {
+                                    dialogKniga = true
+                                })
+                            }
                         }
                     }
 
                     AllDestinations.BOGASLUJBOVYIA_MENU -> BogaslujbovyiaMenu(
-                        navController, innerPadding, Settings.MENU_BOGASLUJBOVYIA, searchText, textFieldValueState
+                        navController, innerPadding, Settings.MENU_BOGASLUJBOVYIA, searchText
                     )
 
                     AllDestinations.AKAFIST_MENU -> BogaslujbovyiaMenu(
-                        navController, innerPadding, Settings.MENU_AKAFIST, searchText, textFieldValueState
+                        navController, innerPadding, Settings.MENU_AKAFIST, searchText
                     )
 
-                    AllDestinations.BIBLIJATEKA_NIADAUNIA -> BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_NIADAUNIA, innerPadding, searchText, textFieldValueState)
+                    AllDestinations.BIBLIJATEKA_NIADAUNIA -> BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_NIADAUNIA, innerPadding, searchText)
 
-                    AllDestinations.BIBLIJATEKA_SPEUNIKI -> BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_SPEUNIKI, innerPadding, searchText, textFieldValueState)
+                    AllDestinations.BIBLIJATEKA_SPEUNIKI -> BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_SPEUNIKI, innerPadding, searchText)
 
-                    AllDestinations.BIBLIJATEKA_MALITOUNIKI -> BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_MALITOUNIKI, innerPadding, searchText, textFieldValueState)
+                    AllDestinations.BIBLIJATEKA_MALITOUNIKI -> BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_MALITOUNIKI, innerPadding, searchText)
 
-                    AllDestinations.BIBLIJATEKA_GISTORYIA -> BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_GISTORYIA, innerPadding, searchText, textFieldValueState)
+                    AllDestinations.BIBLIJATEKA_GISTORYIA -> BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_GISTORYIA, innerPadding, searchText)
 
-                    AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA -> BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA, innerPadding, searchText, textFieldValueState)
+                    AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA -> BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA, innerPadding, searchText)
 
-                    AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU -> BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU, innerPadding, searchText, textFieldValueState)
+                    AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU -> BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU, innerPadding, searchText)
 
-                    AllDestinations.PIESNY_PRASLAULENNIA -> PiesnyList(navController, AllDestinations.PIESNY_PRASLAULENNIA, innerPadding, searchText, textFieldValueState)
+                    AllDestinations.PIESNY_PRASLAULENNIA -> PiesnyList(navController, AllDestinations.PIESNY_PRASLAULENNIA, innerPadding, searchText)
 
-                    AllDestinations.PIESNY_ZA_BELARUS -> PiesnyList(navController, AllDestinations.PIESNY_ZA_BELARUS, innerPadding, searchText, textFieldValueState)
+                    AllDestinations.PIESNY_ZA_BELARUS -> PiesnyList(navController, AllDestinations.PIESNY_ZA_BELARUS, innerPadding, searchText)
 
-                    AllDestinations.PIESNY_DA_BAGARODZICY -> PiesnyList(navController, AllDestinations.PIESNY_DA_BAGARODZICY, innerPadding, searchText, textFieldValueState)
+                    AllDestinations.PIESNY_DA_BAGARODZICY -> PiesnyList(navController, AllDestinations.PIESNY_DA_BAGARODZICY, innerPadding, searchText)
 
-                    AllDestinations.PIESNY_KALIADNYIA -> PiesnyList(navController, AllDestinations.PIESNY_KALIADNYIA, innerPadding, searchText, textFieldValueState)
+                    AllDestinations.PIESNY_KALIADNYIA -> PiesnyList(navController, AllDestinations.PIESNY_KALIADNYIA, innerPadding, searchText)
 
-                    AllDestinations.PIESNY_TAIZE -> PiesnyList(navController, AllDestinations.PIESNY_TAIZE, innerPadding, searchText, textFieldValueState)
+                    AllDestinations.PIESNY_TAIZE -> PiesnyList(navController, AllDestinations.PIESNY_TAIZE, innerPadding, searchText)
 
                     AllDestinations.UNDER_SVAITY_MUNU -> SviatyList(navController, innerPadding)
 
                     AllDestinations.UNDER_PARAFII_BGKC -> ParafiiBGKC(navController, innerPadding)
 
                     AllDestinations.UNDER_PASHALIA -> {
-                        if (!searchText) textFieldValueState = ""
-                        Pashalia(navController, innerPadding, searchText, textFieldValueState)
+                        if (!searchText) Settings.textFieldValueState.value = ""
+                        Pashalia(navController, innerPadding, searchText)
                     }
 
                     AllDestinations.CHASASLOU_MENU -> BogaslujbovyiaMenu(
-                        navController, innerPadding, Settings.MENU_CHASASLOU, searchText, textFieldValueState
+                        navController, innerPadding, Settings.MENU_CHASASLOU, searchText
                     )
 
                     AllDestinations.LITURGIKON_MENU -> BogaslujbovyiaMenu(
-                        navController, innerPadding, Settings.MENU_LITURGIKON, searchText, textFieldValueState
+                        navController, innerPadding, Settings.MENU_LITURGIKON, searchText
                     )
 
                     AllDestinations.MAE_NATATKI_MENU -> {
@@ -1629,58 +1678,58 @@ fun MainConteiner(
                     }
 
                     AllDestinations.MALITVY_MENU -> BogaslujbovyiaMenu(
-                        navController, innerPadding, Settings.MENU_MALITVY, searchText, textFieldValueState
+                        navController, innerPadding, Settings.MENU_MALITVY, searchText
                     )
 
-                    AllDestinations.BIBLIA_SEMUXA -> BibliaMenu(navController, Settings.PEREVODSEMUXI, innerPadding, navigateToSearchBible = { perevod ->
-                        navigationActions.navigateToSearchBiblia(perevod, false)
-                    }, navigateToCytanniList = { chytanne, perevod2 ->
-                        navigationActions.navigateToCytanniList(
-                            "", chytanne, Settings.CHYTANNI_BIBLIA, perevod2, -1
-                        )
-                    }, navigateToBogaslujbovyia = { title, resurs ->
-                        navigationActions.navigateToBogaslujbovyia(title, resurs)
-                    })
+                    AllDestinations.BIBLIA_SEMUXA -> {
+                        BibliaMenu(navController, Settings.PEREVODSEMUXI, innerPadding, searchText, searchBibleState, navigateToCytanniList = { chytanne, position, perevod2 ->
+                            navigationActions.navigateToCytanniList(
+                                "", chytanne, Settings.CHYTANNI_BIBLIA, perevod2, position
+                            )
+                        }, navigateToBogaslujbovyia = { title, resurs ->
+                            navigationActions.navigateToBogaslujbovyia(title, resurs)
+                        })
+                    }
 
-                    AllDestinations.BIBLIA_BOKUNA -> BibliaMenu(navController, Settings.PEREVODBOKUNA, innerPadding, navigateToSearchBible = { perevod ->
-                        navigationActions.navigateToSearchBiblia(perevod, false)
-                    }, navigateToCytanniList = { chytanne, perevod2 ->
-                        navigationActions.navigateToCytanniList(
-                            "", chytanne, Settings.CHYTANNI_BIBLIA, perevod2, -1
-                        )
-                    }, navigateToBogaslujbovyia = { title, resurs ->
-                        navigationActions.navigateToBogaslujbovyia(title, resurs)
-                    })
+                    AllDestinations.BIBLIA_BOKUNA -> {
+                        BibliaMenu(navController, Settings.PEREVODBOKUNA, innerPadding, searchText, searchBibleState, navigateToCytanniList = { chytanne, position, perevod2 ->
+                            navigationActions.navigateToCytanniList(
+                                "", chytanne, Settings.CHYTANNI_BIBLIA, perevod2, position
+                            )
+                        }, navigateToBogaslujbovyia = { title, resurs ->
+                            navigationActions.navigateToBogaslujbovyia(title, resurs)
+                        })
+                    }
 
-                    AllDestinations.BIBLIA_NADSAN -> BibliaMenu(navController, Settings.PEREVODNADSAN, innerPadding, navigateToSearchBible = { perevod ->
-                        navigationActions.navigateToSearchBiblia(perevod, false)
-                    }, navigateToCytanniList = { chytanne, perevod2 ->
-                        navigationActions.navigateToCytanniList(
-                            "", chytanne, Settings.CHYTANNI_BIBLIA, perevod2, -1
-                        )
-                    }, navigateToBogaslujbovyia = { title, resurs ->
-                        navigationActions.navigateToBogaslujbovyia(title, resurs)
-                    })
+                    AllDestinations.BIBLIA_NADSAN -> {
+                        BibliaMenu(navController, Settings.PEREVODNADSAN, innerPadding, searchText, searchBibleState, navigateToCytanniList = { chytanne, position, perevod2 ->
+                            navigationActions.navigateToCytanniList(
+                                "", chytanne, Settings.CHYTANNI_BIBLIA, perevod2, position
+                            )
+                        }, navigateToBogaslujbovyia = { title, resurs ->
+                            navigationActions.navigateToBogaslujbovyia(title, resurs)
+                        })
+                    }
 
-                    AllDestinations.BIBLIA_CHARNIAUSKI -> BibliaMenu(navController, Settings.PEREVODCARNIAUSKI, innerPadding, navigateToSearchBible = { perevod ->
-                        navigationActions.navigateToSearchBiblia(perevod, false)
-                    }, navigateToCytanniList = { chytanne, perevod2 ->
-                        navigationActions.navigateToCytanniList(
-                            "", chytanne, Settings.CHYTANNI_BIBLIA, perevod2, -1
-                        )
-                    }, navigateToBogaslujbovyia = { title, resurs ->
-                        navigationActions.navigateToBogaslujbovyia(title, resurs)
-                    })
+                    AllDestinations.BIBLIA_CHARNIAUSKI -> {
+                        BibliaMenu(navController, Settings.PEREVODCARNIAUSKI, innerPadding, searchText, searchBibleState, navigateToCytanniList = { chytanne, position, perevod2 ->
+                            navigationActions.navigateToCytanniList(
+                                "", chytanne, Settings.CHYTANNI_BIBLIA, perevod2, position
+                            )
+                        }, navigateToBogaslujbovyia = { title, resurs ->
+                            navigationActions.navigateToBogaslujbovyia(title, resurs)
+                        })
+                    }
 
-                    AllDestinations.BIBLIA_SINODAL -> BibliaMenu(navController, Settings.PEREVODSINOIDAL, innerPadding, navigateToSearchBible = { perevod ->
-                        navigationActions.navigateToSearchBiblia(perevod, false)
-                    }, navigateToCytanniList = { chytanne, perevod2 ->
-                        navigationActions.navigateToCytanniList(
-                            "", chytanne, Settings.CHYTANNI_BIBLIA, perevod2, -1
-                        )
-                    }, navigateToBogaslujbovyia = { title, resurs ->
-                        navigationActions.navigateToBogaslujbovyia(title, resurs)
-                    })
+                    AllDestinations.BIBLIA_SINODAL -> {
+                        BibliaMenu(navController, Settings.PEREVODSINOIDAL, innerPadding, searchText, searchBibleState, navigateToCytanniList = { chytanne, position, perevod2 ->
+                            navigationActions.navigateToCytanniList(
+                                "", chytanne, Settings.CHYTANNI_BIBLIA, perevod2, position
+                            )
+                        }, navigateToBogaslujbovyia = { title, resurs ->
+                            navigationActions.navigateToBogaslujbovyia(title, resurs)
+                        })
+                    }
 
                     AllDestinations.KALIANDAR_YEAR -> {
                         val dataToDay = findCaliandarToDay(context, false)
@@ -1690,10 +1739,19 @@ fun MainConteiner(
                                 isToDay = data[1] == dataToDay[1] && data[2] == dataToDay[2] && data[3] == dataToDay[3]
                             }
                         }
-                        KaliandarScreenYear(
-                            coroutineScope = coroutineScope, lazyColumnState = lazyColumnState, innerPadding, navigateToSvityiaView = { svity, position ->
-                                navigationActions.navigateToSvityiaView(svity, position)
+                        if (searchText) {
+                            SearchSviatyia(lazyColumnState, innerPadding, setCaliandarPage = {
+                                coroutineScope.launch {
+                                    lazyColumnState.scrollToItem(Settings.caliandarPosition)
+                                }
+                                searchText = false
                             })
+                        } else {
+                            KaliandarScreenYear(
+                                coroutineScope = coroutineScope, lazyColumnState = lazyColumnState, innerPadding, navigateToSvityiaView = { svity, position ->
+                                    navigationActions.navigateToSvityiaView(svity, position)
+                                })
+                        }
                     }
 
                     AllDestinations.VYBRANAE_LIST -> VybranaeList(
@@ -1723,6 +1781,153 @@ fun MainConteiner(
                 navigationActions.navigateToSvityiaView(svity, position)
             }) {
                 dialogKniga = false
+            }
+        }
+    }
+}
+
+@Composable
+fun SearchSviatyia(lazyColumnState: LazyListState, innerPadding: PaddingValues, setCaliandarPage: () -> Unit) {
+    val context = LocalContext.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+    LaunchedEffect(Settings.textFieldValueState.value) {
+        if (Settings.textFieldValueState.value.trim().length >= 3 && Settings.textFieldValueState.value.trim() != Settings.textFieldValueLatest.value.trim()) {
+            Settings.textFieldValueLatest.value = Settings.textFieldValueState.value.trim()
+            searchJob?.cancel()
+            searchJob = CoroutineScope(Dispatchers.Main).launch {
+                searchListSvityia.clear()
+                val list = withContext(Dispatchers.IO) {
+                    return@withContext rawAsset(context, Settings.textFieldValueState.value.trim())
+                }
+                searchListSvityia.addAll(list)
+            }
+        } else {
+            searchJob?.cancel()
+        }
+    }
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(
+                available: Offset,
+                source: NestedScrollSource
+            ): Offset {
+                keyboardController?.hide()
+                return super.onPreScroll(available, source)
+            }
+        }
+    }
+    Column {
+        Text(
+            modifier = Modifier.padding(start = 10.dp),
+            text = stringResource(R.string.searh_sviatyia_result, searchListSvityia.size),
+            fontStyle = FontStyle.Italic,
+            fontSize = Settings.fontInterface.sp,
+            color = MaterialTheme.colorScheme.secondary
+        )
+        LazyColumn(
+            Modifier.nestedScroll(nestedScrollConnection),
+            state = lazyColumnState
+        ) {
+            items(searchListSvityia.size) { index ->
+                Row(
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .clickable {
+                            val calendar = Calendar.getInstance()
+                            calendar[Calendar.DAY_OF_YEAR] = searchListSvityia[index].dayOfYear
+                            for (e in Settings.data.indices) {
+                                if (calendar[Calendar.DATE] == Settings.data[e][1].toInt() && calendar[Calendar.MONTH] == Settings.data[e][2].toInt() && calendar[Calendar.YEAR] == Settings.data[e][3].toInt()) {
+                                    Settings.caliandarPosition = e
+                                    break
+                                }
+                            }
+                            setCaliandarPage()
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        modifier = Modifier.size(5.dp, 5.dp),
+                        painter = painterResource(R.drawable.poiter),
+                        tint = MaterialTheme.colorScheme.primary,
+                        contentDescription = null
+                    )
+                    Column {
+                        Text(
+                            text = searchListSvityia[index].opisanieData,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(10.dp),
+                            fontStyle = FontStyle.Italic,
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontSize = Settings.fontInterface.sp
+                        )
+                        when (searchListSvityia[index].typeSviat) {
+                            0 -> {
+                                HtmlText(
+                                    modifier = Modifier
+                                        .padding(10.dp),
+                                    text = searchListSvityia[index].opisanie,
+                                    fontSize = Settings.fontInterface.sp
+                                )
+                            }
+
+                            1 -> {
+                                Text(
+                                    modifier = Modifier
+                                        .padding(10.dp),
+                                    text = searchListSvityia[index].opisanie,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = Settings.fontInterface.sp
+                                )
+                            }
+
+                            2 -> {
+                                Text(
+                                    modifier = Modifier
+                                        .padding(10.dp),
+                                    text = searchListSvityia[index].opisanie,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = Settings.fontInterface.sp
+                                )
+                            }
+
+                            3 -> {
+                                Text(
+                                    modifier = Modifier
+                                        .padding(10.dp),
+                                    text = searchListSvityia[index].opisanie,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontSize = Settings.fontInterface.sp
+                                )
+                            }
+
+                            else -> {
+                                val t1 = searchListSvityia[index].opisanie.indexOf(":")
+                                val annotatedString = if (t1 != -1) {
+                                    buildAnnotatedString {
+                                        append(searchListSvityia[index].opisanie)
+                                        addStyle(SpanStyle(fontWeight = FontWeight.Bold), 0, t1 + 1)
+                                    }
+                                } else {
+                                    AnnotatedString(searchListSvityia[index].opisanie)
+                                }
+                                Text(
+                                    modifier = Modifier
+                                        .padding(10.dp),
+                                    text = annotatedString,
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    fontSize = Settings.fontInterface.sp
+                                )
+                            }
+                        }
+                    }
+                }
+                HorizontalDivider()
+            }
+            item {
+                Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
             }
         }
     }

@@ -859,6 +859,7 @@ fun SettingsView(navController: NavHostController) {
                         putBoolean("adminDayInYear", false)
                         putBoolean("paralel_maranata", true)
                         putBoolean("bottomBar", false)
+                        putBoolean("isShareHelp", true)
                     }
                     modeNotification = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)

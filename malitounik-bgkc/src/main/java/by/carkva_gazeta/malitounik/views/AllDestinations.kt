@@ -25,7 +25,6 @@ import by.carkva_gazeta.malitounik.views.AllDestinations.MALITVY_MENU
 import by.carkva_gazeta.malitounik.views.AllDestinations.PADZEI_VIEW
 import by.carkva_gazeta.malitounik.views.AllDestinations.PRANAS
 import by.carkva_gazeta.malitounik.views.AllDestinations.SEARCH_BIBLIA
-import by.carkva_gazeta.malitounik.views.AllDestinations.SEARCH_SVITYIA
 import by.carkva_gazeta.malitounik.views.AllDestinations.SETTINGS_VIEW
 import by.carkva_gazeta.malitounik.views.AllDestinations.SVITYIA_VIEW
 import by.carkva_gazeta.malitounik.views.AllDestinations.UMOUNIA_ZNACHENNI
@@ -76,7 +75,6 @@ object AllDestinations {
     const val UMOUNIA_ZNACHENNI = "Shto_Novaga"
     const val PRANAS = "PraNas"
     const val HELP = "Help"
-    const val SEARCH_SVITYIA = "Search_Svityia"
     const val SETTINGS_VIEW = "Settings_View"
     const val PADZEI_VIEW = "Padzei_View"
     const val SVITYIA_VIEW = "Svityia_View"
@@ -266,12 +264,6 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
     fun navigateToHelp() {
         navController.navigate(HELP) {
             HELP
-        }
-    }
-
-    fun navigateToSearchSvityia() {
-        navController.navigate(SEARCH_SVITYIA) {
-            SEARCH_SVITYIA
         }
     }
 

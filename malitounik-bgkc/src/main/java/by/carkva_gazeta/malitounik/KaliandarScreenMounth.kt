@@ -273,9 +273,9 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                         color = PrimaryTextBlack
                     )
                 }
-                (1..end / 7).forEach {
+                (1..end / 7).forEach { _ ->
                     Row(modifier = Modifier.fillMaxWidth()) {
-                        (1..7).forEach {
+                        (1..7).forEach { _ ->
                             if (e < wik) {
                                 oldDay++
                                 day = "start"

@@ -69,7 +69,7 @@ class FilterPasxaModel : ViewModel() {
 }
 
 @Composable
-fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, searchText: Boolean, search: String) {
+fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, searchText: Boolean) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
@@ -104,7 +104,7 @@ fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, sear
         }
     }
     val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
-    viewModel.filterItem(search)
+    viewModel.filterItem(Settings.textFieldValueState.value)
     Column(modifier = Modifier.nestedScroll(nestedScrollConnection)) {
         if (!searchText) {
             Row(

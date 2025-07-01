@@ -102,7 +102,7 @@ var biblijatekaJob: Job? = null
 
 @Suppress("DEPRECATION")
 @Composable
-fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerPadding: PaddingValues, searchText: Boolean, search: String) {
+fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerPadding: PaddingValues, searchText: Boolean) {
     val context = LocalContext.current
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
@@ -139,27 +139,27 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
                         }
 
                         AllDestinations.BIBLIJATEKA_GISTORYIA -> {
-                            var newList = list.filter { it[4].toInt() == 1 } as ArrayList<ArrayList<String>>
+                            val newList = list.filter { it[4].toInt() == 1 } as ArrayList<ArrayList<String>>
                             bibliatekaList.addAll(newList)
                         }
 
                         AllDestinations.BIBLIJATEKA_MALITOUNIKI -> {
-                            var newList = list.filter { it[4].toInt() == 2 } as ArrayList<ArrayList<String>>
+                            val newList = list.filter { it[4].toInt() == 2 } as ArrayList<ArrayList<String>>
                             bibliatekaList.addAll(newList)
                         }
 
                         AllDestinations.BIBLIJATEKA_SPEUNIKI -> {
-                            var newList = list.filter { it[4].toInt() == 3 } as ArrayList<ArrayList<String>>
+                            val newList = list.filter { it[4].toInt() == 3 } as ArrayList<ArrayList<String>>
                             bibliatekaList.addAll(newList)
                         }
 
                         AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA -> {
-                            var newList = list.filter { it[4].toInt() == 4 } as ArrayList<ArrayList<String>>
+                            val newList = list.filter { it[4].toInt() == 4 } as ArrayList<ArrayList<String>>
                             bibliatekaList.addAll(newList)
                         }
 
                         AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU -> {
-                            var newList = list.filter { it[4].toInt() == 5 } as ArrayList<ArrayList<String>>
+                            val newList = list.filter { it[4].toInt() == 5 } as ArrayList<ArrayList<String>>
                             bibliatekaList.addAll(newList)
                             bibliatekaList.sortByDescending {
                                 val t1 = it[0].indexOf("(")
@@ -181,7 +181,7 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
     if (searchText) {
         viewModel.clear()
         viewModel.addAllItemList(bibliatekaList)
-        viewModel.filterItem(search)
+        viewModel.filterItem(Settings.textFieldValueState.value)
     }
     val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
     if (isDialogBiblijatekaVisable) {
@@ -473,7 +473,7 @@ fun writeFile(
         inProcess(true)
         var error = false
         try {
-            (0..2).forEach {
+            (0..2).forEach { _ ->
                 error = downloadPdfFile(context, url)
                 if (!error) return@forEach
             }
@@ -527,7 +527,7 @@ private suspend fun getBibliateka(
         try {
             val temp = ArrayList<ArrayList<String>>()
             var sb = ""
-            (0..2).forEach {
+            (0..2).forEach { _ ->
                 sb = getBibliatekaJson(context)
                 if (sb != "") return@forEach
             }

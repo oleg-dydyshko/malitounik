@@ -44,6 +44,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -587,10 +588,42 @@ fun Bogaslujbovyia(
         }
     ) { innerPadding ->
         paddingValues = innerPadding
+        var shareIsLaunch by remember { mutableStateOf(false) }
         val launcherShare = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (autoScrollSensor) autoScroll = true
+            shareIsLaunch = false
+        }
+        var dialogHelpShare by remember { mutableStateOf(false) }
+        if (dialogHelpShare) {
+            DialogHelpShare {
+                if (it) {
+                    k.edit {
+                        putBoolean("isShareHelp", false)
+                    }
+                }
+                dialogHelpShare = false
+                shareIsLaunch = true
+            }
         }
         var expandedUp by remember { mutableStateOf(false) }
+        if (shareIsLaunch) {
+            val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+            val isTextFound = textLayout.value?.layoutInput?.text?.text?.contains(clipboard.primaryClip?.getItemAt(0)?.text ?: "@#$") == true
+            val sent = if (isTextFound) clipboard.primaryClip?.getItemAt(0)?.text
+            else textLayout.value?.layoutInput?.text?.text
+            sent?.let { shareText ->
+                if (!isTextFound) {
+                    val clip = ClipData.newPlainText(context.getString(R.string.copy_text), shareText)
+                    clipboard.setPrimaryClip(clip)
+                    Toast.makeText(context, context.getString(R.string.copy), Toast.LENGTH_SHORT).show()
+                }
+                val sendIntent = Intent(Intent.ACTION_SEND)
+                sendIntent.putExtra(Intent.EXTRA_TEXT, shareText)
+                sendIntent.putExtra(Intent.EXTRA_SUBJECT, title)
+                sendIntent.type = "text/plain"
+                launcherShare.launch(Intent.createChooser(sendIntent, title))
+            }
+        }
         Scaffold(
             topBar = {
                 AnimatedVisibility(
@@ -837,22 +870,10 @@ fun Bogaslujbovyia(
                                         DropdownMenuItem(onClick = {
                                             expandedUp = false
                                             autoScroll = false
-                                            if (autoScrollSensor) autoScroll = true
-                                            val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-                                            val isTextFound = textLayout.value?.layoutInput?.text?.text?.contains(clipboard.primaryClip?.getItemAt(0)?.text ?: "@#$") == true
-                                            val sent = if (isTextFound) clipboard.primaryClip?.getItemAt(0)?.text
-                                            else textLayout.value?.layoutInput?.text?.text
-                                            sent?.let { shareText ->
-                                                if (!isTextFound) {
-                                                    val clip = ClipData.newPlainText(context.getString(R.string.copy_text), shareText)
-                                                    clipboard.setPrimaryClip(clip)
-                                                    Toast.makeText(context, context.getString(R.string.copy), Toast.LENGTH_SHORT).show()
-                                                }
-                                                val sendIntent = Intent(Intent.ACTION_SEND)
-                                                sendIntent.putExtra(Intent.EXTRA_TEXT, shareText)
-                                                sendIntent.putExtra(Intent.EXTRA_SUBJECT, title)
-                                                sendIntent.type = "text/plain"
-                                                launcherShare.launch(Intent.createChooser(sendIntent, title))
+                                            if (k.getBoolean("isShareHelp", true)) {
+                                                dialogHelpShare = true
+                                            } else {
+                                                shareIsLaunch = true
                                             }
                                         }, text = { Text(stringResource(R.string.share), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                             Icon(
@@ -1016,22 +1037,10 @@ fun Bogaslujbovyia(
                                         IconButton(onClick = {
                                             showDropdown = false
                                             autoScroll = false
-                                            if (autoScrollSensor) autoScroll = true
-                                            val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-                                            val isTextFound = textLayout.value?.layoutInput?.text?.text?.contains(clipboard.primaryClip?.getItemAt(0)?.text ?: "@#$") == true
-                                            val sent = if (isTextFound) clipboard.primaryClip?.getItemAt(0)?.text
-                                            else textLayout.value?.layoutInput?.text?.text
-                                            sent?.let { shareText ->
-                                                if (!isTextFound) {
-                                                    val clip = ClipData.newPlainText(context.getString(R.string.copy_text), shareText)
-                                                    clipboard.setPrimaryClip(clip)
-                                                    Toast.makeText(context, context.getString(R.string.copy), Toast.LENGTH_SHORT).show()
-                                                }
-                                                val sendIntent = Intent(Intent.ACTION_SEND)
-                                                sendIntent.putExtra(Intent.EXTRA_TEXT, shareText)
-                                                sendIntent.putExtra(Intent.EXTRA_SUBJECT, title)
-                                                sendIntent.type = "text/plain"
-                                                launcherShare.launch(Intent.createChooser(sendIntent, title))
+                                            if (k.getBoolean("isShareHelp", true)) {
+                                                dialogHelpShare = true
+                                            } else {
+                                                shareIsLaunch = true
                                             }
                                         }) {
                                             Icon(
@@ -1445,6 +1454,48 @@ fun DialogLiturgia(
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.close), fontSize = 18.sp)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DialogHelpShare(onDismiss: (Boolean) -> Unit) {
+    var isCheck by remember { mutableStateOf(false) }
+    Dialog(onDismissRequest = { onDismiss(isCheck) }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column {
+                Text(
+                    text = stringResource(R.string.share).uppercase(), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.onTertiary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
+                )
+                Text(text = stringResource(R.string.share_help), modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(checked = isCheck, onCheckedChange = {
+                        isCheck = !isCheck
+                    })
+                    Text(text = stringResource(R.string.not_show), modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
+                }
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = { onDismiss(isCheck) }, shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Text(stringResource(R.string.ok), fontSize = 18.sp)
                     }
                 }
             }

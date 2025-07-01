@@ -72,7 +72,7 @@ class FilterPiesnyListModel : ViewModel() {
 }
 
 @Composable
-fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: PaddingValues, searchText: Boolean, search: String) {
+fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: PaddingValues, searchText: Boolean) {
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
@@ -718,7 +718,7 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
         viewModel.sortWith()
     }
     val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
-    viewModel.filterItem(search)
+    viewModel.filterItem(Settings.textFieldValueState.value)
     Column {
         if (searchText) {
             PiesnyList(filteredItems, navigationActions, innerPadding)
