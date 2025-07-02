@@ -29,7 +29,7 @@ fun biblia(
     } else {
         "s"
     }
-    var fileName = "biblia_error.txt"
+    var fileName: String
     if (perevod == Settings.PEREVODNADSAN) {
         fileName = "chytanne/psaltyr_nadsan.txt"
     } else {
@@ -66,6 +66,7 @@ fun biblia(
                 if (styxStart != 0 && styxEnd != 0 && glavaEnd == glavaStart) {
                     if (styxStart - 1 <= styx && styxEnd > styx) result.add(
                         BibliaDataItem(
+                            glava,
                             spisStyxov[styx].replace(
                                 "\\n",
                                 "<br>"
@@ -77,6 +78,7 @@ fun biblia(
                     if (styxStart != 0) {
                         if (styxStart - 1 <= styx) result.add(
                             BibliaDataItem(
+                                glava,
                                 spisStyxov[styx].replace(
                                     "\\n",
                                     "<br>"
@@ -87,6 +89,7 @@ fun biblia(
                     } else {
                         result.add(
                             BibliaDataItem(
+                                glava,
                                 spisStyxov[styx].replace("\\n", "<br>"),
                                 getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
                             )
@@ -99,6 +102,7 @@ fun biblia(
             for (styx in spisStyxov.indices) {
                 result.add(
                     BibliaDataItem(
+                        glava,
                         spisStyxov[styx].replace("\\n", "<br>"),
                         getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
                     )
@@ -110,6 +114,7 @@ fun biblia(
                 if (styxEnd != 0) {
                     if (styxEnd > styx) result.add(
                         BibliaDataItem(
+                            glava,
                             spisStyxov[styx].replace(
                                 "\\n",
                                 "<br>"
@@ -119,6 +124,7 @@ fun biblia(
                 } else {
                     result.add(
                         BibliaDataItem(
+                            glava,
                             spisStyxov[styx].replace("\\n", "<br>"),
                             getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
                         )
@@ -339,4 +345,4 @@ fun getNameBook(context: Context, perevod: String, novyZapavet: Boolean): Array<
     return arrayOf("")
 }
 
-data class BibliaDataItem(val styx: String, val paralelStyx: String)
+data class BibliaDataItem(val glava: Int, val styx: String, val paralelStyx: String)

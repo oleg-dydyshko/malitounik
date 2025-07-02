@@ -881,6 +881,7 @@ fun MainConteiner(
         Settings.initCaliandarPosition
     } else Settings.caliandarPosition
     val lazyColumnState = rememberLazyListState()
+    val lazyColumnStateSearchSvityia = rememberLazyListState()
     val pagerState = rememberPagerState(pageCount = {
         Settings.data.size
     }, initialPage = initPage)
@@ -1598,7 +1599,7 @@ fun MainConteiner(
                             }
                         }
                         if (searchText) {
-                            SearchSviatyia(lazyColumnState, innerPadding, setCaliandarPage = {
+                            SearchSviatyia(lazyColumnStateSearchSvityia, innerPadding, setCaliandarPage = {
                                 coroutineScope.launch {
                                     pagerState.scrollToPage(Settings.caliandarPosition)
                                 }
@@ -1740,7 +1741,7 @@ fun MainConteiner(
                             }
                         }
                         if (searchText) {
-                            SearchSviatyia(lazyColumnState, innerPadding, setCaliandarPage = {
+                            SearchSviatyia(lazyColumnStateSearchSvityia, innerPadding, setCaliandarPage = {
                                 coroutineScope.launch {
                                     lazyColumnState.scrollToItem(Settings.caliandarPosition)
                                 }
@@ -1787,7 +1788,7 @@ fun MainConteiner(
 }
 
 @Composable
-fun SearchSviatyia(lazyColumnState: LazyListState, innerPadding: PaddingValues, setCaliandarPage: () -> Unit) {
+fun SearchSviatyia(lazyColumnStateSearchSvityia: LazyListState, innerPadding: PaddingValues, setCaliandarPage: () -> Unit) {
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
     LaunchedEffect(Settings.textFieldValueState.value) {
@@ -1826,7 +1827,7 @@ fun SearchSviatyia(lazyColumnState: LazyListState, innerPadding: PaddingValues, 
         )
         LazyColumn(
             Modifier.nestedScroll(nestedScrollConnection),
-            state = lazyColumnState
+            state = lazyColumnStateSearchSvityia
         ) {
             items(searchListSvityia.size) { index ->
                 Row(

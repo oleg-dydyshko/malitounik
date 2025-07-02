@@ -1685,7 +1685,7 @@ fun getBible(
                                                         getNameBook(
                                                             context, kniga, perevodNew, knigiBiblii >= 50
                                                         )
-                                                    } $glava", "[&#8230;]"
+                                                    } ${textBible[w].glava}", "[&#8230;]"
                                                 )
                                             )
                                         } else {
@@ -1696,7 +1696,7 @@ fun getBible(
                                                             getNameBook(
                                                                 context, kniga, perevodNew, knigiBiblii >= 50
                                                             )
-                                                        } $glava", if (biblia == Settings.CHYTANNI_LITURGICHNYIA) {
+                                                        } ${textBible[w].glava}", if (biblia == Settings.CHYTANNI_LITURGICHNYIA) {
                                                             val eGlavy = knigaStyxi.ifEmpty { glava.toString() }
                                                             "<strong><br>" + getNameBook(
                                                                 context, kniga, perevodNew, knigiBiblii >= 50
@@ -1723,7 +1723,7 @@ fun getBible(
                                                 getNameBook(
                                                     context, kniga, perevodNew, knigiBiblii >= 50
                                                 )
-                                            } $glava", text, textBible[w].paralelStyx
+                                            } ${textBible[w].glava}", text, textBible[w].paralelStyx
                                         )
                                     )
                                     id++
