@@ -31,7 +31,9 @@
     <string name="czytanne2">Чытаньні</string>
     <string name="menu_font_size_app">Выбраць памер шрыфту</string>
     <string name="pazdel">Выбраць разьдзел</string>
-    <string name="settings_battom_panel">Ніжняя панэль</string>
+    <string name="settings_battom_panel">Ніжняй панэлі</string>
+    <string name="settings_top_panel">Верхняй панэлі</string>
+    <string name="settings_title_panel">Кнопкі кіраваньня размешчаны на:</string>
     <string name="apav_only">Толькі абавязковыя сьвяты</string>
     <string name="apav_all">Усе сьвяты</string>
     <string name="apav_no">Без апавяшчэньняў</string>

@@ -57,7 +57,6 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
@@ -480,7 +479,6 @@ fun Biblijateka(
                     0.dp
                 )
         ) {
-            var widthZoom by remember { mutableIntStateOf(0) }
             var zoomAll by remember { mutableFloatStateOf(1f) }
             var offsetX by remember { mutableFloatStateOf(0f) }
             var offsetY by remember { mutableFloatStateOf(0f) }
@@ -491,9 +489,6 @@ fun Biblijateka(
             val density = LocalDensity.current
             val pager = remember { PdfViewModel(PdfBitmapConverter(density.density, file)) }
             val modifier = Modifier
-                .onGloballyPositioned { coordinates ->
-                    widthZoom = coordinates.size.width
-                }
                 .clipToBounds()
                 .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
                 .graphicsLayer {

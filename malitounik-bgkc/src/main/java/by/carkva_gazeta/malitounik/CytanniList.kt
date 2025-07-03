@@ -941,7 +941,7 @@ fun CytanniList(
                             stringResource(R.string.menu_font_size_app), modifier = Modifier.padding(start = 10.dp, top = 10.dp), fontStyle = FontStyle.Italic, textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                         )
                         Slider(
-                            modifier = Modifier.padding(horizontal = 10.dp), valueRange = 18f..58f, steps = 10, value = fontSize, onValueChange = {
+                            modifier = Modifier.padding(horizontal = 10.dp), valueRange = 18f..58f, value = fontSize, onValueChange = {
                                 k.edit {
                                     putFloat("font_biblia", it)
                                 }

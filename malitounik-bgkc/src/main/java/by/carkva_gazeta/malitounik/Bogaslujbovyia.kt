@@ -23,6 +23,9 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
@@ -91,6 +94,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
@@ -957,7 +961,7 @@ fun Bogaslujbovyia(
                                             }
                                             intent.putExtra("resours", resursAdmin)
                                             intent.putExtra("title", if (iskniga) listResource[adminResourceEditPosition].title else title)
-                                            intent.putExtra("text",  if (iskniga) subText else htmlText.replace("#ff6666", "#d00505", true))
+                                            intent.putExtra("text", if (iskniga) subText else htmlText.replace("#ff6666", "#d00505", true))
                                             context.startActivity(intent)
                                         }
                                     }) {
@@ -1006,7 +1010,6 @@ fun Bogaslujbovyia(
                                         Slider(
                                             modifier = Modifier.padding(10.dp),
                                             valueRange = 18f..58f,
-                                            steps = 10,
                                             value = fontSize,
                                             onValueChange = {
                                                 k.edit {
@@ -1176,7 +1179,26 @@ fun Bogaslujbovyia(
                     val padding = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp
                     if (autoScrollSensor) {
                         HtmlText(
-                            modifier = Modifier.padding(top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(10.dp)),
+                            modifier = Modifier
+                                .padding(top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(10.dp))
+                                .pointerInput(Unit) {
+                                    awaitEachGesture {
+                                        awaitFirstDown()
+                                        do {
+                                            val event = awaitPointerEvent()
+                                            if (event.changes.size == 2) {
+                                                fontSize *= event.calculateZoom()
+                                                fontSize = fontSize.coerceIn(18f, 58f)
+                                                k.edit {
+                                                    putFloat("font_biblia", fontSize)
+                                                }
+                                                event.changes.forEach { pointerInputChange: PointerInputChange ->
+                                                    pointerInputChange.consume()
+                                                }
+                                            }
+                                        } while (event.changes.any { it.pressed })
+                                    }
+                                },
                             text = htmlText,
                             fontSize = fontSize.sp,
                             isNoLiturgia = isLiturgia && !isNoLiturgia,
@@ -1192,7 +1214,26 @@ fun Bogaslujbovyia(
                     } else {
                         SelectionContainer {
                             HtmlText(
-                                modifier = Modifier.padding(top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(10.dp)),
+                                modifier = Modifier
+                                    .padding(top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(10.dp))
+                                    .pointerInput(Unit) {
+                                        awaitEachGesture {
+                                            awaitFirstDown()
+                                            do {
+                                                val event = awaitPointerEvent()
+                                                if (event.changes.size == 2) {
+                                                    fontSize *= event.calculateZoom()
+                                                    fontSize = fontSize.coerceIn(18f, 58f)
+                                                    k.edit {
+                                                        putFloat("font_biblia", fontSize)
+                                                    }
+                                                    event.changes.forEach { pointerInputChange: PointerInputChange ->
+                                                        pointerInputChange.consume()
+                                                    }
+                                                }
+                                            } while (event.changes.any { it.pressed })
+                                        }
+                                    },
                                 text = htmlText,
                                 fontSize = fontSize.sp,
                                 isNoLiturgia = isLiturgia && !isNoLiturgia,

@@ -215,40 +215,40 @@ fun SettingsView(navController: NavHostController) {
         topBar = {
             TopAppBar(
                 title = {
-                Text(
-                    modifier = Modifier.clickable {
-                        maxLine.intValue = Int.MAX_VALUE
-                        coroutineScope.launch {
-                            delay(5000L)
-                            maxLine.intValue = 1
-                        }
-                    }, text = stringResource(R.string.tools_item).uppercase(), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, fontSize = Settings.fontInterface.sp, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis
-                )
-            }, navigationIcon = {
-                IconButton(onClick = {
-                    if (!backPressHandled) {
-                        backPressHandled = true
-                        navController.popBackStack()
-                    }
-                }, content = {
-                    Icon(
-                        painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                    Text(
+                        modifier = Modifier.clickable {
+                            maxLine.intValue = Int.MAX_VALUE
+                            coroutineScope.launch {
+                                delay(5000L)
+                                maxLine.intValue = 1
+                            }
+                        }, text = stringResource(R.string.tools_item).uppercase(), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, fontSize = Settings.fontInterface.sp, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis
                     )
-                })
-            }, actions = {
-                if (admin) {
+                }, navigationIcon = {
                     IconButton(onClick = {
-                        admin = false
-                        k.edit {
-                            putBoolean("admin", false)
+                        if (!backPressHandled) {
+                            backPressHandled = true
+                            navController.popBackStack()
                         }
-                    }) {
+                    }, content = {
                         Icon(
-                            painter = painterResource(R.drawable.logout), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                            painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
                         )
+                    })
+                }, actions = {
+                    if (admin) {
+                        IconButton(onClick = {
+                            admin = false
+                            k.edit {
+                                putBoolean("admin", false)
+                            }
+                        }) {
+                            Icon(
+                                painter = painterResource(R.drawable.logout), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                            )
+                        }
                     }
-                }
-            }, colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
+                }, colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
             )
         }) { innerPadding ->
         val interactionSourse = remember { MutableInteractionSource() }
@@ -396,46 +396,78 @@ fun SettingsView(navController: NavHostController) {
             }
             var fontSizeInterface by remember { mutableFloatStateOf(k.getFloat("fontSizeInterface", 20f)) }
             Text(
-                stringResource(R.string.settengs_font_size_app), fontStyle = FontStyle.Italic, fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                modifier = Modifier.padding(top = 10.dp), text = stringResource(R.string.settengs_font_size_app), fontStyle = FontStyle.Italic, fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
             )
             Slider(
-                valueRange = 18f..26f, steps = 4, value = fontSizeInterface, onValueChange = {
-                k.edit {
-                    putFloat("fontSizeInterface", it)
-                }
-                fontSizeInterface = it
-                Settings.fontInterface = it
-            }, colors = SliderDefaults.colors(inactiveTrackColor = Divider))
-            var buttomBar by remember { mutableStateOf(k.getBoolean("bottomBar", false)) }
-            Row(
-                verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 10.dp).clickable {
-                    buttomBar = !buttomBar
+                valueRange = 18f..26f, value = fontSizeInterface, onValueChange = {
                     k.edit {
-                        putBoolean("bottomBarr", buttomBar)
+                        putFloat("fontSizeInterface", it)
                     }
-                }) {
-                Text(
-                    stringResource(R.string.settings_battom_panel), modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
-                )
-                Switch(
-                    modifier = Modifier.scale(0.8f), checked = buttomBar, onCheckedChange = {
-                        buttomBar = it
+                    if (k.getFloat("font_biblia", 22f) <= 26f) {
                         k.edit {
-                            putBoolean("bottomBar", buttomBar)
+                            putFloat("font_biblia", it)
                         }
-                    })
+                    }
+                    fontSizeInterface = it
+                    Settings.fontInterface = it
+                }, colors = SliderDefaults.colors(inactiveTrackColor = Divider)
+            )
+            Text(
+                modifier = Modifier.padding(top = 10.dp), text = stringResource(R.string.settings_title_panel), fontStyle = FontStyle.Italic, fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+            )
+            Column(Modifier.selectableGroup()) {
+                var buttomBar by remember { mutableStateOf(k.getBoolean("bottomBar", false)) }
+                val edit = k.edit()
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            buttomBar = false
+                            edit.putBoolean("bottomBar", false)
+                            edit.apply()
+                        }, verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = !buttomBar, onClick = {
+                            buttomBar = false
+                            edit.putBoolean("bottomBar", false)
+                            edit.apply()
+                        })
+                    Text(
+                        stringResource(R.string.settings_top_panel), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            buttomBar = true
+                            edit.putBoolean("bottomBar", true)
+                            edit.apply()
+                        }, verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = buttomBar, onClick = {
+                            buttomBar = true
+                            edit.putBoolean("bottomBar", true)
+                            edit.apply()
+                        })
+                    Text(
+                        stringResource(R.string.settings_battom_panel), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp
+                    )
+                }
             }
             var adminDayInYearState by remember { mutableStateOf(k.getBoolean("adminDayInYear", false)) }
             if (admin) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 10.dp).clickable {
-                        adminDayInYearState = !adminDayInYearState
-                        k.edit {
-                            putBoolean("adminDayInYear", adminDayInYearState)
-                        }
-                    }) {
+                    verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                        .padding(vertical = 10.dp)
+                        .clickable {
+                            adminDayInYearState = !adminDayInYearState
+                            k.edit {
+                                putBoolean("adminDayInYear", adminDayInYearState)
+                            }
+                        }) {
                     Text(
                         stringResource(R.string.admin_day_in_year), modifier = Modifier
                             .weight(1f)
@@ -485,14 +517,15 @@ fun SettingsView(navController: NavHostController) {
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
             var sinoidalState by remember { mutableStateOf(k.getBoolean("sinoidal_bible", false)) }
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                .clickable {
-                    sinoidalState = !sinoidalState
-                    k.edit {
-                        putBoolean("sinoidal_bible", sinoidalState)
+            Row(
+                verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                    .clickable {
+                        sinoidalState = !sinoidalState
+                        k.edit {
+                            putBoolean("sinoidal_bible", sinoidalState)
+                        }
                     }
-                }
-                .padding(vertical = 5.dp)) {
+                    .padding(vertical = 5.dp)) {
                 Text(
                     stringResource(R.string.bsinaidal), modifier = Modifier
                         .weight(1f)
@@ -507,14 +540,15 @@ fun SettingsView(navController: NavHostController) {
                     })
             }
             var maranafaState by remember { mutableStateOf(k.getBoolean("maranafa", false)) }
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                .clickable {
-                    maranafaState = !maranafaState
-                    k.edit {
-                        putBoolean("maranafa", maranafaState)
+            Row(
+                verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                    .clickable {
+                        maranafaState = !maranafaState
+                        k.edit {
+                            putBoolean("maranafa", maranafaState)
+                        }
                     }
-                }
-                .padding(vertical = 5.dp)) {
+                    .padding(vertical = 5.dp)) {
                 Text(
                     stringResource(R.string.maranata_opis), modifier = Modifier
                         .weight(1f)
@@ -529,14 +563,15 @@ fun SettingsView(navController: NavHostController) {
                     })
             }
             var paralelState by remember { mutableStateOf(k.getBoolean("paralel_maranata", true)) }
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                .clickable {
-                    paralelState = !paralelState
-                    k.edit {
-                        putBoolean("paralel_maranata", paralelState)
+            Row(
+                verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                    .clickable {
+                        paralelState = !paralelState
+                        k.edit {
+                            putBoolean("paralel_maranata", paralelState)
+                        }
                     }
-                }
-                .padding(vertical = 5.dp)) {
+                    .padding(vertical = 5.dp)) {
                 Text(
                     stringResource(R.string.paralel), modifier = Modifier
                         .weight(1f)
@@ -694,12 +729,12 @@ fun SettingsView(navController: NavHostController) {
                         dataTimes.forEachIndexed { index, option ->
                             DropdownMenuItem(
                                 text = { Text(text = option.string, fontSize = (Settings.fontInterface - 2).sp) }, onClick = {
-                                textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option.string)
-                                expandedSviaty = false
-                                k.edit {
-                                    putInt("timeNotification", index)
-                                }
-                            }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding, colors = MenuDefaults.itemColors(textColor = PrimaryText)
+                                    textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option.string)
+                                    expandedSviaty = false
+                                    k.edit {
+                                        putInt("timeNotification", index)
+                                    }
+                                }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding, colors = MenuDefaults.itemColors(textColor = PrimaryText)
                             )
                         }
                     }
@@ -735,14 +770,15 @@ fun SettingsView(navController: NavHostController) {
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
             var modePkcSvaity by remember { mutableStateOf(k.getBoolean("s_pkc", false)) }
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                .clickable {
-                    modePkcSvaity = !modePkcSvaity
-                    k.edit {
-                        putBoolean("s_pkc", modePkcSvaity)
+            Row(
+                verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                    .clickable {
+                        modePkcSvaity = !modePkcSvaity
+                        k.edit {
+                            putBoolean("s_pkc", modePkcSvaity)
+                        }
                     }
-                }
-                .padding(vertical = 5.dp)) {
+                    .padding(vertical = 5.dp)) {
                 Text(
                     stringResource(R.string.pkc), modifier = Modifier
                         .weight(1f)
@@ -757,14 +793,15 @@ fun SettingsView(navController: NavHostController) {
                     })
             }
             var modePravasSvaity by remember { mutableStateOf(k.getBoolean("s_pravas", false)) }
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                .clickable {
-                    modePravasSvaity = !modePravasSvaity
-                    k.edit {
-                        putBoolean("s_pravas", modePravasSvaity)
+            Row(
+                verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                    .clickable {
+                        modePravasSvaity = !modePravasSvaity
+                        k.edit {
+                            putBoolean("s_pravas", modePravasSvaity)
+                        }
                     }
-                }
-                .padding(vertical = 5.dp)) {
+                    .padding(vertical = 5.dp)) {
                 Text(
                     stringResource(R.string.sviaty_ulian), modifier = Modifier
                         .weight(1f)
@@ -779,14 +816,15 @@ fun SettingsView(navController: NavHostController) {
                     })
             }
             var modeGosudSvaity by remember { mutableStateOf(k.getBoolean("s_gosud", false)) }
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                .clickable {
-                    modeGosudSvaity = !modeGosudSvaity
-                    k.edit {
-                        putBoolean("s_gosud", modeGosudSvaity)
+            Row(
+                verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                    .clickable {
+                        modeGosudSvaity = !modeGosudSvaity
+                        k.edit {
+                            putBoolean("s_gosud", modeGosudSvaity)
+                        }
                     }
-                }
-                .padding(vertical = 5.dp)) {
+                    .padding(vertical = 5.dp)) {
                 Text(
                     stringResource(R.string.sviaty_dziar), modifier = Modifier
                         .weight(1f)
@@ -801,14 +839,15 @@ fun SettingsView(navController: NavHostController) {
                     })
             }
             var modePafesiiSvaity by remember { mutableStateOf(k.getBoolean("s_pafesii", false)) }
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                .clickable {
-                    modePafesiiSvaity = !modePafesiiSvaity
-                    k.edit {
-                        putBoolean("s_pafesii", modePafesiiSvaity)
+            Row(
+                verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                    .clickable {
+                        modePafesiiSvaity = !modePafesiiSvaity
+                        k.edit {
+                            putBoolean("s_pafesii", modePafesiiSvaity)
+                        }
                     }
-                }
-                .padding(vertical = 5.dp)) {
+                    .padding(vertical = 5.dp)) {
                 Text(
                     stringResource(R.string.sviaty_pfes), modifier = Modifier
                         .weight(1f)
