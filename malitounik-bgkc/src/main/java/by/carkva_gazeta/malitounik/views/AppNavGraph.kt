@@ -744,34 +744,28 @@ fun findCaliandarToDay(context: Context, isGlobal: Boolean = true): ArrayList<St
     return Settings.data[caliandarPosition]
 }
 
-@Composable
-fun findCaliandarPosition(position: Int): ArrayList<ArrayList<String>> {
-    if (Settings.data.isEmpty()) {
-        val gson = Gson()
-        val type = TypeToken.getParameterized(
-            ArrayList::class.java, TypeToken.getParameterized(
-                ArrayList::class.java, String::class.java
-            ).type
+fun findCaliandarPosition(context: Context) {
+    val gson = Gson()
+    val type = TypeToken.getParameterized(
+        ArrayList::class.java, TypeToken.getParameterized(
+            ArrayList::class.java, String::class.java
         ).type
-        val inputStream = LocalContext.current.resources.openRawResource(R.raw.caliandar)
-        val isr = InputStreamReader(inputStream)
-        val reader = BufferedReader(isr)
-        val builder = reader.use {
-            it.readText()
-        }
-        Settings.data.addAll(gson.fromJson(builder, type))
+    ).type
+    val inputStream = context.resources.openRawResource(R.raw.caliandar)
+    val isr = InputStreamReader(inputStream)
+    val reader = BufferedReader(isr)
+    val builder = reader.use {
+        it.readText()
     }
-    if (position == -1 && Settings.initCaliandarPosition == 0) {
-        val calendar = Calendar.getInstance()
-        for (i in Settings.data.indices) {
-            if (calendar[Calendar.DATE] == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
-                Settings.caliandarPosition = i
-                Settings.initCaliandarPosition = i
-                break
-            }
+    Settings.data.addAll(gson.fromJson(builder, type))
+    val calendar = Calendar.getInstance()
+    for (i in Settings.data.indices) {
+        if (calendar[Calendar.DATE] == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
+            Settings.caliandarPosition = i
+            Settings.initCaliandarPosition = i
+            break
         }
-    } else Settings.caliandarPosition = position
-    return Settings.data
+    }
 }
 
 @Composable
@@ -876,15 +870,14 @@ fun MainConteiner(
     LaunchedEffect(Unit) {
         appUpdate = true
     }
-    val initPage = if (Settings.caliandarPosition == -1) {
-        findCaliandarPosition(-1)
-        Settings.initCaliandarPosition
-    } else Settings.caliandarPosition
+    if (Settings.data.isEmpty()) {
+        findCaliandarPosition(context)
+    }
     val lazyColumnState = rememberLazyListState()
     val lazyColumnStateSearchSvityia = rememberLazyListState()
     val pagerState = rememberPagerState(pageCount = {
         Settings.data.size
-    }, initialPage = initPage)
+    }, initialPage = Settings.caliandarPosition)
     var showDropdown by remember { mutableStateOf(false) }
     var showDropdownMenuPos by rememberSaveable { mutableIntStateOf(1) }
     BackHandler(drawerState.isClosed || showDropdown) {
@@ -1080,30 +1073,35 @@ fun MainConteiner(
                             Settings.textFieldValueLatest.value = ""
                             navigationActions.navigateToBibliaSemuxa()
                         }
+
                         AllDestinations.BIBLIA_BOKUNA -> {
                             searchList.clear()
                             Settings.textFieldValueState.value = ""
                             Settings.textFieldValueLatest.value = ""
                             navigationActions.navigateToBibliaBokuna()
                         }
+
                         AllDestinations.BIBLIA_NADSAN -> {
                             searchList.clear()
                             Settings.textFieldValueState.value = ""
                             Settings.textFieldValueLatest.value = ""
                             navigationActions.navigateToBibliaNadsan()
                         }
+
                         AllDestinations.BIBLIA_CHARNIAUSKI -> {
                             searchList.clear()
                             Settings.textFieldValueState.value = ""
                             Settings.textFieldValueLatest.value = ""
                             navigationActions.navigateToBibliaCharniauski()
                         }
+
                         AllDestinations.BIBLIA_SINODAL -> {
                             searchList.clear()
                             Settings.textFieldValueState.value = ""
                             Settings.textFieldValueLatest.value = ""
                             navigationActions.navigateToBibliaSinodal()
                         }
+
                         AllDestinations.VYBRANAE_LIST -> navigationActions.navigateToVybranaeList()
                         AllDestinations.AKAFIST_MENU -> navigationActions.navigateToAkafistMenu()
                         AllDestinations.LITURGIKON_MENU -> navigationActions.navigateToLiturgikonMenu()

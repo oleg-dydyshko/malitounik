@@ -147,7 +147,7 @@ object Settings {
     var bibleTime = false
     var bibleTimeList = false
     var destinations = AllDestinations.KALIANDAR
-    var caliandarPosition = -1
+    var caliandarPosition = 0
     var initCaliandarPosition = 0
     var data = ArrayList<ArrayList<String>>()
     var fontInterface by mutableFloatStateOf(22F)
