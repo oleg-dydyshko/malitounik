@@ -742,7 +742,7 @@ fun CytanniList(
     }, bottomBar = {
         if (showDropdown) {
             ModalBottomSheet(
-                scrimColor = Color.Transparent, properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false), containerColor = MaterialTheme.colorScheme.background, onDismissRequest = {
+                scrimColor = Color.Transparent, properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false), containerColor = MaterialTheme.colorScheme.surfaceContainer, onDismissRequest = {
                     showDropdown = false
                     if (autoScrollSensor) autoScroll = true
                 }) {

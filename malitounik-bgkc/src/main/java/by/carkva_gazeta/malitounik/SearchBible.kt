@@ -272,7 +272,7 @@ fun SearchBible(
                 ModalBottomSheet(
                     scrimColor = Color.Transparent,
                     properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false),
-                    containerColor = MaterialTheme.colorScheme.background,
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
                     onDismissRequest = {
                         showDropdown = false
                     }

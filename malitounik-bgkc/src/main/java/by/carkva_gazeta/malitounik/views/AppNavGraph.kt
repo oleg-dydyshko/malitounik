@@ -1441,7 +1441,7 @@ fun MainConteiner(
                             sheetState = sheetState, properties = ModalBottomSheetProperties(
                                 isAppearanceLightStatusBars = isAppearanceLight, isAppearanceLightNavigationBars = if (Settings.destinations == AllDestinations.KALIANDAR) isAppearanceLight
                                 else !context.dzenNoch
-                            ), containerColor = MaterialTheme.colorScheme.background, onDismissRequest = { showDropdown = false }) {
+                            ), containerColor = MaterialTheme.colorScheme.surfaceContainer, onDismissRequest = { showDropdown = false }) {
                             if (showDropdownMenuPos == 1) {
                                 KaliandarScreenMounth(
                                     setPageCaliandar = { date ->

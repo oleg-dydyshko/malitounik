@@ -992,6 +992,7 @@ fun Bogaslujbovyia(
                                 ModalBottomSheet(
                                     sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
                                     scrimColor = Color.Transparent,
+                                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
                                     properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false),
                                     onDismissRequest = {
                                         showDropdown = false

@@ -594,7 +594,7 @@ fun PadzeiaView(navController: NavHostController) {
                     scrimColor = Color.Transparent,
                     sheetState = sheetState,
                     properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false),
-                    containerColor = MaterialTheme.colorScheme.background,
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
                     onDismissRequest = { showDropdown = false }
                 ) {
                     if (kalendarMun || kalendarMun2 || kalendarMun3) {

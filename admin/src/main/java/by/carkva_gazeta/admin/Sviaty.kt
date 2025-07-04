@@ -54,7 +54,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
 
     @SuppressLint("SetTextI18n")
     private val caliandarMunLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
+        if (result.resultCode == RESULT_OK && newArrayList.isNotEmpty()) {
             val intent = result.data
             if (intent != null) {
                 val position = intent.getIntExtra("position", 0)
@@ -143,6 +143,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
         binding.spinnerSviaty.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             @SuppressLint("SetTextI18n")
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if (newArrayList.isEmpty()) return
                 binding.sviaty.setText(newArrayList[position].opisanie)
                 binding.spinnerIsPasxa.setSelection(newArrayList[position].dataCaliandar)
                 caliandarArrayList.clear()
@@ -189,30 +190,35 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
             val localFile = File("$filesDir/cache/cache.txt")
             MainActivity.referens.child("/sviaty.json").getFile(localFile).addOnCompleteListener {
                 if (it.isSuccessful) {
-                    val builder = localFile.readText()
-                    val gson = Gson()
-                    val type = TypeToken.getParameterized(ArrayList::class.java, SviatyData::class.java).type
-                    newArrayList.addAll(gson.fromJson(builder, type))
-                    (binding.spinnerSviaty.adapter as SpinnerAdapter).notifyDataSetChanged()
-                    binding.spinnerSviaty.setSelection(0)
-                    binding.sviaty.setText(newArrayList[0].opisanie)
-                    binding.spinnerIsPasxa.setSelection(newArrayList[0].dataCaliandar)
-                    caliandarArrayList.clear()
-                    val dat = MenuCaliandar.getDataCalaindar(year = Calendar.getInstance()[Calendar.YEAR])
-                    for (i in dat.indices) {
-                        if (newArrayList[0].dataCaliandar == SviatyData.PASHA) {
-                            if (dat[i][22].toInt() == newArrayList[0].data) {
-                                caliandarArrayList.addAll(MenuCaliandar.getPositionCaliandar(dat[i][25].toInt()))
-                                break
-                            }
-                        } else {
-                            if (dat[i][1].toInt() == newArrayList[0].data && dat[i][2].toInt() + 1 == newArrayList[0].mun) {
-                                caliandarArrayList.addAll(MenuCaliandar.getPositionCaliandar(dat[i][25].toInt()))
-                                break
+                    try {
+                        val builder = localFile.readText()
+                        val gson = Gson()
+                        val type = TypeToken.getParameterized(ArrayList::class.java, SviatyData::class.java).type
+                        newArrayList.addAll(gson.fromJson(builder, type))
+                        (binding.spinnerSviaty.adapter as SpinnerAdapter).notifyDataSetChanged()
+                        binding.spinnerSviaty.setSelection(0)
+                        binding.sviaty.setText(newArrayList[0].opisanie)
+                        binding.spinnerIsPasxa.setSelection(newArrayList[0].dataCaliandar)
+                        caliandarArrayList.clear()
+                        val dat = MenuCaliandar.getDataCalaindar(year = Calendar.getInstance()[Calendar.YEAR])
+                        for (i in dat.indices) {
+                            if (newArrayList[0].dataCaliandar == SviatyData.PASHA) {
+                                if (dat[i][22].toInt() == newArrayList[0].data) {
+                                    caliandarArrayList.addAll(MenuCaliandar.getPositionCaliandar(dat[i][25].toInt()))
+                                    break
+                                }
+                            } else {
+                                if (dat[i][1].toInt() == newArrayList[0].data && dat[i][2].toInt() + 1 == newArrayList[0].mun) {
+                                    caliandarArrayList.addAll(MenuCaliandar.getPositionCaliandar(dat[i][25].toInt()))
+                                    break
+                                }
                             }
                         }
+                        binding.calandar.text = caliandarArrayList[1] + " " + resources.getStringArray(by.carkva_gazeta.malitounik.R.array.meciac_smoll)[caliandarArrayList[2].toInt()] + " " + caliandarArrayList[3]
+                    } catch (_: Throwable) {
+                        Toast.makeText(this@Sviaty, getString(by.carkva_gazeta.malitounik.R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                        binding.progressBar2.visibility = View.GONE
                     }
-                    binding.calandar.text = caliandarArrayList[1] + " " + resources.getStringArray(by.carkva_gazeta.malitounik.R.array.meciac_smoll)[caliandarArrayList[2].toInt()] + " " + caliandarArrayList[3]
                 } else {
                     error = true
                 }

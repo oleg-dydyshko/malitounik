@@ -185,8 +185,8 @@ fun BibliaMenu(
         if (showDropdown) {
             ModalBottomSheet(
                 scrimColor = Color.Transparent,
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
                 properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false),
-                containerColor = MaterialTheme.colorScheme.background,
                 onDismissRequest = {
                     showDropdown = false
                 }
