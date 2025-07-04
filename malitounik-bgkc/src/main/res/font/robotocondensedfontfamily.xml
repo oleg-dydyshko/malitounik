@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <font-family xmlns:app="http://schemas.android.com/apk/res-auto">
     <font
-        app:font="@font/robotocondensed"
+        app:font="@font/roboto_condensed_regular"
         app:fontStyle="normal"
         app:fontWeight="400" />
     <font
-        app:font="@font/robotocondensedbold"
+        app:font="@font/roboto_condensed_bold"
         app:fontStyle="normal"
         app:fontWeight="700" />
     <font
-        app:font="@font/robotocondenseditalic"
+        app:font="@font/roboto_condensed_italic"
         app:fontStyle="italic"
         app:fontWeight="400" />
     <font
-        app:font="@font/robotocondensedbolditalic"
+        app:font="@font/roboto_condensed_bold_italic"
         app:fontStyle="italic"
         app:fontWeight="700" />
 </font-family>

@@ -78,10 +78,10 @@ class CaliandarMunTab1 : BaseFragment() {
 
     fun createFont(style: Int): Typeface? {
         return when (style) {
-            Typeface.BOLD -> ResourcesCompat.getFont(requireActivity(), by.carkva_gazeta.malitounik.R.font.robotocondensedbold)
-            Typeface.ITALIC -> ResourcesCompat.getFont(requireActivity(), by.carkva_gazeta.malitounik.R.font.robotocondenseditalic)
-            Typeface.BOLD_ITALIC -> ResourcesCompat.getFont(requireActivity(), by.carkva_gazeta.malitounik.R.font.robotocondensedbolditalic)
-            else -> ResourcesCompat.getFont(requireActivity(), by.carkva_gazeta.malitounik.R.font.robotocondensed)
+            Typeface.BOLD -> ResourcesCompat.getFont(requireActivity(), by.carkva_gazeta.malitounik.R.font.roboto_condensed_bold)
+            Typeface.ITALIC -> ResourcesCompat.getFont(requireActivity(), by.carkva_gazeta.malitounik.R.font.roboto_condensed_italic)
+            Typeface.BOLD_ITALIC -> ResourcesCompat.getFont(requireActivity(), by.carkva_gazeta.malitounik.R.font.roboto_condensed_bold_italic)
+            else -> ResourcesCompat.getFont(requireActivity(), by.carkva_gazeta.malitounik.R.font.roboto_condensed_regular)
         }
     }
 

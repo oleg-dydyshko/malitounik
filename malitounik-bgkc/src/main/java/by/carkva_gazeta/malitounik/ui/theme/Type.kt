@@ -14,10 +14,10 @@ import by.carkva_gazeta.malitounik.R
     certificates = R.array.com_google_android_gms_fonts_certs
 )*/
 val displayFontFamily = FontFamily(
-    Font(R.font.robotocondensed),
-    Font(R.font.robotocondensedbold, weight = FontWeight.Bold),
-    Font(R.font.robotocondenseditalic, style = FontStyle.Italic),
-    Font(R.font.robotocondensedbolditalic, weight = FontWeight.Bold, style = FontStyle.Italic)
+    Font(R.font.roboto_condensed_regular),
+    Font(R.font.roboto_condensed_bold, weight = FontWeight.Bold),
+    Font(R.font.roboto_condensed_italic, style = FontStyle.Italic),
+    Font(R.font.roboto_condensed_bold_italic, weight = FontWeight.Bold, style = FontStyle.Italic)
 )
 val baseline = Typography()
 
