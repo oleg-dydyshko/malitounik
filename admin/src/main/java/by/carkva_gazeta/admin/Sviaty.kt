@@ -51,6 +51,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
     private val newArrayList = ArrayList<SviatyData>()
     private var edittext: AppCompatEditText? = null
     private var caliandarArrayList = ArrayList<String>()
+    private lateinit var adapter: SpinnerSviaty
 
     @SuppressLint("SetTextI18n")
     private val caliandarMunLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -177,7 +178,8 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
         }
-        binding.spinnerSviaty.adapter = SpinnerAdapter(this@Sviaty, newArrayList)
+        adapter = SpinnerSviaty(this@Sviaty, newArrayList)
+        binding.spinnerSviaty.adapter = adapter
         binding.spinnerIsPasxa.adapter = SpinnerAdapterPasha(this@Sviaty, resources.getStringArray(by.carkva_gazeta.malitounik.R.array.admin_svity_data))
         setTollbarTheme()
     }
@@ -195,7 +197,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                         val gson = Gson()
                         val type = TypeToken.getParameterized(ArrayList::class.java, SviatyData::class.java).type
                         newArrayList.addAll(gson.fromJson(builder, type))
-                        (binding.spinnerSviaty.adapter as SpinnerAdapter).notifyDataSetChanged()
+                        adapter.notifyDataSetChanged()
                         binding.spinnerSviaty.setSelection(0)
                         binding.sviaty.setText(newArrayList[0].opisanie)
                         binding.spinnerIsPasxa.setSelection(newArrayList[0].dataCaliandar)
@@ -495,7 +497,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                 } catch (_: Throwable) {
                     Toast.makeText(this@Sviaty, getString(by.carkva_gazeta.malitounik.R.string.error_ch2), Toast.LENGTH_SHORT).show()
                 }
-                (binding.spinnerSviaty.adapter as SpinnerAdapter).notifyDataSetChanged()
+                adapter.notifyDataSetChanged()
                 binding.spinnerSviaty.visibility = View.VISIBLE
                 binding.spinnerSviaty.setSelection(pos)
                 invalidateOptionsMenu()
@@ -541,11 +543,11 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
         }
     }
 
-    private class SpinnerAdapter(private val activity: Activity, private val data: ArrayList<SviatyData>) : ArrayAdapter<SviatyData>(activity, R.layout.simple_list_item_1, data) {
+    private class SpinnerSviaty(private val activity: Activity, private val data: ArrayList<SviatyData>) : ArrayAdapter<SviatyData>(activity, R.layout.simple_list_item_1, data) {
 
         override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
             val v = super.getDropDownView(position, convertView, parent)
-            val textView = v as TextViewCustom
+            val textView = v as TextView
             val datam = data[position].opisanie
             val t1 = datam.indexOf("</strong>")
             val title = if (t1 != -1) HtmlCompat.fromHtml(datam.substring(0, t1), HtmlCompat.FROM_HTML_MODE_LEGACY).toString()

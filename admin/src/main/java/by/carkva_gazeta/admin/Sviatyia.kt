@@ -144,7 +144,7 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
                     }.await()
                     val gson = Gson()
                     builder = if (builder != "") {
-                        val type = TypeToken.getParameterized(java.util.ArrayList::class.java, String::class.java).type
+                        val type = TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
                         val arrayList: ArrayList<String> = gson.fromJson(builder, type)
                         arrayList[caliandarDayOfYearList[0][1].toInt() - 1]
                     } else {
@@ -486,7 +486,7 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
                     }.await()
                     val gson = Gson()
                     if (builder != "") {
-                        val type = TypeToken.getParameterized(java.util.ArrayList::class.java, String::class.java).type
+                        val type = TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
                         val arrayList: ArrayList<String> = gson.fromJson(builder, type)
                         arrayList[data - 1] = spaw.replace(" ", " ")
                         localFile4.writer().use {

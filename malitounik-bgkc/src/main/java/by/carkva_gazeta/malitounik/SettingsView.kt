@@ -1028,7 +1028,7 @@ fun DialogLogin(
                                 login = ""
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
                                 )
                             }
                         }

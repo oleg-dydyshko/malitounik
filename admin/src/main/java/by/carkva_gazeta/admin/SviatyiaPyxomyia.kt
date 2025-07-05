@@ -90,7 +90,7 @@ class SviatyiaPyxomyia : BaseActivity(), View.OnClickListener, DialogEditImage.D
                 if (it.isSuccessful) {
                     val builder = localFile.readText()
                     val gson = Gson()
-                    val type = TypeToken.getParameterized(java.util.ArrayList::class.java, TypeToken.getParameterized(java.util.ArrayList::class.java, String::class.java).type).type
+                    val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
                     arrayList.addAll(gson.fromJson(builder, type))
                 } else {
                     error = true
@@ -375,7 +375,7 @@ class SviatyiaPyxomyia : BaseActivity(), View.OnClickListener, DialogEditImage.D
                     if (arrayList.isNotEmpty()) {
                         val localFile = File("$filesDir/sviatyja/opisanie13.json")
                         val gson = Gson()
-                        val type = TypeToken.getParameterized(java.util.ArrayList::class.java, TypeToken.getParameterized(java.util.ArrayList::class.java, String::class.java).type).type
+                        val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
                         localFile.writer().use {
                             it.write(gson.toJson(arrayList, type))
                         }

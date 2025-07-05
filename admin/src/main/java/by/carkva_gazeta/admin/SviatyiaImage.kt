@@ -272,7 +272,7 @@ class SviatyiaImage : BaseActivity(), DialogDeliteImage.DialogDeliteListener, Ad
             }.await()
         }
         val gson = Gson()
-        val type = TypeToken.getParameterized(java.util.ArrayList::class.java, String::class.java).type
+        val type = TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
         var res = ""
         val arrayList = ArrayList<String>()
         if (fileOpisanie.exists() && fileOpisanie.readText().isNotEmpty()) {

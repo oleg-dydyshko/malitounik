@@ -104,7 +104,7 @@ class Piarliny : BaseActivity(), View.OnClickListener, DialogDelite.DialogDelite
             resultArray2.add(piarliny[i].data)
             resultArray.add(resultArray2)
         }
-        val type = TypeToken.getParameterized(java.util.ArrayList::class.java, TypeToken.getParameterized(java.util.ArrayList::class.java, String::class.java).type).type
+        val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
         sendPostRequest(gson.toJson(resultArray, type))
     }
 
@@ -125,7 +125,7 @@ class Piarliny : BaseActivity(), View.OnClickListener, DialogDelite.DialogDelite
                     if (task.isSuccessful) {
                         val jsonFile = localFile.readText()
                         val gson = Gson()
-                        val type = TypeToken.getParameterized(java.util.ArrayList::class.java, TypeToken.getParameterized(java.util.ArrayList::class.java, String::class.java).type).type
+                        val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
                         val piarlin = ArrayList<ArrayList<String>>()
                         piarlin.addAll(gson.fromJson(jsonFile, type))
                         piarlin.forEach {
@@ -260,7 +260,7 @@ class Piarliny : BaseActivity(), View.OnClickListener, DialogDelite.DialogDelite
                     resultArray2.add(piarliny[i].data)
                     resultArray.add(resultArray2)
                 }
-                val type = TypeToken.getParameterized(java.util.ArrayList::class.java, TypeToken.getParameterized(java.util.ArrayList::class.java, String::class.java).type).type
+                val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
                 sendPostRequest(gson.toJson(resultArray, type))
             }
             binding.listView.visibility = View.VISIBLE
