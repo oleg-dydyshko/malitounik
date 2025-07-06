@@ -29,7 +29,7 @@ import by.carkva_gazeta.admin.databinding.AdminSviatyBinding
 import by.carkva_gazeta.admin.databinding.SimpleListItem1Binding
 import by.carkva_gazeta.malitounik.MainActivity
 import by.carkva_gazeta.malitounik.Settings
-import by.carkva_gazeta.malitounik.SviatyData
+import by.carkva_gazeta.malitounik.SviatyDataM
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -48,7 +48,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
     private lateinit var binding: AdminSviatyBinding
     private var urlJob: Job? = null
     private var resetTollbarJob: Job? = null
-    private val newArrayList = ArrayList<SviatyData>()
+    private val newArrayList = ArrayList<SviatyDataM>()
     private var edittext: AppCompatEditText? = null
     private var caliandarArrayList = ArrayList<String>()
     private lateinit var adapter: SpinnerSviaty
@@ -64,7 +64,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                 binding.calandar.text = caliandarArrayList[1] + " " + resources.getStringArray(by.carkva_gazeta.malitounik.R.array.meciac_smoll)[caliandarArrayList[2].toInt()] + " " + caliandarArrayList[3]
                 var check = false
                 for (i in newArrayList.indices) {
-                    if ((newArrayList[i].data == caliandarArrayList[22].toInt() && newArrayList[i].dataCaliandar == SviatyData.PASHA) || (newArrayList[i].data == caliandarArrayList[1].toInt() && newArrayList[i].mun == caliandarArrayList[2].toInt() + 1 && newArrayList[i].dataCaliandar == SviatyData.CALAINDAR)) {
+                    if ((newArrayList[i].data == caliandarArrayList[22].toInt() && newArrayList[i].dataCaliandar == SviatyDataM.PASHA) || (newArrayList[i].data == caliandarArrayList[1].toInt() && newArrayList[i].mun == caliandarArrayList[2].toInt() + 1 && newArrayList[i].dataCaliandar == SviatyDataM.CALAINDAR)) {
                         binding.spinnerSviaty.setSelection(i)
                         binding.sviaty.setText(newArrayList[i].opisanie)
                         binding.spinnerIsPasxa.setSelection(newArrayList[i].dataCaliandar)
@@ -103,25 +103,6 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
         super.onCreate(savedInstanceState)
         binding = AdminSviatyBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        /*sviaty.add(SviatyDataM(-1, 0, "Уваход у Ерусалім"))
-        sviaty.add(SviatyDataM(-1, 1, "Уваскрасеньне"))
-        sviaty.add(SviatyDataM(-1, 2, "Узьнясеньне"))
-        sviaty.add(SviatyDataM(-1, 3, "Тройца"))
-        sviaty.add(SviatyDataM(1, 1, "1 Студзеня"))
-        sviaty.add(SviatyDataM(6, 1, "6 Студзеня"))
-        sviaty.add(SviatyDataM(2, 2, "2 Лютага"))
-        sviaty.add(SviatyDataM(25, 3, "25 Сакавіка"))
-        sviaty.add(SviatyDataM(24, 6, "24 Чэрвеня"))
-        sviaty.add(SviatyDataM(29, 6, "29 Чэрвеня"))
-        sviaty.add(SviatyDataM(6, 8, "6 Жніўня"))
-        sviaty.add(SviatyDataM(15, 8, "15 Жніўня"))
-        sviaty.add(SviatyDataM(29, 8, "29 Жніўня"))
-        sviaty.add(SviatyDataM(8, 9, "8 Верасьня"))
-        sviaty.add(SviatyDataM(14, 9, "14 Верасьня"))
-        sviaty.add(SviatyDataM(1, 10, "1 Кастрычніка"))
-        sviaty.add(SviatyDataM(21, 11, "21 Лістапада"))
-        sviaty.add(SviatyDataM(25, 12, "25 Сьнежня"))
-        sviaty.add(SviatyDataM(-1, 4, "Айцоў першых 6-ці Ўсяленскіх сабораў"))*/
         binding.actionBold.setOnClickListener(this)
         binding.actionEm.setOnClickListener(this)
         binding.actionRed.setOnClickListener(this)
@@ -150,7 +131,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                 caliandarArrayList.clear()
                 val dat = MenuCaliandar.getDataCalaindar(year = Calendar.getInstance()[Calendar.YEAR])
                 for (i in dat.indices) {
-                    if (newArrayList[position].dataCaliandar == SviatyData.PASHA) {
+                    if (newArrayList[position].dataCaliandar == SviatyDataM.PASHA) {
                         if (dat[i][22].toInt() == newArrayList[position].data) {
                             caliandarArrayList.addAll(MenuCaliandar.getPositionCaliandar(dat[i][25].toInt()))
                             break
@@ -195,7 +176,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                     try {
                         val builder = localFile.readText()
                         val gson = Gson()
-                        val type = TypeToken.getParameterized(ArrayList::class.java, SviatyData::class.java).type
+                        val type = TypeToken.getParameterized(ArrayList::class.java, SviatyDataM::class.java).type
                         newArrayList.addAll(gson.fromJson(builder, type))
                         adapter.notifyDataSetChanged()
                         binding.spinnerSviaty.setSelection(0)
@@ -204,7 +185,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                         caliandarArrayList.clear()
                         val dat = MenuCaliandar.getDataCalaindar(year = Calendar.getInstance()[Calendar.YEAR])
                         for (i in dat.indices) {
-                            if (newArrayList[0].dataCaliandar == SviatyData.PASHA) {
+                            if (newArrayList[0].dataCaliandar == SviatyDataM.PASHA) {
                                 if (dat[i][22].toInt() == newArrayList[0].data) {
                                     caliandarArrayList.addAll(MenuCaliandar.getPositionCaliandar(dat[i][25].toInt()))
                                     break
@@ -420,7 +401,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
             binding.calandar.text = ""
             binding.sviaty.setText("")
             binding.sviaty.visibility = View.GONE
-            binding.spinnerIsPasxa.setSelection(SviatyData.CALAINDAR)
+            binding.spinnerIsPasxa.setSelection(SviatyDataM.CALAINDAR)
             binding.spinnerIsPasxa.visibility = View.GONE
             invalidateOptionsMenu()
             return true
@@ -458,12 +439,12 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                 binding.progressBar2.visibility = View.VISIBLE
                 var pos = position
                 try {
-                    val data = if (binding.spinnerIsPasxa.selectedItemPosition == SviatyData.PASHA) {
+                    val data = if (binding.spinnerIsPasxa.selectedItemPosition == SviatyDataM.PASHA) {
                         caliandarArrayList[22].toInt()
                     } else {
                         caliandarArrayList[1].toInt()
                     }
-                    val mun = if (binding.spinnerIsPasxa.selectedItemPosition == SviatyData.PASHA) {
+                    val mun = if (binding.spinnerIsPasxa.selectedItemPosition == SviatyDataM.PASHA) {
                         1
                     } else {
                         caliandarArrayList[2].toInt() + 1
@@ -474,13 +455,13 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                         newArrayList[position].dataCaliandar = binding.spinnerIsPasxa.selectedItemPosition
                         newArrayList[position].opisanie = apisanne
                     } else {
-                        newArrayList.add(SviatyData(data, mun, binding.spinnerIsPasxa.selectedItemPosition, apisanne))
+                        newArrayList.add(SviatyDataM(data, mun, binding.spinnerIsPasxa.selectedItemPosition, apisanne))
                         pos = newArrayList.size - 1
                     }
                     if (newArrayList.isNotEmpty()) {
                         val localFile = File("$filesDir/cache/cache.txt")
                         val gson = Gson()
-                        val type = TypeToken.getParameterized(ArrayList::class.java, SviatyData::class.java).type
+                        val type = TypeToken.getParameterized(ArrayList::class.java, SviatyDataM::class.java).type
                         localFile.writer().use {
                             it.write(gson.toJson(newArrayList, type))
                         }
@@ -543,7 +524,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
         }
     }
 
-    private class SpinnerSviaty(private val activity: Activity, private val data: ArrayList<SviatyData>) : ArrayAdapter<SviatyData>(activity, R.layout.simple_list_item_1, data) {
+    private class SpinnerSviaty(private val activity: Activity, private val data: ArrayList<SviatyDataM>) : ArrayAdapter<SviatyDataM>(activity, R.layout.simple_list_item_1, data) {
 
         override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
             val v = super.getDropDownView(position, convertView, parent)
