@@ -42,6 +42,8 @@ import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
+import androidx.glance.layout.fillMaxHeight
+import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
@@ -117,18 +119,10 @@ class UpdateDataClickActionCallback : ActionCallback {
         val pReset = PendingIntent.getBroadcast(context, 257, reset, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         alarmManager.cancel(pReset)
-        when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms() -> {
-                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 120000, pReset)
-            }
-
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 120000, pReset)
-            }
-
-            else -> {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 120000, pReset)
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
+            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 120000, pReset)
+        } else {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 120000, pReset)
         }
         CaliandarWidgetMun().update(context, glanceId)
     }
@@ -231,7 +225,7 @@ fun CalendarMun(context: Context) {
     var e = 1
     val destinationKey = ActionParameters.Key<Boolean>("widget_mun")
     val destinationValue = ActionParameters.Key<Int>("position")
-    Column(modifier = GlanceModifier.background(if (dzenNoch) BackgroundDark else PrimaryTextBlack).padding(15.dp), verticalAlignment = Alignment.CenterVertically) {
+    Column(modifier = GlanceModifier.background(if (dzenNoch) BackgroundDark else PrimaryTextBlack).padding(15.dp).fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
         Row(modifier = GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             if (!(Settings.GET_CALIANDAR_YEAR_MIN == year && mun == Calendar.JANUARY)) {
                 Box(modifier = GlanceModifier.padding(10.dp).clickable(getImageActionCallback(UpdateDataClickActionCallback.TYPE_MINUS))) {
@@ -253,67 +247,67 @@ fun CalendarMun(context: Context) {
                 }
             }
         }
-        Row(modifier = GlanceModifier.fillMaxWidth()) {
+        Row(modifier = GlanceModifier.defaultWeight().fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = context.getString(R.string.ndz),
                 modifier = GlanceModifier
+                    .fillMaxHeight()
                     .defaultWeight()
-                    .background(Primary)
-                    .padding(10.dp),
-                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 18.sp, textAlign = TextAlign.Center)
+                    .background(Primary),
+                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 20.sp, textAlign = TextAlign.Center)
             )
             Text(
                 text = context.getString(R.string.pn),
                 modifier = GlanceModifier
+                    .fillMaxHeight()
                     .defaultWeight()
-                    .background(TitleCalendarMounth)
-                    .padding(10.dp),
-                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 18.sp, textAlign = TextAlign.Center)
+                    .background(TitleCalendarMounth),
+                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 20.sp, textAlign = TextAlign.Center)
             )
             Text(
                 text = context.getString(R.string.au),
                 modifier = GlanceModifier
+                    .fillMaxHeight()
                     .defaultWeight()
-                    .background(TitleCalendarMounth)
-                    .padding(10.dp),
-                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 18.sp, textAlign = TextAlign.Center)
+                    .background(TitleCalendarMounth),
+                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 20.sp, textAlign = TextAlign.Center)
             )
             Text(
                 text = context.getString(R.string.sp),
                 modifier = GlanceModifier
+                    .fillMaxHeight()
                     .defaultWeight()
-                    .background(TitleCalendarMounth)
-                    .padding(10.dp),
-                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 18.sp, textAlign = TextAlign.Center)
+                    .background(TitleCalendarMounth),
+                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 20.sp, textAlign = TextAlign.Center)
             )
             Text(
                 text = context.getString(R.string.ch),
                 modifier = GlanceModifier
+                    .fillMaxHeight()
                     .defaultWeight()
-                    .background(TitleCalendarMounth)
-                    .padding(10.dp),
-                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 18.sp, textAlign = TextAlign.Center)
+                    .background(TitleCalendarMounth),
+                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 20.sp, textAlign = TextAlign.Center)
             )
             Text(
                 text = context.getString(R.string.pt),
                 modifier = GlanceModifier
+                    .fillMaxHeight()
                     .defaultWeight()
-                    .background(TitleCalendarMounth)
-                    .padding(10.dp),
-                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 18.sp, textAlign = TextAlign.Center)
+                    .background(TitleCalendarMounth),
+                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 20.sp, textAlign = TextAlign.Center)
             )
             Text(
                 text = context.getString(R.string.sb),
                 modifier = GlanceModifier
+                    .fillMaxHeight()
                     .defaultWeight()
-                    .background(TitleCalendarMounth)
-                    .padding(10.dp),
-                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 18.sp, textAlign = TextAlign.Center)
+                    .background(TitleCalendarMounth),
+                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 20.sp, textAlign = TextAlign.Center)
             )
         }
-        (1..end / 7).forEach {
-            Row(modifier = GlanceModifier.fillMaxWidth()) {
-                (1..7).forEach {
+        (1..end / 7).forEach { _ ->
+            Row(modifier = GlanceModifier.fillMaxWidth().defaultWeight(), verticalAlignment = Alignment.CenterVertically) {
+                (1..7).forEach { _ ->
                     if (e < wik) {
                         oldDay++
                         day = "start"
@@ -332,10 +326,10 @@ fun CalendarMun(context: Context) {
                             Text(
                                 oldDay.toString(),
                                 modifier = GlanceModifier
+                                    .fillMaxHeight()
                                     .defaultWeight()
-                                    .background(fon)
-                                    .padding(10.dp),
-                                style = TextStyle(color = ColorProvider(SecondaryText, SecondaryText), fontSize = 18.sp, textAlign = TextAlign.Center)
+                                    .background(fon),
+                                style = TextStyle(color = ColorProvider(SecondaryText, SecondaryText), fontSize = 20.sp, textAlign = TextAlign.Center)
                             )
                         }
 
@@ -343,10 +337,10 @@ fun CalendarMun(context: Context) {
                             Text(
                                 newDay.toString(),
                                 modifier = GlanceModifier
+                                    .fillMaxHeight()
                                     .defaultWeight()
-                                    .background(Divider)
-                                    .padding(10.dp),
-                                style = TextStyle(color = ColorProvider(SecondaryText, SecondaryText), fontSize = 18.sp, textAlign = TextAlign.Center)
+                                    .background(Divider),
+                                style = TextStyle(color = ColorProvider(SecondaryText, SecondaryText), fontSize = 20.sp, textAlign = TextAlign.Center)
                             )
                         }
 
@@ -368,10 +362,10 @@ fun CalendarMun(context: Context) {
                                 day,
                                 modifier = GlanceModifier
                                     .clickable(actionStartActivity<MainActivity>(actionParametersOf(destinationKey to true, destinationValue to clickPos)))
+                                    .fillMaxHeight()
                                     .defaultWeight()
-                                    .background(color)
-                                    .padding(10.dp),
-                                style = TextStyle(color = ColorProvider(color2, color2), fontSize = 18.sp, textAlign = TextAlign.Center, fontWeight = bold, textDecoration = if (c[Calendar.DAY_OF_MONTH] == i && munTudey) TextDecoration.Underline else TextDecoration.None)
+                                    .background(color),
+                                style = TextStyle(color = ColorProvider(color2, color2), fontSize = 20.sp, textAlign = TextAlign.Center, fontWeight = bold, textDecoration = if (c[Calendar.DAY_OF_MONTH] == i && munTudey) TextDecoration.Underline else TextDecoration.None)
                             )
                         }
                     }
@@ -405,18 +399,14 @@ class WidgetMun : GlanceAppWidgetReceiver() {
             intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             val pIntent = PendingIntent.getBroadcast(context, 60, intent, PendingIntent.FLAG_IMMUTABLE or 0)
-            when {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms() -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (alarmManager.canScheduleExactAlarms()) {
                     alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
+                } else {
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
                 }
-
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
-                }
-
-                else -> {
-                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
-                }
+            } else {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
             }
         }
     }
@@ -448,18 +438,10 @@ class WidgetMun : GlanceAppWidgetReceiver() {
         intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val pIntent = PendingIntent.getBroadcast(context, 60, intent, PendingIntent.FLAG_IMMUTABLE or 0)
-        when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms() -> {
-                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
-            }
-
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
-            }
-
-            else -> {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
+            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
+        } else {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
         }
     }
 
@@ -516,22 +498,14 @@ class WidgetMun : GlanceAppWidgetReceiver() {
             intentUpdate.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             val pIntent = PendingIntent.getBroadcast(context, 60, intentUpdate, PendingIntent.FLAG_IMMUTABLE or 0)
-            when {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-                    if (alarmManager.canScheduleExactAlarms()) {
-                        alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
-                    } else {
-                        alarmManager.set(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
-                    }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (alarmManager.canScheduleExactAlarms()) {
+                    alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
+                } else {
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
                 }
-
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
-                }
-
-                else -> {
-                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
-                }
+            } else {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
             }
         }
     }

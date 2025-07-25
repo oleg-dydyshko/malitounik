@@ -101,6 +101,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -146,9 +147,7 @@ import by.carkva_gazeta.malitounik.SettingsView
 import by.carkva_gazeta.malitounik.SviatyList
 import by.carkva_gazeta.malitounik.SviatyiaView
 import by.carkva_gazeta.malitounik.VybranaeList
-import by.carkva_gazeta.malitounik.bibleCount
 import by.carkva_gazeta.malitounik.formatFigureTwoPlaces
-import by.carkva_gazeta.malitounik.knigaBiblii
 import by.carkva_gazeta.malitounik.rawAsset
 import by.carkva_gazeta.malitounik.removeZnakiAndSlovy
 import by.carkva_gazeta.malitounik.searchJob
@@ -308,7 +307,6 @@ fun openAssetsResources(context: Context, fileName: String): String {
 fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = rememberNavController()) {
     val drawerScrollStete = rememberScrollState()
     val searchBibleState = rememberLazyListState()
-    val cytanniListState = remember { ArrayList<LazyListState>() }
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var start = k.getString("navigate", AllDestinations.KALIANDAR) ?: AllDestinations.KALIANDAR
     bibleItem = start.contains("Biblia", ignoreCase = true) == true
@@ -659,29 +657,7 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
             Settings.destinations = AllDestinations.CYTANNI_LIST
             val perevod = stackEntry.arguments?.getString("perevod", Settings.PEREVODSEMUXI) ?: Settings.PEREVODSEMUXI
             val position = stackEntry.arguments?.getInt("position", 0) ?: 0
-            val t1 = cytanne.indexOf(";")
-            var knigaText by remember {
-                mutableStateOf(
-                    if (biblia == Settings.CHYTANNI_BIBLIA || biblia == Settings.CHYTANNI_VYBRANAE) {
-                        if (t1 == -1) cytanne.substringBeforeLast(" ")
-                        else {
-                            val sb = cytanne.substring(0, t1)
-                            sb.substringBeforeLast(" ")
-                        }
-                    } else cytanne
-                )
-            }
-            val count = if (biblia == Settings.CHYTANNI_BIBLIA) remember {
-                bibleCount(knigaBiblii(knigaText), perevod)
-            }
-            else 1
-            if (count != cytanniListState.size) {
-                cytanniListState.clear()
-                (0 until count).forEach { _ ->
-                    cytanniListState.add(rememberLazyListState())
-                }
-            }
-            CytanniList(navController, title, cytanne, biblia, perevod, position, cytanniListState)
+            CytanniList(navController, title, cytanne, biblia, perevod, position)
         }
 
         composable(
@@ -1350,84 +1326,84 @@ fun MainConteiner(
                                 painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = textTollBarColor
                             )
                         }
-                        DropdownMenu(
-                            expanded = expandedUp, onDismissRequest = { expandedUp = false }) {
+                    }
+                    DropdownMenu(
+                        expanded = expandedUp, onDismissRequest = { expandedUp = false }) {
+                        DropdownMenuItem(onClick = {
+                            expandedUp = false
+                            navigationActions.navigateToSettingsView()
+                        }, text = { Text(stringResource(R.string.tools_item), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                            Icon(
+                                painter = painterResource(R.drawable.settings), contentDescription = ""
+                            )
+                        })
+                        if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
                             DropdownMenuItem(onClick = {
                                 expandedUp = false
-                                navigationActions.navigateToSettingsView()
-                            }, text = { Text(stringResource(R.string.tools_item), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                navigationActions.navigateToUmouniaZnachenni()
+                            }, text = { Text(stringResource(R.string.symbols_menu), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                 Icon(
-                                    painter = painterResource(R.drawable.settings), contentDescription = ""
+                                    painter = painterResource(R.drawable.info), contentDescription = ""
                                 )
                             })
-                            if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
+                            if (!isBottomBar) {
                                 DropdownMenuItem(onClick = {
                                     expandedUp = false
-                                    navigationActions.navigateToUmouniaZnachenni()
-                                }, text = { Text(stringResource(R.string.symbols_menu), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                    navigationActions.navigateToPadzeiView()
+                                }, text = { Text(stringResource(R.string.sabytie), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                     Icon(
-                                        painter = painterResource(R.drawable.info), contentDescription = ""
+                                        painter = painterResource(R.drawable.event), contentDescription = ""
                                     )
                                 })
-                                if (!isBottomBar) {
-                                    DropdownMenuItem(onClick = {
-                                        expandedUp = false
-                                        navigationActions.navigateToPadzeiView()
-                                    }, text = { Text(stringResource(R.string.sabytie), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.event), contentDescription = ""
-                                        )
-                                    })
-                                    DropdownMenuItem(onClick = {
-                                        expandedUp = false
-                                        searchText = true
-                                    }, text = { Text(stringResource(R.string.poshuk), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.search), contentDescription = ""
-                                        )
-                                    })
-                                }
+                                DropdownMenuItem(onClick = {
+                                    expandedUp = false
+                                    searchText = true
+                                }, text = { Text(stringResource(R.string.poshuk), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.search), contentDescription = ""
+                                    )
+                                })
                             }
-                            if (k.getBoolean("admin", false)) {
-                                HorizontalDivider()
-                                if (currentRoute.contains(AllDestinations.KALIANDAR) || currentRoute.contains("BIBLIJATEKA", ignoreCase = true)) {
-                                    DropdownMenuItem(onClick = {
-                                        expandedUp = false
-                                        if (context.checkmodulesAdmin()) {
-                                            val intent = Intent()
-                                            if (currentRoute.contains(AllDestinations.KALIANDAR)) {
-                                                intent.setClassName(context, "by.carkva_gazeta.admin.Sviatyia")
-                                                intent.putExtra("dayOfYear", Settings.data[Settings.caliandarPosition][24].toInt())
-                                            } else {
-                                                intent.setClassName(context, "by.carkva_gazeta.admin.BibliatekaList")
-                                            }
-                                            context.startActivity(intent)
+                        }
+                        if (k.getBoolean("admin", false)) {
+                            HorizontalDivider()
+                            if (currentRoute.contains(AllDestinations.KALIANDAR) || currentRoute.contains("BIBLIJATEKA", ignoreCase = true)) {
+                                DropdownMenuItem(onClick = {
+                                    expandedUp = false
+                                    if (context.checkmodulesAdmin()) {
+                                        val intent = Intent()
+                                        if (currentRoute.contains(AllDestinations.KALIANDAR)) {
+                                            intent.setClassName(context, "by.carkva_gazeta.admin.Sviatyia")
+                                            intent.putExtra("dayOfYear", Settings.data[Settings.caliandarPosition][24].toInt())
+                                        } else {
+                                            intent.setClassName(context, "by.carkva_gazeta.admin.BibliatekaList")
                                         }
-                                    }, text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.edit), contentDescription = ""
-                                        )
-                                    })
-                                }
-                                if (currentRoute == AllDestinations.LITURGIKON_MENU || currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.CHASASLOU_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU) {
-                                    DropdownMenuItem(onClick = {
-                                        expandedUp = false
-                                        navigationActions.navigateToSearchBiblia(Settings.PEREVODSEMUXI, true)
-                                    }, text = { Text(stringResource(R.string.searche_bogasluz_text), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.search), contentDescription = ""
-                                        )
-                                    })
-                                }
-                                DropdownMenuItem(onClick = {
-                                    expandedUp = false
-                                    logView = true
-                                }, text = { Text(stringResource(R.string.log_m), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                        context.startActivity(intent)
+                                    }
+                                }, text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                     Icon(
-                                        painter = painterResource(R.drawable.description), contentDescription = ""
+                                        painter = painterResource(R.drawable.edit), contentDescription = ""
                                     )
                                 })
                             }
+                            if (currentRoute == AllDestinations.LITURGIKON_MENU || currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.CHASASLOU_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU) {
+                                DropdownMenuItem(onClick = {
+                                    expandedUp = false
+                                    navigationActions.navigateToSearchBiblia(Settings.PEREVODSEMUXI, true)
+                                }, text = { Text(stringResource(R.string.searche_bogasluz_text), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.search), contentDescription = ""
+                                    )
+                                })
+                            }
+                            DropdownMenuItem(onClick = {
+                                expandedUp = false
+                                logView = true
+                            }, text = { Text(stringResource(R.string.log_m), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.description), contentDescription = ""
+                                )
+                            })
                         }
                     }
                 }, colors = TopAppBarDefaults.topAppBarColors(tollBarColor)
@@ -1458,7 +1434,7 @@ fun MainConteiner(
                         }
                     }
                     if (isBottomBar) {
-                        BottomAppBar(containerColor = tollBarColor) {
+                        BottomAppBar(modifier = Modifier.size(Dp.Unspecified, 50.dp), containerColor = tollBarColor) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.CenterVertically
                             ) {

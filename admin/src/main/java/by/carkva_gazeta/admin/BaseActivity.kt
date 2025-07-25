@@ -22,9 +22,6 @@ import androidx.core.view.size
 import by.carkva_gazeta.malitounik.Settings
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.firebase.FirebaseApp
-import com.google.firebase.appcheck.ktx.appCheck
-import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Job
 import java.io.File
 
@@ -66,7 +63,6 @@ abstract class BaseActivity : AppCompatActivity(), MenuProvider {
         super.attachBaseContext(context)
         SplitCompat.install(this)
         FirebaseApp.initializeApp(this)
-        Firebase.appCheck.installAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.getInstance())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

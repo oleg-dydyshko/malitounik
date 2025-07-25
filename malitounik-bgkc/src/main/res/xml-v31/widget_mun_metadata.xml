@@ -9,4 +9,4 @@
     android:widgetCategory="home_screen|keyguard"
     android:configure="by.carkva_gazeta.malitounik.WidgetConfigMun"
     android:widgetFeatures="reconfigurable|configuration_optional"
-    android:resizeMode="horizontal" />
+    android:resizeMode="horizontal|vertical" />

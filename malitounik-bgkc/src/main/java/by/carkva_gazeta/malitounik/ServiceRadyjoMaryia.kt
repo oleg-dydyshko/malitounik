@@ -280,23 +280,18 @@ class ServiceRadyjoMaryia : Service() {
         val action = Intent()
         val pendingIntent: PendingIntent
         val serviceName = ComponentName(this, ServiceRadyjoMaryia::class.java)
-        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        } else {
-            PendingIntent.FLAG_UPDATE_CURRENT
-        }
         when (which) {
             PLAY_PAUSE -> {
                 action.putExtra("action", PLAY_PAUSE)
                 action.component = serviceName
-                pendingIntent = PendingIntent.getService(this, PLAY_PAUSE, action, flags)
+                pendingIntent = PendingIntent.getService(this, PLAY_PAUSE, action, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
                 return pendingIntent
             }
 
             STOP -> {
                 action.putExtra("action", STOP)
                 action.component = serviceName
-                pendingIntent = PendingIntent.getService(this, STOP, action, flags)
+                pendingIntent = PendingIntent.getService(this, STOP, action, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
                 return pendingIntent
             }
         }

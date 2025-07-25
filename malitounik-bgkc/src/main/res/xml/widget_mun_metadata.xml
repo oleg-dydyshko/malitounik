@@ -7,4 +7,4 @@
     android:updatePeriodMillis="0"
     android:previewImage="@drawable/screenshot_mun"
     android:widgetCategory="home_screen|keyguard"
-    android:resizeMode="horizontal" />
+    android:resizeMode="horizontal|vertical" />

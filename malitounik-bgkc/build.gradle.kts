@@ -12,10 +12,10 @@ android {
 
     defaultConfig {
         applicationId = "by.carkva_gazeta.malitounik"
-        minSdk = 21
+        minSdk = 23
         targetSdk = 36
-        versionCode = 442512
-        versionName = "5.98.14.17"
+        versionCode = 442514
+        versionName = "5.98.15"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -78,8 +78,7 @@ dependencies {
     api(platform(libs.firebase.bom))
     api(libs.play.services.instantapps)
     api(libs.gson)
-    api(libs.firebase.storage.ktx)
-    api(libs.firebase.appcheck.playintegrity)
+    api(libs.firebase.storage)
     implementation(libs.feature.delivery.ktx)
     implementation(libs.app.update.ktx)
     implementation (libs.androidx.media3.exoplayer)

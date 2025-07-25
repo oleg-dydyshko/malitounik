@@ -369,7 +369,7 @@ fun MalitvyListAll(
                                             )
                                         )
                                         .padding(10.dp)
-                                        .weight(1f), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                                        .weight(1f), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp, fontWeight = if (menuItem == Settings.MENU_MINEIA_MESIACHNAIA && Calendar.getInstance()[Calendar.DATE] == dataItem.dayOfMonth && Calendar.getInstance()[Calendar.MONTH] == dataItem.month) FontWeight.Bold else FontWeight.Normal
                                 )
                             }
                             HorizontalDivider()

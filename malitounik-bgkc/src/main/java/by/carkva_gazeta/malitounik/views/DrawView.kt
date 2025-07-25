@@ -939,7 +939,7 @@ fun DrawView(
                             )
                         },
                         shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp),
                         colors = navigationDrawerItemColors
                     )
                 }

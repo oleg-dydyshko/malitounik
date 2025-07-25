@@ -93,15 +93,6 @@ private fun Caliandar() {
     val dzenNoch = prefs[booleanPreferencesKey("dzenNoch")] == true
     val data = Settings.data[position]
     val context = LocalContext.current
-    val rColorColorPrimaryText: Color
-    val rColorColorPrimary: Color
-    if (dzenNoch) {
-        rColorColorPrimary = PrimaryBlack
-        rColorColorPrimaryText = PrimaryTextBlack
-    } else {
-        rColorColorPrimary = Primary
-        rColorColorPrimaryText = PrimaryText
-    }
     val month = data[2].toInt()
     val monthName = context.resources.getStringArray(R.array.meciac)
     val dayofmounth = data[1]
@@ -282,18 +273,14 @@ class Widget : GlanceAppWidgetReceiver() {
             intentUpdate.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             val pIntent = PendingIntent.getBroadcast(context, 50, intentUpdate, PendingIntent.FLAG_IMMUTABLE or 0)
-            when {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms() -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (alarmManager.canScheduleExactAlarms()) {
                     alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
+                } else {
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
                 }
-
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
-                }
-
-                else -> {
-                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
-                }
+            } else {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
             }
         }
     }
@@ -304,18 +291,14 @@ class Widget : GlanceAppWidgetReceiver() {
         intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val pIntent = PendingIntent.getBroadcast(context, 50, intent, PendingIntent.FLAG_IMMUTABLE or 0)
-        when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms() -> {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (alarmManager.canScheduleExactAlarms()) {
                 alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
+            } else {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
             }
-
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
-            }
-
-            else -> {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
-            }
+        } else {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
         }
     }
 
@@ -414,22 +397,14 @@ class Widget : GlanceAppWidgetReceiver() {
         intentUpdate.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val pIntent = PendingIntent.getBroadcast(context, 50, intentUpdate, PendingIntent.FLAG_IMMUTABLE or 0)
-        when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-                if (alarmManager.canScheduleExactAlarms()) {
-                    alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
-                } else {
-                    alarmManager.set(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
-                }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (alarmManager.canScheduleExactAlarms()) {
+                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
+            } else {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
             }
-
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
-            }
-
-            else -> {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
-            }
+        } else {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(1), pIntent)
         }
     }
 }

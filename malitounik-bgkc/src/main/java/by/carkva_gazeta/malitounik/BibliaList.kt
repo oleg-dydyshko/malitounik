@@ -402,7 +402,7 @@ fun bibleCount(kniga: Int, perevod: String): Int {
         }
 
         21 -> {
-            if (perevod == Settings.PEREVODSEMUXI) 151
+            if (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODSINOIDAL) 151
             else 150
         }
 
@@ -421,7 +421,10 @@ fun bibleCount(kniga: Int, perevod: String): Int {
         }
 
         32 -> 48
-        33 -> 14
+        33 -> {
+            if (perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODSINOIDAL) 14
+            else 12
+        }
         34 -> 14
         35 -> 3
         36 -> 9
@@ -503,7 +506,7 @@ fun setStaryZapavet(list: Array<String>, perevod: String): ArrayList<BibliaList>
         result.add(BibliaList(list[23], "Ер", 52))
         result.add(BibliaList(list[24], "Плач", 5))
         result.add(BibliaList(list[25], "Езк", 48))
-        result.add(BibliaList(list[26], "Дан", 14))
+        result.add(BibliaList(list[26], "Дан", bibleCount(knigaBiblii("Дан"), perevod)))
         result.add(BibliaList(list[27], "Ас", 14))
         result.add(BibliaList(list[28], "Ёіл", 3))
         result.add(BibliaList(list[29], "Ам", 9))

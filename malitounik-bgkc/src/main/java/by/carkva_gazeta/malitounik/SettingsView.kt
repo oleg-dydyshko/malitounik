@@ -9,6 +9,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.SystemClock
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -513,6 +514,37 @@ fun SettingsView(navController: NavHostController) {
                 }
             }
             Text(
+                modifier = Modifier.padding(top = 20.dp), text = stringResource(R.string.econom_enargi), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.primary
+            )
+            HorizontalDivider(color = MaterialTheme.colorScheme.primary)
+            var power by remember { mutableStateOf(k.getBoolean("power", false)) }
+            Row(
+                verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                    .clickable {
+                        power = !power
+                        k.edit {
+                            putBoolean("power", power)
+                        }
+                        if (power) (context as Activity).window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                        else (context as Activity).window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    }
+                    .padding(vertical = 5.dp)) {
+                Text(
+                    stringResource(R.string.econom_enargi_no), modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                )
+                Switch(
+                    modifier = Modifier.scale(0.8f), checked = power, onCheckedChange = {
+                        power = it
+                        k.edit {
+                            putBoolean("power", power)
+                        }
+                        if (power) (context as Activity).window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                        else (context as Activity).window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    })
+            }
+            Text(
                 modifier = Modifier.padding(top = 10.dp), text = stringResource(R.string.biblia), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.primary
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
@@ -899,6 +931,7 @@ fun SettingsView(navController: NavHostController) {
                         putBoolean("paralel_maranata", true)
                         putBoolean("bottomBar", false)
                         putBoolean("isShareHelp", true)
+                        putBoolean("power", false)
                     }
                     modeNotification = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)

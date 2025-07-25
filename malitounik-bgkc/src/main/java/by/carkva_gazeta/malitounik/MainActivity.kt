@@ -23,6 +23,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.os.SystemClock
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
@@ -68,13 +69,11 @@ import by.carkva_gazeta.malitounik.views.AppNavGraph
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.openAssetsResources
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
+import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
-import com.google.firebase.appcheck.ktx.appCheck
-import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.ktx.storage
+import com.google.firebase.storage.storage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -161,55 +160,27 @@ object Settings {
     @Suppress("DEPRECATION")
     fun isNetworkAvailable(context: Context, typeTransport: Int = TRANSPORT_ALL): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val nw = connectivityManager.activeNetwork ?: return false
-            val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
-            when (typeTransport) {
-                TRANSPORT_CELLULAR -> {
-                    if (actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) return true
-                }
-
-                TRANSPORT_WIFI -> {
-                    if (actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) return true
-                }
-
-                TRANSPORT_ALL -> {
-                    return when {
-                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-
-                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_VPN) -> true
-
-                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-
-                        else -> false
-                    }
-                }
+        val nw = connectivityManager.activeNetwork ?: return false
+        val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
+        when (typeTransport) {
+            TRANSPORT_CELLULAR -> {
+                if (actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) return true
             }
-        } else {
-            val activeNetwork = connectivityManager.activeNetworkInfo ?: return false
-            if (activeNetwork.isConnectedOrConnecting) {
-                when (typeTransport) {
-                    TRANSPORT_CELLULAR -> {
-                        if (activeNetwork.type == ConnectivityManager.TYPE_MOBILE) return true
-                    }
 
-                    TRANSPORT_WIFI -> {
-                        if (activeNetwork.type == ConnectivityManager.TYPE_WIFI) return true
-                    }
+            TRANSPORT_WIFI -> {
+                if (actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) return true
+            }
 
-                    TRANSPORT_ALL -> {
-                        return when (activeNetwork.type) {
-                            ConnectivityManager.TYPE_WIFI -> true
-                            ConnectivityManager.TYPE_MOBILE -> true
+            TRANSPORT_ALL -> {
+                return when {
+                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
 
-                            ConnectivityManager.TYPE_VPN -> true
+                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_VPN) -> true
 
-                            ConnectivityManager.TYPE_ETHERNET -> true
+                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
 
-                            else -> false
-                        }
-                    }
+                    else -> false
                 }
             }
         }
@@ -277,22 +248,14 @@ object Settings {
         pendingIntent?.let {
             val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             if (padzeia && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !am.canScheduleExactAlarms()) return
-            when {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-                    if (am.canScheduleExactAlarms()) {
-                        am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeAlarm, it)
-                    } else {
-                        am.set(AlarmManager.RTC_WAKEUP, timeAlarm, it)
-                    }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (am.canScheduleExactAlarms()) {
+                    am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeAlarm, it)
+                } else {
+                    am.set(AlarmManager.RTC_WAKEUP, timeAlarm, it)
                 }
-
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-                    am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeAlarm, it)
-                }
-
-                else -> {
-                    am.setExact(AlarmManager.RTC_WAKEUP, timeAlarm, it)
-                }
+            } else {
+                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeAlarm, it)
             }
         }
     }
@@ -1156,6 +1119,9 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) {
             setlightSensor()
         }
+        if (k.getBoolean("power", false)) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
         Settings.fontInterface = getFontInterface(this)
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -1198,20 +1164,22 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
                 }
             }
         }
-        CoroutineScope(Dispatchers.IO).launch {
-            if (isNetworkAvailable(this@MainActivity)) {
-                val dir = File("$filesDir/cache")
-                if (!dir.exists()) dir.mkdir()
-                val localFile = File("$filesDir/cache/cache.txt")
-                referens.child("/admin/log.txt").getFile(localFile).addOnFailureListener {
-                    val mes = Toast.makeText(this@MainActivity, getString(R.string.error), Toast.LENGTH_SHORT)
-                    mes.show()
-                }.await()
-                val log = localFile.readText()
-                if (log != "") {
-                    withContext(Dispatchers.Main) {
-                        val mes = Toast.makeText(this@MainActivity, getString(R.string.check_update_resourse), Toast.LENGTH_SHORT)
+        if (k.getBoolean("admin", false)) {
+            CoroutineScope(Dispatchers.IO).launch {
+                if (isNetworkAvailable(this@MainActivity)) {
+                    val dir = File("$filesDir/cache")
+                    if (!dir.exists()) dir.mkdir()
+                    val localFile = File("$filesDir/cache/cache.txt")
+                    referens.child("/admin/log.txt").getFile(localFile).addOnFailureListener {
+                        val mes = Toast.makeText(this@MainActivity, getString(R.string.error), Toast.LENGTH_SHORT)
                         mes.show()
+                    }.await()
+                    val log = localFile.readText()
+                    if (log != "") {
+                        withContext(Dispatchers.Main) {
+                            val mes = Toast.makeText(this@MainActivity, getString(R.string.check_update_resourse), Toast.LENGTH_SHORT)
+                            mes.show()
+                        }
                     }
                 }
             }
@@ -1223,7 +1191,9 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
             if (AppNavGraphState.setAlarm) {
                 val notify = k.getInt("notification", Settings.NOTIFICATION_SVIATY_FULL)
                 Settings.setNotifications(this@MainActivity, notify)
-                downloadOpisanieSviat(this@MainActivity)
+                if (isNetworkAvailable(this@MainActivity)) {
+                    downloadOpisanieSviat(this@MainActivity)
+                }
                 AppNavGraphState.setAlarm = false
             }
         }
@@ -1260,7 +1230,6 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
     override fun attachBaseContext(context: Context) {
         super.attachBaseContext(context)
         FirebaseApp.initializeApp(context)
-        Firebase.appCheck.installAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.getInstance())
     }
 
     private fun timeJob(isDzenNoch: Boolean) {

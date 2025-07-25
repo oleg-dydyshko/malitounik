@@ -101,12 +101,7 @@ val searchListSvityia = SnapshotStateList<Prazdniki>()
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBible(
-    navController: NavHostController,
-    searchBibleState: LazyListState,
-    perevod: String,
-    isBogaslujbovyiaSearch: Boolean,
-    navigateToCytanniList: (String, Int, String) -> Unit,
-    navigateToBogaslujbovyia: (title: String, resurs: String) -> Unit
+    navController: NavHostController, searchBibleState: LazyListState, perevod: String, isBogaslujbovyiaSearch: Boolean, navigateToCytanniList: (String, Int, String) -> Unit, navigateToBogaslujbovyia: (title: String, resurs: String) -> Unit
 ) {
     var searchSettings by remember { mutableStateOf(false) }
     var isProgressVisable by remember { mutableStateOf(false) }
@@ -139,8 +134,7 @@ fun SearchBible(
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
             override fun onPreScroll(
-                available: Offset,
-                source: NestedScrollSource
+                available: Offset, source: NestedScrollSource
             ): Offset {
                 keyboardController?.hide()
                 return super.onPreScroll(available, source)
@@ -156,8 +150,7 @@ fun SearchBible(
     SideEffect {
         val window = (view.context as Activity).window
         WindowCompat.getInsetsController(
-            window,
-            view
+            window, view
         ).apply {
             isAppearanceLightStatusBars = false
             isAppearanceLightNavigationBars = false
@@ -176,82 +169,59 @@ fun SearchBible(
                                     focusRequester.requestFocus()
                                     textFieldLoaded = true
                                 }
-                            },
-                        value = searshString,
-                        onValueChange = { newText ->
-                            searchList.clear()
-                            var edit = newText
-                            if (perevod == Settings.PEREVODSINOIDAL) {
-                                edit = edit.replace("і", "и")
-                                edit = edit.replace("ў", "щ")
-                                edit = edit.replace("І", "И")
-                                edit = edit.replace("Ў", "Щ")
-                                edit = edit.replace("'", "ъ")
-                            } else {
-                                edit = edit.replace("и", "і")
-                                edit = edit.replace("щ", "ў")
-                                edit = edit.replace("И", "І")
-                                edit = edit.replace("Щ", "Ў")
-                                edit = edit.replace("ъ", "'")
+                            }, value = searshString, onValueChange = { newText ->
+                        searchList.clear()
+                        var edit = newText
+                        if (perevod == Settings.PEREVODSINOIDAL) {
+                            edit = edit.replace("і", "и")
+                            edit = edit.replace("ў", "щ")
+                            edit = edit.replace("І", "И")
+                            edit = edit.replace("Ў", "Щ")
+                            edit = edit.replace("'", "ъ")
+                        } else {
+                            edit = edit.replace("и", "і")
+                            edit = edit.replace("щ", "ў")
+                            edit = edit.replace("И", "І")
+                            edit = edit.replace("Щ", "Ў")
+                            edit = edit.replace("ъ", "'")
+                        }
+                        searshString = edit
+                    }, singleLine = true, leadingIcon = {
+                        Icon(
+                            painter = painterResource(R.drawable.search), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                        )
+                    }, trailingIcon = {
+                        if (searshString.isNotEmpty()) {
+                            IconButton(
+                                onClick = {
+                                    searshString = ""
+                                }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                )
                             }
-                            searshString = edit
-                        },
-                        singleLine = true,
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(R.drawable.search),
-                                tint = MaterialTheme.colorScheme.onSecondary,
-                                contentDescription = ""
-                            )
-                        },
-                        trailingIcon = {
-                            if (searshString.isNotEmpty()) {
-                                IconButton(
-                                    onClick = {
-                                        searshString = ""
-                                    }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.close),
-                                        contentDescription = "",
-                                        tint = MaterialTheme.colorScheme.onSecondary
-                                    )
-                                }
-                            }
-                        },
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.onTertiary,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.onTertiary,
-                            focusedTextColor = PrimaryTextBlack,
-                            focusedIndicatorColor = PrimaryTextBlack,
-                            unfocusedTextColor = PrimaryTextBlack,
-                            unfocusedIndicatorColor = PrimaryTextBlack,
-                            cursorColor = PrimaryTextBlack
-                        ),
-                        textStyle = TextStyle(fontSize = TextUnit(Settings.fontInterface, TextUnitType.Sp))
+                        }
+                    }, colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.onTertiary, unfocusedContainerColor = MaterialTheme.colorScheme.onTertiary, focusedTextColor = PrimaryTextBlack, focusedIndicatorColor = PrimaryTextBlack, unfocusedTextColor = PrimaryTextBlack, unfocusedIndicatorColor = PrimaryTextBlack, cursorColor = PrimaryTextBlack
+                    ), textStyle = TextStyle(fontSize = TextUnit(Settings.fontInterface, TextUnitType.Sp))
                     )
                 },
                 navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            if (!backPressHandled) {
-                                backPressHandled = true
-                                navController.popBackStack()
-                            }
-                        },
-                        content = {
-                            Icon(
-                                painter = painterResource(R.drawable.arrow_back),
-                                tint = MaterialTheme.colorScheme.onSecondary,
-                                contentDescription = ""
-                            )
-                        })
+                    IconButton(onClick = {
+                        if (!backPressHandled) {
+                            backPressHandled = true
+                            navController.popBackStack()
+                        }
+                    }, content = {
+                        Icon(
+                            painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                        )
+                    })
                 },
                 actions = {
                     IconButton(onClick = { showDropdown = true }) {
                         Icon(
-                            painter = painterResource(R.drawable.settings),
-                            contentDescription = "",
-                            tint = MaterialTheme.colorScheme.onSecondary
+                            painter = painterResource(R.drawable.settings), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                         )
                     }
                 },
@@ -260,30 +230,21 @@ fun SearchBible(
         }, modifier = Modifier
     ) { innerPadding ->
         Box(
-            Modifier
-                .padding(
-                    innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                    innerPadding.calculateTopPadding(),
-                    innerPadding.calculateEndPadding(LayoutDirection.Rtl),
-                    0.dp
+            Modifier.padding(
+                    innerPadding.calculateStartPadding(LayoutDirection.Ltr), innerPadding.calculateTopPadding(), innerPadding.calculateEndPadding(LayoutDirection.Rtl), 0.dp
                 )
         ) {
             if (showDropdown) {
                 ModalBottomSheet(
-                    scrimColor = Color.Transparent,
-                    properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false),
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    onDismissRequest = {
+                    scrimColor = Color.Transparent, properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false), containerColor = MaterialTheme.colorScheme.surfaceContainer, onDismissRequest = {
                         showDropdown = false
-                    }
-                ) {
+                    }) {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         if (!(perevod == Settings.PEREVODNADSAN || isBogaslujbovyiaSearch)) {
                             DropdownMenuBox(onSearchStart = { searchSettings = true })
                         }
                         Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable {
+                            verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable {
                                 isRegistr = !isRegistr
                                 k.edit {
                                     putBoolean("pegistrbukv", isRegistr)
@@ -291,24 +252,19 @@ fun SearchBible(
                                 searchSettings = true
                             }) {
                             Checkbox(
-                                checked = !isRegistr,
-                                onCheckedChange = {
+                                checked = !isRegistr, onCheckedChange = {
                                     isRegistr = !isRegistr
                                     k.edit {
                                         putBoolean("pegistrbukv", isRegistr)
                                     }
                                     searchSettings = true
-                                }
-                            )
+                                })
                             Text(
-                                stringResource(R.string.registr),
-                                fontSize = Settings.fontInterface.sp,
-                                color = MaterialTheme.colorScheme.secondary
+                                stringResource(R.string.registr), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
                             )
                         }
                         Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable {
+                            verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable {
                                 isDakladnaeSupadzenne = if (isDakladnaeSupadzenne == 0) 1
                                 else 0
                                 k.edit {
@@ -317,20 +273,16 @@ fun SearchBible(
                                 searchSettings = true
                             }) {
                             Checkbox(
-                                checked = isDakladnaeSupadzenne == 1,
-                                onCheckedChange = {
+                                checked = isDakladnaeSupadzenne == 1, onCheckedChange = {
                                     isDakladnaeSupadzenne = if (isDakladnaeSupadzenne == 0) 1
                                     else 0
                                     k.edit {
                                         putInt("slovocalkam", isDakladnaeSupadzenne)
                                     }
                                     searchSettings = true
-                                }
-                            )
+                                })
                             Text(
-                                stringResource(R.string.dakladnae_supadzenne),
-                                fontSize = Settings.fontInterface.sp,
-                                color = MaterialTheme.colorScheme.secondary
+                                stringResource(R.string.dakladnae_supadzenne), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
                             )
                         }
                     }
@@ -340,15 +292,10 @@ fun SearchBible(
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 10.dp),
-                    text = stringResource(R.string.searh_sviatyia_result, searchList.size),
-                    fontStyle = FontStyle.Italic,
-                    fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary
+                        .padding(start = 10.dp), text = stringResource(R.string.searh_sviatyia_result, searchList.size), fontStyle = FontStyle.Italic, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
                 )
                 LazyColumn(
-                    Modifier.nestedScroll(nestedScrollConnection),
-                    state = searchBibleState
+                    Modifier.nestedScroll(nestedScrollConnection), state = searchBibleState
                 ) {
                     items(searchList.size) { index ->
                         Text(
@@ -359,15 +306,10 @@ fun SearchBible(
                                         navigateToBogaslujbovyia(searchList[index].subTitle, searchList[index].resource)
                                     } else {
                                         navigateToCytanniList(
-                                            searchList[index].subTitle + " " + searchList[index].glava.toString(),
-                                            searchList[index].styx - 1,
-                                            perevod
+                                            searchList[index].subTitle + " " + searchList[index].glava.toString(), searchList[index].styx - 1, perevod
                                         )
                                     }
-                                },
-                            text = searchList[index].text.toAnnotatedString(),
-                            color = MaterialTheme.colorScheme.secondary,
-                            fontSize = Settings.fontInterface.sp
+                                }, text = searchList[index].text.toAnnotatedString(), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                         )
                         HorizontalDivider()
                     }
@@ -419,17 +361,14 @@ fun DropdownMenuBox(
         ) {
             options.forEachIndexed { index, option ->
                 DropdownMenuItem(
-                    text = { Text(option, fontSize = Settings.fontInterface.sp) },
-                    onClick = {
-                        textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option)
-                        expanded = false
-                        k.edit {
-                            putInt("biblia_seash", index)
-                        }
-                        onSearchStart()
-                    },
-                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                    colors = MenuDefaults.itemColors(textColor = PrimaryText)
+                    text = { Text(option, fontSize = Settings.fontInterface.sp) }, onClick = {
+                    textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option)
+                    expanded = false
+                    k.edit {
+                        putInt("biblia_seash", index)
+                    }
+                    onSearchStart()
+                }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding, colors = MenuDefaults.itemColors(textColor = PrimaryText)
                 )
             }
         }
@@ -437,10 +376,7 @@ fun DropdownMenuBox(
 }
 
 fun doInBackground(
-    context: Context,
-    searche: String,
-    perevod: String,
-    isBogaslujbovyiaSearch: Boolean
+    context: Context, searche: String, perevod: String, isBogaslujbovyiaSearch: Boolean
 ): ArrayList<SearchBibleItem> {
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var list = if (isBogaslujbovyiaSearch) {
@@ -509,10 +445,7 @@ fun bogashlugbovya(context: Context, poshuk: String, secondRun: Boolean = false)
 }
 
 fun biblia(
-    context: Context,
-    poshuk: String,
-    perevod: String,
-    secondRun: Boolean = false
+    context: Context, poshuk: String, perevod: String, secondRun: Boolean = false
 ): ArrayList<SearchBibleItem> {
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var poshuk1 = poshuk
@@ -520,16 +453,7 @@ fun biblia(
     val registr = k.getBoolean("pegistrbukv", true)
     if (secondRun) {
         val m = if (perevod == Settings.PEREVODSINOIDAL) charArrayOf(
-            'у',
-            'е',
-            'а',
-            'о',
-            'э',
-            'я',
-            'и',
-            'ю',
-            'ь',
-            'ы'
+            'у', 'е', 'а', 'о', 'э', 'я', 'и', 'ю', 'ь', 'ы'
         )
         else charArrayOf('у', 'е', 'а', 'о', 'э', 'я', 'і', 'ю', 'ь', 'ы')
         for (aM in m) {
@@ -597,9 +521,7 @@ fun biblia(
                 var stix = 0
                 for (r in 1 until bibleline.size) {
                     stix++
-                    var aSviatyia =
-                        HtmlCompat.fromHtml(bibleline[r], HtmlCompat.FROM_HTML_MODE_LEGACY)
-                            .toString()
+                    var aSviatyia = HtmlCompat.fromHtml(bibleline[r], HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
                     val title = "$nazva Гл. $glava\n"
                     val t3 = title.length
                     val span = AnnotatedString.Builder()
@@ -611,11 +533,10 @@ fun biblia(
                     if (t5 == -1) t5 = 0
                     else t5 += 4
                     val t6 = aSviatyia.indexOf(" ", t5)
-                    val isInt =
-                        if (t6 != -1) {
-                            val item = aSviatyia.substring(t5, t6)
-                            item.isNotEmpty() && item.isDigitsOnly()
-                        } else false
+                    val isInt = if (t6 != -1) {
+                        val item = aSviatyia.substring(t5, t6)
+                        item.isNotEmpty() && item.isDigitsOnly()
+                    } else false
                     val padd = if (isInt) {
                         val color = if ((context as MainActivity).dzenNoch) PrimaryBlack
                         else Primary
@@ -632,9 +553,7 @@ fun biblia(
                         val t2 = poshuk2[w].str.length
                         val t1 = poshuk2[w].position + t3 + padd
                         span.addStyle(
-                            SpanStyle(background = BezPosta, color = PrimaryText),
-                            t1 - t2,
-                            t1
+                            SpanStyle(background = BezPosta, color = PrimaryText), t1 - t2, t1
                         )
                     }
                     seashpost.add(SearchBibleItem(subTitle, glava, stix, "", span))
@@ -672,8 +591,7 @@ fun findChars(context: Context, search: String, textSearch: String): ArrayList<F
                         if (strSub2Pos != -1) {
                             if (stringBuilder.isEmpty()) stringBuilder.append(
                                 textSearch.substring(
-                                    strSub1Pos,
-                                    strSub1Pos + 1
+                                    strSub1Pos, strSub1Pos + 1
                                 )
                             )
                             if (subChar2.isNotEmpty()) stringBuilder.append(subChar2.toString())
@@ -714,15 +632,12 @@ fun findChars(context: Context, search: String, textSearch: String): ArrayList<F
             }
             if (stringBuilder.toString().isNotEmpty()) {
                 if (k.getInt("slovocalkam", 0) == 1) {
-                    val startString =
-                        if (strSub1Pos > 0) textSearch.substring(strSub1Pos - 1, strSub1Pos)
-                        else " "
-                    val endString =
-                        if (strSub1Pos + stringBuilder.length + 1 <= textSearch.length) textSearch.substring(
-                            strSub1Pos + stringBuilder.length,
-                            strSub1Pos + stringBuilder.length + 1
-                        )
-                        else " "
+                    val startString = if (strSub1Pos > 0) textSearch.substring(strSub1Pos - 1, strSub1Pos)
+                    else " "
+                    val endString = if (strSub1Pos + stringBuilder.length + 1 <= textSearch.length) textSearch.substring(
+                        strSub1Pos + stringBuilder.length, strSub1Pos + stringBuilder.length + 1
+                    )
+                    else " "
                     if (!startString.toCharArray()[0].isLetterOrDigit() && !endString.toCharArray()[0].isLetterOrDigit()) {
                         result.add(FindString(stringBuilder.toString(), strSub))
                         stringBuilder.clear()
@@ -1193,15 +1108,6 @@ fun getPrazdnik(
                     6,
                 )
             )
-            c.set(yearG, Calendar.MARCH, 28)
-            prazdnikiAll.add(
-                Prazdniki(
-                    c[Calendar.DAY_OF_YEAR],
-                    "Пінск: сьвятога Кірылы Тураўскага",
-                    "28 красавіка, " + nedelName[c[Calendar.DAY_OF_WEEK]],
-                    6,
-                )
-            )
             c.set(yearG, Calendar.MAY, 1)
             prazdnikiAll.add(
                 Prazdniki(
@@ -1238,16 +1144,6 @@ fun getPrazdnik(
                     6,
                 )
             )
-            c.set(c[Calendar.YEAR], monthP - 1, dataP)
-            c.add(Calendar.DATE, 56)
-            prazdnikiAll.add(
-                Prazdniki(
-                    c[Calendar.DAY_OF_YEAR],
-                    "Слонім: Сьвятой Тройцы",
-                    c[Calendar.DAY_OF_MONTH].toString() + " " + monthName[c[Calendar.MONTH]] + ", " + nedelName[c[Calendar.DAY_OF_WEEK]],
-                    6,
-                )
-            )
             c.add(Calendar.DATE, 1)
             prazdnikiAll.add(
                 Prazdniki(
@@ -1275,14 +1171,6 @@ fun getPrazdnik(
                     6,
                 )
             )
-            prazdnikiAll.add(
-                Prazdniki(
-                    c[Calendar.DAY_OF_YEAR],
-                    "Жодзіна: сьвятых апосталаў Пятра і Паўла",
-                    "29 чэрвеня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
-                    6,
-                )
-            )
             val chisla = intArrayOf(24, 25, 26, 27, 28, 29, 30)
             var brest = 24
             for (aChisla in chisla) {
@@ -1299,29 +1187,11 @@ fun getPrazdnik(
                     6,
                 )
             )
-            c.set(yearG, Calendar.JULY, 24)
-            prazdnikiAll.add(
-                Prazdniki(
-                    c[Calendar.DAY_OF_YEAR],
-                    "Наваградак: сьв. Барыса і Глеба",
-                    "24 ліпеня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
-                    6,
-                )
-            )
             prazdnikiAll.add(
                 Prazdniki(
                     c[Calendar.DAY_OF_YEAR],
                     "Полацак: манастыр сьв. Барыса і Глеба",
                     "24 ліпеня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
-                    6,
-                )
-            )
-            c.set(yearG, Calendar.AUGUST, 6)
-            prazdnikiAll.add(
-                Prazdniki(
-                    c[Calendar.DAY_OF_YEAR],
-                    "Заслаўе: Перамяненьня Гасподняга",
-                    "6 жніўня, " + nedelName[c[Calendar.DAY_OF_WEEK]],
                     6,
                 )
             )
@@ -1349,23 +1219,6 @@ fun getPrazdnik(
                     c[Calendar.DAY_OF_YEAR],
                     "Ворша: Покрыва Найсьвяцейшай Багародзіцы",
                     "1 кастрычніка, " + nedelName[c[Calendar.DAY_OF_WEEK]],
-                    6,
-                )
-            )
-            prazdnikiAll.add(
-                Prazdniki(
-                    c[Calendar.DAY_OF_YEAR],
-                    "Мар’іна Горка: Покрыва Найсьвяцейшай Багародзіцы",
-                    "1 кастрычніка, " + nedelName[c[Calendar.DAY_OF_WEEK]],
-                    6,
-                )
-            )
-            c.set(yearG, Calendar.NOVEMBER, 8)
-            prazdnikiAll.add(
-                Prazdniki(
-                    c[Calendar.DAY_OF_YEAR],
-                    "Барысаў: сьвятога Арханёла Міхаіла",
-                    "8 лістапада, " + nedelName[c[Calendar.DAY_OF_WEEK]],
                     6,
                 )
             )
@@ -1418,9 +1271,5 @@ data class Prazdniki(val dayOfYear: Int, val opisanie: String, val opisanieData:
 data class FindString(val str: String, val position: Int)
 
 data class SearchBibleItem(
-    val subTitle: String,
-    val glava: Int,
-    val styx: Int,
-    val resource: String,
-    val text: AnnotatedString.Builder
+    val subTitle: String, val glava: Int, val styx: Int, val resource: String, val text: AnnotatedString.Builder
 )

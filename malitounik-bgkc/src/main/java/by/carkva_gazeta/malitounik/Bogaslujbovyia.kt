@@ -110,6 +110,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -287,7 +288,7 @@ fun Bogaslujbovyia(
             !backPressHandled -> {
                 fullscreen = false
                 backPressHandled = true
-                actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                if (!k.getBoolean("power", false)) actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 navController.popBackStack()
             }
         }
@@ -817,10 +818,13 @@ fun Bogaslujbovyia(
                                         IconButton(onClick = {
                                             autoScroll = !autoScroll
                                             autoScrollSensor = !autoScrollSensor
-                                            if (autoScrollSensor) actyvity.window.addFlags(
-                                                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                                            )
-                                            else actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                            if (autoScrollSensor) {
+                                                actyvity.window.addFlags(
+                                                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                                )
+                                            } else if (!k.getBoolean("power", false)) {
+                                                actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                            }
                                         }) {
                                             Icon(
                                                 iconAutoScroll,
@@ -942,34 +946,40 @@ fun Bogaslujbovyia(
                                     }
                                 }
                                 if (k.getBoolean("admin", false) && (isBottomBar || iskniga)) {
-                                    IconButton(onClick = {
-                                        showDropdown = false
-                                        autoScroll = false
-                                        if ((context as MainActivity).checkmodulesAdmin()) {
-                                            val intent = Intent()
-                                            intent.setClassName(context, "by.carkva_gazeta.admin.PasochnicaList")
-                                            val resAminEdit = if (iskniga) listResource[adminResourceEditPosition].resource
-                                            else resursEncode
-                                            val t1 = resAminEdit.lastIndexOf("/")
-                                            val t2 = resAminEdit.lastIndexOf(".")
-                                            val resursAdmin = if (t1 != -1) {
-                                                if (t2 != -1) resAminEdit.substring(t1 + 1, t2)
-                                                else resAminEdit.substring(t1 + 1)
-                                            } else {
-                                                if (t2 != -1) resAminEdit.substring(0, t2)
-                                                else resAminEdit
-                                            }
-                                            intent.putExtra("resours", resursAdmin)
-                                            intent.putExtra("title", if (iskniga) listResource[adminResourceEditPosition].title else title)
-                                            intent.putExtra("text", if (iskniga) subText else htmlText.replace("#ff6666", "#d00505", true))
-                                            context.startActivity(intent)
-                                        }
-                                    }) {
+                                    IconButton(onClick = { expandedUp = true }) {
                                         Icon(
-                                            painter = painterResource(R.drawable.edit),
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.onSecondary
+                                            painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                         )
+                                    }
+                                    DropdownMenu(
+                                        expanded = expandedUp, onDismissRequest = { expandedUp = false }) {
+                                        DropdownMenuItem(onClick = {
+                                            expandedUp = false
+                                            autoScroll = false
+                                            if ((context as MainActivity).checkmodulesAdmin()) {
+                                                val intent = Intent()
+                                                intent.setClassName(context, "by.carkva_gazeta.admin.PasochnicaList")
+                                                val resAminEdit = if (iskniga) listResource[adminResourceEditPosition].resource
+                                                else resursEncode
+                                                val t1 = resAminEdit.lastIndexOf("/")
+                                                val t2 = resAminEdit.lastIndexOf(".")
+                                                val resursAdmin = if (t1 != -1) {
+                                                    if (t2 != -1) resAminEdit.substring(t1 + 1, t2)
+                                                    else resAminEdit.substring(t1 + 1)
+                                                } else {
+                                                    if (t2 != -1) resAminEdit.substring(0, t2)
+                                                    else resAminEdit
+                                                }
+                                                intent.putExtra("resours", resursAdmin)
+                                                intent.putExtra("title", if (iskniga) listResource[adminResourceEditPosition].title else title)
+                                                intent.putExtra("text", if (iskniga) subText else htmlText.replace("#ff6666", "#d00505", true))
+                                                context.startActivity(intent)
+                                            }
+                                        }, text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.edit), contentDescription = ""
+                                            )
+                                        })
                                     }
                                 }
                             }
@@ -1023,7 +1033,7 @@ fun Bogaslujbovyia(
                                 }
                             }
                             if (isBottomBar) {
-                                BottomAppBar(containerColor = MaterialTheme.colorScheme.onTertiary) {
+                                BottomAppBar(modifier = Modifier.size(Dp.Unspecified, 50.dp), containerColor = MaterialTheme.colorScheme.onTertiary) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.SpaceAround
@@ -1089,10 +1099,13 @@ fun Bogaslujbovyia(
                                             IconButton(onClick = {
                                                 autoScroll = !autoScroll
                                                 autoScrollSensor = !autoScrollSensor
-                                                if (autoScrollSensor) actyvity.window.addFlags(
-                                                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                                                )
-                                                else actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                                if (autoScrollSensor) {
+                                                    actyvity.window.addFlags(
+                                                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                                    )
+                                                } else if (!k.getBoolean("power", false)) {
+                                                    actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                                }
                                             }) {
                                                 Icon(
                                                     iconAutoScroll,

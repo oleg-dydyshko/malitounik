@@ -164,11 +164,6 @@ fun PadzeiaView(navController: NavHostController) {
             onDismiss = { deliteAll = false },
             onDelOld = {
                 val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    PendingIntent.FLAG_IMMUTABLE or 0
-                } else {
-                    0
-                }
                 val c2 = Calendar.getInstance()
                 c2.set(Calendar.SECOND, 0)
                 val del = ArrayList<Padzeia>()
@@ -181,7 +176,7 @@ fun PadzeiaView(navController: NavHostController) {
                             if (p.sec != "-1") {
                                 val intent = Settings.createIntentSabytie(context, p.padz, p.dat, p.tim)
                                 val londs3 = p.paznic / 100000L
-                                val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, flags)
+                                val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                                 alarmManager.cancel(pIntent)
                                 pIntent.cancel()
                             }
@@ -195,7 +190,7 @@ fun PadzeiaView(navController: NavHostController) {
                             if (p.sec != "-1") {
                                 val intent = Settings.createIntentSabytie(context, p.padz, p.dat, p.tim)
                                 val londs3 = p.paznic / 100000L
-                                val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, flags)
+                                val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                                 alarmManager.cancel(pIntent)
                                 pIntent.cancel()
                             }
@@ -220,16 +215,11 @@ fun PadzeiaView(navController: NavHostController) {
                 CoroutineScope(Dispatchers.Main).launch {
                     withContext(Dispatchers.IO) {
                         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            PendingIntent.FLAG_IMMUTABLE or 0
-                        } else {
-                            0
-                        }
                         for (p in listPadzeia) {
                             if (p.sec != "-1") {
                                 val intent = Settings.createIntentSabytie(context, p.padz, p.dat, p.tim)
                                 val londs3 = p.paznic / 100000L
-                                val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, flags)
+                                val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                                 alarmManager.cancel(pIntent)
                                 pIntent.cancel()
                             }
@@ -391,14 +381,9 @@ fun PadzeiaView(navController: NavHostController) {
                 if (sab.count == "0") {
                     if (sab.repit == 1 || sab.repit == 4 || sab.repit == 5 || sab.repit == 6) {
                         if (sab.sec != "-1") {
-                            val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                PendingIntent.FLAG_IMMUTABLE or 0
-                            } else {
-                                0
-                            }
                             val intent = Settings.createIntentSabytie(context, sab.padz, sab.dat, sab.tim)
                             val londs3 = sab.paznic / 100000L
-                            val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, flags)
+                            val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                             alarmManager.cancel(pIntent)
                             pIntent.cancel()
                         }
@@ -406,14 +391,9 @@ fun PadzeiaView(navController: NavHostController) {
                         for (p in del) {
                             if (p.padz.contains(filen)) {
                                 if (p.sec != "-1") {
-                                    val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                        PendingIntent.FLAG_IMMUTABLE or 0
-                                    } else {
-                                        0
-                                    }
                                     val intent = Settings.createIntentSabytie(context, p.padz, p.dat, p.tim)
                                     val londs3 = p.paznic / 100000L
-                                    val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, flags)
+                                    val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                                     alarmManager.cancel(pIntent)
                                     pIntent.cancel()
                                 }
@@ -423,14 +403,9 @@ fun PadzeiaView(navController: NavHostController) {
                 } else {
                     for (p in del) {
                         if (p.sec != "-1") {
-                            val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                PendingIntent.FLAG_IMMUTABLE or 0
-                            } else {
-                                0
-                            }
                             val intent = Settings.createIntentSabytie(context, p.padz, p.dat, p.tim)
                             val londs3 = p.paznic / 100000L
-                            val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, flags)
+                            val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                             alarmManager.cancel(pIntent)
                             pIntent.cancel()
                         }
@@ -1287,11 +1262,6 @@ fun savePadzeia(
     var result: Long
     var timeRepit: String
     val c = Calendar.getInstance()
-    val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        PendingIntent.FLAG_IMMUTABLE or 0
-    } else {
-        0
-    }
     var dataK = data2
     var timeK = time2
     val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -1326,7 +1296,7 @@ fun savePadzeia(
                     if (it.sec != "-1") {
                         val intent = Settings.createIntentSabytie(context, it.padz, it.dat, it.tim)
                         val londs3 = it.paznic / 100000L
-                        val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, flags)
+                        val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                         am.cancel(pIntent)
                         pIntent.cancel()
                     }
@@ -1342,13 +1312,9 @@ fun savePadzeia(
                     val londs3 = londs2 / 100000L
                     if (londs2 > c.timeInMillis) {
                         val intent = Settings.createIntentSabytie(context, edit, data, time)
-                        val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, flags)
+                        val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                         try {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, londs2, pIntent)
-                            } else {
-                                am.setExact(AlarmManager.RTC_WAKEUP, londs2, pIntent)
-                            }
+                            am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, londs2, pIntent)
                         } catch (_: SecurityException) {
                         }
                     }
@@ -1390,13 +1356,9 @@ fun savePadzeia(
                         val londs3 = londs2 / 100000L
                         if (londs2 > c.timeInMillis) {
                             val intent = Settings.createIntentSabytie(context, edit, data, time)
-                            val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, flags)
+                            val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                             try {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, londs2, pIntent)
-                                } else {
-                                    am.setExact(AlarmManager.RTC_WAKEUP, londs2, pIntent)
-                                }
+                                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, londs2, pIntent)
                             } catch (_: SecurityException) {
                             }
                         }
@@ -1451,13 +1413,9 @@ fun savePadzeia(
                             val londs3 = londs2 / 100000L
                             if (londs2 > c.timeInMillis) {
                                 val intent = Settings.createIntentSabytie(context, edit, data, time)
-                                val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, flags)
+                                val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                                 try {
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                        am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, londs2, pIntent)
-                                    } else {
-                                        am.setExact(AlarmManager.RTC_WAKEUP, londs2, pIntent)
-                                    }
+                                    am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, londs2, pIntent)
                                 } catch (_: SecurityException) {
                                 }
                             }
@@ -1514,13 +1472,9 @@ fun savePadzeia(
                             val londs3 = londs2 / 100000L
                             if (londs2 > c.timeInMillis) {
                                 val intent = Settings.createIntentSabytie(context, edit, data, time)
-                                val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, flags)
+                                val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                                 try {
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                        am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, londs2, pIntent)
-                                    } else {
-                                        am.setExact(AlarmManager.RTC_WAKEUP, londs2, pIntent)
-                                    }
+                                    am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, londs2, pIntent)
                                 } catch (_: SecurityException) {
                                 }
                             }
@@ -1576,13 +1530,9 @@ fun savePadzeia(
                         val londs3 = londs2 / 100000L
                         if (londs2 > c.timeInMillis) {
                             val intent = Settings.createIntentSabytie(context, edit, data, time)
-                            val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, flags)
+                            val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                             try {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, londs2, pIntent)
-                                } else {
-                                    am.setExact(AlarmManager.RTC_WAKEUP, londs2, pIntent)
-                                }
+                                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, londs2, pIntent)
                             } catch (_: SecurityException) {
                             }
                         }
@@ -1636,13 +1586,9 @@ fun savePadzeia(
                         val londs3 = londs2 / 100000L
                         if (londs2 > c.timeInMillis) {
                             val intent = Settings.createIntentSabytie(context, edit, data, time)
-                            val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, flags)
+                            val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                             try {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, londs2, pIntent)
-                                } else {
-                                    am.setExact(AlarmManager.RTC_WAKEUP, londs2, pIntent)
-                                }
+                                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, londs2, pIntent)
                             } catch (_: SecurityException) {
                             }
                         }
@@ -1696,13 +1642,9 @@ fun savePadzeia(
                         val londs3 = londs2 / 100000L
                         if (londs2 > c.timeInMillis) {
                             val intent = Settings.createIntentSabytie(context, edit, data, time)
-                            val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, flags)
+                            val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                             try {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, londs2, pIntent)
-                                } else {
-                                    am.setExact(AlarmManager.RTC_WAKEUP, londs2, pIntent)
-                                }
+                                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, londs2, pIntent)
                             } catch (_: SecurityException) {
                             }
                         }
@@ -1755,13 +1697,9 @@ fun savePadzeia(
                         val londs3 = londs2 / 100000L
                         if (londs2 > c.timeInMillis) {
                             val intent = Settings.createIntentSabytie(context, edit, data, time)
-                            val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, flags)
+                            val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                             try {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, londs2, pIntent)
-                                } else {
-                                    am.setExact(AlarmManager.RTC_WAKEUP, londs2, pIntent)
-                                }
+                                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, londs2, pIntent)
                             } catch (_: SecurityException) {
                             }
                         }
@@ -1801,13 +1739,9 @@ fun savePadzeia(
                         val londs3 = londs2 / 100000L
                         if (londs2 > c.timeInMillis) {
                             val intent = Settings.createIntentSabytie(context, edit, data, time)
-                            val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, flags)
+                            val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                             try {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, londs2, pIntent)
-                                } else {
-                                    am.setExact(AlarmManager.RTC_WAKEUP, londs2, pIntent)
-                                }
+                                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, londs2, pIntent)
                             } catch (_: SecurityException) {
                             }
                         }
