@@ -949,7 +949,7 @@ fun CytanniList(
                         )
                     ), exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
                 ) {
-                    BottomAppBar(modifier = Modifier.size(Dp.Unspecified, 50.dp), containerColor = colorTollBar) {
+                    BottomAppBar(containerColor = colorTollBar) {
                         Row(
                             modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround
                         ) {

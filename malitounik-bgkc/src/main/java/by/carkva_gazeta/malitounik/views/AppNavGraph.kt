@@ -1165,6 +1165,7 @@ fun MainConteiner(
         }
         var expandedUp by remember { mutableStateOf(false) }
         val searchBibleState = rememberLazyListState()
+        var bottomPadding by remember { mutableStateOf(Dp.Unspecified) }
         Scaffold(topBar = {
             TopAppBar(
                 title = {
@@ -1434,7 +1435,7 @@ fun MainConteiner(
                         }
                     }
                     if (isBottomBar) {
-                        BottomAppBar(modifier = Modifier.size(Dp.Unspecified, 50.dp), containerColor = tollBarColor) {
+                        BottomAppBar(containerColor = tollBarColor) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.CenterVertically
                             ) {
@@ -1524,6 +1525,7 @@ fun MainConteiner(
                 }
             }
         }) { innerPadding ->
+            bottomPadding = innerPadding.calculateBottomPadding()
             Box(
                 modifier = Modifier.padding(
                     innerPadding.calculateStartPadding(LayoutDirection.Ltr), innerPadding.calculateTopPadding(), innerPadding.calculateEndPadding(LayoutDirection.Rtl), 0.dp
