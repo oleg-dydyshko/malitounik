@@ -444,6 +444,7 @@ fun CytanniList(
                     while (true) {
                         delay(autoScrollSpeed.toLong())
                         listState[selectedIndex].scrollBy(2f)
+                        AppNavGraphState.setScrollValuePosition(title, listState[selectedIndex].firstVisibleItemIndex)
                     }
                 }
             }

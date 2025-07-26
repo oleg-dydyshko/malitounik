@@ -758,7 +758,7 @@
     <string name="liturgikon">ЛІТУРГІКОН</string>
     <string name="share_help">Каб падзяліцца часткай тэксту, скапіруйце яго ў буфер абмену, інакш будзе дзеліцца ўсім тэкстам.</string>
     <string name="not_show">Больш не паказваць</string>
-    <string name="econom_enargi">ЭНЕРГАЗБЕРАЖЭНЬНЕ:</string>
+    <string name="econom_enargi">ЭНЭРГАЗЬБЕРАЖЭНЬНЕ:</string>
     <string name="econom_enargi_no">Экран заўсёды ўключаны</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>
