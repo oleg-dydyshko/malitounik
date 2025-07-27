@@ -178,9 +178,22 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                         val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
                         newArrayList.addAll(gson.fromJson(builder, type))
                         adapter.notifyDataSetChanged()
-                        binding.spinnerSviaty.setSelection(0)
-                        binding.sviaty.setText(newArrayList[0][3])
-                        binding.spinnerIsPasxa.setSelection(newArrayList[0][2].toInt())
+                        val extras = intent.extras
+                        if (extras != null) {
+                            for (i in newArrayList.indices) {
+                                if (newArrayList[i][0].toInt() == extras.getInt("day") && newArrayList[i][1].toInt() == extras.getInt("mun")) {
+                                    binding.spinnerSviaty.setSelection(i)
+                                    binding.sviaty.setText(newArrayList[i][3])
+                                    binding.spinnerIsPasxa.setSelection(newArrayList[i][2].toInt())
+                                    extras.clear()
+                                    break
+                                }
+                            }
+                        } else {
+                            binding.spinnerSviaty.setSelection(0)
+                            binding.sviaty.setText(newArrayList[0][3])
+                            binding.spinnerIsPasxa.setSelection(newArrayList[0][2].toInt())
+                        }
                         caliandarArrayList.clear()
                         val dat = MenuCaliandar.getDataCalaindar(year = Calendar.getInstance()[Calendar.YEAR])
                         for (i in dat.indices) {

@@ -78,7 +78,8 @@ fun measureTextWidth(text: String, fontSize: TextUnit, fontWeight: FontWeight): 
 
 @Composable
 fun KaliandarScreen(
-    position: Int, innerPadding: PaddingValues,
+    position: Int,
+    innerPadding: PaddingValues,
     navigateToCytanneList: (String, String, Int) -> Unit,
     navigateToSvityiaView: (svity: Boolean, position: Int) -> Unit,
     navigateToBogaslujbovyia: (title: String, resurs: String) -> Unit,

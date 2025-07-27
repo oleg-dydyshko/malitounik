@@ -128,7 +128,6 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
     }
     val context = LocalContext.current
     val sviatyiaList = remember { SnapshotStateList<OpisanieData>() }
-    val sviatyiaListLocale = remember { SnapshotStateList<OpisanieData>() }
     val dirList = remember { mutableStateListOf<DirList>() }
     var dialoNoIntent by remember { mutableStateOf(false) }
     var dialoNoWIFI by remember { mutableStateOf(false) }
@@ -140,6 +139,11 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
         }
     }
     if (dialoNoWIFI) {
+        val sviatyiaListLocale = if (svity) {
+            loadOpisanieSviat(context, position)
+        } else {
+            loadOpisanieSviatyia(context, year, mun, day)
+        }
         DialogNoWiFI(onDismiss = {
             dialoNoWIFI = false
             sviatyiaList.addAll(sviatyiaListLocale)
@@ -209,34 +213,28 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                 try {
                     if (Settings.isNetworkAvailable(context)) {
                         if (svity) {
+                            val loadOpisanieSviat = loadOpisanieSviat(context, position)
                             if (fileSvity.exists()) {
-                                sviatyiaListLocale.clear()
-                                sviatyiaListLocale.addAll(loadOpisanieSviat(context, position))
                                 sviatyiaList.clear()
-                                sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, true, position))
+                                sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviat, true, position))
                             }
                             downloadOpisanieSviat(context)
-                            sviatyiaListLocale.clear()
-                            sviatyiaListLocale.addAll(loadOpisanieSviat(context, position))
-                            getIcons(context, dirList, sviatyiaListLocale, true, isloadIcons, position, wiFiExists = { dialoNoWIFI = true })
+                            getIcons(context, dirList, loadOpisanieSviat, true, isloadIcons, position, wiFiExists = { dialoNoWIFI = true })
                             if (!dialoNoWIFI) {
                                 sviatyiaList.clear()
-                                sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, true, position))
+                                sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviat, true, position))
                             }
                         } else {
+                            val loadOpisanieSviatyia = loadOpisanieSviatyia(context, year, mun, day)
                             if (fileOpisanie.exists()) {
-                                sviatyiaListLocale.clear()
-                                sviatyiaListLocale.addAll(loadOpisanieSviatyia(context, year, mun, day))
                                 sviatyiaList.clear()
-                                sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, false, position))
+                                sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviatyia, false, position))
                             }
                             downloadOpisanieSviatyia(context, mun)
-                            sviatyiaListLocale.clear()
-                            sviatyiaListLocale.addAll(loadOpisanieSviatyia(context, year, mun, day))
-                            getIcons(context, dirList, sviatyiaListLocale, false, isloadIcons, position, wiFiExists = { dialoNoWIFI = true })
+                            getIcons(context, dirList, loadOpisanieSviatyia, false, isloadIcons, position, wiFiExists = { dialoNoWIFI = true })
                             if (!dialoNoWIFI) {
                                 sviatyiaList.clear()
-                                sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, false, position))
+                                sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviatyia, false, position))
                             }
                         }
                         getPiarliny(context)
@@ -365,8 +363,8 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                     val intent = Intent()
                                     if (svity) {
                                         intent.setClassName(context, "by.carkva_gazeta.admin.Sviaty")
-                                        intent.putExtra("day", day)
-                                        intent.putExtra("mun", mun)
+                                        intent.putExtra("day", sviatyiaList[0].date)
+                                        intent.putExtra("mun", sviatyiaList[0].mun)
                                     } else {
                                         intent.setClassName(context, "by.carkva_gazeta.admin.Sviatyia")
                                         intent.putExtra("dayOfYear", Settings.data[Settings.caliandarPosition][24].toInt())
