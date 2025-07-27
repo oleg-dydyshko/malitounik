@@ -101,7 +101,6 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -1165,7 +1164,6 @@ fun MainConteiner(
         }
         var expandedUp by remember { mutableStateOf(false) }
         val searchBibleState = rememberLazyListState()
-        var bottomPadding by remember { mutableStateOf(Dp.Unspecified) }
         Scaffold(topBar = {
             TopAppBar(
                 title = {
@@ -1525,7 +1523,6 @@ fun MainConteiner(
                 }
             }
         }) { innerPadding ->
-            bottomPadding = innerPadding.calculateBottomPadding()
             Box(
                 modifier = Modifier.padding(
                     innerPadding.calculateStartPadding(LayoutDirection.Ltr), innerPadding.calculateTopPadding(), innerPadding.calculateEndPadding(LayoutDirection.Rtl), 0.dp

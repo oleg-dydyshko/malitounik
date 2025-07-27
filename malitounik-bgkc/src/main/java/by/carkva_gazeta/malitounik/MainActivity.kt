@@ -143,6 +143,9 @@ object Settings {
     const val MENU_MALITVY_RUJANEC = 125
     const val MENU_MAE_NATATKI = 126
     const val MENU_LITURGIKON = 127
+    const val CALAINDAR = 0
+    const val PASHA = 1
+    const val UNDER = 2
     var bibleTime = false
     var bibleTimeList = false
     var destinations = AllDestinations.KALIANDAR
