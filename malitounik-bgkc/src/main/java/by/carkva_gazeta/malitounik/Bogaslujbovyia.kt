@@ -110,6 +110,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -1032,7 +1033,7 @@ fun Bogaslujbovyia(
                                 }
                             }
                             if (isBottomBar) {
-                                BottomAppBar(containerColor = MaterialTheme.colorScheme.onTertiary) {
+                                BottomAppBar(modifier = Modifier.size(Dp.Unspecified, if ((context as MainActivity).isGesture) 60.dp else 100.dp), containerColor = MaterialTheme.colorScheme.onTertiary) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.SpaceAround

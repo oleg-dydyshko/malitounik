@@ -949,7 +949,7 @@ fun CytanniList(
                         )
                     ), exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
                 ) {
-                    BottomAppBar(containerColor = colorTollBar) {
+                    BottomAppBar(modifier = Modifier.size(Dp.Unspecified, if ((context as MainActivity).isGesture) 60.dp else 100.dp), containerColor = colorTollBar) {
                         Row(
                             modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround
                         ) {

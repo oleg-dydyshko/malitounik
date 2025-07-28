@@ -101,6 +101,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -855,8 +856,12 @@ fun MainConteiner(
     }, initialPage = Settings.caliandarPosition)
     var showDropdown by remember { mutableStateOf(false) }
     var showDropdownMenuPos by rememberSaveable { mutableIntStateOf(1) }
-    BackHandler(drawerState.isClosed || showDropdown) {
-        if (drawerState.isClosed) coroutineScope.launch { drawerState.open() }
+    var searchText by rememberSaveable { mutableStateOf(false) }
+    BackHandler(drawerState.isClosed || showDropdown || searchText) {
+        when {
+            searchText -> searchText = false
+            drawerState.isClosed -> coroutineScope.launch { drawerState.open() }
+        }
         showDropdown = false
     }
     val view = LocalView.current
@@ -968,7 +973,6 @@ fun MainConteiner(
     var removeAllVybranae by remember { mutableStateOf(false) }
     var removeAllNatatki by remember { mutableStateOf(false) }
     var logView by remember { mutableStateOf(false) }
-    var searchText by rememberSaveable { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
     if (logView) {
@@ -1433,7 +1437,7 @@ fun MainConteiner(
                         }
                     }
                     if (isBottomBar) {
-                        BottomAppBar(containerColor = tollBarColor) {
+                        BottomAppBar(modifier = Modifier.size(Dp.Unspecified, if (context.isGesture) 60.dp else 100.dp), containerColor = tollBarColor) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.CenterVertically
                             ) {

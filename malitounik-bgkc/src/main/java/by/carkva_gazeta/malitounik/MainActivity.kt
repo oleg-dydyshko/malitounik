@@ -1069,7 +1069,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
     private var ferstStart = false
     var dzenNoch = false
     var checkDzenNoch = false
-    private var isGesture = false
+    var isGesture = false
     private var startTimeJob: Job? = null
     var isConnectServise = false
     var mRadyjoMaryiaService: ServiceRadyjoMaryia? = null
