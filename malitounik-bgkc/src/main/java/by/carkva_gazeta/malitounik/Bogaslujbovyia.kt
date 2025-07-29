@@ -38,13 +38,13 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
@@ -110,7 +110,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -1033,96 +1032,97 @@ fun Bogaslujbovyia(
                                 }
                             }
                             if (isBottomBar) {
-                                BottomAppBar(modifier = Modifier.size(Dp.Unspecified, if ((context as MainActivity).isGesture) 60.dp else 100.dp), containerColor = MaterialTheme.colorScheme.onTertiary) {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceAround
-                                    ) {
-                                        IconButton(onClick = {
-                                            showDropdown = !showDropdown
-                                            autoScroll = false
-                                        }) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.format_size),
-                                                contentDescription = "",
-                                                tint = MaterialTheme.colorScheme.onSecondary
-                                            )
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(MaterialTheme.colorScheme.onTertiary)
+                                        .navigationBarsPadding(),
+                                    horizontalArrangement = Arrangement.SpaceAround
+                                ) {
+                                    IconButton(onClick = {
+                                        showDropdown = !showDropdown
+                                        autoScroll = false
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.format_size),
+                                            contentDescription = "",
+                                            tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
+                                    IconButton(onClick = {
+                                        showDropdown = false
+                                        autoScroll = false
+                                        if (k.getBoolean("isShareHelp", true)) {
+                                            dialogHelpShare = true
+                                        } else {
+                                            shareIsLaunch = true
                                         }
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.share),
+                                            contentDescription = "",
+                                            tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
+                                    IconButton(onClick = {
+                                        searchText = true
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.search),
+                                            contentDescription = "",
+                                            tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
+                                    IconButton(onClick = {
+                                        fullscreen = true
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.fullscreen),
+                                            contentDescription = "",
+                                            tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
+                                    IconButton(onClick = {
+                                        saveVybranoe = true
+                                    }) {
+                                        val icon = if (isVybranoe) painterResource(R.drawable.stars)
+                                        else painterResource(R.drawable.star)
+                                        Icon(
+                                            painter = icon,
+                                            contentDescription = "",
+                                            tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
+                                    if (scrollState.canScrollForward) {
+                                        val iconAutoScroll =
+                                            if (autoScrollSensor) painterResource(R.drawable.stop_circle)
+                                            else painterResource(R.drawable.play_circle)
                                         IconButton(onClick = {
-                                            showDropdown = false
-                                            autoScroll = false
-                                            if (k.getBoolean("isShareHelp", true)) {
-                                                dialogHelpShare = true
-                                            } else {
-                                                shareIsLaunch = true
-                                            }
-                                        }) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.share),
-                                                contentDescription = "",
-                                                tint = MaterialTheme.colorScheme.onSecondary
-                                            )
-                                        }
-                                        IconButton(onClick = {
-                                            searchText = true
-                                        }) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.search),
-                                                contentDescription = "",
-                                                tint = MaterialTheme.colorScheme.onSecondary
-                                            )
-                                        }
-                                        IconButton(onClick = {
-                                            fullscreen = true
-                                        }) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.fullscreen),
-                                                contentDescription = "",
-                                                tint = MaterialTheme.colorScheme.onSecondary
-                                            )
-                                        }
-                                        IconButton(onClick = {
-                                            saveVybranoe = true
-                                        }) {
-                                            val icon = if (isVybranoe) painterResource(R.drawable.stars)
-                                            else painterResource(R.drawable.star)
-                                            Icon(
-                                                painter = icon,
-                                                contentDescription = "",
-                                                tint = MaterialTheme.colorScheme.onSecondary
-                                            )
-                                        }
-                                        if (scrollState.canScrollForward) {
-                                            val iconAutoScroll =
-                                                if (autoScrollSensor) painterResource(R.drawable.stop_circle)
-                                                else painterResource(R.drawable.play_circle)
-                                            IconButton(onClick = {
-                                                autoScroll = !autoScroll
-                                                autoScrollSensor = !autoScrollSensor
-                                                if (autoScrollSensor) {
-                                                    actyvity.window.addFlags(
-                                                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                                                    )
-                                                } else if (!k.getBoolean("power", false)) {
-                                                    actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                                                }
-                                            }) {
-                                                Icon(
-                                                    iconAutoScroll,
-                                                    contentDescription = "",
-                                                    tint = MaterialTheme.colorScheme.onSecondary
+                                            autoScroll = !autoScroll
+                                            autoScrollSensor = !autoScrollSensor
+                                            if (autoScrollSensor) {
+                                                actyvity.window.addFlags(
+                                                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                                                 )
+                                            } else if (!k.getBoolean("power", false)) {
+                                                actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                                             }
-                                        } else if (scrollState.canScrollBackward) {
-                                            IconButton(onClick = {
-                                                isUpList = true
-                                            }) {
-                                                Icon(
-                                                    painter = painterResource(R.drawable.arrow_upward),
-                                                    contentDescription = "",
-                                                    tint = MaterialTheme.colorScheme.onSecondary
-                                                )
-                                            }
+                                        }) {
+                                            Icon(
+                                                iconAutoScroll,
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.onSecondary
+                                            )
+                                        }
+                                    } else if (scrollState.canScrollBackward) {
+                                        IconButton(onClick = {
+                                            isUpList = true
+                                        }) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.arrow_upward),
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.onSecondary
+                                            )
                                         }
                                     }
                                 }

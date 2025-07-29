@@ -760,5 +760,7 @@
     <string name="not_show">Больш не паказваць</string>
     <string name="econom_enargi">ЭНЭРГАЗЬБЕРАЖЭНЬНЕ:</string>
     <string name="econom_enargi_no">Экран заўсёды ўключаны</string>
+    <string name="set_razdel">Увядзіце нумар разьдзелу</string>
+    <string name="razdzel_count">Усяго %1$d</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

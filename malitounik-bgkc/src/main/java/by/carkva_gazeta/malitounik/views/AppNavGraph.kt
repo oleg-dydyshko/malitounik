@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -40,7 +41,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.DrawerState
@@ -101,7 +101,6 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -1437,59 +1436,60 @@ fun MainConteiner(
                         }
                     }
                     if (isBottomBar) {
-                        BottomAppBar(modifier = Modifier.size(Dp.Unspecified, if (context.isGesture) 60.dp else 100.dp), containerColor = tollBarColor) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
-                                    IconButton(onClick = {
-                                        searchText = true
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.search), contentDescription = "", tint = textTollBarColor
-                                        )
-                                    }
-                                    IconButton(onClick = {
-                                        navigationActions.navigateToPadzeiView()
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.event), contentDescription = "", tint = textTollBarColor
-                                        )
-                                    }
-                                    IconButton({
-                                        k.edit {
-                                            if (k.getBoolean("caliandarList", false)) {
-                                                navigationActions.navigateToKaliandar()
-                                                putBoolean("caliandarList", false)
-                                            } else {
-                                                putBoolean("caliandarList", true)
-                                                navigationActions.navigateToKaliandarYear()
-                                            }
-                                        }
-                                    }) {
-                                        val icon = if (k.getBoolean("caliandarList", false)) painterResource(R.drawable.calendar_today)
-                                        else painterResource(R.drawable.list)
-                                        Icon(
-                                            painter = icon, tint = textTollBarColor, contentDescription = ""
-                                        )
-                                    }
-                                    Text(
-                                        text = Calendar.getInstance()[Calendar.DATE].toString(),
-                                        modifier = Modifier
-                                            .clickable {
-                                                showDropdownMenuPos = 1
-                                                showDropdown = true
-                                            }
-                                            .clip(shape = RoundedCornerShape(3.dp))
-                                            .background(textTollBarColor)
-                                            .padding(1.dp)
-                                            .clip(shape = RoundedCornerShape(3.dp))
-                                            .background(if (isToDay) Divider else StrogiPost)
-                                            .padding(horizontal = 5.dp),
-                                        fontSize = 14.sp,
-                                        color = if (isToDay) PrimaryText else PrimaryTextBlack
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(tollBarColor)
+                                .navigationBarsPadding(), horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
+                                IconButton(onClick = {
+                                    searchText = true
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.search), contentDescription = "", tint = textTollBarColor
                                     )
                                 }
+                                IconButton(onClick = {
+                                    navigationActions.navigateToPadzeiView()
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.event), contentDescription = "", tint = textTollBarColor
+                                    )
+                                }
+                                IconButton({
+                                    k.edit {
+                                        if (k.getBoolean("caliandarList", false)) {
+                                            navigationActions.navigateToKaliandar()
+                                            putBoolean("caliandarList", false)
+                                        } else {
+                                            putBoolean("caliandarList", true)
+                                            navigationActions.navigateToKaliandarYear()
+                                        }
+                                    }
+                                }) {
+                                    val icon = if (k.getBoolean("caliandarList", false)) painterResource(R.drawable.calendar_today)
+                                    else painterResource(R.drawable.list)
+                                    Icon(
+                                        painter = icon, tint = textTollBarColor, contentDescription = ""
+                                    )
+                                }
+                                Text(
+                                    text = Calendar.getInstance()[Calendar.DATE].toString(),
+                                    modifier = Modifier
+                                        .clickable {
+                                            showDropdownMenuPos = 1
+                                            showDropdown = true
+                                        }
+                                        .clip(shape = RoundedCornerShape(3.dp))
+                                        .background(textTollBarColor)
+                                        .padding(1.dp)
+                                        .clip(shape = RoundedCornerShape(3.dp))
+                                        .background(if (isToDay) Divider else StrogiPost)
+                                        .padding(horizontal = 5.dp),
+                                    fontSize = 14.sp,
+                                    color = if (isToDay) PrimaryText else PrimaryTextBlack
+                                )
                             }
                         }
                     }
