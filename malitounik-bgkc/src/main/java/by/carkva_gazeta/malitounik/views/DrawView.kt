@@ -69,7 +69,7 @@ fun DrawView(
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var dialogNoInternet by remember { mutableStateOf(false) }
     var dialogProgram by remember { mutableStateOf(false) }
-    val navigationDrawerItemColors = NavigationDrawerItemDefaults.colors(selectedContainerColor = if (context.dzenNoch) BackgroundDrawelMenu else Divider)
+    val navigationDrawerItemColors = NavigationDrawerItemDefaults.colors(selectedContainerColor = if (Settings.dzenNoch.value) BackgroundDrawelMenu else Divider)
     if (dialogNoInternet) {
         DialogNoInternet {
             dialogNoInternet = false

@@ -28,7 +28,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -56,7 +55,6 @@ fun KaliandarScreenInfo(navController: NavHostController) {
     val view = LocalView.current
     val coroutineScope = rememberCoroutineScope()
     val maxLine = remember { mutableIntStateOf(1) }
-    val context = LocalContext.current
     SideEffect {
         val window = (view.context as Activity).window
         WindowCompat.getInsetsController(
@@ -64,7 +62,7 @@ fun KaliandarScreenInfo(navController: NavHostController) {
             view
         ).apply {
             isAppearanceLightStatusBars = false
-            isAppearanceLightNavigationBars = !(context as MainActivity).dzenNoch
+            isAppearanceLightNavigationBars = !Settings.dzenNoch.value
         }
     }
     var backPressHandled by remember { mutableStateOf(false) }

@@ -467,7 +467,6 @@ fun CytanniList(
     BackHandler(!backPressHandled || isSelectMode || isParallelVisable || showDropdown) {
         when {
             isSelectMode -> {
-                if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
                 isSelectMode = false
             }
 
@@ -573,7 +572,6 @@ fun CytanniList(
                     if (isSelectMode || isParallelVisable) {
                         IconButton(onClick = {
                             if (isSelectMode) {
-                                if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
                                 isSelectMode = false
                             } else isParallelVisable = false
                         }, content = {
@@ -1272,7 +1270,6 @@ fun CytanniList(
                         isCopyMode = false
                         isShareMode = false
                         isSelectMode = false
-                        if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
                     }
                     LazyColumn(
                         Modifier
@@ -1325,7 +1322,6 @@ fun CytanniList(
                                             }, onLongPress = {
                                                 if (!fullscreen) {
                                                     isSelectMode = true
-                                                    actyvity.removelightSensor()
                                                     selectState[index] = !selectState[index]
                                                 }
                                             }, onDoubleTap = {

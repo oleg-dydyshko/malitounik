@@ -1,7 +1,6 @@
 package by.carkva_gazeta.malitounik.views
 
 import android.widget.Toast
-import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
@@ -34,14 +33,15 @@ import by.carkva_gazeta.malitounik.BuildConfig
 import by.carkva_gazeta.malitounik.DialogImage
 import by.carkva_gazeta.malitounik.DialogLiturgia
 import by.carkva_gazeta.malitounik.DialogSztoHovaha
-import by.carkva_gazeta.malitounik.MainActivity
 import by.carkva_gazeta.malitounik.R
+import by.carkva_gazeta.malitounik.Settings
 import kotlinx.coroutines.launch
 
 @Composable
 fun HtmlText(
     modifier: Modifier = Modifier,
     text: String,
+    title: String = "",
     color: Color = MaterialTheme.colorScheme.secondary,
     fontWeight: FontWeight? = null,
     textAlign: TextAlign? = null,
@@ -99,9 +99,7 @@ fun HtmlText(
     }*/
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
-    val activity = LocalActivity.current as MainActivity
-    val dzenHoch by remember { mutableStateOf(activity.dzenNoch) }
-    var newText = if (dzenHoch) text.replace("#d00505", "#ff6666", true)
+    var newText = if (Settings.dzenNoch.value) text.replace("#d00505", "#ff6666", true)
     else text
     newText = newText.replace(
         "<!--<VERSION></VERSION>-->",
@@ -149,6 +147,7 @@ fun HtmlText(
                 "https://localhost/pasliachytaeca/" -> {
                     coroutineScope.launch {
                         scrollState.animateScrollTo(0)
+                        if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
                     }
                 }
 
@@ -172,6 +171,7 @@ fun HtmlText(
                             val y = layout.getLineTop(line)
                             coroutineScope.launch {
                                 scrollState.animateScrollTo(y.toInt())
+                                if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
                             }
                         }
                     }
@@ -185,6 +185,7 @@ fun HtmlText(
                             val y = layout.getLineTop(line)
                             coroutineScope.launch {
                                 scrollState.animateScrollTo(y.toInt())
+                                if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
                             }
                         }
                     }
@@ -198,6 +199,7 @@ fun HtmlText(
                             val y = layout.getLineTop(line)
                             coroutineScope.launch {
                                 scrollState.animateScrollTo(y.toInt())
+                                if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
                             }
                         }
                     }
@@ -211,6 +213,7 @@ fun HtmlText(
                             val y = layout.getLineTop(line)
                             coroutineScope.launch {
                                 scrollState.animateScrollTo(y.toInt())
+                                if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
                             }
                         }
                     }
@@ -224,6 +227,7 @@ fun HtmlText(
                             val y = layout.getLineTop(line)
                             coroutineScope.launch {
                                 scrollState.animateScrollTo(y.toInt())
+                                if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
                             }
                         }
                     }
@@ -241,6 +245,7 @@ fun HtmlText(
                             val y = layout.getLineTop(line)
                             coroutineScope.launch {
                                 scrollState.animateScrollTo(y.toInt())
+                                if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
                             }
                         }
                     }
@@ -264,6 +269,7 @@ fun HtmlText(
                             val y = layout.getLineTop(line)
                             coroutineScope.launch {
                                 scrollState.animateScrollTo(y.toInt())
+                                if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
                             }
                         }
                     }
@@ -277,6 +283,7 @@ fun HtmlText(
                             val y = layout.getLineTop(line)
                             coroutineScope.launch {
                                 scrollState.animateScrollTo(y.toInt())
+                                if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
                             }
                         }
                     }
@@ -336,6 +343,7 @@ fun HtmlText(
                             val y = layout.getLineTop(line)
                             coroutineScope.launch {
                                 scrollState.animateScrollTo(y.toInt())
+                                if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
                             }
                         }
                     }
@@ -353,6 +361,7 @@ fun HtmlText(
                             val y = layout.getLineTop(line)
                             coroutineScope.launch {
                                 scrollState.animateScrollTo(y.toInt())
+                                if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
                             }
                         }
                     }
@@ -366,6 +375,7 @@ fun HtmlText(
                             val y = layout.getLineTop(line)
                             coroutineScope.launch {
                                 scrollState.animateScrollTo(y.toInt())
+                                if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
                             }
                         }
                     }
@@ -379,6 +389,7 @@ fun HtmlText(
                             val y = layout.getLineTop(line)
                             coroutineScope.launch {
                                 scrollState.animateScrollTo(y.toInt())
+                                if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
                             }
                         }
                     }

@@ -538,7 +538,7 @@ fun biblia(
                         item.isNotEmpty() && item.isDigitsOnly()
                     } else false
                     val padd = if (isInt) {
-                        val color = if ((context as MainActivity).dzenNoch) PrimaryBlack
+                        val color = if (Settings.dzenNoch.value) PrimaryBlack
                         else Primary
                         val sub1 = aSviatyia.substring(t5, t6)
                         aSviatyia = aSviatyia.replace(sub1, "$sub1.")

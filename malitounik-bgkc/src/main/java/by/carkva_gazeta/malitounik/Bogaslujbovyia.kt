@@ -1214,6 +1214,7 @@ fun Bogaslujbovyia(
                                     }
                                 },
                             text = htmlText,
+                            title = title,
                             fontSize = fontSize.sp,
                             isNoLiturgia = isLiturgia && !isNoLiturgia,
                             searchText = searchTextResult,
@@ -1249,6 +1250,7 @@ fun Bogaslujbovyia(
                                         }
                                     },
                                 text = htmlText,
+                                title = title,
                                 fontSize = fontSize.sp,
                                 isNoLiturgia = isLiturgia && !isNoLiturgia,
                                 searchText = searchTextResult,

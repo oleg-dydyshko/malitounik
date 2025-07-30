@@ -247,13 +247,11 @@ fun DialogMyNatatki(
     }
     val actyvity = LocalActivity.current as MainActivity
     val k = actyvity.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-    if (editMode) actyvity.removelightSensor()
     Dialog(onDismissRequest = {
         if (editMode) {
             if (editTitle.isNotEmpty() || textFieldValueState.text.isNotEmpty()) {
                 onConfirmation(editTitle, textFieldValueState.text)
             }
-            if (k?.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
         } else onDismiss()
     }) {
         Card(
@@ -327,7 +325,6 @@ fun DialogMyNatatki(
                             onClick = {
                                 if (editMode) {
                                     onDismiss()
-                                    if (k?.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
                                 } else editMode = true
                             }
                         ) {
@@ -343,7 +340,6 @@ fun DialogMyNatatki(
                             onClick = {
                                 if (editMode) {
                                     onConfirmation(editTitle, textFieldValueState.text)
-                                    if (k?.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) actyvity.setlightSensor()
                                 } else onDismiss()
                             }
                         ) {

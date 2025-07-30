@@ -11,7 +11,6 @@ import android.os.Build
 import android.os.SystemClock
 import android.view.WindowManager
 import android.widget.Toast
-import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -124,7 +123,7 @@ fun SettingsView(navController: NavHostController) {
             window, view
         ).apply {
             isAppearanceLightStatusBars = false
-            isAppearanceLightNavigationBars = !(context as MainActivity).dzenNoch
+            isAppearanceLightNavigationBars = !Settings.dzenNoch.value
         }
     }
     val coroutineScope = rememberCoroutineScope()
@@ -283,7 +282,6 @@ fun SettingsView(navController: NavHostController) {
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
             Column(Modifier.selectableGroup()) {
-                val actyvity = LocalActivity.current as MainActivity
                 val isSystemInDarkTheme = isSystemInDarkTheme()
                 val edit = k.edit()
                 Row(
@@ -295,9 +293,8 @@ fun SettingsView(navController: NavHostController) {
                                 "mode_night", Settings.MODE_NIGHT_SYSTEM
                             )
                             edit.apply()
-                            actyvity.dzenNoch = isSystemInDarkTheme
+                            Settings.dzenNoch.value = isSystemInDarkTheme
                             (context as MainActivity).removelightSensor()
-                            if (context.checkDzenNoch != context.dzenNoch) actyvity.recreate()
                         }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(
@@ -307,9 +304,8 @@ fun SettingsView(navController: NavHostController) {
                                 "mode_night", Settings.MODE_NIGHT_SYSTEM
                             )
                             edit.apply()
-                            actyvity.dzenNoch = isSystemInDarkTheme
+                            Settings.dzenNoch.value = isSystemInDarkTheme
                             (context as MainActivity).removelightSensor()
-                            if (context.checkDzenNoch != context.dzenNoch) actyvity.recreate()
                         })
                     Text(
                         stringResource(R.string.system), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp
@@ -322,9 +318,8 @@ fun SettingsView(navController: NavHostController) {
                             modeNight = Settings.MODE_NIGHT_NO
                             edit.putInt("mode_night", Settings.MODE_NIGHT_NO)
                             edit.apply()
-                            actyvity.dzenNoch = false
+                            Settings.dzenNoch.value = false
                             (context as MainActivity).removelightSensor()
-                            if (context.checkDzenNoch != context.dzenNoch) actyvity.recreate()
                         }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(
@@ -332,9 +327,8 @@ fun SettingsView(navController: NavHostController) {
                             modeNight = Settings.MODE_NIGHT_NO
                             edit.putInt("mode_night", Settings.MODE_NIGHT_NO)
                             edit.apply()
-                            actyvity.dzenNoch = false
+                            Settings.dzenNoch.value = false
                             (context as MainActivity).removelightSensor()
-                            if (context.checkDzenNoch != context.dzenNoch) actyvity.recreate()
                         })
                     Text(
                         stringResource(R.string.day), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp
@@ -349,9 +343,8 @@ fun SettingsView(navController: NavHostController) {
                                 "mode_night", Settings.MODE_NIGHT_YES
                             )
                             edit.apply()
-                            actyvity.dzenNoch = true
+                            Settings.dzenNoch.value = true
                             (context as MainActivity).removelightSensor()
-                            if (context.checkDzenNoch != context.dzenNoch) actyvity.recreate()
                         }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(
@@ -361,9 +354,8 @@ fun SettingsView(navController: NavHostController) {
                                 "mode_night", Settings.MODE_NIGHT_YES
                             )
                             edit.apply()
-                            actyvity.dzenNoch = true
+                            Settings.dzenNoch.value = true
                             (context as MainActivity).removelightSensor()
-                            if (context.checkDzenNoch != context.dzenNoch) actyvity.recreate()
                         })
                     Text(
                         stringResource(R.string.widget_day_d_n), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp
@@ -954,8 +946,7 @@ fun SettingsView(navController: NavHostController) {
                     modeGosudSvaity = false
                     modePafesiiSvaity = false
                     textFieldNotificstionState.setTextAndPlaceCursorAtEnd(dataTimes[k.getInt("timeNotification", 2)].string)
-                    if ((context as MainActivity).checkDzenNoch != context.dzenNoch) context.recreate()
-                    else setNotificationFull(context)
+                    setNotificationFull(context)
                 }, modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(5.dp), colors = ButtonColors(

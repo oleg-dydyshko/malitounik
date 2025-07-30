@@ -153,6 +153,7 @@ import by.carkva_gazeta.malitounik.searchJob
 import by.carkva_gazeta.malitounik.searchList
 import by.carkva_gazeta.malitounik.searchListSvityia
 import by.carkva_gazeta.malitounik.setNotificationNon
+import by.carkva_gazeta.malitounik.ui.theme.BackgroundTolBarDark
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.Post
@@ -262,7 +263,7 @@ object AppNavGraphState {
         return AnnotatedString.Builder(citataList[Random.nextInt(citataList.size)]).apply {
             addStyle(
                 SpanStyle(
-                    fontFamily = FontFamily(Font(R.font.andantinoscript)), fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic, color = if (context.dzenNoch) PrimaryBlack else Primary, fontSize = (Settings.fontInterface + 4).sp
+                    fontFamily = FontFamily(Font(R.font.andantinoscript)), fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic, color = if (Settings.dzenNoch.value) PrimaryBlack else Primary, fontSize = (Settings.fontInterface + 4).sp
                 ), 0, 1
             )
             addStyle(SpanStyle(fontFamily = FontFamily(Font(R.font.comici))), 1, this.length)
@@ -935,7 +936,7 @@ fun MainConteiner(
         context.intent = null
     }
     var navigateIsSpecial by remember { mutableStateOf(false) }
-    if (drawerState.isOpen) isAppearanceLight = !context.dzenNoch
+    if (drawerState.isOpen) isAppearanceLight = !Settings.dzenNoch.value
     SideEffect {
         val window = (view.context as Activity).window
         WindowCompat.getInsetsController(window, view).apply {
@@ -950,7 +951,7 @@ fun MainConteiner(
                 }
 
                 Settings.destinations == AllDestinations.KALIANDAR -> isAppearanceLight
-                else -> !context.dzenNoch
+                else -> !Settings.dzenNoch.value
             }
         }
     }
@@ -1127,8 +1128,7 @@ fun MainConteiner(
             )
         }, drawerState = drawerState
     ) {
-        val col = MaterialTheme.colorScheme.onTertiary
-        var tollBarColor by remember { mutableStateOf(col) }
+        var tollBarColor by remember { mutableStateOf(if (Settings.dzenNoch.value) BackgroundTolBarDark else Primary) }
         var textTollBarColor by remember { mutableStateOf(PrimaryTextBlack) }
         var title by rememberSaveable {
             mutableStateOf("")
@@ -1418,7 +1418,7 @@ fun MainConteiner(
                         ModalBottomSheet(
                             sheetState = sheetState, properties = ModalBottomSheetProperties(
                                 isAppearanceLightStatusBars = isAppearanceLight, isAppearanceLightNavigationBars = if (Settings.destinations == AllDestinations.KALIANDAR) isAppearanceLight
-                                else !context.dzenNoch
+                                else !Settings.dzenNoch.value
                             ), containerColor = MaterialTheme.colorScheme.surfaceContainer, onDismissRequest = { showDropdown = false }) {
                             if (showDropdownMenuPos == 1) {
                                 KaliandarScreenMounth(
@@ -1601,65 +1601,143 @@ fun MainConteiner(
                         }
                     }
 
-                    AllDestinations.BOGASLUJBOVYIA_MENU -> BogaslujbovyiaMenu(
-                        navController, innerPadding, Settings.MENU_BOGASLUJBOVYIA, searchText
-                    )
+                    AllDestinations.BOGASLUJBOVYIA_MENU -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
+                        BogaslujbovyiaMenu(
+                            navController, innerPadding, Settings.MENU_BOGASLUJBOVYIA, searchText
+                        )
+                    }
 
-                    AllDestinations.AKAFIST_MENU -> BogaslujbovyiaMenu(
-                        navController, innerPadding, Settings.MENU_AKAFIST, searchText
-                    )
+                    AllDestinations.AKAFIST_MENU -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
+                        BogaslujbovyiaMenu(
+                            navController, innerPadding, Settings.MENU_AKAFIST, searchText
+                        )
+                    }
 
-                    AllDestinations.BIBLIJATEKA_NIADAUNIA -> BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_NIADAUNIA, innerPadding, searchText)
+                    AllDestinations.BIBLIJATEKA_NIADAUNIA -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
+                        BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_NIADAUNIA, innerPadding, searchText)
+                    }
 
-                    AllDestinations.BIBLIJATEKA_SPEUNIKI -> BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_SPEUNIKI, innerPadding, searchText)
+                    AllDestinations.BIBLIJATEKA_SPEUNIKI -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
+                        BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_SPEUNIKI, innerPadding, searchText)
+                    }
 
-                    AllDestinations.BIBLIJATEKA_MALITOUNIKI -> BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_MALITOUNIKI, innerPadding, searchText)
+                    AllDestinations.BIBLIJATEKA_MALITOUNIKI -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
+                        BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_MALITOUNIKI, innerPadding, searchText)
+                    }
 
-                    AllDestinations.BIBLIJATEKA_GISTORYIA -> BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_GISTORYIA, innerPadding, searchText)
+                    AllDestinations.BIBLIJATEKA_GISTORYIA -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
+                        BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_GISTORYIA, innerPadding, searchText)
+                    }
 
-                    AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA -> BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA, innerPadding, searchText)
+                    AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
+                        BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA, innerPadding, searchText)
+                    }
 
-                    AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU -> BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU, innerPadding, searchText)
+                    AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
+                        BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU, innerPadding, searchText)
+                    }
 
-                    AllDestinations.PIESNY_PRASLAULENNIA -> PiesnyList(navController, AllDestinations.PIESNY_PRASLAULENNIA, innerPadding, searchText)
+                    AllDestinations.PIESNY_PRASLAULENNIA -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
+                        PiesnyList(navController, AllDestinations.PIESNY_PRASLAULENNIA, innerPadding, searchText)
+                    }
 
-                    AllDestinations.PIESNY_ZA_BELARUS -> PiesnyList(navController, AllDestinations.PIESNY_ZA_BELARUS, innerPadding, searchText)
+                    AllDestinations.PIESNY_ZA_BELARUS -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
+                        PiesnyList(navController, AllDestinations.PIESNY_ZA_BELARUS, innerPadding, searchText)
+                    }
 
-                    AllDestinations.PIESNY_DA_BAGARODZICY -> PiesnyList(navController, AllDestinations.PIESNY_DA_BAGARODZICY, innerPadding, searchText)
+                    AllDestinations.PIESNY_DA_BAGARODZICY -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
+                        PiesnyList(navController, AllDestinations.PIESNY_DA_BAGARODZICY, innerPadding, searchText)
+                    }
 
-                    AllDestinations.PIESNY_KALIADNYIA -> PiesnyList(navController, AllDestinations.PIESNY_KALIADNYIA, innerPadding, searchText)
+                    AllDestinations.PIESNY_KALIADNYIA -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
+                        PiesnyList(navController, AllDestinations.PIESNY_KALIADNYIA, innerPadding, searchText)
+                    }
 
-                    AllDestinations.PIESNY_TAIZE -> PiesnyList(navController, AllDestinations.PIESNY_TAIZE, innerPadding, searchText)
+                    AllDestinations.PIESNY_TAIZE -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
+                        PiesnyList(navController, AllDestinations.PIESNY_TAIZE, innerPadding, searchText)
+                    }
 
-                    AllDestinations.UNDER_SVAITY_MUNU -> SviatyList(navController, innerPadding)
+                    AllDestinations.UNDER_SVAITY_MUNU -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
+                        SviatyList(navController, innerPadding)
+                    }
 
-                    AllDestinations.UNDER_PARAFII_BGKC -> ParafiiBGKC(navController, innerPadding)
+                    AllDestinations.UNDER_PARAFII_BGKC -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
+                        ParafiiBGKC(navController, innerPadding)
+                    }
 
                     AllDestinations.UNDER_PASHALIA -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
                         if (!searchText) Settings.textFieldValueState.value = ""
                         Pashalia(navController, innerPadding, searchText)
                     }
 
-                    AllDestinations.CHASASLOU_MENU -> BogaslujbovyiaMenu(
-                        navController, innerPadding, Settings.MENU_CHASASLOU, searchText
-                    )
+                    AllDestinations.CHASASLOU_MENU -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
+                        BogaslujbovyiaMenu(
+                            navController, innerPadding, Settings.MENU_CHASASLOU, searchText
+                        )
+                    }
 
-                    AllDestinations.LITURGIKON_MENU -> BogaslujbovyiaMenu(
-                        navController, innerPadding, Settings.MENU_LITURGIKON, searchText
-                    )
+                    AllDestinations.LITURGIKON_MENU -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
+                        BogaslujbovyiaMenu(
+                            navController, innerPadding, Settings.MENU_LITURGIKON, searchText
+                        )
+                    }
 
                     AllDestinations.MAE_NATATKI_MENU -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
                         MaeNatatki(
                             innerPadding, sortedNatatki, addFileNatatki, removeAllNatatki, onDismissAddFile = {
                                 addFileNatatki = false
                             })
                     }
 
-                    AllDestinations.MALITVY_MENU -> BogaslujbovyiaMenu(
-                        navController, innerPadding, Settings.MENU_MALITVY, searchText
-                    )
+                    AllDestinations.MALITVY_MENU -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
+                        BogaslujbovyiaMenu(
+                            navController, innerPadding, Settings.MENU_MALITVY, searchText
+                        )
+                    }
 
                     AllDestinations.BIBLIA_SEMUXA -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
                         BibliaMenu(navController, Settings.PEREVODSEMUXI, innerPadding, searchText, searchBibleState, navigateToCytanniList = { chytanne, position, perevod2 ->
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, Settings.CHYTANNI_BIBLIA, perevod2, position
@@ -1670,6 +1748,8 @@ fun MainConteiner(
                     }
 
                     AllDestinations.BIBLIA_BOKUNA -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
                         BibliaMenu(navController, Settings.PEREVODBOKUNA, innerPadding, searchText, searchBibleState, navigateToCytanniList = { chytanne, position, perevod2 ->
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, Settings.CHYTANNI_BIBLIA, perevod2, position
@@ -1680,6 +1760,8 @@ fun MainConteiner(
                     }
 
                     AllDestinations.BIBLIA_NADSAN -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
                         BibliaMenu(navController, Settings.PEREVODNADSAN, innerPadding, searchText, searchBibleState, navigateToCytanniList = { chytanne, position, perevod2 ->
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, Settings.CHYTANNI_BIBLIA, perevod2, position
@@ -1690,6 +1772,8 @@ fun MainConteiner(
                     }
 
                     AllDestinations.BIBLIA_CHARNIAUSKI -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
                         BibliaMenu(navController, Settings.PEREVODCARNIAUSKI, innerPadding, searchText, searchBibleState, navigateToCytanniList = { chytanne, position, perevod2 ->
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, Settings.CHYTANNI_BIBLIA, perevod2, position
@@ -1700,6 +1784,8 @@ fun MainConteiner(
                     }
 
                     AllDestinations.BIBLIA_SINODAL -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
                         BibliaMenu(navController, Settings.PEREVODSINOIDAL, innerPadding, searchText, searchBibleState, navigateToCytanniList = { chytanne, position, perevod2 ->
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, Settings.CHYTANNI_BIBLIA, perevod2, position
@@ -1710,6 +1796,8 @@ fun MainConteiner(
                     }
 
                     AllDestinations.KALIANDAR_YEAR -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
                         val dataToDay = findCaliandarToDay(context, false)
                         LaunchedEffect(lazyColumnState) {
                             snapshotFlow { lazyColumnState.firstVisibleItemIndex }.collect { index ->
@@ -1732,15 +1820,19 @@ fun MainConteiner(
                         }
                     }
 
-                    AllDestinations.VYBRANAE_LIST -> VybranaeList(
-                        navigateToCytanniList = { chytanne, position, perevod2 ->
-                            navigationActions.navigateToCytanniList(
-                                "", chytanne, Settings.CHYTANNI_VYBRANAE, perevod2, position
-                            )
-                        }, navigateToBogaslujbovyia = { title, resourse ->
-                            navigationActions.navigateToBogaslujbovyia(title, resourse)
-                        }, sortedVybranae, removeAllVybranae, innerPadding
-                    )
+                    AllDestinations.VYBRANAE_LIST -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
+                        VybranaeList(
+                            navigateToCytanniList = { chytanne, position, perevod2 ->
+                                navigationActions.navigateToCytanniList(
+                                    "", chytanne, Settings.CHYTANNI_VYBRANAE, perevod2, position
+                                )
+                            }, navigateToBogaslujbovyia = { title, resourse ->
+                                navigationActions.navigateToBogaslujbovyia(title, resourse)
+                            }, sortedVybranae, removeAllVybranae, innerPadding
+                        )
+                    }
                 }
             }
         }
@@ -1917,7 +2009,6 @@ fun DialogLogProgramy(
 ) {
     val context = LocalActivity.current as MainActivity
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-    context.removelightSensor()
     var item by remember { mutableStateOf("") }
     val logView = LogView(context)
     logView.setLogViewListinner(object : LogView.LogViewListinner {
@@ -1970,7 +2061,6 @@ fun DialogLogProgramy(
                         onClick = {
                             logView.createAndSentFile()
                             onDismiss()
-                            if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) context.setlightSensor()
                         }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")

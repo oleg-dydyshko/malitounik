@@ -10,6 +10,8 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -22,7 +24,6 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import android.os.SystemClock
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -31,7 +32,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -50,7 +50,6 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -76,8 +75,6 @@ import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.storage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -159,6 +156,7 @@ object Settings {
     var isProgressVisableRadyjoMaryia = mutableStateOf(false)
     val textFieldValueState = mutableStateOf("")
     val textFieldValueLatest = mutableStateOf("")
+    val dzenNoch = mutableStateOf(false)
 
     @Suppress("DEPRECATION")
     fun isNetworkAvailable(context: Context, typeTransport: Int = TRANSPORT_ALL): Boolean {
@@ -1064,13 +1062,7 @@ fun getFontInterface(context: Context): Float {
 
 class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMaryia.ServiceRadyjoMaryiaListener {
     private var backPressed: Long = 0
-    private var mLastClickTime: Long = 0
-    private var myTimer: Job? = null
-    private var ferstStart = false
-    var dzenNoch = false
-    var checkDzenNoch = false
-    var isGesture = false
-    private var startTimeJob: Job? = null
+    private var isGesture = false
     var isConnectServise = false
     var mRadyjoMaryiaService: ServiceRadyjoMaryia? = null
     val mConnection = object : ServiceConnection {
@@ -1117,7 +1109,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        ferstStart = true
+        //ferstStart = true
         val k = getSharedPreferences("biblia", MODE_PRIVATE)
         if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) {
             setlightSensor()
@@ -1131,22 +1123,20 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
                 onBack()
             }
         })
+        if (savedInstanceState == null) {
+            val modeNight = k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM)
+            val configuration = Resources.getSystem().configuration
+            Settings.dzenNoch.value = configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+            if (modeNight == Settings.MODE_NIGHT_NO) Settings.dzenNoch.value = false
+            if (modeNight == Settings.MODE_NIGHT_YES) Settings.dzenNoch.value = true
+            if (modeNight == Settings.MODE_NIGHT_AUTO) Settings.dzenNoch.value = k.getBoolean("dzenNoch", false)
+        }
         setContent {
-            if (savedInstanceState != null) {
-                dzenNoch = savedInstanceState.getBoolean("dzenNoch", false)
-            } else {
-                val modeNight = k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM)
-                dzenNoch = isSystemInDarkTheme()
-                if (modeNight == Settings.MODE_NIGHT_NO) dzenNoch = false
-                if (modeNight == Settings.MODE_NIGHT_YES) dzenNoch = true
-                if (modeNight == Settings.MODE_NIGHT_AUTO) dzenNoch = k.getBoolean("dzenNoch", false)
-            }
-            checkDzenNoch = dzenNoch
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 window.isNavigationBarContrastEnforced = false
             }
-            val cytata = remember { AppNavGraphState.getCytata(this) }
-            MalitounikTheme(darkTheme = dzenNoch) {
+            val cytata = AppNavGraphState.getCytata(this)
+            MalitounikTheme(darkTheme = Settings.dzenNoch.value) {
                 AppNavGraph(cytata)
                 var dialogSztoHovahaVisable by rememberSaveable { mutableStateOf(checkASztoNovagaMD5Sum()) }
                 if (dialogSztoHovahaVisable) {
@@ -1235,16 +1225,6 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         FirebaseApp.initializeApp(context)
     }
 
-    private fun timeJob(isDzenNoch: Boolean) {
-        if (startTimeJob?.isActive != true) {
-            startTimeJob = CoroutineScope(Dispatchers.Main).launch {
-                dzenNoch = isDzenNoch
-                recreate()
-                mLastClickTime = SystemClock.elapsedRealtime()
-            }
-        }
-    }
-
     override fun onSensorChanged(event: SensorEvent?) {
         event?.let { sensorEvent ->
             sensorChangeDzenNoch(sensorEvent.values[0])
@@ -1255,34 +1235,13 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
     }
 
     private fun sensorChangeDzenNoch(sensorValue: Float) {
-        if (!ferstStart) {
-            if (SystemClock.elapsedRealtime() - mLastClickTime < 6000) {
-                return
+        when {
+            sensorValue <= 4f -> {
+                Settings.dzenNoch.value = true
             }
-        }
-        if (myTimer?.isActive != true) {
-            myTimer = CoroutineScope(Dispatchers.Main).launch {
-                if (!ferstStart) delay(1000)
-                ferstStart = false
-                when {
-                    sensorValue <= 4f -> {
-                        if (!dzenNoch && !checkDzenNoch) {
-                            timeJob(true)
-                        }
-                    }
 
-                    sensorValue >= 21f -> {
-                        if (dzenNoch && checkDzenNoch) {
-                            timeJob(false)
-                        }
-                    }
-
-                    else -> {
-                        if (dzenNoch != checkDzenNoch) {
-                            timeJob(!dzenNoch)
-                        }
-                    }
-                }
+            sensorValue >= 21f -> {
+                Settings.dzenNoch.value = false
             }
         }
     }
@@ -1324,7 +1283,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
             k.edit {
                 putBoolean("setAlarm", true)
                 if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) {
-                    putBoolean("dzenNoch", dzenNoch)
+                    putBoolean("dzenNoch", Settings.dzenNoch.value)
                 }
             }
             AppNavGraphState.bibleItem = false
@@ -1353,11 +1312,6 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         val mySensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         val lightSensor = mySensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)
         mySensorManager.unregisterListener(this, lightSensor)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putBoolean("dzenNoch", dzenNoch)
     }
 
     init {
