@@ -2008,7 +2008,6 @@ fun DialogLogProgramy(
     onDismiss: () -> Unit
 ) {
     val context = LocalActivity.current as MainActivity
-    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var item by remember { mutableStateOf("") }
     val logView = LogView(context)
     logView.setLogViewListinner(object : LogView.LogViewListinner {

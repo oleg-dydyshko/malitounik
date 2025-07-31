@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -20,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,8 +39,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.views.AllDestinations
+import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import java.text.Collator
 import java.util.Locale
 
@@ -734,25 +738,25 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
     }
     val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
     viewModel.filterItem(Settings.textFieldValueState.value)
-    Column {
-        if (searchText) {
-            PiesnyList(filteredItems, navigationActions, innerPadding)
-        } else {
-            val piesnyList = when (piesny) {
-                AllDestinations.PIESNY_PRASLAULENNIA -> piesnyPraslList
-                AllDestinations.PIESNY_ZA_BELARUS -> piesnyBelarusList
-                AllDestinations.PIESNY_DA_BAGARODZICY -> piesnyBagarList
-                AllDestinations.PIESNY_KALIADNYIA -> piesnyKaliadyList
-                AllDestinations.PIESNY_TAIZE -> piesnyTaizeList
-                else -> piesnyPraslList
-            }
-            PiesnyList(piesnyList, navigationActions, innerPadding)
+    if (searchText) {
+        PiesnyList(piesny, filteredItems, navigationActions, innerPadding)
+    } else {
+        val piesnyList = when (piesny) {
+            AllDestinations.PIESNY_PRASLAULENNIA -> piesnyPraslList
+            AllDestinations.PIESNY_ZA_BELARUS -> piesnyBelarusList
+            AllDestinations.PIESNY_DA_BAGARODZICY -> piesnyBagarList
+            AllDestinations.PIESNY_KALIADNYIA -> piesnyKaliadyList
+            AllDestinations.PIESNY_TAIZE -> piesnyTaizeList
+            else -> piesnyPraslList
         }
+        PiesnyList(piesny, piesnyList, navigationActions, innerPadding)
     }
 }
 
 @Composable
-fun PiesnyList(piesnyList: SnapshotStateList<PiesnyListItem>, navigationActions: AppNavigationActions, innerPadding: PaddingValues) {
+fun PiesnyList(piesny: String, piesnyList: SnapshotStateList<PiesnyListItem>, navigationActions: AppNavigationActions, innerPadding: PaddingValues) {
+    val coroutineScope = rememberCoroutineScope()
+    val piesnyListState = rememberLazyListState()
     val keyboardController = LocalSoftwareKeyboardController.current
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val nestedScrollConnection = remember {
@@ -761,11 +765,17 @@ fun PiesnyList(piesnyList: SnapshotStateList<PiesnyListItem>, navigationActions:
                 available: Offset, source: NestedScrollSource
             ): Offset {
                 keyboardController?.hide()
+                AppNavGraphState.setScrollValuePosition(piesny, piesnyListState.firstVisibleItemIndex)
                 return super.onPreScroll(available, source)
             }
         }
     }
-    LazyColumn(Modifier.nestedScroll(nestedScrollConnection)) {
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            piesnyListState.scrollToItem(AppNavGraphState.getScrollValuePosition(piesny))
+        }
+    }
+    LazyColumn(Modifier.nestedScroll(nestedScrollConnection), state = piesnyListState) {
         items(
             piesnyList.size, key = { index -> piesnyList[index].title + index }) { index ->
             Column {
