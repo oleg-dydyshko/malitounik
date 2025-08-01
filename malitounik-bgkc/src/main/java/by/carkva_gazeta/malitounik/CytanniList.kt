@@ -47,6 +47,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -1306,40 +1307,46 @@ fun CytanniList(
                                     )
                                 }
                             }
-                            HtmlText(
-                                modifier = if (!autoScrollSensor && !showDropdown) {
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .pointerInput(Unit) {
-                                            detectTapGestures(onTap = {
-                                                if (!isSelectMode && isParallel && resultPage[index].parallel != "+-+") {
-                                                    isParallelVisable = true
-                                                    paralelChtenia = resultPage[index].parallel
-                                                }
-                                                if (isSelectMode) {
-                                                    selectState[index] = !selectState[index]
-                                                }
-                                            }, onLongPress = {
-                                                if (!fullscreen) {
-                                                    isSelectMode = true
-                                                    selectState[index] = !selectState[index]
-                                                }
-                                            }, onDoubleTap = {
-                                                fullscreen = !fullscreen
-                                            })
-                                        }
-                                } else {
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .pointerInput(Unit) {
-                                            detectTapGestures(
-                                                onDoubleTap = {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                if (isSelectMode) {
+                                    Checkbox(checked = selectState[index], onCheckedChange = {
+                                        selectState[index] = it
+                                    })
+                                }
+                                HtmlText(
+                                    modifier = if (!autoScrollSensor && !showDropdown) {
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .pointerInput(Unit) {
+                                                detectTapGestures(onTap = {
+                                                    if (!isSelectMode && isParallel && resultPage[index].parallel != "+-+") {
+                                                        isParallelVisable = true
+                                                        paralelChtenia = resultPage[index].parallel
+                                                    }
+                                                    if (isSelectMode) {
+                                                        selectState[index] = !selectState[index]
+                                                    }
+                                                }, onLongPress = {
+                                                    if (!fullscreen) {
+                                                        isSelectMode = true
+                                                        selectState[index] = !selectState[index]
+                                                    }
+                                                }, onDoubleTap = {
                                                     fullscreen = !fullscreen
                                                 })
-                                        }
-                                }
-                                    .padding(horizontal = 10.dp)
-                                    .background(if (selectState[index]) Post else Color.Unspecified), text = resultPage[index].text, fontSize = fontSize.sp, color = if (selectState[index]) PrimaryText else MaterialTheme.colorScheme.secondary)
+                                            }
+                                    } else {
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .pointerInput(Unit) {
+                                                detectTapGestures(
+                                                    onDoubleTap = {
+                                                        fullscreen = !fullscreen
+                                                    })
+                                            }
+                                    }
+                                        .padding(horizontal = 10.dp), text = resultPage[index].text, fontSize = fontSize.sp, color = MaterialTheme.colorScheme.secondary)
+                            }
                             if (isParallel && resultPage[index].parallel != "+-+") {
                                 Text(
                                     text = resultPage[index].parallel, modifier = Modifier
@@ -1517,7 +1524,7 @@ fun DialogRazdzel(
                     placeholder = { Text(stringResource(R.string.set_razdel), fontSize = Settings.fontInterface.sp) },
                     value = textFieldValueState,
                     onValueChange = {
-                        if (it.length <= 3 && (it.matches(Regex("^\\d+\$")) || it.isEmpty())) textFieldValueState = it
+                        if (it.length <= 3 && (it.matches(Regex("^\\d+$")) || it.isEmpty())) textFieldValueState = it
                     },
                     modifier = Modifier
                         .fillMaxWidth()
