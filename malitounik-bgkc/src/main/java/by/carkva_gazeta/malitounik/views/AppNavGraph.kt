@@ -1237,6 +1237,7 @@ fun MainConteiner(
                                         showDropdownMenuPos = 1
                                         showDropdown = true
                                     }
+                                    .padding(horizontal = 10.dp, vertical = 7.dp)
                                     .clip(shape = RoundedCornerShape(3.dp))
                                     .background(textTollBarColor)
                                     .padding(1.dp)
@@ -1481,6 +1482,7 @@ fun MainConteiner(
                                             showDropdownMenuPos = 1
                                             showDropdown = true
                                         }
+                                        .padding(horizontal = 10.dp, vertical = 7.dp)
                                         .clip(shape = RoundedCornerShape(3.dp))
                                         .background(textTollBarColor)
                                         .padding(1.dp)

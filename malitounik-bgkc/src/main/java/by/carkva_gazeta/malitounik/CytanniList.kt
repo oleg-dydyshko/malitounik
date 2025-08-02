@@ -1027,7 +1027,7 @@ fun CytanniList(
                                     }
                                 }) {
                                     Icon(
-                                        iconAutoScroll, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                        painter = iconAutoScroll, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
                             } else if (listState[selectedIndex].canScrollBackward) {

@@ -14,8 +14,8 @@ android {
         applicationId = "by.carkva_gazeta.malitounik"
         minSdk = 23
         targetSdk = 36
-        versionCode = 442523
-        versionName = "5.99.1"
+        versionCode = 442524
+        versionName = "5.99.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -76,7 +76,6 @@ dependencies {
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
     api(platform(libs.firebase.bom))
-    api(libs.play.services.instantapps)
     api(libs.gson)
     api(libs.firebase.storage)
     implementation(libs.feature.delivery.ktx)
