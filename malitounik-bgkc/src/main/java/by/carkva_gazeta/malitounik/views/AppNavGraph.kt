@@ -200,6 +200,7 @@ object AppNavGraphState {
     var bibleListPosition = -1
     var vybranaeListPosition = -1
     var setAlarm = true
+    var cytata = AnnotatedString("")
 
     fun setItemsValue(title: String, isInit: Boolean = false): Boolean {
         var result = true
@@ -246,7 +247,7 @@ object AppNavGraphState {
         }
     }
 
-    fun getCytata(context: MainActivity): AnnotatedString {
+    fun getCytata(context: MainActivity) {
         val text = openAssetsResources(context, "citata.txt")
         val citataList = ArrayList<String>()
         val listText = text.split("\n")
@@ -260,7 +261,7 @@ object AppNavGraphState {
                 citataList.add(line.toString())
             }
         }
-        return AnnotatedString.Builder(citataList[Random.nextInt(citataList.size)]).apply {
+        cytata = AnnotatedString.Builder(citataList[Random.nextInt(citataList.size)]).apply {
             addStyle(
                 SpanStyle(
                     fontFamily = FontFamily(Font(R.font.andantinoscript)), fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic, color = if (Settings.dzenNoch.value) PrimaryBlack else Primary, fontSize = (Settings.fontInterface + 4).sp
@@ -304,7 +305,7 @@ fun openAssetsResources(context: Context, fileName: String): String {
 }
 
 @Composable
-fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = rememberNavController()) {
+fun AppNavGraph(navController: NavHostController = rememberNavController()) {
     val drawerScrollStete = rememberScrollState()
     val searchBibleState = rememberLazyListState()
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
@@ -355,175 +356,175 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
         composable(AllDestinations.KALIANDAR) {
             Settings.destinations = AllDestinations.KALIANDAR
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.AKAFIST_MENU) {
             Settings.destinations = AllDestinations.AKAFIST_MENU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.LITURGIKON_MENU) {
             Settings.destinations = AllDestinations.LITURGIKON_MENU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.CHASASLOU_MENU) {
             Settings.destinations = AllDestinations.CHASASLOU_MENU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.MAE_NATATKI_MENU) {
             Settings.destinations = AllDestinations.MAE_NATATKI_MENU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.BOGASLUJBOVYIA_MENU) {
             Settings.destinations = AllDestinations.BOGASLUJBOVYIA_MENU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.MALITVY_MENU) {
             Settings.destinations = AllDestinations.MALITVY_MENU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.BIBLIA_SEMUXA) {
             Settings.destinations = AllDestinations.BIBLIA_SEMUXA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.BIBLIA_BOKUNA) {
             Settings.destinations = AllDestinations.BIBLIA_BOKUNA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.BIBLIA_NADSAN) {
             Settings.destinations = AllDestinations.BIBLIA_NADSAN
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.BIBLIA_CHARNIAUSKI) {
             Settings.destinations = AllDestinations.BIBLIA_CHARNIAUSKI
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.BIBLIA_SINODAL) {
             Settings.destinations = AllDestinations.BIBLIA_SINODAL
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.KALIANDAR_YEAR) {
             Settings.destinations = AllDestinations.KALIANDAR_YEAR
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.VYBRANAE_LIST) {
             Settings.destinations = AllDestinations.VYBRANAE_LIST
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.BIBLIJATEKA_NIADAUNIA) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_NIADAUNIA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.BIBLIJATEKA_SPEUNIKI) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_SPEUNIKI
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.BIBLIJATEKA_GISTORYIA) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_GISTORYIA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.BIBLIJATEKA_MALITOUNIKI) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_MALITOUNIKI
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.PIESNY_PRASLAULENNIA) {
             Settings.destinations = AllDestinations.PIESNY_PRASLAULENNIA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.PIESNY_DA_BAGARODZICY) {
             Settings.destinations = AllDestinations.PIESNY_DA_BAGARODZICY
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.PIESNY_ZA_BELARUS) {
             Settings.destinations = AllDestinations.PIESNY_ZA_BELARUS
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.PIESNY_KALIADNYIA) {
             Settings.destinations = AllDestinations.PIESNY_KALIADNYIA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.PIESNY_TAIZE) {
             Settings.destinations = AllDestinations.PIESNY_TAIZE
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -564,21 +565,21 @@ fun AppNavGraph(cytata: AnnotatedString, navController: NavHostController = reme
         composable(AllDestinations.UNDER_SVAITY_MUNU) {
             Settings.destinations = AllDestinations.UNDER_SVAITY_MUNU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.UNDER_PARAFII_BGKC) {
             Settings.destinations = AllDestinations.UNDER_PARAFII_BGKC
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
         composable(AllDestinations.UNDER_PASHALIA) {
             Settings.destinations = AllDestinations.UNDER_PASHALIA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, cytata = cytata
+                navController = navController, drawerScrollStete = drawerScrollStete
             )
         }
 
@@ -814,8 +815,7 @@ fun CheckUpdateMalitounik(
 @Composable
 fun MainConteiner(
     navController: NavHostController,
-    drawerScrollStete: ScrollState,
-    cytata: AnnotatedString,
+    drawerScrollStete: ScrollState
 ) {
     val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
@@ -1031,7 +1031,6 @@ fun MainConteiner(
             DrawView(
                 drawerScrollStete = drawerScrollStete,
                 route = currentRoute,
-                cytata = cytata,
                 navigateToRazdel = { razdzel ->
                     if (razdzel == AllDestinations.KALIANDAR || razdzel == AllDestinations.KALIANDAR_YEAR) {
                         searchListSvityia.clear()

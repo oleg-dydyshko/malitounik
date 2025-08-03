@@ -36,7 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -62,7 +61,6 @@ import kotlinx.coroutines.launch
 fun DrawView(
     drawerScrollStete: ScrollState,
     route: String,
-    cytata: AnnotatedString,
     navigateToRazdel: (String) -> Unit
 ) {
     val context = LocalActivity.current as MainActivity
@@ -85,7 +83,7 @@ fun DrawView(
             .fillMaxHeight()
             .verticalScroll(drawerScrollStete)
     ) {
-        DrawerHeader(cytata)
+        DrawerHeader()
         HorizontalDivider(
             modifier = Modifier.padding(bottom = 5.dp),
             color = MaterialTheme.colorScheme.secondary
@@ -1173,7 +1171,7 @@ fun DrawView(
 }
 
 @Composable
-fun DrawerHeader(cytata: AnnotatedString) {
+fun DrawerHeader() {
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
@@ -1184,7 +1182,7 @@ fun DrawerHeader(cytata: AnnotatedString) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp),
-            text = cytata,
+            text = AppNavGraphState.cytata,
             fontSize = (Settings.fontInterface - 2).sp,
             textAlign = TextAlign.End,
             fontStyle = FontStyle.Italic,

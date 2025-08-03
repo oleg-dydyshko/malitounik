@@ -1130,14 +1130,14 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
             if (modeNight == Settings.MODE_NIGHT_NO) Settings.dzenNoch.value = false
             if (modeNight == Settings.MODE_NIGHT_YES) Settings.dzenNoch.value = true
             if (modeNight == Settings.MODE_NIGHT_AUTO) Settings.dzenNoch.value = k.getBoolean("dzenNoch", false)
+            AppNavGraphState.getCytata(this)
         }
         setContent {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 window.isNavigationBarContrastEnforced = false
             }
-            val cytata = AppNavGraphState.getCytata(this)
             MalitounikTheme(darkTheme = Settings.dzenNoch.value) {
-                AppNavGraph(cytata)
+                AppNavGraph()
                 var dialogSztoHovahaVisable by rememberSaveable { mutableStateOf(checkASztoNovagaMD5Sum()) }
                 if (dialogSztoHovahaVisable) {
                     DialogSztoHovaha {
