@@ -365,6 +365,7 @@ fun Bogaslujbovyia(
                                 val y = layout.getLineTop(line)
                                 coroutineScope.launch {
                                     scrollState.animateScrollTo(y.toInt())
+                                    AppNavGraphState.setScrollValuePosition(title, scrollState.value)
                                 }
                             }
                         } else {
@@ -390,6 +391,7 @@ fun Bogaslujbovyia(
                         val y = layout.getLineTop(line)
                         coroutineScope.launch {
                             scrollState.animateScrollTo(y.toInt())
+                            AppNavGraphState.setScrollValuePosition(title, scrollState.value)
                         }
                         findForward = false
                     }
@@ -410,6 +412,7 @@ fun Bogaslujbovyia(
                         val y = layout.getLineTop(line)
                         coroutineScope.launch {
                             scrollState.animateScrollTo(y.toInt())
+                            AppNavGraphState.setScrollValuePosition(title, scrollState.value)
                         }
                         findBack = false
                     }
@@ -686,7 +689,7 @@ fun Bogaslujbovyia(
                                         )
                                     },
                                     trailingIcon = {
-                                        if (searchTextResult.isNotEmpty()) {
+                                        if (searshString.isNotEmpty()) {
                                             IconButton(onClick = {
                                                 searshString = ""
                                             }) {
@@ -945,40 +948,31 @@ fun Bogaslujbovyia(
                                     }
                                 }
                                 if (k.getBoolean("admin", false) && (isBottomBar || iskniga)) {
-                                    IconButton(onClick = { expandedUp = true }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                        )
-                                    }
-                                    DropdownMenu(
-                                        expanded = expandedUp, onDismissRequest = { expandedUp = false }) {
-                                        DropdownMenuItem(onClick = {
-                                            expandedUp = false
-                                            autoScroll = false
-                                            if ((context as MainActivity).checkmodulesAdmin()) {
-                                                val intent = Intent()
-                                                intent.setClassName(context, "by.carkva_gazeta.admin.PasochnicaList")
-                                                val resAminEdit = if (iskniga) listResource[adminResourceEditPosition].resource
-                                                else resursEncode
-                                                val t1 = resAminEdit.lastIndexOf("/")
-                                                val t2 = resAminEdit.lastIndexOf(".")
-                                                val resursAdmin = if (t1 != -1) {
-                                                    if (t2 != -1) resAminEdit.substring(t1 + 1, t2)
-                                                    else resAminEdit.substring(t1 + 1)
-                                                } else {
-                                                    if (t2 != -1) resAminEdit.substring(0, t2)
-                                                    else resAminEdit
-                                                }
-                                                intent.putExtra("resours", resursAdmin)
-                                                intent.putExtra("title", if (iskniga) listResource[adminResourceEditPosition].title else title)
-                                                intent.putExtra("text", if (iskniga) subText else htmlText.replace("#ff6666", "#d00505", true))
-                                                context.startActivity(intent)
+                                    IconButton(onClick = {
+                                        autoScroll = false
+                                        if ((context as MainActivity).checkmodulesAdmin()) {
+                                            val intent = Intent()
+                                            intent.setClassName(context, "by.carkva_gazeta.admin.PasochnicaList")
+                                            val resAminEdit = if (iskniga) listResource[adminResourceEditPosition].resource
+                                            else resursEncode
+                                            val t1 = resAminEdit.lastIndexOf("/")
+                                            val t2 = resAminEdit.lastIndexOf(".")
+                                            val resursAdmin = if (t1 != -1) {
+                                                if (t2 != -1) resAminEdit.substring(t1 + 1, t2)
+                                                else resAminEdit.substring(t1 + 1)
+                                            } else {
+                                                if (t2 != -1) resAminEdit.substring(0, t2)
+                                                else resAminEdit
                                             }
-                                        }, text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                            Icon(
-                                                painter = painterResource(R.drawable.edit), contentDescription = ""
-                                            )
-                                        })
+                                            intent.putExtra("resours", resursAdmin)
+                                            intent.putExtra("title", if (iskniga) listResource[adminResourceEditPosition].title else title)
+                                            intent.putExtra("text", if (iskniga) subText else htmlText.replace("#ff6666", "#d00505", true))
+                                            context.startActivity(intent)
+                                        }
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.edit), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                        )
                                     }
                                 }
                             }
@@ -1256,11 +1250,24 @@ fun Bogaslujbovyia(
                                 searchText = searchTextResult,
                                 scrollState = scrollState,
                                 navigateTo = { navigate ->
-                                    navigateTo(navigate, false)
+                                    var skipUtran = false
+                                    if (navigate == "cytanne") {
+                                        if (data[9].isNotEmpty()) {
+                                            var chtenie = data[9]
+                                            if (isLiturgia && chtenie.contains("На ютрані", ignoreCase = true)) {
+                                                val t1 = chtenie.indexOf("\n")
+                                                if (t1 != -1) chtenie = chtenie.substring(t1 + 1)
+                                                skipUtran = true
+                                            }
+                                        }
+                                    }
+                                    navigateTo(navigate, skipUtran)
                                 },
                                 textLayoutResult = { layout ->
-                                    coroutineScope.launch {
-                                        scrollState.scrollTo(AppNavGraphState.getScrollValuePosition(title))
+                                    if (!searchText) {
+                                        coroutineScope.launch {
+                                            scrollState.scrollTo(AppNavGraphState.getScrollValuePosition(title))
+                                        }
                                     }
                                     textLayout.value = layout
                                 }

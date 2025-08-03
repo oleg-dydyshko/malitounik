@@ -201,6 +201,7 @@ object AppNavGraphState {
     var vybranaeListPosition = -1
     var setAlarm = true
     var cytata = AnnotatedString("")
+    var randomCytata = 0
 
     fun setItemsValue(title: String, isInit: Boolean = false): Boolean {
         var result = true
@@ -247,7 +248,7 @@ object AppNavGraphState {
         }
     }
 
-    fun getCytata(context: MainActivity) {
+    fun getCytata(context: MainActivity, isNewCytata: Boolean) {
         val text = openAssetsResources(context, "citata.txt")
         val citataList = ArrayList<String>()
         val listText = text.split("\n")
@@ -261,7 +262,8 @@ object AppNavGraphState {
                 citataList.add(line.toString())
             }
         }
-        cytata = AnnotatedString.Builder(citataList[Random.nextInt(citataList.size)]).apply {
+        if (isNewCytata) randomCytata = Random.nextInt(citataList.size)
+        cytata = AnnotatedString.Builder(citataList[randomCytata]).apply {
             addStyle(
                 SpanStyle(
                     fontFamily = FontFamily(Font(R.font.andantinoscript)), fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic, color = if (Settings.dzenNoch.value) PrimaryBlack else Primary, fontSize = (Settings.fontInterface + 4).sp

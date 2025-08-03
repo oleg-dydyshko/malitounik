@@ -149,11 +149,6 @@ fun BogaslujbovyiaMenu(
                                     folderList[index], Settings.MENU_TRAPARY_KANDAKI_NIADZELNYIA
                                 )
                             }
-                            if (folderList[index] == "МАЛІТВЫ ПАСЬЛЯ СЬВЯТОГА ПРЫЧАСЬЦЯ") {
-                                navigationActions.navigateToMalitvyListAll(
-                                    folderList[index], Settings.MENU_MALITVY_PASLIA_PRYCHASCIA
-                                )
-                            }
                             if (folderList[index] == "ТРЭБНІК") {
                                 navigationActions.navigateToMalitvyListAll(
                                     folderList[index], Settings.MENU_TREBNIK
@@ -210,6 +205,29 @@ fun BogaslujbovyiaMenu(
                 )
             }
             HorizontalDivider()
+        }
+        if (!searchText && menuItem == Settings.MENU_LITURGIKON) {
+            item {
+                Row(
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .clickable {
+                            navigationActions.navigateToMalitvyListAll(
+                                "МАЛІТВЫ ПАСЬЛЯ СЬВЯТОГА ПРЫЧАСЬЦЯ", Settings.MENU_MALITVY_PASLIA_PRYCHASCIA
+                            )
+                        }, verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = null
+                    )
+                    Text(
+                        "МАЛІТВЫ ПАСЬЛЯ СЬВЯТОГА ПРЫЧАСЬЦЯ", modifier = Modifier
+                            .fillMaxSize()
+                            .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                    )
+                }
+                HorizontalDivider()
+            }
         }
         if (!searchText && menuItem == Settings.MENU_CHASASLOU) {
             item {
