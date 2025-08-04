@@ -202,6 +202,7 @@ object AppNavGraphState {
     var setAlarm = true
     var cytata = AnnotatedString("")
     var randomCytata = 0
+    var autoDzenNochTime = System.currentTimeMillis()
 
     fun setItemsValue(title: String, isInit: Boolean = false): Boolean {
         var result = true

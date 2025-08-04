@@ -1237,11 +1237,17 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
     private fun sensorChangeDzenNoch(sensorValue: Float) {
         when {
             sensorValue <= 4f -> {
-                Settings.dzenNoch.value = true
+                if (System.currentTimeMillis() - AppNavGraphState.autoDzenNochTime >= 5000) {
+                    Settings.dzenNoch.value = true
+                    AppNavGraphState.autoDzenNochTime = System.currentTimeMillis()
+                }
             }
 
             sensorValue >= 21f -> {
-                Settings.dzenNoch.value = false
+                if (System.currentTimeMillis() - AppNavGraphState.autoDzenNochTime >= 5000) {
+                    Settings.dzenNoch.value = false
+                    AppNavGraphState.autoDzenNochTime = System.currentTimeMillis()
+                }
             }
         }
     }
