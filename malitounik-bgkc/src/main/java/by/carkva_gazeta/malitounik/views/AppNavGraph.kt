@@ -312,7 +312,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
     val drawerScrollStete = rememberScrollState()
     val searchBibleState = rememberLazyListState()
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-    var start = k.getString("navigate", AllDestinations.KALIANDAR) ?: AllDestinations.KALIANDAR
+    var start by remember { mutableStateOf(k.getString("navigate", AllDestinations.KALIANDAR) ?: AllDestinations.KALIANDAR) }
     bibleItem = start.contains("Biblia", ignoreCase = true) == true
     biblijatekaItem = start.contains("Biblijateka", ignoreCase = true) == true
     piesnyItem = start.contains("Piesny", ignoreCase = true) == true
