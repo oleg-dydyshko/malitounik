@@ -2,7 +2,6 @@ package by.carkva_gazeta.malitounik
 
 import android.app.Activity
 import android.content.Context
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -32,12 +31,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -85,13 +81,7 @@ fun BibliaList(
     val context = LocalContext.current
     val lazyColumnState = rememberLazyListState()
     val bibleList = bibleCount(perevod, isNovyZapavet)
-    val collapsedState = remember(bibleList) { bibleList.map { true }.toMutableStateList() }
-    LaunchedEffect(Unit) {
-        if (AppNavGraphState.bibleListPosition != -1) {
-            collapsedState[AppNavGraphState.bibleListPosition] = false
-            lazyColumnState.scrollToItem(AppNavGraphState.bibleListPosition)
-        }
-    }
+    val collapsedState = remember(bibleList) { bibleList.map { AppNavGraphState.setItemsValue(it.title, true) }.toMutableStateList() }
     LaunchedEffect(Settings.bibleTime) {
         if (Settings.bibleTime) {
             Settings.bibleTime = false
@@ -106,16 +96,6 @@ fun BibliaList(
             }
             val knigaText = k.getString("bible_time_${prevodName}_kniga", "Быц") ?: "Быц"
             val glava = k.getInt("bible_time_${prevodName}_glava", 0)
-            for (i in bibleList.indices) {
-                if (knigaText == bibleList[i].subTitle) {
-                    AppNavGraphState.bibleListPosition = i
-                    coroutineScope.launch {
-                        collapsedState[AppNavGraphState.bibleListPosition] = false
-                        lazyColumnState.scrollToItem(AppNavGraphState.bibleListPosition)
-                    }
-                    break
-                }
-            }
             navigateToCytanniList("$knigaText ${glava + 1}", perevod)
         }
     }
@@ -131,12 +111,6 @@ fun BibliaList(
             isAppearanceLightStatusBars = false
             isAppearanceLightNavigationBars = !Settings.dzenNoch.value
         }
-    }
-    var backPressHandled by remember { mutableStateOf(false) }
-    BackHandler(!backPressHandled) {
-        navController.popBackStack()
-        AppNavGraphState.bibleListPosition = -1
-        backPressHandled = true
     }
     Scaffold(
         topBar = {
@@ -180,11 +154,7 @@ fun BibliaList(
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            if (!backPressHandled) {
-                                backPressHandled = true
-                                navController.popBackStack()
-                                AppNavGraphState.bibleListPosition = -1
-                            }
+                            navController.popBackStack()
                         },
                         content = {
                             Icon(
@@ -218,6 +188,7 @@ fun BibliaList(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier
                                     .clickable {
+                                        AppNavGraphState.setItemsValue(dataItem.title)
                                         collapsedState[i] = !collapsed
                                         CoroutineScope(Dispatchers.Main).launch {
                                             lazyColumnState.scrollToItem(i)
@@ -273,7 +244,6 @@ fun BibliaList(
                                             )
                                             .background(Divider)
                                             .clickable {
-                                                AppNavGraphState.bibleListPosition = i
                                                 navigateToCytanniList(
                                                     dataItem.subTitle + " " + (item + 1).toString(),
                                                     perevod

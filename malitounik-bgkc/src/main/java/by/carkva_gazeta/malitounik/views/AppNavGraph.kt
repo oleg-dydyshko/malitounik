@@ -197,8 +197,6 @@ object AppNavGraphState {
     var bottomSheetScaffoldIsVisible by mutableStateOf(false)
     val itemsValue = ArrayList<AppNavGraphStateItems>()
     val scrollValueList = ArrayList<AppNavGraphStateScroll>()
-    var bibleListPosition = -1
-    var vybranaeListPosition = -1
     var setAlarm = true
     var cytata = AnnotatedString("")
     var randomCytata = 0

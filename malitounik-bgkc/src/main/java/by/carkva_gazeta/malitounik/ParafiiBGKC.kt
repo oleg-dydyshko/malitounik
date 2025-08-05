@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.Divider
+import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
 
 @Composable
@@ -74,7 +75,7 @@ fun ParafiiBGKC(navController: NavHostController, innerPadding: PaddingValues) {
     listTitle.add(ParafiiBGKCItem("Усходні дэканат", listUsx))
     listTitle.add(ParafiiBGKCItem("Заходні дэканат", listZax))
     listTitle.add(ParafiiBGKCItem("Замежжа", listZamejja))
-    val collapsedState = remember(listTitle) { listTitle.map { true }.toMutableStateList() }
+    val collapsedState = remember(listTitle) { listTitle.map { AppNavGraphState.setItemsValue(it.title, true) }.toMutableStateList() }
     LazyColumn {
         item {
             Row(
@@ -104,6 +105,7 @@ fun ParafiiBGKC(navController: NavHostController, innerPadding: PaddingValues) {
                     verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
+                            AppNavGraphState.setItemsValue(dataItem.title)
                             collapsedState[i] = !collapsed
                         }) {
                     Icon(

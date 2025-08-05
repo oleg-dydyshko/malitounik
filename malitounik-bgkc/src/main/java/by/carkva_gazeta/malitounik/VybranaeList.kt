@@ -31,7 +31,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -130,7 +129,7 @@ fun VybranaeList(
         list.sortByDescending { it.id }
     }
     val collapsedState =
-        remember(list) { list.map { true }.toMutableStateList() }
+        remember(list) { list.map { AppNavGraphState.setItemsValue(it.title, true) }.toMutableStateList() }
     val lazyColumnState = rememberLazyListState()
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
@@ -216,12 +215,6 @@ fun VybranaeList(
     if (removeAllVybranae) {
         list.clear()
     }
-    LaunchedEffect(Unit) {
-        if (AppNavGraphState.vybranaeListPosition != -1) {
-            collapsedState[AppNavGraphState.vybranaeListPosition] = false
-            lazyColumnState.scrollToItem(AppNavGraphState.vybranaeListPosition)
-        }
-    }
     LazyColumn(
         state = lazyColumnState
     ) {
@@ -234,8 +227,7 @@ fun VybranaeList(
                         modifier = Modifier
                             .combinedClickable(
                                 onClick = {
-                                    AppNavGraphState.vybranaeListPosition = if (!collapsed) -1
-                                    else i
+                                    AppNavGraphState.setItemsValue(dataItem.title)
                                     collapsedState[i] = !collapsed
                                 },
                                 onLongClick = {

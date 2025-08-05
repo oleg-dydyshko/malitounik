@@ -1297,8 +1297,8 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
             AppNavGraphState.biblijatekaItem = false
             AppNavGraphState.underItem = false
             AppNavGraphState.scrollValueList.clear()
+            AppNavGraphState.itemsValue.clear()
             AppNavGraphState.setAlarm = true
-            AppNavGraphState.vybranaeListPosition = -1
             finish()
         } else {
             backPressed = System.currentTimeMillis()
