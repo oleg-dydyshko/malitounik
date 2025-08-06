@@ -571,7 +571,7 @@ fun SetPadzeia(title: String, apisanne: String, color: Int, raznica: Boolean, re
                 val newApisanne = AnnotatedString.Builder(apisanne).apply {
                     if (raznica) {
                         addStyle(
-                            SpanStyle(color = MaterialTheme.colorScheme.primary), t1, apisanne.length
+                            SpanStyle(color = Primary), t1, apisanne.length
                         )
                     }
                 }.toAnnotatedString()

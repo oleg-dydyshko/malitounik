@@ -913,18 +913,7 @@ fun MainConteiner(
                 }
             }
             if (extras.getBoolean("sabytie", false)) {
-                val calendar = Calendar.getInstance()
-                val chyt = extras.getInt("data")
-                val year = extras.getInt("year")
-                calendar.set(Calendar.DAY_OF_YEAR, chyt)
-                calendar.set(Calendar.YEAR, year)
-                var svitaPosition = Settings.caliandarPosition
-                for (i in Settings.data.indices) {
-                    if (calendar[Calendar.DAY_OF_YEAR] == Settings.data[i][24].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
-                        svitaPosition = i
-                        break
-                    }
-                }
+                val svitaPosition = extras.getInt("caliandarPosition")
                 coroutineScope.launch {
                     if (k.getBoolean(
                             "caliandarList", false
@@ -1289,15 +1278,16 @@ fun MainConteiner(
                                 }
                             }) {
                                 Icon(
+                                    modifier = Modifier.size(24.dp),
                                     painter = if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) {
                                         if (sortedVybranae == Settings.SORT_BY_TIME) {
-                                            painterResource(R.drawable.sort_by_alpha)
+                                            painterResource(R.drawable.sort_by_az)
                                         } else {
                                             painterResource(R.drawable.sort)
                                         }
                                     } else {
                                         if (sortedNatatki == Settings.SORT_BY_TIME) {
-                                            painterResource(R.drawable.sort_by_alpha)
+                                            painterResource(R.drawable.sort_by_az)
                                         } else {
                                             painterResource(R.drawable.sort)
                                         }

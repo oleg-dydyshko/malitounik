@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 package by.carkva_gazeta.malitounik
 
 import android.Manifest
@@ -12,7 +10,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
