@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="malitounik-bgkc">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-07-05T05:29:13.965906007Z">
+        <DropdownSelection timestamp="2025-08-06T03:42:10.493012484Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/home/oleg/.android/avd/Pixel_3a_API_31.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/home/oleg/.android/avd/Igar_Fon.avd" />
             </handle>
           </Target>
         </DropdownSelection>

@@ -713,6 +713,7 @@ fun CytanniList(
                                     menuPosition = 2
                                 }, text = { Text(stringResource(R.string.perevody), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                     Icon(
+                                        modifier = Modifier.size(24.dp),
                                         painter = painterResource(R.drawable.book_red), contentDescription = ""
                                     )
                                 })
@@ -977,6 +978,7 @@ fun CytanniList(
                                 menuPosition = 2
                             }) {
                             Icon(
+                                modifier = Modifier.size(24.dp),
                                 painter = painterResource(R.drawable.book_red), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                             )
                         }

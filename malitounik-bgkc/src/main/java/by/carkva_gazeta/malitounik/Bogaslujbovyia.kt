@@ -803,6 +803,7 @@ fun Bogaslujbovyia(
                                         }
                                     }) {
                                         Icon(
+                                            modifier = Modifier.size(24.dp),
                                             painter = painterResource(R.drawable.book_red),
                                             contentDescription = "",
                                             tint = MaterialTheme.colorScheme.onSecondary
