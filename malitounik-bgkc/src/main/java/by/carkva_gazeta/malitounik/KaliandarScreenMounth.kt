@@ -44,7 +44,6 @@ import by.carkva_gazeta.malitounik.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.Post
 import by.carkva_gazeta.malitounik.ui.theme.Primary
-import by.carkva_gazeta.malitounik.ui.theme.PrimaryDark
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
@@ -292,12 +291,12 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                                     val fon = if (e == 1) BezPosta
                                     else Divider
                                     Text(
-                                        oldDay.toString(),
+                                        text = oldDay.toString(),
                                         modifier = Modifier
                                             .weight(1f)
                                             .padding(1.dp)
                                             .background(fon)
-                                            .padding(5.dp),
+                                            .padding(7.dp),
                                         textAlign = TextAlign.Center,
                                         color = SecondaryText,
                                         fontSize = Settings.fontInterface.sp
@@ -306,12 +305,12 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
 
                                 "end" -> {
                                     Text(
-                                        newDay.toString(),
+                                        text = newDay.toString(),
                                         modifier = Modifier
                                             .weight(1f)
                                             .padding(1.dp)
                                             .background(Divider)
-                                            .padding(5.dp),
+                                            .padding(7.dp),
                                         textAlign = TextAlign.Center,
                                         color = SecondaryText,
                                         fontSize = Settings.fontInterface.sp
@@ -333,7 +332,7 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                                         else PrimaryText
                                     val clickPos = calPas + i - 1
                                     Text(
-                                        day,
+                                        text = day,
                                         modifier = Modifier
                                             .weight(1f)
                                             .clickable {
@@ -341,8 +340,10 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                                                 setPageCaliandar(clickPos)
                                             }
                                             .padding(1.dp)
-                                            .background(if (c[Calendar.DAY_OF_MONTH] == i && munTudey) PrimaryDark else color)
+                                            .background(color)
                                             .padding(5.dp)
+                                            .background(if (c[Calendar.DAY_OF_MONTH] == i && munTudey) color2 else color)
+                                            .padding(2.dp)
                                             .background(color),
                                         textAlign = TextAlign.Center,
                                         fontWeight = bold,

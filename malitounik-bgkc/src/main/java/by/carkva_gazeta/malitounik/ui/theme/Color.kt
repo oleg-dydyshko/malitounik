@@ -3,7 +3,6 @@ package by.carkva_gazeta.malitounik.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val Primary = Color(0xFFD00505)
-val PrimaryDark = Color(0xFF660000)
 val SecondaryText = Color(0xFF999999)
 val PrimaryText = Color(0xFF000000)
 val PrimaryBlack = Color(0xFFff6666)
