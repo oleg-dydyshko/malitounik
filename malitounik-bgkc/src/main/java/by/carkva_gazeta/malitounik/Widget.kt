@@ -108,11 +108,12 @@ private fun Caliandar() {
     val colorText = if (data[7].toInt() == 3 || data[5].toInt() > 0) PrimaryTextBlack
     else PrimaryText
     val destinationKey = ActionParameters.Key<Boolean>("widget_day")
+    val destinationPosition = ActionParameters.Key<Int>("position")
     Box(
         modifier = GlanceModifier.fillMaxSize().background(Color.Transparent)
     ) {
         Box(
-            modifier = GlanceModifier.background(if (dzenNoch) BackgroundDark else PrimaryTextBlack).cornerRadius(20.dp).clickable(actionStartActivity<MainActivity>(actionParametersOf(destinationKey to true)))
+            modifier = GlanceModifier.background(if (dzenNoch) BackgroundDark else PrimaryTextBlack).cornerRadius(20.dp).clickable(actionStartActivity<MainActivity>(actionParametersOf(destinationKey to true, destinationPosition to position)))
         ) {
             Column(
                 verticalAlignment = Alignment.Top,

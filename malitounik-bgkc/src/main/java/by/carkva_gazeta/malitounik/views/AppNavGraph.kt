@@ -894,16 +894,10 @@ fun MainConteiner(
                 }
             }
             if (extras.getBoolean(widgetday, false)) {
-                val calendar = Calendar.getInstance()
-                var caliandarPosition = Settings.caliandarPosition
-                for (i in Settings.data.indices) {
-                    if (calendar[Calendar.DATE] == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
-                        caliandarPosition = i
-                        break
-                    }
-                }
+                val caliandarPosition = extras.getInt("position", Settings.caliandarPosition)
                 if (k.getBoolean("caliandarList", false)) {
                     coroutineScope.launch {
+                        Settings.caliandarPosition = caliandarPosition
                         lazyColumnState.scrollToItem(caliandarPosition)
                     }
                 } else {
@@ -918,8 +912,12 @@ fun MainConteiner(
                     if (k.getBoolean(
                             "caliandarList", false
                         )
-                    ) lazyColumnState.scrollToItem(svitaPosition)
-                    else pagerState.scrollToPage(svitaPosition)
+                    ) {
+                        Settings.caliandarPosition = svitaPosition
+                        lazyColumnState.scrollToItem(svitaPosition)
+                    } else {
+                        pagerState.scrollToPage(svitaPosition)
+                    }
                 }
             }
         }
