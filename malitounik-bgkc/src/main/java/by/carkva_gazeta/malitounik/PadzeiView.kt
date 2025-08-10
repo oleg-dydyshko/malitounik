@@ -37,7 +37,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
@@ -418,67 +417,67 @@ fun PadzeiaView(navController: NavHostController) {
         topBar = {
             TopAppBar(
                 title = {
-                Column {
-                    Text(
-                        modifier = Modifier.clickable {
-                            maxLine.intValue = Int.MAX_VALUE
-                            coroutineScope.launch {
-                                delay(5000L)
-                                maxLine.intValue = 1
+                    Column {
+                        Text(
+                            modifier = Modifier.clickable {
+                                maxLine.intValue = Int.MAX_VALUE
+                                coroutineScope.launch {
+                                    delay(5000L)
+                                    maxLine.intValue = 1
+                                }
+                            }, text = stringResource(R.string.sabytie).uppercase(), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
+                        )
+                    }
+                }, navigationIcon = {
+                    if (editMode) {
+                        IconButton(onClick = {
+                            editMode = false
+                            editPadzeiaInit = true
+                        }, content = {
+                            Icon(
+                                painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                            )
+                        })
+                    } else {
+                        IconButton(onClick = {
+                            if (!backPressHandled) {
+                                backPressHandled = true
+                                navController.popBackStack()
                             }
-                        }, text = stringResource(R.string.sabytie).uppercase(), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
-                    )
-                }
-            }, navigationIcon = {
-                if (editMode) {
-                    IconButton(onClick = {
-                        editMode = false
-                        editPadzeiaInit = true
-                    }, content = {
-                        Icon(
-                            painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
-                        )
-                    })
-                } else {
-                    IconButton(onClick = {
-                        if (!backPressHandled) {
-                            backPressHandled = true
-                            navController.popBackStack()
+                        }, content = {
+                            Icon(
+                                painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                            )
+                        })
+                    }
+                }, actions = {
+                    if (editMode) {
+                        IconButton({
+                            savePadzia = true
+                        }) {
+                            Icon(
+                                painter = painterResource(R.drawable.save), tint = PrimaryTextBlack, contentDescription = ""
+                            )
                         }
-                    }, content = {
-                        Icon(
-                            painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
-                        )
-                    })
-                }
-            }, actions = {
-                if (editMode) {
-                    IconButton({
-                        savePadzia = true
-                    }) {
-                        Icon(
-                            painter = painterResource(R.drawable.save), tint = PrimaryTextBlack, contentDescription = ""
-                        )
+                    } else {
+                        IconButton({
+                            editMode = true
+                            editPadzeia = false
+                            editPadzeiaInit = false
+                        }) {
+                            Icon(
+                                painter = painterResource(R.drawable.add), tint = PrimaryTextBlack, contentDescription = ""
+                            )
+                        }
+                        IconButton({
+                            deliteAll = true
+                        }) {
+                            Icon(
+                                painter = painterResource(R.drawable.delete), tint = PrimaryTextBlack, contentDescription = ""
+                            )
+                        }
                     }
-                } else {
-                    IconButton({
-                        editMode = true
-                        editPadzeia = false
-                        editPadzeiaInit = false
-                    }) {
-                        Icon(
-                            painter = painterResource(R.drawable.add), tint = PrimaryTextBlack, contentDescription = ""
-                        )
-                    }
-                    IconButton({
-                        deliteAll = true
-                    }) {
-                        Icon(
-                            painter = painterResource(R.drawable.delete), tint = PrimaryTextBlack, contentDescription = ""
-                        )
-                    }
-                }
-            }, colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
+                }, colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
             )
         }) { innerPadding ->
         Box(
@@ -502,7 +501,8 @@ fun PadzeiaView(navController: NavHostController) {
                             }, onLongClick = {
                                 showPadziaPosition = index
                                 dialogContextMenu = true
-                            }), verticalAlignment = Alignment.CenterVertically) {
+                            }), verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Box(
                             modifier = Modifier
                                 .size(12.dp, 12.dp)
@@ -698,24 +698,25 @@ fun AddPadzeia(
         })
     }
     Column(modifier = Modifier.fillMaxWidth()) {
-        TextField(modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp), value = padzeia, placeholder = { Text(stringResource(R.string.sabytie_name), fontSize = Settings.fontInterface.sp) }, onValueChange = { newText ->
-            padzeia = newText
-            textFieldColorState.edit {
-                replace(0, length, padzeia)
-            }
-        }, singleLine = true, textStyle = TextStyle(fontSize = Settings.fontInterface.sp), trailingIcon = {
-            if (padzeia.isNotEmpty()) {
-                IconButton(onClick = {
-                    padzeia = ""
-                }) {
-                    Icon(
-                        painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
-                    )
+        TextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp), value = padzeia, placeholder = { Text(stringResource(R.string.sabytie_name), fontSize = Settings.fontInterface.sp) }, onValueChange = { newText ->
+                padzeia = newText
+                textFieldColorState.edit {
+                    replace(0, length, padzeia)
                 }
-            }
-        })
+            }, singleLine = true, textStyle = TextStyle(fontSize = Settings.fontInterface.sp), trailingIcon = {
+                if (padzeia.isNotEmpty()) {
+                    IconButton(onClick = {
+                        padzeia = ""
+                    }) {
+                        Icon(
+                            painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                }
+            })
         Row(modifier = Modifier.padding(start = 10.dp, top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(
                 stringResource(R.string.sabytie_pachatak), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
@@ -740,6 +741,8 @@ fun AddPadzeia(
             Icon(modifier = Modifier.clickable {
                 setShowTimePicker(1)
             }, painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = "", tint = Divider)
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(
                 checked = !konecSabytie, onCheckedChange = {
                     konecSabytie = !konecSabytie
@@ -778,10 +781,10 @@ fun AddPadzeia(
         val options = stringArrayResource(R.array.sabytie_izmerenie)
         var expanded2 by remember { mutableStateOf(false) }
         val textFieldNotificstionState2 = rememberTextFieldState(options[textFieldState2Position])
-        Row(modifier = Modifier.padding(start = 10.dp, top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                stringResource(R.string.Sabytie_uved), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
-            )
+        Text(
+            modifier = Modifier.padding(10.dp), text = stringResource(R.string.Sabytie_uved), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
+        )
+        Row(modifier = Modifier.padding(start = 10.dp), verticalAlignment = Alignment.CenterVertically) {
             TextField(
                 modifier = Modifier
                     .size(width = 90.dp, height = Dp.Unspecified)
@@ -804,13 +807,14 @@ fun AddPadzeia(
                 expanded = expanded2,
                 onExpandedChange = { expanded2 = it },
             ) {
-                Row(modifier = Modifier
-                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-                    .clip(MaterialTheme.shapes.small)
-                    .clickable {}
-                    .background(Divider)
-                    .fillMaxWidth()
-                    .padding(horizontal = 5.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier
+                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                        .clip(MaterialTheme.shapes.small)
+                        .clickable {}
+                        .background(Divider)
+                        .fillMaxWidth()
+                        .padding(horizontal = 5.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         modifier = Modifier
                             .padding(10.dp)
@@ -832,14 +836,14 @@ fun AddPadzeia(
                     options.forEachIndexed { position, option ->
                         DropdownMenuItem(
                             text = {
-                            Text(
-                                option, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
-                            )
-                        }, onClick = {
-                            textFieldNotificstionState2.setTextAndPlaceCursorAtEnd(option)
-                            textFieldState2Position = position
-                            expanded2 = false
-                        }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding, colors = MenuDefaults.itemColors(textColor = PrimaryText)
+                                Text(
+                                    option, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
+                                )
+                            }, onClick = {
+                                textFieldNotificstionState2.setTextAndPlaceCursorAtEnd(option)
+                                textFieldState2Position = position
+                                expanded2 = false
+                            }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding, colors = MenuDefaults.itemColors(textColor = PrimaryText)
                         )
                     }
                 }
@@ -888,13 +892,14 @@ fun AddPadzeia(
                 expanded = expanded,
                 onExpandedChange = { expanded = it },
             ) {
-                Row(modifier = Modifier
-                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-                    .clip(MaterialTheme.shapes.small)
-                    .clickable {}
-                    .background(Divider)
-                    .fillMaxWidth()
-                    .padding(horizontal = 5.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier
+                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                        .clip(MaterialTheme.shapes.small)
+                        .clickable {}
+                        .background(Divider)
+                        .fillMaxWidth()
+                        .padding(horizontal = 5.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         modifier = Modifier
                             .padding(10.dp)
@@ -916,14 +921,14 @@ fun AddPadzeia(
                     sabytieRepit.forEachIndexed { position, option ->
                         DropdownMenuItem(
                             text = {
-                            Text(
-                                option, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
-                            )
-                        }, onClick = {
-                            textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option)
-                            textFieldStatePosition = position
-                            expanded = false
-                        }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding, colors = MenuDefaults.itemColors(textColor = PrimaryText)
+                                Text(
+                                    option, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
+                                )
+                            }, onClick = {
+                                textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option)
+                                textFieldStatePosition = position
+                                expanded = false
+                            }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding, colors = MenuDefaults.itemColors(textColor = PrimaryText)
                         )
                     }
                 }
@@ -1029,13 +1034,14 @@ fun AddPadzeia(
                 expanded = expanded1,
                 onExpandedChange = { expanded1 = it },
             ) {
-                Row(modifier = Modifier
-                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-                    .clip(MaterialTheme.shapes.small)
-                    .clickable {}
-                    .background(Color(color.toColorInt()))
-                    .fillMaxWidth()
-                    .padding(horizontal = 5.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier
+                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                        .clip(MaterialTheme.shapes.small)
+                        .clickable {}
+                        .background(Color(color.toColorInt()))
+                        .fillMaxWidth()
+                        .padding(horizontal = 5.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         modifier = Modifier
                             .padding(10.dp)
@@ -1057,14 +1063,14 @@ fun AddPadzeia(
                     optionsColors.forEachIndexed { position, option ->
                         DropdownMenuItem(
                             modifier = Modifier.background(Color(option.toColorInt())), text = {
-                            Text(
-                                textFieldColorState.text.toString(), style = MaterialTheme.typography.bodyLarge, fontSize = Settings.fontInterface.sp, color = PrimaryTextBlack
-                            )
-                        }, onClick = {
-                            colorPosition = position
-                            color = option
-                            expanded1 = false
-                        }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                                Text(
+                                    textFieldColorState.text.toString(), style = MaterialTheme.typography.bodyLarge, fontSize = Settings.fontInterface.sp, color = PrimaryTextBlack
+                                )
+                            }, onClick = {
+                                colorPosition = position
+                                color = option
+                                expanded1 = false
+                            }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
                         )
                     }
                 }
@@ -1089,30 +1095,52 @@ fun MyTimePickerDialog(
         initialMinute = currentTime.get(Calendar.MINUTE),
         is24Hour = true,
     )
-    TimePickerDialog(onDismiss = { onDismiss() }, onConfirm = { onConfirm(timePickerState) }) {
-        val colorText = if (Settings.dzenNoch.value) PrimaryText
-        else PrimaryTextBlack
-        val color = TimePickerDefaults.colors().copy(timeSelectorSelectedContainerColor = MaterialTheme.colorScheme.primary, timeSelectorSelectedContentColor = colorText)
-        TimePicker(
-            colors = color,
-            state = timePickerState,
-        )
+    val colorText = if (Settings.dzenNoch.value) PrimaryText
+    else PrimaryTextBlack
+    val color = TimePickerDefaults.colors().copy(timeSelectorSelectedContainerColor = MaterialTheme.colorScheme.primary, timeSelectorSelectedContentColor = colorText)
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = stringResource(R.string.set_time), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.onTertiary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
+                )
+                TimePicker(
+                    modifier = Modifier.padding(top = 10.dp),
+                    colors = color,
+                    state = timePickerState,
+                )
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Text(stringResource(R.string.close), fontSize = 18.sp)
+                    }
+                    TextButton(
+                        onClick = {
+                            onConfirm(timePickerState)
+                        }, shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Text(stringResource(R.string.ok), fontSize = 18.sp)
+                    }
+                }
+            }
+        }
     }
-}
-
-@Composable
-fun TimePickerDialog(
-    onDismiss: () -> Unit, onConfirm: () -> Unit, content: @Composable () -> Unit
-) {
-    AlertDialog(onDismissRequest = onDismiss, dismissButton = {
-        TextButton(onClick = { onDismiss() }) {
-            Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
-        }
-    }, confirmButton = {
-        TextButton(onClick = { onConfirm() }) {
-            Text(stringResource(R.string.ok), fontSize = Settings.fontInterface.sp)
-        }
-    }, text = { content() })
 }
 
 fun savePadzeia(

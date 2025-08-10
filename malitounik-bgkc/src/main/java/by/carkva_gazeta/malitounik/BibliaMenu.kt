@@ -73,6 +73,7 @@ import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.TitleCalendarMounth
+import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
 import by.carkva_gazeta.malitounik.views.HtmlText
 import by.carkva_gazeta.malitounik.views.openAssetsResources
@@ -154,7 +155,6 @@ fun BibliaMenu(
         }
     }
     var dialogImageView by rememberSaveable { mutableStateOf(false) }
-    var showDropdown by remember { mutableStateOf(false) }
     var searchSettings by remember { mutableStateOf(false) }
     var isRegistr by remember { mutableStateOf(k.getBoolean("pegistrbukv", true)) }
     var isDakladnaeSupadzenne by remember { mutableIntStateOf(k.getInt("slovocalkam", 0)) }
@@ -164,7 +164,7 @@ fun BibliaMenu(
             searchList.clear()
             searchSettings = false
         }
-        if (Settings.textFieldValueState.value.trim().length >= 3 && Settings.textFieldValueState.value.trim() != Settings.textFieldValueLatest.value.trim()) {
+        if (Settings.textFieldValueState.value.trim().length >= 3 && searchList.isEmpty()) {
             searchJob?.cancel()
             searchJob = CoroutineScope(Dispatchers.Main).launch {
                 isProgressVisable = true
@@ -182,13 +182,13 @@ fun BibliaMenu(
         }
     }
     if (searchText) {
-        if (showDropdown) {
+        if (AppNavGraphState.searchSettings) {
             ModalBottomSheet(
                 scrimColor = Color.Transparent,
                 containerColor = MaterialTheme.colorScheme.surfaceContainer,
                 properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false),
                 onDismissRequest = {
-                    showDropdown = false
+                    AppNavGraphState.searchSettings = false
                 }
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {

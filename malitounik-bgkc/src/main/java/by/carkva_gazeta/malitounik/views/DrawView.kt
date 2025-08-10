@@ -9,6 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,8 +25,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,6 +33,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -67,7 +68,6 @@ fun DrawView(
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var dialogNoInternet by remember { mutableStateOf(false) }
     var dialogProgram by remember { mutableStateOf(false) }
-    val navigationDrawerItemColors = NavigationDrawerItemDefaults.colors(selectedContainerColor = if (Settings.dzenNoch.value) BackgroundDrawelMenu else Divider)
     if (dialogNoInternet) {
         DialogNoInternet {
             dialogNoInternet = false
@@ -88,14 +88,8 @@ fun DrawView(
             modifier = Modifier.padding(bottom = 5.dp),
             color = MaterialTheme.colorScheme.secondary
         )
-        NavigationDrawerItem(
-            label = {
-                Text(
-                    text = stringResource(id = R.string.kaliandar2),
-                    fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary,
-                )
-            },
+        NavigationItem(
+            label = stringResource(id = R.string.kaliandar2),
             selected = route.contains(AllDestinations.KALIANDAR),
             onClick = {
                 navigateToRazdel(AllDestinations.KALIANDAR)
@@ -107,43 +101,26 @@ fun DrawView(
                     contentDescription = "",
                     tint = MaterialTheme.colorScheme.primary
                 )
-            },
-            shape = MaterialTheme.shapes.small,
-            modifier = Modifier.padding(horizontal = 5.dp),
-            colors = navigationDrawerItemColors
+            }
         )
-        NavigationDrawerItem(
-            label = {
-                Text(
-                    text = stringResource(id = R.string.bogaslugbovyia_teksty),
-                    fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary,
-                )
-            },
+        NavigationItem(
+            label = stringResource(id = R.string.bogaslugbovyia_teksty),
             selected = route == AllDestinations.BOGASLUJBOVYIA_MENU,
             onClick = {
                 navigateToRazdel(AllDestinations.BOGASLUJBOVYIA_MENU)
             },
             icon = {
                 Icon(
-                    modifier = Modifier.size(22.dp, 22.dp),
+                    modifier = Modifier
+                        .size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = ""
                 )
-            },
-            shape = MaterialTheme.shapes.small,
-            modifier = Modifier.padding(horizontal = 5.dp),
-            colors = navigationDrawerItemColors
+            }
         )
-        NavigationDrawerItem(
-            label = {
-                Text(
-                    text = stringResource(id = R.string.liturgikon),
-                    fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary,
-                )
-            },
+        NavigationItem(
+            label = stringResource(id = R.string.liturgikon),
             selected = route == AllDestinations.LITURGIKON_MENU,
             onClick = {
                 navigateToRazdel(AllDestinations.LITURGIKON_MENU)
@@ -155,19 +132,10 @@ fun DrawView(
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = ""
                 )
-            },
-            shape = MaterialTheme.shapes.small,
-            modifier = Modifier.padding(horizontal = 5.dp),
-            colors = navigationDrawerItemColors
+            }
         )
-        NavigationDrawerItem(
-            label = {
-                Text(
-                    text = stringResource(id = R.string.chasaslou),
-                    fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary,
-                )
-            },
+        NavigationItem(
+            label = stringResource(id = R.string.chasaslou),
             selected = route == AllDestinations.CHASASLOU_MENU,
             onClick = {
                 navigateToRazdel(AllDestinations.CHASASLOU_MENU)
@@ -179,19 +147,10 @@ fun DrawView(
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = ""
                 )
-            },
-            shape = MaterialTheme.shapes.small,
-            modifier = Modifier.padding(horizontal = 5.dp),
-            colors = navigationDrawerItemColors
+            }
         )
-        NavigationDrawerItem(
-            label = {
-                Text(
-                    text = stringResource(id = R.string.malitvy),
-                    fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary,
-                )
-            },
+        NavigationItem(
+            label = stringResource(id = R.string.malitvy),
             selected = route == AllDestinations.MALITVY_MENU,
             onClick = {
                 navigateToRazdel(AllDestinations.MALITVY_MENU)
@@ -203,19 +162,10 @@ fun DrawView(
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = ""
                 )
-            },
-            shape = MaterialTheme.shapes.small,
-            modifier = Modifier.padding(horizontal = 5.dp),
-            colors = navigationDrawerItemColors
+            }
         )
-        NavigationDrawerItem(
-            label = {
-                Text(
-                    text = stringResource(id = R.string.akafisty),
-                    fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary,
-                )
-            },
+        NavigationItem(
+            label = stringResource(id = R.string.akafisty),
             selected = route == AllDestinations.AKAFIST_MENU,
             onClick = {
                 navigateToRazdel(AllDestinations.AKAFIST_MENU)
@@ -227,19 +177,10 @@ fun DrawView(
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = ""
                 )
-            },
-            shape = MaterialTheme.shapes.small,
-            modifier = Modifier.padding(horizontal = 5.dp),
-            colors = navigationDrawerItemColors
+            }
         )
-        NavigationDrawerItem(
-            label = {
-                Text(
-                    text = stringResource(id = R.string.maje_natatki),
-                    fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary,
-                )
-            },
+        NavigationItem(
+            label = stringResource(id = R.string.maje_natatki),
             selected = route == AllDestinations.MAE_NATATKI_MENU,
             onClick = {
                 navigateToRazdel(AllDestinations.MAE_NATATKI_MENU)
@@ -251,19 +192,10 @@ fun DrawView(
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = ""
                 )
-            },
-            shape = MaterialTheme.shapes.small,
-            modifier = Modifier.padding(horizontal = 5.dp),
-            colors = navigationDrawerItemColors
+            }
         )
-        NavigationDrawerItem(
-            label = {
-                Text(
-                    text = stringResource(id = R.string.MenuVybranoe),
-                    fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary,
-                )
-            },
+        NavigationItem(
+            label = stringResource(id = R.string.MenuVybranoe),
             selected = route == AllDestinations.VYBRANAE_LIST,
             onClick = {
                 navigateToRazdel(AllDestinations.VYBRANAE_LIST)
@@ -275,10 +207,7 @@ fun DrawView(
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = ""
                 )
-            },
-            shape = MaterialTheme.shapes.small,
-            modifier = Modifier.padding(horizontal = 5.dp),
-            colors = navigationDrawerItemColors
+            }
         )
         HorizontalDivider(
             modifier = Modifier.padding(vertical = 5.dp),
@@ -288,7 +217,6 @@ fun DrawView(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 5.dp)
                     .clickable {
                         AppNavGraphState.bibleItem = !AppNavGraphState.bibleItem
                         if (AppNavGraphState.bibleItem && !AppNavGraphState.biblijatekaItem && !AppNavGraphState.piesnyItem && !AppNavGraphState.underItem) {
@@ -302,7 +230,7 @@ fun DrawView(
             ) {
                 Icon(
                     modifier = Modifier
-                        .padding(start = 16.dp, end = 2.dp)
+                        .padding(start = 20.dp)
                         .size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
@@ -310,7 +238,7 @@ fun DrawView(
                 )
                 Text(
                     modifier = Modifier
-                        .padding(16.dp)
+                        .padding(10.dp)
                         .weight(1f),
                     text = stringResource(id = R.string.bibliaAll),
                     fontSize = Settings.fontInterface.sp,
@@ -318,7 +246,7 @@ fun DrawView(
                 )
                 Icon(
                     modifier = Modifier
-                        .padding(start = 21.dp, end = 2.dp)
+                        .padding(horizontal = 10.dp)
                         .size(22.dp, 22.dp),
                     painter = painterResource(if (AppNavGraphState.bibleItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
@@ -333,14 +261,8 @@ fun DrawView(
                 ), exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
             ) {
                 Column {
-                    NavigationDrawerItem(
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.title_biblia),
-                                fontSize = Settings.fontInterface.sp,
-                                color = MaterialTheme.colorScheme.secondary
-                            )
-                        },
+                    NavigationItem(
+                        label = stringResource(id = R.string.title_biblia),
                         selected = route == AllDestinations.BIBLIA_SEMUXA,
                         onClick = {
                             navigateToRazdel(AllDestinations.BIBLIA_SEMUXA)
@@ -352,19 +274,10 @@ fun DrawView(
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
                             )
-                        },
-                        shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 10.dp),
-                        colors = navigationDrawerItemColors
+                        }
                     )
-                    NavigationDrawerItem(
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.title_biblia_bokun),
-                                fontSize = Settings.fontInterface.sp,
-                                color = MaterialTheme.colorScheme.secondary
-                            )
-                        },
+                    NavigationItem(
+                        label = stringResource(id = R.string.title_biblia_bokun),
                         selected = route == AllDestinations.BIBLIA_BOKUNA,
                         onClick = {
                             navigateToRazdel(AllDestinations.BIBLIA_BOKUNA)
@@ -376,19 +289,10 @@ fun DrawView(
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
                             )
-                        },
-                        shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 10.dp),
-                        colors = navigationDrawerItemColors
+                        }
                     )
-                    NavigationDrawerItem(
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.title_psalter),
-                                fontSize = Settings.fontInterface.sp,
-                                color = MaterialTheme.colorScheme.secondary
-                            )
-                        },
+                    NavigationItem(
+                        label = stringResource(id = R.string.title_psalter),
                         selected = route == AllDestinations.BIBLIA_NADSAN,
                         onClick = {
                             navigateToRazdel(AllDestinations.BIBLIA_NADSAN)
@@ -400,19 +304,10 @@ fun DrawView(
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
                             )
-                        },
-                        shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 10.dp),
-                        colors = navigationDrawerItemColors
+                        }
                     )
-                    NavigationDrawerItem(
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.title_biblia_charniauski),
-                                fontSize = Settings.fontInterface.sp,
-                                color = MaterialTheme.colorScheme.secondary
-                            )
-                        },
+                    NavigationItem(
+                        label = stringResource(id = R.string.title_biblia_charniauski),
                         selected = route == AllDestinations.BIBLIA_CHARNIAUSKI,
                         onClick = {
                             navigateToRazdel(AllDestinations.BIBLIA_CHARNIAUSKI)
@@ -424,20 +319,11 @@ fun DrawView(
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
                             )
-                        },
-                        shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 10.dp),
-                        colors = navigationDrawerItemColors
+                        }
                     )
                     if (k.getBoolean("sinoidal_bible", false)) {
-                        NavigationDrawerItem(
-                            label = {
-                                Text(
-                                    text = stringResource(id = R.string.bsinaidal),
-                                    fontSize = Settings.fontInterface.sp,
-                                    color = MaterialTheme.colorScheme.secondary
-                                )
-                            },
+                        NavigationItem(
+                            label = stringResource(id = R.string.bsinaidal),
                             selected = route == AllDestinations.BIBLIA_SINODAL,
                             onClick = {
                                 navigateToRazdel(AllDestinations.BIBLIA_SINODAL)
@@ -449,10 +335,7 @@ fun DrawView(
                                     tint = MaterialTheme.colorScheme.primary,
                                     contentDescription = ""
                                 )
-                            },
-                            shape = MaterialTheme.shapes.small,
-                            modifier = Modifier.padding(horizontal = 10.dp),
-                            colors = navigationDrawerItemColors
+                            }
                         )
                     }
                 }
@@ -464,7 +347,7 @@ fun DrawView(
         ) {
             Icon(
                 modifier = Modifier
-                    .padding(start = 21.dp, end = 2.dp)
+                    .padding(start = 20.dp)
                     .size(22.dp, 22.dp),
                 painter = painterResource(R.drawable.krest),
                 tint = MaterialTheme.colorScheme.primary,
@@ -472,7 +355,7 @@ fun DrawView(
             )
             Text(
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(10.dp)
                     .weight(1f),
                 text = stringResource(id = R.string.padie_maryia),
                 fontSize = Settings.fontInterface.sp,
@@ -537,7 +420,6 @@ fun DrawView(
             Icon(
                 modifier = Modifier
                     .padding(horizontal = 10.dp)
-                    .padding(end = 10.dp)
                     .clickable {
                         if (ServiceRadyjoMaryia.isServiceRadioMaryiaRun) {
                             if (context.isConnectServise) {
@@ -556,7 +438,7 @@ fun DrawView(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 28.dp),
+                    .padding(start = 20.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
@@ -579,7 +461,6 @@ fun DrawView(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 5.dp)
                     .clickable {
                         AppNavGraphState.biblijatekaItem = !AppNavGraphState.biblijatekaItem
                         if (AppNavGraphState.biblijatekaItem && !AppNavGraphState.piesnyItem && !AppNavGraphState.underItem) {
@@ -593,7 +474,7 @@ fun DrawView(
             ) {
                 Icon(
                     modifier = Modifier
-                        .padding(start = 16.dp, end = 2.dp)
+                        .padding(start = 20.dp)
                         .size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
@@ -601,7 +482,7 @@ fun DrawView(
                 )
                 Text(
                     modifier = Modifier
-                        .padding(16.dp)
+                        .padding(10.dp)
                         .weight(1f),
                     text = stringResource(id = R.string.bibliateka_carkvy),
                     fontSize = Settings.fontInterface.sp,
@@ -609,7 +490,7 @@ fun DrawView(
                 )
                 Icon(
                     modifier = Modifier
-                        .padding(start = 21.dp, end = 2.dp)
+                        .padding(horizontal = 10.dp)
                         .size(22.dp, 22.dp),
                     painter = painterResource(if (AppNavGraphState.biblijatekaItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
@@ -624,14 +505,8 @@ fun DrawView(
                 ), exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
             ) {
                 Column {
-                    NavigationDrawerItem(
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.bibliateka_niadaunia),
-                                fontSize = Settings.fontInterface.sp,
-                                color = MaterialTheme.colorScheme.secondary
-                            )
-                        },
+                    NavigationItem(
+                        label = stringResource(id = R.string.bibliateka_niadaunia),
                         selected = route == AllDestinations.BIBLIJATEKA_NIADAUNIA,
                         onClick = {
                             navigateToRazdel(AllDestinations.BIBLIJATEKA_NIADAUNIA)
@@ -643,19 +518,10 @@ fun DrawView(
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
                             )
-                        },
-                        shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 10.dp),
-                        colors = navigationDrawerItemColors
+                        }
                     )
-                    NavigationDrawerItem(
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.bibliateka_gistoryia_carkvy),
-                                fontSize = Settings.fontInterface.sp,
-                                color = MaterialTheme.colorScheme.secondary
-                            )
-                        },
+                    NavigationItem(
+                        label = stringResource(id = R.string.bibliateka_gistoryia_carkvy),
                         selected = route == AllDestinations.BIBLIJATEKA_GISTORYIA,
                         onClick = {
                             navigateToRazdel(AllDestinations.BIBLIJATEKA_GISTORYIA)
@@ -667,19 +533,10 @@ fun DrawView(
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
                             )
-                        },
-                        shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 10.dp),
-                        colors = navigationDrawerItemColors
+                        }
                     )
-                    NavigationDrawerItem(
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.bibliateka_malitouniki),
-                                fontSize = Settings.fontInterface.sp,
-                                color = MaterialTheme.colorScheme.secondary
-                            )
-                        },
+                    NavigationItem(
+                        label = stringResource(id = R.string.bibliateka_malitouniki),
                         selected = route == AllDestinations.BIBLIJATEKA_MALITOUNIKI,
                         onClick = {
                             navigateToRazdel(AllDestinations.BIBLIJATEKA_MALITOUNIKI)
@@ -691,19 +548,10 @@ fun DrawView(
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
                             )
-                        },
-                        shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 10.dp),
-                        colors = navigationDrawerItemColors
+                        }
                     )
-                    NavigationDrawerItem(
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.bibliateka_speuniki),
-                                fontSize = Settings.fontInterface.sp,
-                                color = MaterialTheme.colorScheme.secondary
-                            )
-                        },
+                    NavigationItem(
+                        label = stringResource(id = R.string.bibliateka_speuniki),
                         selected = route == AllDestinations.BIBLIJATEKA_SPEUNIKI,
                         onClick = {
                             navigateToRazdel(AllDestinations.BIBLIJATEKA_SPEUNIKI)
@@ -715,19 +563,10 @@ fun DrawView(
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
                             )
-                        },
-                        shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 10.dp),
-                        colors = navigationDrawerItemColors
+                        }
                     )
-                    NavigationDrawerItem(
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.bibliateka_rel_litaratura),
-                                fontSize = Settings.fontInterface.sp,
-                                color = MaterialTheme.colorScheme.secondary
-                            )
-                        },
+                    NavigationItem(
+                        label = stringResource(id = R.string.bibliateka_rel_litaratura),
                         selected = route == AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA,
                         onClick = {
                             navigateToRazdel(AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA)
@@ -739,19 +578,10 @@ fun DrawView(
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
                             )
-                        },
-                        shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 10.dp),
-                        colors = navigationDrawerItemColors
+                        }
                     )
-                    NavigationDrawerItem(
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.arx_num_gaz),
-                                fontSize = Settings.fontInterface.sp,
-                                color = MaterialTheme.colorScheme.secondary
-                            )
-                        },
+                    NavigationItem(
+                        label = stringResource(id = R.string.arx_num_gaz),
                         selected = route == AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU,
                         onClick = {
                             navigateToRazdel(AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU)
@@ -763,10 +593,7 @@ fun DrawView(
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
                             )
-                        },
-                        shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 10.dp),
-                        colors = navigationDrawerItemColors
+                        }
                     )
                 }
             }
@@ -775,7 +602,6 @@ fun DrawView(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 5.dp)
                     .clickable {
                         AppNavGraphState.piesnyItem = !AppNavGraphState.piesnyItem
                         if (AppNavGraphState.piesnyItem && !AppNavGraphState.underItem) {
@@ -789,7 +615,7 @@ fun DrawView(
             ) {
                 Icon(
                     modifier = Modifier
-                        .padding(start = 16.dp, end = 2.dp)
+                        .padding(start = 20.dp)
                         .size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
@@ -797,7 +623,7 @@ fun DrawView(
                 )
                 Text(
                     modifier = Modifier
-                        .padding(16.dp)
+                        .padding(10.dp)
                         .weight(1f),
                     text = stringResource(id = R.string.song),
                     fontSize = Settings.fontInterface.sp,
@@ -805,7 +631,7 @@ fun DrawView(
                 )
                 Icon(
                     modifier = Modifier
-                        .padding(start = 21.dp, end = 2.dp)
+                        .padding(horizontal = 10.dp)
                         .size(22.dp, 22.dp),
                     painter = painterResource(if (AppNavGraphState.piesnyItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
@@ -820,14 +646,8 @@ fun DrawView(
                 ), exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
             ) {
                 Column {
-                    NavigationDrawerItem(
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.pesny1),
-                                fontSize = Settings.fontInterface.sp,
-                                color = MaterialTheme.colorScheme.secondary
-                            )
-                        },
+                    NavigationItem(
+                        label = stringResource(id = R.string.pesny1),
                         selected = route == AllDestinations.PIESNY_PRASLAULENNIA,
                         onClick = {
                             navigateToRazdel(AllDestinations.PIESNY_PRASLAULENNIA)
@@ -839,19 +659,10 @@ fun DrawView(
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
                             )
-                        },
-                        shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 10.dp),
-                        colors = navigationDrawerItemColors
+                        }
                     )
-                    NavigationDrawerItem(
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.pesny2),
-                                fontSize = Settings.fontInterface.sp,
-                                color = MaterialTheme.colorScheme.secondary
-                            )
-                        },
+                    NavigationItem(
+                        label = stringResource(id = R.string.pesny2),
                         selected = route == AllDestinations.PIESNY_ZA_BELARUS,
                         onClick = {
                             navigateToRazdel(AllDestinations.PIESNY_ZA_BELARUS)
@@ -863,19 +674,10 @@ fun DrawView(
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
                             )
-                        },
-                        shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 10.dp),
-                        colors = navigationDrawerItemColors
+                        }
                     )
-                    NavigationDrawerItem(
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.pesny3),
-                                fontSize = Settings.fontInterface.sp,
-                                color = MaterialTheme.colorScheme.secondary
-                            )
-                        },
+                    NavigationItem(
+                        label = stringResource(id = R.string.pesny3),
                         selected = route == AllDestinations.PIESNY_DA_BAGARODZICY,
                         onClick = {
                             navigateToRazdel(AllDestinations.PIESNY_DA_BAGARODZICY)
@@ -887,19 +689,10 @@ fun DrawView(
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
                             )
-                        },
-                        shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 10.dp),
-                        colors = navigationDrawerItemColors
+                        }
                     )
-                    NavigationDrawerItem(
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.pesny4),
-                                fontSize = Settings.fontInterface.sp,
-                                color = MaterialTheme.colorScheme.secondary
-                            )
-                        },
+                    NavigationItem(
+                        label = stringResource(id = R.string.pesny4),
                         selected = route == AllDestinations.PIESNY_KALIADNYIA,
                         onClick = {
                             navigateToRazdel(AllDestinations.PIESNY_KALIADNYIA)
@@ -911,19 +704,10 @@ fun DrawView(
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
                             )
-                        },
-                        shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 10.dp),
-                        colors = navigationDrawerItemColors
+                        }
                     )
-                    NavigationDrawerItem(
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.pesny5),
-                                fontSize = Settings.fontInterface.sp,
-                                color = MaterialTheme.colorScheme.secondary
-                            )
-                        },
+                    NavigationItem(
+                        label = stringResource(id = R.string.pesny5),
                         selected = route == AllDestinations.PIESNY_TAIZE,
                         onClick = {
                             navigateToRazdel(AllDestinations.PIESNY_TAIZE)
@@ -935,10 +719,7 @@ fun DrawView(
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
                             )
-                        },
-                        shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 10.dp),
-                        colors = navigationDrawerItemColors
+                        }
                     )
                 }
             }
@@ -951,7 +732,6 @@ fun DrawView(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 5.dp)
                     .clickable {
                         AppNavGraphState.underItem = !AppNavGraphState.underItem
                         if (AppNavGraphState.underItem) {
@@ -965,7 +745,7 @@ fun DrawView(
             ) {
                 Icon(
                     modifier = Modifier
-                        .padding(start = 16.dp, end = 2.dp)
+                        .padding(start = 20.dp)
                         .size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
@@ -973,7 +753,7 @@ fun DrawView(
                 )
                 Text(
                     modifier = Modifier
-                        .padding(16.dp)
+                        .padding(10.dp)
                         .weight(1f),
                     text = stringResource(R.string.other),
                     fontSize = Settings.fontInterface.sp,
@@ -981,7 +761,7 @@ fun DrawView(
                 )
                 Icon(
                     modifier = Modifier
-                        .padding(start = 21.dp, end = 2.dp)
+                        .padding(horizontal = 10.dp)
                         .size(22.dp, 22.dp),
                     painter = painterResource(if (AppNavGraphState.underItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
@@ -996,14 +776,8 @@ fun DrawView(
                 ), exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
             ) {
                 Column {
-                    NavigationDrawerItem(
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.spovedz),
-                                fontSize = Settings.fontInterface.sp,
-                                color = MaterialTheme.colorScheme.secondary,
-                            )
-                        },
+                    NavigationItem(
+                        label = stringResource(id = R.string.spovedz),
                         selected = route == AllDestinations.UNDER_PADRYXTOUKA,
                         onClick = {
                             navigateToRazdel(AllDestinations.UNDER_PADRYXTOUKA)
@@ -1015,19 +789,10 @@ fun DrawView(
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
                             )
-                        },
-                        shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 10.dp),
-                        colors = navigationDrawerItemColors
+                        }
                     )
-                    NavigationDrawerItem(
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.pamiatka),
-                                fontSize = Settings.fontInterface.sp,
-                                color = MaterialTheme.colorScheme.secondary,
-                            )
-                        },
+                    NavigationItem(
+                        label = stringResource(id = R.string.pamiatka),
                         selected = route == AllDestinations.UNDER_PAMIATKA,
                         onClick = {
                             navigateToRazdel(AllDestinations.UNDER_PAMIATKA)
@@ -1039,19 +804,10 @@ fun DrawView(
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
                             )
-                        },
-                        shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 10.dp),
-                        colors = navigationDrawerItemColors
+                        }
                     )
-                    NavigationDrawerItem(
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.sviaty),
-                                fontSize = Settings.fontInterface.sp,
-                                color = MaterialTheme.colorScheme.secondary,
-                            )
-                        },
+                    NavigationItem(
+                        label = stringResource(id = R.string.sviaty),
                         selected = route == AllDestinations.UNDER_SVAITY_MUNU,
                         onClick = {
                             navigateToRazdel(AllDestinations.UNDER_SVAITY_MUNU)
@@ -1063,19 +819,10 @@ fun DrawView(
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
                             )
-                        },
-                        shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 10.dp),
-                        colors = navigationDrawerItemColors
+                        }
                     )
-                    NavigationDrawerItem(
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.parafii),
-                                fontSize = Settings.fontInterface.sp,
-                                color = MaterialTheme.colorScheme.secondary,
-                            )
-                        },
+                    NavigationItem(
+                        label = stringResource(id = R.string.parafii),
                         selected = route == AllDestinations.UNDER_PARAFII_BGKC,
                         onClick = {
                             navigateToRazdel(AllDestinations.UNDER_PARAFII_BGKC)
@@ -1087,19 +834,10 @@ fun DrawView(
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
                             )
-                        },
-                        shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 10.dp),
-                        colors = navigationDrawerItemColors
+                        }
                     )
-                    NavigationDrawerItem(
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.paschalia),
-                                fontSize = Settings.fontInterface.sp,
-                                color = MaterialTheme.colorScheme.secondary,
-                            )
-                        },
+                    NavigationItem(
+                        label = stringResource(id = R.string.paschalia),
                         selected = route == AllDestinations.UNDER_PASHALIA,
                         onClick = {
                             navigateToRazdel(AllDestinations.UNDER_PASHALIA)
@@ -1111,19 +849,10 @@ fun DrawView(
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
                             )
-                        },
-                        shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 10.dp),
-                        colors = navigationDrawerItemColors
+                        }
                     )
-                    NavigationDrawerItem(
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.help),
-                                fontSize = Settings.fontInterface.sp,
-                                color = MaterialTheme.colorScheme.secondary,
-                            )
-                        },
+                    NavigationItem(
+                        label = stringResource(id = R.string.help),
                         selected = route == AllDestinations.HELP,
                         onClick = {
                             navigateToRazdel(AllDestinations.HELP)
@@ -1135,19 +864,10 @@ fun DrawView(
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
                             )
-                        },
-                        shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 10.dp),
-                        colors = navigationDrawerItemColors
+                        }
                     )
-                    NavigationDrawerItem(
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.pra_nas),
-                                fontSize = Settings.fontInterface.sp,
-                                color = MaterialTheme.colorScheme.secondary,
-                            )
-                        },
+                    NavigationItem(
+                        label = stringResource(id = R.string.pra_nas),
                         selected = route == AllDestinations.PRANAS,
                         onClick = {
                             navigateToRazdel(AllDestinations.PRANAS)
@@ -1159,13 +879,51 @@ fun DrawView(
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
                             )
-                        },
-                        shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.padding(horizontal = 10.dp),
-                        colors = navigationDrawerItemColors
+                        }
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun NavigationItem(
+    selected: Boolean,
+    label: String,
+    onClick: () -> Unit,
+    icon: @Composable () -> Unit
+) {
+    val color = if (selected) {
+        if (Settings.dzenNoch.value) BackgroundDrawelMenu else Divider
+    } else {
+        Color.Unspecified
+    }
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 10.dp)
+            .clip(MaterialTheme.shapes.small)
+            .background(color)
+            .clickable {
+                onClick()
+            }
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            icon()
+            Text(
+                modifier = Modifier
+                    .padding(start = 12.dp, top = 10.dp, bottom = 10.dp, end = 10.dp)
+                    .weight(1f),
+                text = label,
+                fontSize = Settings.fontInterface.sp,
+                color = MaterialTheme.colorScheme.secondary,
+            )
         }
     }
 }
@@ -1188,9 +946,11 @@ fun DrawerHeader() {
             fontStyle = FontStyle.Italic,
             color = SecondaryText,
         )
-        Icon(modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 10.dp), painter = painterResource(R.drawable.lahatyp), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+        Icon(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 10.dp), painter = painterResource(R.drawable.lahatyp), contentDescription = "", tint = MaterialTheme.colorScheme.primary
+        )
         Icon(modifier = Modifier.fillMaxWidth(), painter = painterResource(R.drawable.lahatyp_apis), contentDescription = "", tint = MaterialTheme.colorScheme.secondary)
     }
 }

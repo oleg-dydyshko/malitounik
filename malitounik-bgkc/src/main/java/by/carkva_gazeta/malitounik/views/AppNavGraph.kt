@@ -201,6 +201,7 @@ object AppNavGraphState {
     var cytata = AnnotatedString("")
     var randomCytata = 0
     var autoDzenNochTime = System.currentTimeMillis()
+    var searchSettings by mutableStateOf(false)
 
     fun setItemsValue(title: String, isInit: Boolean = false): Boolean {
         var result = true
@@ -1315,6 +1316,13 @@ fun MainConteiner(
                         IconButton(onClick = { expandedUp = true }) {
                             Icon(
                                 painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = textTollBarColor
+                            )
+                        }
+                    }
+                    if (searchText && currentRoute.contains("BIBLIA", ignoreCase = true)) {
+                        IconButton(onClick = { AppNavGraphState.searchSettings = true }) {
+                            Icon(
+                                painter = painterResource(R.drawable.settings), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                             )
                         }
                     }

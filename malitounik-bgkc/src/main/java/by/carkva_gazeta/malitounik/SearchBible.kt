@@ -242,9 +242,6 @@ fun SearchBible(
                         showDropdown = false
                     }) {
                     Column(modifier = Modifier.fillMaxWidth()) {
-                        if (!(perevod == Settings.PEREVODNADSAN || isBogaslujbovyiaSearch)) {
-                            DropdownMenuBox(onSearchStart = { searchSettings = true })
-                        }
                         Row(
                             verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable {
                                 isRegistr = !isRegistr
