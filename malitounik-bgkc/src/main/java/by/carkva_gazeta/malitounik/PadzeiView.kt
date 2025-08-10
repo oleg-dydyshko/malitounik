@@ -34,7 +34,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.foundation.verticalScroll
@@ -58,7 +57,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.TimePickerState
@@ -80,6 +78,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -157,85 +156,80 @@ fun PadzeiaView(navController: NavHostController) {
         }
     }
     if (deliteAll) {
-        DialogDelitePadsei(
-            onDismiss = { deliteAll = false },
-            onDelOld = {
-                val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                val c2 = Calendar.getInstance()
-                c2.set(Calendar.SECOND, 0)
-                val del = ArrayList<Padzeia>()
-                for (p in listPadzeia) {
-                    if (p.repit == 0) {
-                        val days = p.datK.split(".")
-                        val time = p.timK.split(":")
-                        val gc = GregorianCalendar(days[2].toInt(), days[1].toInt() - 1, days[0].toInt(), time[0].toInt(), time[1].toInt(), 0)
-                        if (c2.timeInMillis >= gc.timeInMillis) {
-                            if (p.sec != "-1") {
-                                val intent = Settings.createIntentSabytie(context, p.padz, p.dat, p.tim)
-                                val londs3 = p.paznic / 100000L
-                                val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
-                                alarmManager.cancel(pIntent)
-                                pIntent.cancel()
-                            }
-                            del.add(p)
+        DialogDelitePadsei(onDismiss = { deliteAll = false }, onDelOld = {
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val c2 = Calendar.getInstance()
+            c2.set(Calendar.SECOND, 0)
+            val del = ArrayList<Padzeia>()
+            for (p in listPadzeia) {
+                if (p.repit == 0) {
+                    val days = p.datK.split(".")
+                    val time = p.timK.split(":")
+                    val gc = GregorianCalendar(days[2].toInt(), days[1].toInt() - 1, days[0].toInt(), time[0].toInt(), time[1].toInt(), 0)
+                    if (c2.timeInMillis >= gc.timeInMillis) {
+                        if (p.sec != "-1") {
+                            val intent = Settings.createIntentSabytie(context, p.padz, p.dat, p.tim)
+                            val londs3 = p.paznic / 100000L
+                            val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
+                            alarmManager.cancel(pIntent)
+                            pIntent.cancel()
                         }
-                    } else {
-                        val days = p.dat.split(".")
-                        val time = p.timK.split(":")
-                        val gc = GregorianCalendar(days[2].toInt(), days[1].toInt() - 1, days[0].toInt(), time[0].toInt(), time[1].toInt(), 0)
-                        if (c2.timeInMillis >= gc.timeInMillis) {
-                            if (p.sec != "-1") {
-                                val intent = Settings.createIntentSabytie(context, p.padz, p.dat, p.tim)
-                                val londs3 = p.paznic / 100000L
-                                val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
-                                alarmManager.cancel(pIntent)
-                                pIntent.cancel()
-                            }
-                            del.add(p)
+                        del.add(p)
+                    }
+                } else {
+                    val days = p.dat.split(".")
+                    val time = p.timK.split(":")
+                    val gc = GregorianCalendar(days[2].toInt(), days[1].toInt() - 1, days[0].toInt(), time[0].toInt(), time[1].toInt(), 0)
+                    if (c2.timeInMillis >= gc.timeInMillis) {
+                        if (p.sec != "-1") {
+                            val intent = Settings.createIntentSabytie(context, p.padz, p.dat, p.tim)
+                            val londs3 = p.paznic / 100000L
+                            val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
+                            alarmManager.cancel(pIntent)
+                            pIntent.cancel()
                         }
+                        del.add(p)
                     }
                 }
-                if (del.isNotEmpty()) {
-                    listPadzeia.removeAll(del.toSet())
-                    val outputStream = FileWriter("${context.filesDir}/Sabytie.json")
-                    val gson = Gson()
-                    val type = TypeToken.getParameterized(ArrayList::class.java, Padzeia::class.java).type
-                    outputStream.write(gson.toJson(listPadzeia, type))
-                    outputStream.close()
-                    coroutineScope.launch {
-                        lazyListState.scrollToItem(0)
-                    }
-                }
-                deliteAll = false
-            },
-            onDelAll = {
-                CoroutineScope(Dispatchers.Main).launch {
-                    withContext(Dispatchers.IO) {
-                        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                        for (p in listPadzeia) {
-                            if (p.sec != "-1") {
-                                val intent = Settings.createIntentSabytie(context, p.padz, p.dat, p.tim)
-                                val londs3 = p.paznic / 100000L
-                                val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
-                                alarmManager.cancel(pIntent)
-                                pIntent.cancel()
-                            }
-                        }
-                        val file = File("${context.filesDir}/Sabytie.json")
-                        if (file.exists()) file.delete()
-                    }
-                    listPadzeia.clear()
-                    Toast.makeText(context, context.getString(R.string.remove_padzea), Toast.LENGTH_SHORT).show()
-                }
-                deliteAll = false
             }
-        )
+            if (del.isNotEmpty()) {
+                listPadzeia.removeAll(del.toSet())
+                val outputStream = FileWriter("${context.filesDir}/Sabytie.json")
+                val gson = Gson()
+                val type = TypeToken.getParameterized(ArrayList::class.java, Padzeia::class.java).type
+                outputStream.write(gson.toJson(listPadzeia, type))
+                outputStream.close()
+                coroutineScope.launch {
+                    lazyListState.scrollToItem(0)
+                }
+            }
+            deliteAll = false
+        }, onDelAll = {
+            CoroutineScope(Dispatchers.Main).launch {
+                withContext(Dispatchers.IO) {
+                    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                    for (p in listPadzeia) {
+                        if (p.sec != "-1") {
+                            val intent = Settings.createIntentSabytie(context, p.padz, p.dat, p.tim)
+                            val londs3 = p.paznic / 100000L
+                            val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
+                            alarmManager.cancel(pIntent)
+                            pIntent.cancel()
+                        }
+                    }
+                    val file = File("${context.filesDir}/Sabytie.json")
+                    if (file.exists()) file.delete()
+                }
+                listPadzeia.clear()
+                Toast.makeText(context, context.getString(R.string.remove_padzea), Toast.LENGTH_SHORT).show()
+            }
+            deliteAll = false
+        })
     }
     SideEffect {
         val window = (view.context as Activity).window
         WindowCompat.getInsetsController(
-            window,
-            view
+            window, view
         ).apply {
             isAppearanceLightStatusBars = false
             isAppearanceLightNavigationBars = !Settings.dzenNoch.value
@@ -275,7 +269,22 @@ fun PadzeiaView(navController: NavHostController) {
     var time2 by remember { mutableStateOf(initTime) }
     var savePadzia by remember { mutableStateOf(false) }
     if (dialogTimePickerDialog || dialogTimePickerDialog2) {
-        MyTimePickerDialog(onConfirm = { state ->
+        val currentTime = Calendar.getInstance()
+        if (editPadzeia) {
+            if (dialogTimePickerDialog) {
+                val listTime = time.split(":")
+                currentTime.set(Calendar.HOUR_OF_DAY, listTime[0].toInt())
+                currentTime.set(Calendar.MINUTE, listTime[1].toInt())
+            } else {
+                val listTime = time2.split(":")
+                currentTime.set(Calendar.HOUR_OF_DAY, listTime[0].toInt())
+                currentTime.set(Calendar.MINUTE, listTime[1].toInt())
+            }
+        } else {
+            currentTime.set(Calendar.MINUTE, 0)
+            currentTime.add(Calendar.HOUR, 1)
+        }
+        MyTimePickerDialog(currentTime, onConfirm = { state ->
             val nyl = if (state.minute < 10) "0" else ""
             if (dialogTimePickerDialog) {
                 time = "${state.hour}:$nyl${state.minute}"
@@ -319,21 +328,14 @@ fun PadzeiaView(navController: NavHostController) {
         } else {
             stringResource(R.string.sabytie_kali, data1, time1, res)
         }
-        DialogSabytieShow(
-            title,
-            showPadziaPosition,
-            textR,
-            paznicia,
-            onEdit = {
-                editMode = true
-                editPadzeiaInit = true
-                editPadzeia = true
-                showPadzia = false
-            },
-            onDismiss = {
-                showPadzia = false
-            }
-        )
+        DialogSabytieShow(title, showPadziaPosition, textR, paznicia, onEdit = {
+            editMode = true
+            editPadzeiaInit = true
+            editPadzeia = true
+            showPadzia = false
+        }, onDismiss = {
+            showPadzia = false
+        })
     }
     var backPressHandled by remember { mutableStateOf(false) }
     var delitePadzia by remember { mutableStateOf(false) }
@@ -341,19 +343,16 @@ fun PadzeiaView(navController: NavHostController) {
     if (dialogContextMenu) {
         val p = listPadzeia[showPadziaPosition]
         val title = p.padz
-        DialogContextMenu(
-            title,
-            onEdit = {
-                dialogContextMenu = false
-                editMode = true
-                editPadzeiaInit = true
-                editPadzeia = true
-                showPadzia = false
-            },
-            onDelite = {
-                dialogContextMenu = false
-                delitePadzia = true
-            }) {
+        DialogContextMenu(title, onEdit = {
+            dialogContextMenu = false
+            editMode = true
+            editPadzeiaInit = true
+            editPadzeia = true
+            showPadzia = false
+        }, onDelite = {
+            dialogContextMenu = false
+            delitePadzia = true
+        }) {
             dialogContextMenu = false
         }
     }
@@ -419,105 +418,76 @@ fun PadzeiaView(navController: NavHostController) {
         topBar = {
             TopAppBar(
                 title = {
-                    Column {
-                        Text(
-                            modifier = Modifier.clickable {
-                                maxLine.intValue = Int.MAX_VALUE
-                                coroutineScope.launch {
-                                    delay(5000L)
-                                    maxLine.intValue = 1
-                                }
-                            },
-                            text = stringResource(R.string.sabytie).uppercase(),
-                            color = MaterialTheme.colorScheme.onSecondary,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = maxLine.intValue,
-                            overflow = TextOverflow.Ellipsis,
-                            fontSize = Settings.fontInterface.sp
+                Column {
+                    Text(
+                        modifier = Modifier.clickable {
+                            maxLine.intValue = Int.MAX_VALUE
+                            coroutineScope.launch {
+                                delay(5000L)
+                                maxLine.intValue = 1
+                            }
+                        }, text = stringResource(R.string.sabytie).uppercase(), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
+                    )
+                }
+            }, navigationIcon = {
+                if (editMode) {
+                    IconButton(onClick = {
+                        editMode = false
+                        editPadzeiaInit = true
+                    }, content = {
+                        Icon(
+                            painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                        )
+                    })
+                } else {
+                    IconButton(onClick = {
+                        if (!backPressHandled) {
+                            backPressHandled = true
+                            navController.popBackStack()
+                        }
+                    }, content = {
+                        Icon(
+                            painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                        )
+                    })
+                }
+            }, actions = {
+                if (editMode) {
+                    IconButton({
+                        savePadzia = true
+                    }) {
+                        Icon(
+                            painter = painterResource(R.drawable.save), tint = PrimaryTextBlack, contentDescription = ""
                         )
                     }
-                },
-                navigationIcon = {
-                    if (editMode) {
-                        IconButton(
-                            onClick = {
-                                editMode = false
-                                editPadzeiaInit = true
-                            },
-                            content = {
-                                Icon(
-                                    painter = painterResource(R.drawable.close),
-                                    tint = MaterialTheme.colorScheme.onSecondary,
-                                    contentDescription = ""
-                                )
-                            })
-                    } else {
-                        IconButton(
-                            onClick = {
-                                if (!backPressHandled) {
-                                    backPressHandled = true
-                                    navController.popBackStack()
-                                }
-                            },
-                            content = {
-                                Icon(
-                                    painter = painterResource(R.drawable.arrow_back),
-                                    tint = MaterialTheme.colorScheme.onSecondary,
-                                    contentDescription = ""
-                                )
-                            })
+                } else {
+                    IconButton({
+                        editMode = true
+                        editPadzeia = false
+                        editPadzeiaInit = false
+                    }) {
+                        Icon(
+                            painter = painterResource(R.drawable.add), tint = PrimaryTextBlack, contentDescription = ""
+                        )
                     }
-                },
-                actions = {
-                    if (editMode) {
-                        IconButton({
-                            savePadzia = true
-                        }) {
-                            Icon(
-                                painter = painterResource(R.drawable.save),
-                                tint = PrimaryTextBlack,
-                                contentDescription = ""
-                            )
-                        }
-                    } else {
-                        IconButton({
-                            editMode = true
-                            editPadzeia = false
-                            editPadzeiaInit = false
-                        }) {
-                            Icon(
-                                painter = painterResource(R.drawable.add),
-                                tint = PrimaryTextBlack,
-                                contentDescription = ""
-                            )
-                        }
-                        IconButton({
-                            deliteAll = true
-                        }) {
-                            Icon(
-                                painter = painterResource(R.drawable.delete),
-                                tint = PrimaryTextBlack,
-                                contentDescription = ""
-                            )
-                        }
+                    IconButton({
+                        deliteAll = true
+                    }) {
+                        Icon(
+                            painter = painterResource(R.drawable.delete), tint = PrimaryTextBlack, contentDescription = ""
+                        )
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
+                }
+            }, colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
             )
-        }
-    ) { innerPadding ->
+        }) { innerPadding ->
         Box(
             modifier = Modifier.padding(
-                innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                innerPadding.calculateTopPadding(),
-                innerPadding.calculateEndPadding(LayoutDirection.Rtl),
-                0.dp
+                innerPadding.calculateStartPadding(LayoutDirection.Ltr), innerPadding.calculateTopPadding(), innerPadding.calculateEndPadding(LayoutDirection.Rtl), 0.dp
             )
         ) {
             LazyColumn(
-                state = lazyListState,
-                modifier = Modifier
-                    .fillMaxSize()
+                state = lazyListState, modifier = Modifier.fillMaxSize()
             ) {
                 items(listPadzeia.size) { index ->
                     val padzeia = listPadzeia[index]
@@ -526,32 +496,23 @@ fun PadzeiaView(navController: NavHostController) {
                     Row(
                         modifier = Modifier
                             .padding(start = 10.dp)
-                            .combinedClickable(
-                                onClick = {
-                                    showPadziaPosition = index
-                                    showPadzia = true
-                                },
-                                onLongClick = {
-                                    showPadziaPosition = index
-                                    dialogContextMenu = true
-                                }
-                            ),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                            .combinedClickable(onClick = {
+                                showPadziaPosition = index
+                                showPadzia = true
+                            }, onLongClick = {
+                                showPadziaPosition = index
+                                dialogContextMenu = true
+                            }), verticalAlignment = Alignment.CenterVertically) {
                         Box(
                             modifier = Modifier
                                 .size(12.dp, 12.dp)
                                 .background(Color(colors[padzeia.color].toColorInt()))
                         )
                         Text(
-                            text = stringResource(R.string.sabytie_data_name, padzeia.dat, padzeia.padz),
-                            modifier = Modifier
+                            text = stringResource(R.string.sabytie_data_name, padzeia.dat, padzeia.padz), modifier = Modifier
                                 .fillMaxSize()
-                                .padding(10.dp),
-                            color = MaterialTheme.colorScheme.secondary,
-                            fontWeight = if (gc[Calendar.DAY_OF_YEAR] == day[Calendar.DAY_OF_YEAR] && gc[Calendar.YEAR] == day[Calendar.YEAR]) FontWeight.Bold
-                            else FontWeight.Normal,
-                            fontSize = Settings.fontInterface.sp
+                                .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontWeight = if (gc[Calendar.DAY_OF_YEAR] == day[Calendar.DAY_OF_YEAR] && gc[Calendar.YEAR] == day[Calendar.YEAR]) FontWeight.Bold
+                            else FontWeight.Normal, fontSize = Settings.fontInterface.sp
                         )
                     }
                     HorizontalDivider()
@@ -563,12 +524,7 @@ fun PadzeiaView(navController: NavHostController) {
             val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
             if (showDropdown) {
                 ModalBottomSheet(
-                    scrimColor = Color.Transparent,
-                    sheetState = sheetState,
-                    properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false),
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    onDismissRequest = { showDropdown = false }
-                ) {
+                    scrimColor = Color.Transparent, sheetState = sheetState, properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false), containerColor = MaterialTheme.colorScheme.surfaceContainer, onDismissRequest = { showDropdown = false }) {
                     if (kalendarMun || kalendarMun2 || kalendarMun3) {
                         KaliandarScreenMounth(
                             setPageCaliandar = { date ->
@@ -589,8 +545,7 @@ fun PadzeiaView(navController: NavHostController) {
                                 kalendarMun2 = false
                                 kalendarMun3 = false
                                 showDropdown = false
-                            }
-                        )
+                            })
                     }
                 }
             }
@@ -636,18 +591,7 @@ fun PadzeiaView(navController: NavHostController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddPadzeia(
-    save: Boolean,
-    data: String,
-    data2: String,
-    data3: String,
-    time: String,
-    time2: String,
-    editPadzeia: Boolean,
-    listPadzeia: SnapshotStateList<Padzeia>,
-    position: Int,
-    setShowTimePicker: (Int) -> Unit,
-    setShowKalendar: (Int) -> Unit,
-    isSave: () -> Unit
+    save: Boolean, data: String, data2: String, data3: String, time: String, time2: String, editPadzeia: Boolean, listPadzeia: SnapshotStateList<Padzeia>, position: Int, setShowTimePicker: (Int) -> Unit, setShowKalendar: (Int) -> Unit, isSave: () -> Unit
 ) {
     val p = if (editPadzeia) listPadzeia[position]
     else Padzeia("", data, time, 0, 0, "-1", data2, time2, 0, data3, 0, false)
@@ -662,6 +606,7 @@ fun AddPadzeia(
     var countText = data3
     val count = p.count.split(".")
     var konecSabytie by remember { mutableStateOf(p.konecSabytie) }
+    val textFieldColorState = rememberTextFieldState(padzeia)
     LaunchedEffect(Unit) {
         if (editPadzeia) {
             when {
@@ -753,43 +698,34 @@ fun AddPadzeia(
         })
     }
     Column(modifier = Modifier.fillMaxWidth()) {
-        TextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp),
-            value = padzeia,
-            placeholder = { Text(stringResource(R.string.sabytie_name), fontSize = Settings.fontInterface.sp) },
-            onValueChange = { newText ->
-                padzeia = newText
-            },
-            singleLine = true,
-            textStyle = TextStyle(fontSize = Settings.fontInterface.sp),
-            trailingIcon = {
-                if (padzeia.isNotEmpty()) {
-                    IconButton(onClick = {
-                        padzeia = ""
-                    }) {
-                        Icon(
-                            painter = painterResource(R.drawable.close),
-                            contentDescription = "",
-                            tint = MaterialTheme.colorScheme.secondary
-                        )
-                    }
+        TextField(modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp), value = padzeia, placeholder = { Text(stringResource(R.string.sabytie_name), fontSize = Settings.fontInterface.sp) }, onValueChange = { newText ->
+            padzeia = newText
+            textFieldColorState.edit {
+                replace(0, length, padzeia)
+            }
+        }, singleLine = true, textStyle = TextStyle(fontSize = Settings.fontInterface.sp), trailingIcon = {
+            if (padzeia.isNotEmpty()) {
+                IconButton(onClick = {
+                    padzeia = ""
+                }) {
+                    Icon(
+                        painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
+                    )
                 }
             }
-        )
+        })
         Row(modifier = Modifier.padding(start = 10.dp, top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(
-                stringResource(R.string.sabytie_pachatak), fontSize = Settings.fontInterface.sp,
-                color = MaterialTheme.colorScheme.secondary
+                stringResource(R.string.sabytie_pachatak), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
             )
             Text(
                 modifier = Modifier
                     .padding(start = 10.dp)
                     .clickable {
                         setShowKalendar(1)
-                    }, text = data, fontSize = Settings.fontInterface.sp,
-                color = MaterialTheme.colorScheme.secondary
+                    }, text = data, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
             )
             Icon(modifier = Modifier.clickable {
                 setShowKalendar(1)
@@ -799,37 +735,30 @@ fun AddPadzeia(
                     .padding(start = 10.dp)
                     .clickable {
                         setShowTimePicker(1)
-                    }, text = time, fontSize = Settings.fontInterface.sp,
-                color = MaterialTheme.colorScheme.secondary
+                    }, text = time, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
             )
             Icon(modifier = Modifier.clickable {
                 setShowTimePicker(1)
             }, painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = "", tint = Divider)
             Checkbox(
-                checked = !konecSabytie,
-                onCheckedChange = {
+                checked = !konecSabytie, onCheckedChange = {
                     konecSabytie = !konecSabytie
-                }
-            )
+                })
             Text(
-                stringResource(R.string.sabytie_bez_kanca),
-                fontSize = Settings.fontInterface.sp,
-                color = MaterialTheme.colorScheme.secondary
+                stringResource(R.string.sabytie_bez_kanca), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
             )
         }
         if (konecSabytie) {
             Row(modifier = Modifier.padding(start = 10.dp, top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    stringResource(R.string.Sabytie_end), fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary
+                    stringResource(R.string.Sabytie_end), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
                 )
                 Text(
                     modifier = Modifier
                         .padding(start = 10.dp)
                         .clickable {
                             setShowKalendar(2)
-                        }, text = data2, fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary
+                        }, text = data2, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
                 )
                 Icon(modifier = Modifier.clickable {
                     setShowKalendar(2)
@@ -839,8 +768,7 @@ fun AddPadzeia(
                         .padding(start = 10.dp)
                         .clickable {
                             setShowTimePicker(2)
-                        }, text = time2, fontSize = Settings.fontInterface.sp,
-                    color = MaterialTheme.colorScheme.secondary
+                        }, text = time2, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
                 )
                 Icon(modifier = Modifier.clickable {
                     setShowTimePicker(2)
@@ -852,8 +780,7 @@ fun AddPadzeia(
         val textFieldNotificstionState2 = rememberTextFieldState(options[textFieldState2Position])
         Row(modifier = Modifier.padding(start = 10.dp, top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(
-                stringResource(R.string.Sabytie_uved), fontSize = Settings.fontInterface.sp,
-                color = MaterialTheme.colorScheme.secondary
+                stringResource(R.string.Sabytie_uved), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
             )
             TextField(
                 modifier = Modifier
@@ -877,15 +804,27 @@ fun AddPadzeia(
                 expanded = expanded2,
                 onExpandedChange = { expanded2 = it },
             ) {
-                TextField(
-                    modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-                    state = textFieldNotificstionState2,
-                    readOnly = true,
-                    lineLimits = TextFieldLineLimits.SingleLine,
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded2) },
-                    colors = ExposedDropdownMenuDefaults.textFieldColors(focusedTextColor = PrimaryText, unfocusedTextColor = PrimaryText, focusedContainerColor = Divider, unfocusedContainerColor = Divider, focusedTrailingIconColor = PrimaryText, unfocusedTrailingIconColor = PrimaryText),
-                    textStyle = TextStyle(fontSize = Settings.fontInterface.sp),
-                )
+                Row(modifier = Modifier
+                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                    .clip(MaterialTheme.shapes.small)
+                    .clickable {}
+                    .background(Divider)
+                    .fillMaxWidth()
+                    .padding(horizontal = 5.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .weight(1f),
+                        text = textFieldNotificstionState2.text.toString(),
+                        fontSize = (Settings.fontInterface - 2).sp,
+                        color = PrimaryText,
+                    )
+                    Icon(
+                        modifier = Modifier
+                            .padding(start = 21.dp, end = 2.dp)
+                            .size(22.dp, 22.dp), painter = painterResource(if (expanded2) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down), tint = PrimaryText, contentDescription = ""
+                    )
+                }
                 ExposedDropdownMenu(
                     expanded = expanded2,
                     onDismissRequest = { expanded2 = false },
@@ -893,18 +832,14 @@ fun AddPadzeia(
                     options.forEachIndexed { position, option ->
                         DropdownMenuItem(
                             text = {
-                                Text(
-                                    option, fontSize = Settings.fontInterface.sp,
-                                    color = MaterialTheme.colorScheme.secondary
-                                )
-                            },
-                            onClick = {
-                                textFieldNotificstionState2.setTextAndPlaceCursorAtEnd(option)
-                                textFieldState2Position = position
-                                expanded2 = false
-                            },
-                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                            colors = MenuDefaults.itemColors(textColor = PrimaryText)
+                            Text(
+                                option, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
+                            )
+                        }, onClick = {
+                            textFieldNotificstionState2.setTextAndPlaceCursorAtEnd(option)
+                            textFieldState2Position = position
+                            expanded2 = false
+                        }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding, colors = MenuDefaults.itemColors(textColor = PrimaryText)
                         )
                     }
                 }
@@ -946,23 +881,34 @@ fun AddPadzeia(
         val textFieldNotificstionState = rememberTextFieldState(sabytieRepit[textFieldStatePosition])
         Row(modifier = Modifier.padding(start = 10.dp, top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(
-                stringResource(R.string.Sabytie_repit), fontSize = Settings.fontInterface.sp,
-                color = MaterialTheme.colorScheme.secondary
+                stringResource(R.string.Sabytie_repit), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
             )
             ExposedDropdownMenuBox(
                 modifier = Modifier.padding(10.dp),
                 expanded = expanded,
                 onExpandedChange = { expanded = it },
             ) {
-                TextField(
-                    modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-                    state = textFieldNotificstionState,
-                    readOnly = true,
-                    lineLimits = TextFieldLineLimits.SingleLine,
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                    colors = ExposedDropdownMenuDefaults.textFieldColors(focusedTextColor = PrimaryText, unfocusedTextColor = PrimaryText, focusedContainerColor = Divider, unfocusedContainerColor = Divider, focusedTrailingIconColor = PrimaryText, unfocusedTrailingIconColor = PrimaryText),
-                    textStyle = TextStyle(fontSize = Settings.fontInterface.sp)
-                )
+                Row(modifier = Modifier
+                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                    .clip(MaterialTheme.shapes.small)
+                    .clickable {}
+                    .background(Divider)
+                    .fillMaxWidth()
+                    .padding(horizontal = 5.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .weight(1f),
+                        text = textFieldNotificstionState.text.toString(),
+                        fontSize = (Settings.fontInterface - 2).sp,
+                        color = PrimaryText,
+                    )
+                    Icon(
+                        modifier = Modifier
+                            .padding(start = 21.dp, end = 2.dp)
+                            .size(22.dp, 22.dp), painter = painterResource(if (expanded) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down), tint = PrimaryText, contentDescription = ""
+                    )
+                }
                 ExposedDropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
@@ -970,18 +916,14 @@ fun AddPadzeia(
                     sabytieRepit.forEachIndexed { position, option ->
                         DropdownMenuItem(
                             text = {
-                                Text(
-                                    option, fontSize = Settings.fontInterface.sp,
-                                    color = MaterialTheme.colorScheme.secondary
-                                )
-                            },
-                            onClick = {
-                                textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option)
-                                textFieldStatePosition = position
-                                expanded = false
-                            },
-                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                            colors = MenuDefaults.itemColors(textColor = PrimaryText)
+                            Text(
+                                option, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
+                            )
+                        }, onClick = {
+                            textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option)
+                            textFieldStatePosition = position
+                            expanded = false
+                        }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding, colors = MenuDefaults.itemColors(textColor = PrimaryText)
                         )
                     }
                 }
@@ -989,27 +931,20 @@ fun AddPadzeia(
         }
         if (textFieldNotificstionState.text != sabytieRepit[0]) {
             Row {
-                Column(Modifier.selectableGroup())
-                {
+                Column(Modifier.selectableGroup()) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
                                 modeRepit = 1
-                            },
-                        verticalAlignment = Alignment.CenterVertically
+                            }, verticalAlignment = Alignment.CenterVertically
                     ) {
                         RadioButton(
-                            selected = modeRepit == 1,
-                            onClick = {
+                            selected = modeRepit == 1, onClick = {
                                 modeRepit = 1
-                            }
-                        )
+                            })
                         Text(
-                            stringResource(R.string.Sabytie_no_data_zakan),
-                            textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.secondary,
-                            fontSize = Settings.fontInterface.sp
+                            stringResource(R.string.Sabytie_no_data_zakan), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                         )
                     }
                     Row(
@@ -1017,27 +952,19 @@ fun AddPadzeia(
                             .fillMaxWidth()
                             .clickable {
                                 modeRepit = 2
-                            },
-                        verticalAlignment = Alignment.CenterVertically
+                            }, verticalAlignment = Alignment.CenterVertically
                     ) {
                         RadioButton(
-                            selected = modeRepit == 2,
-                            onClick = {
+                            selected = modeRepit == 2, onClick = {
                                 modeRepit = 2
-                            }
-                        )
+                            })
                         Text(
-                            stringResource(R.string.Sabytie_install_kolkast_paz),
-                            textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.secondary,
-                            fontSize = Settings.fontInterface.sp
+                            stringResource(R.string.Sabytie_install_kolkast_paz), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                         )
                     }
                     if (modeRepit == 2) {
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
+                            modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
                         ) {
                             TextField(
                                 modifier = Modifier
@@ -1057,10 +984,7 @@ fun AddPadzeia(
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             )
                             Text(
-                                stringResource(R.string.Sabytie_paz),
-                                textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.secondary,
-                                fontSize = Settings.fontInterface.sp
+                                stringResource(R.string.Sabytie_paz), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                             )
                         }
                     }
@@ -1069,33 +993,23 @@ fun AddPadzeia(
                             .fillMaxWidth()
                             .clickable {
                                 modeRepit = 3
-                            },
-                        verticalAlignment = Alignment.CenterVertically
+                            }, verticalAlignment = Alignment.CenterVertically
                     ) {
                         RadioButton(
-                            selected = modeRepit == 3,
-                            onClick = {
+                            selected = modeRepit == 3, onClick = {
                                 modeRepit = 3
-                            }
-                        )
+                            })
                         Text(
-                            stringResource(R.string.Sabytie_install_data_end),
-                            textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.secondary,
-                            fontSize = Settings.fontInterface.sp
+                            stringResource(R.string.Sabytie_install_data_end), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                         )
                     }
                     if (modeRepit == 3) {
                         Text(
-                            countText,
-                            modifier = Modifier
+                            countText, modifier = Modifier
                                 .padding(start = 10.dp)
                                 .clickable {
                                     setShowKalendar(3)
-                                },
-                            textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.secondary,
-                            fontSize = Settings.fontInterface.sp
+                                }, textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                         )
                     }
                 }
@@ -1104,59 +1018,53 @@ fun AddPadzeia(
 
         Row(modifier = Modifier.padding(start = 10.dp, top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(
-                stringResource(R.string.color_padzei), fontSize = Settings.fontInterface.sp,
-                color = MaterialTheme.colorScheme.secondary
+                stringResource(R.string.color_padzei), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
             )
             var expanded1 by remember { mutableStateOf(false) }
-            val textFieldNotificstionState = rememberTextFieldState(padzeia)
             LaunchedEffect(padzeia) {
-                padzeia.ifEmpty { textFieldNotificstionState.setTextAndPlaceCursorAtEnd(context.getString(R.string.sabytie_name)) }
+                padzeia.ifEmpty { textFieldColorState.setTextAndPlaceCursorAtEnd(context.getString(R.string.sabytie_name)) }
             }
             ExposedDropdownMenuBox(
                 modifier = Modifier.padding(10.dp),
                 expanded = expanded1,
                 onExpandedChange = { expanded1 = it },
             ) {
-                TextField(
-                    modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-                    readOnly = true,
-                    state = textFieldNotificstionState,
-                    lineLimits = TextFieldLineLimits.SingleLine,
-                    trailingIcon = {
-                        val image = if (expanded1) painterResource(R.drawable.keyboard_arrow_up)
-                        else painterResource(R.drawable.keyboard_arrow_down)
-                        Icon(painter = image, contentDescription = "", tint = PrimaryTextBlack)
-                    },
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color(color.toColorInt()),
-                        unfocusedContainerColor = Color(color.toColorInt()),
-                        unfocusedTextColor = PrimaryTextBlack,
-                        focusedTextColor = PrimaryTextBlack,
-                        focusedIndicatorColor = PrimaryTextBlack,
-                        unfocusedIndicatorColor = PrimaryTextBlack,
-                        cursorColor = PrimaryTextBlack
-                    ),
-                    textStyle = TextStyle(fontSize = Settings.fontInterface.sp)
-                )
+                Row(modifier = Modifier
+                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                    .clip(MaterialTheme.shapes.small)
+                    .clickable {}
+                    .background(Color(color.toColorInt()))
+                    .fillMaxWidth()
+                    .padding(horizontal = 5.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .weight(1f),
+                        text = textFieldColorState.text.toString(),
+                        fontSize = (Settings.fontInterface - 2).sp,
+                        color = PrimaryTextBlack,
+                    )
+                    Icon(
+                        modifier = Modifier
+                            .padding(start = 21.dp, end = 2.dp)
+                            .size(22.dp, 22.dp), painter = painterResource(if (expanded1) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down), tint = PrimaryTextBlack, contentDescription = ""
+                    )
+                }
                 ExposedDropdownMenu(
                     expanded = expanded1,
                     onDismissRequest = { expanded1 = false },
                 ) {
                     optionsColors.forEachIndexed { position, option ->
                         DropdownMenuItem(
-                            modifier = Modifier.background(Color(option.toColorInt())),
-                            text = {
-                                Text(
-                                    textFieldNotificstionState.text.toString(), style = MaterialTheme.typography.bodyLarge, fontSize = Settings.fontInterface.sp,
-                                    color = PrimaryTextBlack
-                                )
-                            },
-                            onClick = {
-                                colorPosition = position
-                                color = option
-                                expanded1 = false
-                            },
-                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                            modifier = Modifier.background(Color(option.toColorInt())), text = {
+                            Text(
+                                textFieldColorState.text.toString(), style = MaterialTheme.typography.bodyLarge, fontSize = Settings.fontInterface.sp, color = PrimaryTextBlack
+                            )
+                        }, onClick = {
+                            colorPosition = position
+                            color = option
+                            expanded1 = false
+                        }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
                         )
                     }
                 }
@@ -1165,44 +1073,23 @@ fun AddPadzeia(
     }
     if (save) {
         savePadzeia(
-            LocalContext.current,
-            listPadzeia,
-            position,
-            padzeia,
-            setTimeZa,
-            data,
-            data2,
-            time,
-            time2,
-            textFieldState2Position,
-            textFieldStatePosition,
-            modeRepit,
-            setPautorRaz,
-            countText,
-            konecSabytie,
-            colorPosition,
-            isSave = { isSave() }
-        )
+            LocalContext.current, listPadzeia, position, padzeia, setTimeZa, data, data2, time, time2, textFieldState2Position, textFieldStatePosition, modeRepit, setPautorRaz, countText, konecSabytie, colorPosition, isSave = { isSave() })
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyTimePickerDialog(
+    currentTime: Calendar,
     onConfirm: (TimePickerState) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val currentTime = Calendar.getInstance()
-    currentTime.add(Calendar.HOUR, 1)
     val timePickerState = rememberTimePickerState(
         initialHour = currentTime.get(Calendar.HOUR_OF_DAY),
         initialMinute = currentTime.get(Calendar.MINUTE),
         is24Hour = true,
     )
-    TimePickerDialog(
-        onDismiss = { onDismiss() },
-        onConfirm = { onConfirm(timePickerState) }
-    ) {
+    TimePickerDialog(onDismiss = { onDismiss() }, onConfirm = { onConfirm(timePickerState) }) {
         val colorText = if (Settings.dzenNoch.value) PrimaryText
         else PrimaryTextBlack
         val color = TimePickerDefaults.colors().copy(timeSelectorSelectedContainerColor = MaterialTheme.colorScheme.primary, timeSelectorSelectedContentColor = colorText)
@@ -1215,44 +1102,21 @@ fun MyTimePickerDialog(
 
 @Composable
 fun TimePickerDialog(
-    onDismiss: () -> Unit,
-    onConfirm: () -> Unit,
-    content: @Composable () -> Unit
+    onDismiss: () -> Unit, onConfirm: () -> Unit, content: @Composable () -> Unit
 ) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        dismissButton = {
-            TextButton(onClick = { onDismiss() }) {
-                Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = { onConfirm() }) {
-                Text(stringResource(R.string.ok), fontSize = Settings.fontInterface.sp)
-            }
-        },
-        text = { content() }
-    )
+    AlertDialog(onDismissRequest = onDismiss, dismissButton = {
+        TextButton(onClick = { onDismiss() }) {
+            Text(stringResource(R.string.cansel), fontSize = Settings.fontInterface.sp)
+        }
+    }, confirmButton = {
+        TextButton(onClick = { onConfirm() }) {
+            Text(stringResource(R.string.ok), fontSize = Settings.fontInterface.sp)
+        }
+    }, text = { content() })
 }
 
 fun savePadzeia(
-    context: Context,
-    padzeiaList: SnapshotStateList<Padzeia>,
-    position: Int,
-    padzeiaNazva: String,
-    pavedamicZaText: String,
-    data: String,
-    data2: String,
-    time: String,
-    time2: String,
-    pavedamicZaPosit: Int,
-    repit: Int,
-    repitSettings: Int,
-    repitSettingsCountText: String,
-    repitSettingsDataText: String,
-    konecSabytie: Boolean,
-    color: Int,
-    isSave: () -> Unit
+    context: Context, padzeiaList: SnapshotStateList<Padzeia>, position: Int, padzeiaNazva: String, pavedamicZaText: String, data: String, data2: String, time: String, time2: String, pavedamicZaPosit: Int, repit: Int, repitSettings: Int, repitSettingsCountText: String, repitSettingsDataText: String, konecSabytie: Boolean, color: Int, isSave: () -> Unit
 ) {
     val edit = padzeiaNazva.trim()
     var edit2 = pavedamicZaText
@@ -1771,12 +1635,7 @@ fun savePadzeia(
 
 @Composable
 fun DialogSabytieShow(
-    title: String,
-    position: Int,
-    padzeia: String,
-    paznicia: Boolean,
-    onDismiss: () -> Unit,
-    onEdit: (Int) -> Unit
+    title: String, position: Int, padzeia: String, paznicia: Boolean, onDismiss: () -> Unit, onEdit: (Int) -> Unit
 ) {
     Dialog(onDismissRequest = { onDismiss() }) {
         Card(
@@ -1807,15 +1666,13 @@ fun DialogSabytieShow(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onEdit(position) },
-                        shape = MaterialTheme.shapes.small
+                        onClick = { onEdit(position) }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.edit), contentDescription = "")
                         Text(stringResource(R.string.redagaktirovat), fontSize = 18.sp)
                     }
                     TextButton(
-                        onClick = { onDismiss() },
-                        shape = MaterialTheme.shapes.small
+                        onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.close), fontSize = 18.sp)
@@ -1828,9 +1685,7 @@ fun DialogSabytieShow(
 
 @Composable
 fun DialogDelitePadsei(
-    onDismiss: () -> Unit,
-    onDelAll: () -> Unit,
-    onDelOld: () -> Unit
+    onDismiss: () -> Unit, onDelAll: () -> Unit, onDelOld: () -> Unit
 ) {
     Dialog(onDismissRequest = { onDismiss() }) {
         Card(
@@ -1841,8 +1696,7 @@ fun DialogDelitePadsei(
         ) {
             Column {
                 Text(
-                    text = stringResource(R.string.del_sabytie).uppercase(),
-                    modifier = Modifier
+                    text = stringResource(R.string.del_sabytie).uppercase(), modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
@@ -1852,29 +1706,24 @@ fun DialogDelitePadsei(
                     modifier = Modifier.padding(10.dp),
                 )
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
                 ) {
                     TextButton(
-                        onClick = { onDelOld() },
-                        shape = MaterialTheme.shapes.small
+                        onClick = { onDelOld() }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.delete), contentDescription = "")
                         Text(stringResource(R.string.sabytie_del_old), fontSize = 18.sp)
                     }
                     TextButton(
-                        onClick = { onDelAll() },
-                        shape = MaterialTheme.shapes.small
+                        onClick = { onDelAll() }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.delete), contentDescription = "")
                         Text(stringResource(R.string.sabytie_del_all), fontSize = 18.sp)
                     }
                 }
                 TextButton(
-                    onClick = { onDismiss() },
-                    shape = MaterialTheme.shapes.small,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                    onClick = { onDismiss() }, shape = MaterialTheme.shapes.small, modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
                     Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                     Text(stringResource(R.string.cansel), fontSize = 18.sp)
@@ -1886,10 +1735,7 @@ fun DialogDelitePadsei(
 
 @Composable
 fun DialogContextMenu(
-    title: String,
-    onEdit: () -> Unit,
-    onDelite: () -> Unit,
-    onDismiss: () -> Unit
+    title: String, onEdit: () -> Unit, onDelite: () -> Unit, onDismiss: () -> Unit
 ) {
     Dialog(onDismissRequest = { onDismiss() }) {
         Card(
@@ -1899,8 +1745,7 @@ fun DialogContextMenu(
             shape = RoundedCornerShape(10.dp),
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
@@ -1921,21 +1766,13 @@ fun DialogContextMenu(
                         .padding(horizontal = 10.dp)
                         .clickable {
                             onEdit()
-                        },
-                    verticalAlignment = Alignment.CenterVertically
+                        }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier.size(22.dp, 22.dp),
-                        painter = painterResource(R.drawable.edit),
-                        tint = MaterialTheme.colorScheme.secondary,
-                        contentDescription = null
+                        modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.edit), tint = MaterialTheme.colorScheme.secondary, contentDescription = null
                     )
                     Text(
-                        text = stringResource(R.string.redagaktirovat),
-                        modifier = Modifier
-                            .padding(10.dp),
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = Settings.fontInterface.sp
+                        text = stringResource(R.string.redagaktirovat), modifier = Modifier.padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                     )
                 }
                 HorizontalDivider()
@@ -1945,30 +1782,20 @@ fun DialogContextMenu(
                         .padding(horizontal = 10.dp)
                         .clickable {
                             onDelite()
-                        },
-                    verticalAlignment = Alignment.CenterVertically
+                        }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier.size(22.dp, 22.dp),
-                        painter = painterResource(R.drawable.delete),
-                        tint = MaterialTheme.colorScheme.secondary,
-                        contentDescription = null
+                        modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.delete), tint = MaterialTheme.colorScheme.secondary, contentDescription = null
                     )
                     Text(
-                        text = stringResource(R.string.delite),
-                        modifier = Modifier
-                            .padding(10.dp),
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = Settings.fontInterface.sp
+                        text = stringResource(R.string.delite), modifier = Modifier.padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                     )
                 }
                 HorizontalDivider()
                 TextButton(
-                    onClick = { onDismiss() },
-                    modifier = Modifier
+                    onClick = { onDismiss() }, modifier = Modifier
                         .padding(8.dp)
-                        .align(Alignment.End),
-                    shape = MaterialTheme.shapes.small
+                        .align(Alignment.End), shape = MaterialTheme.shapes.small
                 ) {
                     Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                     Text(stringResource(R.string.cansel), fontSize = 18.sp)

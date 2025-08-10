@@ -2,6 +2,7 @@ package by.carkva_gazeta.malitounik
 
 import android.app.Activity
 import android.content.Context
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,9 +13,9 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.Checkbox
@@ -49,6 +50,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
@@ -170,40 +172,40 @@ fun SearchBible(
                                     textFieldLoaded = true
                                 }
                             }, value = searshString, onValueChange = { newText ->
-                        searchList.clear()
-                        var edit = newText
-                        if (perevod == Settings.PEREVODSINOIDAL) {
-                            edit = edit.replace("і", "и")
-                            edit = edit.replace("ў", "щ")
-                            edit = edit.replace("І", "И")
-                            edit = edit.replace("Ў", "Щ")
-                            edit = edit.replace("'", "ъ")
-                        } else {
-                            edit = edit.replace("и", "і")
-                            edit = edit.replace("щ", "ў")
-                            edit = edit.replace("И", "І")
-                            edit = edit.replace("Щ", "Ў")
-                            edit = edit.replace("ъ", "'")
-                        }
-                        searshString = edit
-                    }, singleLine = true, leadingIcon = {
-                        Icon(
-                            painter = painterResource(R.drawable.search), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
-                        )
-                    }, trailingIcon = {
-                        if (searshString.isNotEmpty()) {
-                            IconButton(
-                                onClick = {
-                                    searshString = ""
-                                }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                )
+                            searchList.clear()
+                            var edit = newText
+                            if (perevod == Settings.PEREVODSINOIDAL) {
+                                edit = edit.replace("і", "и")
+                                edit = edit.replace("ў", "щ")
+                                edit = edit.replace("І", "И")
+                                edit = edit.replace("Ў", "Щ")
+                                edit = edit.replace("'", "ъ")
+                            } else {
+                                edit = edit.replace("и", "і")
+                                edit = edit.replace("щ", "ў")
+                                edit = edit.replace("И", "І")
+                                edit = edit.replace("Щ", "Ў")
+                                edit = edit.replace("ъ", "'")
                             }
-                        }
-                    }, colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.onTertiary, unfocusedContainerColor = MaterialTheme.colorScheme.onTertiary, focusedTextColor = PrimaryTextBlack, focusedIndicatorColor = PrimaryTextBlack, unfocusedTextColor = PrimaryTextBlack, unfocusedIndicatorColor = PrimaryTextBlack, cursorColor = PrimaryTextBlack
-                    ), textStyle = TextStyle(fontSize = TextUnit(Settings.fontInterface, TextUnitType.Sp))
+                            searshString = edit
+                        }, singleLine = true, leadingIcon = {
+                            Icon(
+                                painter = painterResource(R.drawable.search), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                            )
+                        }, trailingIcon = {
+                            if (searshString.isNotEmpty()) {
+                                IconButton(
+                                    onClick = {
+                                        searshString = ""
+                                    }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
+                            }
+                        }, colors = TextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.onTertiary, unfocusedContainerColor = MaterialTheme.colorScheme.onTertiary, focusedTextColor = PrimaryTextBlack, focusedIndicatorColor = PrimaryTextBlack, unfocusedTextColor = PrimaryTextBlack, unfocusedIndicatorColor = PrimaryTextBlack, cursorColor = PrimaryTextBlack
+                        ), textStyle = TextStyle(fontSize = TextUnit(Settings.fontInterface, TextUnitType.Sp))
                     )
                 },
                 navigationIcon = {
@@ -231,8 +233,8 @@ fun SearchBible(
     ) { innerPadding ->
         Box(
             Modifier.padding(
-                    innerPadding.calculateStartPadding(LayoutDirection.Ltr), innerPadding.calculateTopPadding(), innerPadding.calculateEndPadding(LayoutDirection.Rtl), 0.dp
-                )
+                innerPadding.calculateStartPadding(LayoutDirection.Ltr), innerPadding.calculateTopPadding(), innerPadding.calculateEndPadding(LayoutDirection.Rtl), 0.dp
+            )
         ) {
             if (showDropdown) {
                 ModalBottomSheet(
@@ -346,14 +348,33 @@ fun DropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = it },
     ) {
-        TextField(
-            modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-            state = textFieldNotificstionState,
-            readOnly = true,
-            lineLimits = TextFieldLineLimits.SingleLine,
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            colors = ExposedDropdownMenuDefaults.textFieldColors(focusedTextColor = PrimaryText, unfocusedTextColor = PrimaryText, focusedContainerColor = Divider, unfocusedContainerColor = Divider, focusedTrailingIconColor = PrimaryText, unfocusedTrailingIconColor = PrimaryText),
-        )
+        Row(
+            modifier = Modifier
+                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                .clip(MaterialTheme.shapes.small)
+                .clickable {}
+                .background(Divider)
+                .fillMaxWidth()
+                .padding(horizontal = 5.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .weight(1f),
+                text = textFieldNotificstionState.text.toString(),
+                fontSize = (Settings.fontInterface - 2).sp,
+                color = PrimaryText,
+            )
+            Icon(
+                modifier = Modifier
+                    .padding(start = 21.dp, end = 2.dp)
+                    .size(22.dp, 22.dp),
+                painter = painterResource(if (expanded) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
+                tint = PrimaryText,
+                contentDescription = ""
+            )
+        }
         ExposedDropdownMenu(
             containerColor = Divider,
             expanded = expanded,
@@ -362,13 +383,13 @@ fun DropdownMenuBox(
             options.forEachIndexed { index, option ->
                 DropdownMenuItem(
                     text = { Text(option, fontSize = Settings.fontInterface.sp) }, onClick = {
-                    textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option)
-                    expanded = false
-                    k.edit {
-                        putInt("biblia_seash", index)
-                    }
-                    onSearchStart()
-                }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding, colors = MenuDefaults.itemColors(textColor = PrimaryText)
+                        textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option)
+                        expanded = false
+                        k.edit {
+                            putInt("biblia_seash", index)
+                        }
+                        onSearchStart()
+                    }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding, colors = MenuDefaults.itemColors(textColor = PrimaryText)
                 )
             }
         }

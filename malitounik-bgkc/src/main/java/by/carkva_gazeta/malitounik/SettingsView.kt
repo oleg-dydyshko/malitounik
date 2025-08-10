@@ -26,11 +26,11 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.foundation.verticalScroll
@@ -69,6 +69,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -725,7 +726,7 @@ fun SettingsView(navController: NavHostController) {
             for (i in 6..17) {
                 dataTimes.add(DataTime(stringResource(R.string.pavedamic, i), i))
             }
-            val textFieldNotificstionState = rememberTextFieldState(dataTimes[k.getInt("timeNotification", 2)].string)
+            val textFieldNotificstionState = rememberTextFieldState(dataTimes[k.getInt("timeNotification", 2)].title)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     stringResource(R.string.pavedamiс_title), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp
@@ -736,15 +737,33 @@ fun SettingsView(navController: NavHostController) {
                     expanded = expandedSviaty,
                     onExpandedChange = { expandedSviaty = it },
                 ) {
-                    TextField(
-                        modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-                        state = textFieldNotificstionState,
-                        readOnly = true,
-                        lineLimits = TextFieldLineLimits.SingleLine,
-                        textStyle = TextStyle(fontSize = (Settings.fontInterface - 2).sp),
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSviaty) },
-                        colors = ExposedDropdownMenuDefaults.textFieldColors(focusedTextColor = PrimaryText, unfocusedTextColor = PrimaryText, focusedContainerColor = Divider, unfocusedContainerColor = Divider, focusedTrailingIconColor = PrimaryText, unfocusedTrailingIconColor = PrimaryText),
-                    )
+                    Row(
+                        modifier = Modifier
+                            .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                            .clip(MaterialTheme.shapes.small)
+                            .clickable {}
+                            .background(Divider)
+                            .fillMaxWidth()
+                            .padding(horizontal = 5.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .weight(1f),
+                            text = textFieldNotificstionState.text.toString(),
+                            fontSize = (Settings.fontInterface - 2).sp,
+                            color = PrimaryText,
+                        )
+                        Icon(
+                            modifier = Modifier
+                                .padding(start = 21.dp, end = 2.dp)
+                                .size(22.dp, 22.dp),
+                            painter = painterResource(if (expandedSviaty) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
+                            tint = PrimaryText,
+                            contentDescription = ""
+                        )
+                    }
                     ExposedDropdownMenu(
                         containerColor = Divider,
                         expanded = expandedSviaty,
@@ -752,8 +771,8 @@ fun SettingsView(navController: NavHostController) {
                     ) {
                         dataTimes.forEachIndexed { index, option ->
                             DropdownMenuItem(
-                                text = { Text(text = option.string, fontSize = (Settings.fontInterface - 2).sp) }, onClick = {
-                                    textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option.string)
+                                text = { Text(text = option.title, fontSize = (Settings.fontInterface - 2).sp) }, onClick = {
+                                    textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option.title)
                                     expandedSviaty = false
                                     k.edit {
                                         putInt("timeNotification", index)
@@ -945,7 +964,7 @@ fun SettingsView(navController: NavHostController) {
                     modePravasSvaity = false
                     modeGosudSvaity = false
                     modePafesiiSvaity = false
-                    textFieldNotificstionState.setTextAndPlaceCursorAtEnd(dataTimes[k.getInt("timeNotification", 2)].string)
+                    textFieldNotificstionState.setTextAndPlaceCursorAtEnd(dataTimes[k.getInt("timeNotification", 2)].title)
                     setNotificationFull(context)
                 }, modifier = Modifier
                     .align(Alignment.CenterHorizontally)
@@ -1264,4 +1283,4 @@ class SettingsModules(val context: MainActivity) {
     }
 }
 
-class DataTime(val string: String, val data: Int)
+class DataTime(val title: String, val data: Int)
