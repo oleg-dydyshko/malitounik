@@ -1086,7 +1086,6 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        //ferstStart = true
         val k = getSharedPreferences("biblia", MODE_PRIVATE)
         if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) {
             setlightSensor()
@@ -1094,6 +1093,11 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         if (k.getBoolean("power", false)) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
+        val start = k.getString("navigate", AllDestinations.KALIANDAR) ?: AllDestinations.KALIANDAR
+        AppNavGraphState.bibleItem = start.contains("Biblia", ignoreCase = true) == true
+        AppNavGraphState.biblijatekaItem = start.contains("Biblijateka", ignoreCase = true) == true
+        AppNavGraphState.piesnyItem = start.contains("Piesny", ignoreCase = true) == true
+        AppNavGraphState.underItem = start.contains("Under", ignoreCase = true) == true
         Settings.fontInterface = getFontInterface(this)
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {

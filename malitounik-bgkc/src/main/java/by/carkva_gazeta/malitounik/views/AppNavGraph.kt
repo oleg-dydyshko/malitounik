@@ -162,10 +162,6 @@ import by.carkva_gazeta.malitounik.ui.theme.PrimaryBlack
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.StrogiPost
-import by.carkva_gazeta.malitounik.views.AppNavGraphState.bibleItem
-import by.carkva_gazeta.malitounik.views.AppNavGraphState.biblijatekaItem
-import by.carkva_gazeta.malitounik.views.AppNavGraphState.piesnyItem
-import by.carkva_gazeta.malitounik.views.AppNavGraphState.underItem
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.InstallStateUpdatedListener
@@ -312,10 +308,6 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
     val searchBibleState = rememberLazyListState()
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var start by remember { mutableStateOf(k.getString("navigate", AllDestinations.KALIANDAR) ?: AllDestinations.KALIANDAR) }
-    bibleItem = start.contains("Biblia", ignoreCase = true) == true
-    biblijatekaItem = start.contains("Biblijateka", ignoreCase = true) == true
-    piesnyItem = start.contains("Piesny", ignoreCase = true) == true
-    underItem = start.contains("Under", ignoreCase = true) == true
     val context = LocalActivity.current
     val data = context?.intent
     if (data?.data != null) {
