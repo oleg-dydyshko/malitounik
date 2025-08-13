@@ -1362,6 +1362,9 @@ fun CytanniList(
                             if (listState[page].lastScrolledForward && !listState[page].canScrollForward) {
                                 autoScroll = false
                                 autoScrollSensor = false
+                                if (!k.getBoolean("power", false)) {
+                                    actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                }
                             }
                         }
                     }

@@ -40,6 +40,7 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -70,9 +71,9 @@ import java.util.Calendar
 import java.util.GregorianCalendar
 
 @Composable
-fun measureTextWidth(text: String, fontSize: TextUnit, fontWeight: FontWeight): Dp {
+fun measureTextWidth(text: String, fontSize: TextUnit): Dp {
     val textMeasurer = rememberTextMeasurer()
-    val widthInPixels = textMeasurer.measure(text, style = androidx.compose.ui.text.TextStyle(fontSize = fontSize, fontWeight = fontWeight)).size.width
+    val widthInPixels = textMeasurer.measure(text, style = TextStyle(fontSize = fontSize, fontWeight = FontWeight.Bold)).size.width
     return with(LocalDensity.current) { widthInPixels.toDp() }
 }
 
@@ -154,7 +155,7 @@ fun KaliandarScreen(
                 id = R.array.meciac
             )[data[2].toInt()]
             else stringArrayResource(id = R.array.meciac)[data[2].toInt()] + ", " + data[3]
-            var dateColumnWidth = measureTextWidth(mounth, fontSize = Settings.fontInterface.sp, fontWeight = FontWeight.Bold)
+            var dateColumnWidth = measureTextWidth(mounth, fontSize = Settings.fontInterface.sp)
             if (dateColumnWidth < 140.dp) dateColumnWidth = 140.dp
             Column(
                 modifier = Modifier

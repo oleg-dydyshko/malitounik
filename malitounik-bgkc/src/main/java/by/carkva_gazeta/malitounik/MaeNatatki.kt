@@ -4,7 +4,6 @@ package by.carkva_gazeta.malitounik
 
 import android.content.Context
 import android.os.Build
-import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -245,8 +244,6 @@ fun DialogMyNatatki(
             )
         )
     }
-    val actyvity = LocalActivity.current as MainActivity
-    val k = actyvity.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     Dialog(onDismissRequest = {
         if (editMode) {
             if (editTitle.isNotEmpty() || textFieldValueState.text.isNotEmpty()) {

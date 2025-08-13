@@ -137,8 +137,8 @@ private fun getRadyjoMaryiaActionCallback(clickType: Int): Action {
 @Composable
 fun RadyjoMaryia(context: Context) {
     val prefs = currentState<Preferences>()
-    var title = prefs[stringPreferencesKey("title")] ?: context.getString(R.string.padie_maryia_s)
-    var action = prefs[intPreferencesKey("action")] ?: ServiceRadyjoMaryia.STOP
+    val title = prefs[stringPreferencesKey("title")] ?: context.getString(R.string.padie_maryia_s)
+    val action = prefs[intPreferencesKey("action")] ?: ServiceRadyjoMaryia.STOP
     val isPlaying = prefs[booleanPreferencesKey("isPlaying")] == true
     Row(modifier = GlanceModifier.fillMaxWidth().background(RadyjoMaryia), verticalAlignment = Alignment.CenterVertically) {
         Column(modifier = GlanceModifier.defaultWeight()) {

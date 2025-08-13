@@ -1278,6 +1278,9 @@ fun Bogaslujbovyia(
                     if (scrollState.lastScrolledForward && !scrollState.canScrollForward) {
                         autoScroll = false
                         autoScrollSensor = false
+                        if (!k.getBoolean("power", false)) {
+                            actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                        }
                     }
                 }
             }
