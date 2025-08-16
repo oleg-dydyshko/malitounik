@@ -134,6 +134,8 @@ class ServiceRadyjoMaryia : Service() {
         listener?.setTitleRadioMaryia("")
         listener?.unBinding()
         isPlaybackStateReady = false
+        isPlayingRadyjoMaryia = false
+        titleRadyjoMaryia = ""
         if (isError) listener?.errorRadioMaria()
     }
 

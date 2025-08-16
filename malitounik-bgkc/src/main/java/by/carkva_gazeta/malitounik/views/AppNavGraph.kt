@@ -89,6 +89,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -599,6 +600,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
         ) { stackEntry ->
             val title = stackEntry.arguments?.getString("title") ?: ""
             val context = LocalContext.current
+            val resources = LocalResources.current
             val resurs = stackEntry.arguments?.getString("resurs") ?: "bogashlugbovya_error.html"
             Bogaslujbovyia(
                 navController, title, resurs, navigateTo = { navigate, skipUtran ->
@@ -622,7 +624,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
                         "cytanne", "cytannedop" -> {
                             val data = findCaliandarToDay(context)
                             val titleCh = context.getString(
-                                R.string.czytanne3, data[1].toInt(), context.resources.getStringArray(R.array.meciac_smoll)[2]
+                                R.string.czytanne3, data[1].toInt(), resources.getStringArray(R.array.meciac_smoll)[2]
                             )
                             val skip = if (skipUtran) -2 else -1
                             navigationActions.navigateToCytanniList(
@@ -633,7 +635,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
                         "cytannesvityx" -> {
                             val data = findCaliandarToDay(context)
                             val titleCh = context.getString(
-                                R.string.czytanne3, data[1].toInt(), context.resources.getStringArray(R.array.meciac_smoll)[2]
+                                R.string.czytanne3, data[1].toInt(), resources.getStringArray(R.array.meciac_smoll)[2]
                             )
                             navigationActions.navigateToCytanniList(
                                 titleCh, removeZnakiAndSlovy(data[10]), Settings.CHYTANNI_LITURGICHNYIA, Settings.PEREVODSEMUXI, -1

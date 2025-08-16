@@ -73,12 +73,16 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.storage
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStreamReader
 import java.math.BigInteger
 import java.security.MessageDigest
 import java.util.Calendar
@@ -192,9 +196,24 @@ object Settings {
         return calendar.timeInMillis
     }
 
-    private fun mkTimeDayPosition(year: Int, month: Int, day: Int): Int {
+    private fun mkTimeDayPosition(context: Context, year: Int, month: Int, day: Int): Int {
+        if (data.isEmpty()) {
+            val gson = Gson()
+            val type = TypeToken.getParameterized(
+                ArrayList::class.java, TypeToken.getParameterized(
+                    ArrayList::class.java, String::class.java
+                ).type
+            ).type
+            val inputStream = context.resources.openRawResource(R.raw.caliandar)
+            val isr = InputStreamReader(inputStream)
+            val reader = BufferedReader(isr)
+            val builder = reader.use {
+                it.readText()
+            }
+            data.addAll(gson.fromJson(builder, type))
+        }
         for (i in data.indices) {
-            if (year == data[i][0].toInt() && month == data[i][2].toInt() && day == data[i][1].toInt()) {
+            if (year == data[i][3].toInt() && month == data[i][2].toInt() && day == data[i][1].toInt()) {
                 return i
             }
         }
@@ -202,7 +221,8 @@ object Settings {
     }
 
     private fun createIntent(
-        context: Context, title: String, extra: String, caliandarPosition: Int = Settings.caliandarPosition): Intent {
+        context: Context, title: String, extra: String, caliandarPosition: Int = Settings.caliandarPosition
+    ): Intent {
         val intent = Intent(context, ReceiverBroad::class.java)
         intent.action = "by.carkva_gazeta.malitounik.sviaty"
         intent.putExtra("title", title)
@@ -337,7 +357,8 @@ object Settings {
             if (notifications != 0) {
                 if (c.timeInMillis < mkTime(year, monthP - 1, dataP - 1, 19)) {
                     intent = createIntent(
-                        context, context.resources.getString(R.string.S1), context.resources.getString(R.string.Sv3), mkTimeDayPosition(year, monthP - 1, dataP)) // Абавязковае
+                        context, context.resources.getString(R.string.S1), context.resources.getString(R.string.Sv3), mkTimeDayPosition(context, year, monthP - 1, dataP)
+                    ) // Абавязковае
                     val code = "1$year"
                     pIntent = PendingIntent.getBroadcast(
                         context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0
@@ -346,7 +367,8 @@ object Settings {
                 }
                 if (c.timeInMillis < mkTime(year, monthP - 1, dataP, timeNotification)) {
                     intent = createIntent(
-                        context, context.resources.getString(R.string.S1), context.resources.getString(R.string.Sv4), mkTimeDayPosition(year, monthP - 1, dataP)) // Абавязковае
+                        context, context.resources.getString(R.string.S1), context.resources.getString(R.string.Sv4), mkTimeDayPosition(context, year, monthP - 1, dataP)
+                    ) // Абавязковае
                     val code = "2$year"
                     pIntent = PendingIntent.getBroadcast(
                         context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0
@@ -355,7 +377,8 @@ object Settings {
                 }
                 if (c.timeInMillis < mkTime(year, 0, 5, 19)) {
                     intent = createIntent(
-                        context, context.resources.getString(R.string.S2), context.resources.getString(R.string.Sv3), mkTimeDayPosition(year, 0, 6)) // Абавязковае
+                        context, context.resources.getString(R.string.S2), context.resources.getString(R.string.Sv3), mkTimeDayPosition(context, year, 0, 6)
+                    ) // Абавязковае
                     val code = "3$year"
                     pIntent = PendingIntent.getBroadcast(
                         context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0
@@ -364,7 +387,8 @@ object Settings {
                 }
                 if (c.timeInMillis < mkTime(year, 0, 6, timeNotification)) {
                     intent = createIntent(
-                        context, context.resources.getString(R.string.S2), context.resources.getString(R.string.Sv4), mkTimeDayPosition(year, 0, 6)) // Абавязковае
+                        context, context.resources.getString(R.string.S2), context.resources.getString(R.string.Sv4), mkTimeDayPosition(context, year, 0, 6)
+                    ) // Абавязковае
                     val code = "4$year"
                     pIntent = PendingIntent.getBroadcast(
                         context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0
@@ -379,7 +403,8 @@ object Settings {
                     )
                 ) {
                     intent = createIntent(
-                        context, context.resources.getString(R.string.S5), context.resources.getString(R.string.Sv3), mkTimeDayPosition(year, cet[Calendar.MONTH], cet[Calendar.DAY_OF_MONTH] + 1)) // Абавязковае
+                        context, context.resources.getString(R.string.S5), context.resources.getString(R.string.Sv3), mkTimeDayPosition(context, year, cet[Calendar.MONTH], cet[Calendar.DAY_OF_MONTH] + 1)
+                    ) // Абавязковае
                     val code = "5$year"
                     pIntent = PendingIntent.getBroadcast(
                         context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0
@@ -394,7 +419,8 @@ object Settings {
                     )
                 ) {
                     intent = createIntent(
-                        context, context.resources.getString(R.string.S5), context.resources.getString(R.string.Sv4), mkTimeDayPosition(year, cet[Calendar.MONTH], cet[Calendar.DAY_OF_MONTH] + 1)) // Абавязковае
+                        context, context.resources.getString(R.string.S5), context.resources.getString(R.string.Sv4), mkTimeDayPosition(context, year, cet[Calendar.MONTH], cet[Calendar.DAY_OF_MONTH] + 1)
+                    ) // Абавязковае
                     val code = "6$year"
                     pIntent = PendingIntent.getBroadcast(
                         context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0
@@ -410,7 +436,8 @@ object Settings {
                     )
                 ) {
                     intent = createIntent(
-                        context, context.resources.getString(R.string.S6), context.resources.getString(R.string.Sv3), mkTimeDayPosition(year, cet[Calendar.MONTH], cet[Calendar.DAY_OF_MONTH] + 1)) // Абавязковае
+                        context, context.resources.getString(R.string.S6), context.resources.getString(R.string.Sv3), mkTimeDayPosition(context, year, cet[Calendar.MONTH], cet[Calendar.DAY_OF_MONTH] + 1)
+                    ) // Абавязковае
                     val code = "7$year"
                     pIntent = PendingIntent.getBroadcast(
                         context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0
@@ -425,7 +452,8 @@ object Settings {
                     )
                 ) {
                     intent = createIntent(
-                        context, context.resources.getString(R.string.S6), context.resources.getString(R.string.Sv4), mkTimeDayPosition(year, cet[Calendar.MONTH], cet[Calendar.DAY_OF_MONTH] + 1)) // Абавязковае
+                        context, context.resources.getString(R.string.S6), context.resources.getString(R.string.Sv4), mkTimeDayPosition(context, year, cet[Calendar.MONTH], cet[Calendar.DAY_OF_MONTH] + 1)
+                    ) // Абавязковае
                     val code = "8$year"
                     pIntent = PendingIntent.getBroadcast(
                         context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0
@@ -441,7 +469,8 @@ object Settings {
                     )
                 ) {
                     intent = createIntent(
-                        context, context.resources.getString(R.string.S7), context.resources.getString(R.string.Sv3), mkTimeDayPosition(year, cet[Calendar.MONTH], cet[Calendar.DAY_OF_MONTH] + 1)) // Абавязковае
+                        context, context.resources.getString(R.string.S7), context.resources.getString(R.string.Sv3), mkTimeDayPosition(context, year, cet[Calendar.MONTH], cet[Calendar.DAY_OF_MONTH] + 1)
+                    ) // Абавязковае
                     val code = "9$year"
                     pIntent = PendingIntent.getBroadcast(
                         context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0
@@ -456,7 +485,8 @@ object Settings {
                     )
                 ) {
                     intent = createIntent(
-                        context, context.resources.getString(R.string.S7), context.resources.getString(R.string.Sv4), mkTimeDayPosition(year, cet[Calendar.MONTH], cet[Calendar.DAY_OF_MONTH] + 1)) // Абавязковае
+                        context, context.resources.getString(R.string.S7), context.resources.getString(R.string.Sv4), mkTimeDayPosition(context, year, cet[Calendar.MONTH], cet[Calendar.DAY_OF_MONTH] + 1)
+                    ) // Абавязковае
                     val code = "10$year"
                     pIntent = PendingIntent.getBroadcast(
                         context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0
@@ -467,7 +497,8 @@ object Settings {
                 }
                 if (c.timeInMillis < mkTime(year, 2, 24, 19)) {
                     intent = createIntent(
-                        context, context.resources.getString(R.string.S4), context.resources.getString(R.string.Sv3), mkTimeDayPosition(year, 2, 25)) // Абавязковае
+                        context, context.resources.getString(R.string.S4), context.resources.getString(R.string.Sv3), mkTimeDayPosition(context, year, 2, 25)
+                    ) // Абавязковае
                     val code = "11$year"
                     pIntent = PendingIntent.getBroadcast(
                         context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0
@@ -476,7 +507,8 @@ object Settings {
                 }
                 if (c.timeInMillis < mkTime(year, 2, 25, timeNotification)) {
                     intent = createIntent(
-                        context, context.resources.getString(R.string.S4), context.resources.getString(R.string.Sv4), mkTimeDayPosition(year, 2, 25)) // Абавязковае
+                        context, context.resources.getString(R.string.S4), context.resources.getString(R.string.Sv4), mkTimeDayPosition(context, year, 2, 25)
+                    ) // Абавязковае
                     val code = "12$year"
                     pIntent = PendingIntent.getBroadcast(
                         context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0
@@ -485,7 +517,8 @@ object Settings {
                 }
                 if (c.timeInMillis < mkTime(year, 7, 14, 19)) {
                     intent = createIntent(
-                        context, context.resources.getString(R.string.S9), context.resources.getString(R.string.Sv3), mkTimeDayPosition(year, 7, 15)) // Абавязковае
+                        context, context.resources.getString(R.string.S9), context.resources.getString(R.string.Sv3), mkTimeDayPosition(context, year, 7, 15)
+                    ) // Абавязковае
                     val code = "13$year"
                     pIntent = PendingIntent.getBroadcast(
                         context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0
@@ -494,7 +527,8 @@ object Settings {
                 }
                 if (c.timeInMillis < mkTime(year, 7, 15, timeNotification)) {
                     intent = createIntent(
-                        context, context.resources.getString(R.string.S9), context.resources.getString(R.string.Sv4), mkTimeDayPosition(year, 7, 15)) // Абавязковае
+                        context, context.resources.getString(R.string.S9), context.resources.getString(R.string.Sv4), mkTimeDayPosition(context, year, 7, 15)
+                    ) // Абавязковае
                     val code = "14$year"
                     pIntent = PendingIntent.getBroadcast(
                         context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0
@@ -503,7 +537,8 @@ object Settings {
                 }
                 if (c.timeInMillis < mkTime(year, 11, 24, 19)) {
                     intent = createIntent(
-                        context, context.resources.getString(R.string.S13), context.resources.getString(R.string.Sv3), mkTimeDayPosition(year, 11, 25)) // Абавязковае
+                        context, context.resources.getString(R.string.S13), context.resources.getString(R.string.Sv3), mkTimeDayPosition(context, year, 11, 25)
+                    ) // Абавязковае
                     val code = "15$year"
                     pIntent = PendingIntent.getBroadcast(
                         context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0
@@ -512,7 +547,8 @@ object Settings {
                 }
                 if (c.timeInMillis < mkTime(year, 11, 25, timeNotification)) {
                     intent = createIntent(
-                        context, context.resources.getString(R.string.S13), context.resources.getString(R.string.Sv4), mkTimeDayPosition(year, 11, 25)) // Абавязковае
+                        context, context.resources.getString(R.string.S13), context.resources.getString(R.string.Sv4), mkTimeDayPosition(context, year, 11, 25)
+                    ) // Абавязковае
                     val code = "16$year"
                     pIntent = PendingIntent.getBroadcast(
                         context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0
@@ -521,7 +557,8 @@ object Settings {
                 }
                 if (c.timeInMillis < mkTime(year, 5, 28, 19)) {
                     intent = createIntent(
-                        context, context.resources.getString(R.string.S16), context.resources.getString(R.string.Sv3), mkTimeDayPosition(year, 5, 29)) // Абавязковае
+                        context, context.resources.getString(R.string.S16), context.resources.getString(R.string.Sv3), mkTimeDayPosition(context, year, 5, 29)
+                    ) // Абавязковае
                     val code = "17$year"
                     pIntent = PendingIntent.getBroadcast(
                         context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0
@@ -530,7 +567,8 @@ object Settings {
                 }
                 if (c.timeInMillis < mkTime(year, 5, 29, timeNotification)) {
                     intent = createIntent(
-                        context, context.resources.getString(R.string.S16), context.resources.getString(R.string.Sv4), mkTimeDayPosition(year, 5, 29)) // Абавязковае
+                        context, context.resources.getString(R.string.S16), context.resources.getString(R.string.Sv4), mkTimeDayPosition(context, year, 5, 29)
+                    ) // Абавязковае
                     val code = "18$year"
                     pIntent = PendingIntent.getBroadcast(
                         context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0
@@ -539,109 +577,109 @@ object Settings {
                 }
                 if (notifications == 2) {
                     if (c.timeInMillis < mkTime(year, 1, 1, 19)) {
-                        intent = createIntent(context, context.resources.getString(R.string.S3), context.resources.getString(R.string.Sv1), mkTimeDayPosition(year, 1, 2))
+                        intent = createIntent(context, context.resources.getString(R.string.S3), context.resources.getString(R.string.Sv1), mkTimeDayPosition(context, year, 1, 2))
                         val code = "19$year"
                         pIntent = PendingIntent.getBroadcast(context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                         setAlarm(context, mkTime(year, 1, 1, 19), pIntent)
                     }
                     if (c.timeInMillis < mkTime(year, 1, 2, timeNotification)) {
-                        intent = createIntent(context, context.resources.getString(R.string.S3), context.resources.getString(R.string.Sv2), mkTimeDayPosition(year, 1, 2))
+                        intent = createIntent(context, context.resources.getString(R.string.S3), context.resources.getString(R.string.Sv2), mkTimeDayPosition(context, year, 1, 2))
                         val code = "20$year"
                         pIntent = PendingIntent.getBroadcast(context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                         setAlarm(context, mkTime(year, 1, 2, timeNotification), pIntent)
                     }
                     if (c.timeInMillis < mkTime(year, 7, 5, 19)) {
-                        intent = createIntent(context, context.resources.getString(R.string.S8), context.resources.getString(R.string.Sv1), mkTimeDayPosition(year, 7, 6))
+                        intent = createIntent(context, context.resources.getString(R.string.S8), context.resources.getString(R.string.Sv1), mkTimeDayPosition(context, year, 7, 6))
                         val code = "21$year"
                         pIntent = PendingIntent.getBroadcast(context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                         setAlarm(context, mkTime(year, 7, 5, 19), pIntent)
                     }
                     if (c.timeInMillis < mkTime(year, 7, 6, timeNotification)) {
-                        intent = createIntent(context, context.resources.getString(R.string.S8), context.resources.getString(R.string.Sv2), mkTimeDayPosition(year, 7, 6))
+                        intent = createIntent(context, context.resources.getString(R.string.S8), context.resources.getString(R.string.Sv2), mkTimeDayPosition(context, year, 7, 6))
                         val code = "22$year"
                         pIntent = PendingIntent.getBroadcast(context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                         setAlarm(context, mkTime(year, 7, 6, timeNotification), pIntent)
                     }
                     if (c.timeInMillis < mkTime(year, 8, 7, 19)) {
-                        intent = createIntent(context, context.resources.getString(R.string.S10), context.resources.getString(R.string.Sv1), mkTimeDayPosition(year, 8, 8))
+                        intent = createIntent(context, context.resources.getString(R.string.S10), context.resources.getString(R.string.Sv1), mkTimeDayPosition(context, year, 8, 8))
                         val code = "23$year"
                         pIntent = PendingIntent.getBroadcast(context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                         setAlarm(context, mkTime(year, 8, 7, 19), pIntent)
                     }
                     if (c.timeInMillis < mkTime(year, 8, 8, timeNotification)) {
-                        intent = createIntent(context, context.resources.getString(R.string.S10), context.resources.getString(R.string.Sv2), mkTimeDayPosition(year, 8, 8))
+                        intent = createIntent(context, context.resources.getString(R.string.S10), context.resources.getString(R.string.Sv2), mkTimeDayPosition(context, year, 8, 8))
                         val code = "24$year"
                         pIntent = PendingIntent.getBroadcast(context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                         setAlarm(context, mkTime(year, 8, 8, timeNotification), pIntent)
                     }
                     if (c.timeInMillis < mkTime(year, 8, 13, 19)) {
-                        intent = createIntent(context, context.resources.getString(R.string.S11), context.resources.getString(R.string.Sv1), mkTimeDayPosition(year, 8, 14))
+                        intent = createIntent(context, context.resources.getString(R.string.S11), context.resources.getString(R.string.Sv1), mkTimeDayPosition(context, year, 8, 14))
                         val code = "25$year"
                         pIntent = PendingIntent.getBroadcast(context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                         setAlarm(context, mkTime(year, 8, 13, 19), pIntent)
                     }
                     if (c.timeInMillis < mkTime(year, 8, 14, timeNotification)) {
-                        intent = createIntent(context, context.resources.getString(R.string.S11), context.resources.getString(R.string.Sv2), mkTimeDayPosition(year, 8, 14))
+                        intent = createIntent(context, context.resources.getString(R.string.S11), context.resources.getString(R.string.Sv2), mkTimeDayPosition(context, year, 8, 14))
                         val code = "26$year"
                         pIntent = PendingIntent.getBroadcast(context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                         setAlarm(context, mkTime(year, 8, 14, timeNotification), pIntent)
                     }
                     if (c.timeInMillis < mkTime(year, 10, 20, 19)) {
-                        intent = createIntent(context, context.resources.getString(R.string.S12), context.resources.getString(R.string.Sv1), mkTimeDayPosition(year, 10, 21))
+                        intent = createIntent(context, context.resources.getString(R.string.S12), context.resources.getString(R.string.Sv1), mkTimeDayPosition(context, year, 10, 21))
                         val code = "27$year"
                         pIntent = PendingIntent.getBroadcast(context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                         setAlarm(context, mkTime(year, 10, 20, 19), pIntent)
                     }
                     if (c.timeInMillis < mkTime(year, 10, 21, timeNotification)) {
-                        intent = createIntent(context, context.resources.getString(R.string.S12), context.resources.getString(R.string.Sv2), mkTimeDayPosition(year, 10, 21))
+                        intent = createIntent(context, context.resources.getString(R.string.S12), context.resources.getString(R.string.Sv2), mkTimeDayPosition(context, year, 10, 21))
                         val code = "28$year"
                         pIntent = PendingIntent.getBroadcast(context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                         setAlarm(context, mkTime(year, 10, 21, timeNotification), pIntent)
                     }
                     if (c.timeInMillis < mkTime(year, 11, 31, 19)) {
-                        intent = createIntent(context, context.resources.getString(R.string.S14), context.resources.getString(R.string.Sv1), mkTimeDayPosition(year + 1, 0, 1))
+                        intent = createIntent(context, context.resources.getString(R.string.S14), context.resources.getString(R.string.Sv1), mkTimeDayPosition(context, year + 1, 0, 1))
                         val code = "29$year"
                         pIntent = PendingIntent.getBroadcast(context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                         setAlarm(context, mkTime(year, 11, 31, 19), pIntent)
                     }
                     if (c.timeInMillis < mkTime(year, 0, 1, timeNotification)) {
-                        intent = createIntent(context, context.resources.getString(R.string.S14), context.resources.getString(R.string.Sv2), mkTimeDayPosition(year + 1, 0, 1))
+                        intent = createIntent(context, context.resources.getString(R.string.S14), context.resources.getString(R.string.Sv2), mkTimeDayPosition(context, year + 1, 0, 1))
                         val code = "30$year"
                         pIntent = PendingIntent.getBroadcast(context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                         setAlarm(context, mkTime(year, 0, 1, timeNotification), pIntent)
                     }
                     if (c.timeInMillis < mkTime(year, 5, 23, 19)) {
-                        intent = createIntent(context, context.resources.getString(R.string.S15), context.resources.getString(R.string.Sv1), mkTimeDayPosition(year, 5, 24))
+                        intent = createIntent(context, context.resources.getString(R.string.S15), context.resources.getString(R.string.Sv1), mkTimeDayPosition(context, year, 5, 24))
                         val code = "31$year"
                         pIntent = PendingIntent.getBroadcast(context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                         setAlarm(context, mkTime(year, 5, 23, 19), pIntent)
                     }
                     if (c.timeInMillis < mkTime(year, 5, 24, timeNotification)) {
-                        intent = createIntent(context, context.resources.getString(R.string.S15), context.resources.getString(R.string.Sv2), mkTimeDayPosition(year, 5, 24))
+                        intent = createIntent(context, context.resources.getString(R.string.S15), context.resources.getString(R.string.Sv2), mkTimeDayPosition(context, year, 5, 24))
                         val code = "32$year"
                         pIntent = PendingIntent.getBroadcast(context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                         setAlarm(context, mkTime(year, 5, 24, timeNotification), pIntent)
                     }
                     if (c.timeInMillis < mkTime(year, 7, 28, 19)) {
-                        intent = createIntent(context, context.resources.getString(R.string.S17), context.resources.getString(R.string.Sv1), mkTimeDayPosition(year, 7, 29))
+                        intent = createIntent(context, context.resources.getString(R.string.S17), context.resources.getString(R.string.Sv1), mkTimeDayPosition(context, year, 7, 29))
                         val code = "33$year"
                         pIntent = PendingIntent.getBroadcast(context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                         setAlarm(context, mkTime(year, 7, 28, 19), pIntent)
                     }
                     if (c.timeInMillis < mkTime(year, 7, 29, timeNotification)) {
-                        intent = createIntent(context, context.resources.getString(R.string.S17), context.resources.getString(R.string.Sv2), mkTimeDayPosition(year, 7, 29))
+                        intent = createIntent(context, context.resources.getString(R.string.S17), context.resources.getString(R.string.Sv2), mkTimeDayPosition(context, year, 7, 29))
                         val code = "34$year"
                         pIntent = PendingIntent.getBroadcast(context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                         setAlarm(context, mkTime(year, 7, 29, timeNotification), pIntent)
                     }
                     if (c.timeInMillis < mkTime(year, 8, 30, 19)) {
-                        intent = createIntent(context, context.resources.getString(R.string.S18), context.resources.getString(R.string.Sv1), mkTimeDayPosition(year, 9, 1))
+                        intent = createIntent(context, context.resources.getString(R.string.S18), context.resources.getString(R.string.Sv1), mkTimeDayPosition(context, year, 9, 1))
                         val code = "35$year"
                         pIntent = PendingIntent.getBroadcast(context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                         setAlarm(context, mkTime(year, 8, 30, 19), pIntent)
                     }
                     if (c.timeInMillis < mkTime(year, 9, 1, timeNotification)) {
-                        intent = createIntent(context, context.resources.getString(R.string.S18), context.resources.getString(R.string.Sv2), mkTimeDayPosition(year, 9, 1))
+                        intent = createIntent(context, context.resources.getString(R.string.S18), context.resources.getString(R.string.Sv2), mkTimeDayPosition(context, year, 9, 1))
                         val code = "36$year"
                         pIntent = PendingIntent.getBroadcast(context, code.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                         setAlarm(context, mkTime(year, 9, 1, timeNotification), pIntent)
@@ -971,9 +1009,7 @@ object Settings {
 }
 
 enum class SystemNavigation {
-    THREE_BUTTON,
-    TWO_BUTTON,
-    GESTURE;
+    THREE_BUTTON, TWO_BUTTON, GESTURE;
 
     companion object {
         fun create(context: Context) = entries.getOrNull(
@@ -1018,8 +1054,7 @@ fun DialogSztoHovaha(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() },
-                        shape = MaterialTheme.shapes.small
+                        onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.close), fontSize = 18.sp)
@@ -1126,8 +1161,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
                 }
                 SideEffect {
                     isGesture = when (SystemNavigation.create(this)) {
-                        SystemNavigation.THREE_BUTTON,
-                        SystemNavigation.TWO_BUTTON -> false
+                        SystemNavigation.THREE_BUTTON, SystemNavigation.TWO_BUTTON -> false
 
                         SystemNavigation.GESTURE -> true
 
