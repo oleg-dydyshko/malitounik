@@ -21,13 +21,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,12 +43,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import by.carkva_gazeta.malitounik.DialogNoInternet
 import by.carkva_gazeta.malitounik.DialogProgramRadoiMaryia
 import by.carkva_gazeta.malitounik.MainActivity
@@ -51,12 +60,14 @@ import by.carkva_gazeta.malitounik.Settings
 import by.carkva_gazeta.malitounik.WidgetRadyjoMaryia
 import by.carkva_gazeta.malitounik.ui.theme.BackgroundDrawelMenu
 import by.carkva_gazeta.malitounik.ui.theme.Divider
+import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DrawView(
     drawerScrollStete: ScrollState,
@@ -376,7 +387,7 @@ fun DrawView(
                 painter = painterResource(R.drawable.description),
                 contentDescription = ""
             )
-            val icon = if (!Settings.isPlayRadyjoMaryia.value) painterResource(R.drawable.play_arrow)
+            val icon = if (!ServiceRadyjoMaryia.isPlayingRadyjoMaryia) painterResource(R.drawable.play_arrow)
             else painterResource(R.drawable.pause)
             Icon(
                 modifier = Modifier
@@ -392,7 +403,7 @@ fun DrawView(
                                     context.mConnection,
                                     Context.BIND_AUTO_CREATE
                                 )
-                                Settings.isPlayRadyjoMaryia.value = true
+                                ServiceRadyjoMaryia.isPlayingRadyjoMaryia = true
                             } else {
                                 context.mRadyjoMaryiaService?.apply {
                                     if (k.getBoolean("WIDGET_RADYJO_MARYIA_ENABLED", false)) {
@@ -404,7 +415,7 @@ fun DrawView(
                                         )
                                     }
                                     playOrPause()
-                                    Settings.isPlayRadyjoMaryia.value = isPlayingRadioMaria()
+                                    ServiceRadyjoMaryia.isPlayingRadyjoMaryia = isPlayingRadioMaria()
                                 }
                             }
                         } else {
@@ -424,7 +435,7 @@ fun DrawView(
                             }
                             context.isConnectServise = false
                             context.mRadyjoMaryiaService?.stopServiceRadioMaria()
-                            Settings.isPlayRadyjoMaryia.value = false
+                            ServiceRadyjoMaryia.isPlayingRadyjoMaryia = false
                         }
                     },
                 painter = painterResource(R.drawable.stop),
@@ -432,26 +443,119 @@ fun DrawView(
             )
         }
         if (ServiceRadyjoMaryia.isServiceRadioMaryiaRun) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    modifier = Modifier.size(5.dp, 5.dp),
-                    painter = painterResource(R.drawable.poiter),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = ""
-                )
-                Text(
-                    Settings.titleRadioMaryia.value,
+            Column {
+                Row(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(10.dp),
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontSize = Settings.fontInterface.sp
-                )
+                        .fillMaxWidth()
+                        .padding(start = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        modifier = Modifier.size(5.dp, 5.dp),
+                        painter = painterResource(R.drawable.poiter),
+                        tint = MaterialTheme.colorScheme.primary,
+                        contentDescription = ""
+                    )
+                    Text(
+                        text = ServiceRadyjoMaryia.titleRadyjoMaryia,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(10.dp),
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = Settings.fontInterface.sp
+                    )
+                }
+                var expandedSviaty by remember { mutableStateOf(false) }
+                val radioMaryiaList = stringArrayResource(R.array.radio_maryia_list)
+                var radioMaryiaListPosition by remember { mutableIntStateOf(k.getInt("radioMaryiaListPosition", 0)) }
+                ExposedDropdownMenuBox(
+                    modifier = Modifier.padding(10.dp),
+                    expanded = expandedSviaty,
+                    onExpandedChange = { expandedSviaty = it },
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                            .clip(MaterialTheme.shapes.small)
+                            .clickable {}
+                            .background(Divider)
+                            .fillMaxWidth()
+                            .padding(horizontal = 5.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .weight(1f),
+                            text = radioMaryiaList[radioMaryiaListPosition],
+                            fontSize = (Settings.fontInterface - 2).sp,
+                            color = PrimaryText,
+                        )
+                        Icon(
+                            modifier = Modifier
+                                .padding(start = 21.dp, end = 2.dp)
+                                .size(22.dp, 22.dp),
+                            painter = painterResource(if (expandedSviaty) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
+                            tint = PrimaryText,
+                            contentDescription = ""
+                        )
+                    }
+                    ExposedDropdownMenu(
+                        containerColor = Divider,
+                        expanded = expandedSviaty,
+                        onDismissRequest = { expandedSviaty = false },
+                    ) {
+                        radioMaryiaList.forEachIndexed { index, option ->
+                            DropdownMenuItem(
+                                text = { Text(text = option, fontSize = (Settings.fontInterface - 2).sp) }, onClick = {
+                                    if (radioMaryiaListPosition != index) {
+                                        radioMaryiaListPosition = index
+                                        expandedSviaty = false
+                                        k.edit {
+                                            putInt("radioMaryiaListPosition", index)
+                                        }
+                                        if (ServiceRadyjoMaryia.isServiceRadioMaryiaRun) {
+                                            if (context.isConnectServise) {
+                                                context.unbindService(context.mConnection)
+                                            }
+                                            context.isConnectServise = false
+                                            context.mRadyjoMaryiaService?.stopServiceRadioMaria()
+                                            ServiceRadyjoMaryia.isPlayingRadyjoMaryia = false
+                                        }
+                                        if (Settings.isNetworkAvailable(context)) {
+                                            if (!ServiceRadyjoMaryia.isServiceRadioMaryiaRun) {
+                                                Settings.isProgressVisableRadyjoMaryia.value = true
+                                                val intent = Intent(context, ServiceRadyjoMaryia::class.java)
+                                                ContextCompat.startForegroundService(context, intent)
+                                                context.bindService(
+                                                    intent,
+                                                    context.mConnection,
+                                                    Context.BIND_AUTO_CREATE
+                                                )
+                                                ServiceRadyjoMaryia.isPlayingRadyjoMaryia = true
+                                            } else {
+                                                context.mRadyjoMaryiaService?.apply {
+                                                    if (k.getBoolean("WIDGET_RADYJO_MARYIA_ENABLED", false)) {
+                                                        context.sendBroadcast(
+                                                            Intent(
+                                                                context,
+                                                                WidgetRadyjoMaryia::class.java
+                                                            )
+                                                        )
+                                                    }
+                                                    playOrPause()
+                                                    ServiceRadyjoMaryia.isPlayingRadyjoMaryia = isPlayingRadioMaria()
+                                                }
+                                            }
+                                        } else {
+                                            dialogNoInternet = true
+                                        }
+                                    }
+                                }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding, colors = MenuDefaults.itemColors(textColor = PrimaryText)
+                            )
+                        }
+                    }
+                }
             }
         }
         Column {

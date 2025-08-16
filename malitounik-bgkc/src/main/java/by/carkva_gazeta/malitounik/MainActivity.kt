@@ -150,8 +150,6 @@ object Settings {
     var data = ArrayList<ArrayList<String>>()
     var fontInterface by mutableFloatStateOf(22F)
     val vibrate = longArrayOf(0, 1000, 700, 1000)
-    var titleRadioMaryia = mutableStateOf("")
-    var isPlayRadyjoMaryia = mutableStateOf(false)
     var isProgressVisableRadyjoMaryia = mutableStateOf(false)
     val textFieldValueState = mutableStateOf("")
     val textFieldValueLatest = mutableStateOf("")
@@ -1062,7 +1060,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
     }
 
     override fun setTitleRadioMaryia(title: String) {
-        Settings.titleRadioMaryia.value = title
+        ServiceRadyjoMaryia.titleRadyjoMaryia = title
     }
 
     override fun unBinding() {
@@ -1074,11 +1072,11 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
     }
 
     override fun playingRadioMaria(isPlayingRadioMaria: Boolean) {
-        Settings.isPlayRadyjoMaryia.value = isPlayingRadioMaria
+        ServiceRadyjoMaryia.isPlayingRadyjoMaryia = isPlayingRadioMaria
     }
 
     override fun playingRadioMariaStateReady() {
-        Settings.isPlayRadyjoMaryia.value = true
+        ServiceRadyjoMaryia.isPlayingRadyjoMaryia = true
         Settings.isProgressVisableRadyjoMaryia.value = false
         setTitleRadioMaryia(ServiceRadyjoMaryia.titleRadyjoMaryia)
     }

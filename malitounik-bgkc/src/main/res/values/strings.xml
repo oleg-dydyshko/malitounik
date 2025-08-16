@@ -762,5 +762,17 @@
     <string name="set_razdel">Увядзіце нумар разьдзелу</string>
     <string name="razdzel_count">Усяго %1$d</string>
     <string name="set_time">ВЫБЕРЫЦЕ ЧАС</string>
+    <array name="radio_maryia_list">
+        <item>AAC 64 kbit/s stereo</item>
+        <item>MP3 128 kbit/s stereo</item>
+        <item>MP3 64 kbit/s stereo</item>
+        <item>Ogg 32 kbit/s mono</item>
+    </array>
+    <array name="radio_maryia_url_list">
+        <item>https://server.radiorm.by:8443/aac</item>
+        <item>https://server.radiorm.by:8443/live</item>
+        <item>https://server.radiorm.by:8443/start64</item>
+        <item>https://server.radiorm.by:8443/start32</item>
+    </array>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

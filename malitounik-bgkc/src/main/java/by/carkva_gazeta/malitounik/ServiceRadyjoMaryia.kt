@@ -13,6 +13,9 @@ import android.os.Binder
 import android.os.Build
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.net.toUri
@@ -43,9 +46,9 @@ class ServiceRadyjoMaryia : Service() {
         const val START = 1
         const val PLAY_PAUSE = 2
         const val STOP = 3
-        var isServiceRadioMaryiaRun = false
-        var isPlayingRadyjoMaryia = false
-        var titleRadyjoMaryia = ""
+        var isServiceRadioMaryiaRun by mutableStateOf(false)
+        var isPlayingRadyjoMaryia by mutableStateOf(false)
+        var titleRadyjoMaryia by mutableStateOf("")
     }
 
     private var player: ExoPlayer? = null
@@ -84,14 +87,17 @@ class ServiceRadyjoMaryia : Service() {
     }
 
     private fun initRadioMaria() {
+        val k = getSharedPreferences("biblia", MODE_PRIVATE)
+        val radioMaryiaList = resources.getStringArray(R.array.radio_maryia_url_list)
+        val radioMaryiaListPosition = k.getInt("radioMaryiaListPosition", 0)
         player = ExoPlayer.Builder(this).build().apply {
-            setMediaItem(MediaItem.fromUri("https://server.radiorm.by:8443/aac".toUri()))
+            setMediaItem(MediaItem.fromUri(radioMaryiaList[radioMaryiaListPosition].toUri()))
             prepare()
             addListener(object : Player.Listener {
 
                 override fun onPlayerError(error: PlaybackException) {
                     stopServiceRadioMaria(true)
-                    val intent = Intent(Intent.ACTION_VIEW, "https://server.radiorm.by:8443/aac".toUri())
+                    val intent = Intent(Intent.ACTION_VIEW, radioMaryiaList[radioMaryiaListPosition].toUri())
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     startActivity(intent)
                 }
@@ -272,8 +278,8 @@ class ServiceRadyjoMaryia : Service() {
         if (isPlaying) notifi.addAction(R.drawable.pause3, "pause", retreivePlaybackAction(PLAY_PAUSE))
         else notifi.addAction(R.drawable.play3, "play", retreivePlaybackAction(PLAY_PAUSE))
         notifi.addAction(R.drawable.stop3, "stop", retreivePlaybackAction(STOP))
-        val notification = notifi.build()
-        return notification
+        mediaSession.release()
+        return notifi.build()
     }
 
     private fun retreivePlaybackAction(which: Int): PendingIntent? {

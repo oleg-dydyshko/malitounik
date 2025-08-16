@@ -48,6 +48,12 @@
             android:taskAffinity=""
             android:theme="@style/Theme.Transparent" />
         <activity
+            android:name=".WidgetConfigRadioMaryia"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:taskAffinity=""
+            android:theme="@style/Theme.Transparent" />
+        <activity
             android:name=".WidgetRadyjoMaryiaProgram"
             android:excludeFromRecents="true"
             android:exported="false"
@@ -113,6 +119,7 @@
             android:label="@string/padie_maryia_s">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
 
             <meta-data

@@ -63,7 +63,7 @@ class GlanceWidgetRadyjoMaryia : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
             GlanceTheme {
-                RadyjoMaryia(context)
+                RadyjoMaryia()
             }
         }
     }
@@ -135,15 +135,15 @@ private fun getRadyjoMaryiaActionCallback(clickType: Int): Action {
 }
 
 @Composable
-fun RadyjoMaryia(context: Context) {
+fun RadyjoMaryia() {
     val prefs = currentState<Preferences>()
-    val title = prefs[stringPreferencesKey("title")] ?: context.getString(R.string.padie_maryia_s)
-    val action = prefs[intPreferencesKey("action")] ?: ServiceRadyjoMaryia.STOP
-    val isPlaying = prefs[booleanPreferencesKey("isPlaying")] == true
+    val title = prefs[stringPreferencesKey("title")] ?: ServiceRadyjoMaryia.titleRadyjoMaryia
+    val action = prefs[intPreferencesKey("action")] ?: 0
+    val isPlaying = prefs[booleanPreferencesKey("isPlaying")] ?: ServiceRadyjoMaryia.isPlayingRadyjoMaryia
     Row(modifier = GlanceModifier.fillMaxWidth().background(RadyjoMaryia), verticalAlignment = Alignment.CenterVertically) {
         Column(modifier = GlanceModifier.defaultWeight()) {
             Text(
-                title,
+                text = title,
                 modifier = GlanceModifier
                     .defaultWeight()
                     .padding(10.dp),
@@ -194,9 +194,9 @@ class WidgetRadyjoMaryia : GlanceAppWidgetReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
-        val action = intent.extras?.getInt("action", ServiceRadyjoMaryia.STOP) ?: ServiceRadyjoMaryia.STOP
-        val title = intent.extras?.getString("title", "") ?: ""
-        val isPlaying = intent.extras?.getBoolean("isPlaying", false) == true
+        val action = intent.extras?.getInt("action", 0) ?: 0
+        val title = intent.extras?.getString("title", ServiceRadyjoMaryia.titleRadyjoMaryia) ?: ServiceRadyjoMaryia.titleRadyjoMaryia
+        val isPlaying = intent.extras?.getBoolean("isPlaying", ServiceRadyjoMaryia.isPlayingRadyjoMaryia) ?: ServiceRadyjoMaryia.isPlayingRadyjoMaryia
         CoroutineScope(Dispatchers.Main).launch {
             val manager = GlanceAppWidgetManager(context)
             val widget = GlanceWidgetRadyjoMaryia()
