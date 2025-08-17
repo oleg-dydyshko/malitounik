@@ -150,7 +150,6 @@ object Settings {
     var bibleTimeList = false
     var destinations = AllDestinations.KALIANDAR
     var caliandarPosition = 0
-    var initCaliandarPosition = 0
     var data = ArrayList<ArrayList<String>>()
     var fontInterface by mutableFloatStateOf(22F)
     val vibrate = longArrayOf(0, 1000, 700, 1000)

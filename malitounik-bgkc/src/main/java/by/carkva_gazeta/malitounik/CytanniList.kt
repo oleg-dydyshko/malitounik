@@ -115,6 +115,7 @@ import androidx.core.text.isDigitsOnly
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
@@ -442,6 +443,12 @@ fun CytanniList(
             }
         }
         saveVybranoe = false
+    }
+    LifecycleResumeEffect(Unit) {
+        if (autoScrollSensor) autoScroll = true
+        onPauseOrDispose {
+            autoScroll = false
+        }
     }
     LaunchedEffect(autoScroll) {
         if (autoScroll) {

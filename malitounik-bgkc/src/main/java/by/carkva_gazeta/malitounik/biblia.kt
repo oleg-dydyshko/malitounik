@@ -4,13 +4,7 @@ import android.content.Context
 import by.carkva_gazeta.malitounik.views.openAssetsResources
 
 fun biblia(
-    context: Context,
-    kniga: Int,
-    glavaStart: Int,
-    glavaEnd: Int,
-    styxStart: Int,
-    styxEnd: Int,
-    perevod: String
+    context: Context, kniga: Int, glavaStart: Int, glavaEnd: Int, styxStart: Int, styxEnd: Int, perevod: String
 ): ArrayList<BibliaDataItem> {
     var perevodNew = perevod
     val result = ArrayList<BibliaDataItem>()
@@ -56,8 +50,7 @@ fun biblia(
         }
         fileName = "$prevodName$zavet${knigaNew + 1}.txt"
     }
-    val isPsaltyrGreek =
-        perevodNew == Settings.PEREVODSEMUXI || perevodNew == Settings.PEREVODNADSAN || perevodNew == Settings.PEREVODSINOIDAL
+    val isPsaltyrGreek = perevodNew == Settings.PEREVODSEMUXI || perevodNew == Settings.PEREVODNADSAN || perevodNew == Settings.PEREVODSINOIDAL
     val listGlav = openAssetsResources(context, fileName).split("===")
     for (glava in glavaStart..glavaEnd) {
         val spisStyxov = listGlav[glava].trim().split("\n")
@@ -66,32 +59,24 @@ fun biblia(
                 if (styxStart != 0 && styxEnd != 0 && glavaEnd == glavaStart) {
                     if (styxStart - 1 <= styx && styxEnd > styx) result.add(
                         BibliaDataItem(
-                            glava,
-                            spisStyxov[styx].replace(
-                                "\\n",
-                                "<br>"
-                            ),
-                            getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
+                            glava, spisStyxov[styx].replace(
+                                "\\n", "<br>"
+                            ), getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
                         )
                     )
                 } else {
                     if (styxStart != 0) {
                         if (styxStart - 1 <= styx) result.add(
                             BibliaDataItem(
-                                glava,
-                                spisStyxov[styx].replace(
-                                    "\\n",
-                                    "<br>"
-                                ),
-                                getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
+                                glava, spisStyxov[styx].replace(
+                                    "\\n", "<br>"
+                                ), getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
                             )
                         )
                     } else {
                         result.add(
                             BibliaDataItem(
-                                glava,
-                                spisStyxov[styx].replace("\\n", "<br>"),
-                                getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
+                                glava, spisStyxov[styx].replace("\\n", "<br>"), getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
                             )
                         )
                     }
@@ -102,9 +87,7 @@ fun biblia(
             for (styx in spisStyxov.indices) {
                 result.add(
                     BibliaDataItem(
-                        glava,
-                        spisStyxov[styx].replace("\\n", "<br>"),
-                        getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
+                        glava, spisStyxov[styx].replace("\\n", "<br>"), getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
                     )
                 )
             }
@@ -114,19 +97,15 @@ fun biblia(
                 if (styxEnd != 0) {
                     if (styxEnd > styx) result.add(
                         BibliaDataItem(
-                            glava,
-                            spisStyxov[styx].replace(
-                                "\\n",
-                                "<br>"
+                            glava, spisStyxov[styx].replace(
+                                "\\n", "<br>"
                             ), getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
                         )
                     )
                 } else {
                     result.add(
                         BibliaDataItem(
-                            glava,
-                            spisStyxov[styx].replace("\\n", "<br>"),
-                            getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
+                            glava, spisStyxov[styx].replace("\\n", "<br>"), getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
                         )
                     )
                 }

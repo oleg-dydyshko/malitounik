@@ -121,6 +121,7 @@ import androidx.core.content.edit
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik.ui.theme.Button
@@ -227,6 +228,12 @@ fun Bogaslujbovyia(
                 }
             }
             saveVybranoe = false
+        }
+    }
+    LifecycleResumeEffect(Unit) {
+        if (autoScrollSensor) autoScroll = true
+        onPauseOrDispose {
+            autoScroll = false
         }
     }
     LaunchedEffect(autoScroll) {
