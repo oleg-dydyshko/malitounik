@@ -19,7 +19,6 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -108,6 +107,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
@@ -145,7 +145,7 @@ import java.io.File
 import java.net.URLDecoder
 import java.util.Calendar
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Bogaslujbovyia(
     navController: NavHostController, title: String, resurs: String,
@@ -168,10 +168,10 @@ fun Bogaslujbovyia(
     var autoScrollTextColor2 by remember { mutableStateOf(PrimaryTextBlack) }
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
     var saveVybranoe by remember { mutableStateOf(false) }
-    var searchText by rememberSaveable { mutableStateOf(false) }
+    var searchText by rememberSaveable { mutableStateOf(AppNavGraphState.searchBogaslujbovyia.isNotEmpty()) }
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
-    var searshString by rememberSaveable { mutableStateOf("") }
+    var searshString by rememberSaveable { mutableStateOf( AppNavGraphState.searchBogaslujbovyia) }
     var adminResourceEditPosition by remember { mutableIntStateOf(0) }
     val scrollState = rememberScrollState()
     val scrollStateDop = rememberScrollState()
@@ -354,7 +354,7 @@ fun Bogaslujbovyia(
                 searchJob = CoroutineScope(Dispatchers.Main).launch {
                     result.clear()
                     resultPosition = 0
-                    result.addAll(findAllAsanc(layout.layoutInput.text.text, searshString))
+                    result.addAll(findAllAsanc(AnnotatedString.fromHtml(htmlText).text, searshString))
                     textLayout.value?.let { layout ->
                         if (result.isNotEmpty()) {
                             val opiginalText = layout.layoutInput.text

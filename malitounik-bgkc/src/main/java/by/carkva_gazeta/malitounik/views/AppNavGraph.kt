@@ -6,7 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
+
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -200,6 +200,7 @@ object AppNavGraphState {
     var randomCytata = 0
     var autoDzenNochTime = System.currentTimeMillis()
     var searchSettings by mutableStateOf(false)
+    var searchBogaslujbovyia by mutableStateOf("")
 
     fun setItemsValue(title: String, isInit: Boolean = false): Boolean {
         var result = true
@@ -719,19 +720,21 @@ fun findCaliandarToDay(context: Context, isGlobal: Boolean = true): ArrayList<St
 }
 
 fun findCaliandarPosition(context: Context) {
-    val gson = Gson()
-    val type = TypeToken.getParameterized(
-        ArrayList::class.java, TypeToken.getParameterized(
-            ArrayList::class.java, String::class.java
+    if (Settings.data.isEmpty()) {
+        val gson = Gson()
+        val type = TypeToken.getParameterized(
+            ArrayList::class.java, TypeToken.getParameterized(
+                ArrayList::class.java, String::class.java
+            ).type
         ).type
-    ).type
-    val inputStream = context.resources.openRawResource(R.raw.caliandar)
-    val isr = InputStreamReader(inputStream)
-    val reader = BufferedReader(isr)
-    val builder = reader.use {
-        it.readText()
+        val inputStream = context.resources.openRawResource(R.raw.caliandar)
+        val isr = InputStreamReader(inputStream)
+        val reader = BufferedReader(isr)
+        val builder = reader.use {
+            it.readText()
+        }
+        Settings.data.addAll(gson.fromJson(builder, type))
     }
-    Settings.data.addAll(gson.fromJson(builder, type))
     val calendar = Calendar.getInstance()
     for (i in Settings.data.indices) {
         if (calendar[Calendar.DATE] == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
@@ -842,7 +845,7 @@ fun MainConteiner(
     LaunchedEffect(Unit) {
         appUpdate = true
     }
-    if (Settings.data.isEmpty()) {
+    if (Settings.data.isEmpty() || Settings.caliandarPosition == -1) {
         findCaliandarPosition(context)
     }
     val lazyColumnState = rememberLazyListState()

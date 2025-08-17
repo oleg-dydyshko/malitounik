@@ -2,6 +2,7 @@ package by.carkva_gazeta.malitounik
 
 import android.app.Activity
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -87,6 +88,7 @@ import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryBlack
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.openAssetsResources
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -111,7 +113,7 @@ fun SearchBible(
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     var textFieldLoaded by remember { mutableStateOf(false) }
-    var searshString by rememberSaveable { mutableStateOf("") }
+    var searshString by rememberSaveable { mutableStateOf(AppNavGraphState.searchBogaslujbovyia) }
     LaunchedEffect(searchSettings, searshString) {
         if (searchSettings) {
             searchList.clear()
@@ -157,6 +159,11 @@ fun SearchBible(
             isAppearanceLightStatusBars = false
             isAppearanceLightNavigationBars = false
         }
+    }
+    BackHandler {
+        AppNavGraphState.searchBogaslujbovyia = ""
+        searchList.clear()
+        navController.popBackStack()
     }
     Scaffold(
         topBar = {
@@ -212,6 +219,8 @@ fun SearchBible(
                     IconButton(onClick = {
                         if (!backPressHandled) {
                             backPressHandled = true
+                            AppNavGraphState.searchBogaslujbovyia = ""
+                            searchList.clear()
                             navController.popBackStack()
                         }
                     }, content = {
@@ -299,9 +308,11 @@ fun SearchBible(
                     items(searchList.size) { index ->
                         Text(
                             modifier = Modifier
+                                .fillMaxWidth()
                                 .padding(10.dp)
                                 .clickable {
                                     if (isBogaslujbovyiaSearch) {
+                                        AppNavGraphState.searchBogaslujbovyia = searshString
                                         navigateToBogaslujbovyia(searchList[index].subTitle, searchList[index].resource)
                                     } else {
                                         navigateToCytanniList(
@@ -451,6 +462,7 @@ fun bogashlugbovya(context: Context, poshuk: String, secondRun: Boolean = false)
             val t2 = bibleline.indexOf("</strong>", t1 + 8)
             nazva = bibleline.substring(t1 + 8, t2)
             nazva = AnnotatedString.fromHtml(nazva).text
+            nazva = nazva.replace("\n", " ")
         }
         val prepinanie = AnnotatedString.fromHtml(bibleline).text
         val poshuk2 = findChars(context, poshuk1, prepinanie)
