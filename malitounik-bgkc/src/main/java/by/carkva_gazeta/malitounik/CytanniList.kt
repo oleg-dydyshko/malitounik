@@ -1708,12 +1708,32 @@ fun getBible(
                             if (run) {
                                 if (!(styxStart == 0 && styxEnd == 0)) run = false
                                 for (w in textBible.indices) {
-                                    var t5 = textBible[w].styx.indexOf("<br>")
+                                    var textBibleItem = textBible[w].styx
+                                    val listBr = textBibleItem.split("<br>")
+                                    if (listBr.size > 1) {
+                                        val sb = StringBuilder()
+                                        for (e in listBr.indices) {
+                                            val br = if (listBr.size - 1 == e) "" else "<br>"
+                                            val t1 = listBr[e].indexOf(" ")
+                                            val isInt = if (t1 != -1) {
+                                                val item = listBr[e].substring(0, t1)
+                                                item.isNotEmpty() && item.isDigitsOnly()
+                                            } else false
+                                            if (isInt) {
+                                                val styx = listBr[e].substring(0, t1).toInt()
+                                                sb.append("<font color=#D00505>$styx. </font>" + listBr[e].substring(t1)).append(br)
+                                            } else {
+                                                sb.append(listBr[e]).append(br)
+                                            }
+                                        }
+                                        textBibleItem = sb.toString()
+                                    }
+                                    var t5 = textBibleItem.indexOf("<br>")
                                     if (t5 == -1) t5 = 0
                                     else t5 += 4
-                                    val t6 = textBible[w].styx.indexOf(" ", t5)
+                                    val t6 = textBibleItem.indexOf(" ", t5)
                                     val isInt = if (t6 != -1) {
-                                        val item = textBible[w].styx.substring(t5, t6)
+                                        val item = textBibleItem.substring(t5, t6)
                                         item.isNotEmpty() && item.isDigitsOnly()
                                     } else false
                                     if (w == 0) {
@@ -1749,12 +1769,12 @@ fun getBible(
                                         }
                                         id++
                                     }
-                                    var text = textBible[w].styx
+                                    var text = textBibleItem
                                     if (isInt) {
-                                        val styx = textBible[w].styx.substring(t5, t6).toInt()
-                                        text = textBible[w].styx.substring(
+                                        val styx = textBibleItem.substring(t5, t6).toInt()
+                                        text = textBibleItem.substring(
                                             0, t5
-                                        ) + "<font color=#D00505>$styx. </font>" + textBible[w].styx.substring(t6)
+                                        ) + "<font color=#D00505>$styx. </font>" + textBibleItem.substring(t6)
                                     }
                                     result.add(
                                         CytanniListData(
