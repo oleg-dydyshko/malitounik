@@ -257,7 +257,7 @@ fun DialogMyNatatki(
                 .padding(10.dp),
             shape = RoundedCornerShape(10.dp),
         ) {
-            Column {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
                 if (editMode) {
                     TextField(
                         textStyle = TextStyle(fontSize = Settings.fontInterface.sp),

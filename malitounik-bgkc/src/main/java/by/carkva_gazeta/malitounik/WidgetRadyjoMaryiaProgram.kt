@@ -164,7 +164,7 @@ fun DialogProgramRadoiMaryia(
                 .padding(10.dp),
             shape = RoundedCornerShape(10.dp),
         ) {
-            Column {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
                 Text(
                     text = stringResource(R.string.program_radio_maryia).uppercase(), modifier = Modifier
                         .fillMaxWidth()
@@ -220,7 +220,7 @@ fun DialogNoInternet(
                 .padding(10.dp),
             shape = RoundedCornerShape(10.dp),
         ) {
-            Column {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
                 Text(
                     text = stringResource(R.string.no_internet).uppercase(), modifier = Modifier
                         .fillMaxWidth()

@@ -1502,7 +1502,7 @@ fun DialogLiturgia(
                 .padding(10.dp),
             shape = RoundedCornerShape(10.dp),
         ) {
-            Column {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
                 Text(
                     text = title.uppercase(), modifier = Modifier
                         .fillMaxWidth()
@@ -1546,7 +1546,7 @@ fun DialogHelpShare(onDismiss: (Boolean) -> Unit) {
                 .padding(10.dp),
             shape = RoundedCornerShape(10.dp),
         ) {
-            Column {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
                 Text(
                     text = stringResource(R.string.share).uppercase(), modifier = Modifier
                         .fillMaxWidth()

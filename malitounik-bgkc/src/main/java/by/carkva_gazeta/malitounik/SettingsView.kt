@@ -997,6 +997,7 @@ fun DialogClearChash(
     Dialog(onDismissRequest = { onDismiss() }) {
         Card(
             modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
                 .fillMaxWidth()
                 .padding(10.dp),
             shape = RoundedCornerShape(10.dp),
@@ -1053,7 +1054,7 @@ fun DialogLogin(
                 .padding(10.dp),
             shape = RoundedCornerShape(10.dp),
         ) {
-            Column {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
                 Text(
                     text = stringResource(R.string.admin_panel).uppercase(), modifier = Modifier
                         .fillMaxWidth()
@@ -1139,7 +1140,7 @@ fun DialogNotification(
                 .padding(10.dp),
             shape = RoundedCornerShape(10.dp),
         ) {
-            Column {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
                 Text(
                     text = stringResource(R.string.notifi).uppercase(), modifier = Modifier
                         .fillMaxWidth()

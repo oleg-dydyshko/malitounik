@@ -326,6 +326,7 @@ fun DialogKniga(
         ) {
             Column(
                 modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,

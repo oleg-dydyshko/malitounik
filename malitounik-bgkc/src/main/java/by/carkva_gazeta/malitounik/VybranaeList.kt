@@ -382,7 +382,7 @@ fun DialogDelite(
                 .padding(10.dp),
             shape = RoundedCornerShape(10.dp),
         ) {
-            Column {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
                 Text(
                     text = stringResource(R.string.remove).uppercase(), modifier = Modifier
                         .fillMaxWidth()

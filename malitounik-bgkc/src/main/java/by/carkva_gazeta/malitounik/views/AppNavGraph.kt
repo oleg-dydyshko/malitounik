@@ -2020,7 +2020,7 @@ fun DialogLogProgramy(
                 .padding(10.dp),
             shape = RoundedCornerShape(10.dp),
         ) {
-            Column {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
                 Text(
                     text = stringResource(R.string.log).uppercase(), modifier = Modifier
                         .fillMaxWidth()
@@ -2082,7 +2082,7 @@ fun DialogUpdateNoWiFI(
                 .padding(10.dp),
             shape = RoundedCornerShape(10.dp),
         ) {
-            Column {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
                 Text(
                     text = stringResource(R.string.update_title2), modifier = Modifier
                         .fillMaxWidth()

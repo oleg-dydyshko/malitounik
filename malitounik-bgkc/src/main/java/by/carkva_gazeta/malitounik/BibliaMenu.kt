@@ -731,7 +731,7 @@ fun DialogSemuxa(
                 .padding(10.dp),
             shape = RoundedCornerShape(10.dp),
         ) {
-            Column {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
                 Text(
                     text = stringResource(R.string.alesyaSemukha).uppercase(), modifier = Modifier
                         .fillMaxWidth()
@@ -777,7 +777,7 @@ fun DialogPeryaidy(
                 .padding(10.dp),
             shape = RoundedCornerShape(10.dp),
         ) {
-            Column {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
                 Text(
                     text = stringResource(R.string.peryiady).uppercase(), modifier = Modifier
                         .fillMaxWidth()
@@ -829,6 +829,7 @@ fun DialogImage(
         ) {
             Column(
                 modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
                     .verticalScroll(rememberScrollState())
             ) {
                 Image(

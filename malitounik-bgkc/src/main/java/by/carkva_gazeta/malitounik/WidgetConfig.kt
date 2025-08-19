@@ -82,7 +82,7 @@ fun DialogWidgetConfig(
                 .padding(10.dp),
             shape = RoundedCornerShape(10.dp),
         ) {
-            Column {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
                 Text(
                     text = stringResource(R.string.vygliad2).uppercase(), modifier = Modifier
                         .fillMaxWidth()

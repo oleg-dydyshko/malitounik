@@ -611,7 +611,7 @@ fun DialogBiblijateka(
                 .padding(10.dp),
             shape = RoundedCornerShape(10.dp),
         ) {
-            Column {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
                 Text(
                     text = stringResource(R.string.download_file).uppercase(), modifier = Modifier
                         .fillMaxWidth()
@@ -667,7 +667,7 @@ fun DialogNoWiFI(
                 .padding(10.dp),
             shape = RoundedCornerShape(10.dp),
         ) {
-            Column {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
                 Text(
                     text = stringResource(R.string.wifi_error).uppercase(), modifier = Modifier
                         .fillMaxWidth()

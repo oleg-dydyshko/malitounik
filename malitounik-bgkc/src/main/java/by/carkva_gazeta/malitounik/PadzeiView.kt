@@ -1105,7 +1105,7 @@ fun MyTimePickerDialog(
                 .padding(10.dp),
             shape = RoundedCornerShape(10.dp),
         ) {
-            Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = stringResource(R.string.set_time), modifier = Modifier
                         .fillMaxWidth()
@@ -1672,7 +1672,7 @@ fun DialogSabytieShow(
                 .padding(10.dp),
             shape = RoundedCornerShape(10.dp),
         ) {
-            Column {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
                 Text(
                     text = title, modifier = Modifier
                         .fillMaxWidth()
@@ -1722,7 +1722,7 @@ fun DialogDelitePadsei(
                 .padding(10.dp),
             shape = RoundedCornerShape(10.dp),
         ) {
-            Column {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
                 Text(
                     text = stringResource(R.string.del_sabytie).uppercase(), modifier = Modifier
                         .fillMaxWidth()
@@ -1773,7 +1773,8 @@ fun DialogContextMenu(
             shape = RoundedCornerShape(10.dp),
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {

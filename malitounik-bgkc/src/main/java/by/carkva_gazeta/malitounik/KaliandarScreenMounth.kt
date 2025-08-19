@@ -401,7 +401,7 @@ fun DialogSetDataCaliandar(
                 .padding(10.dp),
             shape = RoundedCornerShape(10.dp),
         ) {
-            Column {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
                 Text(
                     text = if (isMun) stringResource(R.string.vybor_mun) else stringResource(R.string.vybor_year), modifier = Modifier
                         .fillMaxWidth()

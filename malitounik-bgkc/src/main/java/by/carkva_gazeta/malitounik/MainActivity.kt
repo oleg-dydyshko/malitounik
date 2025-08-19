@@ -1028,7 +1028,7 @@ fun DialogSztoHovaha(
                 .padding(10.dp),
             shape = RoundedCornerShape(10.dp),
         ) {
-            Column {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
                 Text(
                     text = stringResource(R.string.chto_novaga_title).uppercase(), modifier = Modifier
                         .fillMaxWidth()
