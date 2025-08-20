@@ -1,7 +1,7 @@
 [versions]
 media3Exoplayer = "1.8.0"
 media = "1.7.1"
-agp = "8.12.0"
+agp = "8.12.1"
 kotlin = "2.2.10"
 services = "4.4.3"
 coreKtx = "1.17.0"
@@ -27,7 +27,7 @@ navigation = "2.9.3"
 compose-bom = "2025.08.00"
 activity-compose = "1.10.1"
 firebase-bom = "34.1.0"
-viewbinding = "8.12.0"
+viewbinding = "8.12.1"
 glanceAppwidget = "1.1.1"
 
 [libraries]

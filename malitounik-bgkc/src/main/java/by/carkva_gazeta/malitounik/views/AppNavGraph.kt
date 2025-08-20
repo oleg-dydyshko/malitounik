@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.view.WindowManager
 
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
@@ -964,6 +965,9 @@ fun MainConteiner(
     if (logView) {
         DialogLogProgramy {
             logView = false
+            if (!k.getBoolean("power", false)) {
+                context.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            }
         }
     }
     if (removeAllVybranaeDialog || removeAllNatatkiDialog) {
@@ -2003,6 +2007,7 @@ fun DialogLogProgramy(
     onDismiss: () -> Unit
 ) {
     val context = LocalActivity.current as MainActivity
+    context.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     var item by remember { mutableStateOf("") }
     val logView = LogView(context)
     logView.setLogViewListinner(object : LogView.LogViewListinner {
