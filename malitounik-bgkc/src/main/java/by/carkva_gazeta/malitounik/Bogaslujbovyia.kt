@@ -304,7 +304,7 @@ fun Bogaslujbovyia(
         LaunchedEffect(Unit) {
             isUpList = false
             coroutineScope.launch {
-                scrollState.scrollTo(0)
+                scrollState.animateScrollTo(0)
             }
         }
     }
@@ -1274,7 +1274,7 @@ fun Bogaslujbovyia(
                                 textLayoutResult = { layout ->
                                     if (!searchText) {
                                         coroutineScope.launch {
-                                            scrollState.scrollTo(AppNavGraphState.getScrollValuePosition(title))
+                                            scrollState.animateScrollTo(AppNavGraphState.getScrollValuePosition(title))
                                         }
                                     }
                                     textLayout.value = layout

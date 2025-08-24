@@ -270,7 +270,7 @@ fun BibliaMenu(
                             .padding(10.dp)
                             .clickable {
                                 navigateToCytanniList(
-                                    searchList[index].subTitle + " " + searchList[index].glava.toString(),
+                                    searchList[index].title + " " + searchList[index].glava.toString(),
                                     searchList[index].styx - 1,
                                     perevod
                                 )

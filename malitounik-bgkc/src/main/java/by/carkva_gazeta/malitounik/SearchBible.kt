@@ -2,6 +2,7 @@ package by.carkva_gazeta.malitounik
 
 import android.app.Activity
 import android.content.Context
+import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -95,8 +96,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.Collator
 import java.util.Calendar
 import java.util.GregorianCalendar
+import java.util.Locale
 
 var searchJob: Job? = null
 val searchList = SnapshotStateList<SearchBibleItem>()
@@ -313,10 +316,10 @@ fun SearchBible(
                                 .clickable {
                                     if (isBogaslujbovyiaSearch) {
                                         AppNavGraphState.searchBogaslujbovyia = searshString
-                                        navigateToBogaslujbovyia(searchList[index].subTitle, searchList[index].resource)
+                                        navigateToBogaslujbovyia(searchList[index].title, searchList[index].resource)
                                     } else {
                                         navigateToCytanniList(
-                                            searchList[index].subTitle + " " + searchList[index].glava.toString(), searchList[index].styx - 1, perevod
+                                            searchList[index].title + " " + searchList[index].glava.toString(), searchList[index].styx - 1, perevod
                                         )
                                     }
                                 }, text = searchList[index].text.toAnnotatedString(), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
@@ -421,6 +424,7 @@ fun doInBackground(
     return list
 }
 
+@Suppress("DEPRECATION")
 fun bogashlugbovya(context: Context, poshuk: String, secondRun: Boolean = false): ArrayList<SearchBibleItem> {
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var poshuk1 = poshuk
@@ -470,6 +474,11 @@ fun bogashlugbovya(context: Context, poshuk: String, secondRun: Boolean = false)
         val span = AnnotatedString.Builder()
         span.append(nazva)
         seashpost.add(SearchBibleItem(nazva, 0, 0, bogaslugbovyiaListAll[i].resource, span))
+    }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+        seashpost.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+    } else {
+        seashpost.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
     }
     return seashpost
 }
@@ -1301,5 +1310,5 @@ data class Prazdniki(val dayOfYear: Int, val opisanie: String, val opisanieData:
 data class FindString(val str: String, val position: Int)
 
 data class SearchBibleItem(
-    val subTitle: String, val glava: Int, val styx: Int, val resource: String, val text: AnnotatedString.Builder
+    val title: String, val glava: Int, val styx: Int, val resource: String, val text: AnnotatedString.Builder
 )

@@ -508,7 +508,7 @@ fun CytanniList(
         LaunchedEffect(Unit) {
             isUpList = false
             coroutineScope.launch {
-                listState[selectedIndex].scrollToItem(0)
+                listState[selectedIndex].animateScrollToItem(0)
             }
         }
     }
