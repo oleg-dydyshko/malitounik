@@ -47,7 +47,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -69,10 +68,12 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -82,6 +83,7 @@ import androidx.core.content.edit
 import androidx.core.text.HtmlCompat
 import androidx.core.text.isDigitsOnly
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik.ui.theme.Divider
@@ -116,22 +118,29 @@ fun SearchBible(
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     var textFieldLoaded by remember { mutableStateOf(false) }
-    var searshString by rememberSaveable { mutableStateOf(AppNavGraphState.searchBogaslujbovyia) }
-    LaunchedEffect(searchSettings, searshString) {
+    var searshString by remember { mutableStateOf(TextFieldValue(AppNavGraphState.searchBogaslujbovyia, TextRange(AppNavGraphState.searchBogaslujbovyia.length))) }
+    LifecycleResumeEffect(Unit) {
+        onPauseOrDispose {
+            AppNavGraphState.searchBogaslujbovyia = searshString.text
+        }
+    }
+    LaunchedEffect(searchSettings, searshString.text) {
         if (searchSettings) {
             searchList.clear()
             searchSettings = false
         }
-        if (searshString.trim().length >= 3 && searchList.isEmpty()) {
-            searchJob?.cancel()
-            searchJob = CoroutineScope(Dispatchers.Main).launch {
-                isProgressVisable = true
-                searchList.clear()
-                val list = withContext(Dispatchers.IO) {
-                    return@withContext doInBackground(context, searshString.trim(), perevod, isBogaslujbovyiaSearch)
+        if (searshString.text.trim().length >= 3) {
+            if (searshString.text != AppNavGraphState.searchBogaslujbovyia) {
+                searchJob?.cancel()
+                searchJob = CoroutineScope(Dispatchers.Main).launch {
+                    isProgressVisable = true
+                    searchList.clear()
+                    val list = withContext(Dispatchers.IO) {
+                        return@withContext doInBackground(context, searshString.text.trim(), perevod, isBogaslujbovyiaSearch)
+                    }
+                    searchList.addAll(list)
+                    isProgressVisable = false
                 }
-                searchList.addAll(list)
-                isProgressVisable = false
             }
         } else {
             searchJob?.cancel()
@@ -182,8 +191,7 @@ fun SearchBible(
                                     textFieldLoaded = true
                                 }
                             }, value = searshString, onValueChange = { newText ->
-                            searchList.clear()
-                            var edit = newText
+                            var edit = newText.text
                             if (perevod == Settings.PEREVODSINOIDAL) {
                                 edit = edit.replace("і", "и")
                                 edit = edit.replace("ў", "щ")
@@ -197,21 +205,20 @@ fun SearchBible(
                                 edit = edit.replace("Щ", "Ў")
                                 edit = edit.replace("ъ", "'")
                             }
-                            searshString = edit
+                            searshString = TextFieldValue(edit, newText.selection)
                         }, singleLine = true, leadingIcon = {
                             Icon(
                                 painter = painterResource(R.drawable.search), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
                             )
                         }, trailingIcon = {
-                            if (searshString.isNotEmpty()) {
-                                IconButton(
-                                    onClick = {
-                                        searshString = ""
-                                    }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                    )
-                                }
+                            IconButton(
+                                onClick = {
+                                    searshString = TextFieldValue("")
+                                    searchList.clear()
+                                }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                )
                             }
                         }, colors = TextFieldDefaults.colors(
                             focusedContainerColor = MaterialTheme.colorScheme.onTertiary, unfocusedContainerColor = MaterialTheme.colorScheme.onTertiary, focusedTextColor = PrimaryTextBlack, focusedIndicatorColor = PrimaryTextBlack, unfocusedTextColor = PrimaryTextBlack, unfocusedIndicatorColor = PrimaryTextBlack, cursorColor = PrimaryTextBlack
@@ -315,7 +322,7 @@ fun SearchBible(
                                 .padding(10.dp)
                                 .clickable {
                                     if (isBogaslujbovyiaSearch) {
-                                        AppNavGraphState.searchBogaslujbovyia = searshString
+                                        AppNavGraphState.searchBogaslujbovyia = searshString.text
                                         navigateToBogaslujbovyia(searchList[index].title, searchList[index].resource)
                                     } else {
                                         navigateToCytanniList(

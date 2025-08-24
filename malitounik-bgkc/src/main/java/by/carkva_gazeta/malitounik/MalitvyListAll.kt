@@ -275,12 +275,10 @@ fun MalitvyListAll(
                                     painter = painterResource(R.drawable.search), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
                                 )
                             }, trailingIcon = {
-                                if (textFieldValueState.isNotEmpty()) {
-                                    IconButton(onClick = { textFieldValueState = "" }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                        )
-                                    }
+                                IconButton(onClick = { textFieldValueState = "" }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    )
                                 }
                             }, colors = TextFieldDefaults.colors(
                                 focusedContainerColor = MaterialTheme.colorScheme.onTertiary, unfocusedContainerColor = MaterialTheme.colorScheme.onTertiary, focusedTextColor = PrimaryTextBlack, focusedIndicatorColor = PrimaryTextBlack, unfocusedIndicatorColor = PrimaryTextBlack, cursorColor = PrimaryTextBlack, unfocusedTextColor = PrimaryTextBlack

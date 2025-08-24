@@ -1067,14 +1067,12 @@ fun DialogLogin(
                     TextField(modifier = Modifier.fillMaxWidth(), value = login, onValueChange = { newText ->
                         login = newText
                     }, singleLine = true, textStyle = TextStyle(fontSize = (Settings.fontInterface - 2).sp), trailingIcon = {
-                        if (login.isNotEmpty()) {
-                            IconButton(onClick = {
-                                login = ""
-                            }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
-                                )
-                            }
+                        IconButton(onClick = {
+                            login = ""
+                        }) {
+                            Icon(
+                                painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
+                            )
                         }
                     })
                     TextField(

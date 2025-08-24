@@ -189,16 +189,13 @@ fun MaeNatatki(
             Row(
                 modifier = Modifier
                     .padding(start = 10.dp)
-                    .combinedClickable(
-                        onClick = {
-                            natatkaPosition = index
-                            isNatatkaVisable = true
-                        },
-                        onLongClick = {
-                            natatkaPosition = index
-                            dialogContextMenu = true
-                        }
-                    ),
+                    .combinedClickable(onClick = {
+                        natatkaPosition = index
+                        isNatatkaVisable = true
+                    }, onLongClick = {
+                        natatkaPosition = index
+                        dialogContextMenu = true
+                    }),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
@@ -234,13 +231,14 @@ fun DialogMyNatatki(
 ) {
     var editMode by rememberSaveable { mutableStateOf(isEditMode) }
     var editTitle by rememberSaveable { mutableStateOf(title) }
+    var editContent by rememberSaveable { mutableStateOf(content) }
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
     var textFieldValueState by remember {
         mutableStateOf(
             TextFieldValue(
-                text = content,
-                selection = TextRange(content.length)
+                text = editContent,
+                selection = TextRange(editContent.length)
             )
         )
     }
@@ -304,6 +302,7 @@ fun DialogMyNatatki(
                             value = textFieldValueState,
                             onValueChange = {
                                 textFieldValueState = it
+                                editContent = it.text
                             },
                             textStyle = TextStyle(fontSize = Settings.fontInterface.sp)
                         )

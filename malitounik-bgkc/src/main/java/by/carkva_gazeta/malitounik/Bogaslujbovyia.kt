@@ -103,11 +103,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
@@ -171,7 +173,7 @@ fun Bogaslujbovyia(
     var searchText by rememberSaveable { mutableStateOf(AppNavGraphState.searchBogaslujbovyia.isNotEmpty()) }
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
-    var searshString by rememberSaveable { mutableStateOf( AppNavGraphState.searchBogaslujbovyia) }
+    var searshString by remember { mutableStateOf(TextFieldValue(AppNavGraphState.searchBogaslujbovyia, TextRange(AppNavGraphState.searchBogaslujbovyia.length))) }
     var adminResourceEditPosition by remember { mutableIntStateOf(0) }
     val scrollState = rememberScrollState()
     val scrollStateDop = rememberScrollState()
@@ -234,6 +236,7 @@ fun Bogaslujbovyia(
         if (autoScrollSensor) autoScroll = true
         onPauseOrDispose {
             autoScroll = false
+            AppNavGraphState.searchBogaslujbovyia = searshString.text
         }
     }
     LaunchedEffect(autoScroll) {
@@ -345,38 +348,38 @@ fun Bogaslujbovyia(
     val result = remember { mutableStateListOf<ArrayList<Int>>() }
     var resultPosition by remember { mutableIntStateOf(0) }
     val textLayout = remember { mutableStateOf<TextLayoutResult?>(null) }
-    LaunchedEffect(searshString) {
-        if (searshString.trim().length >= 3) {
-            if (searchJob?.isActive == true) {
+    LaunchedEffect(searshString.text) {
+        if (searshString.text.trim().length >= 3) {
+            if (searshString.text != AppNavGraphState.searchBogaslujbovyia) {
                 searchJob?.cancel()
-            }
-            textLayout.value?.let { layout ->
-                searchJob = CoroutineScope(Dispatchers.Main).launch {
-                    result.clear()
-                    resultPosition = 0
-                    result.addAll(findAllAsanc(AnnotatedString.fromHtml(htmlText).text, searshString))
-                    textLayout.value?.let { layout ->
-                        if (result.isNotEmpty()) {
-                            val opiginalText = layout.layoutInput.text
-                            val annotatedString = buildAnnotatedString {
-                                append(opiginalText)
-                                for (i in result.indices) {
-                                    val size = result[i].size - 1
-                                    addStyle(SpanStyle(background = BezPosta, color = PrimaryText), result[i][0], result[i][size])
+                textLayout.value?.let { layout ->
+                    searchJob = CoroutineScope(Dispatchers.Main).launch {
+                        result.clear()
+                        resultPosition = 0
+                        result.addAll(findAllAsanc(AnnotatedString.fromHtml(htmlText).text, searshString.text))
+                        textLayout.value?.let { layout ->
+                            if (result.isNotEmpty()) {
+                                val opiginalText = layout.layoutInput.text
+                                val annotatedString = buildAnnotatedString {
+                                    append(opiginalText)
+                                    for (i in result.indices) {
+                                        val size = result[i].size - 1
+                                        addStyle(SpanStyle(background = BezPosta, color = PrimaryText), result[i][0], result[i][size])
+                                    }
                                 }
-                            }
-                            searchTextResult = annotatedString
-                            val t1 = result[0][0]
-                            if (t1 != -1) {
-                                val line = layout.getLineForOffset(t1)
-                                val y = layout.getLineTop(line)
-                                coroutineScope.launch {
-                                    scrollState.animateScrollTo(y.toInt())
-                                    AppNavGraphState.setScrollValuePosition(title, scrollState.value)
+                                searchTextResult = annotatedString
+                                val t1 = result[0][0]
+                                if (t1 != -1) {
+                                    val line = layout.getLineForOffset(t1)
+                                    val y = layout.getLineTop(line)
+                                    coroutineScope.launch {
+                                        scrollState.animateScrollTo(y.toInt())
+                                        AppNavGraphState.setScrollValuePosition(title, scrollState.value)
+                                    }
                                 }
+                            } else {
+                                searchTextResult = AnnotatedString("")
                             }
-                        } else {
-                            searchTextResult = AnnotatedString("")
                         }
                     }
                 }
@@ -678,14 +681,14 @@ fun Bogaslujbovyia(
                                         },
                                     value = searshString,
                                     onValueChange = { newText ->
-                                        var edit = newText
+                                        var edit = newText.text
                                         edit = edit.replace("и", "і")
                                         edit = edit.replace("щ", "ў")
                                         edit = edit.replace("И", "І")
                                         edit = edit.replace("Щ", "Ў")
                                         edit = edit.replace("ъ", "'")
                                         searchTextResult = AnnotatedString("")
-                                        searshString = edit
+                                        searshString = TextFieldValue(edit, newText.selection)
                                     },
                                     singleLine = true,
                                     leadingIcon = {
@@ -696,16 +699,15 @@ fun Bogaslujbovyia(
                                         )
                                     },
                                     trailingIcon = {
-                                        if (searshString.isNotEmpty()) {
-                                            IconButton(onClick = {
-                                                searshString = ""
-                                            }) {
-                                                Icon(
-                                                    painter = painterResource(R.drawable.close),
-                                                    contentDescription = "",
-                                                    tint = MaterialTheme.colorScheme.onSecondary
-                                                )
-                                            }
+                                        IconButton(onClick = {
+                                            searshString = TextFieldValue("")
+                                            searchList.clear()
+                                        }) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.close),
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.onSecondary
+                                            )
                                         }
                                     },
                                     colors = TextFieldDefaults.colors(
@@ -734,7 +736,7 @@ fun Bogaslujbovyia(
                                             iskniga = false
                                         } else {
                                             searchText = false
-                                            searshString = ""
+                                            searshString = TextFieldValue("")
                                             searchTextResult = AnnotatedString("")
                                         }
                                         if (autoScrollSensor) autoScroll = true

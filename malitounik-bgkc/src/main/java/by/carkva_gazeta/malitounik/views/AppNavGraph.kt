@@ -98,12 +98,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -954,7 +956,7 @@ fun MainConteiner(
             k.getInt("natatki_sort", Settings.SORT_BY_ABC)
         )
     }
-    var addFileNatatki by remember { mutableStateOf(false) }
+    var addFileNatatki by rememberSaveable { mutableStateOf(false) }
     var removeAllVybranaeDialog by remember { mutableStateOf(false) }
     var removeAllNatatkiDialog by remember { mutableStateOf(false) }
     var removeAllVybranae by remember { mutableStateOf(false) }
@@ -1016,6 +1018,7 @@ fun MainConteiner(
     val color = MaterialTheme.colorScheme.onTertiary
     var colorBlackboard by remember { mutableStateOf(color) }
     var dialogKniga by remember { mutableStateOf(false) }
+    var searshString by remember { mutableStateOf(TextFieldValue(Settings.textFieldValueState.value, TextRange(Settings.textFieldValueState.value.length))) }
     ModalNavigationDrawer(
         drawerContent = {
             DrawView(
@@ -1173,27 +1176,27 @@ fun MainConteiner(
                                         focusRequester.requestFocus()
                                         textFieldLoaded = true
                                     }
-                                }, value = Settings.textFieldValueState.value, onValueChange = { newText ->
-                                var edit = newText
+                                }, value = searshString, onValueChange = { newText ->
+                                var edit = newText.text
                                 edit = edit.replace("и", "і")
                                 edit = edit.replace("щ", "ў")
                                 edit = edit.replace("И", "І")
                                 edit = edit.replace("Щ", "Ў")
                                 edit = edit.replace("ъ", "'")
+                                searshString = TextFieldValue(edit, newText.selection)
                                 Settings.textFieldValueState.value = edit
                             }, singleLine = true, leadingIcon = {
                                 Icon(
                                     painter = painterResource(R.drawable.search), tint = textTollBarColor, contentDescription = ""
                                 )
                             }, trailingIcon = {
-                                if (Settings.textFieldValueState.value.isNotEmpty()) {
-                                    IconButton(onClick = {
-                                        Settings.textFieldValueState.value = ""
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.close), contentDescription = "", tint = textTollBarColor
-                                        )
-                                    }
+                                IconButton(onClick = {
+                                    Settings.textFieldValueState.value = ""
+                                    searshString = TextFieldValue("")
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.close), contentDescription = "", tint = textTollBarColor
+                                    )
                                 }
                             }, colors = TextFieldDefaults.colors(
                                 focusedContainerColor = tollBarColor, unfocusedContainerColor = tollBarColor, focusedTextColor = textTollBarColor, unfocusedTextColor = textTollBarColor, focusedIndicatorColor = textTollBarColor, unfocusedIndicatorColor = textTollBarColor, cursorColor = textTollBarColor
