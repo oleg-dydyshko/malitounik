@@ -1311,6 +1311,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
             AppNavGraphState.scrollValueList.clear()
             AppNavGraphState.itemsValue.clear()
             AppNavGraphState.setAlarm = true
+            AppNavGraphState.appUpdate = true
             finish()
         } else {
             backPressed = System.currentTimeMillis()

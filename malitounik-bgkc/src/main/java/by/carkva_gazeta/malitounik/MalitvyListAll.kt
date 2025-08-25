@@ -277,7 +277,7 @@ fun MalitvyListAll(
                             }, trailingIcon = {
                                 IconButton(onClick = { textFieldValueState = "" }) {
                                     Icon(
-                                        painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                        painter = if (textFieldValueState.isNotEmpty()) painterResource(R.drawable.close) else painterResource(R.drawable.empty), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
                             }, colors = TextFieldDefaults.colors(

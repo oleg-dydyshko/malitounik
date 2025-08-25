@@ -704,7 +704,7 @@ fun Bogaslujbovyia(
                                             searchList.clear()
                                         }) {
                                             Icon(
-                                                painter = painterResource(R.drawable.close),
+                                                painter = if (searshString.text.isNotEmpty()) painterResource(R.drawable.close) else painterResource(R.drawable.empty),
                                                 contentDescription = "",
                                                 tint = MaterialTheme.colorScheme.onSecondary
                                             )

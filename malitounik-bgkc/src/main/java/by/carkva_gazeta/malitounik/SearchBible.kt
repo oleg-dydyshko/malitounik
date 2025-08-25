@@ -217,7 +217,7 @@ fun SearchBible(
                                     searchList.clear()
                                 }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    painter = if (searshString.text.isNotEmpty()) painterResource(R.drawable.close) else painterResource(R.drawable.empty), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
                         }, colors = TextFieldDefaults.colors(

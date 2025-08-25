@@ -204,6 +204,7 @@ object AppNavGraphState {
     var autoDzenNochTime = System.currentTimeMillis()
     var searchSettings by mutableStateOf(false)
     var searchBogaslujbovyia by mutableStateOf("")
+    var appUpdate by mutableStateOf(true)
 
     fun setItemsValue(title: String, isInit: Boolean = false): Boolean {
         var result = true
@@ -789,6 +790,9 @@ fun CheckUpdateMalitounik(
                     appUpdateManager.startUpdateFlowForResult(appUpdateInfo, launcher, AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build())
                 }
             }
+            appUpdateInfoTask.addOnFailureListener {
+                onDismiss()
+            }
             noWIFI = false
         }) {
             onDismiss()
@@ -808,6 +812,9 @@ fun CheckUpdateMalitounik(
                         appUpdateManager.startUpdateFlowForResult(appUpdateInfo, launcher, AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build())
                     }
                 }
+            }
+            appUpdateInfoTask.addOnFailureListener {
+                onDismiss()
             }
         }
     }
@@ -831,22 +838,19 @@ fun MainConteiner(
     var isInstallApp by remember { mutableStateOf(k.getBoolean("isInstallApp", false)) }
     var isProgressVisable by remember { mutableStateOf(false) }
     var progressApp by remember { mutableFloatStateOf(0f) }
-    var appUpdate by remember { mutableStateOf(false) }
-    if (appUpdate) {
+    if (AppNavGraphState.appUpdate) {
         CheckUpdateMalitounik(onDownloadComplet = {
             isInstallApp = true
             k.edit {
                 putBoolean("isInstallApp", true)
             }
+            AppNavGraphState.appUpdate = false
         }, updateDownloadProgress = { isVisable, progress ->
             isProgressVisable = isVisable
             progressApp = progress
         }) {
-            appUpdate = false
+            AppNavGraphState.appUpdate = false
         }
-    }
-    LaunchedEffect(Unit) {
-        appUpdate = true
     }
     if (Settings.data.isEmpty() || Settings.caliandarPosition == -1) {
         findCaliandarPosition(context)
@@ -1195,7 +1199,7 @@ fun MainConteiner(
                                     searshString = TextFieldValue("")
                                 }) {
                                     Icon(
-                                        painter = painterResource(R.drawable.close), contentDescription = "", tint = textTollBarColor
+                                        painter = if (Settings.textFieldValueState.value.isNotEmpty()) painterResource(R.drawable.close) else painterResource(R.drawable.empty), contentDescription = "", tint = textTollBarColor
                                     )
                                 }
                             }, colors = TextFieldDefaults.colors(
