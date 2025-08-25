@@ -316,7 +316,7 @@ fun KaliandarScreen(
             )
             if (data[9].isNotEmpty()) {
                 val title = stringResource(
-                    R.string.czytanne3, data[1].toInt(), stringArrayResource(R.array.meciac_smoll)[2]
+                    R.string.czytanne3, data[1].toInt(), stringArrayResource(R.array.meciac_smoll)[data[2].toInt()]
                 )
                 Text(
                     modifier = Modifier
@@ -327,7 +327,7 @@ fun KaliandarScreen(
             }
             if (data[10].isNotEmpty()) {
                 val title = stringResource(
-                    R.string.czytanne3, data[1].toInt(), stringArrayResource(R.array.meciac_smoll)[2]
+                    R.string.czytanne3, data[1].toInt(), stringArrayResource(R.array.meciac_smoll)[data[2].toInt()]
                 )
                 Text(
                     modifier = Modifier
@@ -338,7 +338,7 @@ fun KaliandarScreen(
             }
             if (data[11].isNotEmpty()) {
                 val title = stringResource(
-                    R.string.czytanne3, data[1].toInt(), stringArrayResource(R.array.meciac_smoll)[2]
+                    R.string.czytanne3, data[1].toInt(), stringArrayResource(R.array.meciac_smoll)[data[2].toInt()]
                 )
                 Text(
                     modifier = Modifier
@@ -368,7 +368,7 @@ fun KaliandarScreen(
                     modifier = Modifier.padding(start = 10.dp, bottom = 10.dp), text = stringResource(id = R.string.maranata), fontStyle = FontStyle.Italic, color = colorText, fontSize = Settings.fontInterface.sp, maxLines = 1, overflow = TextOverflow.Ellipsis
                 )
                 val title = stringResource(
-                    R.string.maranata2, data[1].toInt(), stringArrayResource(R.array.meciac_smoll)[2]
+                    R.string.maranata2, data[1].toInt(), stringArrayResource(R.array.meciac_smoll)[data[2].toInt()]
                 )
                 Text(
                     modifier = Modifier
