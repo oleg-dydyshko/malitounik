@@ -790,9 +790,6 @@ fun CheckUpdateMalitounik(
                     appUpdateManager.startUpdateFlowForResult(appUpdateInfo, launcher, AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build())
                 }
             }
-            appUpdateInfoTask.addOnFailureListener {
-                onDismiss()
-            }
             noWIFI = false
         }) {
             onDismiss()
@@ -811,6 +808,9 @@ fun CheckUpdateMalitounik(
                         appUpdateManager.registerListener(installStateUpdatedListener)
                         appUpdateManager.startUpdateFlowForResult(appUpdateInfo, launcher, AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build())
                     }
+                }
+                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_NOT_AVAILABLE) {
+                    onDismiss()
                 }
             }
             appUpdateInfoTask.addOnFailureListener {
