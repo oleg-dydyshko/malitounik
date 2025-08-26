@@ -350,36 +350,34 @@ fun Bogaslujbovyia(
     val textLayout = remember { mutableStateOf<TextLayoutResult?>(null) }
     LaunchedEffect(searshString.text) {
         if (searshString.text.trim().length >= 3) {
-            if (searshString.text != AppNavGraphState.searchBogaslujbovyia) {
-                searchJob?.cancel()
-                textLayout.value?.let { layout ->
-                    searchJob = CoroutineScope(Dispatchers.Main).launch {
-                        result.clear()
-                        resultPosition = 0
-                        result.addAll(findAllAsanc(AnnotatedString.fromHtml(htmlText).text, searshString.text))
-                        textLayout.value?.let { layout ->
-                            if (result.isNotEmpty()) {
-                                val opiginalText = layout.layoutInput.text
-                                val annotatedString = buildAnnotatedString {
-                                    append(opiginalText)
-                                    for (i in result.indices) {
-                                        val size = result[i].size - 1
-                                        addStyle(SpanStyle(background = BezPosta, color = PrimaryText), result[i][0], result[i][size])
-                                    }
+            searchJob?.cancel()
+            textLayout.value?.let { layout ->
+                searchJob = CoroutineScope(Dispatchers.Main).launch {
+                    result.clear()
+                    resultPosition = 0
+                    result.addAll(findAllAsanc(AnnotatedString.fromHtml(htmlText).text, searshString.text))
+                    textLayout.value?.let { layout ->
+                        if (result.isNotEmpty()) {
+                            val opiginalText = layout.layoutInput.text
+                            val annotatedString = buildAnnotatedString {
+                                append(opiginalText)
+                                for (i in result.indices) {
+                                    val size = result[i].size - 1
+                                    addStyle(SpanStyle(background = BezPosta, color = PrimaryText), result[i][0], result[i][size])
                                 }
-                                searchTextResult = annotatedString
-                                val t1 = result[0][0]
-                                if (t1 != -1) {
-                                    val line = layout.getLineForOffset(t1)
-                                    val y = layout.getLineTop(line)
-                                    coroutineScope.launch {
-                                        scrollState.animateScrollTo(y.toInt())
-                                        AppNavGraphState.setScrollValuePosition(title, scrollState.value)
-                                    }
-                                }
-                            } else {
-                                searchTextResult = AnnotatedString("")
                             }
+                            searchTextResult = annotatedString
+                            val t1 = result[0][0]
+                            if (t1 != -1) {
+                                val line = layout.getLineForOffset(t1)
+                                val y = layout.getLineTop(line)
+                                coroutineScope.launch {
+                                    scrollState.animateScrollTo(y.toInt())
+                                    AppNavGraphState.setScrollValuePosition(title, scrollState.value)
+                                }
+                            }
+                        } else {
+                            searchTextResult = AnnotatedString("")
                         }
                     }
                 }

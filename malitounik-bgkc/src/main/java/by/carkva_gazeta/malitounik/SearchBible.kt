@@ -447,23 +447,7 @@ fun bogashlugbovya(context: Context, poshuk: String, secondRun: Boolean = false)
             }
         }
     }
-    val bogaslugbovyiaListAll = ArrayList<BogaslujbovyiaListData>()
-    bogaslugbovyiaListAll.addAll(getBogaslujbovyia())
-    bogaslugbovyiaListAll.addAll(getMalitvy())
-    bogaslugbovyiaListAll.addAll(getAkafist())
-    bogaslugbovyiaListAll.addAll(getRujanec())
-    bogaslugbovyiaListAll.addAll(getAktoix())
-    bogaslugbovyiaListAll.addAll(getViachernia())
-    bogaslugbovyiaListAll.addAll(getTraparyKandakiShtodzennyia())
-    bogaslugbovyiaListAll.addAll(getTraparyKandakiNiadzelnyia())
-    bogaslugbovyiaListAll.addAll(getMalitvyPasliaPrychascia())
-    bogaslugbovyiaListAll.addAll(getTrebnik())
-    bogaslugbovyiaListAll.addAll(getMineiaAgulnaia())
-    val slugbovyiaTextu = SlugbovyiaTextu()
-    val listPast = slugbovyiaTextu.getAllSlugbovyiaTextu()
-    listPast.forEach { slugbovyiaTextuData ->
-        bogaslugbovyiaListAll.add(BogaslujbovyiaListData(slugbovyiaTextuData.title + ". " + slugbovyiaTextu.getNazouSluzby(slugbovyiaTextuData.sluzba), slugbovyiaTextuData.resource))
-    }
+    val bogaslugbovyiaListAll = getAllBogaslujbovyia()
     for (i in 0 until bogaslugbovyiaListAll.size) {
         if (searchJob?.isActive == false) break
         var nazva = context.getString(R.string.error_ch)

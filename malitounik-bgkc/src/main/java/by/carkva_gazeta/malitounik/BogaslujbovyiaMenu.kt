@@ -55,6 +55,29 @@ class FilterBogaslujbovyiaListModel {
     }
 }
 
+fun getAllBogaslujbovyia(): ArrayList<BogaslujbovyiaListData> {
+    val listAll = ArrayList<BogaslujbovyiaListData>()
+    listAll.addAll(getBogaslujbovyia())
+    listAll.addAll(getMalitvy())
+    listAll.addAll(getAkafist())
+    listAll.addAll(getLiturgikon())
+    listAll.addAll(getChasaslou())
+    listAll.addAll(getRujanec())
+    listAll.addAll(getAktoix())
+    listAll.addAll(getViachernia())
+    listAll.addAll(getTraparyKandakiShtodzennyia())
+    listAll.addAll(getTraparyKandakiNiadzelnyia())
+    listAll.addAll(getMalitvyPasliaPrychascia())
+    listAll.addAll(getTrebnik())
+    listAll.addAll(getMineiaAgulnaia())
+    val slugbovyiaTextu = SlugbovyiaTextu()
+    val listPast = slugbovyiaTextu.getAllSlugbovyiaTextu()
+    listPast.forEach { slugbovyiaTextuData ->
+        listAll.add(BogaslujbovyiaListData(slugbovyiaTextuData.title + ". " + slugbovyiaTextu.getNazouSluzby(slugbovyiaTextuData.sluzba), slugbovyiaTextuData.resource))
+    }
+    return listAll
+}
+
 @Composable
 fun BogaslujbovyiaMenu(
     navController: NavHostController, innerPadding: PaddingValues, menuItem: Int, searchText: Boolean
@@ -78,25 +101,7 @@ fun BogaslujbovyiaMenu(
     val folderList = stringArrayResource(R.array.bogaslugbovyia_folder_list)
     val viewModel = FilterBogaslujbovyiaListModel()
     if (searchText) {
-        val listAll = ArrayList<BogaslujbovyiaListData>()
-        listAll.addAll(getBogaslujbovyia())
-        listAll.addAll(getMalitvy())
-        listAll.addAll(getAkafist())
-        listAll.addAll(getLiturgikon())
-        listAll.addAll(getChasaslou())
-        listAll.addAll(getRujanec())
-        listAll.addAll(getAktoix())
-        listAll.addAll(getViachernia())
-        listAll.addAll(getTraparyKandakiShtodzennyia())
-        listAll.addAll(getTraparyKandakiNiadzelnyia())
-        listAll.addAll(getMalitvyPasliaPrychascia())
-        listAll.addAll(getTrebnik())
-        listAll.addAll(getMineiaAgulnaia())
-        val slugbovyiaTextu = SlugbovyiaTextu()
-        val listPast = slugbovyiaTextu.getAllSlugbovyiaTextu()
-        listPast.forEach { slugbovyiaTextuData ->
-            listAll.add(BogaslujbovyiaListData(slugbovyiaTextuData.title + ". " + slugbovyiaTextu.getNazouSluzby(slugbovyiaTextuData.sluzba), slugbovyiaTextuData.resource))
-        }
+        val listAll = getAllBogaslujbovyia()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
             listAll.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
         } else {
