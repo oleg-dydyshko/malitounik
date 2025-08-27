@@ -121,7 +121,7 @@ fun SearchBible(
     var searshString by remember { mutableStateOf(TextFieldValue(AppNavGraphState.searchBogaslujbovyia, TextRange(AppNavGraphState.searchBogaslujbovyia.length))) }
     LifecycleResumeEffect(Unit) {
         onPauseOrDispose {
-            AppNavGraphState.searchBogaslujbovyia = searshString.text
+            if (searchList.isNotEmpty()) AppNavGraphState.searchBogaslujbovyia = searshString.text
         }
     }
     LaunchedEffect(searchSettings, searshString.text) {
