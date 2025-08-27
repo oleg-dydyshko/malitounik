@@ -167,6 +167,7 @@ import by.carkva_gazeta.malitounik.ui.theme.PrimaryBlack
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.StrogiPost
+import by.carkva_gazeta.malitounik.zamena
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.InstallStateUpdatedListener
@@ -1182,12 +1183,11 @@ fun MainConteiner(
                                     }
                                 }, value = searshString, onValueChange = { newText ->
                                 var edit = newText.text
-                                edit = edit.replace("и", "і")
-                                edit = edit.replace("щ", "ў")
-                                edit = edit.replace("И", "І")
-                                edit = edit.replace("Щ", "Ў")
-                                edit = edit.replace("ъ", "'")
-                                searshString = TextFieldValue(edit, newText.selection)
+                                var selection = newText.selection
+                                val oldEdit = edit
+                                edit = zamena(edit)
+                                if (oldEdit != edit) selection = TextRange(edit.length)
+                                searshString = TextFieldValue(edit, selection)
                                 Settings.textFieldValueState.value = edit
                             }, singleLine = true, leadingIcon = {
                                 Icon(

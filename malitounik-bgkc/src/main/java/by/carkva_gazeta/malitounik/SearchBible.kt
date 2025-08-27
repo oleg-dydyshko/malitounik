@@ -191,6 +191,7 @@ fun SearchBible(
                                     textFieldLoaded = true
                                 }
                             }, value = searshString, onValueChange = { newText ->
+                            var selection = newText.selection
                             var edit = newText.text
                             if (perevod == Settings.PEREVODSINOIDAL) {
                                 edit = edit.replace("і", "и")
@@ -199,13 +200,11 @@ fun SearchBible(
                                 edit = edit.replace("Ў", "Щ")
                                 edit = edit.replace("'", "ъ")
                             } else {
-                                edit = edit.replace("и", "і")
-                                edit = edit.replace("щ", "ў")
-                                edit = edit.replace("И", "І")
-                                edit = edit.replace("Щ", "Ў")
-                                edit = edit.replace("ъ", "'")
+                                val oldEdit = edit
+                                edit = zamena(edit, k.getBoolean("pegistrbukv", true))
+                                if (oldEdit != edit) selection = TextRange(edit.length)
                             }
-                            searshString = TextFieldValue(edit, newText.selection)
+                            searshString = TextFieldValue(edit, selection)
                         }, singleLine = true, leadingIcon = {
                             Icon(
                                 painter = painterResource(R.drawable.search), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
