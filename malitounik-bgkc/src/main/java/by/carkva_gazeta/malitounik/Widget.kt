@@ -80,29 +80,36 @@ class CaliandarWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
             GlanceTheme {
-                Caliandar()
+                Caliandar(context)
             }
         }
     }
 }
 
 @Composable
-private fun Caliandar() {
+private fun Caliandar(context: Context) {
     val prefs = currentState<Preferences>()
     val position = prefs[intPreferencesKey("position_widget_day")] ?: findCaliandarToDay(LocalContext.current, false)[25].toInt()
     val dzenNoch = prefs[booleanPreferencesKey("dzenNoch")] == true
     val data = Settings.data[position]
-    val context = LocalContext.current
     val month = data[2].toInt()
     val monthName = context.resources.getStringArray(R.array.meciac)
     val dayofmounth = data[1]
     val nedel = data[0].toInt()
     val nedelName = context.resources.getStringArray(R.array.dni_nedeli)
     val colorBackground = when {
+        data[5].toInt() == 1 || data[5].toInt() == 2 -> Primary
         data[7].toInt() == 2 -> Post
         data[7].toInt() == 1 -> BezPosta
         data[7].toInt() == 3 -> StrogiPost
-        data[5].toInt() > 0 -> Primary
+        data[5].toInt() == 3 -> Primary
+        else -> Divider
+    }
+    val colorBackgroundButtom = when {
+        data[7].toInt() == 2 -> Post
+        data[7].toInt() == 1 -> BezPosta
+        data[7].toInt() == 3 -> StrogiPost
+        data[5].toInt() == 3 -> Primary
         else -> Divider
     }
     val colorText = if (data[7].toInt() == 3 || data[5].toInt() > 0) PrimaryTextBlack
@@ -234,7 +241,7 @@ private fun Caliandar() {
                         else -> context.resources.getString(R.string.Post)
                     }
                     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalAlignment = Alignment.Bottom) {
-                        Row(modifier = GlanceModifier.fillMaxWidth().background(colorBackground), horizontalAlignment = Alignment.CenterHorizontally, verticalAlignment = Alignment.CenterVertically) {
+                        Row(modifier = GlanceModifier.fillMaxWidth().background(colorBackgroundButtom), horizontalAlignment = Alignment.CenterHorizontally, verticalAlignment = Alignment.CenterVertically) {
                             if (data[7].toInt() != 1) {
                                 Image(provider = ImageProvider(if (data[7].toInt() == 3) R.drawable.fishe_red_black else R.drawable.fishe), contentDescription = "", modifier = GlanceModifier.size(26.dp, 13.dp))
                             }
