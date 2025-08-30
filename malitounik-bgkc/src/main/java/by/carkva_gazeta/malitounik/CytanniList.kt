@@ -1420,7 +1420,7 @@ fun CytanniList(
                     Row(
                         modifier = Modifier
                             .align(Alignment.End)
-                            .padding(bottom = 10.dp, end = 10.dp)
+                            .padding(bottom = if (isBottomBar) 0.dp else 10.dp, end = 10.dp)
                     ) {
                         Box(
                             modifier = Modifier
