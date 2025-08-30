@@ -965,6 +965,7 @@ fun CytanniList(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .padding(top = 10.dp)
                             .background(colorTollBar)
                             .navigationBarsPadding(), horizontalArrangement = Arrangement.SpaceAround
                     ) {
@@ -975,7 +976,7 @@ fun CytanniList(
                                 menuPosition = 1
                             }) {
                             Icon(
-                                painter = painterResource(R.drawable.format_size), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                modifier = Modifier.size(36.dp), painter = painterResource(R.drawable.format_size), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                             )
                         }
                         IconButton(
@@ -1365,7 +1366,7 @@ fun CytanniList(
                             }
                         }
                         item {
-                            Spacer(Modifier.padding(bottom = if (fullscreen) 10.dp else innerPadding.calculateBottomPadding() + 10.dp))
+                            Spacer(Modifier.padding(bottom = if (fullscreen) 10.dp else innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp)))
                             if (listState[page].lastScrolledForward && !listState[page].canScrollForward) {
                                 autoScroll = false
                                 autoScrollSensor = false

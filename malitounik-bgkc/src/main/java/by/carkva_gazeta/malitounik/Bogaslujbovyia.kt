@@ -1037,6 +1037,7 @@ fun Bogaslujbovyia(
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
+                                        .padding(top = 10.dp)
                                         .background(MaterialTheme.colorScheme.onTertiary)
                                         .navigationBarsPadding(),
                                     horizontalArrangement = Arrangement.SpaceAround
@@ -1196,7 +1197,7 @@ fun Bogaslujbovyia(
                     if (autoScrollSensor) {
                         HtmlText(
                             modifier = Modifier
-                                .padding(top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(10.dp))
+                                .padding(top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp))
                                 .pointerInput(Unit) {
                                     awaitEachGesture {
                                         awaitFirstDown()
@@ -1232,7 +1233,7 @@ fun Bogaslujbovyia(
                         SelectionContainer {
                             HtmlText(
                                 modifier = Modifier
-                                    .padding(top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(10.dp))
+                                    .padding(top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp))
                                     .pointerInput(Unit) {
                                         awaitEachGesture {
                                             awaitFirstDown()
