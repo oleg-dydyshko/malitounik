@@ -25,7 +25,6 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
-import androidx.glance.LocalContext
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionParametersOf
 import androidx.glance.action.actionStartActivity
@@ -79,6 +78,21 @@ class CaliandarWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
+            if (Settings.data.isEmpty()) {
+                val gson = Gson()
+                val type = TypeToken.getParameterized(
+                    ArrayList::class.java, TypeToken.getParameterized(
+                        ArrayList::class.java, String::class.java
+                    ).type
+                ).type
+                val inputStream = context.resources.openRawResource(R.raw.caliandar)
+                val isr = InputStreamReader(inputStream)
+                val reader = BufferedReader(isr)
+                val builder = reader.use {
+                    it.readText()
+                }
+                Settings.data.addAll(gson.fromJson(builder, type))
+            }
             GlanceTheme {
                 Caliandar(context)
             }
@@ -89,7 +103,7 @@ class CaliandarWidget : GlanceAppWidget() {
 @Composable
 private fun Caliandar(context: Context) {
     val prefs = currentState<Preferences>()
-    val position = prefs[intPreferencesKey("position_widget_day")] ?: findCaliandarToDay(LocalContext.current, false)[25].toInt()
+    val position = prefs[intPreferencesKey("position_widget_day")] ?: findCaliandarToDay(false)[25].toInt()
     val dzenNoch = prefs[booleanPreferencesKey("dzenNoch")] == true
     val data = Settings.data[position]
     val month = data[2].toInt()
@@ -236,9 +250,9 @@ private fun Caliandar(context: Context) {
                 }
                 if ((data[7].toInt() > 0 && nedel == Calendar.FRIDAY) || (data[7].toInt() == 3 && nedel != Calendar.SATURDAY && nedel != Calendar.SUNDAY)) {
                     val post = when (data[7].toInt()) {
-                        1 -> context.resources.getString(R.string.No_post_n)
-                        3 -> context.resources.getString(R.string.Strogi_post_n)
-                        else -> context.resources.getString(R.string.Post)
+                        1 -> context.getString(R.string.No_post_n)
+                        3 -> context.getString(R.string.Strogi_post_n)
+                        else -> context.getString(R.string.Post)
                     }
                     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalAlignment = Alignment.Bottom) {
                         Row(modifier = GlanceModifier.fillMaxWidth().background(colorBackgroundButtom), horizontalAlignment = Alignment.CenterHorizontally, verticalAlignment = Alignment.CenterVertically) {
@@ -268,7 +282,7 @@ class Widget : GlanceAppWidgetReceiver() {
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
         CoroutineScope(Dispatchers.Main).launch {
-            val position = getDataKaliandar(context)
+            val position = getDataKaliandar()
             val manager = GlanceAppWidgetManager(context)
             val widget = CaliandarWidget()
             val glanceIds = manager.getGlanceIds(widget.javaClass)
@@ -352,25 +366,8 @@ class Widget : GlanceAppWidgetReceiver() {
         return dzenNoch
     }
 
-    private fun getDataKaliandar(context: Context): Int {
+    private fun getDataKaliandar(): Int {
         val calendar = Calendar.getInstance()
-        val gson = Gson()
-        if (Settings.data.isEmpty()) {
-            val type = TypeToken.getParameterized(
-                ArrayList::class.java,
-                TypeToken.getParameterized(
-                    ArrayList::class.java,
-                    String::class.java
-                ).type
-            ).type
-            val inputStream = context.resources.openRawResource(R.raw.caliandar)
-            val isr = InputStreamReader(inputStream)
-            val reader = BufferedReader(isr)
-            val builder = reader.use {
-                it.readText()
-            }
-            Settings.data.addAll(gson.fromJson(builder, type))
-        }
         var kalPosition = 0
         for (i in Settings.data.indices) {
             if (calendar[Calendar.DATE] == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
@@ -384,7 +381,7 @@ class Widget : GlanceAppWidgetReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
         CoroutineScope(Dispatchers.Main).launch {
-            val position = getDataKaliandar(context)
+            val position = getDataKaliandar()
             val manager = GlanceAppWidgetManager(context)
             val widget = CaliandarWidget()
             val glanceIds = manager.getGlanceIds(widget.javaClass)

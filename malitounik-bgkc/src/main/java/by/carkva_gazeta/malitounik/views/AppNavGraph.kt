@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.view.WindowManager
-
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -174,8 +173,6 @@ import com.google.android.play.core.install.InstallStateUpdatedListener
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -629,7 +626,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
                         }
 
                         "cytanne", "cytannedop" -> {
-                            val data = findCaliandarToDay(context)
+                            val data = findCaliandarToDay()
                             val titleCh = context.getString(
                                 R.string.czytanne3, data[1].toInt(), resources.getStringArray(R.array.meciac_smoll)[2]
                             )
@@ -640,7 +637,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
                         }
 
                         "cytannesvityx" -> {
-                            val data = findCaliandarToDay(context)
+                            val data = findCaliandarToDay()
                             val titleCh = context.getString(
                                 R.string.czytanne3, data[1].toInt(), resources.getStringArray(R.array.meciac_smoll)[2]
                             )
@@ -694,22 +691,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
     }
 }
 
-fun findCaliandarToDay(context: Context, isGlobal: Boolean = true): ArrayList<String> {
-    if (Settings.data.isEmpty()) {
-        val gson = Gson()
-        val type = TypeToken.getParameterized(
-            ArrayList::class.java, TypeToken.getParameterized(
-                ArrayList::class.java, String::class.java
-            ).type
-        ).type
-        val inputStream = context.resources.openRawResource(R.raw.caliandar)
-        val isr = InputStreamReader(inputStream)
-        val reader = BufferedReader(isr)
-        val builder = reader.use {
-            it.readText()
-        }
-        Settings.data.addAll(gson.fromJson(builder, type))
-    }
+fun findCaliandarToDay(isGlobal: Boolean = true): ArrayList<String> {
     var caliandarPosition = Settings.caliandarPosition
     val calendar = Calendar.getInstance()
     for (i in Settings.data.indices) {
@@ -724,22 +706,7 @@ fun findCaliandarToDay(context: Context, isGlobal: Boolean = true): ArrayList<St
     return Settings.data[caliandarPosition]
 }
 
-fun findCaliandarPosition(context: Context) {
-    if (Settings.data.isEmpty()) {
-        val gson = Gson()
-        val type = TypeToken.getParameterized(
-            ArrayList::class.java, TypeToken.getParameterized(
-                ArrayList::class.java, String::class.java
-            ).type
-        ).type
-        val inputStream = context.resources.openRawResource(R.raw.caliandar)
-        val isr = InputStreamReader(inputStream)
-        val reader = BufferedReader(isr)
-        val builder = reader.use {
-            it.readText()
-        }
-        Settings.data.addAll(gson.fromJson(builder, type))
-    }
+fun findCaliandarPosition() {
     val calendar = Calendar.getInstance()
     for (i in Settings.data.indices) {
         if (calendar[Calendar.DATE] == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
@@ -854,7 +821,7 @@ fun MainConteiner(
         }
     }
     if (Settings.data.isEmpty() || Settings.caliandarPosition == -1) {
-        findCaliandarPosition(context)
+        findCaliandarPosition()
     }
     val lazyColumnState = rememberLazyListState()
     val lazyColumnStateSearchSvityia = rememberLazyListState()
@@ -1030,11 +997,10 @@ fun MainConteiner(
                 drawerScrollStete = drawerScrollStete,
                 route = currentRoute,
                 navigateToRazdel = { razdzel ->
-                    if (razdzel == AllDestinations.KALIANDAR || razdzel == AllDestinations.KALIANDAR_YEAR) {
-                        searchListSvityia.clear()
-                        Settings.textFieldValueState.value = ""
-                        Settings.textFieldValueLatest.value = ""
-                    }
+                    searchList.clear()
+                    searchListSvityia.clear()
+                    Settings.textFieldValueState.value = ""
+                    Settings.textFieldValueLatest.value = ""
                     when (razdzel) {
                         AllDestinations.KALIANDAR -> {
                             if (k.getBoolean("caliandarList", false)) navigationActions.navigateToKaliandarYear()
@@ -1044,37 +1010,22 @@ fun MainConteiner(
                         AllDestinations.BOGASLUJBOVYIA_MENU -> navigationActions.navigateToBogaslujbovyiaMenu()
                         AllDestinations.MALITVY_MENU -> navigationActions.navigateToMalitvyMenu()
                         AllDestinations.BIBLIA_SEMUXA -> {
-                            searchList.clear()
-                            Settings.textFieldValueState.value = ""
-                            Settings.textFieldValueLatest.value = ""
                             navigationActions.navigateToBibliaSemuxa()
                         }
 
                         AllDestinations.BIBLIA_BOKUNA -> {
-                            searchList.clear()
-                            Settings.textFieldValueState.value = ""
-                            Settings.textFieldValueLatest.value = ""
                             navigationActions.navigateToBibliaBokuna()
                         }
 
                         AllDestinations.BIBLIA_NADSAN -> {
-                            searchList.clear()
-                            Settings.textFieldValueState.value = ""
-                            Settings.textFieldValueLatest.value = ""
                             navigationActions.navigateToBibliaNadsan()
                         }
 
                         AllDestinations.BIBLIA_CHARNIAUSKI -> {
-                            searchList.clear()
-                            Settings.textFieldValueState.value = ""
-                            Settings.textFieldValueLatest.value = ""
                             navigationActions.navigateToBibliaCharniauski()
                         }
 
                         AllDestinations.BIBLIA_SINODAL -> {
-                            searchList.clear()
-                            Settings.textFieldValueState.value = ""
-                            Settings.textFieldValueLatest.value = ""
                             navigationActions.navigateToBibliaSinodal()
                         }
 
@@ -1540,7 +1491,7 @@ fun MainConteiner(
             ) {
                 when (Settings.destinations) {
                     AllDestinations.KALIANDAR -> {
-                        val dataToDay = findCaliandarToDay(context, false)
+                        val dataToDay = findCaliandarToDay(false)
                         val fling = PagerDefaults.flingBehavior(
                             state = pagerState, pagerSnapDistance = PagerSnapDistance.atMost(1)
                         )
@@ -1804,7 +1755,7 @@ fun MainConteiner(
                     AllDestinations.KALIANDAR_YEAR -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        val dataToDay = findCaliandarToDay(context, false)
+                        val dataToDay = findCaliandarToDay(false)
                         LaunchedEffect(lazyColumnState) {
                             snapshotFlow { lazyColumnState.firstVisibleItemIndex }.collect { index ->
                                 val data = Settings.data[index]

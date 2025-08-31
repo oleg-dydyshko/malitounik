@@ -80,6 +80,21 @@ class CaliandarWidgetMun : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
             GlanceTheme {
+                if (Settings.data.isEmpty()) {
+                    val gson = Gson()
+                    val type = TypeToken.getParameterized(
+                        ArrayList::class.java, TypeToken.getParameterized(
+                            ArrayList::class.java, String::class.java
+                        ).type
+                    ).type
+                    val inputStream = context.resources.openRawResource(R.raw.caliandar)
+                    val isr = InputStreamReader(inputStream)
+                    val reader = BufferedReader(isr)
+                    val builder = reader.use {
+                        it.readText()
+                    }
+                    Settings.data.addAll(gson.fromJson(builder, type))
+                }
                 CalendarMun(context)
             }
         }
@@ -102,11 +117,11 @@ class UpdateDataClickActionCallback : ActionCallback {
             var position = it[intPreferencesKey("position")] ?: Settings.caliandarPosition
             when (clickType) {
                 TYPE_PLUS -> {
-                    position = getDataKaliandar(context, 1, position)
+                    position = getDataKaliandar(1, position)
                 }
 
                 TYPE_MINUS -> {
-                    position = getDataKaliandar(context, -1, position)
+                    position = getDataKaliandar(-1, position)
                 }
             }
             it.toMutablePreferences().apply {
@@ -135,22 +150,7 @@ private fun getImageActionCallback(clickType: Int): Action {
     )
 }
 
-private fun findDefaultCaliandarMun(context: Context): Int {
-    if (Settings.data.isEmpty()) {
-        val gson = Gson()
-        val type = TypeToken.getParameterized(
-            ArrayList::class.java, TypeToken.getParameterized(
-                ArrayList::class.java, String::class.java
-            ).type
-        ).type
-        val inputStream = context.resources.openRawResource(R.raw.caliandar)
-        val isr = InputStreamReader(inputStream)
-        val reader = BufferedReader(isr)
-        val builder = reader.use {
-            it.readText()
-        }
-        Settings.data.addAll(gson.fromJson(builder, type))
-    }
+private fun findDefaultCaliandarMun(): Int {
     var caliandarPosition = Settings.caliandarPosition
     val calendar = Calendar.getInstance()
     for (i in Settings.data.indices) {
@@ -162,24 +162,7 @@ private fun findDefaultCaliandarMun(context: Context): Int {
     return caliandarPosition
 }
 
-private fun getDataKaliandar(context: Context, date: Int, position: Int): Int {
-    if (Settings.data.isEmpty()) {
-        val gson = Gson()
-        val type = TypeToken.getParameterized(
-            ArrayList::class.java,
-            TypeToken.getParameterized(
-                ArrayList::class.java,
-                String::class.java
-            ).type
-        ).type
-        val inputStream = context.resources.openRawResource(R.raw.caliandar)
-        val isr = InputStreamReader(inputStream)
-        val reader = BufferedReader(isr)
-        val builder = reader.use {
-            it.readText()
-        }
-        Settings.data.addAll(gson.fromJson(builder, type))
-    }
+private fun getDataKaliandar(date: Int, position: Int): Int {
     val oldData = Settings.data[position]
     var newPosition = position
     val calendar = if (date == 0) Calendar.getInstance() as GregorianCalendar
@@ -197,7 +180,7 @@ private fun getDataKaliandar(context: Context, date: Int, position: Int): Int {
 @Composable
 fun CalendarMun(context: Context) {
     val prefs = currentState<Preferences>()
-    val position = prefs[intPreferencesKey("position")] ?: findDefaultCaliandarMun(context)
+    val position = prefs[intPreferencesKey("position")] ?: findDefaultCaliandarMun()
     val dzenNoch = prefs[booleanPreferencesKey("dzenNoch")] == true
     val data = Settings.data
     val mun = data[position][2].toInt()
@@ -405,7 +388,7 @@ class WidgetMun : GlanceAppWidgetReceiver() {
             glanceIds.forEach { glanceId ->
                 updateAppWidgetState(context, glanceId) {
                     it[booleanPreferencesKey("dzenNoch")] = getBaseDzenNoch(context)
-                    it[intPreferencesKey("position")] = getDataKaliandar(context, 0, Settings.caliandarPosition)
+                    it[intPreferencesKey("position")] = getDataKaliandar(0, Settings.caliandarPosition)
                 }
                 widget.update(context, glanceId)
             }
@@ -491,12 +474,12 @@ class WidgetMun : GlanceAppWidgetReceiver() {
             glanceIds.forEach { glanceId ->
                 updateAppWidgetState(context, glanceId) {
                     it[booleanPreferencesKey("dzenNoch")] = getBaseDzenNoch(context)
-                    it[intPreferencesKey("position")] = getDataKaliandar(context, 0, it[intPreferencesKey("position")] ?: findDefaultCaliandarMun(context))
+                    it[intPreferencesKey("position")] = getDataKaliandar(0, it[intPreferencesKey("position")] ?: findDefaultCaliandarMun())
                     if (intent.action == munPlus) {
-                        it[intPreferencesKey("position")] = getDataKaliandar(context, 1, it[intPreferencesKey("position")] ?: findDefaultCaliandarMun(context))
+                        it[intPreferencesKey("position")] = getDataKaliandar(1, it[intPreferencesKey("position")] ?: findDefaultCaliandarMun())
                     }
                     if (intent.action == munMinus) {
-                        it[intPreferencesKey("position")] = getDataKaliandar(context, -1, it[intPreferencesKey("position")] ?: findDefaultCaliandarMun(context))
+                        it[intPreferencesKey("position")] = getDataKaliandar(-1, it[intPreferencesKey("position")] ?: findDefaultCaliandarMun())
                     }
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
                         AppWidgetManager.getInstance(context).setWidgetPreview(

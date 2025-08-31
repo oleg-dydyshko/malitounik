@@ -1166,9 +1166,11 @@ fun CytanniList(
                     }
                 }
                 if (biblia == Settings.CHYTANNI_LITURGICHNYIA && skipUtran && utranEndPosition > 0) {
-                    LaunchedEffect(utranEndPosition) {
+                    var pos = AppNavGraphState.getScrollValuePosition(title)
+                    if (pos == 0) pos = utranEndPosition
+                    LaunchedEffect(pos) {
                         coroutineScope.launch {
-                            listState[selectedIndex].scrollToItem(utranEndPosition)
+                            listState[selectedIndex].scrollToItem(pos)
                             positionRemember = -1
                             skipUtran = false
                         }
@@ -1420,7 +1422,7 @@ fun CytanniList(
                     Row(
                         modifier = Modifier
                             .align(Alignment.End)
-                            .padding(bottom = if (isBottomBar) 0.dp else 10.dp, end = 10.dp)
+                            .padding(bottom = if (!isBottomBar || fullscreen) 10.dp else 0.dp, end = 10.dp)
                     ) {
                         Box(
                             modifier = Modifier

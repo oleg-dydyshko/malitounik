@@ -452,10 +452,10 @@ fun Bogaslujbovyia(
     val isViachernia = resursEncode == "bogashlugbovya/viaczernia_niadzelnaja.html" || resursEncode == "bogashlugbovya/viaczernia_na_kozny_dzen.html" || resursEncode == "bogashlugbovya/viaczernia_u_vialikim_poscie.html" || resursEncode == "bogashlugbovya/viaczerniaja_sluzba_sztodzionnaja_biez_sviatara.html" || resursEncode == "bogashlugbovya/viaczernia_svietly_tydzien.html"
     val isUtran = resursEncode == "bogashlugbovya/jutran_niadzelnaja.html"
     val isLiturgia = resursEncode == "bogashlugbovya/lit_jana_zalatavusnaha.html" || resursEncode == "bogashlugbovya/lit_jan_zalat_vielikodn.html" || resursEncode == "bogashlugbovya/lit_vasila_vialikaha.html" || resursEncode == "bogashlugbovya/abiednica.html" || resursEncode == "bogashlugbovya/vialikdzien_liturhija.html"
-    val dataCal = findCaliandarToDay(context)
+    val dataCal = findCaliandarToDay()
     val isNoLiturgia = dataCal[22].toInt() == -53 || dataCal[22].toInt() == -51 || (dataCal[22].toInt() in -48..-2 && !(dataCal[0].toInt() == Calendar.SATURDAY || dataCal[0].toInt() == Calendar.SUNDAY))
     val cytanneVisable = (isLiturgia && !isNoLiturgia) || (isViachernia && isNoLiturgia) || isUtran
-    val data = findCaliandarToDay(context)
+    val data = findCaliandarToDay()
     val listResource = ArrayList<SlugbovyiaTextuData>()
     when {
         isLiturgia -> {
@@ -1337,7 +1337,7 @@ fun Bogaslujbovyia(
                         Row(
                             modifier = Modifier
                                 .align(Alignment.End)
-                                .padding(bottom = if (isBottomBar) 0.dp else 10.dp, end = 10.dp)
+                                .padding(bottom = if (!isBottomBar || fullscreen) 10.dp else 0.dp, end = 10.dp)
                         ) {
                             Box(
                                 modifier = Modifier
