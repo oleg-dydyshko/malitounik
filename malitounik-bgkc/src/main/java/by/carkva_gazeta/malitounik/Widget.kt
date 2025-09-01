@@ -91,7 +91,9 @@ class CaliandarWidget : GlanceAppWidget() {
                 val builder = reader.use {
                     it.readText()
                 }
-                Settings.data.addAll(gson.fromJson(builder, type))
+                if (Settings.data.isEmpty()) {
+                    Settings.data.addAll(gson.fromJson(builder, type))
+                }
             }
             GlanceTheme {
                 Caliandar(context)
