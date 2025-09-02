@@ -1992,7 +1992,7 @@ fun DialogLogProgramy(
                 )
                 Column(
                     modifier = Modifier
-                        .weight(1f)
+                        .weight(1f, false)
                         .padding(10.dp)
                         .verticalScroll(rememberScrollState())
                 ) {

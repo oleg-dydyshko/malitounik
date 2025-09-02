@@ -1513,7 +1513,7 @@ fun DialogLiturgia(
                 Column(
                     modifier = Modifier
                         .padding(10.dp)
-                        .weight(1f)
+                        .weight(1f, false)
                         .verticalScroll(rememberScrollState())
                 ) {
                     HtmlText(text = item, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
