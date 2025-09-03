@@ -41,7 +41,7 @@ class LogView(val context: MainActivity) {
         logJob?.cancel()
         logJob = CoroutineScope(Dispatchers.Main).launch {
             val localFile = File("${context.filesDir}/cache/cache.txt")
-            MainActivity.referens.child("/admin/log.txt").getFile(localFile).await()
+            Malitounik.referens.child("/admin/log.txt").getFile(localFile).await()
             var log = ""
             if (localFile.exists()) log = localFile.readText()
             if (log.isNotEmpty()) {
@@ -62,7 +62,7 @@ class LogView(val context: MainActivity) {
     private suspend fun getLogFile(count: Int = 0): ArrayList<String> {
         val localFile = File("${context.filesDir}/cache/log.txt")
         var error = false
-        MainActivity.referens.child("/admin/adminListFile.txt").getFile(localFile).addOnFailureListener {
+        Malitounik.referens.child("/admin/adminListFile.txt").getFile(localFile).addOnFailureListener {
             error = true
         }.await()
         if (error && count < 3) {
@@ -70,15 +70,15 @@ class LogView(val context: MainActivity) {
             return log
         }
         oldCheckSB = localFile.readText()
-        val list = MainActivity.referens.child("/admin").list(1000).await()
+        val list = Malitounik.referens.child("/admin").list(1000).await()
         runPrefixes(list, oldCheckSB)
-        val list2 = MainActivity.referens.child("/chytanne/Semucha").list(1000).await()
+        val list2 = Malitounik.referens.child("/chytanne/Semucha").list(1000).await()
         runItems(list2, oldCheckSB)
-        var pathReference = MainActivity.referens.child("/calendarsviatyia.txt")
+        var pathReference = Malitounik.referens.child("/calendarsviatyia.txt")
         addItems(pathReference.path, pathReference.name, oldCheckSB)
         for (year in Settings.GET_CALIANDAR_YEAR_MIN..Settings.GET_CALIANDAR_YEAR_MAX) {
             try {
-                pathReference = MainActivity.referens.child("/calendar-cytanne_$year.php")
+                pathReference = Malitounik.referens.child("/calendar-cytanne_$year.php")
                 addItems(pathReference.path, pathReference.name, oldCheckSB)
             } catch (_: Throwable) {
             }
@@ -152,7 +152,7 @@ class LogView(val context: MainActivity) {
     }
 
     private suspend fun addItems(path: String, name: String, checkList: String, count: Int = 0) {
-        val pathReference = MainActivity.referens.child(path)
+        val pathReference = Malitounik.referens.child(path)
         var error = false
         val meta = pathReference.metadata.addOnFailureListener {
             error = true
@@ -199,7 +199,7 @@ class LogView(val context: MainActivity) {
                         if (t1 != -1) filePath = filePath.substring(0, t1)
                         var error = false
                         try {
-                            MainActivity.referens.child(filePath).getFile(localFile).addOnFailureListener {
+                            Malitounik.referens.child(filePath).getFile(localFile).addOnFailureListener {
                                 error = true
                             }.await()
                         } catch (_: Throwable) {
@@ -270,8 +270,8 @@ class LogView(val context: MainActivity) {
                 localFile.writer().use {
                     it.write(sb.toString())
                 }
-                MainActivity.referens.child("/admin/log.txt").putFile(Uri.fromFile(logFile)).await()
-                MainActivity.referens.child("/admin/adminListFile.txt").putFile(Uri.fromFile(localFile)).await()
+                Malitounik.referens.child("/admin/log.txt").putFile(Uri.fromFile(logFile)).await()
+                Malitounik.referens.child("/admin/adminListFile.txt").putFile(Uri.fromFile(localFile)).await()
             }
         }
     }

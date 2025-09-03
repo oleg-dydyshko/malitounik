@@ -34,6 +34,7 @@ import androidx.core.view.isVisible
 import androidx.transition.TransitionManager
 import by.carkva_gazeta.admin.databinding.AdminPasochnicaBinding
 import by.carkva_gazeta.malitounik.MainActivity
+import by.carkva_gazeta.malitounik.Malitounik
 import by.carkva_gazeta.malitounik.Settings
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.splitcompat.SplitCompat
@@ -515,7 +516,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
         logFile.writer().use {
             it.write(getString(by.carkva_gazeta.malitounik.R.string.check_update_resourse))
         }
-        MainActivity.referens.child("/admin/log.txt").putFile(Uri.fromFile(logFile)).addOnFailureListener {
+        Malitounik.referens.child("/admin/log.txt").putFile(Uri.fromFile(logFile)).addOnFailureListener {
             Toast.makeText(this@Pasochnica, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
             error = true
         }.await()
@@ -530,7 +531,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                 binding.progressBar2.visibility = View.VISIBLE
                 try {
                     if (!setDir) {
-                        MainActivity.referens.child("/$dir/" + fileName.replace("\n", " ")).downloadUrl.addOnCompleteListener {
+                        Malitounik.referens.child("/$dir/" + fileName.replace("\n", " ")).downloadUrl.addOnCompleteListener {
                             if (it.isSuccessful) {
                                 val dialogFileExists = DialogFileExists.getInstance(dir, oldFileName, fileName, true)
                                 dialogFileExists.show(supportFragmentManager, "dialogFileExists")
@@ -557,7 +558,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                 binding.progressBar2.visibility = View.VISIBLE
                 try {
                     val localFile = File("$filesDir/cache/cache.txt")
-                    MainActivity.referens.child("/admin/piasochnica/" + fileName.replace("\n", " ")).getFile(localFile).addOnFailureListener {
+                    Malitounik.referens.child("/admin/piasochnica/" + fileName.replace("\n", " ")).getFile(localFile).addOnFailureListener {
                         Toast.makeText(this@Pasochnica, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                     }.await()
                     val t3 = dirToFile.lastIndexOf("/")
@@ -579,8 +580,8 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                         newFile = "$newFile.html"
                     }
                     if (newFile[0].isDigit()) newFile = "mm_$newFile"
-                    MainActivity.referens.child("/$newDir$newFile").putFile(Uri.fromFile(localFile)).await()
-                    MainActivity.referens.child("/admin/piasochnica/" + fileName.replace("\n", " ")).delete().await()
+                    Malitounik.referens.child("/$newDir$newFile").putFile(Uri.fromFile(localFile)).await()
+                    Malitounik.referens.child("/admin/piasochnica/" + fileName.replace("\n", " ")).delete().await()
                     val t6 = newFile.lastIndexOf(".")
                     if (t6 != -1) {
                         this@Pasochnica.fileName = "(" + newFile.substring(0, t6) + ") " + newFile
@@ -607,7 +608,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                     }
                     val tv = if (title != "") HtmlCompat.fromHtml(title, HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
                     else fileName.replace("\n", " ")
-                    MainActivity.referens.child("/admin/piasochnica/$oldFile$tv").putFile(Uri.fromFile(localFile)).addOnCompleteListener {
+                    Malitounik.referens.child("/admin/piasochnica/$oldFile$tv").putFile(Uri.fromFile(localFile)).addOnCompleteListener {
                         if (it.isSuccessful) {
                             Snackbar.make(binding.scrollView, getString(by.carkva_gazeta.malitounik.R.string.save), Snackbar.LENGTH_LONG).apply {
                                 setActionTextColor(ContextCompat.getColor(this@Pasochnica, by.carkva_gazeta.malitounik.R.color.colorWhite))
@@ -656,7 +657,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                     intent.removeExtra("isSite")
                     try {
                         val localFile = File("$filesDir/cache/cache.txt")
-                        MainActivity.referens.child("/admin/piasochnica/$fileName").getFile(localFile).addOnFailureListener {
+                        Malitounik.referens.child("/admin/piasochnica/$fileName").getFile(localFile).addOnFailureListener {
                             Toast.makeText(this@Pasochnica, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                         }.await()
                         result = localFile.readText()
@@ -675,7 +676,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                         localFile.writer().use {
                             it.write(result)
                         }
-                        MainActivity.referens.child("/admin/piasochnica/" + fileName.replace("\n", " ")).putFile(Uri.fromFile(localFile)).addOnCompleteListener {
+                        Malitounik.referens.child("/admin/piasochnica/" + fileName.replace("\n", " ")).putFile(Uri.fromFile(localFile)).addOnCompleteListener {
                             if (it.isSuccessful) {
                                 PasochnicaList.getFindFileListAsSave()
                                 if (isSaveAs) {
@@ -763,7 +764,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                 var t2 = result[i].lastIndexOf(".")
                 if (t2 == -1) t2 = result[i].length
                 if (result[i].substring(t1 + 1, t2) == fileName) {
-                    MainActivity.referens.child("/" + result[i]).getFile(localFile).addOnCompleteListener {
+                    Malitounik.referens.child("/" + result[i]).getFile(localFile).addOnCompleteListener {
                         if (it.isSuccessful) text = localFile.readText()
                         else Toast.makeText(this@Pasochnica, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                     }.await()

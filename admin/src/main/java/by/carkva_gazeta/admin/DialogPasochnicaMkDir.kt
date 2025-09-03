@@ -13,7 +13,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import by.carkva_gazeta.admin.databinding.DialogEditviewDisplayBinding
-import by.carkva_gazeta.malitounik.MainActivity
+import by.carkva_gazeta.malitounik.Malitounik
 import by.carkva_gazeta.malitounik.Settings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -100,10 +100,10 @@ class DialogPasochnicaMkDir : DialogFragment() {
                     CoroutineScope(Dispatchers.Main).launch {
                         try {
                             val localFile = File("${fragmentActivity.filesDir}/cache/cache.txt")
-                            MainActivity.referens.child("/admin/piasochnica/$oldName").getFile(localFile).addOnFailureListener {
+                            Malitounik.referens.child("/admin/piasochnica/$oldName").getFile(localFile).addOnFailureListener {
                                 Toast.makeText(fragmentActivity, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                             }.await()
-                            MainActivity.referens.child("/$dir/$dirName/$newName").putFile(Uri.fromFile(localFile)).await()
+                            Malitounik.referens.child("/$dir/$dirName/$newName").putFile(Uri.fromFile(localFile)).await()
                         } catch (_: Throwable) {
                             activity?.let {
                                 Toast.makeText(it, getString(by.carkva_gazeta.malitounik.R.string.error_ch2), Toast.LENGTH_SHORT).show()

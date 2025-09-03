@@ -61,6 +61,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.edit
+import by.carkva_gazeta.malitounik.Malitounik.Companion.referens
 import by.carkva_gazeta.malitounik.Settings.isNetworkAvailable
 import by.carkva_gazeta.malitounik.ui.theme.MalitounikTheme
 import by.carkva_gazeta.malitounik.views.AllDestinations
@@ -68,11 +69,7 @@ import by.carkva_gazeta.malitounik.views.AppNavGraph
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.openAssetsResources
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
-import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.storage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
@@ -166,7 +163,7 @@ object Settings {
                     ArrayList::class.java, String::class.java
                 ).type
             ).type
-            val inputStream = MainActivity.applicationContext().resources.openRawResource(R.raw.caliandar)
+            val inputStream = Malitounik.applicationContext().resources.openRawResource(R.raw.caliandar)
             val isr = InputStreamReader(inputStream)
             val reader = BufferedReader(isr)
             val builder = reader.use {
@@ -1336,21 +1333,5 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         val mySensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         val lightSensor = mySensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)
         mySensorManager.unregisterListener(this, lightSensor)
-    }
-
-    init {
-        instance = this
-    }
-
-    companion object {
-        private var instance: MainActivity? = null
-        private val storage: FirebaseStorage
-            get() = Firebase.storage
-        val referens: StorageReference
-            get() = storage.reference
-
-        fun applicationContext(): Context {
-            return instance!!.applicationContext
-        }
     }
 }

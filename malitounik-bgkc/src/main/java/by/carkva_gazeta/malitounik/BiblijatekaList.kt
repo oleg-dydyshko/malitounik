@@ -509,7 +509,7 @@ private suspend fun downloadPdfFile(context: Context, url: String): Boolean {
     var error = false
     val dir = File("${context.filesDir}/cache")
     if (!dir.exists()) dir.mkdir()
-    val pathReference = MainActivity.referens.child("/data/bibliateka/$url")
+    val pathReference = Malitounik.referens.child("/data/bibliateka/$url")
     val localFile = File("${context.filesDir}/cache/$url")
     pathReference.getFile(localFile).addOnFailureListener {
         error = true
@@ -576,7 +576,7 @@ private suspend fun getBibliateka(
 
 private suspend fun getBibliatekaJson(context: Context): String {
     var text = ""
-    val pathReference = MainActivity.referens.child("/bibliateka.json")
+    val pathReference = Malitounik.referens.child("/bibliateka.json")
     val localFile = File("${context.filesDir}/bibliateka.json")
     if (!localFile.exists() && Settings.isNetworkAvailable(context)) {
         pathReference.getFile(localFile).addOnCompleteListener {
@@ -593,7 +593,7 @@ private suspend fun saveImagePdf(context: Context, image: String) {
     if (!dir.exists()) dir.mkdir()
     val imageFile = File("${context.filesDir}/bibliatekaImage/$image")
     if (!imageFile.exists() && Settings.isNetworkAvailable(context)) {
-        MainActivity.referens.child("/images/bibliateka/$image").getFile(imageFile).await()
+        Malitounik.referens.child("/images/bibliateka/$image").getFile(imageFile).await()
     }
 }
 

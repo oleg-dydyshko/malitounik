@@ -20,7 +20,7 @@ import androidx.core.view.isVisible
 import androidx.transition.TransitionManager
 import by.carkva_gazeta.admin.databinding.AdminPiarlinyBinding
 import by.carkva_gazeta.admin.databinding.SimpleListItem2Binding
-import by.carkva_gazeta.malitounik.MainActivity
+import by.carkva_gazeta.malitounik.Malitounik
 import by.carkva_gazeta.malitounik.Settings
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.gson.Gson
@@ -121,7 +121,7 @@ class Piarliny : BaseActivity(), View.OnClickListener, DialogDelite.DialogDelite
             binding.progressBar2.visibility = View.VISIBLE
             try {
                 val localFile = File("$filesDir/cache/cache.txt")
-                MainActivity.referens.child("/chytanne/piarliny.json").getFile(localFile).addOnCompleteListener { task ->
+                Malitounik.referens.child("/chytanne/piarliny.json").getFile(localFile).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val jsonFile = localFile.readText()
                         val gson = Gson()
@@ -365,7 +365,7 @@ class Piarliny : BaseActivity(), View.OnClickListener, DialogDelite.DialogDelite
                     localFile.writer().use {
                         it.write(piarliny)
                     }
-                    MainActivity.referens.child("/chytanne/piarliny.json").putFile(Uri.fromFile(localFile)).addOnCompleteListener {
+                    Malitounik.referens.child("/chytanne/piarliny.json").putFile(Uri.fromFile(localFile)).addOnCompleteListener {
                         if (it.isSuccessful) {
                             Toast.makeText(this@Piarliny, getString(by.carkva_gazeta.malitounik.R.string.save), Toast.LENGTH_SHORT).show()
                             binding.addPiarliny.text?.clear()

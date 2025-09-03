@@ -555,7 +555,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
 }
 
 suspend fun downloadOpisanieSviat(context: Context, count: Int = 0) {
-    val pathReference = MainActivity.referens.child("/sviaty.json")
+    val pathReference = Malitounik.referens.child("/sviaty.json")
     val file = File("${context.filesDir}/sviaty.json")
     var error = false
     pathReference.getFile(file).addOnCompleteListener {
@@ -574,7 +574,7 @@ suspend fun downloadOpisanieSviat(context: Context, count: Int = 0) {
 suspend fun downloadOpisanieSviatyia(context: Context, mun: Int, count: Int = 0) {
     val dir = File("${context.filesDir}/sviatyja/")
     if (!dir.exists()) dir.mkdir()
-    val pathReference = MainActivity.referens.child("/chytanne/sviatyja/opisanie$mun.json")
+    val pathReference = Malitounik.referens.child("/chytanne/sviatyja/opisanie$mun.json")
     val fileOpisanie = File("${context.filesDir}/sviatyja/opisanie$mun.json")
     var error = false
     pathReference.getFile(fileOpisanie).addOnCompleteListener {
@@ -585,7 +585,7 @@ suspend fun downloadOpisanieSviatyia(context: Context, mun: Int, count: Int = 0)
     var read = ""
     if (fileOpisanie.exists()) read = fileOpisanie.readText()
     if (read == "") error = true
-    val pathReference13 = MainActivity.referens.child("/chytanne/sviatyja/opisanie13.json")
+    val pathReference13 = Malitounik.referens.child("/chytanne/sviatyja/opisanie13.json")
     val fileOpisanie13 = File("${context.filesDir}/sviatyja/opisanie13.json")
     pathReference13.getFile(fileOpisanie13).addOnCompleteListener {
         if (!it.isSuccessful) {
@@ -769,7 +769,7 @@ suspend fun getIcons(
     var size = 0L
     val sb = StringBuilder()
     val fileIconMataData = File("${context.filesDir}/iconsMataData.txt")
-    val pathReferenceMataData = MainActivity.referens.child("/chytanne/iconsMataData.txt")
+    val pathReferenceMataData = Malitounik.referens.child("/chytanne/iconsMataData.txt")
     pathReferenceMataData.getFile(fileIconMataData).await()
     val list = fileIconMataData.readText().split("\n")
     for (i in 0 until sviatyiaList.size) {
@@ -796,7 +796,7 @@ suspend fun getIcons(
                     val fileNameT = name.substring(0, t3) + ".txt"
                     val file = File("${context.filesDir}/iconsApisanne/$fileNameT")
                     try {
-                        MainActivity.referens.child("/chytanne/iconsApisanne/$fileNameT").getFile(file).addOnFailureListener {
+                        Malitounik.referens.child("/chytanne/iconsApisanne/$fileNameT").getFile(file).addOnFailureListener {
                             if (file.exists()) file.delete()
                         }.await()
                     } catch (_: Throwable) {
@@ -833,7 +833,7 @@ suspend fun getIcons(
         for (i in 0 until dirList.size) {
             try {
                 val fileIcon = File("${context.filesDir}/icons/" + dirList[i].name)
-                val pathReference = MainActivity.referens.child("/chytanne/icons/" + dirList[i].name)
+                val pathReference = Malitounik.referens.child("/chytanne/icons/" + dirList[i].name)
                 pathReference.getFile(fileIcon).await()
             } catch (_: Throwable) {
             }
@@ -880,7 +880,7 @@ fun loadIconsOnImageView(context: Context, sviatyiaList: SnapshotStateList<Opisa
 }
 
 suspend fun getPiarliny(context: Context) {
-    val pathReference = MainActivity.referens.child("/chytanne/piarliny.json")
+    val pathReference = Malitounik.referens.child("/chytanne/piarliny.json")
     val localFile = File("${context.filesDir}/piarliny.json")
     pathReference.getFile(localFile).await()
 }

@@ -1592,7 +1592,7 @@ fun DialogRazdzel(
 fun getBible(
     cytanne: String, perevod: String, biblia: Int, isTitle: Boolean = false
 ): ArrayList<CytanniListData> {
-    val context = MainActivity.applicationContext()
+    val context = Malitounik.applicationContext()
     val result = ArrayList<CytanniListData>()
     var id = 0
     try {

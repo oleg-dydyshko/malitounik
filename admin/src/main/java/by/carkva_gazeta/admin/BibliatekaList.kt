@@ -31,7 +31,7 @@ import androidx.transition.TransitionManager
 import by.carkva_gazeta.admin.databinding.AdminBibliatekaListBinding
 import by.carkva_gazeta.admin.databinding.AdminSimpleListItemBibliotekaBinding
 import by.carkva_gazeta.admin.databinding.SimpleListItem1Binding
-import by.carkva_gazeta.malitounik.MainActivity
+import by.carkva_gazeta.malitounik.Malitounik
 import by.carkva_gazeta.malitounik.Settings
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.gson.Gson
@@ -185,7 +185,7 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
         val t1 = url.path?.lastIndexOf("/") ?: 0
         val fileName = url.path?.substring(t1 + 1) ?: ""
         var error = false
-        val pathReference = MainActivity.referens.child("/data/bibliateka/$fileName")
+        val pathReference = Malitounik.referens.child("/data/bibliateka/$fileName")
         val metaData = pathReference.metadata.addOnFailureListener {
             error = true
         }.await()
@@ -246,10 +246,10 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
                     saveBibliatekaJson()
                     val filePdf = File(binding.pdfTextView.text.toString())
                     if (filePdf.exists()) {
-                        if (binding.pdfTextView.text.toString() != "") MainActivity.referens.child("/data/bibliateka/$pdf").putFile(Uri.fromFile(filePdf)).await()
+                        if (binding.pdfTextView.text.toString() != "") Malitounik.referens.child("/data/bibliateka/$pdf").putFile(Uri.fromFile(filePdf)).await()
                     }
                     if (file.exists()) {
-                        MainActivity.referens.child("/images/bibliateka/" + file.name).putFile(Uri.fromFile(file)).await()
+                        Malitounik.referens.child("/images/bibliateka/" + file.name).putFile(Uri.fromFile(file)).await()
                     }
                 }
                 adapter.notifyDataSetChanged()
@@ -268,7 +268,7 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
         localFile.writer().use {
             it.write(gson.toJson(arrayList, type))
         }
-        MainActivity.referens.child("/bibliateka.json").putFile(Uri.fromFile(localFile)).await()
+        Malitounik.referens.child("/bibliateka.json").putFile(Uri.fromFile(localFile)).await()
     }
 
     override fun onDialogDeliteClick(position: Int, name: String) {
@@ -278,12 +278,12 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
 
     override fun fileDelite(position: Int, title: String, isSite: Boolean) {
         CoroutineScope(Dispatchers.Main).launch {
-            MainActivity.referens.child("/data/bibliateka/" + arrayList[position][2]).delete().await()
+            Malitounik.referens.child("/data/bibliateka/" + arrayList[position][2]).delete().await()
             val file = File(arrayList[position][5])
             if (file.exists()) {
                 file.delete()
             }
-            MainActivity.referens.child("/images/bibliateka/" + file.name).delete().await()
+            Malitounik.referens.child("/images/bibliateka/" + file.name).delete().await()
             arrayList.removeAt(position)
             adapter.notifyDataSetChanged()
             saveBibliatekaJson()
@@ -350,14 +350,14 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
     private suspend fun saveImagePdf(pdf: String, image: String) {
         val t1 = pdf.lastIndexOf(".")
         val imageTempFile = File("$filesDir/image_temp/" + pdf.substring(0, t1) + ".png")
-        MainActivity.referens.child("/images/bibliateka/$image").getFile(imageTempFile).addOnFailureListener {
+        Malitounik.referens.child("/images/bibliateka/$image").getFile(imageTempFile).addOnFailureListener {
             Toast.makeText(this, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
         }.await()
     }
 
     private suspend fun getBibliatekaJson(): String {
         var text = ""
-        val pathReference = MainActivity.referens.child("/bibliateka.json")
+        val pathReference = Malitounik.referens.child("/bibliateka.json")
         val localFile = File("$filesDir/cache/cache.txt")
         pathReference.getFile(localFile).addOnCompleteListener {
             if (it.isSuccessful) text = localFile.readText()

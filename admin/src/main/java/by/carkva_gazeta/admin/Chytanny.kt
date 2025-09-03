@@ -26,7 +26,7 @@ import androidx.core.view.forEachIndexed
 import androidx.transition.TransitionManager
 import by.carkva_gazeta.admin.databinding.AdminChytannyBinding
 import by.carkva_gazeta.admin.databinding.SimpleListItem1Binding
-import by.carkva_gazeta.malitounik.MainActivity
+import by.carkva_gazeta.malitounik.Malitounik
 import by.carkva_gazeta.malitounik.Settings
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.firebase.storage.StorageException
@@ -66,7 +66,7 @@ class Chytanny : BaseActivity() {
             val localFile = File("$filesDir/cache/cache.txt")
             var text = ""
             try {
-                MainActivity.referens.child("/calendar-cytanne_$year.php").getFile(localFile).addOnSuccessListener {
+                Malitounik.referens.child("/calendar-cytanne_$year.php").getFile(localFile).addOnSuccessListener {
                     text = localFile.readText()
                 }.await()
             } catch (_: StorageException) {
@@ -282,7 +282,7 @@ class Chytanny : BaseActivity() {
         logFile.writer().use {
             it.write(getString(by.carkva_gazeta.malitounik.R.string.check_update_resourse))
         }
-        MainActivity.referens.child("/admin/log.txt").putFile(Uri.fromFile(logFile)).addOnFailureListener {
+        Malitounik.referens.child("/admin/log.txt").putFile(Uri.fromFile(logFile)).addOnFailureListener {
             Toast.makeText(this@Chytanny, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
             error = true
         }.await()
@@ -300,7 +300,7 @@ class Chytanny : BaseActivity() {
                     localFile.writer().use {
                         it.write(cytanni)
                     }
-                    MainActivity.referens.child("/calendar-cytanne_$year.php").putFile(Uri.fromFile(localFile)).addOnCompleteListener {
+                    Malitounik.referens.child("/calendar-cytanne_$year.php").putFile(Uri.fromFile(localFile)).addOnCompleteListener {
                         if (it.isSuccessful) {
                             Toast.makeText(this@Chytanny, getString(by.carkva_gazeta.malitounik.R.string.save), Toast.LENGTH_SHORT).show()
                         } else {

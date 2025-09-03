@@ -810,7 +810,7 @@ fun getMineiaMesiachnaia(subTitle: String): ArrayList<MineiaList> {
 }
 
 fun getMineiaMesiachnaiaMounth(): ArrayList<BogaslujbovyiaListData> {
-    val context = MainActivity.applicationContext()
+    val context = Malitounik.applicationContext()
     val list = ArrayList<BogaslujbovyiaListData>()
     val mounthList = context.resources.getStringArray(R.array.meciac3)
     mounthList.forEachIndexed { index, item ->

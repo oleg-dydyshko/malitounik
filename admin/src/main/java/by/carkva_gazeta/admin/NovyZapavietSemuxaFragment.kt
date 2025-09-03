@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import by.carkva_gazeta.admin.databinding.AdminBiblePageFragmentBinding
-import by.carkva_gazeta.malitounik.MainActivity
+import by.carkva_gazeta.malitounik.Malitounik
 import by.carkva_gazeta.malitounik.Settings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -71,7 +71,7 @@ class NovyZapavietSemuxaFragment : BaseFragment() {
             logFile.writer().use {
                 it.write(getString(by.carkva_gazeta.malitounik.R.string.check_update_resourse))
             }
-            MainActivity.referens.child("/admin/log.txt").putFile(Uri.fromFile(logFile)).addOnFailureListener {
+            Malitounik.referens.child("/admin/log.txt").putFile(Uri.fromFile(logFile)).addOnFailureListener {
                 Toast.makeText(activity, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                 error = true
             }.await()
@@ -88,7 +88,7 @@ class NovyZapavietSemuxaFragment : BaseFragment() {
                     _binding?.progressBar2?.visibility = View.VISIBLE
                     val localFile = File("${activity.filesDir}/cache/cache.txt")
                     val zag = "Разьдзел"
-                    MainActivity.referens.child("/chytanne/Semucha/biblian$id.txt").getFile(localFile).addOnCompleteListener { task ->
+                    Malitounik.referens.child("/chytanne/Semucha/biblian$id.txt").getFile(localFile).addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             val file = localFile.readText()
                             val file2 = file.split("===")
@@ -115,7 +115,7 @@ class NovyZapavietSemuxaFragment : BaseFragment() {
                         }
                     }.await()
                     saveLogFile()
-                    MainActivity.referens.child("/chytanne/Semucha/biblian$id.txt").putFile(Uri.fromFile(localFile)).addOnCompleteListener { task ->
+                    Malitounik.referens.child("/chytanne/Semucha/biblian$id.txt").putFile(Uri.fromFile(localFile)).addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             Toast.makeText(activity, getString(by.carkva_gazeta.malitounik.R.string.save), Toast.LENGTH_SHORT).show()
                         } else {
@@ -169,7 +169,7 @@ class NovyZapavietSemuxaFragment : BaseFragment() {
                     val sb = StringBuilder()
                     try {
                         val localFile = File("${fragmentActivity.filesDir}/cache/cache.txt")
-                        MainActivity.referens.child(url).getFile(localFile).addOnCompleteListener { it ->
+                        Malitounik.referens.child(url).getFile(localFile).addOnCompleteListener { it ->
                             if (it.isSuccessful) {
                                 if (localFile.length() != 0L) {
                                     val text = localFile.readText()

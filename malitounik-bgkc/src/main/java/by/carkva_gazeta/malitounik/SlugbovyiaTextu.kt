@@ -2433,9 +2433,9 @@ class SlugbovyiaTextu {
 
     fun loadPiarliny() {
         if (piarliny.isEmpty() && loadPiarlinyJob?.isActive != true) {
-            val filePiarliny = File("${MainActivity.applicationContext().filesDir}/piarliny.json")
+            val filePiarliny = File("${Malitounik.applicationContext().filesDir}/piarliny.json")
             if (!filePiarliny.exists()) {
-                if (Settings.isNetworkAvailable(MainActivity.applicationContext())) {
+                if (Settings.isNetworkAvailable(Malitounik.applicationContext())) {
                     loadPiarlinyJob = CoroutineScope(Dispatchers.Main).launch {
                         try {
                             val builder = getPiarliny()
@@ -2463,9 +2463,9 @@ class SlugbovyiaTextu {
     }
 
     private suspend fun getPiarliny(): String {
-        val pathReference = MainActivity.referens.child("/chytanne/piarliny.json")
+        val pathReference = Malitounik.referens.child("/chytanne/piarliny.json")
         var text = ""
-        val localFile = File("${MainActivity.applicationContext().filesDir}/piarliny.json")
+        val localFile = File("${Malitounik.applicationContext().filesDir}/piarliny.json")
         pathReference.getFile(localFile).addOnSuccessListener {
             text = localFile.readText()
         }.await()

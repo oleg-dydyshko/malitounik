@@ -20,7 +20,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.transition.TransitionManager
 import by.carkva_gazeta.admin.databinding.AdminDialigSaveAsBinding
 import by.carkva_gazeta.admin.databinding.AdminSimpleListItemBinding
-import by.carkva_gazeta.malitounik.MainActivity
+import by.carkva_gazeta.malitounik.Malitounik
 import by.carkva_gazeta.malitounik.Settings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -222,7 +222,7 @@ class PiasochnicaSaveAsFileExplorer : BaseActivity(), DialogPasochnicaMkDir.Dial
                 try {
                     fileList.clear()
                     val temp = ArrayList<MyNetFile>()
-                    val list = MainActivity.referens.child("/$dir").list(1000).await()
+                    val list = Malitounik.referens.child("/$dir").list(1000).await()
                     if (dir != "") {
                         val t1 = dir.lastIndexOf("/")
                         temp.add(MyNetFile(R.drawable.directory_up, dir.substring(t1 + 1)))

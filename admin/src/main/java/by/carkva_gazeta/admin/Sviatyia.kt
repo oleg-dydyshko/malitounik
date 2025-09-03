@@ -28,7 +28,7 @@ import androidx.transition.TransitionManager
 import by.carkva_gazeta.admin.databinding.AdminSviatyiaBinding
 import by.carkva_gazeta.admin.databinding.SimpleListItem1Binding
 import by.carkva_gazeta.admin.databinding.SimpleListItemTipiconBinding
-import by.carkva_gazeta.malitounik.MainActivity
+import by.carkva_gazeta.malitounik.Malitounik
 import by.carkva_gazeta.malitounik.Settings
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.firebase.Firebase
@@ -407,7 +407,7 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
         logFile.writer().use {
             it.write(getString(by.carkva_gazeta.malitounik.R.string.check_update_resourse))
         }
-        MainActivity.referens.child("/admin/log.txt").putFile(Uri.fromFile(logFile)).addOnFailureListener {
+        Malitounik.referens.child("/admin/log.txt").putFile(Uri.fromFile(logFile)).addOnFailureListener {
             Toast.makeText(this@Sviatyia, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
             error = true
         }.await()

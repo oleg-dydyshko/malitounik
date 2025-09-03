@@ -27,7 +27,7 @@ import androidx.core.view.isVisible
 import androidx.transition.TransitionManager
 import by.carkva_gazeta.admin.databinding.AdminSviatyBinding
 import by.carkva_gazeta.admin.databinding.SimpleListItem1Binding
-import by.carkva_gazeta.malitounik.MainActivity
+import by.carkva_gazeta.malitounik.Malitounik
 import by.carkva_gazeta.malitounik.Settings
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.gson.Gson
@@ -146,7 +146,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                     try {
                         val fileIcon = File("$filesDir/icons/v_" + newArrayList[binding.spinnerSviaty.selectedItemPosition][0] + "_" + newArrayList[binding.spinnerSviaty.selectedItemPosition][1] + "_1.jpg")
                         if (!fileIcon.exists()) {
-                            val pathReference = MainActivity.referens.child("/chytanne/icons/" + fileIcon.name)
+                            val pathReference = Malitounik.referens.child("/chytanne/icons/" + fileIcon.name)
                             pathReference.getFile(fileIcon).await()
                         }
                     } catch (_: Throwable) {
@@ -170,7 +170,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
         binding.progressBar2.visibility = View.VISIBLE
         try {
             val localFile = File("$filesDir/cache/cache.txt")
-            MainActivity.referens.child("/sviaty.json").getFile(localFile).addOnCompleteListener {
+            Malitounik.referens.child("/sviaty.json").getFile(localFile).addOnCompleteListener {
                 if (it.isSuccessful) {
                     try {
                         val builder = localFile.readText()
@@ -283,7 +283,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                         out.flush()
                         out.close()
                     }
-                    MainActivity.referens.child("/chytanne/icons/$fileName").putFile(Uri.fromFile(localFile)).await()
+                    Malitounik.referens.child("/chytanne/icons/$fileName").putFile(Uri.fromFile(localFile)).await()
                 }
                 val t1 = fileName.lastIndexOf(".")
                 val fileNameT = fileName.substring(0, t1) + ".txt"
@@ -291,13 +291,13 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                     localFile.writer().use {
                         it.write(text)
                     }
-                    MainActivity.referens.child("/chytanne/iconsApisanne/$fileNameT").putFile(Uri.fromFile(localFile)).addOnSuccessListener {
+                    Malitounik.referens.child("/chytanne/iconsApisanne/$fileNameT").putFile(Uri.fromFile(localFile)).addOnSuccessListener {
                         val file = File("$filesDir/iconsApisanne/$fileNameT")
                         localFile.copyTo(file, true)
                     }.await()
                 } else {
                     try {
-                        MainActivity.referens.child("/chytanne/iconsApisanne/$fileNameT").delete().await()
+                        Malitounik.referens.child("/chytanne/iconsApisanne/$fileNameT").delete().await()
                     } catch (_: Throwable) {
                     }
                 }
@@ -311,7 +311,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
 
     private suspend fun loadFilesMetaData() {
         val sb = StringBuilder()
-        val list = MainActivity.referens.child("/chytanne/icons").list(1000).await()
+        val list = Malitounik.referens.child("/chytanne/icons").list(1000).await()
         list.items.forEach {
             val meta = it.metadata.await()
             sb.append(it.name).append("<-->").append(meta.sizeBytes).append("<-->").append(meta.updatedTimeMillis).append("\n")
@@ -320,7 +320,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
         fileIcon.writer().use {
             it.write(sb.toString())
         }
-        MainActivity.referens.child("/chytanne/iconsMataData.txt").putFile(Uri.fromFile(fileIcon)).await()
+        Malitounik.referens.child("/chytanne/iconsMataData.txt").putFile(Uri.fromFile(fileIcon)).await()
     }
 
     override fun onClick(v: View?) {
@@ -482,7 +482,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                         localFile.writer().use {
                             it.write(gson.toJson(newArrayList, type))
                         }
-                        MainActivity.referens.child("/sviaty.json").putFile(Uri.fromFile(localFile)).addOnCompleteListener {
+                        Malitounik.referens.child("/sviaty.json").putFile(Uri.fromFile(localFile)).addOnCompleteListener {
                             if (it.isSuccessful) {
                                 Toast.makeText(this@Sviaty, getString(by.carkva_gazeta.malitounik.R.string.save), Toast.LENGTH_SHORT).show()
                             } else {
