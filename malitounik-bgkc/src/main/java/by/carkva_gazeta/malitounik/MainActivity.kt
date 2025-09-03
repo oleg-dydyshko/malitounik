@@ -158,6 +158,26 @@ object Settings {
     val textFieldValueLatest = mutableStateOf("")
     val dzenNoch = mutableStateOf(false)
 
+    fun dataCaliandar() {
+        if (data.isEmpty()) {
+            val gson = Gson()
+            val type = TypeToken.getParameterized(
+                ArrayList::class.java, TypeToken.getParameterized(
+                    ArrayList::class.java, String::class.java
+                ).type
+            ).type
+            val inputStream = MainActivity.applicationContext().resources.openRawResource(R.raw.caliandar)
+            val isr = InputStreamReader(inputStream)
+            val reader = BufferedReader(isr)
+            val builder = reader.use {
+                it.readText()
+            }
+            if (data.isEmpty()) {
+                data.addAll(gson.fromJson(builder, type))
+            }
+        }
+    }
+
     @Suppress("DEPRECATION")
     fun isNetworkAvailable(context: Context, typeTransport: Int = TRANSPORT_ALL): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -1129,21 +1149,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
             if (modeNight == Settings.MODE_NIGHT_YES) Settings.dzenNoch.value = true
             if (modeNight == Settings.MODE_NIGHT_AUTO) Settings.dzenNoch.value = k.getBoolean("dzenNoch", false)
         }
-        if (Settings.data.isEmpty()) {
-            val gson = Gson()
-            val type = TypeToken.getParameterized(
-                ArrayList::class.java, TypeToken.getParameterized(
-                    ArrayList::class.java, String::class.java
-                ).type
-            ).type
-            val inputStream = resources.openRawResource(R.raw.caliandar)
-            val isr = InputStreamReader(inputStream)
-            val reader = BufferedReader(isr)
-            val builder = reader.use {
-                it.readText()
-            }
-            Settings.data.addAll(gson.fromJson(builder, type))
-        }
+        Settings.dataCaliandar()
         setContent {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 window.isNavigationBarContrastEnforced = false

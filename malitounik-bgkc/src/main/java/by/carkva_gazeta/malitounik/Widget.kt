@@ -64,13 +64,9 @@ import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.StrogiPost
 import by.carkva_gazeta.malitounik.views.findCaliandarToDay
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.BufferedReader
-import java.io.InputStreamReader
 import java.util.Calendar
 
 class CaliandarWidget : GlanceAppWidget() {
@@ -78,23 +74,6 @@ class CaliandarWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
-            if (Settings.data.isEmpty()) {
-                val gson = Gson()
-                val type = TypeToken.getParameterized(
-                    ArrayList::class.java, TypeToken.getParameterized(
-                        ArrayList::class.java, String::class.java
-                    ).type
-                ).type
-                val inputStream = context.resources.openRawResource(R.raw.caliandar)
-                val isr = InputStreamReader(inputStream)
-                val reader = BufferedReader(isr)
-                val builder = reader.use {
-                    it.readText()
-                }
-                if (Settings.data.isEmpty()) {
-                    Settings.data.addAll(gson.fromJson(builder, type))
-                }
-            }
             GlanceTheme {
                 Caliandar(context)
             }
@@ -104,6 +83,7 @@ class CaliandarWidget : GlanceAppWidget() {
 
 @Composable
 private fun Caliandar(context: Context) {
+    Settings.dataCaliandar()
     val prefs = currentState<Preferences>()
     val position = prefs[intPreferencesKey("position_widget_day")] ?: findCaliandarToDay(false)[25].toInt()
     val dzenNoch = prefs[booleanPreferencesKey("dzenNoch")] == true
