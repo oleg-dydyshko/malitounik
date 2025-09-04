@@ -2215,7 +2215,7 @@ fun getParalel(kniga: Int, glava: Int, styx: Int, isPsaltyrGreek: Boolean): Stri
 data class CytanniListItemData(val page: Int, val item: ArrayList<CytanniListData>)
 
 data class CytanniListData(
-    val id: Int, val title: String, val titlePerevod: String = "", val text: String = "", val parallel: String = "+-+"
+    val id: Int, val title: String, val text: String = "", val parallel: String = "+-+"
 )
 
 data class VybranaeData(
