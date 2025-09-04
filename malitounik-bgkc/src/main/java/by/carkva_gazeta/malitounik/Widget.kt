@@ -83,7 +83,6 @@ class CaliandarWidget : GlanceAppWidget() {
 
 @Composable
 private fun Caliandar(context: Context) {
-    Settings.dataCaliandar()
     val prefs = currentState<Preferences>()
     val position = prefs[intPreferencesKey("position_widget_day")] ?: findCaliandarToDay(false)[25].toInt()
     val dzenNoch = prefs[booleanPreferencesKey("dzenNoch")] == true
@@ -263,8 +262,9 @@ class Widget : GlanceAppWidgetReceiver() {
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
+        Settings.dataCaliandar()
         CoroutineScope(Dispatchers.Main).launch {
-            val position = getDataKaliandar()
+            val position = findCaliandarToDay(false)[25].toInt()
             val manager = GlanceAppWidgetManager(context)
             val widget = CaliandarWidget()
             val glanceIds = manager.getGlanceIds(widget.javaClass)
@@ -348,28 +348,15 @@ class Widget : GlanceAppWidgetReceiver() {
         return dzenNoch
     }
 
-    private fun getDataKaliandar(): Int {
-        val calendar = Calendar.getInstance()
-        var kalPosition = 0
-        for (i in Settings.data.indices) {
-            if (calendar[Calendar.DATE] == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
-                kalPosition = i
-                break
-            }
-        }
-        return kalPosition
-    }
-
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
+        Settings.dataCaliandar()
         CoroutineScope(Dispatchers.Main).launch {
-            val position = getDataKaliandar()
             val manager = GlanceAppWidgetManager(context)
             val widget = CaliandarWidget()
             val glanceIds = manager.getGlanceIds(widget.javaClass)
             glanceIds.forEach { glanceId ->
                 updateAppWidgetState(context, glanceId) {
-                    it[intPreferencesKey("position_widget_day")] = position
                     it[booleanPreferencesKey("dzenNoch")] = getBaseDzenNoch(context)
                 }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {

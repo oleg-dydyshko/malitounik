@@ -1205,7 +1205,7 @@ fun CytanniList(
                         positionRemember = -1
                     }
                     if (resultPage.isEmpty()) {
-                        resultPage.add(CytanniListData(0, subTitle, openAssetsResources(context, "biblia_error.txt")))
+                        resultPage.add(CytanniListData( id = 0, title = subTitle, text = openAssetsResources(context, "biblia_error.txt")))
                         isPerevodError = true
                     } else {
                         isPerevodError = false
@@ -1596,9 +1596,14 @@ fun getBible(
     val result = ArrayList<CytanniListData>()
     var id = 0
     try {
-        val list = cytanne.split(";")
+        var chytNew = cytanne
+        if (cytanne.contains("Пасл Ер 1") && (perevod == Settings.PEREVODBOKUNA ||perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODSEMUXI)) {
+            chytNew = chytNew.replace("Пасл Ер 1", "Вар 6")
+        }
+        val list = chytNew.split(";")
         var knigaText = ""
         var knigaStyxi = ""
+        var perevodOld = perevod
         for (i in list.indices) {
             val itemList = list[i].trim()
             if (itemList != "") {
@@ -1702,6 +1707,17 @@ fun getBible(
                                 kniga = getRealBook(knigiBiblii, perevodNew)
                             }
                         }
+                        var titlePerevod = ""
+                        if (perevodOld != perevodNew) {
+                            when (perevodNew) {
+                                Settings.PEREVODSEMUXI -> titlePerevod = "<br><em>" + context.getString(R.string.title_biblia2) + "</em><br>"
+                                Settings.PEREVODSINOIDAL -> titlePerevod = "<br><em>" + context.getString(R.string.bsinaidal2) + "</em><br>"
+                                Settings.PEREVODNADSAN -> titlePerevod = "<br><em>" + context.getString(R.string.title_psalter) + "</em><br>"
+                                Settings.PEREVODBOKUNA -> titlePerevod = "<br><em>" + context.getString(R.string.title_biblia_bokun2) + "</em><br>"
+                                Settings.PEREVODCARNIAUSKI -> titlePerevod = "<br><em>" + context.getString(R.string.title_biblia_charniauski2) + "</em><br>"
+                            }
+                            perevodOld = perevodNew
+                        }
                         try {
                             val textBible = if (styxStart == 0 && styxEnd == 0) {
                                 biblia(context, knigiBiblii, glava, glava, styxStart, styxEnd, perevodNew)
@@ -1743,28 +1759,28 @@ fun getBible(
                                         if (e > 0) {
                                             result.add(
                                                 CytanniListData(
-                                                    id, "${
+                                                    id = id, title = "${
                                                         getNameBook(
                                                             context, kniga, perevodNew, knigiBiblii >= 50
                                                         )
-                                                    } ${textBible[w].glava}", "[&#8230;]"
+                                                    } ${textBible[w].glava}", text = "[&#8230;]"
                                                 )
                                             )
                                         } else {
                                             if (isTitle) {
                                                 result.add(
                                                     CytanniListData(
-                                                        id, "${
+                                                        id = id, title = "${
                                                             getNameBook(
                                                                 context, kniga, perevodNew, knigiBiblii >= 50
                                                             )
-                                                        } ${textBible[w].glava}", if (biblia == Settings.CHYTANNI_LITURGICHNYIA) {
+                                                        } ${textBible[w].glava}", text = if (biblia == Settings.CHYTANNI_LITURGICHNYIA) {
                                                             val eGlavy = knigaStyxi.ifEmpty { glava.toString() }
-                                                            "<strong><br>" + getNameBook(
+                                                            "$titlePerevod<strong><br>" + getNameBook(
                                                                 context, kniga, perevodNew, knigiBiblii >= 50
                                                             ) + " $eGlavy<strong><br>"
                                                         } else {
-                                                            "<strong><br>" + getNameBook(
+                                                            "$titlePerevod<strong><br>" + getNameBook(
                                                                 context, kniga, perevodNew, knigiBiblii >= 50
                                                             ) + " $glava<strong><br>"
                                                         }))
@@ -1781,18 +1797,18 @@ fun getBible(
                                     }
                                     result.add(
                                         CytanniListData(
-                                            id, "${
+                                            id = id, title = "${
                                                 getNameBook(
                                                     context, kniga, perevodNew, knigiBiblii >= 50
                                                 )
-                                            } ${textBible[w].glava}", text, textBible[w].paralelStyx
+                                            } ${textBible[w].glava}", text = text, parallel = textBible[w].paralelStyx
                                         )
                                     )
                                     id++
                                 }
                             }
                         } catch (_: Throwable) {
-                            result.add(CytanniListData(id, title = "", text = openAssetsResources(context, "biblia_error.txt")))
+                            result.add(CytanniListData(id = id, title = "", text = openAssetsResources(context, "biblia_error.txt")))
                             id++
                         }
                     }
@@ -1800,7 +1816,7 @@ fun getBible(
             }
         }
     } catch (_: Throwable) {
-        result.add(CytanniListData(id, title = "", text = openAssetsResources(context, "biblia_error.txt")))
+        result.add(CytanniListData(id = id, title = "", text = openAssetsResources(context, "biblia_error.txt")))
         id++
     }
     return result
@@ -1839,7 +1855,7 @@ fun knigaBiblii(kniga: String): Int {
     if (kniga == "Ер" || kniga == "Ярэм") bible = 28
     if (kniga == "Плач") bible = 29
     if (kniga == "Пасл Ер") bible = 30
-    if (kniga == "Бар") bible = 31
+    if (kniga == "Вар") bible = 31
     if (kniga == "Езк") bible = 32
     if (kniga == "Дан") bible = 33
     if (kniga == "Ас") bible = 34
@@ -2199,7 +2215,7 @@ fun getParalel(kniga: Int, glava: Int, styx: Int, isPsaltyrGreek: Boolean): Stri
 data class CytanniListItemData(val page: Int, val item: ArrayList<CytanniListData>)
 
 data class CytanniListData(
-    val id: Int, val title: String, val text: String = "", val parallel: String = "+-+"
+    val id: Int, val title: String, val titlePerevod: String = "", val text: String = "", val parallel: String = "+-+"
 )
 
 data class VybranaeData(
