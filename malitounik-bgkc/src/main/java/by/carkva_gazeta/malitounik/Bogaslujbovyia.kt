@@ -27,6 +27,7 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -621,6 +622,7 @@ fun Bogaslujbovyia(
             }
         }
         var expandedUp by remember { mutableStateOf(false) }
+        val interactionSourse = remember { MutableInteractionSource() }
         if (shareIsLaunch) {
             val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
             val isTextFound = textLayout.value?.layoutInput?.text?.text?.contains(clipboard.primaryClip?.getItemAt(0)?.text ?: "@#$") == true
@@ -1037,6 +1039,7 @@ fun Bogaslujbovyia(
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
+                                        .clickable(interactionSource = interactionSourse, indication = null) {}
                                         .padding(top = 10.dp)
                                         .background(MaterialTheme.colorScheme.onTertiary)
                                         .navigationBarsPadding(),

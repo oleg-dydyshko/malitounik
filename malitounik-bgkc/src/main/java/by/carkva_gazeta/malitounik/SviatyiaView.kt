@@ -10,6 +10,8 @@ import android.graphics.BitmapFactory
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -213,28 +215,26 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                 try {
                     if (Settings.isNetworkAvailable(context)) {
                         if (svity) {
-                            val loadOpisanieSviat = loadOpisanieSviat(context, position)
                             if (fileSvity.exists()) {
                                 sviatyiaList.clear()
-                                sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviat, true, position))
+                                sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviat(context, position), true, position))
                             }
                             downloadOpisanieSviat(context)
-                            getIcons(context, dirList, loadOpisanieSviat, true, isloadIcons, position, wiFiExists = { dialoNoWIFI = true })
+                            getIcons(context, dirList, loadOpisanieSviat(context, position), true, isloadIcons, position, wiFiExists = { dialoNoWIFI = true })
                             if (!dialoNoWIFI) {
                                 sviatyiaList.clear()
-                                sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviat, true, position))
+                                sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviat(context, position), true, position))
                             }
                         } else {
-                            val loadOpisanieSviatyia = loadOpisanieSviatyia(context, year, mun, day)
                             if (fileOpisanie.exists()) {
                                 sviatyiaList.clear()
-                                sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviatyia, false, position))
+                                sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviatyia(context, year, mun, day), false, position))
                             }
                             downloadOpisanieSviatyia(context, mun)
-                            getIcons(context, dirList, loadOpisanieSviatyia, false, isloadIcons, position, wiFiExists = { dialoNoWIFI = true })
+                            getIcons(context, dirList, loadOpisanieSviatyia(context, year, mun, day), false, isloadIcons, position, wiFiExists = { dialoNoWIFI = true })
                             if (!dialoNoWIFI) {
                                 sviatyiaList.clear()
-                                sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviatyia, false, position))
+                                sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviatyia(context, year, mun, day), false, position))
                             }
                         }
                         getPiarliny(context)
@@ -246,6 +246,46 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                 }
             }
             isProgressVisable = false
+        }
+    }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == 700) {
+            coroutineScope.launch {
+                try {
+                    if (Settings.isNetworkAvailable(context)) {
+                        val fileOpisanie = File("${context.filesDir}/sviatyja/opisanie$mun.json")
+                        val fileSvity = File("${context.filesDir}/sviaty.json")
+                        if (svity) {
+                            if (fileSvity.exists()) {
+                                sviatyiaList.clear()
+                                sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviat(context, position), true, position))
+                            }
+                            downloadOpisanieSviat(context)
+                            getIcons(context, dirList, loadOpisanieSviat(context, position), true, isloadIcons, position, wiFiExists = { dialoNoWIFI = true })
+                            if (!dialoNoWIFI) {
+                                sviatyiaList.clear()
+                                sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviat(context, position), true, position))
+                            }
+                        } else {
+                            if (fileOpisanie.exists()) {
+                                sviatyiaList.clear()
+                                sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviatyia(context, year, mun, day), false, position))
+                            }
+                            downloadOpisanieSviatyia(context, mun)
+                            getIcons(context, dirList, loadOpisanieSviatyia(context, year, mun, day), false, isloadIcons, position, wiFiExists = { dialoNoWIFI = true })
+                            if (!dialoNoWIFI) {
+                                sviatyiaList.clear()
+                                sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviatyia(context, year, mun, day), false, position))
+                            }
+                        }
+                        getPiarliny(context)
+                        checkPiarliny = checkParliny(context, mun, day)
+                    } else {
+                        dialoNoIntent = true
+                    }
+                } catch (_: Throwable) {
+                }
+            }
         }
     }
     var zoomAll by remember { mutableFloatStateOf(1f) }
@@ -369,7 +409,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                         intent.setClassName(context, "by.carkva_gazeta.admin.Sviatyia")
                                         intent.putExtra("dayOfYear", Settings.data[Settings.caliandarPosition][24].toInt())
                                     }
-                                    context.startActivity(intent)
+                                    launcher.launch(intent)
                                 }
                             }) {
                                 Icon(

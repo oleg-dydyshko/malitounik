@@ -20,6 +20,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -527,6 +528,7 @@ fun CytanniList(
     var isShareMode by remember { mutableStateOf(false) }
     var isSelectAll by remember { mutableStateOf(false) }
     var dialogRazdel by remember { mutableStateOf(false) }
+    val interactionSourse = remember { MutableInteractionSource() }
     if (dialogRazdel) {
         DialogRazdzel(listState, autoScrollSensor, setSelectedIndex = { selectedIndex = it }, setAutoScroll = { autoScroll = it }) {
             dialogRazdel = false
@@ -965,6 +967,7 @@ fun CytanniList(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .clickable(interactionSource = interactionSourse, indication = null) {}
                             .padding(top = 10.dp)
                             .background(colorTollBar)
                             .navigationBarsPadding(), horizontalArrangement = Arrangement.SpaceAround
@@ -976,7 +979,7 @@ fun CytanniList(
                                 menuPosition = 1
                             }) {
                             Icon(
-                                modifier = Modifier.size(36.dp), painter = painterResource(R.drawable.format_size), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.format_size), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                             )
                         }
                         IconButton(

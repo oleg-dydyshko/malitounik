@@ -294,7 +294,7 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
             return true
         }
         if (id == R.id.action_save) {
-            sendPostRequest(binding.sviaty.text.toString(), binding.chytanne.text.toString(), binding.spinnerStyle.selectedItemPosition, binding.spinnerZnak.selectedItemPosition.toString(), binding.apisanne.text.toString())
+            sendPostRequest()
             return true
         }
         if (id == R.id.action_preview) {
@@ -416,9 +416,15 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
         }
     }
 
-    private fun sendPostRequest(name: String, chtenie: String, bold: Int, tipicon: String, spaw: String) {
+    private fun sendPostRequest() {
         if (Settings.isNetworkAvailable(this)) {
             CoroutineScope(Dispatchers.Main).launch {
+                val name = binding.sviaty.text.toString()
+                val chtenie = binding.chytanne.text.toString()
+                val bold = binding.spinnerStyle.selectedItemPosition
+                val spaw = binding.apisanne.text.toString()
+                var tipicon = binding.spinnerZnak.selectedItemPosition.toString()
+                if (tipicon == "0") tipicon = ""
                 var checkSviatyai = false
                 val data = caliandarDayOfYearList[0][1].toInt()
                 val mun = caliandarDayOfYearList[0][2].toInt()
@@ -454,11 +460,9 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
                             Toast.makeText(this@Sviatyia, getString(by.carkva_gazeta.malitounik.R.string.error), Toast.LENGTH_SHORT).show()
                         }
                     }.await()
-                    var sw3 = ""
                     val sb = StringBuilder()
                     for (i in 0 until 366) {
-                        if (sviatyiaNewList[i][3] != "0") sw3 = sviatyiaNewList[i][3]
-                        sb.append(sviatyiaNewList[i][0] + "<>" + sviatyiaNewList[i][1] + "<>" + sviatyiaNewList[i][2] + "<>" + sw3 + "\n")
+                        sb.append(sviatyiaNewList[i][0] + "<>" + sviatyiaNewList[i][1] + "<>" + sviatyiaNewList[i][2] + "<>" + sviatyiaNewList[i][3] + "\n")
                     }
                     val localFile3 = File("$filesDir/cache/cache3.txt")
                     if (sviatyiaNewList.isNotEmpty()) {
