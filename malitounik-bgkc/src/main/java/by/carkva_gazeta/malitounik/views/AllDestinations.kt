@@ -15,6 +15,7 @@ import by.carkva_gazeta.malitounik.views.AllDestinations.BOGASLUJBOVYIA
 import by.carkva_gazeta.malitounik.views.AllDestinations.BOGASLUJBOVYIA_MENU
 import by.carkva_gazeta.malitounik.views.AllDestinations.CHASASLOU_MENU
 import by.carkva_gazeta.malitounik.views.AllDestinations.CYTANNI_LIST
+import by.carkva_gazeta.malitounik.views.AllDestinations.CYTATY_MENU
 import by.carkva_gazeta.malitounik.views.AllDestinations.HELP
 import by.carkva_gazeta.malitounik.views.AllDestinations.KALIANDAR
 import by.carkva_gazeta.malitounik.views.AllDestinations.KALIANDAR_YEAR
@@ -79,6 +80,7 @@ object AllDestinations {
     const val PADZEI_VIEW = "Padzei_View"
     const val SVITYIA_VIEW = "Svityia_View"
     const val LITURGIKON_MENU = "Liturgikon_Menu"
+    const val CYTATY_MENU = "cytaty"
 }
 
 class AppNavigationActions(private val navController: NavHostController, k: SharedPreferences) {
@@ -358,6 +360,12 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
     fun navigateToBogaslujbovyia(title: String, resurs: String) {
         navController.navigate("$BOGASLUJBOVYIA/$title/" + URLEncoder.encode(resurs, "UTF8")) {
             BOGASLUJBOVYIA
+        }
+    }
+
+    fun navigateToCytaty() {
+        navController.navigate(CYTATY_MENU) {
+            CYTATY_MENU
         }
     }
 }

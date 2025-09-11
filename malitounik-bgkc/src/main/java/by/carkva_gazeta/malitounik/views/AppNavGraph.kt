@@ -128,6 +128,7 @@ import by.carkva_gazeta.malitounik.BiblijtekaList
 import by.carkva_gazeta.malitounik.Bogaslujbovyia
 import by.carkva_gazeta.malitounik.BogaslujbovyiaMenu
 import by.carkva_gazeta.malitounik.CytanniList
+import by.carkva_gazeta.malitounik.Cytaty
 import by.carkva_gazeta.malitounik.DialogDelite
 import by.carkva_gazeta.malitounik.KaliandarKnigaView
 import by.carkva_gazeta.malitounik.KaliandarScreen
@@ -688,6 +689,10 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
                 navigationActions.navigateToBogaslujbovyia(title, resurs)
             })
         }
+
+        composable(AllDestinations.CYTATY_MENU) {
+            Cytaty(navController)
+        }
     }
 }
 
@@ -1068,6 +1073,7 @@ fun MainConteiner(
                         AllDestinations.UNDER_SVAITY_MUNU -> navigationActions.navigateToSviaty()
                         AllDestinations.UNDER_PARAFII_BGKC -> navigationActions.navigateToParafiiBgkc()
                         AllDestinations.UNDER_PASHALIA -> navigationActions.navigateToPashalia()
+                        AllDestinations.CYTATY_MENU -> navigationActions.navigateToCytaty()
                     }
                     coroutineScope.launch {
                         drawerState.close()

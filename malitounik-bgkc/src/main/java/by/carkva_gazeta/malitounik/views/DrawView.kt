@@ -93,7 +93,9 @@ fun DrawView(
             .fillMaxHeight()
             .verticalScroll(drawerScrollStete)
     ) {
-        DrawerHeader()
+        DrawerHeader {
+            navigateToRazdel(AllDestinations.CYTATY_MENU)
+        }
         HorizontalDivider(
             modifier = Modifier.padding(bottom = 5.dp),
             color = MaterialTheme.colorScheme.secondary
@@ -1030,7 +1032,7 @@ fun NavigationItem(
 }
 
 @Composable
-fun DrawerHeader() {
+fun DrawerHeader(onClick: () -> Unit) {
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
@@ -1040,6 +1042,9 @@ fun DrawerHeader() {
         Text(
             modifier = Modifier
                 .fillMaxWidth()
+                .clickable {
+                    onClick()
+                }
                 .padding(bottom = 10.dp),
             text = AppNavGraphState.cytata,
             fontSize = (Settings.fontInterface - 2).sp,

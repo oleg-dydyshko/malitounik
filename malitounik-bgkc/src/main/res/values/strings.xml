@@ -774,5 +774,6 @@
         <item>https://server.radiorm.by:8443/start64</item>
         <item>https://server.radiorm.by:8443/start32</item>
     </array>
+    <string name="cytaty">ЦЫТАТЫ З БІБЛІІ</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>
