@@ -1073,7 +1073,10 @@ fun MainConteiner(
                         AllDestinations.UNDER_SVAITY_MUNU -> navigationActions.navigateToSviaty()
                         AllDestinations.UNDER_PARAFII_BGKC -> navigationActions.navigateToParafiiBgkc()
                         AllDestinations.UNDER_PASHALIA -> navigationActions.navigateToPashalia()
-                        AllDestinations.CYTATY_MENU -> navigationActions.navigateToCytaty()
+                        AllDestinations.CYTATY_MENU -> {
+                            navigateIsSpecial = true
+                            navigationActions.navigateToCytaty()
+                        }
                     }
                     coroutineScope.launch {
                         drawerState.close()
