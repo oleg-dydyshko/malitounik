@@ -901,23 +901,15 @@ fun MainConteiner(
         }
         context.intent = null
     }
-    var navigateIsSpecial by remember { mutableStateOf(false) }
     if (drawerState.isOpen) isAppearanceLight = !Settings.dzenNoch.value
     SideEffect {
         val window = (view.context as Activity).window
         WindowCompat.getInsetsController(window, view).apply {
-            isAppearanceLightStatusBars = if (navigateIsSpecial) {
-                false
-            } else {
+            isAppearanceLightStatusBars = isAppearanceLight
+            isAppearanceLightNavigationBars = if (Settings.destinations == AllDestinations.KALIANDAR) {
                 isAppearanceLight
-            }
-            isAppearanceLightNavigationBars = when {
-                navigateIsSpecial -> {
-                    false
-                }
-
-                Settings.destinations == AllDestinations.KALIANDAR -> isAppearanceLight
-                else -> !Settings.dzenNoch.value
+            } else {
+                !Settings.dzenNoch.value
             }
         }
     }
@@ -1002,84 +994,65 @@ fun MainConteiner(
                 drawerScrollStete = drawerScrollStete,
                 route = currentRoute,
                 navigateToRazdel = { razdzel ->
-                    searchList.clear()
-                    searchListSvityia.clear()
-                    Settings.textFieldValueState.value = ""
-                    Settings.textFieldValueLatest.value = ""
-                    when (razdzel) {
-                        AllDestinations.KALIANDAR -> {
-                            if (k.getBoolean("caliandarList", false)) navigationActions.navigateToKaliandarYear()
-                            else navigationActions.navigateToKaliandar()
-                        }
-
-                        AllDestinations.BOGASLUJBOVYIA_MENU -> navigationActions.navigateToBogaslujbovyiaMenu()
-                        AllDestinations.MALITVY_MENU -> navigationActions.navigateToMalitvyMenu()
-                        AllDestinations.BIBLIA_SEMUXA -> {
-                            navigationActions.navigateToBibliaSemuxa()
-                        }
-
-                        AllDestinations.BIBLIA_BOKUNA -> {
-                            navigationActions.navigateToBibliaBokuna()
-                        }
-
-                        AllDestinations.BIBLIA_NADSAN -> {
-                            navigationActions.navigateToBibliaNadsan()
-                        }
-
-                        AllDestinations.BIBLIA_CHARNIAUSKI -> {
-                            navigationActions.navigateToBibliaCharniauski()
-                        }
-
-                        AllDestinations.BIBLIA_SINODAL -> {
-                            navigationActions.navigateToBibliaSinodal()
-                        }
-
-                        AllDestinations.VYBRANAE_LIST -> navigationActions.navigateToVybranaeList()
-                        AllDestinations.AKAFIST_MENU -> navigationActions.navigateToAkafistMenu()
-                        AllDestinations.LITURGIKON_MENU -> navigationActions.navigateToLiturgikonMenu()
-                        AllDestinations.CHASASLOU_MENU -> navigationActions.navigateToChasaslouMenu()
-                        AllDestinations.MAE_NATATKI_MENU -> navigationActions.navigateToMaeNatatkiMenu()
-                        AllDestinations.BIBLIJATEKA_NIADAUNIA -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_NIADAUNIA)
-                        AllDestinations.BIBLIJATEKA_MALITOUNIKI -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_MALITOUNIKI)
-                        AllDestinations.BIBLIJATEKA_GISTORYIA -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_GISTORYIA)
-                        AllDestinations.BIBLIJATEKA_SPEUNIKI -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_SPEUNIKI)
-                        AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU)
-                        AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA)
-                        AllDestinations.PIESNY_PRASLAULENNIA -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_PRASLAULENNIA)
-                        AllDestinations.PIESNY_DA_BAGARODZICY -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_DA_BAGARODZICY)
-                        AllDestinations.PIESNY_ZA_BELARUS -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_ZA_BELARUS)
-                        AllDestinations.PIESNY_KALIADNYIA -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_KALIADNYIA)
-                        AllDestinations.PIESNY_TAIZE -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_TAIZE)
-                        AllDestinations.UNDER_PADRYXTOUKA -> {
-                            navigateIsSpecial = true
-                            navigationActions.navigateToPadryxtouka()
-                        }
-
-                        AllDestinations.UNDER_PAMIATKA -> {
-                            navigateIsSpecial = true
-                            navigationActions.navigateToPamiatka()
-                        }
-
-                        AllDestinations.PRANAS -> {
-                            navigateIsSpecial = true
-                            navigationActions.navigateToPraNas()
-                        }
-
-                        AllDestinations.HELP -> {
-                            navigateIsSpecial = true
-                            navigationActions.navigateToHelp()
-                        }
-
-                        AllDestinations.UNDER_SVAITY_MUNU -> navigationActions.navigateToSviaty()
-                        AllDestinations.UNDER_PARAFII_BGKC -> navigationActions.navigateToParafiiBgkc()
-                        AllDestinations.UNDER_PASHALIA -> navigationActions.navigateToPashalia()
-                        AllDestinations.CYTATY_MENU -> {
-                            navigateIsSpecial = true
-                            navigationActions.navigateToCytaty()
-                        }
-                    }
                     coroutineScope.launch {
                         drawerState.close()
+                        searchList.clear()
+                        searchListSvityia.clear()
+                        Settings.textFieldValueState.value = ""
+                        Settings.textFieldValueLatest.value = ""
+                        when (razdzel) {
+                            AllDestinations.KALIANDAR -> {
+                                if (k.getBoolean("caliandarList", false)) navigationActions.navigateToKaliandarYear()
+                                else navigationActions.navigateToKaliandar()
+                            }
+
+                            AllDestinations.BOGASLUJBOVYIA_MENU -> navigationActions.navigateToBogaslujbovyiaMenu()
+                            AllDestinations.MALITVY_MENU -> navigationActions.navigateToMalitvyMenu()
+                            AllDestinations.BIBLIA_SEMUXA -> {
+                                navigationActions.navigateToBibliaSemuxa()
+                            }
+
+                            AllDestinations.BIBLIA_BOKUNA -> {
+                                navigationActions.navigateToBibliaBokuna()
+                            }
+
+                            AllDestinations.BIBLIA_NADSAN -> {
+                                navigationActions.navigateToBibliaNadsan()
+                            }
+
+                            AllDestinations.BIBLIA_CHARNIAUSKI -> {
+                                navigationActions.navigateToBibliaCharniauski()
+                            }
+
+                            AllDestinations.BIBLIA_SINODAL -> {
+                                navigationActions.navigateToBibliaSinodal()
+                            }
+
+                            AllDestinations.VYBRANAE_LIST -> navigationActions.navigateToVybranaeList()
+                            AllDestinations.AKAFIST_MENU -> navigationActions.navigateToAkafistMenu()
+                            AllDestinations.LITURGIKON_MENU -> navigationActions.navigateToLiturgikonMenu()
+                            AllDestinations.CHASASLOU_MENU -> navigationActions.navigateToChasaslouMenu()
+                            AllDestinations.MAE_NATATKI_MENU -> navigationActions.navigateToMaeNatatkiMenu()
+                            AllDestinations.BIBLIJATEKA_NIADAUNIA -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_NIADAUNIA)
+                            AllDestinations.BIBLIJATEKA_MALITOUNIKI -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_MALITOUNIKI)
+                            AllDestinations.BIBLIJATEKA_GISTORYIA -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_GISTORYIA)
+                            AllDestinations.BIBLIJATEKA_SPEUNIKI -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_SPEUNIKI)
+                            AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU)
+                            AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA -> navigationActions.navigateToBiblijatekaList(AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA)
+                            AllDestinations.PIESNY_PRASLAULENNIA -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_PRASLAULENNIA)
+                            AllDestinations.PIESNY_DA_BAGARODZICY -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_DA_BAGARODZICY)
+                            AllDestinations.PIESNY_ZA_BELARUS -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_ZA_BELARUS)
+                            AllDestinations.PIESNY_KALIADNYIA -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_KALIADNYIA)
+                            AllDestinations.PIESNY_TAIZE -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_TAIZE)
+                            AllDestinations.UNDER_PADRYXTOUKA -> navigationActions.navigateToPadryxtouka()
+                            AllDestinations.UNDER_PAMIATKA -> navigationActions.navigateToPamiatka()
+                            AllDestinations.PRANAS -> navigationActions.navigateToPraNas()
+                            AllDestinations.HELP -> navigationActions.navigateToHelp()
+                            AllDestinations.UNDER_SVAITY_MUNU -> navigationActions.navigateToSviaty()
+                            AllDestinations.UNDER_PARAFII_BGKC -> navigationActions.navigateToParafiiBgkc()
+                            AllDestinations.UNDER_PASHALIA -> navigationActions.navigateToPashalia()
+                            AllDestinations.CYTATY_MENU -> navigationActions.navigateToCytaty()
+                        }
                     }
                 },
             )
