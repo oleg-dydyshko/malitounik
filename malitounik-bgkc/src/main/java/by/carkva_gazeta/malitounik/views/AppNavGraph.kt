@@ -1064,6 +1064,8 @@ fun MainConteiner(
             mutableStateOf("")
         }
         var isBottomBar by remember { mutableStateOf(k.getBoolean("bottomBar", false)) }
+        var isIconSort by remember { mutableStateOf(false) }
+        isIconSort = currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.MAE_NATATKI_MENU
         title = when (currentRoute) {
             AllDestinations.KALIANDAR -> stringResource(R.string.kaliandar2)
             AllDestinations.KALIANDAR_YEAR -> stringResource(R.string.kaliandar2)
@@ -1203,7 +1205,7 @@ fun MainConteiner(
                                 )
                             }
                         }
-                        if (currentRoute.contains(AllDestinations.VYBRANAE_LIST) || currentRoute.contains(AllDestinations.MAE_NATATKI_MENU)) {
+                        if (isIconSort) {
                             IconButton(onClick = {
                                 expandedUp = false
                                 sortedVybranae = if (sortedVybranae == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
@@ -1349,7 +1351,7 @@ fun MainConteiner(
                 }, colors = TopAppBarDefaults.topAppBarColors(tollBarColor)
             )
         }, bottomBar = {
-            if (!(currentRoute == AllDestinations.LITURGIKON_MENU || currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.CHASASLOU_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA || currentRoute == AllDestinations.UNDER_PARAFII_BGKC || currentRoute == AllDestinations.UNDER_SVAITY_MUNU || currentRoute.contains("BIBLIA", ignoreCase = true) || currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.MAE_NATATKI_MENU)) {
+            if (!(currentRoute == AllDestinations.LITURGIKON_MENU || currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.CHASASLOU_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA || currentRoute == AllDestinations.UNDER_PARAFII_BGKC || currentRoute == AllDestinations.UNDER_SVAITY_MUNU || currentRoute.contains("BIBLIA", ignoreCase = true) || currentRoute == AllDestinations.VYBRANAE_LIST)) {
                 val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
                 if (!searchText) {
                     if (showDropdown) {
@@ -1677,9 +1679,11 @@ fun MainConteiner(
                     AllDestinations.BIBLIA_SEMUXA -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        BibliaMenu(navController, Settings.PEREVODSEMUXI, innerPadding, searchText, searchBibleState, navigateToCytanniList = { chytanne, position, perevod2 ->
+                        BibliaMenu(navController, Settings.PEREVODSEMUXI, innerPadding, searchText, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
+                            isIconSort = isIconSortVisibility
+                        }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
                             navigationActions.navigateToCytanniList(
-                                "", chytanne, Settings.CHYTANNI_BIBLIA, perevod2, position
+                                "", chytanne, biblia, perevod2, position
                             )
                         }, navigateToBogaslujbovyia = { title, resurs ->
                             navigationActions.navigateToBogaslujbovyia(title, resurs)
@@ -1689,9 +1693,11 @@ fun MainConteiner(
                     AllDestinations.BIBLIA_BOKUNA -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        BibliaMenu(navController, Settings.PEREVODBOKUNA, innerPadding, searchText, searchBibleState, navigateToCytanniList = { chytanne, position, perevod2 ->
+                        BibliaMenu(navController, Settings.PEREVODBOKUNA, innerPadding, searchText, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
+                            isIconSort = isIconSortVisibility
+                        }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
                             navigationActions.navigateToCytanniList(
-                                "", chytanne, Settings.CHYTANNI_BIBLIA, perevod2, position
+                                "", chytanne, biblia, perevod2, position
                             )
                         }, navigateToBogaslujbovyia = { title, resurs ->
                             navigationActions.navigateToBogaslujbovyia(title, resurs)
@@ -1701,9 +1707,11 @@ fun MainConteiner(
                     AllDestinations.BIBLIA_NADSAN -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        BibliaMenu(navController, Settings.PEREVODNADSAN, innerPadding, searchText, searchBibleState, navigateToCytanniList = { chytanne, position, perevod2 ->
+                        BibliaMenu(navController, Settings.PEREVODNADSAN, innerPadding, searchText, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
+                            isIconSort = isIconSortVisibility
+                        }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
                             navigationActions.navigateToCytanniList(
-                                "", chytanne, Settings.CHYTANNI_BIBLIA, perevod2, position
+                                "", chytanne, biblia, perevod2, position
                             )
                         }, navigateToBogaslujbovyia = { title, resurs ->
                             navigationActions.navigateToBogaslujbovyia(title, resurs)
@@ -1713,9 +1721,11 @@ fun MainConteiner(
                     AllDestinations.BIBLIA_CHARNIAUSKI -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        BibliaMenu(navController, Settings.PEREVODCARNIAUSKI, innerPadding, searchText, searchBibleState, navigateToCytanniList = { chytanne, position, perevod2 ->
+                        BibliaMenu(navController, Settings.PEREVODCARNIAUSKI, innerPadding, searchText, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
+                            isIconSort = isIconSortVisibility
+                        }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
                             navigationActions.navigateToCytanniList(
-                                "", chytanne, Settings.CHYTANNI_BIBLIA, perevod2, position
+                                "", chytanne, biblia, perevod2, position
                             )
                         }, navigateToBogaslujbovyia = { title, resurs ->
                             navigationActions.navigateToBogaslujbovyia(title, resurs)
@@ -1725,9 +1735,11 @@ fun MainConteiner(
                     AllDestinations.BIBLIA_SINODAL -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        BibliaMenu(navController, Settings.PEREVODSINOIDAL, innerPadding, searchText, searchBibleState, navigateToCytanniList = { chytanne, position, perevod2 ->
+                        BibliaMenu(navController, Settings.PEREVODSINOIDAL, innerPadding, searchText, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
+                            isIconSort = isIconSortVisibility
+                        }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
                             navigationActions.navigateToCytanniList(
-                                "", chytanne, Settings.CHYTANNI_BIBLIA, perevod2, position
+                                "", chytanne, biblia, perevod2, position
                             )
                         }, navigateToBogaslujbovyia = { title, resurs ->
                             navigationActions.navigateToBogaslujbovyia(title, resurs)

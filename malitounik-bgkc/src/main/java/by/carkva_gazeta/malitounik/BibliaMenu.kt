@@ -10,6 +10,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -77,6 +78,8 @@ import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
 import by.carkva_gazeta.malitounik.views.HtmlText
 import by.carkva_gazeta.malitounik.views.openAssetsResources
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -91,7 +94,9 @@ fun BibliaMenu(
     innerPadding: PaddingValues,
     searchText: Boolean,
     searchBibleState: LazyListState,
-    navigateToCytanniList: (String, Int, String) -> Unit,
+    sorted: Int,
+    isIconSortVisibility: (Boolean) -> Unit,
+    navigateToCytanniList: (String, Int, String, Int) -> Unit,
     navigateToBogaslujbovyia: (String, String) -> Unit
 ) {
     val context = LocalContext.current
@@ -273,7 +278,8 @@ fun BibliaMenu(
                                 navigateToCytanniList(
                                     searchList[index].title + " " + searchList[index].glava.toString(),
                                     searchList[index].styx - 1,
-                                    perevod
+                                    perevod,
+                                    Settings.CHYTANNI_BIBLIA
                                 )
                             },
                         text = searchList[index].text.toAnnotatedString(),
@@ -302,10 +308,34 @@ fun BibliaMenu(
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
         ) {
-            Column(modifier = Modifier.fillMaxWidth()) {
+            TextButton(
+                onClick = {
+                    navigationActions.navigateToBibliaList(false, perevod)
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(5.dp)
+                    .size(width = 200.dp, height = Dp.Unspecified),
+                colors = ButtonColors(
+                    Primary,
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified
+                ),
+                shape = MaterialTheme.shapes.small
+            ) {
+                Text(
+                    if (perevod == Settings.PEREVODNADSAN) stringResource(R.string.psalter)
+                    else stringResource(R.string.stary_zapaviet),
+                    fontSize = Settings.fontInterface.sp,
+                    color = PrimaryTextBlack,
+                    textAlign = TextAlign.Center
+                )
+            }
+            if (perevod != Settings.PEREVODNADSAN) {
                 TextButton(
                     onClick = {
-                        navigationActions.navigateToBibliaList(false, perevod)
+                        navigationActions.navigateToBibliaList(true, perevod)
                     },
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
@@ -320,41 +350,341 @@ fun BibliaMenu(
                     shape = MaterialTheme.shapes.small
                 ) {
                     Text(
-                        if (perevod == Settings.PEREVODNADSAN) stringResource(R.string.psalter)
-                        else stringResource(R.string.stary_zapaviet),
+                        stringResource(R.string.novy_zapaviet),
                         fontSize = Settings.fontInterface.sp,
                         color = PrimaryTextBlack,
                         textAlign = TextAlign.Center
                     )
                 }
-                if (perevod != Settings.PEREVODNADSAN) {
-                    TextButton(
-                        onClick = {
-                            navigationActions.navigateToBibliaList(true, perevod)
+            }
+            TextButton(
+                onClick = {
+                    bibleTime = true
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(5.dp)
+                    .size(width = 200.dp, height = Dp.Unspecified),
+                colors = ButtonColors(
+                    Divider,
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified
+                ),
+                shape = MaterialTheme.shapes.small
+            ) {
+                Text(stringResource(R.string.bible_time), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
+            }
+            val prevodName = when (perevod) {
+                Settings.PEREVODSEMUXI -> "biblia"
+                Settings.PEREVODBOKUNA -> "bokuna"
+                Settings.PEREVODCARNIAUSKI -> "carniauski"
+                Settings.PEREVODNADSAN -> "nadsan"
+                Settings.PEREVODSINOIDAL -> "sinaidal"
+                else -> "biblia"
+            }
+            val titlePerevod = stringResource(R.string.str_short_label1)
+            val file = File("${LocalContext.current.filesDir}/vybranoe_${prevodName}.json")
+            if (file.exists()) {
+                val gson = Gson()
+                val type =
+                    TypeToken.getParameterized(
+                        ArrayList::class.java,
+                        VybranaeData::class.java
+                    ).type
+                val list: ArrayList<VybranaeData> = gson.fromJson(file.readText(), type)
+                var removeItem by remember { mutableIntStateOf(-1) }
+                if (removeItem != -1) {
+                    val titleVybrenae = stringResource(
+                        R.string.vybranoe_biblia_delite, list[removeItem].title + " " + (list[removeItem].glava + 1)
+                    )
+                    DialogDelite(
+                        title = titleVybrenae,
+                        onDismiss = {
+                            removeItem = -1
                         },
+                        onConfirmation = {
+                            list.removeAt(removeItem)
+                            if (list.isEmpty() && file.exists()) {
+                                file.delete()
+                            } else {
+                                file.writer().use {
+                                    it.write(gson.toJson(list, type))
+                                }
+                            }
+                            removeItem = -1
+                        }
+                    )
+                }
+                var collapsedState by remember { mutableStateOf(AppNavGraphState.setItemsValue(titlePerevod, true)) }
+                Column(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
                         modifier = Modifier
+                            .clickable {
+                                AppNavGraphState.setItemsValue(titlePerevod)
+                                collapsedState = !collapsedState
+                            }
+                            .clip(MaterialTheme.shapes.small)
+                            .background(Divider)
                             .align(Alignment.CenterHorizontally)
-                            .padding(5.dp)
-                            .size(width = 200.dp, height = Dp.Unspecified),
-                        colors = ButtonColors(
-                            Primary,
-                            Color.Unspecified,
-                            Color.Unspecified,
-                            Color.Unspecified
-                        ),
-                        shape = MaterialTheme.shapes.small
+                            .size(width = 200.dp, height = Dp.Unspecified)
                     ) {
                         Text(
-                            stringResource(R.string.novy_zapaviet),
+                            text = titlePerevod,
+                            modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
+                            color = PrimaryText,
                             fontSize = Settings.fontInterface.sp,
-                            color = PrimaryTextBlack,
                             textAlign = TextAlign.Center
                         )
+                        Icon(
+                            painter = if (!collapsedState)
+                                painterResource(R.drawable.keyboard_arrow_down)
+                            else
+                                painterResource(R.drawable.keyboard_arrow_up),
+                            contentDescription = "",
+                            tint = PrimaryText,
+                        )
+                    }
+                }
+                if (sorted == Settings.SORT_BY_ABC) {
+                    list.sortWith(
+                        compareBy({
+                            it.knigaText
+                        }, {
+                            it.glava
+                        })
+                    )
+                } else {
+                    list.sortByDescending { it.id }
+                }
+                isIconSortVisibility(!collapsedState)
+                AnimatedVisibility(
+                    !collapsedState, enter = fadeIn(
+                        tween(
+                            durationMillis = 700, easing = LinearOutSlowInEasing
+                        )
+                    ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
+                ) {
+                    Column {
+                        for (index in list.indices) {
+                            Row(
+                                modifier = Modifier
+                                    .combinedClickable(
+                                        onClick = {
+                                            val newList = StringBuilder()
+                                            for (r in 0 until list.size) {
+                                                val char = if (r == list.size - 1) ""
+                                                else ";"
+                                                newList.append(list[r].knigaText + " " + (list[r].glava + 1) + char)
+                                            }
+                                            navigateToCytanniList(
+                                                newList.toString(),
+                                                index,
+                                                list[index].perevod,
+                                                Settings.CHYTANNI_VYBRANAE
+                                            )
+                                        },
+                                        onLongClick = {
+                                            removeItem = index
+                                        }
+                                    )
+                                    .padding(start = 10.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(5.dp, 5.dp),
+                                    painter = painterResource(R.drawable.poiter),
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    contentDescription = null
+                                )
+                                Text(
+                                    list[index].title + " " + (list[index].glava + 1),
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(10.dp),
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    fontSize = Settings.fontInterface.sp
+                                )
+                            }
+                            HorizontalDivider()
+                        }
+                    }
+                }
+            }
+            if (perevod == Settings.PEREVODNADSAN) {
+                Column(
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .clip(shape = RoundedCornerShape(10.dp))
+                        .border(
+                            1.dp,
+                            color = MaterialTheme.colorScheme.secondary,
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                        .align(Alignment.CenterHorizontally)
+                        .size(width = 400.dp, height = Dp.Unspecified)
+                ) {
+                    Row {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(5.dp)
+                                .weight(1f)
+                                .clip(shape = RoundedCornerShape(10.dp))
+                                .background(TitleCalendarMounth)
+                                .padding(10.dp),
+                            text = stringResource(R.string.kafizma),
+                            fontSize = Settings.fontInterface.sp,
+                            textAlign = TextAlign.Center,
+                            color = PrimaryTextBlack
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        for (i in 1..5) {
+                            Text(
+                                modifier = Modifier
+                                    .padding(5.dp)
+                                    .weight(1f)
+                                    .clip(shape = RoundedCornerShape(10.dp))
+                                    .background(Divider)
+                                    .padding(vertical = 5.dp)
+                                    .clickable {
+                                        val index = when (i) {
+                                            1 -> "1"
+                                            2 -> "9"
+                                            3 -> "17"
+                                            4 -> "24"
+                                            5 -> "32"
+                                            else -> "1"
+                                        }
+                                        navigateToCytanniList(
+                                            "Пс $index",
+                                            -1,
+                                            perevod,
+                                            Settings.CHYTANNI_BIBLIA
+                                        )
+                                    },
+                                text = i.toString(),
+                                fontSize = Settings.fontInterface.sp,
+                                textAlign = TextAlign.Center,
+                                color = PrimaryText
+                            )
+                        }
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        for (i in 6..10) {
+                            Text(
+                                modifier = Modifier
+                                    .padding(5.dp)
+                                    .weight(1f)
+                                    .clip(shape = RoundedCornerShape(10.dp))
+                                    .background(Divider)
+                                    .padding(vertical = 5.dp)
+                                    .clickable {
+                                        val index = when (i) {
+                                            6 -> "37"
+                                            7 -> "46"
+                                            8 -> "55"
+                                            9 -> "64"
+                                            10 -> "70"
+                                            else -> "37"
+                                        }
+                                        navigateToCytanniList(
+                                            "Пс $index",
+                                            -1,
+                                            perevod,
+                                            Settings.CHYTANNI_BIBLIA
+                                        )
+                                    },
+                                text = i.toString(),
+                                fontSize = Settings.fontInterface.sp,
+                                textAlign = TextAlign.Center,
+                                color = PrimaryText
+                            )
+                        }
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        for (i in 11..15) {
+                            Text(
+                                modifier = Modifier
+                                    .padding(5.dp)
+                                    .weight(1f)
+                                    .clip(shape = RoundedCornerShape(10.dp))
+                                    .background(Divider)
+                                    .padding(vertical = 5.dp)
+                                    .clickable {
+                                        val index = when (i) {
+                                            11 -> "77"
+                                            12 -> "85"
+                                            13 -> "91"
+                                            14 -> "101"
+                                            15 -> "105"
+                                            else -> "77"
+                                        }
+                                        navigateToCytanniList(
+                                            "Пс $index",
+                                            -1,
+                                            perevod,
+                                            Settings.CHYTANNI_BIBLIA
+                                        )
+                                    },
+                                text = i.toString(),
+                                fontSize = Settings.fontInterface.sp,
+                                textAlign = TextAlign.Center,
+                                color = PrimaryText
+                            )
+                        }
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        for (i in 16..20) {
+                            Text(
+                                modifier = Modifier
+                                    .padding(5.dp)
+                                    .weight(1f)
+                                    .clip(shape = RoundedCornerShape(10.dp))
+                                    .background(Divider)
+                                    .padding(vertical = 5.dp)
+                                    .clickable {
+                                        val index = when (i) {
+                                            16 -> "109"
+                                            17 -> "118"
+                                            18 -> "119"
+                                            19 -> "134"
+                                            20 -> "143"
+                                            else -> "109"
+                                        }
+                                        navigateToCytanniList(
+                                            "Пс $index",
+                                            -1,
+                                            perevod,
+                                            Settings.CHYTANNI_BIBLIA
+                                        )
+                                    },
+                                text = i.toString(),
+                                fontSize = Settings.fontInterface.sp,
+                                textAlign = TextAlign.Center,
+                                color = PrimaryText
+                            )
+                        }
                     }
                 }
                 TextButton(
                     onClick = {
-                        bibleTime = true
+                        navigateToBogaslujbovyia(context.getString(R.string.malitva_pered), "nadsan_pered.html")
                     },
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
@@ -368,383 +698,170 @@ fun BibliaMenu(
                     ),
                     shape = MaterialTheme.shapes.small
                 ) {
-                    Text(stringResource(R.string.bible_time), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
+                    Text(stringResource(R.string.malitva_pered), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
                 }
-                val prevodName = when (perevod) {
-                    Settings.PEREVODSEMUXI -> "biblia"
-                    Settings.PEREVODBOKUNA -> "bokuna"
-                    Settings.PEREVODCARNIAUSKI -> "carniauski"
-                    Settings.PEREVODNADSAN -> "nadsan"
-                    Settings.PEREVODSINOIDAL -> "sinaidal"
-                    else -> "biblia"
+                TextButton(
+                    onClick = {
+                        navigateToBogaslujbovyia(context.getString(R.string.malitva_posle), "nadsan_posle.html")
+                    },
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(5.dp)
+                        .size(width = 200.dp, height = Dp.Unspecified),
+                    colors = ButtonColors(
+                        Divider,
+                        Color.Unspecified,
+                        Color.Unspecified,
+                        Color.Unspecified
+                    ),
+                    shape = MaterialTheme.shapes.small
+                ) {
+                    Text(stringResource(R.string.malitva_posle), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
                 }
-                val file = File("${LocalContext.current.filesDir}/vybranoe_${prevodName}.json")
-                if (file.exists()) {
-                    TextButton(
-                        onClick = {
-                            navigationActions.navigateToVybranaeList()
-                        },
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(5.dp)
-                            .size(width = 200.dp, height = Dp.Unspecified),
-                        colors = ButtonColors(
-                            Divider,
-                            Color.Unspecified,
-                            Color.Unspecified,
-                            Color.Unspecified
-                        ),
-                        shape = MaterialTheme.shapes.small
-                    ) {
-                        Text(stringResource(R.string.str_short_label1), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
-                    }
-                }
-                if (perevod == Settings.PEREVODNADSAN) {
-                    Column(
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .clip(shape = RoundedCornerShape(10.dp))
-                            .border(
-                                1.dp,
-                                color = MaterialTheme.colorScheme.secondary,
-                                shape = RoundedCornerShape(10.dp)
-                            )
-                            .align(Alignment.CenterHorizontally)
-                            .size(width = 400.dp, height = Dp.Unspecified)
-                    ) {
-                        Row {
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(5.dp)
-                                    .weight(1f)
-                                    .clip(shape = RoundedCornerShape(10.dp))
-                                    .background(TitleCalendarMounth)
-                                    .padding(10.dp),
-                                text = stringResource(R.string.kafizma),
-                                fontSize = Settings.fontInterface.sp,
-                                textAlign = TextAlign.Center,
-                                color = PrimaryTextBlack
-                            )
-                        }
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            for (i in 1..5) {
-                                Text(
-                                    modifier = Modifier
-                                        .padding(5.dp)
-                                        .weight(1f)
-                                        .clip(shape = RoundedCornerShape(10.dp))
-                                        .background(Divider)
-                                        .padding(vertical = 5.dp)
-                                        .clickable {
-                                            val index = when (i) {
-                                                1 -> "1"
-                                                2 -> "9"
-                                                3 -> "17"
-                                                4 -> "24"
-                                                5 -> "32"
-                                                else -> "1"
-                                            }
-                                            navigateToCytanniList(
-                                                "Пс $index",
-                                                -1,
-                                                perevod
-                                            )
-                                        },
-                                    text = i.toString(),
-                                    fontSize = Settings.fontInterface.sp,
-                                    textAlign = TextAlign.Center,
-                                    color = PrimaryText
-                                )
-                            }
-                        }
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            for (i in 6..10) {
-                                Text(
-                                    modifier = Modifier
-                                        .padding(5.dp)
-                                        .weight(1f)
-                                        .clip(shape = RoundedCornerShape(10.dp))
-                                        .background(Divider)
-                                        .padding(vertical = 5.dp)
-                                        .clickable {
-                                            val index = when (i) {
-                                                6 -> "37"
-                                                7 -> "46"
-                                                8 -> "55"
-                                                9 -> "64"
-                                                10 -> "70"
-                                                else -> "37"
-                                            }
-                                            navigateToCytanniList(
-                                                "Пс $index",
-                                                -1,
-                                                perevod
-                                            )
-                                        },
-                                    text = i.toString(),
-                                    fontSize = Settings.fontInterface.sp,
-                                    textAlign = TextAlign.Center,
-                                    color = PrimaryText
-                                )
-                            }
-                        }
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            for (i in 11..15) {
-                                Text(
-                                    modifier = Modifier
-                                        .padding(5.dp)
-                                        .weight(1f)
-                                        .clip(shape = RoundedCornerShape(10.dp))
-                                        .background(Divider)
-                                        .padding(vertical = 5.dp)
-                                        .clickable {
-                                            val index = when (i) {
-                                                11 -> "77"
-                                                12 -> "85"
-                                                13 -> "91"
-                                                14 -> "101"
-                                                15 -> "105"
-                                                else -> "77"
-                                            }
-                                            navigateToCytanniList(
-                                                "Пс $index",
-                                                -1,
-                                                perevod
-                                            )
-                                        },
-                                    text = i.toString(),
-                                    fontSize = Settings.fontInterface.sp,
-                                    textAlign = TextAlign.Center,
-                                    color = PrimaryText
-                                )
-                            }
-                        }
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            for (i in 16..20) {
-                                Text(
-                                    modifier = Modifier
-                                        .padding(5.dp)
-                                        .weight(1f)
-                                        .clip(shape = RoundedCornerShape(10.dp))
-                                        .background(Divider)
-                                        .padding(vertical = 5.dp)
-                                        .clickable {
-                                            val index = when (i) {
-                                                16 -> "109"
-                                                17 -> "118"
-                                                18 -> "119"
-                                                19 -> "134"
-                                                20 -> "143"
-                                                else -> "109"
-                                            }
-                                            navigateToCytanniList(
-                                                "Пс $index",
-                                                -1,
-                                                perevod
-                                            )
-                                        },
-                                    text = i.toString(),
-                                    fontSize = Settings.fontInterface.sp,
-                                    textAlign = TextAlign.Center,
-                                    color = PrimaryText
-                                )
-                            }
-                        }
-                    }
-                    TextButton(
-                        onClick = {
-                            navigateToBogaslujbovyia(context.getString(R.string.malitva_pered), "nadsan_pered.html")
-                        },
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(5.dp)
-                            .size(width = 200.dp, height = Dp.Unspecified),
-                        colors = ButtonColors(
-                            Divider,
-                            Color.Unspecified,
-                            Color.Unspecified,
-                            Color.Unspecified
-                        ),
-                        shape = MaterialTheme.shapes.small
-                    ) {
-                        Text(stringResource(R.string.malitva_pered), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
-                    }
-                    TextButton(
-                        onClick = {
-                            navigateToBogaslujbovyia(context.getString(R.string.malitva_posle), "nadsan_posle.html")
-                        },
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(5.dp)
-                            .size(width = 200.dp, height = Dp.Unspecified),
-                        colors = ButtonColors(
-                            Divider,
-                            Color.Unspecified,
-                            Color.Unspecified,
-                            Color.Unspecified
-                        ),
-                        shape = MaterialTheme.shapes.small
-                    ) {
-                        Text(stringResource(R.string.malitva_posle), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
-                    }
-                    TextButton(
-                        onClick = {
-                            pesnyView = !pesnyView
-                        },
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(5.dp)
-                            .size(width = 200.dp, height = Dp.Unspecified),
-                        colors = ButtonColors(
-                            Divider,
-                            Color.Unspecified,
-                            Color.Unspecified,
-                            Color.Unspecified
-                        ),
-                        shape = MaterialTheme.shapes.small
-                    ) {
-                        Text(stringResource(R.string.pesni), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
-                    }
-                    AnimatedVisibility(
-                        pesnyView, enter = fadeIn(
-                            tween(
-                                durationMillis = 700, easing = LinearOutSlowInEasing
-                            )
-                        ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-                    ) {
-                        Column {
-                            for (i in 1..9) {
-                                Row(
-                                    modifier = Modifier
-                                        .padding(start = 10.dp)
-                                        .clickable {
-                                            navigationActions.navigateToBogaslujbovyia(
-                                                context.getString(R.string.pesnia, i),
-                                                when (i) {
-                                                    1 -> "nadsan_pesni_1.html"
-                                                    2 -> "nadsan_pesni_2.html"
-                                                    3 -> "nadsan_pesni_3.html"
-                                                    4 -> "nadsan_pesni_4.html"
-                                                    5 -> "nadsan_pesni_5.html"
-                                                    6 -> "nadsan_pesni_6.html"
-                                                    7 -> "nadsan_pesni_7.html"
-                                                    8 -> "nadsan_pesni_8.html"
-                                                    9 -> "nadsan_pesni_9.html"
-                                                    else -> "nadsan_pesni_1.html"
-                                                }
-                                            )
-                                        },
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        modifier = Modifier.size(5.dp, 5.dp),
-                                        painter = painterResource(R.drawable.poiter),
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        contentDescription = null
-                                    )
-                                    Text(
-                                        stringResource(R.string.pesnia, i),
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .padding(10.dp),
-                                        color = MaterialTheme.colorScheme.secondary,
-                                        fontSize = Settings.fontInterface.sp
-                                    )
-                                }
-                                HorizontalDivider()
-                            }
-                        }
-                    }
-                    TextButton(
-                        onClick = {
-                            dialogPeryiadyView = true
-                        },
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(5.dp)
-                            .size(width = 200.dp, height = Dp.Unspecified),
-                        colors = ButtonColors(
-                            Divider,
-                            Color.Unspecified,
-                            Color.Unspecified,
-                            Color.Unspecified
-                        ),
-                        shape = MaterialTheme.shapes.small
-                    ) {
-                        Text(stringResource(R.string.peryiady), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
-                    }
-                    TextButton(
-                        onClick = {
-                            dialogImageView = !dialogImageView
-                        },
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(5.dp)
-                            .size(width = 200.dp, height = Dp.Unspecified),
-                        colors = ButtonColors(
-                            Divider,
-                            Color.Unspecified,
-                            Color.Unspecified,
-                            Color.Unspecified
-                        ),
-                        shape = MaterialTheme.shapes.small
-                    ) {
-                        Text(stringResource(R.string.title_psalter_privila), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
-                    }
+                TextButton(
+                    onClick = {
+                        pesnyView = !pesnyView
+                    },
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(5.dp)
+                        .size(width = 200.dp, height = Dp.Unspecified),
+                    colors = ButtonColors(
+                        Divider,
+                        Color.Unspecified,
+                        Color.Unspecified,
+                        Color.Unspecified
+                    ),
+                    shape = MaterialTheme.shapes.small
+                ) {
+                    Text(stringResource(R.string.pesni), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
                 }
                 AnimatedVisibility(
-                    dialogImageView, enter = fadeIn(
+                    pesnyView, enter = fadeIn(
                         tween(
                             durationMillis = 700, easing = LinearOutSlowInEasing
                         )
                     ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
                 ) {
-                    Image(
-                        painter = painterResource(R.drawable.pravily_chytannia_psaltyria), contentDescription = "", modifier = Modifier
-                            .padding(10.dp)
-                            .fillMaxWidth(), contentScale = ContentScale.FillWidth
-                    )
-                }
-                if (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODBOKUNA) {
-                    TextButton(
-                        onClick = {
-                            dialogVisable = true
-                        },
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(5.dp)
-                            .size(width = 200.dp, height = Dp.Unspecified),
-                        colors = ButtonColors(
-                            Divider,
-                            Color.Unspecified,
-                            Color.Unspecified,
-                            Color.Unspecified
-                        ),
-                        shape = MaterialTheme.shapes.small
-                    ) {
-                        Text(
-                            stringResource(R.string.alesyaSemukha2),
-                            fontSize = Settings.fontInterface.sp,
-                            color = PrimaryText,
-                            textAlign = TextAlign.Center
-                        )
+                    Column {
+                        for (i in 1..9) {
+                            Row(
+                                modifier = Modifier
+                                    .padding(start = 10.dp)
+                                    .clickable {
+                                        navigationActions.navigateToBogaslujbovyia(
+                                            context.getString(R.string.pesnia, i),
+                                            when (i) {
+                                                1 -> "nadsan_pesni_1.html"
+                                                2 -> "nadsan_pesni_2.html"
+                                                3 -> "nadsan_pesni_3.html"
+                                                4 -> "nadsan_pesni_4.html"
+                                                5 -> "nadsan_pesni_5.html"
+                                                6 -> "nadsan_pesni_6.html"
+                                                7 -> "nadsan_pesni_7.html"
+                                                8 -> "nadsan_pesni_8.html"
+                                                9 -> "nadsan_pesni_9.html"
+                                                else -> "nadsan_pesni_1.html"
+                                            }
+                                        )
+                                    },
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(5.dp, 5.dp),
+                                    painter = painterResource(R.drawable.poiter),
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    contentDescription = null
+                                )
+                                Text(
+                                    stringResource(R.string.pesnia, i),
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(10.dp),
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    fontSize = Settings.fontInterface.sp
+                                )
+                            }
+                            HorizontalDivider()
+                        }
                     }
                 }
-                Spacer(modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding() + if (k.getBoolean("isInstallApp", false)) 60.dp else 0.dp))
+                TextButton(
+                    onClick = {
+                        dialogPeryiadyView = true
+                    },
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(5.dp)
+                        .size(width = 200.dp, height = Dp.Unspecified),
+                    colors = ButtonColors(
+                        Divider,
+                        Color.Unspecified,
+                        Color.Unspecified,
+                        Color.Unspecified
+                    ),
+                    shape = MaterialTheme.shapes.small
+                ) {
+                    Text(stringResource(R.string.peryiady), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
+                }
+                TextButton(
+                    onClick = {
+                        dialogImageView = !dialogImageView
+                    },
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(5.dp)
+                        .size(width = 200.dp, height = Dp.Unspecified),
+                    colors = ButtonColors(
+                        Divider,
+                        Color.Unspecified,
+                        Color.Unspecified,
+                        Color.Unspecified
+                    ),
+                    shape = MaterialTheme.shapes.small
+                ) {
+                    Text(stringResource(R.string.title_psalter_privila), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
+                }
             }
+            AnimatedVisibility(
+                dialogImageView, enter = fadeIn(
+                    tween(
+                        durationMillis = 700, easing = LinearOutSlowInEasing
+                    )
+                ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.pravily_chytannia_psaltyria), contentDescription = "", modifier = Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth(), contentScale = ContentScale.FillWidth
+                )
+            }
+            if (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODBOKUNA) {
+                TextButton(
+                    onClick = {
+                        dialogVisable = true
+                    },
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(5.dp)
+                        .size(width = 200.dp, height = Dp.Unspecified),
+                    colors = ButtonColors(
+                        Divider,
+                        Color.Unspecified,
+                        Color.Unspecified,
+                        Color.Unspecified
+                    ),
+                    shape = MaterialTheme.shapes.small
+                ) {
+                    Text(
+                        stringResource(R.string.alesyaSemukha2),
+                        fontSize = Settings.fontInterface.sp,
+                        color = PrimaryText,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding() + if (k.getBoolean("isInstallApp", false)) 60.dp else 0.dp))
         }
     }
 }
