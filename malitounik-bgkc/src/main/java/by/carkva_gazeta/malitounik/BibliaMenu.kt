@@ -369,6 +369,24 @@ fun BibliaMenu(
                 ) {
                     Text(stringResource(R.string.bible_time), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
                 }
+                TextButton(
+                    onClick = {
+                        navigationActions.navigateToVybranaeList()
+                    },
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(5.dp)
+                        .size(width = 200.dp, height = Dp.Unspecified),
+                    colors = ButtonColors(
+                        Divider,
+                        Color.Unspecified,
+                        Color.Unspecified,
+                        Color.Unspecified
+                    ),
+                    shape = MaterialTheme.shapes.small
+                ) {
+                    Text(stringResource(R.string.str_short_label1), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
+                }
                 if (perevod == Settings.PEREVODNADSAN) {
                     Column(
                         modifier = Modifier
@@ -742,9 +760,11 @@ fun DialogSemuxa(
                 val text =
                     if (isSemuxa) openAssetsResources(context, "all_rights_reserved_semuxa.html")
                     else openAssetsResources(context, "all_rights_reserved_bokun.html")
-                Column(modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .weight(1f)) {
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                        .weight(1f)
+                ) {
                     HtmlText(text = text, modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
                 }
                 Row(
