@@ -81,6 +81,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -369,23 +370,34 @@ fun BibliaMenu(
                 ) {
                     Text(stringResource(R.string.bible_time), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
                 }
-                TextButton(
-                    onClick = {
-                        navigationActions.navigateToVybranaeList()
-                    },
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(5.dp)
-                        .size(width = 200.dp, height = Dp.Unspecified),
-                    colors = ButtonColors(
-                        Divider,
-                        Color.Unspecified,
-                        Color.Unspecified,
-                        Color.Unspecified
-                    ),
-                    shape = MaterialTheme.shapes.small
-                ) {
-                    Text(stringResource(R.string.str_short_label1), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
+                val prevodName = when (perevod) {
+                    Settings.PEREVODSEMUXI -> "biblia"
+                    Settings.PEREVODBOKUNA -> "bokuna"
+                    Settings.PEREVODCARNIAUSKI -> "carniauski"
+                    Settings.PEREVODNADSAN -> "nadsan"
+                    Settings.PEREVODSINOIDAL -> "sinaidal"
+                    else -> "biblia"
+                }
+                val file = File("${LocalContext.current.filesDir}/vybranoe_${prevodName}.json")
+                if (file.exists()) {
+                    TextButton(
+                        onClick = {
+                            navigationActions.navigateToVybranaeList()
+                        },
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(5.dp)
+                            .size(width = 200.dp, height = Dp.Unspecified),
+                        colors = ButtonColors(
+                            Divider,
+                            Color.Unspecified,
+                            Color.Unspecified,
+                            Color.Unspecified
+                        ),
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Text(stringResource(R.string.str_short_label1), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
+                    }
                 }
                 if (perevod == Settings.PEREVODNADSAN) {
                     Column(
