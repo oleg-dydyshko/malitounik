@@ -105,6 +105,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -176,6 +177,7 @@ import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
@@ -1099,12 +1101,19 @@ fun MainConteiner(
         }
         var expandedUp by remember { mutableStateOf(false) }
         val searchBibleState = rememberLazyListState()
+        val maxLine = remember { mutableIntStateOf(2) }
         Scaffold(topBar = {
             TopAppBar(
                 title = {
                     if (!searchText) {
                         Text(
-                            title.uppercase(), color = textTollBarColor, fontWeight = FontWeight.Bold, fontSize = Settings.fontInterface.sp
+                            modifier = Modifier.clickable {
+                                maxLine.intValue = Int.MAX_VALUE
+                                coroutineScope.launch {
+                                    delay(5000L)
+                                    maxLine.intValue = 2
+                                }
+                            }, text = title.uppercase(), color = textTollBarColor, fontWeight = FontWeight.Bold, fontSize = Settings.fontInterface.sp, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis
                         )
                     } else {
                         TextField(
@@ -1213,25 +1222,26 @@ fun MainConteiner(
                                 sortedNatatki = if (sortedNatatki == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
                                 else Settings.SORT_BY_ABC
                                 k.edit {
-                                    if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) putInt(
-                                        "sortedVybranae", sortedVybranae
-                                    )
-                                    else putInt("natatki_sort", sortedNatatki)
+                                    if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.BIBLIA_SEMUXA || currentRoute == AllDestinations.BIBLIA_BOKUNA || currentRoute == AllDestinations.BIBLIA_NADSAN || currentRoute == AllDestinations.BIBLIA_CHARNIAUSKI || currentRoute == AllDestinations.BIBLIA_SINODAL) {
+                                        putInt(
+                                            "sortedVybranae", sortedVybranae
+                                        )
+                                    } else putInt("natatki_sort", sortedNatatki)
                                 }
                             }) {
                                 Icon(
                                     modifier = Modifier.size(24.dp),
-                                    painter = if (currentRoute.contains(AllDestinations.VYBRANAE_LIST)) {
+                                    painter = if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.BIBLIA_SEMUXA || currentRoute == AllDestinations.BIBLIA_BOKUNA || currentRoute == AllDestinations.BIBLIA_NADSAN || currentRoute == AllDestinations.BIBLIA_CHARNIAUSKI || currentRoute == AllDestinations.BIBLIA_SINODAL) {
                                         if (sortedVybranae == Settings.SORT_BY_TIME) {
                                             painterResource(R.drawable.sort_by_az)
                                         } else {
-                                            painterResource(R.drawable.sort)
+                                            painterResource(R.drawable.sort_by_time)
                                         }
                                     } else {
                                         if (sortedNatatki == Settings.SORT_BY_TIME) {
                                             painterResource(R.drawable.sort_by_az)
                                         } else {
-                                            painterResource(R.drawable.sort)
+                                            painterResource(R.drawable.sort_by_time)
                                         }
                                     }, contentDescription = "", tint = textTollBarColor
                                 )

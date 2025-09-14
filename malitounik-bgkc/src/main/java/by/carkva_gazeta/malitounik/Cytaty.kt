@@ -1,9 +1,12 @@
 package by.carkva_gazeta.malitounik
 
 import android.app.Activity
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -42,6 +45,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -113,47 +117,50 @@ fun Cytaty(navController: NavHostController) {
                 }
             }
         }
-        LazyColumn(state = lazyListState, modifier = Modifier.nestedScroll(nestedScrollConnection)) {
-            items(listState.size) { item ->
-                val t1 = listState[item].indexOf("(")
-                val cytata = AnnotatedString.Builder(listState[item]).apply {
-                    addStyle(
-                        SpanStyle(
-                            fontFamily = FontFamily(Font(R.font.andantinoscript)), fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic, color = if (Settings.dzenNoch.value) PrimaryBlack else Primary, fontSize = (Settings.fontInterface + 4).sp
-                        ), 0, 1
-                    )
-                    addStyle(SpanStyle(fontFamily = FontFamily(Font(R.font.comici))), 1, this.length)
-                    if (t1 != -1) {
-                        addStyle(ParagraphStyle(textAlign = TextAlign.Right), t1, this.length)
-                    }
-                }.toAnnotatedString()
-                if (item == 0) {
-                    Spacer(Modifier.padding(top = innerPadding.calculateTopPadding()))
-                }
-                Row(
-                    modifier = Modifier
-                        .padding(start = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        modifier = Modifier.size(5.dp, 5.dp),
-                        painter = painterResource(R.drawable.poiter),
-                        tint = MaterialTheme.colorScheme.primary,
-                        contentDescription = null
-                    )
-                    Text(
-                        text = cytata,
+        Box(
+            modifier = Modifier.padding(
+                innerPadding.calculateStartPadding(LayoutDirection.Ltr), innerPadding.calculateTopPadding(), innerPadding.calculateEndPadding(LayoutDirection.Rtl), 0.dp
+            )
+        ) {
+            LazyColumn(state = lazyListState, modifier = Modifier.nestedScroll(nestedScrollConnection)) {
+                items(listState.size) { item ->
+                    val t1 = listState[item].indexOf("(")
+                    val cytata = AnnotatedString.Builder(listState[item]).apply {
+                        addStyle(
+                            SpanStyle(
+                                fontFamily = FontFamily(Font(R.font.andantinoscript)), fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic, color = if (Settings.dzenNoch.value) PrimaryBlack else Primary, fontSize = (Settings.fontInterface + 4).sp
+                            ), 0, 1
+                        )
+                        addStyle(SpanStyle(fontFamily = FontFamily(Font(R.font.comici))), 1, this.length)
+                        if (t1 != -1) {
+                            addStyle(ParagraphStyle(textAlign = TextAlign.Right), t1, this.length)
+                        }
+                    }.toAnnotatedString()
+                    Row(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(10.dp),
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = Settings.fontInterface.sp
-                    )
+                            .padding(start = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(5.dp, 5.dp),
+                            painter = painterResource(R.drawable.poiter),
+                            tint = MaterialTheme.colorScheme.primary,
+                            contentDescription = null
+                        )
+                        Text(
+                            text = cytata,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(10.dp),
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontSize = Settings.fontInterface.sp
+                        )
+                    }
+                    HorizontalDivider()
                 }
-                HorizontalDivider()
-            }
-            item {
-                Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding().plus(10.dp)))
+                item {
+                    Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding().plus(10.dp)))
+                }
             }
         }
     }
