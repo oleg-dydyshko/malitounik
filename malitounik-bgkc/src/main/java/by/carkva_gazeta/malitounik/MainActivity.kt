@@ -102,6 +102,7 @@ object Settings {
     const val PEREVODNADSAN = "3"
     const val PEREVODBOKUNA = "4"
     const val PEREVODCARNIAUSKI = "5"
+    const val PEREVODCATOLIK = "6"
     const val MODE_NIGHT_SYSTEM = 1
     const val MODE_NIGHT_NO = 2
     const val MODE_NIGHT_YES = 3
@@ -1127,6 +1128,45 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         if (k.getBoolean("power", false)) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
+        /*CoroutineScope(Dispatchers.IO).launch {
+            withContext(Dispatchers.IO) {
+                val glav = 28
+                var knigaFile = 2
+                for (kniga in 41..66) {
+                    val result = StringBuilder("\n===")
+                    for (page in 1..glav) {
+                        val url = URL("https://bible.by/bcat/$kniga/$page/")
+                        val urlConnection = url.openConnection() as HttpURLConnection
+                        try {
+                            var text = urlConnection.inputStream.bufferedReader().readText()
+                            text = text.replace("<br><br>", "<p>")
+                            text = text.replace("<br>", " ")
+                            text = text.replace("<span class=\"subtitle\">", "<br><em>")//<p class="quote">
+                            text = text.replace("</span>", "</em><br><br>")
+                            text = text.replace("<p class=\"quote\">", "")
+                            text = text.replace("</p>", "")
+                            val t1 = text.indexOf("<div class=\"text by\">")
+                            val t2 = text.indexOf("<div class=\"clearfix\">")
+                            if (t1 == -1) break
+                            if (t2 != -1) {
+                                result.append(AnnotatedString.fromHtml(text.substring(t1, t2)).toString())
+                                if (page < glav) {
+                                    result.append("\n===")
+                                }
+                            }
+                        } finally {
+                            urlConnection.disconnect()
+                        }
+                    }
+                    val file = File( "$filesDir/catolikn${knigaFile}.txt")
+                    file.writer().use {
+                        it.write(result.toString())
+                    }
+                    knigaFile++
+                }
+                val test = 1
+            }
+        }*/
         val start = k.getString("navigate", AllDestinations.KALIANDAR) ?: AllDestinations.KALIANDAR
         AppNavGraphState.bibleItem = start.contains("Biblia", ignoreCase = true) == true
         AppNavGraphState.biblijatekaItem = start.contains("Biblijateka", ignoreCase = true) == true

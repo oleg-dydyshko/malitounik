@@ -595,6 +595,35 @@
         <item>Юды</item>
         <item>Адкрыццё</item>
     </string-array>
+    <string-array name="catolikn">
+        <item>Мацвея</item>
+        <item>Марка</item>
+        <item>Лукі</item>
+        <item>Яна</item>
+        <item>Дзеі</item>
+        <item>Да Рымлянаў</item>
+        <item>1 да Карынцянаў</item>
+        <item>2 да Карынцянаў</item>
+        <item>Да Галатаў</item>
+        <item>Да Эфесцаў</item>
+        <item>Да Філіпянаў</item>
+        <item>Да Каласянаў</item>
+        <item>1 да Тэсаланікійцаў</item>
+        <item>2 да Тэсаланікійцаў</item>
+        <item>1 да Цімафея</item>
+        <item>2 да Цімафея</item>
+        <item>Да Ціта</item>
+        <item>Да Філімона</item>
+        <item>Да Габрэяў</item>
+        <item>Якуба</item>
+        <item>1 Пятра</item>
+        <item>2 Пятра</item>
+        <item>1 Яна</item>
+        <item>2 Яна</item>
+        <item>3 Яна</item>
+        <item>Юды</item>
+        <item>Апакаліпсіс</item>
+    </string-array>
     <string-array name="charniauskis">
         <item>Роду</item>
         <item>Выхад</item>
@@ -775,5 +804,7 @@
         <item>https://server.radiorm.by:8443/start32</item>
     </array>
     <string name="cytaty">ЦЫТАТЫ З БІБЛІІ</string>
+    <string name="title_biblia_catolik">БІБЛІЯ (пераклад Рыма-Каталіцкага Касцёла)</string>
+    <string name="title_biblia_catolik2">Пераклад Рыма-Каталіцкага Касцёла</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

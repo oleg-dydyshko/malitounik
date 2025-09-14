@@ -80,12 +80,13 @@ fun VybranaeList(
     val vybranoeList2 = remember { SnapshotStateList<VybranaeDataAll>() }
     if (initVybranoe) {
         initVybranoe = false
-        for (i in 1..5) {
+        for (i in 1..6) {
             val vybranoeList = SnapshotStateList<VybranaeData>()
             val prevodName = when (i.toString()) {
                 Settings.PEREVODSEMUXI -> "biblia"
                 Settings.PEREVODBOKUNA -> "bokuna"
                 Settings.PEREVODCARNIAUSKI -> "carniauski"
+                Settings.PEREVODCATOLIK -> "catolik"
                 Settings.PEREVODNADSAN -> "nadsan"
                 Settings.PEREVODSINOIDAL -> "sinaidal"
                 else -> "biblia"
@@ -96,6 +97,7 @@ fun VybranaeList(
                 Settings.PEREVODNADSAN -> stringResource(R.string.title_psalter)
                 Settings.PEREVODBOKUNA -> stringResource(R.string.title_biblia_bokun2)
                 Settings.PEREVODCARNIAUSKI -> stringResource(R.string.title_biblia_charniauski2)
+                Settings.PEREVODCATOLIK -> stringResource(R.string.title_biblia_catolik2)
                 else -> stringResource(R.string.title_biblia2)
             }
             val file = File("${LocalContext.current.filesDir}/vybranoe_${prevodName}.json")
@@ -159,6 +161,7 @@ fun VybranaeList(
                         Settings.PEREVODBOKUNA -> "bokuna"
                         Settings.PEREVODCARNIAUSKI -> "carniauski"
                         Settings.PEREVODNADSAN -> "nadsan"
+                        Settings.PEREVODCATOLIK -> "catolik"
                         Settings.PEREVODSINOIDAL -> "sinaidal"
                         else -> "biblia"
                     }
@@ -200,6 +203,7 @@ fun VybranaeList(
                         Settings.PEREVODBOKUNA -> "bokuna"
                         Settings.PEREVODCARNIAUSKI -> "carniauski"
                         Settings.PEREVODNADSAN -> "nadsan"
+                        Settings.PEREVODCATOLIK -> "catolik"
                         Settings.PEREVODSINOIDAL -> "sinaidal"
                         else -> "biblia"
                     }

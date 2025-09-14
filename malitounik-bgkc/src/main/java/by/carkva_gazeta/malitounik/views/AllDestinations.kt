@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.cytanniListItemData
 import by.carkva_gazeta.malitounik.views.AllDestinations.AKAFIST_MENU
 import by.carkva_gazeta.malitounik.views.AllDestinations.BIBLIA_BOKUNA
+import by.carkva_gazeta.malitounik.views.AllDestinations.BIBLIA_CATOLIK
 import by.carkva_gazeta.malitounik.views.AllDestinations.BIBLIA_CHARNIAUSKI
 import by.carkva_gazeta.malitounik.views.AllDestinations.BIBLIA_LIST
 import by.carkva_gazeta.malitounik.views.AllDestinations.BIBLIA_NADSAN
@@ -50,6 +51,7 @@ object AllDestinations {
     const val BIBLIA_NADSAN = "Biblia_Nadsan"
     const val BIBLIA_CHARNIAUSKI = "Biblia_Charniauski"
     const val BIBLIA_SINODAL = "Biblia_Sinodal"
+    const val BIBLIA_CATOLIK = "Biblia_Catolik"
     const val BIBLIA_LIST = "Biblia_List"
     const val VYBRANAE_LIST = "Bybranae_List"
     const val SEARCH_BIBLIA = "Search_Biblia"
@@ -206,6 +208,16 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
             }
         }
         edit.putString("navigate", BIBLIA_CHARNIAUSKI)
+        edit.apply()
+    }
+
+    fun navigateToBibliaCatolik() {
+        navController.navigate(BIBLIA_CATOLIK) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: BIBLIA_CATOLIK) {
+                inclusive = true
+            }
+        }
+        edit.putString("navigate", BIBLIA_CATOLIK)
         edit.apply()
     }
 

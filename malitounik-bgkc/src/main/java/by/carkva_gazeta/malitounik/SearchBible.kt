@@ -494,8 +494,11 @@ fun biblia(
             }
         }
     }
-    val rangeBibile = if (perevod == Settings.PEREVODNADSAN) 0..0
-    else 0..1
+    val rangeBibile = when (perevod) {
+        Settings.PEREVODNADSAN -> 0..0
+        Settings.PEREVODCATOLIK -> 1..1
+        else -> 0..1
+    }
     for (novyZapaviet in rangeBibile) {
         val list = if (novyZapaviet == 0) getNameBook(context, perevod, false)
         else getNameBook(context, perevod, true)
@@ -537,6 +540,7 @@ fun biblia(
                 Settings.PEREVODSEMUXI -> "chytanne/Semucha/biblia"
                 Settings.PEREVODBOKUNA -> "chytanne/Bokun/bokuna"
                 Settings.PEREVODCARNIAUSKI -> "chytanne/Carniauski/carniauski"
+                Settings.PEREVODCATOLIK -> "chytanne/Catolik/catolik"
                 Settings.PEREVODNADSAN -> "chytanne/psaltyr_nadsan.txt"
                 Settings.PEREVODSINOIDAL -> "chytanne/Sinodal/sinaidal"
                 else -> "chytanne/Semucha/biblia"

@@ -123,6 +123,10 @@ fun BibliaMenu(
                 "carniauski"
             }
 
+            Settings.PEREVODCATOLIK -> {
+                "catolik"
+            }
+
             Settings.PEREVODSINOIDAL -> {
                 "sinaidal"
             }
@@ -137,7 +141,7 @@ fun BibliaMenu(
     }
     var dialogVisable by remember { mutableStateOf(false) }
     if (dialogVisable) {
-        DialogSemuxa(perevod == Settings.PEREVODSEMUXI) {
+        DialogSemuxa(perevod) {
             dialogVisable = false
         }
     }
@@ -170,7 +174,7 @@ fun BibliaMenu(
             searchList.clear()
             searchSettings = false
         }
-        if (Settings.textFieldValueState.value.trim().length >= 3 && searchList.isEmpty()) {
+        if (Settings.textFieldValueState.value.trim().length >= 3) {
             searchJob?.cancel()
             searchJob = CoroutineScope(Dispatchers.Main).launch {
                 isProgressVisable = true
@@ -308,29 +312,31 @@ fun BibliaMenu(
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
         ) {
-            TextButton(
-                onClick = {
-                    navigationActions.navigateToBibliaList(false, perevod)
-                },
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(5.dp)
-                    .size(width = 200.dp, height = Dp.Unspecified),
-                colors = ButtonColors(
-                    Primary,
-                    Color.Unspecified,
-                    Color.Unspecified,
-                    Color.Unspecified
-                ),
-                shape = MaterialTheme.shapes.small
-            ) {
-                Text(
-                    if (perevod == Settings.PEREVODNADSAN) stringResource(R.string.psalter)
-                    else stringResource(R.string.stary_zapaviet),
-                    fontSize = Settings.fontInterface.sp,
-                    color = PrimaryTextBlack,
-                    textAlign = TextAlign.Center
-                )
+            if (perevod != Settings.PEREVODCATOLIK) {
+                TextButton(
+                    onClick = {
+                        navigationActions.navigateToBibliaList(false, perevod)
+                    },
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(5.dp)
+                        .size(width = 200.dp, height = Dp.Unspecified),
+                    colors = ButtonColors(
+                        Primary,
+                        Color.Unspecified,
+                        Color.Unspecified,
+                        Color.Unspecified
+                    ),
+                    shape = MaterialTheme.shapes.small
+                ) {
+                    Text(
+                        if (perevod == Settings.PEREVODNADSAN) stringResource(R.string.psalter)
+                        else stringResource(R.string.stary_zapaviet),
+                        fontSize = Settings.fontInterface.sp,
+                        color = PrimaryTextBlack,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
             if (perevod != Settings.PEREVODNADSAN) {
                 TextButton(
@@ -380,6 +386,7 @@ fun BibliaMenu(
                 Settings.PEREVODBOKUNA -> "bokuna"
                 Settings.PEREVODCARNIAUSKI -> "carniauski"
                 Settings.PEREVODNADSAN -> "nadsan"
+                Settings.PEREVODCATOLIK -> "catolik"
                 Settings.PEREVODSINOIDAL -> "sinaidal"
                 else -> "biblia"
             }
@@ -836,7 +843,7 @@ fun BibliaMenu(
                         .fillMaxWidth(), contentScale = ContentScale.FillWidth
                 )
             }
-            if (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODBOKUNA) {
+            if (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODCATOLIK) {
                 TextButton(
                     onClick = {
                         dialogVisable = true
@@ -868,7 +875,7 @@ fun BibliaMenu(
 
 @Composable
 fun DialogSemuxa(
-    isSemuxa: Boolean,
+    perevod: String,
     onDismiss: () -> Unit,
 ) {
     Dialog(onDismissRequest = { onDismiss() }) {
@@ -886,9 +893,11 @@ fun DialogSemuxa(
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
                 val context = LocalContext.current
-                val text =
-                    if (isSemuxa) openAssetsResources(context, "all_rights_reserved_semuxa.html")
-                    else openAssetsResources(context, "all_rights_reserved_bokun.html")
+                val text = when (perevod) {
+                    Settings.PEREVODBOKUNA -> openAssetsResources(context, "all_rights_reserved_bokun.html")
+                    Settings.PEREVODCATOLIK -> openAssetsResources(context, "all_rights_reserved_catolik.html")
+                    else -> openAssetsResources(context, "all_rights_reserved_semuxa.html")
+                }
                 Column(
                     modifier = Modifier
                         .verticalScroll(rememberScrollState())

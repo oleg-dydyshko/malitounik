@@ -432,6 +432,13 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
             )
         }
 
+        composable(AllDestinations.BIBLIA_CATOLIK) {
+            Settings.destinations = AllDestinations.BIBLIA_CATOLIK
+            MainConteiner(
+                navController = navController, drawerScrollStete = drawerScrollStete
+            )
+        }
+
         composable(AllDestinations.BIBLIA_SINODAL) {
             Settings.destinations = AllDestinations.BIBLIA_SINODAL
             MainConteiner(
@@ -956,6 +963,7 @@ fun MainConteiner(
                             Settings.PEREVODSEMUXI -> "biblia"
                             Settings.PEREVODBOKUNA -> "bokuna"
                             Settings.PEREVODCARNIAUSKI -> "carniauski"
+                            Settings.PEREVODCATOLIK -> "catolik"
                             Settings.PEREVODNADSAN -> "nadsan"
                             Settings.PEREVODSINOIDAL -> "sinaidal"
                             else -> "biblia"
@@ -1024,6 +1032,10 @@ fun MainConteiner(
 
                             AllDestinations.BIBLIA_CHARNIAUSKI -> {
                                 navigationActions.navigateToBibliaCharniauski()
+                            }
+
+                            AllDestinations.BIBLIA_CATOLIK -> {
+                                navigationActions.navigateToBibliaCatolik()
                             }
 
                             AllDestinations.BIBLIA_SINODAL -> {
@@ -1096,6 +1108,7 @@ fun MainConteiner(
             AllDestinations.BIBLIA_BOKUNA -> stringResource(R.string.title_biblia_bokun)
             AllDestinations.BIBLIA_NADSAN -> stringResource(R.string.title_psalter)
             AllDestinations.BIBLIA_CHARNIAUSKI -> stringResource(R.string.title_biblia_charniauski)
+            AllDestinations.BIBLIA_CATOLIK -> stringResource(R.string.title_biblia_catolik)
             AllDestinations.BIBLIA_SINODAL -> stringResource(R.string.bsinaidal)
             else -> ""
         }
@@ -1222,7 +1235,7 @@ fun MainConteiner(
                                 sortedNatatki = if (sortedNatatki == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
                                 else Settings.SORT_BY_ABC
                                 k.edit {
-                                    if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.BIBLIA_SEMUXA || currentRoute == AllDestinations.BIBLIA_BOKUNA || currentRoute == AllDestinations.BIBLIA_NADSAN || currentRoute == AllDestinations.BIBLIA_CHARNIAUSKI || currentRoute == AllDestinations.BIBLIA_SINODAL) {
+                                    if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.BIBLIA_SEMUXA || currentRoute == AllDestinations.BIBLIA_BOKUNA || currentRoute == AllDestinations.BIBLIA_NADSAN || currentRoute == AllDestinations.BIBLIA_CHARNIAUSKI || currentRoute == AllDestinations.BIBLIA_SINODAL || currentRoute == AllDestinations.BIBLIA_CATOLIK) {
                                         putInt(
                                             "sortedVybranae", sortedVybranae
                                         )
@@ -1231,7 +1244,7 @@ fun MainConteiner(
                             }) {
                                 Icon(
                                     modifier = Modifier.size(24.dp),
-                                    painter = if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.BIBLIA_SEMUXA || currentRoute == AllDestinations.BIBLIA_BOKUNA || currentRoute == AllDestinations.BIBLIA_NADSAN || currentRoute == AllDestinations.BIBLIA_CHARNIAUSKI || currentRoute == AllDestinations.BIBLIA_SINODAL) {
+                                    painter = if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.BIBLIA_SEMUXA || currentRoute == AllDestinations.BIBLIA_BOKUNA || currentRoute == AllDestinations.BIBLIA_NADSAN || currentRoute == AllDestinations.BIBLIA_CHARNIAUSKI || currentRoute == AllDestinations.BIBLIA_SINODAL || currentRoute == AllDestinations.BIBLIA_CATOLIK) {
                                         if (sortedVybranae == Settings.SORT_BY_TIME) {
                                             painterResource(R.drawable.sort_by_az)
                                         } else {
@@ -1732,6 +1745,20 @@ fun MainConteiner(
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
                         BibliaMenu(navController, Settings.PEREVODCARNIAUSKI, innerPadding, searchText, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
+                            isIconSort = isIconSortVisibility
+                        }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
+                            navigationActions.navigateToCytanniList(
+                                "", chytanne, biblia, perevod2, position
+                            )
+                        }, navigateToBogaslujbovyia = { title, resurs ->
+                            navigationActions.navigateToBogaslujbovyia(title, resurs)
+                        })
+                    }
+
+                    AllDestinations.BIBLIA_CATOLIK -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
+                        BibliaMenu(navController, Settings.PEREVODCATOLIK, innerPadding, searchText, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
                             isIconSort = isIconSortVisibility
                         }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
                             navigationActions.navigateToCytanniList(

@@ -74,6 +74,7 @@ fun BibliaList(
         Settings.PEREVODSEMUXI -> stringResource(R.string.title_biblia)
         Settings.PEREVODBOKUNA -> stringResource(R.string.title_biblia_bokun)
         Settings.PEREVODCARNIAUSKI -> stringResource(R.string.title_biblia_charniauski)
+        Settings.PEREVODCATOLIK -> stringResource(R.string.title_biblia_catolik)
         Settings.PEREVODNADSAN -> stringResource(R.string.title_psalter)
         Settings.PEREVODSINOIDAL -> stringResource(R.string.bsinaidal)
         else -> stringResource(R.string.kaliandar2)
@@ -91,6 +92,7 @@ fun BibliaList(
                 Settings.PEREVODSEMUXI -> "biblia"
                 Settings.PEREVODBOKUNA -> "bokuna"
                 Settings.PEREVODCARNIAUSKI -> "carniauski"
+                Settings.PEREVODCATOLIK -> "catolik"
                 Settings.PEREVODSINOIDAL -> "sinaidal"
                 else -> "biblia"
             }
@@ -306,6 +308,11 @@ fun bibleCount(perevod: String, isNovyZapavet: Boolean): ArrayList<BibliaList> {
                 val list = stringArrayResource(R.array.charniauskis)
                 result.addAll(setStaryZapavet(list, perevod))
             }
+        }
+
+        Settings.PEREVODCATOLIK -> {
+            val list = stringArrayResource(R.array.catolikn)
+            result.addAll(setNovyZapavet(list, perevod))
         }
 
         Settings.PEREVODNADSAN -> {
@@ -544,7 +551,7 @@ fun setNovyZapavet(list: Array<String>, perevod: String): ArrayList<BibliaList> 
     result.add(BibliaList(list[2], "Лк", 24))
     result.add(BibliaList(list[3], "Ян", 21))
     result.add(BibliaList(list[4], "Дз", 28))
-    if (perevod != Settings.PEREVODCARNIAUSKI) {
+    if (!(perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODCATOLIK)) {
         result.add(BibliaList(list[5], "Як", 5))
         result.add(BibliaList(list[6], "1 Пт", 5))
         result.add(BibliaList(list[7], "2 Пт", 3))
