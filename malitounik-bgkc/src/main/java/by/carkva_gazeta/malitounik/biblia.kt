@@ -125,6 +125,7 @@ fun getRealBook(kniga: Int, perevod: String): Int {
         knigaNew = kniga - 50
     }
     if (perevod == Settings.PEREVODCATOLIK && kniga < 50) knigaNew = -1
+    if (perevod == Settings.PEREVODNADSAN && kniga < 50 && knigaNew != 21) knigaNew = -1
     if ((perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODCATOLIK) && kniga >= 50) {
         knigaNew = when (knigaNew) {
             0 -> 0

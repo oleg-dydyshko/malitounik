@@ -914,31 +914,28 @@ fun CytanniList(
                                 }
                             }
                             if (biblia == Settings.CHYTANNI_BIBLIA || biblia == Settings.CHYTANNI_VYBRANAE) {
-                                val kniga = knigaBiblii(knigaText)
-                                if (kniga == 21) {
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable {
-                                                cytanniListItemData.value.clear()
-                                                selectOldPerevod = perevod
-                                                perevod = Settings.PEREVODNADSAN
-                                                initVybranoe = true
-                                                selectPerevod = true
-                                            }, verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        RadioButton(
-                                            selected = perevod == Settings.PEREVODNADSAN, onClick = {
-                                                cytanniListItemData.value.clear()
-                                                selectOldPerevod = perevod
-                                                perevod = Settings.PEREVODNADSAN
-                                                initVybranoe = true
-                                                selectPerevod = true
-                                            })
-                                        Text(
-                                            stringResource(R.string.title_psalter), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                                        )
-                                    }
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            cytanniListItemData.value.clear()
+                                            selectOldPerevod = perevod
+                                            perevod = Settings.PEREVODNADSAN
+                                            initVybranoe = true
+                                            selectPerevod = true
+                                        }, verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    RadioButton(
+                                        selected = perevod == Settings.PEREVODNADSAN, onClick = {
+                                            cytanniListItemData.value.clear()
+                                            selectOldPerevod = perevod
+                                            perevod = Settings.PEREVODNADSAN
+                                            initVybranoe = true
+                                            selectPerevod = true
+                                        })
+                                    Text(
+                                        stringResource(R.string.title_psalter), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                                    )
                                 }
                             }
                             if (biblia != Settings.CHYTANNI_LITURGICHNYIA) {
@@ -1249,7 +1246,7 @@ fun CytanniList(
                         positionRemember = -1
                     }
                     if (resultPage.isEmpty()) {
-                        resultPage.add(CytanniListData( id = 0, title = subTitle, text = openAssetsResources(context, "biblia_error.txt")))
+                        resultPage.add(CytanniListData(id = 0, title = subTitle, text = openAssetsResources(context, "biblia_error.txt")))
                         isPerevodError = true
                     } else {
                         isPerevodError = false
@@ -1642,7 +1639,7 @@ fun getBible(
     var id = 0
     try {
         var chytNew = cytanne
-        if (cytanne.contains("Пасл Ер 1") && (perevod == Settings.PEREVODBOKUNA ||perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODSEMUXI)) {
+        if (cytanne.contains("Пасл Ер 1") && (perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODSEMUXI)) {
             chytNew = chytNew.replace("Пасл Ер 1", "Вар 6")
         }
         val list = chytNew.split(";")
