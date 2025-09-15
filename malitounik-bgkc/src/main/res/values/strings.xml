@@ -804,7 +804,7 @@
         <item>https://server.radiorm.by:8443/start32</item>
     </array>
     <string name="cytaty">ЦЫТАТЫ З БІБЛІІ</string>
-    <string name="title_biblia_catolik">БІБЛІЯ (пераклад Рыма-Каталіцкага Касцёла)</string>
+    <string name="title_biblia_catolik">НОВЫ ЗАПАВЕТ (пераклад Рыма-Каталіцкага Касцёла)</string>
     <string name="title_biblia_catolik2">Пераклад Рыма-Каталіцкага Касцёла</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>
