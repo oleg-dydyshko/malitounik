@@ -67,6 +67,7 @@ import by.carkva_gazeta.malitounik.ui.theme.MalitounikTheme
 import by.carkva_gazeta.malitounik.views.AllDestinations
 import by.carkva_gazeta.malitounik.views.AppNavGraph
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
+import by.carkva_gazeta.malitounik.views.findCaliandarPosition
 import by.carkva_gazeta.malitounik.views.openAssetsResources
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.google.firebase.FirebaseApp
@@ -173,6 +174,9 @@ object Settings {
             if (data.isEmpty()) {
                 data.addAll(gson.fromJson(builder, type))
             }
+        }
+        if (caliandarPosition == -1) {
+            findCaliandarPosition()
         }
     }
 

@@ -14,8 +14,8 @@ android {
         applicationId = "by.carkva_gazeta.malitounik"
         minSdk = 23
         targetSdk = 36
-        versionCode = 442545
-        versionName = "5.99.23"
+        versionCode = 442546
+        versionName = "5.99.24"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
