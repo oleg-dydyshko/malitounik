@@ -1357,7 +1357,7 @@ fun CytanniList(
                                     Text(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(start = 10.dp, end = 10.dp, top = 10.dp), text = titlePerevod, fontSize = fontSize.sp, lineHeight = fontSize.sp * 1.15, fontStyle = FontStyle.Italic, color = MaterialTheme.colorScheme.secondary
+                                            .padding(start = 10.dp, end = 10.dp, top = 10.dp), text = titlePerevod, fontSize = fontSize.sp, lineHeight = fontSize.sp * 1.15, color = SecondaryText
                                     )
                                 }
                             }
@@ -1727,37 +1727,35 @@ fun getBible(
                         var perevodNew = perevod
                         val knigiBiblii = knigaBiblii(knigaText)
                         var kniga = getRealBook(knigiBiblii, perevodNew)
-                        if (biblia != Settings.CHYTANNI_BIBLIA) {
-                            if (kniga == -1) {
-                                perevodNew = Settings.PEREVODCARNIAUSKI
-                                kniga = getRealBook(knigiBiblii, perevodNew)
-                            }
-                            if (biblia != Settings.CHYTANNI_LITURGICHNYIA && kniga == -1) {
-                                perevodNew = Settings.PEREVODSINOIDAL
-                                kniga = getRealBook(knigiBiblii, perevodNew)
-                            }
-                            if (biblia != Settings.CHYTANNI_LITURGICHNYIA && (knigiBiblii == 21 && glava == 151 && (perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODBOKUNA))) {
-                                perevodNew = Settings.PEREVODSINOIDAL
-                                kniga = getRealBook(knigiBiblii, perevodNew)
-                            }
-                            if ((knigiBiblii == 33 && (glavaEnd == 13 || glavaEnd == 14)) && (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODBOKUNA)) {
-                                perevodNew = Settings.PEREVODCARNIAUSKI
-                                kniga = getRealBook(knigiBiblii, perevodNew)
-                            }
-                            if (biblia != Settings.CHYTANNI_LITURGICHNYIA && (knigiBiblii == 13 && glava == 37 && perevod != Settings.PEREVODSINOIDAL)) {
-                                perevodNew = Settings.PEREVODSINOIDAL
-                                kniga = getRealBook(knigiBiblii, perevodNew)
-                            }
+                        if (kniga == -1) {
+                            perevodNew = Settings.PEREVODCARNIAUSKI
+                            kniga = getRealBook(knigiBiblii, perevodNew)
+                        }
+                        if (biblia != Settings.CHYTANNI_LITURGICHNYIA && kniga == -1) {
+                            perevodNew = Settings.PEREVODSINOIDAL
+                            kniga = getRealBook(knigiBiblii, perevodNew)
+                        }
+                        if (biblia != Settings.CHYTANNI_LITURGICHNYIA && (knigiBiblii == 21 && glava == 151 && (perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODBOKUNA))) {
+                            perevodNew = Settings.PEREVODSINOIDAL
+                            kniga = getRealBook(knigiBiblii, perevodNew)
+                        }
+                        if ((knigiBiblii == 33 && (glavaEnd == 13 || glavaEnd == 14)) && (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODBOKUNA)) {
+                            perevodNew = Settings.PEREVODCARNIAUSKI
+                            kniga = getRealBook(knigiBiblii, perevodNew)
+                        }
+                        if (biblia != Settings.CHYTANNI_LITURGICHNYIA && (knigiBiblii == 13 && glava == 37 && perevod != Settings.PEREVODSINOIDAL)) {
+                            perevodNew = Settings.PEREVODSINOIDAL
+                            kniga = getRealBook(knigiBiblii, perevodNew)
                         }
                         var titlePerevod = ""
                         if (perevodOld != perevodNew) {
                             when (perevodNew) {
-                                Settings.PEREVODSEMUXI -> titlePerevod = "<br><em>" + context.getString(R.string.title_biblia2) + "</em><br>"
-                                Settings.PEREVODSINOIDAL -> titlePerevod = "<br><em>" + context.getString(R.string.bsinaidal2) + "</em><br>"
-                                Settings.PEREVODNADSAN -> titlePerevod = "<br><em>" + context.getString(R.string.title_psalter) + "</em><br>"
-                                Settings.PEREVODBOKUNA -> titlePerevod = "<br><em>" + context.getString(R.string.title_biblia_bokun2) + "</em><br>"
-                                Settings.PEREVODCARNIAUSKI -> titlePerevod = "<br><em>" + context.getString(R.string.title_biblia_charniauski2) + "</em><br>"
-                                Settings.PEREVODCATOLIK -> titlePerevod = "<br><em>" + context.getString(R.string.title_biblia_catolik2) + "</em><br>"
+                                Settings.PEREVODSEMUXI -> titlePerevod = "<br><font color=\"#999999\">" + context.getString(R.string.title_biblia2) + "</font><br>"
+                                Settings.PEREVODSINOIDAL -> titlePerevod = "<br><font color=\"#999999\">" + context.getString(R.string.bsinaidal2) + "</font><br>"
+                                Settings.PEREVODNADSAN -> titlePerevod = "<br><font color=\"#999999\">" + context.getString(R.string.title_psalter) + "</font><br>"
+                                Settings.PEREVODBOKUNA -> titlePerevod = "<br><font color=\"#999999\">" + context.getString(R.string.title_biblia_bokun2) + "</font><br>"
+                                Settings.PEREVODCARNIAUSKI -> titlePerevod = "<br><font color=\"#999999\">" + context.getString(R.string.title_biblia_charniauski2) + "</font><br>"
+                                Settings.PEREVODCATOLIK -> titlePerevod = "<br><font color=\"#999999\">" + context.getString(R.string.title_biblia_catolik2) + "</font><br>"
                             }
                             perevodOld = perevodNew
                         }

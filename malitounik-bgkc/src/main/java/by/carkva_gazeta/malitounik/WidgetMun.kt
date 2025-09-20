@@ -95,7 +95,7 @@ class UpdateDataClickActionCallback : ActionCallback {
     override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
         val clickType = requireNotNull(parameters[getClickTypeActionParameterKey()])
         updateAppWidgetState(context, PreferencesGlanceStateDefinition, glanceId) {
-            var position = it[intPreferencesKey("position")] ?: Settings.caliandarPosition
+            var position = it[intPreferencesKey("position")] ?: findDefaultCaliandarMun()
             when (clickType) {
                 TYPE_PLUS -> {
                     position = getDataKaliandar(1, position)
@@ -132,6 +132,7 @@ private fun getImageActionCallback(clickType: Int): Action {
 }
 
 private fun findDefaultCaliandarMun(): Int {
+    Settings.dataCaliandar()
     var caliandarPosition = Settings.caliandarPosition
     val calendar = Calendar.getInstance()
     for (i in Settings.data.indices) {
@@ -370,7 +371,7 @@ class WidgetMun : GlanceAppWidgetReceiver() {
             glanceIds.forEach { glanceId ->
                 updateAppWidgetState(context, glanceId) {
                     it[booleanPreferencesKey("dzenNoch")] = getBaseDzenNoch(context)
-                    it[intPreferencesKey("position")] = getDataKaliandar(0, Settings.caliandarPosition)
+                    it[intPreferencesKey("position")] = getDataKaliandar(0, findDefaultCaliandarMun())
                 }
                 widget.update(context, glanceId)
             }
