@@ -1374,7 +1374,7 @@ fun MainConteiner(
                 }, colors = TopAppBarDefaults.topAppBarColors(tollBarColor)
             )
         }, bottomBar = {
-            if (!(currentRoute == AllDestinations.LITURGIKON_MENU || currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.CHASASLOU_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA || currentRoute == AllDestinations.UNDER_PARAFII_BGKC || currentRoute == AllDestinations.UNDER_SVAITY_MUNU || currentRoute.contains("BIBLIA", ignoreCase = true) || currentRoute == AllDestinations.VYBRANAE_LIST)) {
+            if (!(currentRoute == AllDestinations.MAE_NATATKI_MENU || currentRoute == AllDestinations.LITURGIKON_MENU || currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.CHASASLOU_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA || currentRoute == AllDestinations.UNDER_PARAFII_BGKC || currentRoute == AllDestinations.UNDER_SVAITY_MUNU || currentRoute.contains("BIBLIA", ignoreCase = true) || currentRoute == AllDestinations.VYBRANAE_LIST)) {
                 val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
                 if (!searchText) {
                     if (showDropdown) {

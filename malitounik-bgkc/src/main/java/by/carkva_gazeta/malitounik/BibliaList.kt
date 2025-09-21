@@ -501,7 +501,7 @@ fun setStaryZapavet(list: Array<String>, perevod: String): ArrayList<BibliaList>
             result.add(BibliaList(list[40], "Юдт", 16))
             result.add(BibliaList(list[41], "Мдр", 19))
             result.add(BibliaList(list[42], "Сір", 51))
-            result.add(BibliaList(list[43], "Бар", 6))
+            result.add(BibliaList(list[43], "Вар", 6))
             result.add(BibliaList(list[44], "1 Мак", 16))
             result.add(BibliaList(list[45], "2 Мак", 15))
         }
@@ -521,7 +521,7 @@ fun setStaryZapavet(list: Array<String>, perevod: String): ArrayList<BibliaList>
         result.add(BibliaList(list[28], "Ер", 52))
         result.add(BibliaList(list[29], "Плач", 5))
         result.add(BibliaList(list[30], "Пасл Ер", 1))
-        result.add(BibliaList(list[31], "Бар", 5))
+        result.add(BibliaList(list[31], "Вар", 5))
         result.add(BibliaList(list[32], "Езк", 48))
         result.add(BibliaList(list[33], "Дан", 14))
         result.add(BibliaList(list[34], "Ас", 14))

@@ -193,16 +193,17 @@ class CytanniListItems(
 fun CytanniList(
     navController: NavHostController, title: String, cytanne: String, biblia: Int, perevodRoot: String, position: Int
 ) {
-    val t1 = cytanne.indexOf(";")
+    var newCytanne = cytanne
+    val t1 = newCytanne.indexOf(";")
     var knigaText by remember {
         mutableStateOf(
             if (biblia == Settings.CHYTANNI_BIBLIA || biblia == Settings.CHYTANNI_VYBRANAE) {
-                if (t1 == -1) cytanne.substringBeforeLast(" ")
+                if (t1 == -1) newCytanne.substringBeforeLast(" ")
                 else {
-                    val sb = cytanne.substring(0, t1)
+                    val sb = newCytanne.substring(0, t1)
                     sb.substringBeforeLast(" ")
                 }
-            } else cytanne
+            } else newCytanne
         )
     }
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
@@ -299,7 +300,7 @@ fun CytanniList(
     }
     val initPage = if (biblia == Settings.CHYTANNI_BIBLIA) {
         if (Settings.bibleTimeList) k.getInt("bible_time_${prevodName}_glava", 0)
-        else cytanne.substringAfterLast(" ").toInt() - 1
+        else newCytanne.substringAfterLast(" ").toInt() - 1
     } else 0
     val pagerState = rememberPagerState(pageCount = {
         listState.size
@@ -330,6 +331,9 @@ fun CytanniList(
     if (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODBOKUNA) {
         if (knigaBiblii(knigaText) == 33) {
             if (selectedIndex > 11) selectedIndex = 11
+        }
+        if (knigaBiblii(knigaText) == 31) {
+            if (selectedIndex > 4) selectedIndex = 4
         }
     }
     if (biblia == Settings.CHYTANNI_BIBLIA && selectPerevod) {
@@ -364,13 +368,12 @@ fun CytanniList(
             }
         }
         if (perevod == Settings.PEREVODSINOIDAL) {
-            if (knigaBiblii(knigaText) == 31 && listState.size == 6) {
+            if (knigaBiblii(knigaText) == 31) {
                 if (selectedIndex == 5) {
-                    for (i in 5 downTo 1) listState.removeAt(i)
+                    for (i in 4 downTo 1) listState.removeAt(i)
                     selectedIndex = 0
                     knigaText = "Пасл Ер"
-                } else {
-                    listState.removeAt(5)
+                    newCytanne = "Пасл Ер 1"
                 }
             }
         }
@@ -380,7 +383,8 @@ fun CytanniList(
                     listState.add(rememberLazyListState())
                 }
                 selectedIndex = 5
-                knigaText = "Бар"
+                knigaText = "Вар"
+                newCytanne = "Вар 6"
             }
         }
     }
@@ -763,118 +767,124 @@ fun CytanniList(
                                 stringResource(R.string.perevody), modifier = Modifier.padding(start = 10.dp, top = 10.dp), textAlign = TextAlign.Center, fontStyle = FontStyle.Italic, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                             )
                             val edit = k.edit()
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        cytanniListItemData.value.clear()
-                                        selectOldPerevod = perevod
-                                        perevod = Settings.PEREVODSEMUXI
-                                        initVybranoe = true
-                                        selectPerevod = true
-                                        if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
-                                            "perevodMaranata", perevod
-                                        )
-                                        if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
-                                            "perevod", perevod
-                                        )
-                                        edit.apply()
-                                    }, verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                RadioButton(
-                                    selected = perevod == Settings.PEREVODSEMUXI, onClick = {
-                                        cytanniListItemData.value.clear()
-                                        selectOldPerevod = perevod
-                                        perevod = Settings.PEREVODSEMUXI
-                                        initVybranoe = true
-                                        selectPerevod = true
-                                        if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
-                                            "perevodMaranata", perevod
-                                        )
-                                        if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
-                                            "perevod", perevod
-                                        )
-                                        edit.apply()
-                                    })
-                                Text(
-                                    stringResource(R.string.title_biblia2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                                )
+                            if (getRealBook(knigaBiblii(knigaText), Settings.PEREVODSEMUXI) != -1) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            cytanniListItemData.value.clear()
+                                            selectOldPerevod = perevod
+                                            perevod = Settings.PEREVODSEMUXI
+                                            initVybranoe = true
+                                            selectPerevod = true
+                                            if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
+                                                "perevodMaranata", perevod
+                                            )
+                                            if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
+                                                "perevod", perevod
+                                            )
+                                            edit.apply()
+                                        }, verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    RadioButton(
+                                        selected = perevod == Settings.PEREVODSEMUXI, onClick = {
+                                            cytanniListItemData.value.clear()
+                                            selectOldPerevod = perevod
+                                            perevod = Settings.PEREVODSEMUXI
+                                            initVybranoe = true
+                                            selectPerevod = true
+                                            if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
+                                                "perevodMaranata", perevod
+                                            )
+                                            if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
+                                                "perevod", perevod
+                                            )
+                                            edit.apply()
+                                        })
+                                    Text(
+                                        stringResource(R.string.title_biblia2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                                    )
+                                }
                             }
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        cytanniListItemData.value.clear()
-                                        selectOldPerevod = perevod
-                                        perevod = Settings.PEREVODBOKUNA
-                                        initVybranoe = true
-                                        selectPerevod = true
-                                        if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
-                                            "perevodMaranata", perevod
-                                        )
-                                        if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
-                                            "perevod", perevod
-                                        )
-                                        edit.apply()
-                                    }, verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                RadioButton(
-                                    selected = perevod == Settings.PEREVODBOKUNA, onClick = {
-                                        cytanniListItemData.value.clear()
-                                        selectOldPerevod = perevod
-                                        perevod = Settings.PEREVODBOKUNA
-                                        initVybranoe = true
-                                        selectPerevod = true
-                                        if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
-                                            "perevodMaranata", perevod
-                                        )
-                                        if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
-                                            "perevod", perevod
-                                        )
-                                        edit.apply()
-                                    })
-                                Text(
-                                    stringResource(R.string.title_biblia_bokun2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                                )
+                            if (getRealBook(knigaBiblii(knigaText), Settings.PEREVODBOKUNA) != -1) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            cytanniListItemData.value.clear()
+                                            selectOldPerevod = perevod
+                                            perevod = Settings.PEREVODBOKUNA
+                                            initVybranoe = true
+                                            selectPerevod = true
+                                            if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
+                                                "perevodMaranata", perevod
+                                            )
+                                            if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
+                                                "perevod", perevod
+                                            )
+                                            edit.apply()
+                                        }, verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    RadioButton(
+                                        selected = perevod == Settings.PEREVODBOKUNA, onClick = {
+                                            cytanniListItemData.value.clear()
+                                            selectOldPerevod = perevod
+                                            perevod = Settings.PEREVODBOKUNA
+                                            initVybranoe = true
+                                            selectPerevod = true
+                                            if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
+                                                "perevodMaranata", perevod
+                                            )
+                                            if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
+                                                "perevod", perevod
+                                            )
+                                            edit.apply()
+                                        })
+                                    Text(
+                                        stringResource(R.string.title_biblia_bokun2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                                    )
+                                }
                             }
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        cytanniListItemData.value.clear()
-                                        selectOldPerevod = perevod
-                                        perevod = Settings.PEREVODCARNIAUSKI
-                                        initVybranoe = true
-                                        selectPerevod = true
-                                        if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
-                                            "perevodMaranata", perevod
-                                        )
-                                        if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
-                                            "perevod", perevod
-                                        )
-                                        edit.apply()
-                                    }, verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                RadioButton(
-                                    selected = perevod == Settings.PEREVODCARNIAUSKI, onClick = {
-                                        cytanniListItemData.value.clear()
-                                        selectOldPerevod = perevod
-                                        perevod = Settings.PEREVODCARNIAUSKI
-                                        initVybranoe = true
-                                        selectPerevod = true
-                                        if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
-                                            "perevodMaranata", perevod
-                                        )
-                                        if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
-                                            "perevod", perevod
-                                        )
-                                        edit.apply()
-                                    })
-                                Text(
-                                    stringResource(R.string.title_biblia_charniauski2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                                )
+                            if (getRealBook(knigaBiblii(knigaText), Settings.PEREVODCARNIAUSKI) != -1 || knigaBiblii(knigaText) == 30) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            cytanniListItemData.value.clear()
+                                            selectOldPerevod = perevod
+                                            perevod = Settings.PEREVODCARNIAUSKI
+                                            initVybranoe = true
+                                            selectPerevod = true
+                                            if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
+                                                "perevodMaranata", perevod
+                                            )
+                                            if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
+                                                "perevod", perevod
+                                            )
+                                            edit.apply()
+                                        }, verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    RadioButton(
+                                        selected = perevod == Settings.PEREVODCARNIAUSKI, onClick = {
+                                            cytanniListItemData.value.clear()
+                                            selectOldPerevod = perevod
+                                            perevod = Settings.PEREVODCARNIAUSKI
+                                            initVybranoe = true
+                                            selectPerevod = true
+                                            if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
+                                                "perevodMaranata", perevod
+                                            )
+                                            if (biblia == Settings.CHYTANNI_LITURGICHNYIA) edit.putString(
+                                                "perevod", perevod
+                                            )
+                                            edit.apply()
+                                        })
+                                    Text(
+                                        stringResource(R.string.title_biblia_charniauski2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                                    )
+                                }
                             }
-                            if (biblia != Settings.CHYTANNI_MARANATA) {
+                            if ((biblia == Settings.CHYTANNI_BIBLIA && knigaBiblii(knigaText) >= 50) || biblia == Settings.CHYTANNI_LITURGICHNYIA || biblia == Settings.CHYTANNI_VYBRANAE) {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -913,7 +923,7 @@ fun CytanniList(
                                     )
                                 }
                             }
-                            if (biblia == Settings.CHYTANNI_BIBLIA || biblia == Settings.CHYTANNI_VYBRANAE) {
+                            if ((biblia == Settings.CHYTANNI_BIBLIA && knigaText == "Пс") || biblia == Settings.CHYTANNI_VYBRANAE) {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -1220,7 +1230,7 @@ fun CytanniList(
                 HorizontalPager(
                     pageSpacing = 10.dp, state = pagerState, flingBehavior = fling, verticalAlignment = Alignment.Top, userScrollEnabled = biblia == Settings.CHYTANNI_BIBLIA
                 ) { page ->
-                    val viewModel = CytanniListItems(biblia, page, cytanne, perevod)
+                    val viewModel = CytanniListItems(biblia, page, newCytanne, perevod)
                     val resultPage by viewModel.filteredItems.collectAsStateWithLifecycle()
                     if (biblia != Settings.CHYTANNI_BIBLIA && positionRemember != -1) {
                         var resultCount = 0
