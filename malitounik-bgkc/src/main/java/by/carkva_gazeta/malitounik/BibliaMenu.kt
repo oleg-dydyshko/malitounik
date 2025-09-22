@@ -169,6 +169,40 @@ fun BibliaMenu(
     var isRegistr by remember { mutableStateOf(k.getBoolean("pegistrbukv", true)) }
     var isDakladnaeSupadzenne by remember { mutableIntStateOf(k.getInt("slovocalkam", 0)) }
     var isProgressVisable by remember { mutableStateOf(false) }
+    var isDeliteVybranaeAll by remember { mutableStateOf(false) }
+    if (isDeliteVybranaeAll) {
+        val titlePerevod = when (perevod) {
+            Settings.PEREVODSEMUXI -> stringResource(R.string.title_biblia2)
+            Settings.PEREVODSINOIDAL -> stringResource(R.string.bsinaidal2)
+            Settings.PEREVODNADSAN -> stringResource(R.string.title_psalter)
+            Settings.PEREVODBOKUNA -> stringResource(R.string.title_biblia_bokun2)
+            Settings.PEREVODCARNIAUSKI -> stringResource(R.string.title_biblia_charniauski2)
+            Settings.PEREVODCATOLIK -> stringResource(R.string.title_biblia_catolik2)
+            else -> stringResource(R.string.title_biblia2)
+        }
+        DialogDelite(
+            title = stringResource(R.string.vybranoe_biblia_delite, titlePerevod),
+            onDismiss = {
+                isDeliteVybranaeAll = false
+            },
+            onConfirmation = {
+                val prevodName = when (perevod) {
+                    Settings.PEREVODSEMUXI -> "biblia"
+                    Settings.PEREVODBOKUNA -> "bokuna"
+                    Settings.PEREVODCARNIAUSKI -> "carniauski"
+                    Settings.PEREVODNADSAN -> "nadsan"
+                    Settings.PEREVODCATOLIK -> "catolik"
+                    Settings.PEREVODSINOIDAL -> "sinaidal"
+                    else -> "biblia"
+                }
+                val file = File("${context.filesDir}/vybranoe_${prevodName}.json")
+                if (file.exists()) {
+                    file.delete()
+                }
+                isDeliteVybranaeAll = false
+            }
+        )
+    }
     LaunchedEffect(searchSettings, Settings.textFieldValueState.value) {
         if (searchSettings) {
             searchList.clear()
@@ -424,15 +458,24 @@ fun BibliaMenu(
                     )
                 }
                 var collapsedState by remember { mutableStateOf(AppNavGraphState.setItemsValue(titlePerevod, true)) }
-                Column(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)
+                ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
                         modifier = Modifier
-                            .clickable {
-                                AppNavGraphState.setItemsValue(titlePerevod)
-                                collapsedState = !collapsedState
-                            }
+                            .combinedClickable(
+                                onClick = {
+                                    AppNavGraphState.setItemsValue(titlePerevod)
+                                    collapsedState = !collapsedState
+                                },
+                                onLongClick = {
+                                    isDeliteVybranaeAll = true
+                                }
+                            )
                             .clip(MaterialTheme.shapes.small)
                             .background(Divider)
                             .align(Alignment.CenterHorizontally)
