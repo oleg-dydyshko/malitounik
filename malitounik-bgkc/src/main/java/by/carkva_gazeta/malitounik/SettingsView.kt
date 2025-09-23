@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -99,6 +100,7 @@ import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
 import com.google.android.play.core.splitinstall.SplitInstallException
 import com.google.android.play.core.splitinstall.SplitInstallHelper
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
@@ -565,50 +567,61 @@ fun SettingsView(navController: NavHostController) {
                     })
             }
             var maranafaState by remember { mutableStateOf(k.getBoolean("maranafa", false)) }
-            Row(
-                verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                    .clickable {
-                        maranafaState = !maranafaState
-                        k.edit {
-                            putBoolean("maranafa", maranafaState)
-                        }
-                    }
-                    .padding(vertical = 5.dp)) {
-                Text(
-                    stringResource(R.string.maranata_opis), modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
-                )
-                Switch(
-                    modifier = Modifier.scale(0.8f), checked = maranafaState, onCheckedChange = {
-                        maranafaState = it
-                        k.edit {
-                            putBoolean("maranafa", maranafaState)
-                        }
-                    })
-            }
             var paralelState by remember { mutableStateOf(k.getBoolean("paralel_maranata", true)) }
-            Row(
-                verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                    .clickable {
-                        paralelState = !paralelState
-                        k.edit {
-                            putBoolean("paralel_maranata", paralelState)
+            Column (
+                modifier = Modifier
+                    .clip(shape = RoundedCornerShape(10.dp))
+                    .border(
+                        width = 1.dp,
+                        color = SecondaryText,
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                    .padding(horizontal = 10.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                        .clickable {
+                            maranafaState = !maranafaState
+                            k.edit {
+                                putBoolean("maranafa", maranafaState)
+                            }
                         }
-                    }
-                    .padding(vertical = 5.dp)) {
-                Text(
-                    stringResource(R.string.paralel), modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
-                )
-                Switch(
-                    modifier = Modifier.scale(0.8f), checked = paralelState, onCheckedChange = {
-                        paralelState = it
-                        k.edit {
-                            putBoolean("paralel_maranata", paralelState)
+                        .padding(vertical = 5.dp)) {
+                    Text(
+                        stringResource(R.string.maranata_opis), modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                    )
+                    Switch(
+                        modifier = Modifier.scale(0.8f), checked = maranafaState, onCheckedChange = {
+                            maranafaState = it
+                            k.edit {
+                                putBoolean("maranafa", maranafaState)
+                            }
+                        })
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                        .clickable {
+                            paralelState = !paralelState
+                            k.edit {
+                                putBoolean("paralel_maranata", paralelState)
+                            }
                         }
-                    })
+                        .padding(vertical = 5.dp)) {
+                    Text(
+                        stringResource(R.string.paralel), modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                    )
+                    Switch(
+                        modifier = Modifier.scale(0.8f), checked = paralelState, onCheckedChange = {
+                            paralelState = it
+                            k.edit {
+                                putBoolean("paralel_maranata", paralelState)
+                            }
+                        })
+                }
             }
             Text(
                 modifier = Modifier.padding(top = 20.dp), text = stringResource(R.string.sviaty_notifi), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.primary
