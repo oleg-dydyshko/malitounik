@@ -1345,6 +1345,14 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         }
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        val k = getSharedPreferences("biblia", MODE_PRIVATE)
+        if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_SYSTEM) {
+            Settings.dzenNoch.value = newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+        }
+    }
+
     private fun onBack() {
         if (isGesture || backPressed + 2000 > System.currentTimeMillis()) {
             moveTaskToBack(true)
