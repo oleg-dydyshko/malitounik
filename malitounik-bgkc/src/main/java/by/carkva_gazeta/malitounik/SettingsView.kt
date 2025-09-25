@@ -2,7 +2,6 @@ package by.carkva_gazeta.malitounik
 
 import android.Manifest
 import android.app.Activity
-import android.app.AlarmManager
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -91,7 +90,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
-import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.Settings.NOTIFICATION_CHANNEL_ID_SVIATY
@@ -152,30 +150,20 @@ fun SettingsView(navController: NavHostController) {
             dialodLogin = false
         }
     }
-    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-    if (dialodNotificatin) {
-        val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
-            if (it) {
-                when (k.getInt("notification", Settings.NOTIFICATION_SVIATY_FULL)) {
-                    Settings.NOTIFICATION_SVIATY_ONLY -> setNotificationOnly(context)
-                    Settings.NOTIFICATION_SVIATY_FULL -> setNotificationFull(context)
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    if (!alarmManager.canScheduleExactAlarms()) {
-                        val intent = Intent()
-                        intent.action = android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
-                        intent.data = ("package:" + context.packageName).toUri()
-                        context.startActivity(intent)
-                    }
-                }
-            } else {
-                k.edit {
-                    putInt("notification", Settings.NOTIFICATION_SVIATY_NONE)
-                }
-                setNotificationNon(context)
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
+        if (it) {
+            when (k.getInt("notification", Settings.NOTIFICATION_SVIATY_FULL)) {
+                Settings.NOTIFICATION_SVIATY_ONLY -> setNotificationOnly(context)
+                Settings.NOTIFICATION_SVIATY_FULL -> setNotificationFull(context)
             }
-            dialodNotificatin = false
+        } else {
+            k.edit {
+                putInt("notification", Settings.NOTIFICATION_SVIATY_NONE)
+            }
+            setNotificationNon(context)
         }
+    }
+    if (dialodNotificatin) {
         DialogNotification(onConfirm = {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 val permissionCheck2 = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
@@ -568,7 +556,7 @@ fun SettingsView(navController: NavHostController) {
             }
             var maranafaState by remember { mutableStateOf(k.getBoolean("maranafa", false)) }
             var paralelState by remember { mutableStateOf(k.getBoolean("paralel_maranata", true)) }
-            Column (
+            Column(
                 modifier = Modifier
                     .clip(shape = RoundedCornerShape(10.dp))
                     .border(
@@ -680,7 +668,7 @@ fun SettingsView(navController: NavHostController) {
                             }
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
-                                if (PackageManager.PERMISSION_DENIED == permissionCheck || !alarmManager.canScheduleExactAlarms()) {
+                                if (PackageManager.PERMISSION_DENIED == permissionCheck) {
                                     dialodNotificatin = true
                                 } else {
                                     setNotificationFull(context)
@@ -698,7 +686,7 @@ fun SettingsView(navController: NavHostController) {
                             }
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
-                                if (PackageManager.PERMISSION_DENIED == permissionCheck || !alarmManager.canScheduleExactAlarms()) {
+                                if (PackageManager.PERMISSION_DENIED == permissionCheck) {
                                     dialodNotificatin = true
                                 } else {
                                     setNotificationFull(context)
@@ -1172,13 +1160,13 @@ fun DialogNotification(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onConfirm() }, shape = MaterialTheme.shapes.small
+                        onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
-                        onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
+                        onClick = { onConfirm() }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
                         Text(stringResource(R.string.dazvolic), fontSize = 18.sp)

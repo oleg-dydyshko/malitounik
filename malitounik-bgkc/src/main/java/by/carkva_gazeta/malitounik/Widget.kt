@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
@@ -80,10 +79,23 @@ class CaliandarWidget : GlanceAppWidget() {
     }
 }
 
+fun getDataKaliandar(): Int {
+    Settings.dataCaliandar()
+    val calendar = Calendar.getInstance()
+    var kalPosition = 0
+    for (i in Settings.data.indices) {
+        if (calendar[Calendar.DATE] == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
+            kalPosition = i
+            break
+        }
+    }
+    return kalPosition
+}
+
 @Composable
 private fun Caliandar(context: Context) {
     val prefs = currentState<Preferences>()
-    val position = prefs[intPreferencesKey("position_widget_day")] ?: 0
+    val position =  getDataKaliandar()
     val dzenNoch = prefs[booleanPreferencesKey("dzenNoch")] == true
     val data = Settings.data[position]
     val month = data[2].toInt()
@@ -263,13 +275,11 @@ class Widget : GlanceAppWidgetReceiver() {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
         Settings.dataCaliandar()
         CoroutineScope(Dispatchers.Main).launch {
-            val position = getDataKaliandar()
             val manager = GlanceAppWidgetManager(context)
             val widget = CaliandarWidget()
             val glanceIds = manager.getGlanceIds(widget.javaClass)
             glanceIds.forEach { glanceId ->
                 updateAppWidgetState(context, glanceId) {
-                    it[intPreferencesKey("position_widget_day")] = position
                     it[booleanPreferencesKey("dzenNoch")] = getBaseDzenNoch(context)
                 }
                 widget.update(context, glanceId)
@@ -347,29 +357,15 @@ class Widget : GlanceAppWidgetReceiver() {
         return dzenNoch
     }
 
-    private fun getDataKaliandar(): Int {
-        val calendar = Calendar.getInstance()
-        var kalPosition = 0
-        for (i in Settings.data.indices) {
-            if (calendar[Calendar.DATE] == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
-                kalPosition = i
-                break
-            }
-        }
-        return kalPosition
-    }
-
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
         Settings.dataCaliandar()
         CoroutineScope(Dispatchers.Main).launch {
-            val position = getDataKaliandar()
             val manager = GlanceAppWidgetManager(context)
             val widget = CaliandarWidget()
             val glanceIds = manager.getGlanceIds(widget.javaClass)
             glanceIds.forEach { glanceId ->
                 updateAppWidgetState(context, glanceId) {
-                    it[intPreferencesKey("position_widget_day")] = position
                     it[booleanPreferencesKey("dzenNoch")] = getBaseDzenNoch(context)
                 }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {

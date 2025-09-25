@@ -650,33 +650,34 @@ fun AddPadzeia(
             }
         }
     }
-    if (dialodNotificatin) {
-        val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
-            if (!it) {
+    val launcherAlarm = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            if (!alarmManager.canScheduleExactAlarms()) {
                 setTimeZa = ""
             }
-            dialodNotificatin = false
         }
-        val launcherAlarm = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+    }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
+        if (it) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                if (alarmManager.canScheduleExactAlarms()) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        val permissionCheck2 = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
-                        if (permissionCheck2 == PackageManager.PERMISSION_DENIED) {
-                            launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                        }
-                    }
-                } else {
-                    setTimeZa = ""
+                if (!alarmManager.canScheduleExactAlarms()) {
+                    val intent = Intent()
+                    intent.action = android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                    intent.data = ("package:" + context.packageName).toUri()
+                    launcherAlarm.launch(intent)
                 }
             }
+        } else {
+            setTimeZa = ""
         }
+    }
+    if (dialodNotificatin) {
         DialogNotification(onConfirm = {
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
                 if (!alarmManager.canScheduleExactAlarms()) {
-                    dialodNotificatin = false
                     val intent = Intent()
                     intent.action = android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
                     intent.data = ("package:" + context.packageName).toUri()
@@ -684,11 +685,14 @@ fun AddPadzeia(
                 }
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                if (alarmManager.canScheduleExactAlarms()) {
-                    val permissionCheck2 = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
-                    if (permissionCheck2 == PackageManager.PERMISSION_DENIED) {
-                        launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                    }
+                val permissionCheck2 = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                if (permissionCheck2 == PackageManager.PERMISSION_DENIED) {
+                    launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                } else if (!alarmManager.canScheduleExactAlarms()) {
+                    val intent = Intent()
+                    intent.action = android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                    intent.data = ("package:" + context.packageName).toUri()
+                    launcherAlarm.launch(intent)
                 }
             }
             dialodNotificatin = false
@@ -1773,7 +1777,8 @@ fun DialogContextMenu(
             shape = RoundedCornerShape(10.dp),
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.background),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
