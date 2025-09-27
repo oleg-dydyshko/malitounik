@@ -63,7 +63,7 @@ class GlanceWidgetRadyjoMaryia : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
             GlanceTheme {
-                RadyjoMaryia()
+                RadyjoMaryia(context)
             }
         }
     }
@@ -135,11 +135,11 @@ private fun getRadyjoMaryiaActionCallback(clickType: Int): Action {
 }
 
 @Composable
-fun RadyjoMaryia() {
+fun RadyjoMaryia(context: Context) {
     val prefs = currentState<Preferences>()
-    val title = prefs[stringPreferencesKey("title")] ?: ServiceRadyjoMaryia.titleRadyjoMaryia
-    val action = prefs[intPreferencesKey("action")] ?: 0
-    val isPlaying = prefs[booleanPreferencesKey("isPlaying")] ?: ServiceRadyjoMaryia.isPlayingRadyjoMaryia
+    val title = prefs[stringPreferencesKey("title")] ?: context.getString(R.string.padie_maryia_s)
+    val action = prefs[intPreferencesKey("action")] ?: RadyjoMaryiaClickActionCallback.TYPE_STOP
+    val isPlaying = prefs[booleanPreferencesKey("isPlaying")] ?: false
     Row(modifier = GlanceModifier.fillMaxWidth().background(RadyjoMaryia), verticalAlignment = Alignment.CenterVertically) {
         Column(modifier = GlanceModifier.defaultWeight()) {
             Text(
