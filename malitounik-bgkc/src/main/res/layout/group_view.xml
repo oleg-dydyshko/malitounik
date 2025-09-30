@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<by.carkva_gazeta.malitounik.admin.TextViewCustom xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/textGroup"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="40sp"
+    android:paddingLeft="40sp"
+    android:paddingTop="10sp"
+    android:paddingRight="40sp"
+    android:paddingBottom="10sp"
+    android:textSize="14sp" />

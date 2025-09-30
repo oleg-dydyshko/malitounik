@@ -152,6 +152,8 @@ import by.carkva_gazeta.malitounik.SettingsView
 import by.carkva_gazeta.malitounik.SviatyList
 import by.carkva_gazeta.malitounik.SviatyiaView
 import by.carkva_gazeta.malitounik.VybranaeList
+import by.carkva_gazeta.malitounik.admin.BibliatekaList
+import by.carkva_gazeta.malitounik.admin.Sviatyia
 import by.carkva_gazeta.malitounik.formatFigureTwoPlaces
 import by.carkva_gazeta.malitounik.rawAsset
 import by.carkva_gazeta.malitounik.removeZnakiAndSlovy
@@ -1335,14 +1337,12 @@ fun MainConteiner(
                             if (currentRoute.contains(AllDestinations.KALIANDAR) || currentRoute.contains("BIBLIJATEKA", ignoreCase = true)) {
                                 DropdownMenuItem(onClick = {
                                     expandedUp = false
-                                    if (context.checkmodulesAdmin()) {
-                                        val intent = Intent()
-                                        if (currentRoute.contains(AllDestinations.KALIANDAR)) {
-                                            intent.setClassName(context, "by.carkva_gazeta.admin.Sviatyia")
-                                            intent.putExtra("dayOfYear", Settings.data[Settings.caliandarPosition][24].toInt())
-                                        } else {
-                                            intent.setClassName(context, "by.carkva_gazeta.admin.BibliatekaList")
-                                        }
+                                    if (currentRoute.contains(AllDestinations.KALIANDAR)) {
+                                        val intent = Intent(context, Sviatyia::class.java)
+                                        intent.putExtra("dayOfYear", Settings.data[Settings.caliandarPosition][24].toInt())
+                                        context.startActivity(intent)
+                                    } else {
+                                        val intent = Intent(context, BibliatekaList::class.java)
                                         context.startActivity(intent)
                                     }
                                 }, text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {

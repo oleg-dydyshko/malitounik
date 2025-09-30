@@ -126,6 +126,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.navigation.NavHostController
+import by.carkva_gazeta.malitounik.admin.Pasochnica
+import by.carkva_gazeta.malitounik.admin.PasochnicaList
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik.ui.theme.Button
 import by.carkva_gazeta.malitounik.ui.theme.Divider
@@ -930,25 +932,22 @@ fun Bogaslujbovyia(
                                             DropdownMenuItem(onClick = {
                                                 expandedUp = false
                                                 autoScroll = false
-                                                if ((context as MainActivity).checkmodulesAdmin()) {
-                                                    val intent = Intent()
-                                                    intent.setClassName(context, "by.carkva_gazeta.admin.PasochnicaList")
-                                                    val resAminEdit = if (iskniga) listResource[adminResourceEditPosition].resource
-                                                    else resursEncode
-                                                    val t1 = resAminEdit.lastIndexOf("/")
-                                                    val t2 = resAminEdit.lastIndexOf(".")
-                                                    val resursAdmin = if (t1 != -1) {
-                                                        if (t2 != -1) resAminEdit.substring(t1 + 1, t2)
-                                                        else resAminEdit.substring(t1 + 1)
-                                                    } else {
-                                                        if (t2 != -1) resAminEdit.substring(0, t2)
-                                                        else resAminEdit
-                                                    }
-                                                    intent.putExtra("resours", resursAdmin)
-                                                    intent.putExtra("title", if (iskniga) listResource[adminResourceEditPosition].title else title)
-                                                    intent.putExtra("text", if (iskniga) subText else htmlText.replace("#ff6666", "#d00505", true))
-                                                    context.startActivity(intent)
+                                                val intent = Intent(context, PasochnicaList::class.java)
+                                                val resAminEdit = if (iskniga) listResource[adminResourceEditPosition].resource
+                                                else resursEncode
+                                                val t1 = resAminEdit.lastIndexOf("/")
+                                                val t2 = resAminEdit.lastIndexOf(".")
+                                                val resursAdmin = if (t1 != -1) {
+                                                    if (t2 != -1) resAminEdit.substring(t1 + 1, t2)
+                                                    else resAminEdit.substring(t1 + 1)
+                                                } else {
+                                                    if (t2 != -1) resAminEdit.substring(0, t2)
+                                                    else resAminEdit
                                                 }
+                                                intent.putExtra("resours", resursAdmin)
+                                                intent.putExtra("title", if (iskniga) listResource[adminResourceEditPosition].title else title)
+                                                intent.putExtra("text", if (iskniga) subText else htmlText.replace("#ff6666", "#d00505", true))
+                                                context.startActivity(intent)
                                             }, text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                                 Icon(
                                                     painter = painterResource(R.drawable.edit), contentDescription = ""
@@ -960,25 +959,22 @@ fun Bogaslujbovyia(
                                 if (k.getBoolean("admin", false) && (isBottomBar || iskniga)) {
                                     IconButton(onClick = {
                                         autoScroll = false
-                                        if ((context as MainActivity).checkmodulesAdmin()) {
-                                            val intent = Intent()
-                                            intent.setClassName(context, "by.carkva_gazeta.admin.PasochnicaList")
-                                            val resAminEdit = if (iskniga) listResource[adminResourceEditPosition].resource
-                                            else resursEncode
-                                            val t1 = resAminEdit.lastIndexOf("/")
-                                            val t2 = resAminEdit.lastIndexOf(".")
-                                            val resursAdmin = if (t1 != -1) {
-                                                if (t2 != -1) resAminEdit.substring(t1 + 1, t2)
-                                                else resAminEdit.substring(t1 + 1)
-                                            } else {
-                                                if (t2 != -1) resAminEdit.substring(0, t2)
-                                                else resAminEdit
-                                            }
-                                            intent.putExtra("resours", resursAdmin)
-                                            intent.putExtra("title", if (iskniga) listResource[adminResourceEditPosition].title else title)
-                                            intent.putExtra("text", if (iskniga) subText else htmlText.replace("#ff6666", "#d00505", true))
-                                            context.startActivity(intent)
+                                        val intent = Intent(context, PasochnicaList::class.java)
+                                        val resAminEdit = if (iskniga) listResource[adminResourceEditPosition].resource
+                                        else resursEncode
+                                        val t1 = resAminEdit.lastIndexOf("/")
+                                        val t2 = resAminEdit.lastIndexOf(".")
+                                        val resursAdmin = if (t1 != -1) {
+                                            if (t2 != -1) resAminEdit.substring(t1 + 1, t2)
+                                            else resAminEdit.substring(t1 + 1)
+                                        } else {
+                                            if (t2 != -1) resAminEdit.substring(0, t2)
+                                            else resAminEdit
                                         }
+                                        intent.putExtra("resours", resursAdmin)
+                                        intent.putExtra("title", if (iskniga) listResource[adminResourceEditPosition].title else title)
+                                        intent.putExtra("text", if (iskniga) subText else htmlText.replace("#ff6666", "#d00505", true))
+                                        context.startActivity(intent)
                                     }) {
                                         Icon(
                                             painter = painterResource(R.drawable.edit), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary

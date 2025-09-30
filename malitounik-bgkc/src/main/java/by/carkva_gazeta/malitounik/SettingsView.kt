@@ -94,6 +94,7 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.Settings.NOTIFICATION_CHANNEL_ID_SVIATY
 import by.carkva_gazeta.malitounik.Settings.setNotifications
+import by.carkva_gazeta.malitounik.admin.AdminMain
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
@@ -138,12 +139,8 @@ fun SettingsView(navController: NavHostController) {
     if (dialodLogin) {
         DialogLogin { isLogin ->
             if (isLogin) {
-                val module = SettingsModules(context as MainActivity)
                 k.edit {
                     putBoolean("admin", true)
-                }
-                if (!module.checkmodulesAdmin()) {
-                    module.downloadDynamicModule("admin")
                 }
                 admin = true
             }
@@ -467,26 +464,8 @@ fun SettingsView(navController: NavHostController) {
                 }
                 TextButton(
                     onClick = {
-                        val module = SettingsModules(context as MainActivity)
-                        if (module.checkmodulesAdmin()) {
-                            SplitInstallHelper.updateAppInfo(context)
-                            val intent = Intent()
-                            intent.setClassName(context, "by.carkva_gazeta.admin.AdminMain")
-                            context.startActivity(intent)
-                        } else {
-                            module.setDownloadDynamicModuleListener(object : SettingsModules.DownloadDynamicModuleListener {
-                                override fun dynamicModuleDownloading(totalBytesToDownload: Double, bytesDownloaded: Double) {
-                                }
-
-                                override fun dynamicModuleInstalled() {
-                                    SplitInstallHelper.updateAppInfo(context)
-                                    val intent = Intent()
-                                    intent.setClassName(context, "by.carkva_gazeta.admin.AdminMain")
-                                    context.startActivity(intent)
-                                }
-                            })
-                            module.downloadDynamicModule("admin")
-                        }
+                        val intent = Intent(context, AdminMain::class.java)
+                        context.startActivity(intent)
                     }, modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(5.dp), colors = ButtonColors(

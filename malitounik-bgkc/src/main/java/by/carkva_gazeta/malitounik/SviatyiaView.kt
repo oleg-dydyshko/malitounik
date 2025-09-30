@@ -96,6 +96,8 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavHostController
+import by.carkva_gazeta.malitounik.admin.Sviaty
+import by.carkva_gazeta.malitounik.admin.Sviatyia
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.views.HtmlText
 import com.google.gson.Gson
@@ -399,16 +401,14 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                         if (k.getBoolean("admin", false)) {
                             VerticalDivider()
                             IconButton(onClick = {
-                                if ((context as MainActivity).checkmodulesAdmin()) {
-                                    val intent = Intent()
-                                    if (svity) {
-                                        intent.setClassName(context, "by.carkva_gazeta.admin.Sviaty")
-                                        intent.putExtra("day", sviatyiaList[0].date)
-                                        intent.putExtra("mun", sviatyiaList[0].mun)
-                                    } else {
-                                        intent.setClassName(context, "by.carkva_gazeta.admin.Sviatyia")
-                                        intent.putExtra("dayOfYear", Settings.data[Settings.caliandarPosition][24].toInt())
-                                    }
+                                if (svity) {
+                                    val intent = Intent(context, Sviaty::class.java)
+                                    intent.putExtra("day", sviatyiaList[0].date)
+                                    intent.putExtra("mun", sviatyiaList[0].mun)
+                                    launcher.launch(intent)
+                                } else {
+                                    val intent = Intent(context, Sviatyia::class.java)
+                                    intent.putExtra("dayOfYear", Settings.data[Settings.caliandarPosition][24].toInt())
                                     launcher.launch(intent)
                                 }
                             }) {

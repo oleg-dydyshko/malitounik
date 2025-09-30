@@ -1013,6 +1013,11 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
+                252, "Нараджэньне Найсьвяцейшае Багародзіцы", "bogashlugbovya/mm_08_09_naradzennie_baharodzicy_jutran.html", JUTRAN
+            )
+        )
+        datMinALL.add(
+            SlugbovyiaTextuData(
                 253, "Пасьвяцьце Нараджэньня Багародзіцы і сьвятых Якіма і Ганны", "bogashlugbovya/mm_09_09_pasviaccie_naradzennia_baharodzicy_jakima_i_hanny_liturhija.html", LITURHIJA
             )
         )

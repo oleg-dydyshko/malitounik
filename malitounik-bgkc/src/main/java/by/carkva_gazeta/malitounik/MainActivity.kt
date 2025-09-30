@@ -69,7 +69,6 @@ import by.carkva_gazeta.malitounik.views.AppNavGraph
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.findCaliandarPosition
 import by.carkva_gazeta.malitounik.views.openAssetsResources
-import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.google.firebase.FirebaseApp
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -1249,16 +1248,6 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
                 AppNavGraphState.setAlarm = false
             }
         }
-    }
-
-    fun checkmodulesAdmin(): Boolean {
-        val muduls = SplitInstallManagerFactory.create(this).installedModules
-        for (mod in muduls) {
-            if (mod == "admin") {
-                return true
-            }
-        }
-        return false
     }
 
     fun checkASztoNovagaMD5Sum(): Boolean {

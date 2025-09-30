@@ -341,10 +341,11 @@ fun BibliaMenu(
             }
         }
     } else {
+        val scrollState = rememberScrollState()
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(scrollState)
         ) {
             if (perevod != Settings.PEREVODCATOLIK) {
                 TextButton(
@@ -483,7 +484,9 @@ fun BibliaMenu(
                     ) {
                         Text(
                             text = titlePerevod,
-                            modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
+                            modifier = Modifier
+                                .padding(vertical = 8.dp)
+                                .weight(1f),
                             color = PrimaryText,
                             fontSize = Settings.fontInterface.sp,
                             textAlign = TextAlign.Center
@@ -768,23 +771,41 @@ fun BibliaMenu(
                 ) {
                     Text(stringResource(R.string.malitva_posle), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
                 }
-                TextButton(
-                    onClick = {
-                        pesnyView = !pesnyView
-                    },
+                Column(
                     modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(5.dp)
-                        .size(width = 200.dp, height = Dp.Unspecified),
-                    colors = ButtonColors(
-                        Divider,
-                        Color.Unspecified,
-                        Color.Unspecified,
-                        Color.Unspecified
-                    ),
-                    shape = MaterialTheme.shapes.small
+                        .fillMaxWidth()
+                        .padding(10.dp)
                 ) {
-                    Text(stringResource(R.string.pesni), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .clickable {
+                                pesnyView = !pesnyView
+                            }
+                            .clip(MaterialTheme.shapes.small)
+                            .background(Divider)
+                            .align(Alignment.CenterHorizontally)
+                            .size(width = 200.dp, height = Dp.Unspecified)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.pesni),
+                            modifier = Modifier
+                                .padding(vertical = 8.dp)
+                                .weight(1f),
+                            color = PrimaryText,
+                            fontSize = Settings.fontInterface.sp,
+                            textAlign = TextAlign.Center
+                        )
+                        Icon(
+                            painter = if (pesnyView)
+                                painterResource(R.drawable.keyboard_arrow_down)
+                            else
+                                painterResource(R.drawable.keyboard_arrow_up),
+                            contentDescription = "",
+                            tint = PrimaryText,
+                        )
+                    }
                 }
                 AnimatedVisibility(
                     pesnyView, enter = fadeIn(
@@ -854,23 +875,41 @@ fun BibliaMenu(
                 ) {
                     Text(stringResource(R.string.peryiady), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
                 }
-                TextButton(
-                    onClick = {
-                        dialogImageView = !dialogImageView
-                    },
+                Column(
                     modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(5.dp)
-                        .size(width = 200.dp, height = Dp.Unspecified),
-                    colors = ButtonColors(
-                        Divider,
-                        Color.Unspecified,
-                        Color.Unspecified,
-                        Color.Unspecified
-                    ),
-                    shape = MaterialTheme.shapes.small
+                        .fillMaxWidth()
+                        .padding(10.dp)
                 ) {
-                    Text(stringResource(R.string.title_psalter_privila), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .clickable {
+                                dialogImageView = !dialogImageView
+                            }
+                            .clip(MaterialTheme.shapes.small)
+                            .background(Divider)
+                            .align(Alignment.CenterHorizontally)
+                            .size(width = 200.dp, height = Dp.Unspecified)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.title_psalter_privila),
+                            modifier = Modifier
+                                .padding(vertical = 8.dp)
+                                .weight(1f),
+                            color = PrimaryText,
+                            fontSize = Settings.fontInterface.sp,
+                            textAlign = TextAlign.Center
+                        )
+                        Icon(
+                            painter = if (dialogImageView)
+                                painterResource(R.drawable.keyboard_arrow_down)
+                            else
+                                painterResource(R.drawable.keyboard_arrow_up),
+                            contentDescription = "",
+                            tint = PrimaryText,
+                        )
+                    }
                 }
             }
             AnimatedVisibility(
