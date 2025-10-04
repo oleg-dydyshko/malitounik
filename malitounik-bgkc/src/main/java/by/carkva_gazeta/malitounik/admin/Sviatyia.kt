@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.TypedValue
@@ -13,6 +14,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.BaseAdapter
@@ -22,8 +24,10 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.transition.TransitionManager
 import by.carkva_gazeta.malitounik.databinding.AdminSviatyiaBinding
 import by.carkva_gazeta.malitounik.databinding.SimpleListItem1Binding
@@ -95,6 +99,7 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
         binding.apisanne.onFocusChangeListener = null
     }
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         k = getSharedPreferences("biblia", MODE_PRIVATE)
@@ -103,7 +108,28 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
         }
         binding = AdminSviatyiaBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        WindowCompat.getInsetsController(
+            window,
+            binding.root
+        ).apply {
+            isAppearanceLightStatusBars = true
+            isAppearanceLightNavigationBars = true
+        }
+        binding.root.setOnApplyWindowInsetsListener { view, windowInsets ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val inset = windowInsets.getInsets(WindowInsets.Type.systemBars())
+                view.updatePadding(left = inset.left, top = inset.top, right = inset.right, bottom = inset.bottom)
+            } else {
+                val windowInsets = view.rootWindowInsets
+                if (windowInsets != null) {
+                    view.updatePadding(
+                        windowInsets.stableInsetLeft, windowInsets.stableInsetTop,
+                        windowInsets.stableInsetRight, windowInsets.stableInsetBottom
+                    )
+                }
+            }
+            windowInsets
+        }
         val cal = Calendar.getInstance()
         val dayOfYear = intent.extras?.getInt("dayOfYear") ?: cal[Calendar.DAY_OF_YEAR]
         caliandarDayOfYearList = MenuCaliandar.getDataCalaindar(dayOfYear = dayOfYear, year = cal[Calendar.YEAR])

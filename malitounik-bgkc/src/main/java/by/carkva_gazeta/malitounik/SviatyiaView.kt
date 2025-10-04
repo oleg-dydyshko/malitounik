@@ -150,7 +150,8 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
         }
         DialogNoWiFI(onDismiss = {
             dialoNoWIFI = false
-            sviatyiaList.addAll(sviatyiaListLocale)
+            sviatyiaList.clear()
+            sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, svity, position))
         }) {
             dialoNoWIFI = false
             isloadIcons = true

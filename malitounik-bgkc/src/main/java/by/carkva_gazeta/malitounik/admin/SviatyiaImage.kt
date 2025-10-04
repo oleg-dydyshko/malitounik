@@ -1,7 +1,6 @@
 package by.carkva_gazeta.malitounik.admin
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -17,6 +16,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ImageView
@@ -25,12 +25,14 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.graphics.scale
 import androidx.core.text.isDigitsOnly
+import androidx.core.view.WindowCompat
+import androidx.core.view.updatePadding
 import androidx.transition.TransitionManager
-import by.carkva_gazeta.malitounik.databinding.AdminSviatyiaImageBinding
-import by.carkva_gazeta.malitounik.databinding.ListItemImageBinding
 import by.carkva_gazeta.malitounik.Malitounik
 import by.carkva_gazeta.malitounik.R
 import by.carkva_gazeta.malitounik.Settings
+import by.carkva_gazeta.malitounik.databinding.AdminSviatyiaImageBinding
+import by.carkva_gazeta.malitounik.databinding.ListItemImageBinding
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
@@ -93,10 +95,33 @@ class SviatyiaImage : BaseActivity(), DialogDeliteImage.DialogDeliteListener, Ad
         resetTollbarJob?.cancel()
     }
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = AdminSviatyiaImageBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        WindowCompat.getInsetsController(
+            window,
+            binding.root
+        ).apply {
+            isAppearanceLightStatusBars = true
+            isAppearanceLightNavigationBars = true
+        }
+        binding.root.setOnApplyWindowInsetsListener { view, windowInsets ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val inset = windowInsets.getInsets(WindowInsets.Type.systemBars())
+                view.updatePadding(left = inset.left, top = inset.top, right = inset.right, bottom = inset.bottom)
+            } else {
+                val windowInsets = view.rootWindowInsets
+                if (windowInsets != null) {
+                    view.updatePadding(
+                        windowInsets.stableInsetLeft, windowInsets.stableInsetTop,
+                        windowInsets.stableInsetRight, windowInsets.stableInsetBottom
+                    )
+                }
+            }
+            windowInsets
+        }
         val c = Calendar.getInstance()
         mun = intent.extras?.getInt("mun", c[Calendar.MONTH] + 1) ?: (c[Calendar.MONTH] + 1)
         day = intent.extras?.getInt("day", c[Calendar.DATE]) ?: c[Calendar.DATE]

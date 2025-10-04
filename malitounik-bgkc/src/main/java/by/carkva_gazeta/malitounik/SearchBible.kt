@@ -340,9 +340,7 @@ fun SearchBible(
         }
         if (isProgressVisable) {
             Box(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
+                modifier = Modifier.fillMaxSize()
             ) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }

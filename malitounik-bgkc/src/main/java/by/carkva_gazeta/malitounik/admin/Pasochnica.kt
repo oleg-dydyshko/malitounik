@@ -2,11 +2,11 @@ package by.carkva_gazeta.malitounik.admin
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Typeface
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.Spannable
@@ -22,6 +22,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -30,12 +31,14 @@ import androidx.core.content.edit
 import androidx.core.text.HtmlCompat
 import androidx.core.text.toHtml
 import androidx.core.text.toSpannable
+import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.transition.TransitionManager
-import by.carkva_gazeta.malitounik.databinding.AdminPasochnicaBinding
 import by.carkva_gazeta.malitounik.Malitounik
 import by.carkva_gazeta.malitounik.R
 import by.carkva_gazeta.malitounik.Settings
+import by.carkva_gazeta.malitounik.databinding.AdminPasochnicaBinding
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -46,9 +49,6 @@ import kotlinx.coroutines.tasks.await
 import org.apache.commons.text.StringEscapeUtils
 import java.io.File
 import java.lang.Character.UnicodeBlock
-import kotlin.collections.forEach
-import kotlin.text.iterator
-import kotlin.text.substring
 
 
 class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.DialogFileExistsListener, InteractiveScrollView.OnInteractiveScrollChangedCallback, DialogPasochnicaAHref.DialogPasochnicaAHrefListener, DialogIsHtml.DialogIsHtmlListener {
@@ -322,11 +322,34 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
         return title.trim()
     }
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         k = getSharedPreferences("biblia", MODE_PRIVATE)
         binding = AdminPasochnicaBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        WindowCompat.getInsetsController(
+            window,
+            binding.root
+        ).apply {
+            isAppearanceLightStatusBars = true
+            isAppearanceLightNavigationBars = true
+        }
+        binding.root.setOnApplyWindowInsetsListener { view, windowInsets ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val inset = windowInsets.getInsets(WindowInsets.Type.systemBars())
+                view.updatePadding(left = inset.left, top = inset.top, right = inset.right, bottom = inset.bottom)
+            } else {
+                val windowInsets = view.rootWindowInsets
+                if (windowInsets != null) {
+                    view.updatePadding(
+                        windowInsets.stableInsetLeft, windowInsets.stableInsetTop,
+                        windowInsets.stableInsetRight, windowInsets.stableInsetBottom
+                    )
+                }
+            }
+            windowInsets
+        }
         binding.apisanne.addTextChangedListener(textWatcher)
         binding.apisanne.textSize = k.getFloat("font_biblia", 22F)
         binding.actionBold.setOnClickListener(this)
@@ -675,7 +698,9 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                         }
                         Malitounik.referens.child("/admin/piasochnica/" + fileName.replace("\n", " ")).putFile(Uri.fromFile(localFile)).addOnCompleteListener {
                             if (it.isSuccessful) {
-                                PasochnicaList.getFindFileListAsSave()
+                                if (PasochnicaList.findDirAsSave.isEmpty()) {
+                                    PasochnicaList.getFindFileListAsSave()
+                                }
                                 if (isSaveAs) {
                                     if (saveAs) {
                                         if (resours != "") {

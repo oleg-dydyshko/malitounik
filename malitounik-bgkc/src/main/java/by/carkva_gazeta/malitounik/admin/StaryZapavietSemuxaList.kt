@@ -3,15 +3,19 @@ package by.carkva_gazeta.malitounik.admin
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.widget.BaseExpandableListAdapter
 import android.widget.ExpandableListView
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.updatePadding
 import androidx.transition.TransitionManager
 import by.carkva_gazeta.malitounik.databinding.ChildViewBinding
 import by.carkva_gazeta.malitounik.databinding.ContentBibleBinding
@@ -35,11 +39,34 @@ class StaryZapavietSemuxaList : BaseActivity() {
         resetTollbarJob?.cancel()
     }
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         k = getSharedPreferences("biblia", MODE_PRIVATE)
         binding = ContentBibleBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        WindowCompat.getInsetsController(
+            window,
+            binding.root
+        ).apply {
+            isAppearanceLightStatusBars = true
+            isAppearanceLightNavigationBars = true
+        }
+        binding.root.setOnApplyWindowInsetsListener { view, windowInsets ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val inset = windowInsets.getInsets(WindowInsets.Type.systemBars())
+                view.updatePadding(left = inset.left, top = inset.top, right = inset.right, bottom = inset.bottom)
+            } else {
+                val windowInsets = view.rootWindowInsets
+                if (windowInsets != null) {
+                    view.updatePadding(
+                        windowInsets.stableInsetLeft, windowInsets.stableInsetTop,
+                        windowInsets.stableInsetRight, windowInsets.stableInsetBottom
+                    )
+                }
+            }
+            windowInsets
+        }
         binding.elvMain.selector = ContextCompat.getDrawable(this, R.drawable.selector_default)
         val children1 = ArrayList<String>()
         val children2 = ArrayList<String>()

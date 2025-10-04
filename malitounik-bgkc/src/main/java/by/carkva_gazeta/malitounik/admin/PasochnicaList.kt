@@ -1,11 +1,11 @@
 package by.carkva_gazeta.malitounik.admin
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Typeface
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
@@ -17,6 +17,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
@@ -24,6 +25,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.text.HtmlCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.updatePadding
 import androidx.transition.TransitionManager
 import by.carkva_gazeta.malitounik.Malitounik
 import by.carkva_gazeta.malitounik.R
@@ -118,11 +121,36 @@ class PasochnicaList : BaseActivity(), DialogPasochnicaFileName.DialogPasochnica
         }
     }
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        getFindFileListAsSave()
+        if (findDirAsSave.isEmpty()) {
+            getFindFileListAsSave()
+        }
         k = getSharedPreferences("biblia", MODE_PRIVATE)
         binding = AdminPasochnicaListBinding.inflate(layoutInflater)
+        WindowCompat.getInsetsController(
+            window,
+            binding.root
+        ).apply {
+            isAppearanceLightStatusBars = true
+            isAppearanceLightNavigationBars = true
+        }
+        binding.root.setOnApplyWindowInsetsListener { view, windowInsets ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val inset = windowInsets.getInsets(WindowInsets.Type.systemBars())
+                view.updatePadding(left = inset.left, top = inset.top, right = inset.right, bottom = inset.bottom)
+            } else {
+                val windowInsets = view.rootWindowInsets
+                if (windowInsets != null) {
+                    view.updatePadding(
+                        windowInsets.stableInsetLeft, windowInsets.stableInsetTop,
+                        windowInsets.stableInsetRight, windowInsets.stableInsetBottom
+                    )
+                }
+            }
+            windowInsets
+        }
         setContentView(binding.root)
         setTollbarTheme()
 
@@ -315,7 +343,6 @@ class PasochnicaList : BaseActivity(), DialogPasochnicaFileName.DialogPasochnica
                     Malitounik.referens.child("/admin/piasochnica/$resourse$res").putFile(Uri.fromFile(localFile)).await()
                 } catch (_: Throwable) {
                     Toast.makeText(this@PasochnicaList, getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
-
                 }
                 binding.progressBar2.visibility = View.GONE
                 val intent = Intent(this@PasochnicaList, Pasochnica::class.java)
@@ -457,7 +484,7 @@ class PasochnicaList : BaseActivity(), DialogPasochnicaFileName.DialogPasochnica
                     }
                     val intent = Intent(this@PasochnicaList, Pasochnica::class.java)
                     intent.putExtra("text", this@PasochnicaList.intent.extras?.getString("text", "") ?: "")
-                    intent.putExtra("resours", this@PasochnicaList.intent.extras?.getString("resours", "") ?: "")
+                    intent.putExtra("resours", res)
                     intent.putExtra("exits", exits)
                     intent.putExtra("title", this@PasochnicaList.intent.extras?.getString("title", "") ?: "")
                     startActivity(intent)
@@ -555,17 +582,15 @@ class PasochnicaList : BaseActivity(), DialogPasochnicaFileName.DialogPasochnica
     companion object {
         val findDirAsSave = ArrayList<String>()
 
-        private fun findFile(list: ListResult? = null) {
-            CoroutineScope(Dispatchers.Main).launch {
-                val nawList = list ?: Malitounik.referens.child("/admin").list(1000).await()
-                nawList.items.forEach {
-                    findDirAsSave.add(it.path)
-                }
-                nawList.prefixes.forEach {
-                    if (it.name != "piasochnica") {
-                        val rList = Malitounik.referens.child(it.path).list(1000).await()
-                        findFile(rList)
-                    }
+        private suspend fun findFile(list: ListResult? = null) {
+            val nawList = list ?: Malitounik.referens.child("/admin").list(1000).await()
+            nawList.items.forEach {
+                findDirAsSave.add(it.path)
+            }
+            nawList.prefixes.forEach {
+                if (it.name != "piasochnica") {
+                    val rList = Malitounik.referens.child(it.path).list(1000).await()
+                    findFile(rList)
                 }
             }
         }

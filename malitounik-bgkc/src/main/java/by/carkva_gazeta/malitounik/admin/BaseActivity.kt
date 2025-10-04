@@ -15,6 +15,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
 import androidx.core.view.get
@@ -66,8 +67,7 @@ abstract class BaseActivity : AppCompatActivity(), MenuProvider {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //enableEdgeToEdge()
-        theme.applyStyle(R.style.OptOutEdgeToEdgeEnforcement, false)
+        enableEdgeToEdge()
         addMenuProvider(this)
         setTheme(R.style.AppTheme)
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {

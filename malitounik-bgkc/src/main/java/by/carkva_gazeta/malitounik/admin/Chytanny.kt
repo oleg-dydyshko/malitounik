@@ -1,9 +1,9 @@
 package by.carkva_gazeta.malitounik.admin
 
 import android.app.Activity
-import android.content.Context
 import android.graphics.Typeface
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
@@ -15,6 +15,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
@@ -22,13 +23,15 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.forEachIndexed
+import androidx.core.view.updatePadding
 import androidx.transition.TransitionManager
-import by.carkva_gazeta.malitounik.databinding.AdminChytannyBinding
-import by.carkva_gazeta.malitounik.databinding.SimpleListItem1Binding
 import by.carkva_gazeta.malitounik.Malitounik
 import by.carkva_gazeta.malitounik.R
 import by.carkva_gazeta.malitounik.Settings
+import by.carkva_gazeta.malitounik.databinding.AdminChytannyBinding
+import by.carkva_gazeta.malitounik.databinding.SimpleListItem1Binding
 import com.google.firebase.storage.StorageException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -152,10 +155,33 @@ class Chytanny : BaseActivity() {
         }
     }
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = AdminChytannyBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        WindowCompat.getInsetsController(
+            window,
+            binding.root
+        ).apply {
+            isAppearanceLightStatusBars = true
+            isAppearanceLightNavigationBars = true
+        }
+        binding.root.setOnApplyWindowInsetsListener { view, windowInsets ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val inset = windowInsets.getInsets(WindowInsets.Type.systemBars())
+                view.updatePadding(left = inset.left, top = inset.top, right = inset.right, bottom = inset.bottom)
+            } else {
+                val windowInsets = view.rootWindowInsets
+                if (windowInsets != null) {
+                    view.updatePadding(
+                        windowInsets.stableInsetLeft, windowInsets.stableInsetTop,
+                        windowInsets.stableInsetRight, windowInsets.stableInsetBottom
+                    )
+                }
+            }
+            windowInsets
+        }
         isError = savedInstanceState?.getBoolean("isError", false) == true
         for (i in Settings.GET_CALIANDAR_YEAR_MIN .. Settings.GET_CALIANDAR_YEAR_MAX) data.add(i.toString())
         binding.spinnerYear.adapter = SpinnerAdapter(this, data)

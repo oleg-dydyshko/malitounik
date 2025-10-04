@@ -126,7 +126,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.navigation.NavHostController
-import by.carkva_gazeta.malitounik.admin.Pasochnica
 import by.carkva_gazeta.malitounik.admin.PasochnicaList
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik.ui.theme.Button

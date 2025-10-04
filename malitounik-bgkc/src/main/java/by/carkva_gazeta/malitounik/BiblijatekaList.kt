@@ -297,9 +297,7 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
     }
     if (isProgressVisable) {
         Box(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }

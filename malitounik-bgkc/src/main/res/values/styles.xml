@@ -7,13 +7,13 @@
         <item name="android:windowBackground">@color/colorWhite</item>
         <item name="android:colorBackground">@color/colorWhite</item>
         <item name="android:textColorPrimary">@color/colorPrimary_text</item>
+        <item name="android:statusBarColor">@color/colorPrimary</item>
         <item name="android:navigationBarColor">@color/colorPrimaryDark</item>
         <item name="android:textColorSecondary">@color/colorSecondary_text</item>
         <item name="android:textColor">@color/colorPrimary_text</item>
         <item name="fontFamily">@font/robotocondensedfontfamily</item>
         <item name="autoCompleteTextViewStyle">@style/cursorColor</item>
     </style>
-    <style name="OptOutEdgeToEdgeEnforcement" />
     <style name="AlertDialogTheme" parent="ThemeOverlay.AppCompat.Dialog.Alert">
         <item name="buttonBarPositiveButtonStyle">@style/ButtonStyle</item>
         <item name="buttonBarNegativeButtonStyle">@style/ButtonStyle</item>

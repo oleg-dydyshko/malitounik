@@ -2,10 +2,14 @@ package by.carkva_gazeta.malitounik.admin
 
 import android.content.Intent
 import android.content.res.Resources
+import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.MenuItem
 import android.view.ViewGroup
+import android.view.WindowInsets
+import androidx.core.view.WindowCompat
+import androidx.core.view.updatePadding
 import androidx.transition.TransitionManager
 import by.carkva_gazeta.malitounik.R
 import by.carkva_gazeta.malitounik.databinding.AdminMainBinding
@@ -19,9 +23,32 @@ class AdminMain : BaseActivity() {
     private lateinit var binding: AdminMainBinding
     private var resetTollbarJob: Job? = null
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = AdminMainBinding.inflate(layoutInflater)
+        WindowCompat.getInsetsController(
+            window,
+            binding.root
+        ).apply {
+            isAppearanceLightStatusBars = true
+            isAppearanceLightNavigationBars = true
+        }
+        binding.root.setOnApplyWindowInsetsListener { view, windowInsets ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val inset = windowInsets.getInsets(WindowInsets.Type.systemBars())
+                view.updatePadding(left = inset.left, top = inset.top, right = inset.right, bottom = inset.bottom)
+            } else {
+                val windowInsets = view.rootWindowInsets
+                if (windowInsets != null) {
+                    view.updatePadding(
+                        windowInsets.stableInsetLeft, windowInsets.stableInsetTop,
+                        windowInsets.stableInsetRight, windowInsets.stableInsetBottom
+                    )
+                }
+            }
+            windowInsets
+        }
         try {
             setContentView(binding.root)
         } catch (_: Resources.NotFoundException) {

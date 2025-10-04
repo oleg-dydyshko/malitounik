@@ -612,7 +612,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
         }
 
         composable(
-            AllDestinations.BOGASLUJBOVYIA + "/{title}/{resurs}",
+            AllDestinations.BOGASLUJBOVYIA + "/{title}/{resurs}"
         ) { stackEntry ->
             val title = stackEntry.arguments?.getString("title") ?: ""
             val context = LocalContext.current
@@ -898,10 +898,7 @@ fun MainConteiner(
             if (extras.getBoolean("sabytie", false)) {
                 val svitaPosition = extras.getInt("caliandarPosition")
                 coroutineScope.launch {
-                    if (k.getBoolean(
-                            "caliandarList", false
-                        )
-                    ) {
+                    if (k.getBoolean("caliandarList", false)) {
                         Settings.caliandarPosition = svitaPosition
                         lazyColumnState.scrollToItem(svitaPosition)
                     } else {

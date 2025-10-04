@@ -1,12 +1,16 @@
 package by.carkva_gazeta.malitounik.admin
 
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.ViewGroup
+import android.view.WindowInsets
+import androidx.core.view.WindowCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.FragmentActivity
 import androidx.transition.TransitionManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -40,6 +44,7 @@ class StaryZapavietSemuxa : BaseActivity(), DialogBibleRazdel.DialogBibleRazdelL
         binding.pager.setCurrentItem(glava, false)
     }
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         k = getSharedPreferences("biblia", MODE_PRIVATE)
         if (savedInstanceState != null) {
@@ -48,6 +53,28 @@ class StaryZapavietSemuxa : BaseActivity(), DialogBibleRazdel.DialogBibleRazdelL
         super.onCreate(savedInstanceState)
         binding = AdminBibleBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        WindowCompat.getInsetsController(
+            window,
+            binding.root
+        ).apply {
+            isAppearanceLightStatusBars = true
+            isAppearanceLightNavigationBars = true
+        }
+        binding.root.setOnApplyWindowInsetsListener { view, windowInsets ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val inset = windowInsets.getInsets(WindowInsets.Type.systemBars())
+                view.updatePadding(left = inset.left, top = inset.top, right = inset.right, bottom = inset.bottom)
+            } else {
+                val windowInsets = view.rootWindowInsets
+                if (windowInsets != null) {
+                    view.updatePadding(
+                        windowInsets.stableInsetLeft, windowInsets.stableInsetTop,
+                        windowInsets.stableInsetRight, windowInsets.stableInsetBottom
+                    )
+                }
+            }
+            windowInsets
+        }
         kniga = intent.extras?.getInt("kniga", 0) ?: 0
         glava = intent.extras?.getInt("glava", 0) ?: 0
         if (intent.extras?.containsKey("stix") == true) {
