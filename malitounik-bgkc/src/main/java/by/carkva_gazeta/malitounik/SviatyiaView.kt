@@ -646,105 +646,113 @@ fun loadOpisanieSviatyia(context: Context, year: Int, mun: Int, day: Int): Snaps
     val sviatyiaList = SnapshotStateList<OpisanieData>()
     val fileOpisanie = File("${context.filesDir}/sviatyja/opisanie$mun.json")
     if (fileOpisanie.exists()) {
-        val builder = fileOpisanie.readText()
-        val gson = Gson()
-        val type = TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
-        var res = ""
-        val arrayList = ArrayList<String>()
-        if (builder.isNotEmpty()) {
-            arrayList.addAll(gson.fromJson(builder, type))
-            res = arrayList[day - 1]
-        }
-        if (Settings.dzenNoch.value) res = res.replace("#d00505", "#ff6666", true)
-        val title = ArrayList<String>()
-        val listRes = res.split("<strong>")
-        var sb = ""
-        for (i in listRes.size - 1 downTo 0) {
-            val text = listRes[i].replace("<!--image-->", "")
-            if (text.trim() != "") {
-                if (text.contains("Трапар") || text.contains("Кандак")) {
-                    sb = "<strong>$text$sb"
-                    continue
-                } else {
-                    sb = "<strong>$text$sb"
-                    title.add(0, sb)
-                    sb = ""
+        try {
+            val builder = fileOpisanie.readText()
+            val gson = Gson()
+            val type = TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
+            var res = ""
+            val arrayList = ArrayList<String>()
+            if (builder.isNotEmpty()) {
+                arrayList.addAll(gson.fromJson(builder, type))
+                res = arrayList[day - 1]
+            }
+            if (Settings.dzenNoch.value) res = res.replace("#d00505", "#ff6666", true)
+            val title = ArrayList<String>()
+            val listRes = res.split("<strong>")
+            var sb = ""
+            for (i in listRes.size - 1 downTo 0) {
+                val text = listRes[i].replace("<!--image-->", "")
+                if (text.trim() != "") {
+                    if (text.contains("Трапар") || text.contains("Кандак")) {
+                        sb = "<strong>$text$sb"
+                        continue
+                    } else {
+                        sb = "<strong>$text$sb"
+                        title.add(0, sb)
+                        sb = ""
+                    }
                 }
             }
-        }
-        title.forEachIndexed { index, text ->
-            val t1 = text.indexOf("</strong>")
-            var textTitle = ""
-            var fulText = ""
-            if (t1 != -1) {
-                textTitle = text.substring(0, t1 + 9)
-                fulText = text.substring(t1 + 9)
+            title.forEachIndexed { index, text ->
+                val t1 = text.indexOf("</strong>")
+                var textTitle = ""
+                var fulText = ""
+                if (t1 != -1) {
+                    textTitle = text.substring(0, t1 + 9)
+                    fulText = text.substring(t1 + 9)
+                }
+                val spannedtitle = AnnotatedString.fromHtml(textTitle)
+                val spanned = AnnotatedString.fromHtml(fulText)
+                sviatyiaList.add(OpisanieData(index + 1, day, mun, Settings.CALAINDAR, spannedtitle, spanned, "", ""))
             }
-            val spannedtitle = AnnotatedString.fromHtml(textTitle)
-            val spanned = AnnotatedString.fromHtml(fulText)
-            sviatyiaList.add(OpisanieData(index + 1, day, mun, Settings.CALAINDAR, spannedtitle, spanned, "", ""))
+        } catch (_: Throwable) {
+            fileOpisanie.delete()
         }
     }
     val fileOpisanie13 = File("${context.filesDir}/sviatyja/opisanie13.json")
     if (fileOpisanie13.exists()) {
-        val builder = fileOpisanie13.readText()
-        val gson = Gson()
-        val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
-        val arrayList = ArrayList<ArrayList<String>>()
-        if (builder.isNotEmpty()) {
-            arrayList.addAll(gson.fromJson(builder, type))
-            val pasha = GregorianCalendar(year, Calendar.DECEMBER, 25)
-            val pastvoW = pasha[Calendar.DAY_OF_WEEK]
-            for (i in 26..31) {
-                val pastvo = GregorianCalendar(year, Calendar.DECEMBER, i)
-                val iazepW = pastvo[Calendar.DAY_OF_WEEK]
+        try {
+            val builder = fileOpisanie13.readText()
+            val gson = Gson()
+            val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
+            val arrayList = ArrayList<ArrayList<String>>()
+            if (builder.isNotEmpty()) {
+                arrayList.addAll(gson.fromJson(builder, type))
+                val pasha = GregorianCalendar(year, Calendar.DECEMBER, 25)
+                val pastvoW = pasha[Calendar.DAY_OF_WEEK]
+                for (i in 26..31) {
+                    val pastvo = GregorianCalendar(year, Calendar.DECEMBER, i)
+                    val iazepW = pastvo[Calendar.DAY_OF_WEEK]
+                    for (e in 0 until arrayList.size) {
+                        if (pastvoW != Calendar.SUNDAY) {
+                            if (arrayList[e][1].toInt() == 0 && mun - 1 == Calendar.DECEMBER && day == i && Calendar.SUNDAY == iazepW) {
+                                val t1 = arrayList[e][2].indexOf("</strong>")
+                                var textTitle = ""
+                                var fulText = ""
+                                if (t1 != -1) {
+                                    textTitle = arrayList[e][2].substring(0, t1 + 9)
+                                    fulText = arrayList[e][2].substring(t1 + 9)
+                                }
+                                val spannedtitle = AnnotatedString.fromHtml(textTitle)
+                                val spanned = AnnotatedString.fromHtml(fulText)
+                                sviatyiaList.add(OpisanieData(sviatyiaList.size + 1, arrayList[e][0].toInt(), arrayList[e][1].toInt(), Settings.CALAINDAR, spannedtitle, spanned, "", ""))
+                            }
+                        } else {
+                            if (arrayList[e][1].toInt() == 0 && mun - 1 == Calendar.DECEMBER && day == i && Calendar.MONDAY == iazepW) {
+                                val t1 = arrayList[e][2].indexOf("</strong>")
+                                var textTitle = ""
+                                var fulText = ""
+                                if (t1 != -1) {
+                                    textTitle = arrayList[e][2].substring(0, t1 + 9)
+                                    fulText = arrayList[e][2].substring(t1 + 9)
+                                }
+                                val spannedtitle = AnnotatedString.fromHtml(textTitle)
+                                val spanned = AnnotatedString.fromHtml(fulText)
+                                sviatyiaList.add(OpisanieData(sviatyiaList.size + 1, arrayList[e][0].toInt(), arrayList[e][1].toInt(), Settings.CALAINDAR, spannedtitle, spanned, "", ""))
+                            }
+                        }
+                    }
+                }
+                val gc = GregorianCalendar()
+                val dayF = if (gc.isLeapYear(year)) 29
+                else 28
                 for (e in 0 until arrayList.size) {
-                    if (pastvoW != Calendar.SUNDAY) {
-                        if (arrayList[e][1].toInt() == 0 && mun - 1 == Calendar.DECEMBER && day == i && Calendar.SUNDAY == iazepW) {
-                            val t1 = arrayList[e][2].indexOf("</strong>")
-                            var textTitle = ""
-                            var fulText = ""
-                            if (t1 != -1) {
-                                textTitle = arrayList[e][2].substring(0, t1 + 9)
-                                fulText = arrayList[e][2].substring(t1 + 9)
-                            }
-                            val spannedtitle = AnnotatedString.fromHtml(textTitle)
-                            val spanned = AnnotatedString.fromHtml(fulText)
-                            sviatyiaList.add(OpisanieData(sviatyiaList.size + 1, arrayList[e][0].toInt(), arrayList[e][1].toInt(), Settings.CALAINDAR, spannedtitle, spanned, "", ""))
+                    if (arrayList[e][1].toInt() == 1 && mun - 1 == Calendar.FEBRUARY && day == dayF) {
+                        val t1 = arrayList[e][2].indexOf("</strong>")
+                        var textTitle = ""
+                        var fulText = ""
+                        if (t1 != -1) {
+                            textTitle = arrayList[e][2].substring(0, t1 + 9)
+                            fulText = arrayList[e][2].substring(t1 + 9)
                         }
-                    } else {
-                        if (arrayList[e][1].toInt() == 0 && mun - 1 == Calendar.DECEMBER && day == i && Calendar.MONDAY == iazepW) {
-                            val t1 = arrayList[e][2].indexOf("</strong>")
-                            var textTitle = ""
-                            var fulText = ""
-                            if (t1 != -1) {
-                                textTitle = arrayList[e][2].substring(0, t1 + 9)
-                                fulText = arrayList[e][2].substring(t1 + 9)
-                            }
-                            val spannedtitle = AnnotatedString.fromHtml(textTitle)
-                            val spanned = AnnotatedString.fromHtml(fulText)
-                            sviatyiaList.add(OpisanieData(sviatyiaList.size + 1, arrayList[e][0].toInt(), arrayList[e][1].toInt(), Settings.CALAINDAR, spannedtitle, spanned, "", ""))
-                        }
+                        val spannedtitle = AnnotatedString.fromHtml(textTitle)
+                        val spanned = AnnotatedString.fromHtml(fulText)
+                        sviatyiaList.add(OpisanieData(sviatyiaList.size + 1, arrayList[e][0].toInt(), arrayList[e][1].toInt(), Settings.CALAINDAR, spannedtitle, spanned, "", ""))
                     }
                 }
             }
-            val gc = GregorianCalendar()
-            val dayF = if (gc.isLeapYear(year)) 29
-            else 28
-            for (e in 0 until arrayList.size) {
-                if (arrayList[e][1].toInt() == 1 && mun - 1 == Calendar.FEBRUARY && day == dayF) {
-                    val t1 = arrayList[e][2].indexOf("</strong>")
-                    var textTitle = ""
-                    var fulText = ""
-                    if (t1 != -1) {
-                        textTitle = arrayList[e][2].substring(0, t1 + 9)
-                        fulText = arrayList[e][2].substring(t1 + 9)
-                    }
-                    val spannedtitle = AnnotatedString.fromHtml(textTitle)
-                    val spanned = AnnotatedString.fromHtml(fulText)
-                    sviatyiaList.add(OpisanieData(sviatyiaList.size + 1, arrayList[e][0].toInt(), arrayList[e][1].toInt(), Settings.CALAINDAR, spannedtitle, spanned, "", ""))
-                }
-            }
+        } catch (_: Throwable) {
+            fileOpisanie13.delete()
         }
     }
     return sviatyiaList
@@ -754,35 +762,39 @@ fun loadOpisanieSviat(context: Context, position: Int): SnapshotStateList<Opisan
     val sviatyiaList = SnapshotStateList<OpisanieData>()
     val fileOpisanieSviat = File("${context.filesDir}/sviaty.json")
     if (fileOpisanieSviat.exists()) {
-        val builder = fileOpisanieSviat.readText()
-        val gson = Gson()
-        val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
-        val arrayList = gson.fromJson<ArrayList<ArrayList<String>>>(builder, type)
-        arrayList?.forEach { strings ->
-            var puxomuia = false
-            val day = if (strings[2].toInt() == Settings.PASHA) Settings.data[position][22].toInt()
-            else Settings.data[position][1].toInt()
-            val mun = if (strings[2].toInt() == Settings.PASHA) 1
-            else Settings.data[position][2].toInt() + 1
-            if (strings[2].toInt() == Settings.UNDER) {
-                if (strings[3].contains("Айцоў першых 6-ці Ўсяленскіх сабораў", true) && Settings.data[position][1].toInt() >= 13 && Settings.data[position][1].toInt() <= 19 && Settings.data[position][2].toInt() == Calendar.JULY) {
-                    puxomuia = true
+        try {
+            val builder = fileOpisanieSviat.readText()
+            val gson = Gson()
+            val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
+            val arrayList = gson.fromJson<ArrayList<ArrayList<String>>>(builder, type)
+            arrayList?.forEach { strings ->
+                var puxomuia = false
+                val day = if (strings[2].toInt() == Settings.PASHA) Settings.data[position][22].toInt()
+                else Settings.data[position][1].toInt()
+                val mun = if (strings[2].toInt() == Settings.PASHA) 1
+                else Settings.data[position][2].toInt() + 1
+                if (strings[2].toInt() == Settings.UNDER) {
+                    if (strings[3].contains("Айцоў першых 6-ці Ўсяленскіх сабораў", true) && Settings.data[position][1].toInt() >= 13 && Settings.data[position][1].toInt() <= 19 && Settings.data[position][2].toInt() == Calendar.JULY) {
+                        puxomuia = true
+                    }
+                }
+                if (puxomuia || (day == strings[0].toInt() && mun == strings[1].toInt())) {
+                    var res = strings[3]
+                    if (Settings.dzenNoch.value) res = res.replace("#d00505", "#ff6666", true)
+                    val t1 = res.indexOf("</strong>")
+                    var textTitle = ""
+                    var fulText = ""
+                    if (t1 != -1) {
+                        textTitle = res.substring(0, t1 + 9)
+                        fulText = res.substring(t1 + 9)
+                    }
+                    val spannedtitle = AnnotatedString.fromHtml(textTitle)
+                    val spanned = AnnotatedString.fromHtml(fulText)
+                    sviatyiaList.add(OpisanieData(1, strings[0].toInt(), strings[1].toInt(), strings[2].toInt(), spannedtitle, spanned, "", ""))
                 }
             }
-            if (puxomuia || (day == strings[0].toInt() && mun == strings[1].toInt())) {
-                var res = strings[3]
-                if (Settings.dzenNoch.value) res = res.replace("#d00505", "#ff6666", true)
-                val t1 = res.indexOf("</strong>")
-                var textTitle = ""
-                var fulText = ""
-                if (t1 != -1) {
-                    textTitle = res.substring(0, t1 + 9)
-                    fulText = res.substring(t1 + 9)
-                }
-                val spannedtitle = AnnotatedString.fromHtml(textTitle)
-                val spanned = AnnotatedString.fromHtml(fulText)
-                sviatyiaList.add(OpisanieData(1, strings[0].toInt(), strings[1].toInt(), strings[2].toInt(), spannedtitle, spanned, "", ""))
-            }
+        } catch (_: Throwable) {
+            fileOpisanieSviat.delete()
         }
     }
     return sviatyiaList

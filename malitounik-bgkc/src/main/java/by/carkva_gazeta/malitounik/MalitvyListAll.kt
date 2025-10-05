@@ -747,22 +747,22 @@ fun getChasaslou(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
-            "Гадзіна 1", "bogashlugbovya/kan_hadz_hadzina_1.html"
+            "Гадзіна 1", "bogashlugbovya/kan_hadz_hadzina_1.html", "ЧАСАСЛОЎ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Гадзіна 6", "bogashlugbovya/kan_hadz_hadzina_6.html"
+            "Гадзіна 6", "bogashlugbovya/kan_hadz_hadzina_6.html", "ЧАСАСЛОЎ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Гадзіна 6 у вялікі пост", "bogashlugbovya/kan_hadz_hadzina_6_vialiki_post.html"
+            "Гадзіна 6 у вялікі пост", "bogashlugbovya/kan_hadz_hadzina_6_vialiki_post.html", "ЧАСАСЛОЎ"
         )
     )
-    list.add(BogaslujbovyiaListData("Павячэрніца малая", "bogashlugbovya/paviaczernica_malaja.html"))
-    list.add(BogaslujbovyiaListData("Павячэрніца вялікая", "bogashlugbovya/paviaczernica_vialikaja.html"))
-    list.add(BogaslujbovyiaListData("Ютрань нядзельная (у скароце)", "bogashlugbovya/jutran_niadzelnaja.html"))
+    list.add(BogaslujbovyiaListData("Павячэрніца малая", "bogashlugbovya/paviaczernica_malaja.html", "ЧАСАСЛОЎ"))
+    list.add(BogaslujbovyiaListData("Павячэрніца вялікая", "bogashlugbovya/paviaczernica_vialikaja.html", "ЧАСАСЛОЎ"))
+    list.add(BogaslujbovyiaListData("Ютрань нядзельная (у скароце)", "bogashlugbovya/jutran_niadzelnaja.html", "ЧАСАСЛОЎ"))
     return list
 }
 
@@ -823,179 +823,179 @@ fun getMineiaAgulnaia(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная Найсьвяцейшай Багародзіцы", "bogashlugbovya/viachernia_mineia_agulnaia1.html"
+            "Вячэрня агульная Найсьвяцейшай Багародзіцы", "bogashlugbovya/viachernia_mineia_agulnaia1.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная Яну Хрысьціцелю", "bogashlugbovya/viachernia_mineia_agulnaia2.html"
+            "Вячэрня агульная Яну Хрысьціцелю", "bogashlugbovya/viachernia_mineia_agulnaia2.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
-    list.add(BogaslujbovyiaListData("Вячэрня агульная прароку", "bogashlugbovya/viachernia_mineia_agulnaia3.html"))
-    list.add(BogaslujbovyiaListData("Вячэрня агульная апосталу", "bogashlugbovya/viachernia_mineia_agulnaia4.html"))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная прароку", "bogashlugbovya/viachernia_mineia_agulnaia3.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"))
+    list.add(BogaslujbovyiaListData("Вячэрня агульная апосталу", "bogashlugbovya/viachernia_mineia_agulnaia4.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"))
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная апосталам", "bogashlugbovya/viachernia_mineia_agulnaia5.html"
-        )
-    )
-    list.add(
-        BogaslujbovyiaListData(
-            "Вячэрня агульная сьвятаначальніку", "bogashlugbovya/viachernia_mineia_agulnaia6.html"
+            "Вячэрня агульная апосталам", "bogashlugbovya/viachernia_mineia_agulnaia5.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная сьвятаначальнікам", "bogashlugbovya/viachernia_mineia_agulnaia7.html"
+            "Вячэрня агульная сьвятаначальніку", "bogashlugbovya/viachernia_mineia_agulnaia6.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная посьніку, манаху і пустэльніку", "bogashlugbovya/viachernia_mineia_agulnaia8.html"
+            "Вячэрня агульная сьвятаначальнікам", "bogashlugbovya/viachernia_mineia_agulnaia7.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная посьнікам, манахам і пустэльнікам", "bogashlugbovya/viachernia_mineia_agulnaia9.html"
+            "Вячэрня агульная посьніку, манаху і пустэльніку", "bogashlugbovya/viachernia_mineia_agulnaia8.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная вызнаўцу і настаўніку царкоўнаму", "bogashlugbovya/viachernia_mineia_agulnaia10.html"
+            "Вячэрня агульная посьнікам, манахам і пустэльнікам", "bogashlugbovya/viachernia_mineia_agulnaia9.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная мучаніку", "bogashlugbovya/viachernia_mineia_agulnaia11.html"
+            "Вячэрня агульная вызнаўцу і настаўніку царкоўнаму", "bogashlugbovya/viachernia_mineia_agulnaia10.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная мучаніку (іншая)", "bogashlugbovya/viachernia_mineia_agulnaia12.html"
+            "Вячэрня агульная мучаніку", "bogashlugbovya/viachernia_mineia_agulnaia11.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная мучанікам", "bogashlugbovya/viachernia_mineia_agulnaia13.html"
+            "Вячэрня агульная мучаніку (іншая)", "bogashlugbovya/viachernia_mineia_agulnaia12.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная сьвятамучаніку", "bogashlugbovya/viachernia_mineia_agulnaia14.html"
+            "Вячэрня агульная мучанікам", "bogashlugbovya/viachernia_mineia_agulnaia13.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная сьвятамучанікам", "bogashlugbovya/viachernia_mineia_agulnaia15.html"
+            "Вячэрня агульная сьвятамучаніку", "bogashlugbovya/viachernia_mineia_agulnaia14.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная мучаніку сьвятару або манаху", "bogashlugbovya/viachernia_mineia_agulnaia16.html"
+            "Вячэрня агульная сьвятамучанікам", "bogashlugbovya/viachernia_mineia_agulnaia15.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная мучанікам сьвятарам або манахам", "bogashlugbovya/viachernia_mineia_agulnaia17.html"
+            "Вячэрня агульная мучаніку сьвятару або манаху", "bogashlugbovya/viachernia_mineia_agulnaia16.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная мучаніцы", "bogashlugbovya/viachernia_mineia_agulnaia18.html"
+            "Вячэрня агульная мучанікам сьвятарам або манахам", "bogashlugbovya/viachernia_mineia_agulnaia17.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная мучаніцы (іншая)", "bogashlugbovya/viachernia_mineia_agulnaia19.html"
+            "Вячэрня агульная мучаніцы", "bogashlugbovya/viachernia_mineia_agulnaia18.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная мучаніцам", "bogashlugbovya/viachernia_mineia_agulnaia20.html"
+            "Вячэрня агульная мучаніцы (іншая)", "bogashlugbovya/viachernia_mineia_agulnaia19.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная мучаніцы манахіні", "bogashlugbovya/viachernia_mineia_agulnaia21.html"
+            "Вячэрня агульная мучаніцам", "bogashlugbovya/viachernia_mineia_agulnaia20.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная сьвятой жанчыне", "bogashlugbovya/viachernia_mineia_agulnaia22.html"
+            "Вячэрня агульная мучаніцы манахіні", "bogashlugbovya/viachernia_mineia_agulnaia21.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная сьвятым жанчынам", "bogashlugbovya/viachernia_mineia_agulnaia23.html"
+            "Вячэрня агульная сьвятой жанчыне", "bogashlugbovya/viachernia_mineia_agulnaia22.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня агульная бескарысьлівым лекарам і цудатворцам", "bogashlugbovya/viachernia_mineia_agulnaia24.html"
+            "Вячэрня агульная сьвятым жанчынам", "bogashlugbovya/viachernia_mineia_agulnaia23.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Служба апосталу або апосталам", "bogashlugbovya/sluzba_apostalu_apostalam.html"
+            "Вячэрня агульная бескарысьлівым лекарам і цудатворцам", "bogashlugbovya/viachernia_mineia_agulnaia24.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Служба настаўніку царкоўнаму і вызнаўцу", "bogashlugbovya/sluzba_nastauniku_cark_vyznaucu.html"
-        )
-    )
-    list.add(BogaslujbovyiaListData("Служба сьвятаначальнікам", "bogashlugbovya/sluzba_sviatanaczalnikam.html"))
-    list.add(BogaslujbovyiaListData("Служба сьвятаначальніку", "bogashlugbovya/sluzba_sviatanaczalniku.html"))
-    list.add(
-        BogaslujbovyiaListData(
-            "Служба Найсьвяцейшай Багародзіцы", "bogashlugbovya/sluzba_najsviaciejszaj_baharodzicy.html"
+            "Служба апосталу або апосталам", "bogashlugbovya/sluzba_apostalu_apostalam.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Служба за памерлых на кожны дзень тыдня", "bogashlugbovya/sluzba_za_pamierlych_na_kozny_dzien_tydnia.html"
+            "Служба настаўніку царкоўнаму і вызнаўцу", "bogashlugbovya/sluzba_nastauniku_cark_vyznaucu.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
+        )
+    )
+    list.add(BogaslujbovyiaListData("Служба сьвятаначальнікам", "bogashlugbovya/sluzba_sviatanaczalnikam.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"))
+    list.add(BogaslujbovyiaListData("Служба сьвятаначальніку", "bogashlugbovya/sluzba_sviatanaczalniku.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"))
+    list.add(
+        BogaslujbovyiaListData(
+            "Служба Найсьвяцейшай Багародзіцы", "bogashlugbovya/sluzba_najsviaciejszaj_baharodzicy.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Служба бескарысьлівым лекарам і цудатворцам", "bogashlugbovya/sluzba_bieskaryslivym_lekaram_cudatvorcam.html"
-        )
-    )
-    list.add(BogaslujbovyiaListData("Служба мучаніцам", "bogashlugbovya/sluzba_muczanicam.html"))
-    list.add(BogaslujbovyiaListData("Служба мучаніцы", "bogashlugbovya/sluzba_muczanicy.html"))
-    list.add(BogaslujbovyiaListData("Служба мучанікам", "bogashlugbovya/sluzba_muczanikam.html"))
-    list.add(
-        BogaslujbovyiaListData(
-            "Служба мучанікам сьвятарам і манахам", "bogashlugbovya/sluzba_muczanikam_sviataram_i_manacham.html"
-        )
-    )
-    list.add(BogaslujbovyiaListData("Служба мучаніку", "bogashlugbovya/sluzba_muczaniku.html"))
-    list.add(
-        BogaslujbovyiaListData(
-            "Служба мучаніку сьвятару і манаху", "bogashlugbovya/sluzba_muczaniku_sviataru_i_manachu.html"
-        )
-    )
-    list.add(BogaslujbovyiaListData("Служба сьвятой жанчыне", "bogashlugbovya/sluzba_sviatoj_zanczynie.html"))
-    list.add(BogaslujbovyiaListData("Служба сьвятым жанчынам", "bogashlugbovya/sluzba_sviatym_zanczynam.html"))
-    list.add(
-        BogaslujbovyiaListData(
-            "Служба посьнікам, манахам і пустэльнікам", "bogashlugbovya/sluzba_posnikam_manacham_pustelnikam.html"
+            "Служба за памерлых на кожны дзень тыдня", "bogashlugbovya/sluzba_za_pamierlych_na_kozny_dzien_tydnia.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Служба посьніку / аскету, манаху і пустэльніку", "bogashlugbovya/sluzba_posniku_manachu_pustelniku.html"
+            "Служба бескарысьлівым лекарам і цудатворцам", "bogashlugbovya/sluzba_bieskaryslivym_lekaram_cudatvorcam.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
+        )
+    )
+    list.add(BogaslujbovyiaListData("Служба мучаніцам", "bogashlugbovya/sluzba_muczanicam.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"))
+    list.add(BogaslujbovyiaListData("Служба мучаніцы", "bogashlugbovya/sluzba_muczanicy.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"))
+    list.add(BogaslujbovyiaListData("Служба мучанікам", "bogashlugbovya/sluzba_muczanikam.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"))
+    list.add(
+        BogaslujbovyiaListData(
+            "Служба мучанікам сьвятарам і манахам", "bogashlugbovya/sluzba_muczanikam_sviataram_i_manacham.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
+        )
+    )
+    list.add(BogaslujbovyiaListData("Служба мучаніку", "bogashlugbovya/sluzba_muczaniku.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"))
+    list.add(
+        BogaslujbovyiaListData(
+            "Служба мучаніку сьвятару і манаху", "bogashlugbovya/sluzba_muczaniku_sviataru_i_manachu.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
+        )
+    )
+    list.add(BogaslujbovyiaListData("Служба сьвятой жанчыне", "bogashlugbovya/sluzba_sviatoj_zanczynie.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"))
+    list.add(BogaslujbovyiaListData("Служба сьвятым жанчынам", "bogashlugbovya/sluzba_sviatym_zanczynam.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"))
+    list.add(
+        BogaslujbovyiaListData(
+            "Служба посьнікам, манахам і пустэльнікам", "bogashlugbovya/sluzba_posnikam_manacham_pustelnikam.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Служба сьвятому Яну Хрысьціцелю", "bogashlugbovya/sluzba_janu_chryscicielu.html"
+            "Служба посьніку / аскету, манаху і пустэльніку", "bogashlugbovya/sluzba_posniku_manachu_pustelniku.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
         )
     )
-    list.add(BogaslujbovyiaListData("Служба прароку", "bogashlugbovya/sluzba_praroku.html"))
-    list.add(BogaslujbovyiaListData("Служба сьвятым анёлам", "bogashlugbovya/sluzba_aniolam.html"))
-    list.add(BogaslujbovyiaListData("Служба сьвятому крыжу", "bogashlugbovya/sluzba_kryzu.html"))
-    list.add(BogaslujbovyiaListData("Служба сьвятамучанікам", "bogashlugbovya/sluzba_sviatamuczanikam.html"))
-    list.add(BogaslujbovyiaListData("Служба сьвятамучаніку", "bogashlugbovya/sluzba_sviatamuczaniku.html"))
+    list.add(
+        BogaslujbovyiaListData(
+            "Служба сьвятому Яну Хрысьціцелю", "bogashlugbovya/sluzba_janu_chryscicielu.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
+        )
+    )
+    list.add(BogaslujbovyiaListData("Служба прароку", "bogashlugbovya/sluzba_praroku.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"))
+    list.add(BogaslujbovyiaListData("Служба сьвятым анёлам", "bogashlugbovya/sluzba_aniolam.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"))
+    list.add(BogaslujbovyiaListData("Служба сьвятому крыжу", "bogashlugbovya/sluzba_kryzu.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"))
+    list.add(BogaslujbovyiaListData("Служба сьвятамучанікам", "bogashlugbovya/sluzba_sviatamuczanikam.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"))
+    list.add(BogaslujbovyiaListData("Служба сьвятамучаніку", "bogashlugbovya/sluzba_sviatamuczaniku.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"))
     return list
 }
 
@@ -1003,43 +1003,43 @@ fun getTrebnik(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
-            "Служба аб вызваленьні бязьвінна зьняволеных", "bogashlugbovya/sluzba_vyzvalen_biazvinna_zniavolenych.html"
+            "Служба аб вызваленьні бязьвінна зьняволеных", "bogashlugbovya/sluzba_vyzvalen_biazvinna_zniavolenych.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЭБНІК"
         )
     )
-    list.add(BogaslujbovyiaListData("Служба за памерлых — Малая паніхіда", "bogashlugbovya/panichida_malaja.html"))
+    list.add(BogaslujbovyiaListData("Служба за памерлых — Малая паніхіда", "bogashlugbovya/panichida_malaja.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЭБНІК"))
     list.add(
         BogaslujbovyiaListData(
-            "Чын асьвячэньня транспартнага сродку", "bogashlugbovya/czyn_asviaczennia_transpartnaha_srodku.html"
-        )
-    )
-    list.add(
-        BogaslujbovyiaListData(
-            "Асьвячэньне крыжа на сьвятой Літургіі", "bogashlugbovya/asviaczennie_kryza.html"
+            "Чын асьвячэньня транспартнага сродку", "bogashlugbovya/czyn_asviaczennia_transpartnaha_srodku.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЭБНІК"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Блаславеньне ўсялякае рэчы", "bogashlugbovya/mltv_blaslaviennie_usialakaj_reczy.html"
+            "Асьвячэньне крыжа на сьвятой Літургіі", "bogashlugbovya/asviaczennie_kryza.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЭБНІК"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітва на асьвячэньне памятнай табліцы Слузе Божаму", "bogashlugbovya/mltv_asviacz_pamiatnaj_tablicy.html"
+            "Блаславеньне ўсялякае рэчы", "bogashlugbovya/mltv_blaslaviennie_usialakaj_reczy.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЭБНІК"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітва на асьвячэньне памятнай табліцы Слузе Божаму, які пацярпеў за Беларусь", "bogashlugbovya/mltv_asviacz_pamiatnaj_tablicy_paciarpieu_za_bielarus1.html"
+            "Малітва на асьвячэньне памятнай табліцы Слузе Божаму", "bogashlugbovya/mltv_asviacz_pamiatnaj_tablicy.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЭБНІК"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітва на асьвячэньне памятнай табліцы ўсім бязьвінным ахвярам, якія пацярпелі за Беларусь", "bogashlugbovya/mltv_asviacz_pamiatnaj_tablicy_biazvinnym_achviaram_paciarpieli_za_bielarus.html"
+            "Малітва на асьвячэньне памятнай табліцы Слузе Божаму, які пацярпеў за Беларусь", "bogashlugbovya/mltv_asviacz_pamiatnaj_tablicy_paciarpieu_za_bielarus1.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЭБНІК"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітоўны чын сьвятарскіх адведзінаў парафіянаў", "bogashlugbovya/malitouny_czyn_sviatarskich_adviedzinau_parafijanau.html"
+            "Малітва на асьвячэньне памятнай табліцы ўсім бязьвінным ахвярам, якія пацярпелі за Беларусь", "bogashlugbovya/mltv_asviacz_pamiatnaj_tablicy_biazvinnym_achviaram_paciarpieli_za_bielarus.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЭБНІК"
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Малітоўны чын сьвятарскіх адведзінаў парафіянаў", "bogashlugbovya/malitouny_czyn_sviatarskich_adviedzinau_parafijanau.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЭБНІК"
         )
     )
     return list
@@ -1047,13 +1047,13 @@ fun getTrebnik(): ArrayList<BogaslujbovyiaListData> {
 
 fun getMalitvyPasliaPrychascia(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
-    list.add(BogaslujbovyiaListData("Малітва падзякі", "bogashlugbovya/paslia_prychascia1.html"))
-    list.add(BogaslujbovyiaListData("Малітва сьв. Васіля Вялікага", "bogashlugbovya/paslia_prychascia2.html"))
-    list.add(BogaslujbovyiaListData("Малітва Сымона Мэтафраста", "bogashlugbovya/paslia_prychascia3.html"))
-    list.add(BogaslujbovyiaListData("Іншая малітва", "bogashlugbovya/paslia_prychascia4.html"))
+    list.add(BogaslujbovyiaListData("Малітва падзякі", "bogashlugbovya/paslia_prychascia1.html", "ЛІТУРГІКОН -> МАЛІТВЫ ПАСЬЛЯ СЬВЯТОГА ПРЫЧАСЬЦЯ"))
+    list.add(BogaslujbovyiaListData("Малітва сьв. Васіля Вялікага", "bogashlugbovya/paslia_prychascia2.html", "ЛІТУРГІКОН -> МАЛІТВЫ ПАСЬЛЯ СЬВЯТОГА ПРЫЧАСЬЦЯ"))
+    list.add(BogaslujbovyiaListData("Малітва Сымона Мэтафраста", "bogashlugbovya/paslia_prychascia3.html", "ЛІТУРГІКОН -> МАЛІТВЫ ПАСЬЛЯ СЬВЯТОГА ПРЫЧАСЬЦЯ"))
+    list.add(BogaslujbovyiaListData("Іншая малітва", "bogashlugbovya/paslia_prychascia4.html", "ЛІТУРГІКОН -> МАЛІТВЫ ПАСЬЛЯ СЬВЯТОГА ПРЫЧАСЬЦЯ"))
     list.add(
         BogaslujbovyiaListData(
-            "Малітва да Найсьвяцейшай Багародзіцы", "bogashlugbovya/paslia_prychascia5.html"
+            "Малітва да Найсьвяцейшай Багародзіцы", "bogashlugbovya/paslia_prychascia5.html", "ЛІТУРГІКОН -> МАЛІТВЫ ПАСЬЛЯ СЬВЯТОГА ПРЫЧАСЬЦЯ"
         )
     )
     return list
@@ -1061,52 +1061,52 @@ fun getMalitvyPasliaPrychascia(): ArrayList<BogaslujbovyiaListData> {
 
 fun getTraparyKandakiNiadzelnyia(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
-    list.add(BogaslujbovyiaListData("Тон 1", "bogashlugbovya/ton1.html"))
-    list.add(BogaslujbovyiaListData("Тон 2", "bogashlugbovya/ton2.html"))
-    list.add(BogaslujbovyiaListData("Тон 3", "bogashlugbovya/ton3.html"))
-    list.add(BogaslujbovyiaListData("Тон 4", "bogashlugbovya/ton4.html"))
-    list.add(BogaslujbovyiaListData("Тон 5", "bogashlugbovya/ton5.html"))
-    list.add(BogaslujbovyiaListData("Тон 6", "bogashlugbovya/ton6.html"))
-    list.add(BogaslujbovyiaListData("Тон 7", "bogashlugbovya/ton7.html"))
-    list.add(BogaslujbovyiaListData("Тон 8", "bogashlugbovya/ton8.html"))
+    list.add(BogaslujbovyiaListData("Тон 1", "bogashlugbovya/ton1.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРАПАРЫ І КАНДАКІ НЯДЗЕЛЬНЫЯ ВАСЬМІ ТОНАЎ"))
+    list.add(BogaslujbovyiaListData("Тон 2", "bogashlugbovya/ton2.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРАПАРЫ І КАНДАКІ НЯДЗЕЛЬНЫЯ ВАСЬМІ ТОНАЎ"))
+    list.add(BogaslujbovyiaListData("Тон 3", "bogashlugbovya/ton3.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРАПАРЫ І КАНДАКІ НЯДЗЕЛЬНЫЯ ВАСЬМІ ТОНАЎ"))
+    list.add(BogaslujbovyiaListData("Тон 4", "bogashlugbovya/ton4.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРАПАРЫ І КАНДАКІ НЯДЗЕЛЬНЫЯ ВАСЬМІ ТОНАЎ"))
+    list.add(BogaslujbovyiaListData("Тон 5", "bogashlugbovya/ton5.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРАПАРЫ І КАНДАКІ НЯДЗЕЛЬНЫЯ ВАСЬМІ ТОНАЎ"))
+    list.add(BogaslujbovyiaListData("Тон 6", "bogashlugbovya/ton6.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРАПАРЫ І КАНДАКІ НЯДЗЕЛЬНЫЯ ВАСЬМІ ТОНАЎ"))
+    list.add(BogaslujbovyiaListData("Тон 7", "bogashlugbovya/ton7.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРАПАРЫ І КАНДАКІ НЯДЗЕЛЬНЫЯ ВАСЬМІ ТОНАЎ"))
+    list.add(BogaslujbovyiaListData("Тон 8", "bogashlugbovya/ton8.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРАПАРЫ І КАНДАКІ НЯДЗЕЛЬНЫЯ ВАСЬМІ ТОНАЎ"))
     return list
 }
 
 fun getTraparyKandakiShtodzennyia(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
-    list.add(BogaslujbovyiaListData("ПАНЯДЗЕЛАК\nСлужба сьвятым анёлам", "bogashlugbovya/ton1_budni.html"))
-    list.add(BogaslujbovyiaListData("АЎТОРАК\nСлужба сьвятому Яну Хрысьціцелю", "bogashlugbovya/ton2_budni.html"))
+    list.add(BogaslujbovyiaListData("ПАНЯДЗЕЛАК\nСлужба сьвятым анёлам", "bogashlugbovya/ton1_budni.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ"))
+    list.add(BogaslujbovyiaListData("АЎТОРАК\nСлужба сьвятому Яну Хрысьціцелю", "bogashlugbovya/ton2_budni.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ"))
     list.add(
         BogaslujbovyiaListData(
-            "СЕРАДА\nСлужба Найсьвяцейшай Багародзіцы і Крыжу", "bogashlugbovya/ton3_budni.html"
+            "СЕРАДА\nСлужба Найсьвяцейшай Багародзіцы і Крыжу", "bogashlugbovya/ton3_budni.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "ЧАЦЬВЕР\nСлужба апосталам і сьвятому Мікалаю", "bogashlugbovya/ton4_budni.html"
+            "ЧАЦЬВЕР\nСлужба апосталам і сьвятому Мікалаю", "bogashlugbovya/ton4_budni.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ"
         )
     )
-    list.add(BogaslujbovyiaListData("ПЯТНІЦА\nСлужба Крыжу Гасподняму", "bogashlugbovya/ton5_budni.html"))
-    list.add(BogaslujbovyiaListData("СУБОТА\nСлужба ўсім сьвятым і памёрлым", "bogashlugbovya/ton6_budni.html"))
+    list.add(BogaslujbovyiaListData("ПЯТНІЦА\nСлужба Крыжу Гасподняму", "bogashlugbovya/ton5_budni.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ"))
+    list.add(BogaslujbovyiaListData("СУБОТА\nСлужба ўсім сьвятым і памёрлым", "bogashlugbovya/ton6_budni.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ"))
     return list
 }
 
 fun getViachernia(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
-    list.add(BogaslujbovyiaListData("Вячэрня ў нядзелі і сьвяты", "bogashlugbovya/viaczernia_niadzelnaja.html"))
+    list.add(BogaslujbovyiaListData("Вячэрня ў нядзелі і сьвяты", "bogashlugbovya/viaczernia_niadzelnaja.html", "ЧАСАСЛОЎ -> ВЯЧЭРНЯ"))
     list.add(
         BogaslujbovyiaListData(
-            "Ліцьця і блаславеньне хлябоў", "bogashlugbovya/viaczernia_liccia_i_blaslavenne_chliabou.html"
+            "Ліцьця і блаславеньне хлябоў", "bogashlugbovya/viaczernia_liccia_i_blaslavenne_chliabou.html", "ЧАСАСЛОЎ -> ВЯЧЭРНЯ"
         )
     )
-    list.add(BogaslujbovyiaListData("Вячэрня ў звычайныя дні", "bogashlugbovya/viaczernia_na_kozny_dzen.html"))
-    list.add(BogaslujbovyiaListData("Вячэрня ў Вялікім посьце", "bogashlugbovya/viaczernia_u_vialikim_poscie.html"))
+    list.add(BogaslujbovyiaListData("Вячэрня ў звычайныя дні", "bogashlugbovya/viaczernia_na_kozny_dzen.html", "ЧАСАСЛОЎ -> ВЯЧЭРНЯ"))
+    list.add(BogaslujbovyiaListData("Вячэрня ў Вялікім посьце", "bogashlugbovya/viaczernia_u_vialikim_poscie.html", "ЧАСАСЛОЎ -> ВЯЧЭРНЯ"))
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрняя служба штодзённая (без сьвятара)", "bogashlugbovya/viaczerniaja_sluzba_sztodzionnaja_biez_sviatara.html"
+            "Вячэрняя служба штодзённая (без сьвятара)", "bogashlugbovya/viaczerniaja_sluzba_sztodzionnaja_biez_sviatara.html", "ЧАСАСЛОЎ -> ВЯЧЭРНЯ"
         )
     )
-    list.add(BogaslujbovyiaListData("Вячэрня на Сьветлым тыдні", "bogashlugbovya/viaczernia_svietly_tydzien.html"))
+    list.add(BogaslujbovyiaListData("Вячэрня на Сьветлым тыдні", "bogashlugbovya/viaczernia_svietly_tydzien.html", "ЧАСАСЛОЎ -> ВЯЧЭРНЯ"))
     return list
 }
 
@@ -1114,47 +1114,47 @@ fun getAktoix(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня Тон 1", "bogashlugbovya/viaczernia_ton1.html"
+            "Вячэрня Тон 1", "bogashlugbovya/viaczernia_ton1.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> АКТОІХ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня Тон 2", "bogashlugbovya/viaczernia_ton2.html"
+            "Вячэрня Тон 2", "bogashlugbovya/viaczernia_ton2.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> АКТОІХ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня Тон 3", "bogashlugbovya/viaczernia_ton3.html"
+            "Вячэрня Тон 3", "bogashlugbovya/viaczernia_ton3.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> АКТОІХ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня Тон 4", "bogashlugbovya/viaczernia_ton4.html"
+            "Вячэрня Тон 4", "bogashlugbovya/viaczernia_ton4.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> АКТОІХ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня Тон 5", "bogashlugbovya/viaczernia_ton5.html"
+            "Вячэрня Тон 5", "bogashlugbovya/viaczernia_ton5.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> АКТОІХ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня Тон 6", "bogashlugbovya/viaczernia_ton6.html"
+            "Вячэрня Тон 6", "bogashlugbovya/viaczernia_ton6.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> АКТОІХ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня Тон 7", "bogashlugbovya/viaczernia_ton7.html"
+            "Вячэрня Тон 7", "bogashlugbovya/viaczernia_ton7.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> АКТОІХ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вячэрня Тон 8", "bogashlugbovya/viaczernia_ton8.html"
+            "Вячэрня Тон 8", "bogashlugbovya/viaczernia_ton8.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> АКТОІХ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Багародзічныя адпушчальныя", "bogashlugbovya/viaczernia_baharodzicznyja_adpuszczalnyja.html"
+            "Багародзічныя адпушчальныя", "bogashlugbovya/viaczernia_baharodzicznyja_adpuszczalnyja.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> АКТОІХ"
         )
     )
     return list
@@ -1164,43 +1164,43 @@ fun getPrynagodnyia1(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
-            "Малітва да Маці Божай Браслаўскай, Валадаркі Азёраў", "prynagodnyia/prynagodnyia_7.html"
+            "Малітва да Маці Божай Браслаўскай, Валадаркі Азёраў", "prynagodnyia/prynagodnyia_7.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітва да Маці Божай Будслаўскай, Апякункі Беларусі", "prynagodnyia/prynagodnyia_8.html"
+            "Малітва да Маці Божай Будслаўскай, Апякункі Беларусі", "prynagodnyia/prynagodnyia_8.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітва да Маці Божай Нястомнай Дапамогі", "prynagodnyia/prynagodnyia_9.html"
+            "Малітва да Маці Божай Нястомнай Дапамогі", "prynagodnyia/prynagodnyia_9.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
-    list.add(BogaslujbovyiaListData("Малітва да Маці Божай Берасьцейскай", "prynagodnyia/prynagodnyia_30.html"))
-    list.add(BogaslujbovyiaListData("Малітва да Маці Божай Лагішынскай", "prynagodnyia/prynagodnyia_31.html"))
+    list.add(BogaslujbovyiaListData("Малітва да Маці Божай Берасьцейскай", "prynagodnyia/prynagodnyia_30.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва да Маці Божай Лагішынскай", "prynagodnyia/prynagodnyia_31.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(
         BogaslujbovyiaListData(
-            "Малітва да Маці Божай Будслаўскай", "prynagodnyia/mltv_mb_budslauskaja.html"
-        )
-    )
-    list.add(
-        BogaslujbovyiaListData(
-            "Малітва да Божае Маці перад іконай Ейнай Менскай", "prynagodnyia/mltv_mb_mienskaja.html"
+            "Малітва да Маці Божай Будслаўскай", "prynagodnyia/mltv_mb_budslauskaja.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітва да Найсьвяцейшай Дзевы Марыі Барунскай", "prynagodnyia/mltv_mb_barunskaja.html"
+            "Малітва да Божае Маці перад іконай Ейнай Менскай", "prynagodnyia/mltv_mb_mienskaja.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітва да Багародзіцы, праслаўленай у цудатворнай Жыровіцкай іконе", "prynagodnyia/mltv_mb_zyrovickaja.html"
+            "Малітва да Найсьвяцейшай Дзевы Марыі Барунскай", "prynagodnyia/mltv_mb_barunskaja.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
-    list.add(BogaslujbovyiaListData("Малітва да Маці Божай Бялыніцкай", "prynagodnyia/mltv_mb_bialynickaja.html"))
-    list.add(BogaslujbovyiaListData("Малітва да Найсьвяцейшае Багародзіцы з пакорным і скрушлівым сэрцам", "prynagodnyia/mltv_da_baharodzicy_skaryna.html"))
+    list.add(
+        BogaslujbovyiaListData(
+            "Малітва да Багародзіцы, праслаўленай у цудатворнай Жыровіцкай іконе", "prynagodnyia/mltv_mb_zyrovickaja.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
+        )
+    )
+    list.add(BogaslujbovyiaListData("Малітва да Маці Божай Бялыніцкай", "prynagodnyia/mltv_mb_bialynickaja.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва да Найсьвяцейшае Багародзіцы з пакорным і скрушлівым сэрцам", "prynagodnyia/mltv_da_baharodzicy_skaryna.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
         list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
     } else {
@@ -1213,28 +1213,28 @@ fun getPrynagodnyia2(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
-            "Малітва аб дапамозе ў выбары жыцьцёвай дарогі дзіцяці", "prynagodnyia/prynagodnyia_1.html"
+            "Малітва аб дапамозе ў выбары жыцьцёвай дарогі дзіцяці", "prynagodnyia/prynagodnyia_1.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітва бацькоў за дзяцей («Божа, у Тройцы Адзіны...»)", "prynagodnyia/mltv_backou_za_dziaciej_boza_u_trojcy_adziny.html"
+            "Малітва бацькоў за дзяцей («Божа, у Тройцы Адзіны...»)", "prynagodnyia/mltv_backou_za_dziaciej_boza_u_trojcy_adziny.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
-    list.add(BogaslujbovyiaListData("Малітва бацькоў за дзяцей", "prynagodnyia/prynagodnyia_4.html"))
-    list.add(BogaslujbovyiaListData("Малітва за дарослых дзяцей", "prynagodnyia/prynagodnyia_11.html"))
-    list.add(BogaslujbovyiaListData("Малітва за бацькоў", "prynagodnyia/mltv_za_backou.html"))
-    list.add(BogaslujbovyiaListData("Малітва за хворае дзіця", "prynagodnyia/prynagodnyia_15.html"))
+    list.add(BogaslujbovyiaListData("Малітва бацькоў за дзяцей", "prynagodnyia/prynagodnyia_4.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва за дарослых дзяцей", "prynagodnyia/prynagodnyia_11.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва за бацькоў", "prynagodnyia/mltv_za_backou.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва за хворае дзіця", "prynagodnyia/prynagodnyia_15.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(
         BogaslujbovyiaListData(
-            "Малітва сям’і аб Божым бласлаўленьні на час адпачынку і вакацыяў", "prynagodnyia/prynagodnyia_33.html"
+            "Малітва сям’і аб Божым бласлаўленьні на час адпачынку і вакацыяў", "prynagodnyia/prynagodnyia_33.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
-    list.add(BogaslujbovyiaListData("Блаславеньне маці (Матчына малітва)", "prynagodnyia/prynagodnyia_40.html"))
-    list.add(BogaslujbovyiaListData("Малітва за хросьнікаў", "prynagodnyia/mltv_za_chrosnikau.html"))
-    list.add(BogaslujbovyiaListData("Малітва да сьв. Язэпа", "prynagodnyia/prynagodnyia_37.html"))
-    list.add(BogaslujbovyiaListData("Малітва мужа і бацькі да сьв. Язэпа", "prynagodnyia/prynagodnyia_38.html"))
-    list.add(BogaslujbovyiaListData("Малітва да сьв. Язэпа за мужчынаў", "prynagodnyia/prynagodnyia_39.html"))
+    list.add(BogaslujbovyiaListData("Блаславеньне маці (Матчына малітва)", "prynagodnyia/prynagodnyia_40.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва за хросьнікаў", "prynagodnyia/mltv_za_chrosnikau.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва да сьв. Язэпа", "prynagodnyia/prynagodnyia_37.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва мужа і бацькі да сьв. Язэпа", "prynagodnyia/prynagodnyia_38.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва да сьв. Язэпа за мужчынаў", "prynagodnyia/prynagodnyia_39.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
         list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
     } else {
@@ -1245,11 +1245,11 @@ fun getPrynagodnyia2(): ArrayList<BogaslujbovyiaListData> {
 
 fun getPrynagodnyia3(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
-    list.add(BogaslujbovyiaListData("Малітва за Беларусь", "prynagodnyia/prynagodnyia_10.html"))
-    list.add(BogaslujbovyiaListData("Малітва за Айчыну - Ян Павел II", "prynagodnyia/prynagodnyia_36.html"))
+    list.add(BogaslujbovyiaListData("Малітва за Беларусь", "prynagodnyia/prynagodnyia_10.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва за Айчыну - Ян Павел II", "prynagodnyia/prynagodnyia_36.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(
         BogaslujbovyiaListData(
-            "Малітва за ўсіх, што пацярпелі за Беларусь", "prynagodnyia/mltv_paciarpieli_za_bielarus.html"
+            "Малітва за ўсіх, што пацярпелі за Беларусь", "prynagodnyia/mltv_paciarpieli_za_bielarus.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
@@ -1262,33 +1262,33 @@ fun getPrynagodnyia3(): ArrayList<BogaslujbovyiaListData> {
 
 fun getPrynagodnyia4(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
-    list.add(BogaslujbovyiaListData("Малітва аб еднасьці", "prynagodnyia/mltv_ab_jednasci.html"))
-    list.add(BogaslujbovyiaListData("Малітва за парафію", "prynagodnyia/prynagodnyia_13.html"))
-    list.add(BogaslujbovyiaListData("Малітва за хрысьціянскую еднасьць", "prynagodnyia/prynagodnyia_16.html"))
+    list.add(BogaslujbovyiaListData("Малітва аб еднасьці", "prynagodnyia/mltv_ab_jednasci.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва за парафію", "prynagodnyia/prynagodnyia_13.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва за хрысьціянскую еднасьць", "prynagodnyia/prynagodnyia_16.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(
         BogaslujbovyiaListData(
-            "Малітвы за сьвятароў і сьвятарскія пакліканьні", "prynagodnyia/prynagodnyia_24.html"
+            "Малітвы за сьвятароў і сьвятарскія пакліканьні", "prynagodnyia/prynagodnyia_24.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
-    list.add(BogaslujbovyiaListData("Цябе, Бога, хвалім", "prynagodnyia/pesny_prasl_70.html"))
-    list.add(BogaslujbovyiaListData("Малітва за Царкву", "prynagodnyia/mltv_za_carkvu.html"))
-    list.add(BogaslujbovyiaListData("Малітва за Царкву 2", "prynagodnyia/mltv_za_carkvu_2.html"))
+    list.add(BogaslujbovyiaListData("Цябе, Бога, хвалім", "prynagodnyia/pesny_prasl_70.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва за Царкву", "prynagodnyia/mltv_za_carkvu.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва за Царкву 2", "prynagodnyia/mltv_za_carkvu_2.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(
         BogaslujbovyiaListData(
-            "Малітва за царкоўную еднасьць", "prynagodnyia/mltv_za_carkounuju_jednasc.html"
-        )
-    )
-    list.add(
-        BogaslujbovyiaListData(
-            "Малітва разам з Падляшскімі мучанікамі аб еднасьці", "prynagodnyia/mltv_razam_z_padlaszskimi_muczanikami_ab_jednasci.html"
+            "Малітва за царкоўную еднасьць", "prynagodnyia/mltv_za_carkounuju_jednasc.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітва аб еднасьці царквы (Экзарха Леаніда Фёдарава)", "prynagodnyia/mltv_ab_jednasci_carkvy_leanida_fiodarava.html"
+            "Малітва разам з Падляшскімі мучанікамі аб еднасьці", "prynagodnyia/mltv_razam_z_padlaszskimi_muczanikami_ab_jednasci.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
-    list.add(BogaslujbovyiaListData("Малітва за нашую зямлю", "prynagodnyia/mltv_za_naszuju_ziamlu.html"))
+    list.add(
+        BogaslujbovyiaListData(
+            "Малітва аб еднасьці царквы (Экзарха Леаніда Фёдарава)", "prynagodnyia/mltv_ab_jednasci_carkvy_leanida_fiodarava.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
+        )
+    )
+    list.add(BogaslujbovyiaListData("Малітва за нашую зямлю", "prynagodnyia/mltv_za_naszuju_ziamlu.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
         list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
     } else {
@@ -1301,16 +1301,16 @@ fun getPrynagodnyia5(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
-            "Малітва за хворага («Міласэрны Божа»)", "prynagodnyia/mltv_za_chvoraha_milaserny_boza.html"
+            "Малітва за хворага («Міласэрны Божа»)", "prynagodnyia/mltv_za_chvoraha_milaserny_boza.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малітва за хворага («Лекару душ і целаў»)", "prynagodnyia/mltv_za_chvoraha_lekaru_dush_cielau.html"
+            "Малітва за хворага («Лекару душ і целаў»)", "prynagodnyia/mltv_za_chvoraha_lekaru_dush_cielau.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
-    list.add(BogaslujbovyiaListData("Малітва ў часе хваробы", "prynagodnyia/mltv_u_czasie_chvaroby.html"))
-    list.add(BogaslujbovyiaListData("Малітва падчас згубнай пошасьці", "prynagodnyia/prynagodnyia_28.html"))
+    list.add(BogaslujbovyiaListData("Малітва ў часе хваробы", "prynagodnyia/mltv_u_czasie_chvaroby.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва падчас згубнай пошасьці", "prynagodnyia/prynagodnyia_28.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
         list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
     } else {
@@ -1321,74 +1321,74 @@ fun getPrynagodnyia5(): ArrayList<BogaslujbovyiaListData> {
 
 fun getPrynagodnyia6(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
-    list.add(BogaslujbovyiaListData("Малітва перад пачаткам навучаньня", "prynagodnyia/prynagodnyia_21.html"))
+    list.add(BogaslujbovyiaListData("Малітва перад пачаткам навучаньня", "prynagodnyia/prynagodnyia_21.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(
         BogaslujbovyiaListData(
-            "Малітва за дзяцей перад пачаткам навукі", "prynagodnyia/prynagodnyia_12.html"
+            "Малітва за дзяцей перад пачаткам навукі", "prynagodnyia/prynagodnyia_12.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
-    list.add(BogaslujbovyiaListData("Малітва вучняў перад навучаньнем", "prynagodnyia/prynagodnyia_29.html"))
-    list.add(BogaslujbovyiaListData("Малітва вучня", "prynagodnyia/prynagodnyia_6.html"))
-    list.add(BogaslujbovyiaListData("Малітвы за памерлых", "prynagodnyia/mltv_za_pamierlych.html"))
-    list.add(BogaslujbovyiaListData("Намер ісьці за Хрыстом", "prynagodnyia/prynagodnyia_26.html"))
-    list.add(BogaslujbovyiaListData("Малітва пілігрыма", "prynagodnyia/prynagodnyia_32.html"))
+    list.add(BogaslujbovyiaListData("Малітва вучняў перад навучаньнем", "prynagodnyia/prynagodnyia_29.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва вучня", "prynagodnyia/prynagodnyia_6.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітвы за памерлых", "prynagodnyia/mltv_za_pamierlych.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Намер ісьці за Хрыстом", "prynagodnyia/prynagodnyia_26.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва пілігрыма", "prynagodnyia/prynagodnyia_32.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(
         BogaslujbovyiaListData(
-            "Малітва да ўкрыжаванага Хрыста (Францішак Скарына)", "prynagodnyia/mltv_da_ukryzavanaha_chrysta_skaryna.html"
+            "Малітва да ўкрыжаванага Хрыста (Францішак Скарына)", "prynagodnyia/mltv_da_ukryzavanaha_chrysta_skaryna.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
-    list.add(BogaslujbovyiaListData("Малітва аб блаславеньні", "prynagodnyia/prynagodnyia_0.html"))
-    list.add(BogaslujbovyiaListData("Малітва кіроўцы", "prynagodnyia/mltv_kiroucy.html"))
-    list.add(BogaslujbovyiaListData("Малітва за ўмацаваньне ў любові", "prynagodnyia/prynagodnyia_17.html"))
-    list.add(BogaslujbovyiaListData("Малітва маладога чалавека", "prynagodnyia/prynagodnyia_18.html"))
-    list.add(BogaslujbovyiaListData("Малітва на ўсякую патрэбу", "prynagodnyia/prynagodnyia_19.html"))
+    list.add(BogaslujbovyiaListData("Малітва аб блаславеньні", "prynagodnyia/prynagodnyia_0.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва кіроўцы", "prynagodnyia/mltv_kiroucy.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва за ўмацаваньне ў любові", "prynagodnyia/prynagodnyia_17.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва маладога чалавека", "prynagodnyia/prynagodnyia_18.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва на ўсякую патрэбу", "prynagodnyia/prynagodnyia_19.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(
         BogaslujbovyiaListData(
-            "Малітва падзякі за атрыманыя дабрадзействы", "prynagodnyia/prynagodnyia_20.html"
+            "Малітва падзякі за атрыманыя дабрадзействы", "prynagodnyia/prynagodnyia_20.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
-    list.add(BogaslujbovyiaListData("Малітва перад іспытамі", "prynagodnyia/prynagodnyia_22.html"))
+    list.add(BogaslujbovyiaListData("Малітва перад іспытамі", "prynagodnyia/prynagodnyia_22.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(
         BogaslujbovyiaListData(
-            "Малітва ранішняга намеру (Опціных старцаў)", "prynagodnyia/prynagodnyia_23.html"
+            "Малітва ранішняга намеру (Опціных старцаў)", "prynagodnyia/prynagodnyia_23.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
-    list.add(BogaslujbovyiaListData("Малітва ў час адпачынку", "prynagodnyia/prynagodnyia_34.html"))
+    list.add(BogaslujbovyiaListData("Малітва ў час адпачынку", "prynagodnyia/prynagodnyia_34.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(
         BogaslujbovyiaListData(
-            "Малітва за бязьвінных ахвяраў перасьледу", "prynagodnyia/prynagodnyia_35.html"
-        )
-    )
-    list.add(
-        BogaslujbovyiaListData(
-            "Малітвы перад ядою і пасьля яды", "prynagodnyia/mltv_pierad_jadoj_i_pasla.html"
-        )
-    )
-    list.add(BogaslujbovyiaListData("Малітва за ўсіх і за ўсё", "prynagodnyia/mltv_za_usich_i_za_usio.html"))
-    list.add(BogaslujbovyiaListData("Малітва за вязьняў", "prynagodnyia/mltv_za_viazniau.html"))
-    list.add(
-        BogaslujbovyiaListData(
-            "Малітва перад пачаткам і пасьля кожнай справы", "prynagodnyia/mltv_pierad_i_pasla_koznaj_spravy.html"
-        )
-    )
-    list.add(BogaslujbovyiaListData("Малітва ў дзень нараджэньня", "prynagodnyia/mltv_dzien_naradzennia.html"))
-    list.add(
-        BogaslujbovyiaListData(
-            "Малітва аб духу любові", "prynagodnyia/mltv_ab_duchu_lubovi_sv_franciszak.html"
-        )
-    )
-    list.add(BogaslujbovyiaListData("Малітва на кожны час", "prynagodnyia/mltv_na_kozny_czas.html"))
-    list.add(
-        BogaslujbovyiaListData(
-            "Малітвы за памерлых («Божа духаў і ўсякага цялеснага стварэньня»)", "prynagodnyia/mltv_za_pamierlych_boza_duchau.html"
+            "Малітва за бязьвінных ахвяраў перасьледу", "prynagodnyia/prynagodnyia_35.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Юбілейная малітва", "prynagodnyia/mltv_jubilejnaja.html"
+            "Малітвы перад ядою і пасьля яды", "prynagodnyia/mltv_pierad_jadoj_i_pasla.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
-    list.add(BogaslujbovyiaListData("Малітва аб муках Госпада нашага Ісуса Хрыста", "prynagodnyia/mltv_ab_mukach_hospada.html"))
+    list.add(BogaslujbovyiaListData("Малітва за ўсіх і за ўсё", "prynagodnyia/mltv_za_usich_i_za_usio.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва за вязьняў", "prynagodnyia/mltv_za_viazniau.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(
+        BogaslujbovyiaListData(
+            "Малітва перад пачаткам і пасьля кожнай справы", "prynagodnyia/mltv_pierad_i_pasla_koznaj_spravy.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
+        )
+    )
+    list.add(BogaslujbovyiaListData("Малітва ў дзень нараджэньня", "prynagodnyia/mltv_dzien_naradzennia.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(
+        BogaslujbovyiaListData(
+            "Малітва аб духу любові", "prynagodnyia/mltv_ab_duchu_lubovi_sv_franciszak.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
+        )
+    )
+    list.add(BogaslujbovyiaListData("Малітва на кожны час", "prynagodnyia/mltv_na_kozny_czas.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(
+        BogaslujbovyiaListData(
+            "Малітвы за памерлых («Божа духаў і ўсякага цялеснага стварэньня»)", "prynagodnyia/mltv_za_pamierlych_boza_duchau.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Юбілейная малітва", "prynagodnyia/mltv_jubilejnaja.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
+        )
+    )
+    list.add(BogaslujbovyiaListData("Малітва аб муках Госпада нашага Ісуса Хрыста", "prynagodnyia/mltv_ab_mukach_hospada.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
         list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
     } else {

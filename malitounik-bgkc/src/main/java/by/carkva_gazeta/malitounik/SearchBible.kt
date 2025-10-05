@@ -444,7 +444,7 @@ fun bogashlugbovya(context: Context, poshuk: String, secondRun: Boolean = false)
             }
         }
     }
-    val bogaslugbovyiaListAll = getAllBogaslujbovyia()
+    val bogaslugbovyiaListAll = getAllBogaslujbovyia(context)
     for (i in 0 until bogaslugbovyiaListAll.size) {
         if (searchJob?.isActive == false) break
         var nazva = context.getString(R.string.error_ch)

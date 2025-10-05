@@ -5,6 +5,7 @@ package by.carkva_gazeta.malitounik
 import android.content.Context
 import android.os.Build
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,10 +35,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.text.Collator
+import java.util.Calendar
 import java.util.Locale
 
 class FilterBogaslujbovyiaListModel {
@@ -55,7 +58,23 @@ class FilterBogaslujbovyiaListModel {
     }
 }
 
-fun getAllBogaslujbovyia(): ArrayList<BogaslujbovyiaListData> {
+fun mineiaMesichnaiaMounth(day: Int, isPasha: Boolean): Int {
+    val year = Calendar.getInstance()[Calendar.YEAR]
+    Settings.data.forEach {
+        if (isPasha) {
+            if (it[22].toInt() == day && it[3].toInt() == year) {
+                return it[2].toInt()
+            }
+        } else {
+            if (it[24].toInt() == day && it[3].toInt() == year) {
+                return it[2].toInt()
+            }
+        }
+    }
+    return Calendar.JANUARY
+}
+
+fun getAllBogaslujbovyia(context: Context): ArrayList<BogaslujbovyiaListData> {
     val listAll = ArrayList<BogaslujbovyiaListData>()
     listAll.addAll(getBogaslujbovyia())
     listAll.addAll(getMalitvy())
@@ -73,7 +92,22 @@ fun getAllBogaslujbovyia(): ArrayList<BogaslujbovyiaListData> {
     val slugbovyiaTextu = SlugbovyiaTextu()
     val listPast = slugbovyiaTextu.getAllSlugbovyiaTextu()
     listPast.forEach { slugbovyiaTextuData ->
-        listAll.add(BogaslujbovyiaListData(slugbovyiaTextuData.title + ". " + slugbovyiaTextu.getNazouSluzby(slugbovyiaTextuData.sluzba), slugbovyiaTextuData.resource))
+        val path = when (slugbovyiaTextuData.mineia) {
+            SlugbovyiaTextu.MINEIA_KVETNAIA -> "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЫЁДЗЬ -> ТРЫЁДЗЬ КВЕТНАЯ"
+            SlugbovyiaTextu.MINEIA_VIALIKI_POST_1 -> "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЫЁДЗЬ -> ТРЫЁДЗЬ ПОСНАЯ -> СЛУЖБЫ 1-ГА ТЫДНЯ ВЯЛІКАГА ПОСТУ"
+            SlugbovyiaTextu.MINEIA_VIALIKI_POST_2 -> "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЫЁДЗЬ -> ТРЫЁДЗЬ ПОСНАЯ -> СЛУЖБЫ 2-ГА ТЫДНЯ ВЯЛІКАГА ПОСТУ"
+            SlugbovyiaTextu.MINEIA_VIALIKI_POST_3 -> "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЫЁДЗЬ -> ТРЫЁДЗЬ ПОСНАЯ -> СЛУЖБЫ 3-ГА ТЫДНЯ ВЯЛІКАГА ПОСТУ"
+            SlugbovyiaTextu.MINEIA_VIALIKI_POST_4 -> "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЫЁДЗЬ -> ТРЫЁДЗЬ ПОСНАЯ -> СЛУЖБЫ 4-ГА ТЫДНЯ ВЯЛІКАГА ПОСТУ"
+            SlugbovyiaTextu.MINEIA_VIALIKI_POST_5 -> "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЫЁДЗЬ -> ТРЫЁДЗЬ ПОСНАЯ -> СЛУЖБЫ 5-ГА ТЫДНЯ ВЯЛІКАГА ПОСТУ"
+            SlugbovyiaTextu.MINEIA_VIALIKI_POST_6 -> "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЫЁДЗЬ -> ТРЫЁДЗЬ ПОСНАЯ -> СЛУЖБЫ 6-ГА ТЫДНЯ ВЯЛІКАГА ПОСТУ"
+            SlugbovyiaTextu.MINEIA_VIALIKI_TYDZEN -> "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЫЁДЗЬ -> СЛУЖБЫ ВЯЛІКАГА ТЫДНЯ"
+            SlugbovyiaTextu.MINEIA_SVITLY_TYDZEN -> "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЫЁДЗЬ -> СЛУЖБЫ СЬВЕТЛАГА ТЫДНЯ"
+            else -> {
+                val mount= context.resources.getStringArray(R.array.meciac2)
+                "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ МЕСЯЧНАЯ -> " + mount[mineiaMesichnaiaMounth(slugbovyiaTextuData.day, slugbovyiaTextuData.pasxa)]
+            }
+        }
+        listAll.add(BogaslujbovyiaListData(slugbovyiaTextuData.title + ". " + slugbovyiaTextu.getNazouSluzby(slugbovyiaTextuData.sluzba), slugbovyiaTextuData.resource, path))
     }
     return listAll
 }
@@ -101,7 +135,7 @@ fun BogaslujbovyiaMenu(
     val folderList = stringArrayResource(R.array.bogaslugbovyia_folder_list)
     val viewModel = FilterBogaslujbovyiaListModel()
     if (searchText) {
-        val listAll = getAllBogaslujbovyia()
+        val listAll = getAllBogaslujbovyia(context)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
             listAll.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
         } else {
@@ -189,7 +223,7 @@ fun BogaslujbovyiaMenu(
             }
         }
         items(filteredItems.size) { index ->
-            Row(
+            Column(
                 modifier = Modifier
                     .padding(start = 10.dp)
                     .clickable {
@@ -198,16 +232,24 @@ fun BogaslujbovyiaMenu(
                                 filteredItems[index].title, filteredItems[index].resource
                             )
                         }
-                    }, verticalAlignment = Alignment.CenterVertically
+                    }
             ) {
-                Icon(
-                    modifier = Modifier.size(5.dp, 5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
-                )
-                Text(
-                    filteredItems[index].title, modifier = Modifier
-                        .fillMaxSize()
-                        .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        modifier = Modifier.size(5.dp, 5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
+                    )
+                    Text(
+                        text = filteredItems[index].title, modifier = Modifier
+                            .fillMaxSize()
+                            .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                    )
+                }
+                if (searchText) {
+                    Text(
+                        text = filteredItems[index].path, modifier = Modifier
+                            .padding(start = 15.dp, end = 10.dp, bottom = 10.dp), color = SecondaryText, fontSize = Settings.fontInterface.sp
+                    )
+                }
             }
             HorizontalDivider()
         }
@@ -313,25 +355,25 @@ fun getLiturgikon(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
-            "Боская Літургія сьв. Яна Залатавуснага", "bogashlugbovya/lit_jana_zalatavusnaha.html"
+            "Боская Літургія сьв. Яна Залатавуснага", "bogashlugbovya/lit_jana_zalatavusnaha.html", "ЛІТУРГІКОН"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Боская Літургія ў Велікодны перыяд", "bogashlugbovya/lit_jan_zalat_vielikodn.html"
+            "Боская Літургія ў Велікодны перыяд", "bogashlugbovya/lit_jan_zalat_vielikodn.html", "ЛІТУРГІКОН"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Боская Літургія сьв. Васіля Вялікага", "bogashlugbovya/lit_vasila_vialikaha.html"
+            "Боская Літургія сьв. Васіля Вялікага", "bogashlugbovya/lit_vasila_vialikaha.html", "ЛІТУРГІКОН"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Літургія раней асьвячаных дароў", "bogashlugbovya/lit_raniej_asviaczanych_darou.html"
+            "Літургія раней асьвячаных дароў", "bogashlugbovya/lit_raniej_asviaczanych_darou.html", "ЛІТУРГІКОН"
         )
     )
-    list.add(BogaslujbovyiaListData("Абедніца", "bogashlugbovya/abiednica.html"))
+    list.add(BogaslujbovyiaListData("Абедніца", "bogashlugbovya/abiednica.html", "ЛІТУРГІКОН"))
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
         list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
     } else {
@@ -342,18 +384,18 @@ fun getLiturgikon(): ArrayList<BogaslujbovyiaListData> {
 
 fun getAkafist(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
-    list.add(BogaslujbovyiaListData("Пра Акафіст", "bogashlugbovya/akafist0.html"))
-    list.add(BogaslujbovyiaListData("Найсьвяцейшай Багародзіцы", "bogashlugbovya/akafist1.html"))
-    list.add(BogaslujbovyiaListData("Маці Божай Нястомнай Дапамогі", "bogashlugbovya/akafist2.html"))
-    list.add(BogaslujbovyiaListData("перад Жыровіцкай іконай", "bogashlugbovya/akafist3.html"))
-    list.add(BogaslujbovyiaListData("у гонар Падляшскіх мучанікаў", "bogashlugbovya/akafist4.html"))
-    list.add(BogaslujbovyiaListData("Імю Ісусаваму", "bogashlugbovya/akafist5.html"))
-    list.add(BogaslujbovyiaListData("да Духа Сьвятога", "bogashlugbovya/akafist6.html"))
-    list.add(BogaslujbovyiaListData("сьв. Апосталам Пятру і Паўлу", "bogashlugbovya/akafist7.html"))
-    list.add(BogaslujbovyiaListData("Акафіст сьв. Язэпу", "bogashlugbovya/akafist_praviednamu_jazepu.html"))
+    list.add(BogaslujbovyiaListData("Пра Акафіст", "bogashlugbovya/akafist0.html", "АКАФІСТЫ"))
+    list.add(BogaslujbovyiaListData("Найсьвяцейшай Багародзіцы", "bogashlugbovya/akafist1.html", "АКАФІСТЫ"))
+    list.add(BogaslujbovyiaListData("Маці Божай Нястомнай Дапамогі", "bogashlugbovya/akafist2.html", "АКАФІСТЫ"))
+    list.add(BogaslujbovyiaListData("перад Жыровіцкай іконай", "bogashlugbovya/akafist3.html", "АКАФІСТЫ"))
+    list.add(BogaslujbovyiaListData("у гонар Падляшскіх мучанікаў", "bogashlugbovya/akafist4.html", "АКАФІСТЫ"))
+    list.add(BogaslujbovyiaListData("Імю Ісусаваму", "bogashlugbovya/akafist5.html", "АКАФІСТЫ"))
+    list.add(BogaslujbovyiaListData("да Духа Сьвятога", "bogashlugbovya/akafist6.html", "АКАФІСТЫ"))
+    list.add(BogaslujbovyiaListData("сьв. Апосталам Пятру і Паўлу", "bogashlugbovya/akafist7.html", "АКАФІСТЫ"))
+    list.add(BogaslujbovyiaListData("Акафіст сьв. Язэпу", "bogashlugbovya/akafist_praviednamu_jazepu.html", "АКАФІСТЫ"))
     list.add(
         BogaslujbovyiaListData(
-            "Акафіст Росіцкім мучанікам", "bogashlugbovya/akafist_rosickim_muczanikam.html"
+            "Акафіст Росіцкім мучанікам", "bogashlugbovya/akafist_rosickim_muczanikam.html", "АКАФІСТЫ"
         )
     )
     return list
@@ -361,20 +403,20 @@ fun getAkafist(): ArrayList<BogaslujbovyiaListData> {
 
 fun getRujanec(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
-    list.add(BogaslujbovyiaListData("Малітвы на вяровіцы", "bogashlugbovya/ruzanec0.html"))
-    list.add(BogaslujbovyiaListData("Молімся на ружанцы", "bogashlugbovya/ruzanec2.html"))
-    list.add(BogaslujbovyiaListData("Разважаньні на Ружанец", "bogashlugbovya/ruzanec1.html"))
-    list.add(BogaslujbovyiaListData("Частка I. Радасныя таямніцы (пн, сб)", "bogashlugbovya/ruzanec3.html"))
-    list.add(BogaslujbovyiaListData("Частка II. Балесныя таямніцы (аўт, пт)", "bogashlugbovya/ruzanec4.html"))
-    list.add(BogaslujbovyiaListData("Частка III. Слаўныя таямніцы (ср, ндз)", "bogashlugbovya/ruzanec5.html"))
-    list.add(BogaslujbovyiaListData("Частка IV. Таямніцы сьвятла (чц)", "bogashlugbovya/ruzanec6.html"))
+    list.add(BogaslujbovyiaListData("Малітвы на вяровіцы", "bogashlugbovya/ruzanec0.html", "МАЛІТВЫ -> РУЖАНЕЦ"))
+    list.add(BogaslujbovyiaListData("Молімся на ружанцы", "bogashlugbovya/ruzanec2.html", "МАЛІТВЫ -> РУЖАНЕЦ"))
+    list.add(BogaslujbovyiaListData("Разважаньні на Ружанец", "bogashlugbovya/ruzanec1.html", "МАЛІТВЫ -> РУЖАНЕЦ"))
+    list.add(BogaslujbovyiaListData("Частка I. Радасныя таямніцы (пн, сб)", "bogashlugbovya/ruzanec3.html", "МАЛІТВЫ -> РУЖАНЕЦ"))
+    list.add(BogaslujbovyiaListData("Частка II. Балесныя таямніцы (аўт, пт)", "bogashlugbovya/ruzanec4.html", "МАЛІТВЫ -> РУЖАНЕЦ"))
+    list.add(BogaslujbovyiaListData("Частка III. Слаўныя таямніцы (ср, ндз)", "bogashlugbovya/ruzanec5.html", "МАЛІТВЫ -> РУЖАНЕЦ"))
+    list.add(BogaslujbovyiaListData("Частка IV. Таямніцы сьвятла (чц)", "bogashlugbovya/ruzanec6.html", "МАЛІТВЫ -> РУЖАНЕЦ"))
     return list
 }
 
 fun getMalitvy(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
-    list.add(BogaslujbovyiaListData("Ранішняя малітвы", "bogashlugbovya/malitvy_ranisznija.html"))
-    list.add(BogaslujbovyiaListData("Вячэрнія малітвы", "bogashlugbovya/malitvy_viaczernija.html"))
+    list.add(BogaslujbovyiaListData("Ранішняя малітвы", "bogashlugbovya/malitvy_ranisznija.html", "МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Вячэрнія малітвы", "bogashlugbovya/malitvy_viaczernija.html", "МАЛІТВЫ"))
     return list
 }
 
@@ -382,27 +424,27 @@ fun getBogaslujbovyia(): ArrayList<BogaslujbovyiaListData> {
     val list = ArrayList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
-            "Набажэнства ў гонар Маці Божай Нястомнай Дапамогі", "bogashlugbovya/nabazenstva_maci_bozaj_niast_dap.html"
+            "Набажэнства ў гонар Маці Божай Нястомнай Дапамогі", "bogashlugbovya/nabazenstva_maci_bozaj_niast_dap.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малебны канон Найсьвяцейшай Багародзіцы", "bogashlugbovya/kanon_malebny_baharodzicy.html"
+            "Малебны канон Найсьвяцейшай Багародзіцы", "bogashlugbovya/kanon_malebny_baharodzicy.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вялікі пакаянны канон сьвятога Андрэя Крыцкага", "bogashlugbovya/kanon_andreja_kryckaha.html"
+            "Вялікі пакаянны канон сьвятога Андрэя Крыцкага", "bogashlugbovya/kanon_andreja_kryckaha.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Малебен сьв. Кірылу і Мятоду, настаўнікам славянскім", "bogashlugbovya/malebien_kiryla_miatod.html"
+            "Малебен сьв. Кірылу і Мятоду, настаўнікам славянскім", "bogashlugbovya/malebien_kiryla_miatod.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ"
         )
     )
     list.add(
         BogaslujbovyiaListData(
-            "Вялікі пакаянны канон сьвятога Андрэя Крыцкага(у 4-х частках)", "bogashlugbovya/kanon_andreja_kryckaha_4_czastki.html"
+            "Вялікі пакаянны канон сьвятога Андрэя Крыцкага(у 4-х частках)", "bogashlugbovya/kanon_andreja_kryckaha_4_czastki.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ"
         )
     )
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
@@ -413,4 +455,4 @@ fun getBogaslujbovyia(): ArrayList<BogaslujbovyiaListData> {
     return list
 }
 
-data class BogaslujbovyiaListData(val title: String, val resource: String)
+data class BogaslujbovyiaListData(val title: String, val resource: String, val path: String = "")
