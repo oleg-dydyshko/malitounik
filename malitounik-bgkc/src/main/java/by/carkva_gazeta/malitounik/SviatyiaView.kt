@@ -101,6 +101,7 @@ import by.carkva_gazeta.malitounik.admin.Sviatyia
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.views.HtmlText
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -685,8 +686,9 @@ fun loadOpisanieSviatyia(context: Context, year: Int, mun: Int, day: Int): Snaps
                 val spanned = AnnotatedString.fromHtml(fulText)
                 sviatyiaList.add(OpisanieData(index + 1, day, mun, Settings.CALAINDAR, spannedtitle, spanned, "", ""))
             }
-        } catch (_: Throwable) {
+        }  catch (_: JsonSyntaxException) {
             fileOpisanie.delete()
+        } catch (_: Throwable) {
         }
     }
     val fileOpisanie13 = File("${context.filesDir}/sviatyja/opisanie13.json")
@@ -751,8 +753,9 @@ fun loadOpisanieSviatyia(context: Context, year: Int, mun: Int, day: Int): Snaps
                     }
                 }
             }
-        } catch (_: Throwable) {
+        }  catch (_: JsonSyntaxException) {
             fileOpisanie13.delete()
+        } catch (_: Throwable) {
         }
     }
     return sviatyiaList
@@ -793,8 +796,9 @@ fun loadOpisanieSviat(context: Context, position: Int): SnapshotStateList<Opisan
                     sviatyiaList.add(OpisanieData(1, strings[0].toInt(), strings[1].toInt(), strings[2].toInt(), spannedtitle, spanned, "", ""))
                 }
             }
-        } catch (_: Throwable) {
+        } catch (_: JsonSyntaxException) {
             fileOpisanieSviat.delete()
+        } catch (_: Throwable) {
         }
     }
     return sviatyiaList

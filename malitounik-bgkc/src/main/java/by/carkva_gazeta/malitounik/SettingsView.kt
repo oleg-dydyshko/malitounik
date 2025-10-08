@@ -100,13 +100,6 @@ import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
-import com.google.android.play.core.splitinstall.SplitInstallException
-import com.google.android.play.core.splitinstall.SplitInstallHelper
-import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
-import com.google.android.play.core.splitinstall.SplitInstallRequest
-import com.google.android.play.core.splitinstall.SplitInstallStateUpdatedListener
-import com.google.android.play.core.splitinstall.model.SplitInstallErrorCode
-import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -1171,94 +1164,6 @@ fun setNotificationFull(context: Context) {
 fun setNotificationNon(context: Context) {
     CoroutineScope(Dispatchers.IO).launch {
         setNotifications(context, Settings.NOTIFICATION_SVIATY_NONE)
-    }
-}
-
-class SettingsModules(val context: MainActivity) {
-    private var downloadDynamicModuleListener: DownloadDynamicModuleListener? = null
-
-    interface DownloadDynamicModuleListener {
-        fun dynamicModuleDownloading(totalBytesToDownload: Double, bytesDownloaded: Double)
-        fun dynamicModuleInstalled()
-    }
-
-    fun setDownloadDynamicModuleListener(listener: DownloadDynamicModuleListener) {
-        downloadDynamicModuleListener = listener
-    }
-
-    fun checkmodulesAdmin(): Boolean {
-        val muduls = SplitInstallManagerFactory.create(context).installedModules
-        for (mod in muduls) {
-            if (mod == "admin") {
-                return true
-            }
-        }
-        return false
-    }
-
-    fun downloadDynamicModule(moduleName: String) {
-        val splitInstallManager = SplitInstallManagerFactory.create(context)
-
-        val request = SplitInstallRequest.newBuilder().addModule(moduleName).build()
-
-        val listener = SplitInstallStateUpdatedListener { state ->
-            if (state.status() == SplitInstallSessionStatus.FAILED) {
-                downloadDynamicModule(moduleName)
-                return@SplitInstallStateUpdatedListener
-            }
-            if (state.status() == SplitInstallSessionStatus.REQUIRES_USER_CONFIRMATION) {
-                splitInstallManager.startConfirmationDialogForResult(state, context, 150)
-            }
-            if (state.sessionId() == sessionId) {
-                when (state.status()) {
-                    SplitInstallSessionStatus.PENDING -> {
-                    }
-
-                    SplitInstallSessionStatus.DOWNLOADED -> {
-                    }
-
-                    SplitInstallSessionStatus.DOWNLOADING -> {
-                        downloadDynamicModuleListener?.dynamicModuleDownloading(state.totalBytesToDownload().toDouble(), state.bytesDownloaded().toDouble())
-                    }
-
-                    SplitInstallSessionStatus.INSTALLED -> {
-                        downloadDynamicModuleListener?.dynamicModuleInstalled()
-                    }
-
-                    SplitInstallSessionStatus.CANCELED -> {
-                    }
-
-                    SplitInstallSessionStatus.CANCELING -> {
-                    }
-
-                    SplitInstallSessionStatus.FAILED -> {
-                    }
-
-                    SplitInstallSessionStatus.INSTALLING -> {
-                    }
-
-                    SplitInstallSessionStatus.REQUIRES_USER_CONFIRMATION -> {
-                    }
-
-                    SplitInstallSessionStatus.UNKNOWN -> {
-                    }
-                }
-            }
-        }
-
-        splitInstallManager.registerListener(listener)
-
-        splitInstallManager.startInstall(request).addOnFailureListener {
-            if ((it as SplitInstallException).errorCode == SplitInstallErrorCode.NETWORK_ERROR) {
-                Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
-            }
-        }.addOnSuccessListener {
-            sessionId = it
-        }
-    }
-
-    companion object {
-        private var sessionId = 0
     }
 }
 
