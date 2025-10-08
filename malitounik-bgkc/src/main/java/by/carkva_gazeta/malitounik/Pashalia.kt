@@ -81,7 +81,7 @@ fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, sear
     val cal = Calendar.getInstance()
     LaunchedEffect(Unit) {
         viewModel.clear()
-        for (year in 1582..2099) {
+        for (year in 1582..2499) {
             viewModel.addItemList(pasxa(context, year))
             if (year == cal[Calendar.YEAR] - 3) findIndex = year
         }
