@@ -47,6 +47,7 @@
         android:layout_width="0sp"
         android:layout_height="0sp"
         android:scrollbars="none"
+        android:fitsSystemWindows="true"
         app:layout_constraintBottom_toTopOf="@+id/find"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

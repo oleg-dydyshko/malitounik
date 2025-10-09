@@ -45,6 +45,7 @@
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0sp"
+        android:fitsSystemWindows="true"
         android:descendantFocusability="afterDescendants"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

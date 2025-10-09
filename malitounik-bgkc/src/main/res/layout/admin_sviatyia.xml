@@ -114,6 +114,7 @@
 
             <by.carkva_gazeta.malitounik.admin.EditTextCustom
                 android:id="@+id/apisanne"
+                android:fitsSystemWindows="true"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/opisanie" />
@@ -149,7 +150,6 @@
             android:layout_width="28sp"
             android:layout_height="28sp"
             android:layout_marginStart="10sp"
-            android:layout_marginLeft="10sp"
             android:layout_marginTop="5sp"
             android:layout_marginBottom="5sp"
             android:contentDescription="@string/empty"
@@ -160,7 +160,6 @@
             android:layout_width="28sp"
             android:layout_height="28sp"
             android:layout_marginStart="10sp"
-            android:layout_marginLeft="10sp"
             android:layout_marginTop="5sp"
             android:layout_marginBottom="5sp"
             android:contentDescription="@string/empty"
@@ -171,7 +170,6 @@
             android:layout_width="28sp"
             android:layout_height="28sp"
             android:layout_marginStart="10sp"
-            android:layout_marginLeft="10sp"
             android:layout_marginTop="5sp"
             android:layout_marginBottom="5sp"
             android:contentDescription="@string/empty"

@@ -131,6 +131,7 @@
                 android:id="@+id/opisanie"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fitsSystemWindows="true"
                 android:layout_marginTop="10sp"
                 android:hint="@string/opisanie"
                 android:inputType="textMultiLine"

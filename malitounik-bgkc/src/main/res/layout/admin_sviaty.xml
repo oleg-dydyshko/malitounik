@@ -53,6 +53,7 @@
         android:id="@+id/scrollView"
         android:layout_width="0sp"
         android:layout_height="0sp"
+        android:fitsSystemWindows="true"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

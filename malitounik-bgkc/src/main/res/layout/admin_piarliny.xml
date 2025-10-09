@@ -53,6 +53,7 @@
         android:id="@+id/add_piarliny"
         android:layout_width="0sp"
         android:layout_height="0sp"
+        android:fitsSystemWindows="true"
         android:gravity="start|top"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
