@@ -1,15 +1,19 @@
 package by.carkva_gazeta.malitounik.admin
 
 import android.app.Activity
+import android.content.Context
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.Spanned
+import android.text.TextWatcher
 import android.text.style.StyleSpan
 import android.util.TypedValue
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -18,14 +22,12 @@ import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.WindowCompat
-import androidx.core.view.forEachIndexed
 import androidx.core.view.updatePadding
+import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.TransitionManager
 import by.carkva_gazeta.malitounik.Malitounik
 import by.carkva_gazeta.malitounik.R
@@ -49,6 +51,8 @@ class Chytanny : BaseActivity() {
     private var resetTollbarJob: Job? = null
     private val data = ArrayList<String>()
     private var isError = false
+    private val list = ArrayList<CytanneList>()
+    private lateinit var adapter: RecyclerViewAdapter
 
     override fun onPause() {
         super.onPause()
@@ -59,8 +63,8 @@ class Chytanny : BaseActivity() {
     private fun loadChytanny(year: Int) {
         urlJob?.cancel()
         urlJob = CoroutineScope(Dispatchers.Main).launch {
+            list.clear()
             binding.progressBar2.visibility = View.VISIBLE
-            binding.linear.removeAllViewsInLayout()
             val localFile = File("$filesDir/cache/cache.txt")
             var text = ""
             try {
@@ -135,14 +139,17 @@ class Chytanny : BaseActivity() {
                     datefull.setSpan(CustomTypefaceSpan("", font), 0, c1 + 2, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
                     datefull.setSpan(CustomTypefaceSpan("", font2), c1 + 2, c1 + 2 + c2 + c3 + 1, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
                     datefull.setSpan(CustomTypefaceSpan("", font), c1 + 2 + c2 + c3 + 1, datefull.length, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
-                    binding.linear.addView(grateTextView(datefull))
-                    binding.linear.addView(grateEditView(1, fw.substring(t1 + 11, t2)))
-                    binding.linear.addView(grateEditView(2, fw.substring(t3 + 10, t4)))
+                    list.add(CytanneList(datefull, fw.substring(t1 + 11, t2), fw.substring(t3 + 10, t4)))
+                    //binding.linear.addView(grateTextView(datefull))
+                    //binding.linear.addView(grateEditView(1, fw.substring(t1 + 11, t2)))
+                    //binding.linear.addView(grateEditView(2, fw.substring(t3 + 10, t4)))
                 } else {
-                    binding.linear.addView(grateEditViewHidden(fw))
+                    list.add(CytanneList(SpannableString(""), fw, ""))
+                    //binding.linear.addView(grateEditViewHidden(fw))
                 }
             }
             binding.progressBar2.visibility = View.GONE
+            adapter.notifyItemRangeChanged(0, list.size)
         }
     }
 
@@ -167,6 +174,8 @@ class Chytanny : BaseActivity() {
             isAppearanceLightStatusBars = true
             isAppearanceLightNavigationBars = true
         }
+        adapter = RecyclerViewAdapter(this, list)
+        binding.recyclerView.adapter = adapter
         binding.root.setOnApplyWindowInsetsListener { view, windowInsets ->
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 val inset = windowInsets.getInsets(WindowInsets.Type.systemBars())
@@ -183,7 +192,7 @@ class Chytanny : BaseActivity() {
             windowInsets
         }
         isError = savedInstanceState?.getBoolean("isError", false) == true
-        for (i in Settings.GET_CALIANDAR_YEAR_MIN .. Settings.GET_CALIANDAR_YEAR_MAX) data.add(i.toString())
+        for (i in Settings.GET_CALIANDAR_YEAR_MIN..Settings.GET_CALIANDAR_YEAR_MAX) data.add(i.toString())
         binding.spinnerYear.adapter = SpinnerAdapter(this, data)
         binding.spinnerYear.setSelection(2)
         binding.spinnerYear.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -195,39 +204,6 @@ class Chytanny : BaseActivity() {
             }
         }
         setTollbarTheme()
-    }
-
-    private fun grateTextView(text: SpannableString): TextView {
-        val density = resources.displayMetrics.density
-        val padding = 10 * density
-        val textView = TextViewCustom(this)
-        val llp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
-        llp.setMargins(padding.toInt(), padding.toInt(), 0, 0)
-        textView.layoutParams = llp
-        textView.text = text.trim()
-        return textView
-    }
-
-    private fun grateEditView(position: Int, text: String): EditText {
-        val density = resources.displayMetrics.density
-        val padding = 5 * density
-        val textView = EditTextCustom(this)
-        textView.typeface = createFont(Typeface.NORMAL)
-        textView.tag = position
-        val llp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
-        llp.setMargins(padding.toInt(), padding.toInt(), padding.toInt(), 0)
-        textView.layoutParams = llp
-        textView.setText(text)
-        textView.isSingleLine = true
-        return textView
-    }
-
-    private fun grateEditViewHidden(text: String): EditText {
-        val textView = EditTextCustom(this)
-        textView.tag = -1
-        textView.setText(text)
-        textView.visibility = View.GONE
-        return textView
     }
 
     private fun setTollbarTheme() {
@@ -272,21 +248,11 @@ class Chytanny : BaseActivity() {
         if (id == R.id.action_save) {
             if (!isError) {
                 val sb = StringBuilder()
-                binding.linear.forEachIndexed { _, view ->
-                    if (view is EditText) {
-                        when (view.tag as Int) {
-                            -1 -> {
-                                sb.append(view.text.toString() + "\n")
-                            }
-
-                            1 -> {
-                                sb.append("\$calendar[]=array(\"cviaty\"=>\"${view.text}\", \"cytanne\"=>\"\".\$ahref.\"")
-                            }
-
-                            2 -> {
-                                sb.append("${view.text}</a>\");\n")
-                            }
-                        }
+                list.forEach { item ->
+                    if (item.data.isEmpty()) {
+                        sb.append(item.title + "\n")
+                    } else {
+                        sb.append("\$calendar[]=array(\"cviaty\"=>\"${item.title}\", \"cytanne\"=>\"\".\$ahref.\"${item.cynanne}</a>\");\n")
                     }
                 }
                 val year = data[binding.spinnerYear.selectedItemPosition].toInt()
@@ -349,6 +315,35 @@ class Chytanny : BaseActivity() {
         outState.putBoolean("isError", isError)
     }
 
+    private class RecyclerViewAdapter(val context: Context, val list: ArrayList<CytanneList>) : RecyclerView.Adapter<RecyclerViewHolder>() {
+
+        override fun getItemCount(): Int {
+            return list.size
+        }
+
+        override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int) {
+            if (list[position].data.isNotEmpty()) {
+                holder.data.visibility = View.VISIBLE
+                holder.title.visibility = View.VISIBLE
+                holder.cytenne.visibility = View.VISIBLE
+                holder.data.text = list[position].data
+                holder.title.setText(list[position].title)
+                holder.title.addTextChangedListener(TitleChangedListener(list, true, position))
+                holder.cytenne.setText(list[position].cynanne)
+                holder.cytenne.addTextChangedListener(TitleChangedListener(list, false, position))
+            } else {
+                holder.data.visibility = View.GONE
+                holder.title.visibility = View.GONE
+                holder.cytenne.visibility = View.GONE
+            }
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewHolder {
+            val view = LayoutInflater.from(context).inflate(R.layout.simple_list_item_cytanny, parent, false)
+            return RecyclerViewHolder(view)
+        }
+    }
+
     private inner class SpinnerAdapter(private val activity: Activity, private val data: ArrayList<String>) : ArrayAdapter<String>(activity, R.layout.simple_list_item_1, data) {
 
         private val gc = Calendar.getInstance()
@@ -387,5 +382,45 @@ class Chytanny : BaseActivity() {
         }
     }
 
+    private class RecyclerViewHolder : RecyclerView.ViewHolder {
+        var data: TextViewCustom
+        var title: EditTextCustom
+        var cytenne: EditTextCustom
+
+        constructor(view: View) : super(view) {
+            data = view.findViewById<TextViewCustom>(R.id.data)
+            title = view.findViewById<EditTextCustom>(R.id.title)
+            cytenne = view.findViewById<EditTextCustom>(R.id.chytanne)
+        }
+    }
+
+    private class TitleChangedListener(val list: ArrayList<CytanneList>, val isTitleEdit: Boolean, val listPosition: Int) : TextWatcher {
+        private var editPosition = 0
+        private var check = 0
+        private var editch = true
+
+        override fun afterTextChanged(s: Editable?) {
+            if (editch) {
+                val edit = s.toString()
+                if (isTitleEdit) {
+                    list[listPosition].title = edit
+                } else {
+                    list[listPosition].cynanne = edit
+                }
+            }
+        }
+
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            editch = count != after
+            check = after
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            editPosition = start + count
+        }
+    }
+
     private class ViewHolder(var text: TextView)
+
+    private data class CytanneList(val data: SpannableString, var title: String, var cynanne: String)
 }

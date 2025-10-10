@@ -25,7 +25,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
                 android:singleLine="true"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -41,23 +40,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/AppBarLayout" />
 
-    <by.carkva_gazeta.malitounik.admin.InteractiveScrollView
-        android:id="@+id/scrollView"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0sp"
         android:fitsSystemWindows="true"
         android:descendantFocusability="afterDescendants"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinnerYear">
-
-        <LinearLayout
-            android:id="@+id/linear"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-    </by.carkva_gazeta.malitounik.admin.InteractiveScrollView>
+        app:layout_constraintTop_toBottomOf="@+id/spinnerYear"/>
 
     <ProgressBar
         android:id="@+id/progressBar2"
