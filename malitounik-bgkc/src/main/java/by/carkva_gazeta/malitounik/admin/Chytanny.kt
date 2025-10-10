@@ -1,7 +1,6 @@
 package by.carkva_gazeta.malitounik.admin
 
 import android.app.Activity
-import android.content.Context
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
@@ -13,7 +12,6 @@ import android.text.Spanned
 import android.text.TextWatcher
 import android.text.style.StyleSpan
 import android.util.TypedValue
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -34,6 +32,7 @@ import by.carkva_gazeta.malitounik.R
 import by.carkva_gazeta.malitounik.Settings
 import by.carkva_gazeta.malitounik.databinding.AdminChytannyBinding
 import by.carkva_gazeta.malitounik.databinding.SimpleListItem1Binding
+import by.carkva_gazeta.malitounik.databinding.SimpleListItemCytannyBinding
 import com.google.firebase.storage.StorageException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -140,12 +139,6 @@ class Chytanny : BaseActivity() {
                     datefull.setSpan(CustomTypefaceSpan("", font2), c1 + 2, c1 + 2 + c2 + c3 + 1, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
                     datefull.setSpan(CustomTypefaceSpan("", font), c1 + 2 + c2 + c3 + 1, datefull.length, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
                     list.add(CytanneList(datefull, fw.substring(t1 + 11, t2), fw.substring(t3 + 10, t4)))
-                    //binding.linear.addView(grateTextView(datefull))
-                    //binding.linear.addView(grateEditView(1, fw.substring(t1 + 11, t2)))
-                    //binding.linear.addView(grateEditView(2, fw.substring(t3 + 10, t4)))
-                } else {
-                    list.add(CytanneList(SpannableString(""), fw, ""))
-                    //binding.linear.addView(grateEditViewHidden(fw))
                 }
             }
             binding.progressBar2.visibility = View.GONE
@@ -248,6 +241,32 @@ class Chytanny : BaseActivity() {
         if (id == R.id.action_save) {
             if (!isError) {
                 val sb = StringBuilder()
+                val preList = "<?php\n" +
+                        "/***********************************************************************\n" +
+                        "*                      Літургічны каляндар                             *\n" +
+                        "* ==================================================================== *\n" +
+                        "*                                                                      *\n" +
+                        "* Copyright (c) 2014 by Oleg Dydyshko                                  *\n" +
+                        "* http://carkva-gazeta.by                                              *\n" +
+                        "*                                                                      *\n" +
+                        "* This program is free software. You can redistribute it and/or modify *\n" +
+                        "* it under the terms of the GNU General Public License as published by *\n" +
+                        "* the Free Software Foundation; either version 2 of the License.       *\n" +
+                        "*                                                                      *\n" +
+                        "***********************************************************************/\n" +
+                        "\n" +
+                        "//Здесь Очередные чтения, Святые и праздники привязаные к Пасхе\n" +
+                        "//\n" +
+                        "/*******************************************************************************\n" +
+                        "* Основной формат: Лк 10.38-11.2, Лк 10.38-42                                  *\n" +
+                        "* Допустимые значения: Лк 10.38, 10.38-11.2, 10.38-42, 10.38, 38               *\n" +
+                        "* Недостающие элементы чтений автоматически добавляются из предыдущего чтения  *\n" +
+                        "* Расположение других элементов - произвольно                                  *\n" +
+                        "* Тэг <br> - перенос строки                                                    *\n" +
+                        "* BAG(ошибка): чтение Дз 6.8-7.5, 47-60 выведет Дз 6.8-7.5, Дз 6.47-60         *\n" +
+                        "* BAG 2: Ян 6.35б-39 выведет Ян 6.35-39                                        *\n" +
+                        "********************************************************************************/\n"
+                sb.append(preList)
                 list.forEach { item ->
                     if (item.data.isEmpty()) {
                         sb.append(item.title + "\n")
@@ -255,6 +274,7 @@ class Chytanny : BaseActivity() {
                         sb.append("\$calendar[]=array(\"cviaty\"=>\"${item.title}\", \"cytanne\"=>\"\".\$ahref.\"${item.cynanne}</a>\");\n")
                     }
                 }
+                sb.append("?>")
                 val year = data[binding.spinnerYear.selectedItemPosition].toInt()
                 sendPostRequest(sb.toString().trim(), year)
             }
@@ -315,31 +335,28 @@ class Chytanny : BaseActivity() {
         outState.putBoolean("isError", isError)
     }
 
-    private class RecyclerViewAdapter(val context: Context, val list: ArrayList<CytanneList>) : RecyclerView.Adapter<RecyclerViewHolder>() {
+    private class RecyclerViewAdapter(val activity: Activity, val list: ArrayList<CytanneList>) : RecyclerView.Adapter<RecyclerViewHolder>() {
 
         override fun getItemCount(): Int {
             return list.size
         }
 
         override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int) {
-            if (list[position].data.isNotEmpty()) {
-                holder.data.visibility = View.VISIBLE
-                holder.title.visibility = View.VISIBLE
-                holder.cytenne.visibility = View.VISIBLE
-                holder.data.text = list[position].data
-                holder.title.setText(list[position].title)
-                holder.title.addTextChangedListener(TitleChangedListener(list, true, position))
-                holder.cytenne.setText(list[position].cynanne)
-                holder.cytenne.addTextChangedListener(TitleChangedListener(list, false, position))
-            } else {
-                holder.data.visibility = View.GONE
-                holder.title.visibility = View.GONE
-                holder.cytenne.visibility = View.GONE
-            }
+            holder.data.text = list[position].data
+            holder.title.removeTextChangedListener(holder.titleTextWatcher)
+            holder.title.setText(list[position].title)
+            holder.titleTextWatcher.setList(list)
+            holder.titleTextWatcher.updatePosition(position)
+            holder.title.addTextChangedListener(holder.titleTextWatcher)
+            holder.cytenne.removeTextChangedListener(holder.cytanneTextWatcher)
+            holder.cytenne.setText(list[position].cynanne)
+            holder.cytanneTextWatcher.setList(list)
+            holder.cytanneTextWatcher.updatePosition(position)
+            holder.cytenne.addTextChangedListener(holder.cytanneTextWatcher)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewHolder {
-            val view = LayoutInflater.from(context).inflate(R.layout.simple_list_item_cytanny, parent, false)
+            val view = SimpleListItemCytannyBinding.inflate(activity.layoutInflater, parent, false)
             return RecyclerViewHolder(view)
         }
     }
@@ -386,27 +403,71 @@ class Chytanny : BaseActivity() {
         var data: TextViewCustom
         var title: EditTextCustom
         var cytenne: EditTextCustom
+        val titleTextWatcher: TitleChangedListener
+        val cytanneTextWatcher: CytanneChangedListener
 
-        constructor(view: View) : super(view) {
-            data = view.findViewById<TextViewCustom>(R.id.data)
-            title = view.findViewById<EditTextCustom>(R.id.title)
-            cytenne = view.findViewById<EditTextCustom>(R.id.chytanne)
+        constructor(view: SimpleListItemCytannyBinding) : super(view.root) {
+            data = view.data
+            title = view.title
+            cytenne = view.chytanne
+            titleTextWatcher = TitleChangedListener()
+            title.addTextChangedListener(titleTextWatcher)
+            cytanneTextWatcher = CytanneChangedListener()
+            cytenne.addTextChangedListener(cytanneTextWatcher)
         }
     }
 
-    private class TitleChangedListener(val list: ArrayList<CytanneList>, val isTitleEdit: Boolean, val listPosition: Int) : TextWatcher {
+    private class TitleChangedListener() : TextWatcher {
         private var editPosition = 0
         private var check = 0
         private var editch = true
+        private var position = 0
+        private var list = ArrayList<CytanneList>()
+
+        fun setList(list: ArrayList<CytanneList>) {
+            this.list = list
+        }
+
+        fun updatePosition(position: Int) {
+            this.position = position
+        }
 
         override fun afterTextChanged(s: Editable?) {
             if (editch) {
                 val edit = s.toString()
-                if (isTitleEdit) {
-                    list[listPosition].title = edit
-                } else {
-                    list[listPosition].cynanne = edit
-                }
+                list[position].title = edit
+            }
+        }
+
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            editch = count != after
+            check = after
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            editPosition = start + count
+        }
+    }
+
+    private class CytanneChangedListener() : TextWatcher {
+        private var editPosition = 0
+        private var check = 0
+        private var editch = true
+        private var position = 0
+        private var list = ArrayList<CytanneList>()
+
+        fun setList(list: ArrayList<CytanneList>) {
+            this.list = list
+        }
+
+        fun updatePosition(position: Int) {
+            this.position = position
+        }
+
+        override fun afterTextChanged(s: Editable?) {
+            if (editch) {
+                val edit = s.toString()
+                list[position].cynanne = edit
             }
         }
 
