@@ -287,7 +287,9 @@ fun DialogMyNatatki(
                         )
                     }
                 }
-                Column(modifier = Modifier.imePadding().verticalScroll(rememberScrollState())) {
+                Column(modifier = Modifier
+                    .imePadding()
+                    .verticalScroll(rememberScrollState())) {
                     if (editMode) {
                         TextField(
                             modifier = Modifier
@@ -322,7 +324,8 @@ fun DialogMyNatatki(
                                 if (editMode) {
                                     onDismiss()
                                 } else editMode = true
-                            }
+                            },
+                            shape = MaterialTheme.shapes.small
                         ) {
                             if (editMode) {
                                 Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
@@ -337,7 +340,8 @@ fun DialogMyNatatki(
                                 if (editMode) {
                                     onConfirmation(editTitle, textFieldValueState.text)
                                 } else onDismiss()
-                            }
+                            },
+                            shape = MaterialTheme.shapes.small
                         ) {
                             if (editMode) {
                                 Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.save), contentDescription = "")

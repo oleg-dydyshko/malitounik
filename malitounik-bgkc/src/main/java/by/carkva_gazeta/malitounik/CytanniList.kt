@@ -49,7 +49,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -128,6 +127,7 @@ import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
 import by.carkva_gazeta.malitounik.ui.theme.StrogiPost
+import by.carkva_gazeta.malitounik.views.AppDropdownMenu
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.HtmlText
 import by.carkva_gazeta.malitounik.views.openAssetsResources
@@ -700,7 +700,7 @@ fun CytanniList(
                                     painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
-                            DropdownMenu(
+                            AppDropdownMenu(
                                 expanded = expandedUp, onDismissRequest = { expandedUp = false }) {
                                 if (biblia == Settings.CHYTANNI_BIBLIA && listState.size - 1 > 1) {
                                     DropdownMenuItem(onClick = {

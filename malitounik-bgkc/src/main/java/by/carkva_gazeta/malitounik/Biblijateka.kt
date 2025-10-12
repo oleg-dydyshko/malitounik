@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -86,6 +85,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import androidx.paging.compose.collectAsLazyPagingItems
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik.views.AppDropdownMenu
 import coil3.Canvas
 import coil3.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
@@ -385,7 +385,7 @@ fun Biblijateka(
                                 tint = MaterialTheme.colorScheme.onSecondary
                             )
                         }
-                        DropdownMenu(
+                        AppDropdownMenu(
                             expanded = expanded,
                             onDismissRequest = { expanded = false }
                         ) {

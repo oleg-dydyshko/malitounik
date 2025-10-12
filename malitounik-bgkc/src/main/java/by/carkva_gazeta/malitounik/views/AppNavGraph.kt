@@ -46,7 +46,6 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -1291,7 +1290,7 @@ fun MainConteiner(
                             )
                         }
                     }
-                    DropdownMenu(
+                    AppDropdownMenu(
                         expanded = expandedUp, onDismissRequest = { expandedUp = false }) {
                         DropdownMenuItem(onClick = {
                             expandedUp = false

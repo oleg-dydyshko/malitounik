@@ -48,7 +48,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -134,7 +133,9 @@ import by.carkva_gazeta.malitounik.ui.theme.Post
 import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik.views.AppDropdownMenu
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
+import by.carkva_gazeta.malitounik.views.DialogListinner
 import by.carkva_gazeta.malitounik.views.HtmlText
 import by.carkva_gazeta.malitounik.views.findCaliandarToDay
 import by.carkva_gazeta.malitounik.views.openAssetsResources
@@ -326,6 +327,25 @@ fun Bogaslujbovyia(
         } else {
             controller.show(WindowInsetsCompat.Type.systemBars())
             controller.show(WindowInsetsCompat.Type.navigationBars())
+        }
+    }
+    var dialogLiturgia by rememberSaveable { mutableStateOf(false) }
+    var chast by rememberSaveable { mutableIntStateOf(0) }
+    if (dialogLiturgia) {
+        DialogLiturgia(chast) {
+            dialogLiturgia = false
+        }
+    }
+    var dialogQrCode by rememberSaveable { mutableStateOf(false) }
+    if (dialogQrCode) {
+        DialogImage(painter = painterResource(R.drawable.qr_code_google_play)) {
+            dialogQrCode = false
+        }
+    }
+    var dialogSztoHovahaVisable by remember { mutableStateOf(false) }
+    if (dialogSztoHovahaVisable) {
+        DialogSztoHovaha {
+            dialogSztoHovahaVisable = false
         }
     }
     SideEffect {
@@ -874,7 +894,7 @@ fun Bogaslujbovyia(
                                             painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                         )
                                     }
-                                    DropdownMenu(
+                                    AppDropdownMenu(
                                         expanded = expandedUp, onDismissRequest = { expandedUp = false }) {
                                         if (listResource.isNotEmpty()) {
                                             DropdownMenuItem(onClick = {
@@ -1225,6 +1245,22 @@ fun Bogaslujbovyia(
                             },
                             textLayoutResult = { layout ->
                                 textLayout.value = layout
+                            },
+                            isDialogListinner = { dialog, chastka ->
+                                when (dialog) {
+                                    DialogListinner.DIALOGQRCODE.name -> {
+                                        dialogQrCode = true
+                                    }
+
+                                    DialogListinner.DIALOGSZTOHOVAHA.name -> {
+                                        dialogSztoHovahaVisable = true
+                                    }
+
+                                    DialogListinner.DIALOGLITURGIA.name -> {
+                                        chast = chastka
+                                        dialogLiturgia = true
+                                    }
+                                }
                             }
                         )
                     } else {
@@ -1277,6 +1313,22 @@ fun Bogaslujbovyia(
                                         }
                                     }
                                     textLayout.value = layout
+                                },
+                                isDialogListinner = { dialog, chastka ->
+                                    when (dialog) {
+                                        DialogListinner.DIALOGQRCODE.name -> {
+                                            dialogQrCode = true
+                                        }
+
+                                        DialogListinner.DIALOGSZTOHOVAHA.name -> {
+                                            dialogSztoHovahaVisable = true
+                                        }
+
+                                        DialogListinner.DIALOGLITURGIA.name -> {
+                                            chast = chastka
+                                            dialogLiturgia = true
+                                        }
+                                    }
                                 }
                             )
                         }

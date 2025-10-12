@@ -6,18 +6,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -30,12 +25,15 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import by.carkva_gazeta.malitounik.BuildConfig
-import by.carkva_gazeta.malitounik.DialogImage
-import by.carkva_gazeta.malitounik.DialogLiturgia
-import by.carkva_gazeta.malitounik.DialogSztoHovaha
 import by.carkva_gazeta.malitounik.R
 import by.carkva_gazeta.malitounik.Settings
 import kotlinx.coroutines.launch
+
+enum class DialogListinner {
+    DIALOGQRCODE,
+    DIALOGSZTOHOVAHA,
+    DIALOGLITURGIA
+}
 
 @Composable
 fun HtmlText(
@@ -50,53 +48,9 @@ fun HtmlText(
     scrollState: ScrollState = rememberScrollState(),
     searchText: AnnotatedString = AnnotatedString(""),
     navigateTo: (String) -> Unit = {},
-    textLayoutResult: (TextLayoutResult?) -> Unit = {}
+    textLayoutResult: (TextLayoutResult?) -> Unit = {},
+    isDialogListinner: (String, Int) -> Unit = { _, _ -> }
 ) {
-    /*val annotatedString = buildAnnotatedString {
-        val spanned = HtmlCompat.fromHtml(text, mode)
-        append(spanned.toString())
-        spanned.getSpans(0, spanned.length, Any::class.java).forEach { span ->
-            val start = spanned.getSpanStart(span)
-            val end = spanned.getSpanEnd(span)
-            when (span) {
-                is StyleSpan -> when (span.style) {
-                    Typeface.BOLD -> addStyle(SpanStyle(fontWeight = FontWeight.Bold), start, end)
-                    Typeface.ITALIC -> addStyle(SpanStyle(fontStyle = FontStyle.Italic), start, end)
-                    Typeface.BOLD_ITALIC -> addStyle(
-                        SpanStyle(fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic),
-                        start,
-                        end
-                    )
-                }
-
-                is UnderlineSpan -> addStyle(
-                    SpanStyle(textDecoration = TextDecoration.Underline),
-                    start,
-                    end
-                )
-
-                is ForegroundColorSpan -> addStyle(
-                    SpanStyle(color = MaterialTheme.colorScheme.primary),
-                    start,
-                    end
-                )
-
-                is URLSpan -> {
-                    addLink(
-                        LinkAnnotation.Url(
-                            span.url,
-                            TextLinkStyles(
-                                style = SpanStyle(
-                                    textDecoration = TextDecoration.Underline,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            )
-                        ), start, end
-                    )
-                }
-            }
-        }
-    }*/
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     var newText = if (Settings.dzenNoch.value) text.replace("#d00505", "#ff6666", true)
@@ -106,32 +60,7 @@ fun HtmlText(
         "<em>Версія праграмы: ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})</em><br><br>"
     )
     val uriHandler = LocalUriHandler.current
-    var dialogSztoHovahaVisable by remember { mutableStateOf(false) }
-    if (dialogSztoHovahaVisable) {
-        DialogSztoHovaha {
-            dialogSztoHovahaVisable = false
-        }
-    }
-    /*val navigationActions = remember(navController) {
-        navController?.let {
-            val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-            AppNavigationActions(navController, k)
-        }
-    }*/
     val textLayout = remember { mutableStateOf<TextLayoutResult?>(null) }
-    var dialogLiturgia by rememberSaveable { mutableStateOf(false) }
-    var chast by rememberSaveable { mutableIntStateOf(0) }
-    if (dialogLiturgia) {
-        DialogLiturgia(chast) {
-            dialogLiturgia = false
-        }
-    }
-    var dialogQrCode by rememberSaveable { mutableStateOf(false) }
-    if (dialogQrCode) {
-        DialogImage(painter = painterResource(R.drawable.qr_code_google_play)) {
-            dialogQrCode = false
-        }
-    }
     val annotatedString = AnnotatedString.fromHtml(
         newText,
         TextLinkStyles(
@@ -152,11 +81,11 @@ fun HtmlText(
                 }
 
                 "https://localhost/qr.code/" -> {
-                    dialogQrCode = true
+                    isDialogListinner(DialogListinner.DIALOGQRCODE.name, 0)
                 }
 
                 "https://localhost/shto.novaga/" -> {
-                    dialogSztoHovahaVisable = true
+                    isDialogListinner(DialogListinner.DIALOGSZTOHOVAHA.name, 0)
                 }
 
                 "https://localhost/malitvypasliaprychastia/" -> {
@@ -252,13 +181,11 @@ fun HtmlText(
                 }
 
                 "https://localhost/vybranyiavershyzpsalm/" -> {
-                    chast = 11
-                    dialogLiturgia = true
+                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 11)
                 }
 
                 "https://localhost/gltut/" -> {
-                    chast = 13
-                    dialogLiturgia = true
+                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 13)
                 }
 
                 "https://localhost/gospadzetabeklichu/" -> {
@@ -290,48 +217,39 @@ fun HtmlText(
                 }
 
                 "https://localhost/gladztut102/" -> {
-                    chast = 1
-                    dialogLiturgia = true
+                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 1)
                 }
 
                 "https://localhost/gladztut91/" -> {
-                    chast = 2
-                    dialogLiturgia = true
+                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 2)
                 }
 
                 "https://localhost/gladztut145/" -> {
-                    chast = 3
-                    dialogLiturgia = true
+                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 3)
                 }
 
                 "https://localhost/gladztut92/" -> {
-                    chast = 4
-                    dialogLiturgia = true
+                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 4)
                 }
 
                 "https://localhost/gladztut94/" -> {
-                    chast = 10
-                    dialogLiturgia = true
+                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 10)
                 }
 
                 "https://localhost/inshyantyfon/" -> {
-                    chast = 5
-                    dialogLiturgia = true
+                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 5)
                 }
 
                 "https://localhost/malitvazapamerlyx/" -> {
-                    chast = 6
-                    dialogLiturgia = true
+                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 6)
                 }
 
                 "https://localhost/malitvazapaclikanyx/" -> {
-                    chast = 7
-                    dialogLiturgia = true
+                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 7)
                 }
 
                 "https://localhost/uspaminpamerlyxijyvix/" -> {
-                    chast = 14
-                    dialogLiturgia = true
+                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 14)
                 }
 
                 "https://localhost/adzinarodnesyne/" -> {
