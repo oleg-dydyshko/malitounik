@@ -2,6 +2,7 @@ package by.carkva_gazeta.malitounik.views
 
 import android.view.Gravity
 import android.view.WindowManager
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -17,6 +18,9 @@ import androidx.compose.ui.window.DialogWindowProvider
 
 @Composable
 fun AppDropdownMenu(expanded: Boolean, onDismissRequest: () -> Unit, content: @Composable () -> Unit) {
+    BackHandler(expanded) {
+        onDismissRequest()
+    }
     if (expanded) {
         Dialog(onDismissRequest = { onDismissRequest() }, DialogProperties(usePlatformDefaultWidth = false)) {
             (LocalView.current.parent as? DialogWindowProvider)?.window?.let { window ->
@@ -27,7 +31,6 @@ fun AppDropdownMenu(expanded: Boolean, onDismissRequest: () -> Unit, content: @C
                     WindowManager.LayoutParams.WRAP_CONTENT,
                     WindowManager.LayoutParams.WRAP_CONTENT
                 )
-                window.setDimAmount(0f)
             }
             Surface(
                 modifier = Modifier.padding(5.dp),

@@ -1,5 +1,6 @@
 package by.carkva_gazeta.malitounik
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -55,6 +56,9 @@ fun KaliandarKnigaView(
     var dialogKnigaView by remember { mutableStateOf(false) }
     val slujbaList = remember { mutableStateListOf<SlugbovyiaTextuData>() }
     var slujva by remember { mutableIntStateOf(SlugbovyiaTextu.LITURHIJA) }
+    BackHandler(true) {
+        onDismiss()
+    }
     if (dialogKnigaView) {
         DialogKniga(
             slujva, slujbaList,
@@ -68,7 +72,7 @@ fun KaliandarKnigaView(
     Row(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0f, 0f, 0f, 0.5f))
+            .background(Color(0f, 0f, 0f, 0.6f))
             .clickable(
                 interactionSource = interactionSourse,
                 indication = null
