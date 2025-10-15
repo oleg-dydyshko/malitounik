@@ -68,7 +68,7 @@ fun BibliaList(
     perevod: String,
     navigateToCytanniList: (String, String) -> Unit = { _, _ -> }
 ) {
-    val coroutineScope: CoroutineScope = rememberCoroutineScope()
+    val coroutineScope = rememberCoroutineScope()
     val maxLine = remember { mutableIntStateOf(1) }
     val title = when (perevod) {
         Settings.PEREVODSEMUXI -> stringResource(R.string.title_biblia)

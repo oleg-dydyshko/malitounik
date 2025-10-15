@@ -325,27 +325,29 @@ fun KaliandarScreen(
                         .clickable { navigateToCytanneList(title, removeZnakiAndSlovy(data[9]), Settings.CHYTANNI_LITURGICHNYIA) }, text = data[9], color = colorText, fontSize = Settings.fontInterface.sp
                 )
             }
-            if (data[10].isNotEmpty()) {
-                val title = stringResource(
-                    R.string.czytanne3, data[1].toInt(), stringArrayResource(R.array.meciac_smoll)[data[2].toInt()]
-                )
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp, start = 10.dp, end = 10.dp)
-                        .clickable { navigateToCytanneList(title, removeZnakiAndSlovy(data[10]), Settings.CHYTANNI_LITURGICHNYIA) }, text = data[10], fontStyle = FontStyle.Italic, color = colorText, fontSize = Settings.fontInterface.sp
-                )
-            }
-            if (data[11].isNotEmpty()) {
-                val title = stringResource(
-                    R.string.czytanne3, data[1].toInt(), stringArrayResource(R.array.meciac_smoll)[data[2].toInt()]
-                )
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp, start = 10.dp, end = 10.dp)
-                        .clickable { navigateToCytanneList(title, removeZnakiAndSlovy(data[11]), Settings.CHYTANNI_LITURGICHNYIA) }, text = data[11], fontStyle = FontStyle.Italic, color = colorText, fontSize = Settings.fontInterface.sp
-                )
+            if (!(data[22].toInt() == -2 || data[22].toInt() == -53 || data[22].toInt() == -51) || (data[22].toInt() in -48..-4 && (data[0].toInt() == Calendar.SATURDAY || data[0].toInt() == Calendar.SUNDAY))) {
+                if (data[10].isNotEmpty()) {
+                    val title = stringResource(
+                        R.string.czytanne3, data[1].toInt(), stringArrayResource(R.array.meciac_smoll)[data[2].toInt()]
+                    )
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp, start = 10.dp, end = 10.dp)
+                            .clickable { navigateToCytanneList(title, removeZnakiAndSlovy(data[10]), Settings.CHYTANNI_LITURGICHNYIA) }, text = data[10], fontStyle = FontStyle.Italic, color = colorText, fontSize = Settings.fontInterface.sp
+                    )
+                }
+                if (data[11].isNotEmpty()) {
+                    val title = stringResource(
+                        R.string.czytanne3, data[1].toInt(), stringArrayResource(R.array.meciac_smoll)[data[2].toInt()]
+                    )
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp, start = 10.dp, end = 10.dp)
+                            .clickable { navigateToCytanneList(title, removeZnakiAndSlovy(data[11]), Settings.CHYTANNI_LITURGICHNYIA) }, text = data[11], fontStyle = FontStyle.Italic, color = colorText, fontSize = Settings.fontInterface.sp
+                    )
+                }
             }
             if (data[18].toInt() == 1 || data[21].isNotEmpty()) {
                 val textPamAndBlas = if (data[18].toInt() == 1) stringResource(R.string.pamerlyia)
