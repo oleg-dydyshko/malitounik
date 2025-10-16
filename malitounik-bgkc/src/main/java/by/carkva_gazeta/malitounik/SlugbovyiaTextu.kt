@@ -2586,7 +2586,7 @@ class SlugbovyiaTextu {
             }
 
             isPasxa -> {
-                realDay = pasha(day)
+                realDay = pasha(day, year)
             }
 
             else -> {
@@ -2598,8 +2598,7 @@ class SlugbovyiaTextu {
         return realDay
     }
 
-    private fun pasha(day: Int): Int {
-        val year = Calendar.getInstance()[Calendar.YEAR]
+    private fun pasha(day: Int, year: Int): Int {
         var dataP: Int
         val monthP: Int
         val a = year % 19

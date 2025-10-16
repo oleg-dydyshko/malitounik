@@ -55,8 +55,6 @@ import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -192,7 +190,7 @@ fun BibliaList(
                                     .clickable {
                                         AppNavGraphState.setItemsValue(dataItem.title)
                                         collapsedState[i] = !collapsed
-                                        CoroutineScope(Dispatchers.Main).launch {
+                                        coroutineScope.launch {
                                             lazyColumnState.scrollToItem(i)
                                         }
                                     }

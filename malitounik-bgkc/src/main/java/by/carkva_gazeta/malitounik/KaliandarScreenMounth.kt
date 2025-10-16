@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -49,8 +50,6 @@ import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
 import by.carkva_gazeta.malitounik.ui.theme.StrogiPost
 import by.carkva_gazeta.malitounik.ui.theme.TitleCalendarMounth
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.GregorianCalendar
@@ -394,6 +393,7 @@ fun DialogSetDataCaliandar(
     isMun: Boolean,
     onDismiss: () -> Unit
 ) {
+    val coroutineScope = rememberCoroutineScope()
     Dialog(onDismissRequest = { onDismiss() }) {
         Card(
             modifier = Modifier
@@ -417,10 +417,9 @@ fun DialogSetDataCaliandar(
                                     .fillMaxWidth()
                                     .padding(start = 10.dp)
                                     .clickable {
-                                        CoroutineScope(Dispatchers.Main).launch {
+                                        coroutineScope.launch {
                                             pagerState.scrollToPage(getFindPage(i, year))
                                         }
-                                        android.util.Log.d("Oleg", getFindPage(mun, i).toString() + " " + mun + " " + i)
                                         onDismiss()
                                     }, verticalAlignment = Alignment.CenterVertically
                             ) {
@@ -443,7 +442,7 @@ fun DialogSetDataCaliandar(
                                     .fillMaxWidth()
                                     .padding(start = 10.dp)
                                     .clickable {
-                                        CoroutineScope(Dispatchers.Main).launch {
+                                        coroutineScope.launch {
                                             pagerState.scrollToPage(getFindPage(mun, i))
                                         }
                                         onDismiss()

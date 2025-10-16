@@ -44,7 +44,7 @@ fun HtmlText(
     fontWeight: FontWeight? = null,
     textAlign: TextAlign? = null,
     fontSize: TextUnit = 22.sp,
-    isNoLiturgia: Boolean = true,
+    isLiturgia: Boolean = true,
     scrollState: ScrollState = rememberScrollState(),
     searchText: AnnotatedString = AnnotatedString(""),
     navigateTo: (String) -> Unit = {},
@@ -314,7 +314,7 @@ fun HtmlText(
                 }
 
                 "https://localhost/cytanne/" -> {
-                    if (isNoLiturgia) {
+                    if (isLiturgia) {
                         navigateTo("cytanne")
                     } else {
                         navigateTo("error")

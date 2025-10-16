@@ -44,7 +44,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
-import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -811,8 +810,8 @@ fun MainConteiner(
     drawerScrollStete: ScrollState
 ) {
     val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
-    val coroutineScope: CoroutineScope = rememberCoroutineScope()
-    val drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val coroutineScope = rememberCoroutineScope()
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val currentRoute = currentNavBackStackEntry?.destination?.route ?: AllDestinations.KALIANDAR
     val context = LocalActivity.current as MainActivity
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)

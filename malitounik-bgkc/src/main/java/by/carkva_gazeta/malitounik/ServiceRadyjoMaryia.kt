@@ -97,7 +97,7 @@ class ServiceRadyjoMaryia : Service() {
 
                 override fun onPlayerError(error: PlaybackException) {
                     stopServiceRadioMaria(true)
-                    val intent = Intent(Intent.ACTION_VIEW, radioMaryiaList[radioMaryiaListPosition].toUri())
+                    val intent = Intent(Intent.ACTION_VIEW, "https://radiomaria.by/player/".toUri())
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     startActivity(intent)
                 }

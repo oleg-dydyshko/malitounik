@@ -474,10 +474,8 @@ fun Bogaslujbovyia(
     val isViachernia = resursEncode == "bogashlugbovya/viaczernia_niadzelnaja.html" || resursEncode == "bogashlugbovya/viaczernia_na_kozny_dzen.html" || resursEncode == "bogashlugbovya/viaczernia_u_vialikim_poscie.html" || resursEncode == "bogashlugbovya/viaczerniaja_sluzba_sztodzionnaja_biez_sviatara.html" || resursEncode == "bogashlugbovya/viaczernia_svietly_tydzien.html"
     val isUtran = resursEncode == "bogashlugbovya/jutran_niadzelnaja.html"
     val isLiturgia = resursEncode == "bogashlugbovya/lit_jana_zalatavusnaha.html" || resursEncode == "bogashlugbovya/lit_jan_zalat_vielikodn.html" || resursEncode == "bogashlugbovya/lit_vasila_vialikaha.html" || resursEncode == "bogashlugbovya/abiednica.html" || resursEncode == "bogashlugbovya/vialikdzien_liturhija.html"
-    val dataCal = findCaliandarToDay()
-    val isNoLiturgia = dataCal[22].toInt() == -53 || dataCal[22].toInt() == -51 || (dataCal[22].toInt() in -48..-2 && !(dataCal[0].toInt() == Calendar.SATURDAY || dataCal[0].toInt() == Calendar.SUNDAY))
-    val cytanneVisable = (isLiturgia && !isNoLiturgia) || (isViachernia && isNoLiturgia) || isUtran
     val data = findCaliandarToDay()
+    val cytanneVisable = (isLiturgia && isLiturgia(data)) || isViachernia || isUtran
     val listResource = ArrayList<SlugbovyiaTextuData>()
     when {
         isLiturgia -> {
@@ -1237,7 +1235,7 @@ fun Bogaslujbovyia(
                             text = htmlText,
                             title = title,
                             fontSize = fontSize.sp,
-                            isNoLiturgia = isLiturgia && !isNoLiturgia,
+                            isLiturgia = isLiturgia && isLiturgia(data),
                             searchText = searchTextResult,
                             scrollState = scrollState,
                             navigateTo = { navigate ->
@@ -1289,7 +1287,7 @@ fun Bogaslujbovyia(
                                 text = htmlText,
                                 title = title,
                                 fontSize = fontSize.sp,
-                                isNoLiturgia = isLiturgia && !isNoLiturgia,
+                                isLiturgia = isLiturgia && isLiturgia(data),
                                 searchText = searchTextResult,
                                 scrollState = scrollState,
                                 navigateTo = { navigate ->
@@ -1412,7 +1410,7 @@ fun Bogaslujbovyia(
                                                 autoScrollTextVisable = true
                                                 autoScrollTextVisableJob?.cancel()
                                                 autoScrollTextVisableJob =
-                                                    CoroutineScope(Dispatchers.Main).launch {
+                                                    coroutineScope.launch {
                                                         delay(3000)
                                                         autoScrollTextVisable = false
                                                     }
@@ -1722,6 +1720,20 @@ fun findAll(search: String, searchChars: String): ArrayList<ArrayList<Int>> {
         }
     }
     return findList
+}
+
+fun isLiturgia(dataDayList: ArrayList<String>): Boolean {
+    val dayIfYear = dataDayList[24].toInt()
+    val dayInPasha = dataDayList[22].toInt()
+    val dayOfNedel = dataDayList[0].toInt()
+    return when {
+        dayIfYear == 85 -> true
+        dayInPasha == -53 -> false
+        dayInPasha == -51 -> false
+        dayInPasha == -2 -> false
+        dayInPasha in -48..-4 -> dayOfNedel == Calendar.SATURDAY || dayOfNedel == Calendar.SUNDAY
+        else -> true
+    }
 }
 
 data class VybranaeDataAll(

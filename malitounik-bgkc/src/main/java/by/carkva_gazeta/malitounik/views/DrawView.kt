@@ -37,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,8 +63,6 @@ import by.carkva_gazeta.malitounik.ui.theme.BackgroundDrawelMenu
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -74,6 +73,7 @@ fun DrawView(
     route: String,
     navigateToRazdel: (String) -> Unit
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val context = LocalActivity.current as MainActivity
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var dialogNoInternet by remember { mutableStateOf(false) }
@@ -232,7 +232,7 @@ fun DrawView(
                     .clickable {
                         AppNavGraphState.bibleItem = !AppNavGraphState.bibleItem
                         if (AppNavGraphState.bibleItem && !AppNavGraphState.biblijatekaItem && !AppNavGraphState.piesnyItem && !AppNavGraphState.underItem) {
-                            CoroutineScope(Dispatchers.Main).launch {
+                            coroutineScope.launch {
                                 delay(100)
                                 drawerScrollStete.scrollTo(drawerScrollStete.maxValue)
                             }
@@ -582,7 +582,7 @@ fun DrawView(
                     .clickable {
                         AppNavGraphState.biblijatekaItem = !AppNavGraphState.biblijatekaItem
                         if (AppNavGraphState.biblijatekaItem && !AppNavGraphState.piesnyItem && !AppNavGraphState.underItem) {
-                            CoroutineScope(Dispatchers.Main).launch {
+                            coroutineScope.launch {
                                 delay(100)
                                 drawerScrollStete.scrollTo(drawerScrollStete.maxValue)
                             }
@@ -723,7 +723,7 @@ fun DrawView(
                     .clickable {
                         AppNavGraphState.piesnyItem = !AppNavGraphState.piesnyItem
                         if (AppNavGraphState.piesnyItem && !AppNavGraphState.underItem) {
-                            CoroutineScope(Dispatchers.Main).launch {
+                            coroutineScope.launch {
                                 delay(100)
                                 drawerScrollStete.scrollTo(drawerScrollStete.maxValue)
                             }
@@ -853,7 +853,7 @@ fun DrawView(
                     .clickable {
                         AppNavGraphState.underItem = !AppNavGraphState.underItem
                         if (AppNavGraphState.underItem) {
-                            CoroutineScope(Dispatchers.Main).launch {
+                            coroutineScope.launch {
                                 delay(100)
                                 drawerScrollStete.scrollTo(drawerScrollStete.maxValue)
                             }
