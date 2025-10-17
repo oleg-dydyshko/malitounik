@@ -503,15 +503,27 @@ private fun saveFile(context: Context, fileName: String) {
     fileInput.delete()
 }
 
-private suspend fun downloadPdfFile(context: Context, url: String): Boolean {
+private suspend fun downloadPdfFile(context: Context, url: String, count: Int = 0): Boolean {
     var error = false
     val dir = File("${context.filesDir}/cache")
     if (!dir.exists()) dir.mkdir()
     val pathReference = Malitounik.referens.child("/data/bibliateka/$url")
+    val metadata = pathReference.metadata.addOnFailureListener {
+        error = true
+    }.await()
+    if (error && count < 3) {
+        downloadPdfFile(context, url, count + 1)
+        return error
+    }
+    val size = metadata.sizeBytes
     val localFile = File("${context.filesDir}/cache/$url")
     pathReference.getFile(localFile).addOnFailureListener {
         error = true
     }.await()
+    if (size != localFile.length()) error = true
+    if (error && count < 3) {
+        downloadPdfFile(context, url, count + 1)
+    }
     return error
 }
 
@@ -572,17 +584,32 @@ private suspend fun getBibliateka(
     }
 }
 
-private suspend fun getBibliatekaJson(context: Context): String {
+private suspend fun getBibliatekaJson(context: Context, count: Int = 0): String {
     var text = ""
+    val dir = File("${context.filesDir}/cache")
+    if (!dir.exists()) dir.mkdir()
+    val localFile = File("${context.filesDir}/cache/cache.txt")
     val pathReference = Malitounik.referens.child("/bibliateka.json")
-    val localFile = File("${context.filesDir}/bibliateka.json")
+    var error = false
+    val metadata = pathReference.metadata.addOnFailureListener {
+        error = true
+    }.await()
+    val size = metadata.sizeBytes
     if (!localFile.exists() && Settings.isNetworkAvailable(context)) {
         pathReference.getFile(localFile).addOnCompleteListener {
             if (it.isSuccessful) text = localFile.readText()
+            else error = true
         }.await()
+        if (size != localFile.length()) error = true
     } else {
         text = localFile.readText()
     }
+    if (error && count < 3) {
+        getBibliatekaJson(context, count + 1)
+        return text
+    }
+    val localFileResult = File("${context.filesDir}/bibliateka.json")
+    localFile.copyTo(localFileResult, overwrite = true)
     return text
 }
 

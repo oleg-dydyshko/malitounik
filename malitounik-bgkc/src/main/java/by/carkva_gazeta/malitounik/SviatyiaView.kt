@@ -598,42 +598,81 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
 
 suspend fun downloadOpisanieSviat(context: Context, count: Int = 0) {
     val pathReference = Malitounik.referens.child("/sviaty.json")
-    val file = File("${context.filesDir}/sviaty.json")
+    val dir = File("${context.filesDir}/cache")
+    if (!dir.exists()) dir.mkdir()
+    val file = File("${context.filesDir}/cache/cache.txt")
     var error = false
-    pathReference.getFile(file).addOnCompleteListener {
-        if (!it.isSuccessful) {
-            error = true
-        }
+    val metadata = pathReference.metadata.addOnFailureListener {
+        error = true
+    }.await()
+    if (error && count < 3) {
+        downloadOpisanieSviat(context, count + 1)
+        return
+    }
+    val size = metadata.sizeBytes
+    if (size != file.length()) error = true
+    pathReference.getFile(file).addOnFailureListener {
+        error = true
     }.await()
     var read = ""
     if (file.exists()) read = file.readText()
     if (read == "") error = true
     if (error && count < 3) {
         downloadOpisanieSviat(context, count + 1)
+        return
     }
+    val fileResult = File("${context.filesDir}/sviaty.json")
+    file.copyTo(fileResult, overwrite = true)
 }
 
 suspend fun downloadOpisanieSviatyia(context: Context, mun: Int, count: Int = 0) {
     val dir = File("${context.filesDir}/sviatyja/")
     if (!dir.exists()) dir.mkdir()
+    val dir2 = File("${context.filesDir}/cache")
+    if (!dir2.exists()) dir2.mkdir()
+    val fileOpisanie = File("${context.filesDir}/cache/cache.txt")
     val pathReference = Malitounik.referens.child("/chytanne/sviatyja/opisanie$mun.json")
-    val fileOpisanie = File("${context.filesDir}/sviatyja/opisanie$mun.json")
     var error = false
-    pathReference.getFile(fileOpisanie).addOnCompleteListener {
-        if (!it.isSuccessful) {
-            error = true
-        }
+    val metadata = pathReference.metadata.addOnFailureListener {
+        error = true
     }.await()
+    if (error && count < 3) {
+        downloadOpisanieSviatyia(context, mun, count + 1)
+        return
+    }
+    val size = metadata.sizeBytes
+    pathReference.getFile(fileOpisanie).addOnFailureListener {
+        error = true
+    }.await()
+    if (error && count < 3) {
+        downloadOpisanieSviatyia(context, mun, count + 1)
+        return
+    }
+    if (size != fileOpisanie.length()) error = true
+
     var read = ""
     if (fileOpisanie.exists()) read = fileOpisanie.readText()
     if (read == "") error = true
+    if (error && count < 3) {
+        downloadOpisanieSviatyia(context, mun, count + 1)
+        return
+    }
+    val fileOpisanieResult = File("${context.filesDir}/sviatyja/opisanie$mun.json")
+    fileOpisanie.copyTo(fileOpisanieResult, overwrite = true)
     val pathReference13 = Malitounik.referens.child("/chytanne/sviatyja/opisanie13.json")
-    val fileOpisanie13 = File("${context.filesDir}/sviatyja/opisanie13.json")
-    pathReference13.getFile(fileOpisanie13).addOnCompleteListener {
-        if (!it.isSuccessful) {
-            error = true
-        }
+    val fileOpisanie13 = File("${context.filesDir}/cache/cache.txt")
+    val metadata13 = pathReference13.metadata.addOnFailureListener {
+        error = true
     }.await()
+    if (error && count < 3) {
+        downloadOpisanieSviatyia(context, mun, count + 1)
+        return
+    }
+    val size13 = metadata13.sizeBytes
+    pathReference13.getFile(fileOpisanie13).addOnFailureListener {
+        error = true
+    }.await()
+    if (size13 != fileOpisanie13.length()) error = true
     var read13 = ""
     if (fileOpisanie13.exists()) read13 = fileOpisanie13.readText()
     if (read13 == "") error = true
@@ -641,6 +680,8 @@ suspend fun downloadOpisanieSviatyia(context: Context, mun: Int, count: Int = 0)
         downloadOpisanieSviatyia(context, mun, count + 1)
         return
     }
+    val fileOpisanieResult13 = File("${context.filesDir}/sviatyja/opisanie13.json")
+    fileOpisanie13.copyTo(fileOpisanieResult13, overwrite = true)
 }
 
 fun loadOpisanieSviatyia(context: Context, year: Int, mun: Int, day: Int): SnapshotStateList<OpisanieData> {
@@ -686,7 +727,7 @@ fun loadOpisanieSviatyia(context: Context, year: Int, mun: Int, day: Int): Snaps
                 val spanned = AnnotatedString.fromHtml(fulText)
                 sviatyiaList.add(OpisanieData(index + 1, day, mun, Settings.CALAINDAR, spannedtitle, spanned, "", ""))
             }
-        }  catch (_: JsonSyntaxException) {
+        } catch (_: JsonSyntaxException) {
             fileOpisanie.delete()
         } catch (_: Throwable) {
         }
@@ -753,7 +794,7 @@ fun loadOpisanieSviatyia(context: Context, year: Int, mun: Int, day: Int): Snaps
                     }
                 }
             }
-        }  catch (_: JsonSyntaxException) {
+        } catch (_: JsonSyntaxException) {
             fileOpisanie13.delete()
         } catch (_: Throwable) {
         }
@@ -818,16 +859,32 @@ suspend fun getIcons(
     if (!dir.exists()) dir.mkdir()
     val dir2 = File("${context.filesDir}/iconsApisanne")
     if (!dir2.exists()) dir2.mkdir()
-    if (count < 3) {
+    val dir3 = File("${context.filesDir}/cache")
+    if (!dir3.exists()) dir3.mkdir()
+    dirList.clear()
+    var size = 0L
+    var error = false
+    val sb = StringBuilder()
+    val fileIconMataData = File("${context.filesDir}/cache/cache.txt")
+    val pathReferenceMataData = Malitounik.referens.child("/chytanne/iconsMataData.txt")
+    val metadata = pathReferenceMataData.metadata.addOnFailureListener {
+        error = true
+    }.await()
+    if (error && count < 3) {
         getIcons(context, dirList, sviatyiaList, svity, isLoadIcon, position, wiFiExists, count + 1)
         return
     }
-    dirList.clear()
-    var size = 0L
-    val sb = StringBuilder()
-    val fileIconMataData = File("${context.filesDir}/iconsMataData.txt")
-    val pathReferenceMataData = Malitounik.referens.child("/chytanne/iconsMataData.txt")
-    pathReferenceMataData.getFile(fileIconMataData).await()
+    val sizeBytes = metadata.sizeBytes
+    pathReferenceMataData.getFile(fileIconMataData).addOnFailureListener {
+        error = true
+    }.await()
+    if (sizeBytes != fileIconMataData.length()) error = true
+    if (error && count < 3) {
+        getIcons(context, dirList, sviatyiaList, svity, isLoadIcon, position, wiFiExists, count + 1)
+        return
+    }
+    val fileIconMataDataResult = File("${context.filesDir}/iconsMataData.txt")
+    fileIconMataData.copyTo(fileIconMataDataResult, overwrite = true)
     val list = fileIconMataData.readText().split("\n")
     for (i in 0 until sviatyiaList.size) {
         list.forEach {
@@ -891,8 +948,29 @@ suspend fun getIcons(
             try {
                 val fileIcon = File("${context.filesDir}/icons/" + dirList[i].name)
                 val pathReference = Malitounik.referens.child("/chytanne/icons/" + dirList[i].name)
-                pathReference.getFile(fileIcon).await()
+                val metadata = pathReference.metadata.addOnFailureListener {
+                    error = true
+                }.await()
+                if (error && count < 3) {
+                    getIcons(context, dirList, sviatyiaList, svity, isLoadIcon, position, wiFiExists, count + 1)
+                    return
+                }
+                val sizeBytes = metadata.sizeBytes
+                pathReference.getFile(fileIcon).addOnFailureListener {
+                    error = true
+                }.await()
+                if (sizeBytes != fileIcon.length()) {
+                    if (fileIcon.exists()) fileIcon.delete()
+                    error = true
+                }
+                if (error && count < 3) {
+                    getIcons(context, dirList, sviatyiaList, svity, isLoadIcon, position, wiFiExists, count + 1)
+                    return
+                }
             } catch (_: Throwable) {
+                if (count < 3) {
+                    getIcons(context, dirList, sviatyiaList, svity, isLoadIcon, position, wiFiExists, count + 1)
+                }
             }
         }
     }
@@ -936,10 +1014,30 @@ fun loadIconsOnImageView(context: Context, sviatyiaList: SnapshotStateList<Opisa
     return sviatyiaList
 }
 
-suspend fun getPiarliny(context: Context) {
+suspend fun getPiarliny(context: Context, count: Int = 0) {
+    var error = false
+    val dir = File("${context.filesDir}/cache")
+    if (!dir.exists()) dir.mkdir()
     val pathReference = Malitounik.referens.child("/chytanne/piarliny.json")
-    val localFile = File("${context.filesDir}/piarliny.json")
-    pathReference.getFile(localFile).await()
+    val metadata = pathReference.metadata.addOnFailureListener {
+        error = true
+    }.await()
+    if (error && count < 3) {
+        getPiarliny(context, count + 1)
+        return
+    }
+    val size = metadata.sizeBytes
+    val localFile = File("${context.filesDir}/cache/cache.txt")
+    pathReference.getFile(localFile).addOnFailureListener {
+        error = true
+    }.await()
+    if (size != localFile.length()) error = true
+    if (error && count < 3) {
+        getPiarliny(context, count + 1)
+        return
+    }
+    val localFileResult = File("${context.filesDir}/piarliny.json")
+    localFile.copyTo(localFileResult, overwrite = true)
 }
 
 fun checkParliny(context: Context, mun: Int, day: Int): Boolean {
