@@ -339,6 +339,7 @@ fun DialogKniga(
     navigateToBogaslujbovyia: (title: String, resurs: String) -> Unit,
     onDismiss: () -> Unit
 ) {
+    val slugbovyiaTextu = SlugbovyiaTextu()
     val slujvaTitle = when (slujba) {
         1 -> stringResource(R.string.viachernia)
         2 -> stringResource(R.string.raviachernica)
@@ -383,10 +384,10 @@ fun DialogKniga(
                             modifier = Modifier.size(5.dp, 5.dp),
                             painter = painterResource(R.drawable.poiter),
                             tint = MaterialTheme.colorScheme.primary,
-                            contentDescription = null
+                            contentDescription = ""
                         )
                         Text(
-                            text = list[i].title,
+                            text = list[i].title + ". " + slugbovyiaTextu.getNazouSluzby(list[i].sluzba),
                             modifier = Modifier
                                 .padding(10.dp),
                             color = MaterialTheme.colorScheme.secondary,

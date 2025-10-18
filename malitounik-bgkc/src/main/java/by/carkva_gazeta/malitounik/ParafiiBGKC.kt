@@ -88,7 +88,7 @@ fun ParafiiBGKC(navController: NavHostController, innerPadding: PaddingValues) {
                     }, verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    modifier = Modifier.size(5.dp, 5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
+                    modifier = Modifier.size(5.dp, 5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
                 )
                 Text(
                     curyia.title, modifier = Modifier
@@ -139,7 +139,7 @@ fun ParafiiBGKC(navController: NavHostController, innerPadding: PaddingValues) {
                             }, verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            modifier = Modifier.size(5.dp, 5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
+                            modifier = Modifier.size(5.dp, 5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
                         )
                         Text(
                             dataItem.list[index].title, modifier = Modifier

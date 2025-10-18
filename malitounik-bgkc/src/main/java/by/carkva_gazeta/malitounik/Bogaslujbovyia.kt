@@ -535,7 +535,7 @@ fun Bogaslujbovyia(
                                 modifier = Modifier.size(5.dp, 5.dp),
                                 painter = painterResource(R.drawable.poiter),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                contentDescription = ""
                             )
                             Text(
                                 modifier = Modifier.padding(start = 10.dp),
@@ -604,7 +604,7 @@ fun Bogaslujbovyia(
                                     modifier = Modifier.size(5.dp, 5.dp),
                                     painter = painterResource(R.drawable.poiter),
                                     tint = MaterialTheme.colorScheme.primary,
-                                    contentDescription = null
+                                    contentDescription = ""
                                 )
                                 Text(
                                     modifier = Modifier.padding(start = 10.dp),

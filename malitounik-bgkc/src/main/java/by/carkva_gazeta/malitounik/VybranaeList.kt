@@ -309,7 +309,7 @@ fun VybranaeList(
                                 modifier = Modifier.size(5.dp, 5.dp),
                                 painter = painterResource(R.drawable.poiter),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
+                                contentDescription = ""
                             )
                             Text(
                                 dataItem.listBible[index].title + " " + (dataItem.listBible[index].glava + 1),
@@ -344,7 +344,7 @@ fun VybranaeList(
                             modifier = Modifier.size(5.dp, 5.dp),
                             painter = painterResource(R.drawable.poiter),
                             tint = MaterialTheme.colorScheme.primary,
-                            contentDescription = null
+                            contentDescription = ""
                         )
                         Text(
                             dataItem.title,

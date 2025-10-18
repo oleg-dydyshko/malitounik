@@ -1803,7 +1803,7 @@ fun DialogContextMenu(
                         }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.edit), tint = MaterialTheme.colorScheme.secondary, contentDescription = null
+                        modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.edit), tint = MaterialTheme.colorScheme.secondary, contentDescription = ""
                     )
                     Text(
                         text = stringResource(R.string.redagaktirovat), modifier = Modifier.padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
@@ -1819,7 +1819,7 @@ fun DialogContextMenu(
                         }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.delete), tint = MaterialTheme.colorScheme.secondary, contentDescription = null
+                        modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.delete), tint = MaterialTheme.colorScheme.secondary, contentDescription = ""
                     )
                     Text(
                         text = stringResource(R.string.delite), modifier = Modifier.padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp

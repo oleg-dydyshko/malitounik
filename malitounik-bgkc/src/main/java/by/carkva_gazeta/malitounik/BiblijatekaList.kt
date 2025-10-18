@@ -350,7 +350,7 @@ fun BiblijatekaListItems(
                         modifier = Modifier.size(5.dp, 5.dp),
                         painter = painterResource(R.drawable.poiter),
                         tint = MaterialTheme.colorScheme.primary,
-                        contentDescription = null
+                        contentDescription = ""
                     )
                     Text(
                         text = if (listItem[index][0] != "") listItem[index][0]

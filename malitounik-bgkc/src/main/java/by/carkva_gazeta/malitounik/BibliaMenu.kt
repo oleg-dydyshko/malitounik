@@ -547,7 +547,7 @@ fun BibliaMenu(
                                     modifier = Modifier.size(5.dp, 5.dp),
                                     painter = painterResource(R.drawable.poiter),
                                     tint = MaterialTheme.colorScheme.primary,
-                                    contentDescription = null
+                                    contentDescription = ""
                                 )
                                 Text(
                                     list[index].title + " " + (list[index].glava + 1),
@@ -839,7 +839,7 @@ fun BibliaMenu(
                                     modifier = Modifier.size(5.dp, 5.dp),
                                     painter = painterResource(R.drawable.poiter),
                                     tint = MaterialTheme.colorScheme.primary,
-                                    contentDescription = null
+                                    contentDescription = ""
                                 )
                                 Text(
                                     stringResource(R.string.pesnia, i),

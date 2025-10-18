@@ -450,7 +450,7 @@ fun MalitvyListAll(
                                         }, verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(
-                                        modifier = Modifier.size(5.dp, 5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
+                                        modifier = Modifier.size(5.dp, 5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
                                     )
                                     val titleSluzba = if (menuItem == Settings.MENU_MINEIA_MESIACHNAIA) subList[index].title + ". " + subList[index].titleSluzba
                                     else subList[index].titleSluzba
@@ -556,7 +556,7 @@ fun MalitvyListAll(
                         ) {
                             Icon(
                                 modifier = if (menuItem == Settings.MENU_TRYEDZ || menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH || menuItem == Settings.MENU_TRYEDZ_POSNAIA) Modifier.size(17.dp, 17.dp) else Modifier.size(5.dp, 5.dp), painter = if (menuItem == Settings.MENU_TRYEDZ || menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH || menuItem == Settings.MENU_TRYEDZ_POSNAIA) painterResource(R.drawable.folder)
-                                else painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
+                                else painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
                             )
                             Text(
                                 text = if (menuItem == Settings.MENU_TRYEDZ || menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH || menuItem == Settings.MENU_TRYEDZ_POSNAIA) list[index].title.uppercase() else list[index].title, modifier = Modifier.padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontWeight = if (menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH) {
@@ -599,7 +599,7 @@ fun MalitvyListAll(
                                 }, verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = null
+                                modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
                             )
                             Text(
                                 "ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ", modifier = Modifier
@@ -652,7 +652,7 @@ fun PynagodnyiaList(prynagodnyaList: ArrayList<BogaslujbovyiaListData>, navigati
                         }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier.size(5.dp, 5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
+                        modifier = Modifier.size(5.dp, 5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
                     )
                     Text(
                         text = prynagodnyaList[index].title, modifier = Modifier

@@ -1463,7 +1463,7 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                85, "Дабравешчаньне Найсьвяцейшай Багародзіцы (Вячэрня з Літургіяй)", "bogashlugbovya/mm_25_03_dabravieszczannie_viaczernia_z_liturhijaj.html", VIACZERNIA_Z_LITURHIJA
+                85, "Дабравешчаньне Найсьвяцейшай Багародзіцы", "bogashlugbovya/mm_25_03_dabravieszczannie_viaczernia_z_liturhijaj.html", VIACZERNIA_Z_LITURHIJA
             )
         )
         datMinALL.add(

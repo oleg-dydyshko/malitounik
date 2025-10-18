@@ -116,7 +116,7 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                         .size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
-                    contentDescription = null
+                    contentDescription = ""
                 )
             }
             Row(
@@ -136,7 +136,7 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                         .size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
-                    contentDescription = null
+                    contentDescription = ""
                 )
             }
         }
@@ -424,7 +424,7 @@ fun DialogSetDataCaliandar(
                                     }, verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
-                                    modifier = Modifier.size(5.dp, 5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
+                                    modifier = Modifier.size(5.dp, 5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
                                 )
                                 Text(
                                     text = list[i], modifier = Modifier
@@ -449,7 +449,7 @@ fun DialogSetDataCaliandar(
                                     }, verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
-                                    modifier = Modifier.size(5.dp, 5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
+                                    modifier = Modifier.size(5.dp, 5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
                                 )
                                 Text(
                                     text = i.toString(), modifier = Modifier
