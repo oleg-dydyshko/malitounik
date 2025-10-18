@@ -633,7 +633,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
                         }
 
                         "gliadzitutdabraveshchane" -> {
-                            navigationActions.navigateToBogaslujbovyia("Дабравешчаньне Найсьвяцейшай Багародзіцы", "bogashlugbovya/mm_25_03_dabravieszczannie_viaczernia_z_liturhijaj.html")
+                            navigationActions.navigateToBogaslujbovyia("Дабравешчаньне Найсьвяцейшай Багародзіцы (Вячэрня з Літургіяй)", "bogashlugbovya/mm_25_03_dabravieszczannie_viaczernia_z_liturhijaj.html")
                         }
 
                         "cytanne", "cytannedop" -> {

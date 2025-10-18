@@ -1,12 +1,12 @@
 package by.carkva_gazeta.malitounik
 
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import java.io.File
 import java.util.Calendar
 import java.util.GregorianCalendar
@@ -1463,7 +1463,7 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                85, "Дабравешчаньне Найсьвяцейшай Багародзіцы", "bogashlugbovya/mm_25_03_dabravieszczannie_viaczernia_z_liturhijaj.html", VIACZERNIA_Z_LITURHIJA
+                85, "Дабравешчаньне Найсьвяцейшай Багародзіцы (Вячэрня з Літургіяй)", "bogashlugbovya/mm_25_03_dabravieszczannie_viaczernia_z_liturhijaj.html", VIACZERNIA_Z_LITURHIJA
             )
         )
         datMinALL.add(
@@ -2402,8 +2402,9 @@ class SlugbovyiaTextu {
         var day = 0
         val resultSlugba = datMinALL.filter {
             when (slugbaType) {
-                VIACZERNIA, VIACZERNIA_UVIECZARY -> it.sluzba == VIACZERNIA || it.sluzba == VIACZERNIA_UVIECZARY || it.sluzba == VIACZERNIA_Z_LITURHIJA
+                VIACZERNIA, VIACZERNIA_UVIECZARY -> it.sluzba == VIACZERNIA || it.sluzba == VIACZERNIA_UVIECZARY
                 VIALHADZINY -> it.sluzba == VIALHADZINY || it.sluzba == VELIKODNYIAHADZINY || it.sluzba == HADZINA6
+                LITURHIJA, VIACZERNIA_Z_LITURHIJA -> it.sluzba == LITURHIJA || it.sluzba == VIACZERNIA_Z_LITURHIJA
                 else -> it.sluzba == slugbaType
             }
         }
@@ -2443,14 +2444,17 @@ class SlugbovyiaTextu {
                 if (Settings.isNetworkAvailable(Malitounik.applicationContext())) {
                     loadPiarlinyJob = CoroutineScope(Dispatchers.Main).launch {
                         try {
-                            val builder = getPiarliny()
+                            getPiarliny(Malitounik.applicationContext())
+                            val localFile = File("${Malitounik.applicationContext().filesDir}/piarliny.json")
+                            val builder = localFile.readText()
                             if (builder != "") {
                                 val gson = Gson()
                                 val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
                                 piarliny.addAll(gson.fromJson(builder, type))
                             }
-                        } catch (_: Throwable) {
+                        } catch (_: JsonSyntaxException) {
                             filePiarliny.delete()
+                        } catch (_: Throwable) {
                         }
                     }
                 }
@@ -2460,21 +2464,12 @@ class SlugbovyiaTextu {
                     val gson = Gson()
                     val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
                     piarliny.addAll(gson.fromJson(builder, type))
-                } catch (_: Throwable) {
+                } catch (_: JsonSyntaxException) {
                     filePiarliny.delete()
+                } catch (_: Throwable) {
                 }
             }
         }
-    }
-
-    private suspend fun getPiarliny(): String {
-        val pathReference = Malitounik.referens.child("/chytanne/piarliny.json")
-        var text = ""
-        val localFile = File("${Malitounik.applicationContext().filesDir}/piarliny.json")
-        pathReference.getFile(localFile).addOnSuccessListener {
-            text = localFile.readText()
-        }.await()
-        return text
     }
 
     fun checkParliny(dayOfYear: Int): Boolean {

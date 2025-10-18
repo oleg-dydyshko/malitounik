@@ -1042,15 +1042,16 @@ suspend fun getPiarliny(context: Context, count: Int = 0) {
 
 fun checkParliny(context: Context, mun: Int, day: Int): Boolean {
     val piarliny = ArrayList<ArrayList<String>>()
-    val fileOpisanieSviat = File("${context.filesDir}/piarliny.json")
-    if (fileOpisanieSviat.exists()) {
+    val filePiarliny = File("${context.filesDir}/piarliny.json")
+    if (filePiarliny.exists()) {
         try {
-            val builder = fileOpisanieSviat.readText()
+            val builder = filePiarliny.readText()
             val gson = Gson()
             val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
             piarliny.addAll(gson.fromJson(builder, type))
+        } catch (_: JsonSyntaxException) {
+            filePiarliny.delete()
         } catch (_: Throwable) {
-            fileOpisanieSviat.delete()
         }
         val cal = GregorianCalendar()
         piarliny.forEach {
