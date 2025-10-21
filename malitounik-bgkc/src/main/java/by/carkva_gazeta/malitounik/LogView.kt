@@ -3,6 +3,9 @@ package by.carkva_gazeta.malitounik
 import android.content.Intent
 import android.net.Uri
 import android.os.Environment
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.content.FileProvider
 import com.google.firebase.storage.ListResult
 import kotlinx.coroutines.CoroutineScope
@@ -25,21 +28,15 @@ class LogView(val context: MainActivity) {
     private val sb = StringBuilder()
     private val checkSB = StringBuilder()
     private var oldCheckSB = ""
-    private var logViewListinner: LogViewListinner? = null
-
-    interface LogViewListinner {
-        fun logView(log: String)
-    }
-
-    fun setLogViewListinner(listinner: LogViewListinner) {
-        logViewListinner = listinner
-    }
+    var logViewText by mutableStateOf("")
+    var isLogJob by mutableStateOf(false)
 
     fun upDateLog() {
+        if (logJob?.isActive == true) return
         log.clear()
         sb.clear()
-        logJob?.cancel()
         logJob = CoroutineScope(Dispatchers.Main).launch {
+            isLogJob = true
             val localFile = File("${context.filesDir}/cache/cache.txt")
             Malitounik.referens.child("/admin/log.txt").getFile(localFile).await()
             var log = ""
@@ -47,15 +44,22 @@ class LogView(val context: MainActivity) {
             if (log.isNotEmpty()) {
                 getLogFile()
             } else {
-                logViewListinner?.logView(context.getString(R.string.admin_upload_log_contine))
+                logViewText = context.getString(R.string.admin_upload_log_contine)
             }
+            isLogJob = false
         }
+    }
+
+    fun onDismiss() {
+        logJob?.cancel()
     }
 
     fun checkFiles() {
         logJob?.cancel()
         logJob = CoroutineScope(Dispatchers.Main).launch {
+            isLogJob = true
             getLogFile()
+            isLogJob = false
         }
     }
 
@@ -85,7 +89,7 @@ class LogView(val context: MainActivity) {
         }
         checkResources()
         if (log.isEmpty()) {
-            logViewListinner?.logView(context.getString(R.string.admin_upload_contine))
+            logViewText = context.getString(R.string.admin_upload_contine)
             val zip = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "MainActivityResource.zip")
             sendAndClearLogFile(zip, isSendLogFile = false, isClearLogFile = true)
         } else {
@@ -94,7 +98,7 @@ class LogView(val context: MainActivity) {
                 strB.append(it)
                 strB.append("\n")
             }
-            logViewListinner?.logView(strB.toString())
+            logViewText = strB.toString()
         }
         return log
     }
@@ -130,7 +134,7 @@ class LogView(val context: MainActivity) {
                 }
             }
         }
-        logViewListinner?.logView(checkSB.toString())
+        logViewText = checkSB.toString()
     }
 
     private suspend fun runPrefixes(list: ListResult, checkList: String) {
@@ -179,7 +183,7 @@ class LogView(val context: MainActivity) {
         } else {
             log.add(path)
         }
-        logViewListinner?.logView(path)
+        logViewText = path
     }
 
     fun createAndSentFile() {

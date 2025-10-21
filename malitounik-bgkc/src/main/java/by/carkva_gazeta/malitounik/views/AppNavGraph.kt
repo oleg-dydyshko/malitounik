@@ -1993,13 +1993,7 @@ fun DialogLogProgramy(
 ) {
     val context = LocalActivity.current as MainActivity
     context.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-    var item by remember { mutableStateOf("") }
     val logView = LogView(context)
-    logView.setLogViewListinner(object : LogView.LogViewListinner {
-        override fun logView(log: String) {
-            item = log
-        }
-    })
     LaunchedEffect(Unit) {
         logView.upDateLog()
     }
@@ -2026,29 +2020,51 @@ fun DialogLogProgramy(
                     HtmlText(
                         modifier = Modifier.clickable {
                             logView.checkFiles()
-                        }, text = item, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
+                        }, text = logView.logViewText, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
                     )
                 }
-                Row(
-                    modifier = Modifier
-                        .align(Alignment.End)
-                        .padding(horizontal = 8.dp, vertical = 2.dp),
-                    horizontalArrangement = Arrangement.End,
-                ) {
-                    TextButton(
-                        onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
+                if (logView.isLogJob) {
+                    Row(
+                        modifier = Modifier
+                            .align(Alignment.End)
+                            .padding(horizontal = 8.dp, vertical = 2.dp),
+                        horizontalArrangement = Arrangement.End,
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
-                        Text(stringResource(R.string.close), fontSize = 18.sp)
+                        TextButton(
+                            onClick = {
+                                logView.onDismiss()
+                                onDismiss()
+                            }, shape = MaterialTheme.shapes.small
+                        ) {
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                            Text(stringResource(R.string.cansel), fontSize = 18.sp)
+                        }
                     }
-                    TextButton(
-                        onClick = {
-                            logView.createAndSentFile()
-                            onDismiss()
-                        }, shape = MaterialTheme.shapes.small
+                } else {
+                    Row(
+                        modifier = Modifier
+                            .align(Alignment.End)
+                            .padding(horizontal = 8.dp, vertical = 2.dp),
+                        horizontalArrangement = Arrangement.End,
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
-                        Text(stringResource(R.string.set_log), fontSize = 18.sp)
+                        TextButton(
+                            onClick = {
+                                logView.onDismiss()
+                                onDismiss()
+                            }, shape = MaterialTheme.shapes.small
+                        ) {
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                            Text(stringResource(R.string.close), fontSize = 18.sp)
+                        }
+                        TextButton(
+                            onClick = {
+                                logView.createAndSentFile()
+                                onDismiss()
+                            }, shape = MaterialTheme.shapes.small
+                        ) {
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                            Text(stringResource(R.string.set_log), fontSize = 18.sp)
+                        }
                     }
                 }
             }
