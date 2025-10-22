@@ -1993,9 +1993,9 @@ fun DialogLogProgramy(
 ) {
     val context = LocalActivity.current as MainActivity
     context.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-    val logView = LogView(context)
+    val logView = LogView()
     LaunchedEffect(Unit) {
-        logView.upDateLog()
+        logView.upDateLog(context)
     }
     Dialog(onDismissRequest = { onDismiss() }, DialogProperties(dismissOnClickOutside = false, dismissOnBackPress = false)) {
         Card(
@@ -2019,11 +2019,11 @@ fun DialogLogProgramy(
                 ) {
                     HtmlText(
                         modifier = Modifier.clickable {
-                            logView.checkFiles()
-                        }, text = logView.logViewText, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
+                            logView.checkFiles(context)
+                        }, text = LogView.logViewText, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
                     )
                 }
-                if (logView.isLogJob) {
+                if (LogView.isLogJob) {
                     Row(
                         modifier = Modifier
                             .align(Alignment.End)
@@ -2058,7 +2058,7 @@ fun DialogLogProgramy(
                         }
                         TextButton(
                             onClick = {
-                                logView.createAndSentFile()
+                                logView.createAndSentFile(context)
                                 onDismiss()
                             }, shape = MaterialTheme.shapes.small
                         ) {

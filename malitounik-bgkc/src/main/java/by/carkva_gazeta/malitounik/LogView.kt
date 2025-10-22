@@ -1,5 +1,6 @@
 package by.carkva_gazeta.malitounik
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Environment
@@ -22,16 +23,19 @@ import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-class LogView(val context: MainActivity) {
-    private var log = ArrayList<String>()
-    private var logJob: Job? = null
-    private val sb = StringBuilder()
-    private val checkSB = StringBuilder()
-    private var oldCheckSB = ""
-    var logViewText by mutableStateOf("")
-    var isLogJob by mutableStateOf(false)
+class LogView {
 
-    fun upDateLog() {
+    companion object {
+        private val checkSB = StringBuilder()
+        private var oldCheckSB = ""
+        private var log = ArrayList<String>()
+        private var logJob: Job? = null
+        private val sb = StringBuilder()
+        var logViewText by mutableStateOf("")
+        var isLogJob by mutableStateOf(false)
+    }
+
+    fun upDateLog(context: Context) {
         if (logJob?.isActive == true) return
         log.clear()
         sb.clear()
@@ -42,7 +46,7 @@ class LogView(val context: MainActivity) {
             var log = ""
             if (localFile.exists()) log = localFile.readText()
             if (log.isNotEmpty()) {
-                getLogFile()
+                getLogFile(context)
             } else {
                 logViewText = context.getString(R.string.admin_upload_log_contine)
             }
@@ -54,23 +58,23 @@ class LogView(val context: MainActivity) {
         logJob?.cancel()
     }
 
-    fun checkFiles() {
+    fun checkFiles(context: Context) {
         logJob?.cancel()
         logJob = CoroutineScope(Dispatchers.Main).launch {
             isLogJob = true
-            getLogFile()
+            getLogFile(context)
             isLogJob = false
         }
     }
 
-    private suspend fun getLogFile(count: Int = 0): ArrayList<String> {
+    private suspend fun getLogFile(context: Context, count: Int = 0): ArrayList<String> {
         val localFile = File("${context.filesDir}/cache/log.txt")
         var error = false
         Malitounik.referens.child("/admin/adminListFile.txt").getFile(localFile).addOnFailureListener {
             error = true
         }.await()
         if (error && count < 3) {
-            getLogFile(count + 1)
+            getLogFile(context, count + 1)
             return log
         }
         oldCheckSB = localFile.readText()
@@ -91,7 +95,7 @@ class LogView(val context: MainActivity) {
         if (log.isEmpty()) {
             logViewText = context.getString(R.string.admin_upload_contine)
             val zip = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "MainActivityResource.zip")
-            sendAndClearLogFile(zip, isSendLogFile = false, isClearLogFile = true)
+            sendAndClearLogFile(context, zip, isSendLogFile = false, isClearLogFile = true)
         } else {
             val strB = StringBuilder()
             log.forEach {
@@ -186,7 +190,7 @@ class LogView(val context: MainActivity) {
         logViewText = path
     }
 
-    fun createAndSentFile() {
+    fun createAndSentFile(context: Context) {
         val zip = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "MalitounikResource.zip")
         if (log.isNotEmpty() && Settings.isNetworkAvailable(context)) {
             logJob = CoroutineScope(Dispatchers.Main).launch {
@@ -249,14 +253,14 @@ class LogView(val context: MainActivity) {
                     out.closeEntry()
                     out.close()
                 }
-                sendAndClearLogFile(zip)
+                sendAndClearLogFile(context, zip)
             }
         } else {
-            sendAndClearLogFile(zip)
+            sendAndClearLogFile(context, zip)
         }
     }
 
-    private fun sendAndClearLogFile(zip: File, isClearLogFile: Boolean = true, isSendLogFile: Boolean = true) {
+    private fun sendAndClearLogFile(context: Context, zip: File, isClearLogFile: Boolean = true, isSendLogFile: Boolean = true) {
         if (isSendLogFile) {
             val sendIntent = Intent(Intent.ACTION_SEND)
             sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "by.carkva_gazeta.malitounik.fileprovider", zip))
