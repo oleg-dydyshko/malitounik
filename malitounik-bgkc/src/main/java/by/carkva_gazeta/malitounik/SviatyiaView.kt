@@ -182,6 +182,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
             }
 
             !backPressHandled -> {
+                fullscreen = false
                 backPressHandled = true
                 navController.popBackStack()
             }
