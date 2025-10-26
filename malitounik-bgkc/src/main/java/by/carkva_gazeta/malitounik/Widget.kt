@@ -137,7 +137,7 @@ private fun Caliandar(context: Context) {
                     Text(text = dayofmounth, style = TextStyle(color = ColorProvider(colorText, colorText), fontSize = 40.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Bold))
                     Text(text = monthName[month], style = TextStyle(color = ColorProvider(colorText, colorText), fontSize = 18.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Bold))
                 }
-                Column(modifier = GlanceModifier.padding(start = 5.dp, end = 5.dp, bottom = 5.dp)) {
+                Column(modifier = GlanceModifier.padding(5.dp)) {
                     if (data[6].isNotEmpty()) {
                         if (data[5].toInt() == 1 || data[5].toInt() == 2) {
                             Row(verticalAlignment = Alignment.CenterVertically) {

@@ -118,7 +118,7 @@ fun KaliandarKnigaView(
                                 } else {
                                     slujbaList.clear()
                                     slujbaList.addAll(listSlujbaViach)
-                                    slujva = 1
+                                    slujva = SlugbovyiaTextu.VIACZERNIA
                                     dialogKnigaView = true
                                 }
                             }
@@ -145,7 +145,7 @@ fun KaliandarKnigaView(
                             } else {
                                 slujbaList.clear()
                                 slujbaList.addAll(listSlujbaPavia)
-                                slujva = 2
+                                slujva = SlugbovyiaTextu.PAVIACHERNICA
                                 dialogKnigaView = true
                             }
                         }
@@ -171,7 +171,7 @@ fun KaliandarKnigaView(
                             } else {
                                 slujbaList.clear()
                                 slujbaList.addAll(listSlujbaPaunoch)
-                                slujva = 3
+                                slujva = SlugbovyiaTextu.PAUNOCHNICA
                                 dialogKnigaView = true
                             }
                         }
@@ -202,7 +202,7 @@ fun KaliandarKnigaView(
                             } else {
                                 slujbaList.clear()
                                 slujbaList.addAll(listSlujbaJutran)
-                                slujva = 4
+                                slujva = SlugbovyiaTextu.JUTRAN
                                 dialogKnigaView = true
                             }
                         }
@@ -228,7 +228,7 @@ fun KaliandarKnigaView(
                             } else {
                                 slujbaList.clear()
                                 slujbaList.addAll(listSlujbaVilHadz)
-                                slujva = 5
+                                slujva = SlugbovyiaTextu.VIALHADZINY
                                 dialogKnigaView = true
                             }
                         }
@@ -255,7 +255,7 @@ fun KaliandarKnigaView(
                             } else {
                                 slujbaList.clear()
                                 slujbaList.addAll(listSlujbaLitur)
-                                slujva = 6
+                                slujva = SlugbovyiaTextu.LITURHIJA
                                 dialogKnigaView = true
                             }
                         }
@@ -341,12 +341,12 @@ fun DialogKniga(
 ) {
     val slugbovyiaTextu = SlugbovyiaTextu()
     val slujvaTitle = when (slujba) {
-        1 -> stringResource(R.string.viachernia)
-        2 -> stringResource(R.string.raviachernica)
-        3 -> stringResource(R.string.paunochnica)
-        4 -> stringResource(R.string.utran)
-        5 -> stringResource(R.string.gadziny)
-        6 -> stringResource(R.string.liturgia)
+        SlugbovyiaTextu.VIACZERNIA -> stringResource(R.string.viachernia)
+        SlugbovyiaTextu.PAVIACHERNICA -> stringResource(R.string.raviachernica)
+        SlugbovyiaTextu.PAUNOCHNICA -> stringResource(R.string.paunochnica)
+        SlugbovyiaTextu.JUTRAN -> stringResource(R.string.utran)
+        SlugbovyiaTextu.VIALHADZINY -> stringResource(R.string.gadziny)
+        SlugbovyiaTextu.LITURHIJA -> stringResource(R.string.liturgia)
         else -> ""
     }
     Dialog(onDismissRequest = { onDismiss() }) {
@@ -387,7 +387,8 @@ fun DialogKniga(
                             contentDescription = ""
                         )
                         Text(
-                            text = list[i].title + ". " + slugbovyiaTextu.getNazouSluzby(list[i].sluzba),
+                            text = if (slujba == list[i].sluzba) list[i].title
+                            else list[i].title + ". " + slugbovyiaTextu.getNazouSluzby(list[i].sluzba),
                             modifier = Modifier
                                 .padding(10.dp),
                             color = MaterialTheme.colorScheme.secondary,

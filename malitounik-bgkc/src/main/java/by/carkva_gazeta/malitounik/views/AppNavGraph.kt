@@ -854,15 +854,21 @@ fun MainConteiner(
         showDropdown = false
     }
     val view = LocalView.current
-    var isAppearanceLight = false
-    if (Settings.destinations == AllDestinations.KALIANDAR) {
-        if (Settings.data[Settings.caliandarPosition][7].toInt() == 3 && !(Settings.data[Settings.caliandarPosition][0].toInt() == Calendar.SUNDAY || Settings.data[Settings.caliandarPosition][0].toInt() == Calendar.SATURDAY)) {
-            isAppearanceLight = true
+    var isAppearanceLight by remember { mutableStateOf(false) }
+    LaunchedEffect(isAppearanceLight, Unit, drawerState.isOpen) {
+        isAppearanceLight = if (drawerState.isOpen) {
+            !Settings.dzenNoch.value
+        } else {
+            if (currentRoute == AllDestinations.KALIANDAR) {
+                when {
+                    Settings.data[Settings.caliandarPosition][7].toInt() == 3 -> false
+                    Settings.data[Settings.caliandarPosition][5].toInt() > 0 -> false
+                    else -> true
+                }
+            } else {
+                false
+            }
         }
-        if (Settings.data[Settings.caliandarPosition][5].toInt() > 0) {
-            isAppearanceLight = true
-        }
-        isAppearanceLight = !isAppearanceLight
     }
     LaunchedEffect(Unit) {
         val extras = context.intent?.extras
@@ -908,7 +914,6 @@ fun MainConteiner(
         }
         context.intent = null
     }
-    if (drawerState.isOpen) isAppearanceLight = !Settings.dzenNoch.value
     SideEffect {
         val window = (view.context as Activity).window
         WindowCompat.getInsetsController(window, view).apply {
@@ -1504,35 +1509,28 @@ fun MainConteiner(
                                 val data = Settings.data[page]
                                 isToDay = data[1] == dataToDay[1] && data[2] == dataToDay[2] && data[3] == dataToDay[3]
                                 var colorText = PrimaryText
-                                isAppearanceLight = false
                                 when {
                                     data[7].toInt() == 2 -> colorBlackboard = Post
                                     data[7].toInt() == 1 -> colorBlackboard = BezPosta
-                                    data[7].toInt() == 3 && !(data[0].toInt() == Calendar.SUNDAY || data[0].toInt() == Calendar.SATURDAY) -> {
+                                    data[7].toInt() == 3 -> {
                                         colorBlackboard = StrogiPost
                                         colorText = PrimaryTextBlack
-                                        isAppearanceLight = true
+                                        isAppearanceLight = false
                                     }
 
                                     data[5].toInt() > 0 -> {
                                         colorBlackboard = Primary
                                         colorText = PrimaryTextBlack
-                                        isAppearanceLight = true
+                                        isAppearanceLight = false
                                     }
 
                                     else -> {
                                         colorBlackboard = Divider
+                                        isAppearanceLight = true
                                     }
                                 }
                                 tollBarColor = colorBlackboard
                                 textTollBarColor = colorText
-                                val window = (view.context as Activity).window
-                                WindowCompat.getInsetsController(
-                                    window, view
-                                ).apply {
-                                    isAppearanceLightStatusBars = !isAppearanceLight
-                                    isAppearanceLightNavigationBars = !isAppearanceLight
-                                }
                             }
                         }
                         if (searchText) {
