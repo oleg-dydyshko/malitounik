@@ -45,13 +45,13 @@
     <by.carkva_gazeta.malitounik.admin.InteractiveScrollView
         android:id="@+id/scrollView"
         android:layout_width="0sp"
-        android:layout_height="0sp"
-        android:scrollbars="none"
+        android:layout_height="0dp"
         android:fitsSystemWindows="true"
-        app:layout_constraintBottom_toTopOf="@+id/find"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout2">
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
 
         <by.carkva_gazeta.malitounik.admin.EditTextCustom
             android:id="@+id/apisanne"
@@ -64,69 +64,6 @@
             android:layout_marginBottom="10sp" />
     </by.carkva_gazeta.malitounik.admin.InteractiveScrollView>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/find"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <ImageView
-            android:id="@+id/imageView6"
-            android:layout_width="24sp"
-            android:layout_height="24sp"
-            android:layout_marginEnd="20sp"
-            android:contentDescription="@string/empty"
-            android:padding="4sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/imageView5"
-            app:layout_constraintTop_toTopOf="@+id/textSearch"
-            app:srcCompat="@drawable/find_up" />
-
-        <by.carkva_gazeta.malitounik.admin.EditTextCustom
-            android:id="@+id/textSearch"
-            android:layout_width="0sp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8sp"
-            android:layout_marginLeft="8sp"
-            android:layout_marginEnd="8sp"
-            android:layout_marginRight="8sp"
-            android:hint="@string/seashmin"
-            android:imeOptions="actionDone|flagNoEnterAction"
-            android:inputType="text"
-            android:singleLine="true"
-            app:backgroundTint="@color/colorPrimary"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/textCount"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <ImageView
-            android:id="@+id/imageView5"
-            android:layout_width="24sp"
-            android:layout_height="24sp"
-            android:layout_marginEnd="20sp"
-            android:layout_marginRight="15sp"
-            android:contentDescription="@string/empty"
-            android:padding="4sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textSearch"
-            app:srcCompat="@drawable/find_niz" />
-
-        <by.carkva_gazeta.malitounik.admin.TextViewCustom
-            android:id="@+id/textCount"
-            android:layout_width="0sp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="5sp"
-            android:layout_marginRight="5sp"
-            android:text="@string/niama"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/imageView6"
-            app:layout_constraintTop_toTopOf="@+id/textSearch" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="0sp"
@@ -134,9 +71,9 @@
         android:background="@color/colorPrimaryMaranAta"
         android:gravity="center"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout2">
 
         <ImageView
             android:id="@+id/action_back"

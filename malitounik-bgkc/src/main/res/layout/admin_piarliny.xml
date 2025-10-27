@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -56,20 +57,20 @@
         android:fitsSystemWindows="true"
         android:gravity="start|top"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout2" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
     <ListView
         android:id="@+id/listView"
         android:layout_width="0sp"
         android:layout_height="0sp"
         android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout2" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
     <LinearLayout
         android:id="@+id/linearLayout2"
@@ -79,16 +80,15 @@
         android:gravity="center"
         android:orientation="horizontal"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout2">
 
         <ImageView
             android:id="@+id/action_bold"
             android:layout_width="28sp"
             android:layout_height="28sp"
             android:layout_marginStart="10sp"
-            android:layout_marginLeft="10sp"
             android:layout_marginTop="5sp"
             android:layout_marginBottom="5sp"
             android:contentDescription="@string/empty"
@@ -99,7 +99,6 @@
             android:layout_width="28sp"
             android:layout_height="28sp"
             android:layout_marginStart="10sp"
-            android:layout_marginLeft="10sp"
             android:layout_marginTop="5sp"
             android:layout_marginBottom="5sp"
             android:contentDescription="@string/empty"
@@ -110,7 +109,6 @@
             android:layout_width="28sp"
             android:layout_height="28sp"
             android:layout_marginStart="10sp"
-            android:layout_marginLeft="10sp"
             android:layout_marginTop="5sp"
             android:layout_marginBottom="5sp"
             android:contentDescription="@string/empty"
