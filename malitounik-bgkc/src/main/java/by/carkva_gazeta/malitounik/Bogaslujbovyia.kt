@@ -1213,6 +1213,7 @@ fun Bogaslujbovyia(
                     if (autoScrollSensor) {
                         HtmlText(
                             modifier = Modifier
+                                .fillMaxWidth()
                                 .padding(top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp))
                                 .pointerInput(Unit) {
                                     awaitEachGesture {
@@ -1265,6 +1266,7 @@ fun Bogaslujbovyia(
                         SelectionContainer {
                             HtmlText(
                                 modifier = Modifier
+                                    .fillMaxWidth()
                                     .padding(top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp))
                                     .pointerInput(Unit) {
                                         awaitEachGesture {
