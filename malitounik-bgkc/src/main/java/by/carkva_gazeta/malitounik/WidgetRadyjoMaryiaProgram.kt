@@ -143,7 +143,7 @@ fun DialogProgramRadoiMaryia(
                                 }
                                 val t2 = text.lastIndexOf("<div style=\"clear: both;\">")
                                 if (t2 != -1) {
-                                    text = text.substring(0, t2)
+                                    text = text.take(t2)
                                 }
                                 text = text.replace("<div style=\"clear: both;\">", "")
                                 text = "$efir$text"

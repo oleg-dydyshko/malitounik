@@ -151,7 +151,7 @@ private fun Caliandar(context: Context) {
                         }
                     }
                     if (data[8].isNotEmpty()) {
-                        Text(text = AnnotatedString.fromHtml(data[8]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp, textAlign = TextAlign.Center, fontStyle = FontStyle.Italic))
+                        Text(modifier = GlanceModifier.fillMaxWidth(), text = AnnotatedString.fromHtml(data[8]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp, textAlign = TextAlign.Center, fontStyle = if (data[8].contains("<strong>")) FontStyle.Normal else FontStyle.Italic, fontWeight = if (data[8].contains("<strong>")) FontWeight.Bold else FontWeight.Normal))
                     }
                     if (data[4].isNotEmpty()) {
                         var icon = 0
@@ -172,11 +172,11 @@ private fun Caliandar(context: Context) {
                                     if (icon != 0) {
                                         Row(verticalAlignment = Alignment.CenterVertically) {
                                             Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
-                                            Text(modifier = GlanceModifier.padding(start = 5.dp), text = text.substring(0, t1), style = TextStyle(color = ColorProvider(Primary, PrimaryBlack), fontSize = 18.sp, fontWeight = FontWeight.Bold))
+                                            Text(modifier = GlanceModifier.padding(start = 5.dp), text = text.take(t1), style = TextStyle(color = ColorProvider(Primary, PrimaryBlack), fontSize = 18.sp, fontWeight = FontWeight.Bold))
                                         }
                                         Text(text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
                                     } else {
-                                        Text(text = text.substring(0, t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp, fontWeight = FontWeight.Bold))
+                                        Text(text = text.take(t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp, fontWeight = FontWeight.Bold))
                                         Text(text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
                                     }
                                 } else {
@@ -196,11 +196,11 @@ private fun Caliandar(context: Context) {
                                     if (icon != 0) {
                                         Row(verticalAlignment = Alignment.CenterVertically) {
                                             Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
-                                            Text(modifier = GlanceModifier.padding(start = 5.dp), text = text.substring(0, t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp))
+                                            Text(modifier = GlanceModifier.padding(start = 5.dp), text = text.take(t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp))
                                         }
                                         Text(text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
                                     } else {
-                                        Text(text = text.substring(0, t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp))
+                                        Text(text = text.take(t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp))
                                         Text(text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
                                     }
                                 } else {
@@ -221,7 +221,7 @@ private fun Caliandar(context: Context) {
                                 if (icon != 0) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
-                                        Text(modifier = GlanceModifier.padding(start = 5.dp), text = text.substring(0, t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
+                                        Text(modifier = GlanceModifier.padding(start = 5.dp), text = text.take(t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
                                     }
                                     Text(text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
                                 } else {

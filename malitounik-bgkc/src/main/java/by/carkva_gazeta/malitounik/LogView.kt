@@ -116,7 +116,7 @@ class LogView {
             if (t11 != -1 && t22 != -1) {
                 val name2 = oldList[element].substring(t11 + 6, t22)
                 val t33 = name2.indexOf(".")
-                val nameRR = if (t33 != -1) name2.substring(0, t33)
+                val nameRR = if (t33 != -1) name2.take(t33)
                 else name2
                 var testR = false
                 for (i in list.indices) {
@@ -125,7 +125,7 @@ class LogView {
                     if (t1 != -1 && t2 != -1) {
                         val name1 = list[i].substring(t1 + 6, t2)
                         val t3 = name1.indexOf(".")
-                        val nameR = if (t3 != -1) name1.substring(0, t3)
+                        val nameR = if (t3 != -1) name1.take(t3)
                         else name1
                         if (nameR == nameRR) {
                             testR = true
@@ -204,7 +204,7 @@ class LogView {
                         val file = log[index]
                         var filePath = file.replace("//", "/")
                         val t1 = filePath.indexOf("(")
-                        if (t1 != -1) filePath = filePath.substring(0, t1)
+                        if (t1 != -1) filePath = filePath.take(t1)
                         var error = false
                         try {
                             Malitounik.referens.child(filePath).getFile(localFile).addOnFailureListener {

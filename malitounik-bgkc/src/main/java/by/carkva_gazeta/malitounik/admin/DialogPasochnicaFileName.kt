@@ -72,7 +72,7 @@ class DialogPasochnicaFileName : DialogFragment() {
     }
 
     internal interface DialogPasochnicaFileNameListener {
-        fun setFileName(oldFileName: String, fileName: String, isSite: Boolean, saveAs: Boolean)
+        fun setFileName(oldFileName: String, fileName: String, isSite: Boolean)
     }
 
     override fun onAttach(context: Context) {
@@ -165,7 +165,7 @@ class DialogPasochnicaFileName : DialogFragment() {
             val mun = resources.getStringArray(R.array.meciac_smoll)
             fileName = gc[Calendar.DATE].toString() + "_" + mun[gc[Calendar.MONTH]] + "_" + gc[Calendar.YEAR] + "_" + gc[Calendar.HOUR_OF_DAY] + ":" + gc[Calendar.MINUTE]
         }
-        mListener?.setFileName(oldFileName, fileName, isSite, saveAs)
+        mListener?.setFileName(oldFileName, fileName, isSite)
         dialog?.cancel()
     }
 

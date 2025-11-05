@@ -2,7 +2,6 @@ package by.carkva_gazeta.malitounik.admin
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -308,7 +307,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                     Malitounik.referens.child("/chytanne/icons/$fileName").putFile(Uri.fromFile(localFile)).await()
                 }
                 val t1 = fileName.lastIndexOf(".")
-                val fileNameT = fileName.substring(0, t1) + ".txt"
+                val fileNameT = fileName.take(t1) + ".txt"
                 if (text != "") {
                     localFile.writer().use {
                         it.write(text)
@@ -353,7 +352,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                 val endSelect = it.selectionEnd
                 val text = it.text.toString()
                 val build = with(StringBuilder()) {
-                    append(text.substring(0, startSelect))
+                    append(text.take(startSelect))
                     append("<strong>")
                     append(text.substring(startSelect, endSelect))
                     append("</strong>")
@@ -368,7 +367,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                 val endSelect = it.selectionEnd
                 val text = it.text.toString()
                 val build = with(StringBuilder()) {
-                    append(text.substring(0, startSelect))
+                    append(text.take(startSelect))
                     append("<em>")
                     append(text.substring(startSelect, endSelect))
                     append("</em>")
@@ -383,7 +382,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                 val endSelect = it.selectionEnd
                 val text = it.text.toString()
                 val build = with(StringBuilder()) {
-                    append(text.substring(0, startSelect))
+                    append(text.take(startSelect))
                     append("<font color=\"#d00505\">")
                     append(text.substring(startSelect, endSelect))
                     append("</font>")
@@ -397,7 +396,7 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
                 val endSelect = it.selectionEnd
                 val text = it.text.toString()
                 val build = with(StringBuilder()) {
-                    append(text.substring(0, endSelect))
+                    append(text.take(endSelect))
                     append("<br>")
                     append(text.substring(endSelect))
                     toString()
@@ -570,8 +569,8 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
             val textView = v as TextView
             val datam = data[position][3]
             val t1 = datam.indexOf("</strong>")
-            val title = if (t1 != -1) HtmlCompat.fromHtml(datam.substring(0, t1), HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
-            else HtmlCompat.fromHtml(datam.substring(0, 30), HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
+            val title = if (t1 != -1) HtmlCompat.fromHtml(datam.take(t1), HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
+            else HtmlCompat.fromHtml(datam.take(30), HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
             textView.text = title
             textView.setBackgroundResource(R.drawable.selector_default)
             return v
@@ -595,8 +594,8 @@ class Sviaty : BaseActivity(), View.OnClickListener, DialogEditImage.DialogEditI
             }
             val datam = data[position][3]
             val t1 = datam.indexOf("</strong>")
-            val title = if (t1 != -1) HtmlCompat.fromHtml(datam.substring(0, t1), HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
-            else HtmlCompat.fromHtml(datam.substring(0, 30), HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
+            val title = if (t1 != -1) HtmlCompat.fromHtml(datam.take(t1), HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
+            else HtmlCompat.fromHtml(datam.take(30), HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
             viewHolder.text.text = title
             viewHolder.text.setBackgroundResource(R.drawable.selector_default)
             return rootView

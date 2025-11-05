@@ -223,7 +223,7 @@ class SviatyiaImage : BaseActivity(), DialogDeliteImage.DialogDeliteListener, Ad
     private fun getViewByPosition(): View? {
         val firstListItemPosition = binding.dragListView.firstVisiblePosition
         val lastListItemPosition = firstListItemPosition + binding.dragListView.childCount - 1
-        return if (position < firstListItemPosition || position > lastListItemPosition) {
+        return if (position !in firstListItemPosition..lastListItemPosition) {
             binding.dragListView.adapter.getView(position, null, binding.dragListView)
         } else {
             val childIndex = position - firstListItemPosition
@@ -310,7 +310,7 @@ class SviatyiaImage : BaseActivity(), DialogDeliteImage.DialogDeliteListener, Ad
                 } else {
                     val t1 = text.indexOf("</strong>")
                     if (t1 != -1) {
-                        sb = text.substring(0, t1)
+                        sb = text.take(t1)
                         titleArray.add(0, sb)
                     }
                 }
@@ -388,7 +388,7 @@ class SviatyiaImage : BaseActivity(), DialogDeliteImage.DialogDeliteListener, Ad
                 val dir = File("$filesDir/iconsApisanne")
                 if (!dir.exists()) dir.mkdir()
                 val t1 = fileName.lastIndexOf(".")
-                val fileNameT = fileName.substring(0, t1) + ".txt"
+                val fileNameT = fileName.take(t1) + ".txt"
                 if (text != "") {
                     val localFile = File("$filesDir/cache/cache.txt")
                     localFile.writer().use {

@@ -103,10 +103,10 @@ class Chytanny : BaseActivity() {
             val monName2 = resources.getStringArray(R.array.meciac_smoll)
             var countDay = 0
             for (fw in fileLine) {
-                if (fw.contains("\$calendar[]")) {
+                if (fw.contains($$"$calendar[]")) {
                     val t1 = fw.indexOf("\"cviaty\"=>\"")
                     val t2 = fw.indexOf("\", \"")
-                    val t3 = fw.indexOf("\".\$ahref.\"")
+                    val t3 = fw.indexOf($$"\".$ahref.\"")
                     val t4 = fw.indexOf("</a>\"")
                     val c = GregorianCalendar(year, monthP - 1, dataP + countDay)
                     var data = c[Calendar.DATE]
@@ -271,7 +271,7 @@ class Chytanny : BaseActivity() {
                     if (item.data.isEmpty()) {
                         sb.append(item.title + "\n")
                     } else {
-                        sb.append("\$calendar[]=array(\"cviaty\"=>\"${item.title}\", \"cytanne\"=>\"\".\$ahref.\"${item.cynanne}</a>\");\n")
+                        sb.append($$"$calendar[]=array(\"cviaty\"=>\"$${item.title}\", \"cytanne\"=>\"\".$ahref.\"$${item.cynanne}</a>\");\n")
                     }
                 }
                 sb.append("?>")

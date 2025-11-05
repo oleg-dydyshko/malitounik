@@ -25,6 +25,8 @@ import by.carkva_gazeta.malitounik.views.AllDestinations.MAE_NATATKI_MENU
 import by.carkva_gazeta.malitounik.views.AllDestinations.MALITVY_LIST_ALL
 import by.carkva_gazeta.malitounik.views.AllDestinations.MALITVY_MENU
 import by.carkva_gazeta.malitounik.views.AllDestinations.PADZEI_VIEW
+import by.carkva_gazeta.malitounik.views.AllDestinations.PIASOCHNICA
+import by.carkva_gazeta.malitounik.views.AllDestinations.PIASOCHNICA_LIST
 import by.carkva_gazeta.malitounik.views.AllDestinations.PRANAS
 import by.carkva_gazeta.malitounik.views.AllDestinations.SEARCH_BIBLIA
 import by.carkva_gazeta.malitounik.views.AllDestinations.SETTINGS_VIEW
@@ -83,6 +85,8 @@ object AllDestinations {
     const val SVITYIA_VIEW = "Svityia_View"
     const val LITURGIKON_MENU = "Liturgikon_Menu"
     const val CYTATY_MENU = "cytaty"
+    const val PIASOCHNICA_LIST = "Piasochnica_List"
+    const val PIASOCHNICA = "Piasochnica"
 }
 
 class AppNavigationActions(private val navController: NavHostController, k: SharedPreferences) {
@@ -378,6 +382,18 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
     fun navigateToCytaty() {
         navController.navigate(CYTATY_MENU) {
             CYTATY_MENU
+        }
+    }
+
+    fun navigateToPiasochnicaList(dirToFile: String = "") {
+        navController.navigate("PIASOCHNICA_LIST/" + URLEncoder.encode(dirToFile, "UTF8")) {
+            PIASOCHNICA_LIST
+        }
+    }
+
+    fun navigateToPiasochnica(resurs: String) {
+        navController.navigate("$PIASOCHNICA/" + URLEncoder.encode(resurs, "UTF8")) {
+            PIASOCHNICA
         }
     }
 }

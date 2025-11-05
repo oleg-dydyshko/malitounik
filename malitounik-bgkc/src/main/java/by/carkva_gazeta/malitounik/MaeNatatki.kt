@@ -121,9 +121,8 @@ fun MaeNatatki(
                 if (filedel.exists()) filedel.delete()
                 fileList.removeAt(natatkaPosition)
                 removeNatatka = false
-            },
-            onDismiss = { removeNatatka = false }
-        )
+            }
+        ) { removeNatatka = false }
     }
     if (addFile) {
         DialogMyNatatki(

@@ -1278,12 +1278,12 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                328, "Пасьвяцьце Ўваходу ў сьвятыню Найсьвяцейшай Багародзіцы і між сьвятымі айцоў нашых Амфілёха і Рыгора", "bogashlugbovya/mm_23_11_pasviaccie_uvachodu_baharodzicy_amfilocha_ryhora_viaczernia.html", VIACZERNIA
+                328, "Пасьвяцьце Ўваходу ў сьвятыню Найсьвяцейшай Багародзіцы і між сьвятымі айцоў нашых Амфілоха і Рыгора", "bogashlugbovya/mm_23_11_pasviaccie_uvachodu_baharodzicy_amfilocha_ryhora_viaczernia.html", VIACZERNIA
             )
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                328, "Пасьвяцьце Ўваходу ў сьвятыню Найсьвяцейшай Багародзіцы і між сьвятымі айцоў нашых Амфілёха і Рыгора", "bogashlugbovya/mm_23_11_pasviaccie_uvachodu_liturhija.html", LITURHIJA
+                328, "Пасьвяцьце Ўваходу ў сьвятыню Найсьвяцейшай Багародзіцы і між сьвятымі айцоў нашых Амфілоха і Рыгора", "bogashlugbovya/mm_23_11_pasviaccie_uvachodu_liturhija.html", LITURHIJA
             )
         )
         datMinALL.add(

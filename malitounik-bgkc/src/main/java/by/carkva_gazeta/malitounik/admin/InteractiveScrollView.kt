@@ -24,7 +24,7 @@ class InteractiveScrollView : ScrollView {
     constructor(context: Context?) : super(context)
 
     interface OnInteractiveScrollChangedCallback {
-        fun onScroll(t: Int, oldt: Int)
+        fun onScroll(t: Int)
     }
 
     interface OnBottomReachedListener {
@@ -46,7 +46,7 @@ class InteractiveScrollView : ScrollView {
         val diff = view.bottom - (height + scrollY)
         checkDiff = diff <= 0
         mListener?.onBottomReached(checkDiff)
-        mOnInteractiveScrollChangedCallback?.onScroll(t, oldt)
+        mOnInteractiveScrollChangedCallback?.onScroll(t)
     }
 
     @SuppressLint("ClickableViewAccessibility")

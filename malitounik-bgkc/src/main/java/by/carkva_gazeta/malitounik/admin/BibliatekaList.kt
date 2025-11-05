@@ -1,7 +1,6 @@
 package by.carkva_gazeta.malitounik.admin
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -213,7 +212,7 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
                         }
                         return@withContext
                     }
-                    val imageLocal = "$filesDir/image_temp/" + pdfName.substring(0, t1) + ".png"
+                    val imageLocal = "$filesDir/image_temp/" + pdfName.take(t1) + ".png"
                     if (position == -1) {
                         val mySqlList = ArrayList<String>()
                         mySqlList.add(link)
@@ -317,7 +316,7 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
                             mySqlList.add(pdfFileSize)
                             mySqlList.add(rubrika)
                             val t1 = pdf.lastIndexOf(".")
-                            mySqlList.add(pdf.substring(0, t1) + ".png")
+                            mySqlList.add(pdf.take(t1) + ".png")
                             val dir = File("$filesDir/image_temp")
                             if (!dir.exists()) dir.mkdir()
                             val file = File(image)
@@ -347,7 +346,7 @@ class BibliatekaList : BaseActivity(), DialogBiblijatekaContextMenu.DialogPiarli
 
     private suspend fun saveImagePdf(pdf: String, image: String) {
         val t1 = pdf.lastIndexOf(".")
-        val imageTempFile = File("$filesDir/image_temp/" + pdf.substring(0, t1) + ".png")
+        val imageTempFile = File("$filesDir/image_temp/" + pdf.take(t1) + ".png")
         Malitounik.referens.child("/images/bibliateka/$image").getFile(imageTempFile).addOnFailureListener {
             Toast.makeText(this, getString(R.string.error), Toast.LENGTH_SHORT).show()
         }.await()

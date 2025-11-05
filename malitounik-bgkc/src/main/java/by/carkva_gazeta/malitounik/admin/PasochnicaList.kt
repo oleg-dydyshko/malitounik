@@ -47,7 +47,7 @@ import java.util.Calendar
 import java.util.GregorianCalendar
 
 
-class PasochnicaList : BaseActivity(), DialogPasochnicaFileName.DialogPasochnicaFileNameListener, DialogContextMenu.DialogContextMenuListener, DialogDelite.DialogDeliteListener, DialogDeliteAllBackCopy.DialogDeliteAllBackCopyListener, DialogDeliteAllPasochnica.DialogDeliteAllPasochnicaListener {
+class PasochnicaList : BaseActivity(), DialogPasochnicaFileName.DialogPasochnicaFileNameListener, DialogContextMenuOld.DialogContextMenuListener, DialogDelite.DialogDeliteListener, DialogDeliteAllBackCopy.DialogDeliteAllBackCopyListener, DialogDeliteAllPasochnica.DialogDeliteAllPasochnicaListener {
 
     private lateinit var k: SharedPreferences
     private lateinit var binding: AdminPasochnicaListBinding
@@ -187,7 +187,7 @@ class PasochnicaList : BaseActivity(), DialogPasochnicaFileName.DialogPasochnica
             startActivity(intent)
         }
         binding.listView.setOnItemLongClickListener { _, _, position, _ ->
-            val contextMenu = DialogContextMenu.getInstance(position, fileList[position], false)
+            val contextMenu = DialogContextMenuOld.getInstance(position, fileList[position], false)
             contextMenu.show(supportFragmentManager, "contextMenu")
             return@setOnItemLongClickListener true
         }
@@ -224,7 +224,7 @@ class PasochnicaList : BaseActivity(), DialogPasochnicaFileName.DialogPasochnica
         invalidateOptionsMenu()
     }
 
-    override fun setFileName(oldFileName: String, fileName: String, isSite: Boolean, saveAs: Boolean) {
+    override fun setFileName(oldFileName: String, fileName: String, isSite: Boolean) {
         if (oldFileName.contains("(BackCopy")) {
             val fileNameold = oldFileName.replace("(BackCopy)", "")
             val fileOld = File(getExternalFilesDir("PiasochnicaBackCopy"), fileNameold)
@@ -304,7 +304,7 @@ class PasochnicaList : BaseActivity(), DialogPasochnicaFileName.DialogPasochnica
                 else ""
                 fileName = "$mm$fileName"
                 if (dirToFile != fileName) {
-                    getFileRenamePostRequest(dirToFile, dirToFile.substring(0, t5 + 1) + fileName, true)
+                    getFileRenamePostRequest(dirToFile, dirToFile.take(t5 + 1) + fileName, true)
                 }
                 var resourse = ""
                 val localFile = File("$filesDir/cache/cache.txt")
@@ -319,8 +319,8 @@ class PasochnicaList : BaseActivity(), DialogPasochnicaFileName.DialogPasochnica
                 var newFileName = fileName.replace("\n", " ")
                 var title = ""
                 if (t1 != -1) {
-                    resourse = "(" + newFileName.substring(0, t1) + ") "
-                    newFileName = newFileName.substring(0, t1)
+                    resourse = "(" + newFileName.take(t1) + ") "
+                    newFileName = newFileName.take(t1)
                     if (fileName.contains(".html")) {
                         val rt = localFile.readText()
                         val t2 = rt.indexOf("<strong>")
@@ -337,7 +337,7 @@ class PasochnicaList : BaseActivity(), DialogPasochnicaFileName.DialogPasochnica
                 }
                 val res = if (title != "") {
                     val preparetext = HtmlCompat.fromHtml(title, HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
-                    preparetext.substring(0, 1).uppercase() + preparetext.substring(1).lowercase()
+                    preparetext.take(1).uppercase() + preparetext.substring(1).lowercase()
                 } else newFileName
                 try {
                     Malitounik.referens.child("/admin/piasochnica/$resourse$res").putFile(Uri.fromFile(localFile)).await()

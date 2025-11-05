@@ -147,11 +147,6 @@ fun VybranaeList(
         )
         DialogDelite(
             title = titleVybrenae,
-            onDismiss = {
-                removeItem = -1
-                removeItemBible = -1
-                removeItemBibleAll = false
-            },
             onConfirmation = {
                 val perevod = if (list[removeItem].recourse.isEmpty()) list[removeItem].listBible[0].perevod
                 else Settings.PEREVODSEMUXI
@@ -214,7 +209,11 @@ fun VybranaeList(
                 }
                 removeItem = -1
             }
-        )
+        ) {
+            removeItem = -1
+            removeItemBible = -1
+            removeItemBibleAll = false
+        }
     }
     if (removeAllVybranae) {
         list.clear()
@@ -376,8 +375,8 @@ fun VybranaeList(
 @Composable
 fun DialogDelite(
     title: String,
-    onDismiss: () -> Unit,
-    onConfirmation: () -> Unit
+    onConfirmation: () -> Unit,
+    onDismiss: () -> Unit
 ) {
     Dialog(onDismissRequest = { onDismiss() }) {
         Card(

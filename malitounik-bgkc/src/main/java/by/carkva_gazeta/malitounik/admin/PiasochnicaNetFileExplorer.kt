@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.File
 
-class PiasochnicaNetFileExplorer : BaseActivity(), DialogContextMenu.DialogContextMenuListener, DialogPasochnicaFileName.DialogPasochnicaFileNameListener, DialogDelite.DialogDeliteListener {
+class PiasochnicaNetFileExplorer : BaseActivity(), DialogContextMenuOld.DialogContextMenuListener, DialogPasochnicaFileName.DialogPasochnicaFileNameListener, DialogDelite.DialogDeliteListener {
 
     private lateinit var adapter: TitleListAdaprer
     private val fileList = ArrayList<MyNetFile>()
@@ -56,7 +56,7 @@ class PiasochnicaNetFileExplorer : BaseActivity(), DialogContextMenu.DialogConte
         dialogDelite.show(supportFragmentManager, "dialogDelite")
     }
 
-    override fun setFileName(oldFileName: String, fileName: String, isSite: Boolean, saveAs: Boolean) {
+    override fun setFileName(oldFileName: String, fileName: String, isSite: Boolean) {
         if (oldFileName.contains("(BackCopy")) {
             val fileNameold = oldFileName.replace("(BackCopy)", "")
             val fileOld = File(getExternalFilesDir("PiasochnicaBackCopy"), fileNameold)
@@ -97,7 +97,7 @@ class PiasochnicaNetFileExplorer : BaseActivity(), DialogContextMenu.DialogConte
         getDirListRequest(dir)
         binding.content.setOnItemLongClickListener { _, _, position, _ ->
             if (!(fileList[position].resources == R.drawable.directory_up || fileList[position].resources == R.drawable.directory_icon)) {
-                val contextMenu = DialogContextMenu.getInstance(position, dir + "/" + fileList[position].title, true)
+                val contextMenu = DialogContextMenuOld.getInstance(position, dir + "/" + fileList[position].title, true)
                 contextMenu.show(supportFragmentManager, "contextMenu")
             }
             return@setOnItemLongClickListener true

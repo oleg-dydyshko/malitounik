@@ -152,6 +152,8 @@ import by.carkva_gazeta.malitounik.SviatyList
 import by.carkva_gazeta.malitounik.SviatyiaView
 import by.carkva_gazeta.malitounik.VybranaeList
 import by.carkva_gazeta.malitounik.admin.BibliatekaList
+import by.carkva_gazeta.malitounik.admin.PasochnicaListNew
+import by.carkva_gazeta.malitounik.admin.PiasochnicaNew
 import by.carkva_gazeta.malitounik.admin.Sviatyia
 import by.carkva_gazeta.malitounik.formatFigureTwoPlaces
 import by.carkva_gazeta.malitounik.rawAsset
@@ -292,7 +294,7 @@ fun openAssetsResources(context: Context, fileName: String): String {
                 line = it
                 if (line.contains("//")) {
                     val t1 = line.indexOf("//")
-                    line = line.substring(0, t1).trim()
+                    line = line.take(t1).trim()
                     if (line.isNotEmpty()) builder.append(line).append("\n")
                 } else {
                     builder.append(line).append("\n")
@@ -703,6 +705,16 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
         composable(AllDestinations.CYTATY_MENU) {
             Cytaty(navController)
         }
+
+        composable(AllDestinations.PIASOCHNICA_LIST + "/{dirToFile}") { stackEntry ->
+            val dirToFile = stackEntry.arguments?.getString("dirToFile") ?: ""
+            PasochnicaListNew(navController, dirToFile)
+        }
+
+        composable(AllDestinations.PIASOCHNICA + "/{resurs}") { stackEntry ->
+            val resurs = stackEntry.arguments?.getString("resurs") ?: "bogashlugbovya_error.html"
+            PiasochnicaNew(navController, resurs)
+        }
     }
 }
 
@@ -956,10 +968,7 @@ fun MainConteiner(
     if (removeAllVybranaeDialog || removeAllNatatkiDialog) {
         DialogDelite(
             title = if (removeAllVybranaeDialog) stringResource(R.string.del_all_vybranoe)
-            else stringResource(R.string.delite_all_natatki), onDismiss = {
-                removeAllVybranaeDialog = false
-                removeAllNatatkiDialog = false
-            }, onConfirmation = {
+            else stringResource(R.string.delite_all_natatki), onConfirmation = {
                 if (removeAllVybranaeDialog) {
                     for (perevod in 1..5) {
                         val prevodName = when (perevod.toString()) {
@@ -983,7 +992,10 @@ fun MainConteiner(
                     removeAllNatatkiDialog = false
                     removeAllNatatki = true
                 }
-            })
+            }) {
+            removeAllVybranaeDialog = false
+            removeAllNatatkiDialog = false
+        }
     }
     if (k.getInt("notification", Settings.NOTIFICATION_SVIATY_FULL) != Settings.NOTIFICATION_SVIATY_NONE) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

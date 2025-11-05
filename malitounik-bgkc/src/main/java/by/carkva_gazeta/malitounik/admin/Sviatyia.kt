@@ -1,7 +1,6 @@
 package by.carkva_gazeta.malitounik.admin
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
@@ -368,7 +367,7 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
             val endSelect = binding.apisanne.selectionEnd
             val text = binding.apisanne.text.toString()
             val build = with(StringBuilder()) {
-                append(text.substring(0, startSelect))
+                append(text.take(startSelect))
                 append("<strong>")
                 append(text.substring(startSelect, endSelect))
                 append("</strong>")
@@ -383,7 +382,7 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
             val endSelect = binding.apisanne.selectionEnd
             val text = binding.apisanne.text.toString()
             val build = with(StringBuilder()) {
-                append(text.substring(0, startSelect))
+                append(text.take(startSelect))
                 append("<em>")
                 append(text.substring(startSelect, endSelect))
                 append("</em>")
@@ -398,7 +397,7 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
             val endSelect = binding.apisanne.selectionEnd
             val text = binding.apisanne.text.toString()
             val build = with(StringBuilder()) {
-                append(text.substring(0, startSelect))
+                append(text.take(startSelect))
                 append("<font color=\"#d00505\">")
                 append(text.substring(startSelect, endSelect))
                 append("</font>")
@@ -412,7 +411,7 @@ class Sviatyia : BaseActivity(), View.OnClickListener {
             val endSelect = binding.apisanne.selectionEnd
             val text = binding.apisanne.text.toString()
             val build = with(StringBuilder()) {
-                append(text.substring(0, endSelect))
+                append(text.take(endSelect))
                 append("<br>")
                 append(text.substring(endSelect))
                 toString()

@@ -185,7 +185,7 @@ class Piarliny : BaseActivity(), View.OnClickListener, DialogDelite.DialogDelite
         binding.listView.setOnItemLongClickListener { _, _, position, _ ->
             var text = piarliny[position].data
             if (text.length > 30) {
-                text = text.substring(0, 30)
+                text = text.take(30)
                 text = "$text..."
             }
             val dialogDelite = DialogDelite.getInstance(position, text, false)
@@ -323,7 +323,7 @@ class Piarliny : BaseActivity(), View.OnClickListener, DialogDelite.DialogDelite
             val endSelect = binding.addPiarliny.selectionEnd
             val text = binding.addPiarliny.text.toString()
             val build = with(StringBuilder()) {
-                append(text.substring(0, startSelect))
+                append(text.take(startSelect))
                 append("<strong>")
                 append(text.substring(startSelect, endSelect))
                 append("</strong>")
@@ -338,7 +338,7 @@ class Piarliny : BaseActivity(), View.OnClickListener, DialogDelite.DialogDelite
             val endSelect = binding.addPiarliny.selectionEnd
             val text = binding.addPiarliny.text.toString()
             val build = with(StringBuilder()) {
-                append(text.substring(0, startSelect))
+                append(text.take(startSelect))
                 append("<em>")
                 append(text.substring(startSelect, endSelect))
                 append("</em>")
@@ -353,7 +353,7 @@ class Piarliny : BaseActivity(), View.OnClickListener, DialogDelite.DialogDelite
             val endSelect = binding.addPiarliny.selectionEnd
             val text = binding.addPiarliny.text.toString()
             val build = with(StringBuilder()) {
-                append(text.substring(0, startSelect))
+                append(text.take(startSelect))
                 append("<font color=\"#d00505\">")
                 append(text.substring(startSelect, endSelect))
                 append("</font>")
@@ -367,7 +367,7 @@ class Piarliny : BaseActivity(), View.OnClickListener, DialogDelite.DialogDelite
             val endSelect = binding.addPiarliny.selectionEnd
             val text = binding.addPiarliny.text.toString()
             val build = with(StringBuilder()) {
-                append(text.substring(0, endSelect))
+                append(text.take(endSelect))
                 append("<br>")
                 append(text.substring(endSelect))
                 toString()

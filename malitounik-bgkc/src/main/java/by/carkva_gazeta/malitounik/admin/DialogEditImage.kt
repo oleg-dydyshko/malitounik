@@ -92,7 +92,7 @@ class DialogEditImage : DialogFragment() {
             val t1 = path.lastIndexOf("/")
             val name = path.substring(t1 + 1)
             val t3 = name.lastIndexOf(".")
-            val fileNameT = name.substring(0, t3) + ".txt"
+            val fileNameT = name.take(t3) + ".txt"
             val file = File("${it.filesDir}/iconsApisanne/$fileNameT")
             if (file.exists()) {
                 binding.opisanie.setText(file.readText())

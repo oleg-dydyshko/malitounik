@@ -212,7 +212,7 @@ class SviatyiaPyxomyia : BaseActivity(), View.OnClickListener, DialogEditImage.D
                     Malitounik.referens.child("/chytanne/icons/$fileName").putFile(Uri.fromFile(localFile)).await()
                 }
                 val t1 = fileName.lastIndexOf(".")
-                val fileNameT = fileName.substring(0, t1) + ".txt"
+                val fileNameT = fileName.take(t1) + ".txt"
                 if (text != "") {
                     localFile.writer().use {
                         it.write(text)
@@ -257,7 +257,7 @@ class SviatyiaPyxomyia : BaseActivity(), View.OnClickListener, DialogEditImage.D
                 val endSelect = it.selectionEnd
                 val text = it.text.toString()
                 val build = with(StringBuilder()) {
-                    append(text.substring(0, startSelect))
+                    append(text.take(startSelect))
                     append("<strong>")
                     append(text.substring(startSelect, endSelect))
                     append("</strong>")
@@ -272,7 +272,7 @@ class SviatyiaPyxomyia : BaseActivity(), View.OnClickListener, DialogEditImage.D
                 val endSelect = it.selectionEnd
                 val text = it.text.toString()
                 val build = with(StringBuilder()) {
-                    append(text.substring(0, startSelect))
+                    append(text.take(startSelect))
                     append("<em>")
                     append(text.substring(startSelect, endSelect))
                     append("</em>")
@@ -287,7 +287,7 @@ class SviatyiaPyxomyia : BaseActivity(), View.OnClickListener, DialogEditImage.D
                 val endSelect = it.selectionEnd
                 val text = it.text.toString()
                 val build = with(StringBuilder()) {
-                    append(text.substring(0, startSelect))
+                    append(text.take(startSelect))
                     append("<font color=\"#d00505\">")
                     append(text.substring(startSelect, endSelect))
                     append("</font>")
@@ -301,7 +301,7 @@ class SviatyiaPyxomyia : BaseActivity(), View.OnClickListener, DialogEditImage.D
                 val endSelect = it.selectionEnd
                 val text = it.text.toString()
                 val build = with(StringBuilder()) {
-                    append(text.substring(0, endSelect))
+                    append(text.take(endSelect))
                     append("<br>")
                     append(text.substring(endSelect))
                     toString()

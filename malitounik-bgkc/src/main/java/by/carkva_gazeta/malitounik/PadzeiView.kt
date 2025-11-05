@@ -409,9 +409,9 @@ fun PadzeiaView(navController: NavHostController) {
             }
             Toast.makeText(context, context.getString(R.string.remove_padzea), Toast.LENGTH_SHORT).show()
             delitePadzia = false
-        }, onDismiss = {
+        }) {
             delitePadzia = false
-        })
+        }
     }
     Scaffold(
         topBar = {
@@ -1767,7 +1767,7 @@ fun DialogDelitePadsei(
 
 @Composable
 fun DialogContextMenu(
-    title: String, onEdit: () -> Unit, onDelite: () -> Unit, onDismiss: () -> Unit
+    title: String, editTitle: String = stringResource(R.string.redagaktirovat), onEdit: () -> Unit, onDelite: () -> Unit, onDismiss: () -> Unit
 ) {
     Dialog(onDismissRequest = { onDismiss() }) {
         Card(
@@ -1806,7 +1806,7 @@ fun DialogContextMenu(
                         modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.edit), tint = MaterialTheme.colorScheme.secondary, contentDescription = ""
                     )
                     Text(
-                        text = stringResource(R.string.redagaktirovat), modifier = Modifier.padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                        text = editTitle, modifier = Modifier.padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                     )
                 }
                 HorizontalDivider()

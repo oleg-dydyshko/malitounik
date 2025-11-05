@@ -181,9 +181,6 @@ fun BibliaMenu(
         }
         DialogDelite(
             title = stringResource(R.string.vybranoe_biblia_delite, titlePerevod),
-            onDismiss = {
-                isDeliteVybranaeAll = false
-            },
             onConfirmation = {
                 val prevodName = when (perevod) {
                     Settings.PEREVODSEMUXI -> "biblia"
@@ -200,7 +197,9 @@ fun BibliaMenu(
                 }
                 isDeliteVybranaeAll = false
             }
-        )
+        ) {
+            isDeliteVybranaeAll = false
+        }
     }
     LaunchedEffect(searchSettings, Settings.textFieldValueState.value) {
         if (searchSettings) {
@@ -439,9 +438,6 @@ fun BibliaMenu(
                     )
                     DialogDelite(
                         title = titleVybrenae,
-                        onDismiss = {
-                            removeItem = -1
-                        },
                         onConfirmation = {
                             list.removeAt(removeItem)
                             if (list.isEmpty() && file.exists()) {
@@ -453,7 +449,9 @@ fun BibliaMenu(
                             }
                             removeItem = -1
                         }
-                    )
+                    ) {
+                        removeItem = -1
+                    }
                 }
                 var collapsedState by remember { mutableStateOf(AppNavGraphState.setItemsValue(titlePerevod, true)) }
                 Column(

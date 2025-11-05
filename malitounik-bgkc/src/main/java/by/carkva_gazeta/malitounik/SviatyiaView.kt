@@ -721,7 +721,7 @@ fun loadOpisanieSviatyia(context: Context, year: Int, mun: Int, day: Int): Snaps
                 var textTitle = ""
                 var fulText = ""
                 if (t1 != -1) {
-                    textTitle = text.substring(0, t1 + 9)
+                    textTitle = text.take(t1 + 9)
                     fulText = text.substring(t1 + 9)
                 }
                 val spannedtitle = AnnotatedString.fromHtml(textTitle)
@@ -830,7 +830,7 @@ fun loadOpisanieSviat(context: Context, position: Int): SnapshotStateList<Opisan
                     var textTitle = ""
                     var fulText = ""
                     if (t1 != -1) {
-                        textTitle = res.substring(0, t1 + 9)
+                        textTitle = res.take(t1 + 9)
                         fulText = res.substring(t1 + 9)
                     }
                     val spannedtitle = AnnotatedString.fromHtml(textTitle)
@@ -908,7 +908,7 @@ suspend fun getIcons(
                 }
                 if (name.contains(imageSrc)) {
                     val t3 = name.lastIndexOf(".")
-                    val fileNameT = name.substring(0, t3) + ".txt"
+                    val fileNameT = name.take(t3) + ".txt"
                     val file = File("${context.filesDir}/iconsApisanne/$fileNameT")
                     try {
                         Malitounik.referens.child("/chytanne/iconsApisanne/$fileNameT").getFile(file).addOnFailureListener {

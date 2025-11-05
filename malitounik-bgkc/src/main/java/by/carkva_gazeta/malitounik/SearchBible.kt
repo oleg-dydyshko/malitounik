@@ -440,7 +440,7 @@ fun bogashlugbovya(context: Context, poshuk: String, secondRun: Boolean = false)
         for (aM in m) {
             val r = poshuk1.length - 1
             if (poshuk1[r] == aM && r >= 3) {
-                poshuk1 = poshuk1.replace(poshuk1, poshuk1.substring(0, r), registr)
+                poshuk1 = poshuk1.replace(poshuk1, poshuk1.take(r), registr)
             }
         }
     }
@@ -487,7 +487,7 @@ fun biblia(
             val r = poshuk1.length - 1
             if (poshuk1.length >= 3) {
                 if (poshuk1[r] == aM && r >= 3) {
-                    poshuk1 = poshuk1.replace(poshuk1, poshuk1.substring(0, r), registr)
+                    poshuk1 = poshuk1.replace(poshuk1, poshuk1.take(r), registr)
                 }
             }
         }
@@ -704,7 +704,7 @@ fun rawAsset(context: Context, poshukString: String, secondRun: Boolean = false)
             val r = poshuk.length - 1
             if (r >= 3) {
                 if (poshuk[r] == aM) {
-                    poshuk = poshuk.replace(poshuk, poshuk.substring(0, r), true)
+                    poshuk = poshuk.replace(poshuk, poshuk.take(r), true)
                 }
             }
         }

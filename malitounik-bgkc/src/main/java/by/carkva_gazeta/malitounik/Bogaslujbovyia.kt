@@ -125,7 +125,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.navigation.NavHostController
-import by.carkva_gazeta.malitounik.admin.PasochnicaList
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik.ui.theme.Button
 import by.carkva_gazeta.malitounik.ui.theme.Divider
@@ -135,6 +134,7 @@ import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.views.AppDropdownMenu
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
+import by.carkva_gazeta.malitounik.views.AppNavigationActions
 import by.carkva_gazeta.malitounik.views.DialogListinner
 import by.carkva_gazeta.malitounik.views.HtmlText
 import by.carkva_gazeta.malitounik.views.findCaliandarToDay
@@ -159,6 +159,9 @@ fun Bogaslujbovyia(
     val resursEncode = URLDecoder.decode(resurs, "UTF8")
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+    val navigationActions = remember(navController) {
+        AppNavigationActions(navController, k)
+    }
     var fontSize by remember { mutableFloatStateOf(k.getFloat("font_biblia", 22F)) }
     val vybranoeList = remember { ArrayList<VybranaeDataAll>() }
     var showDropdown by remember { mutableStateOf(false) }
@@ -559,7 +562,7 @@ fun Bogaslujbovyia(
                             }
                             if (isUtran && chtenie.contains("На ютрані", ignoreCase = true)) {
                                 val t1 = chtenie.indexOf("\n")
-                                if (t1 != -1) chtenie = chtenie.substring(0, t1)
+                                if (t1 != -1) chtenie = chtenie.take(t1)
                             }
                             listResource.add(SlugbovyiaTextuData(0, chtenie, "9", SlugbovyiaTextu.LITURHIJA))
                         }
@@ -575,7 +578,7 @@ fun Bogaslujbovyia(
                             }
                             if (isUtran && chtenie.contains("На ютрані", ignoreCase = true)) {
                                 val t1 = chtenie.indexOf("\n")
-                                if (t1 != -1) chtenie = chtenie.substring(0, t1)
+                                if (t1 != -1) chtenie = chtenie.take(t1)
                             }
                             listResource.add(SlugbovyiaTextuData(0, chtenie, "11", SlugbovyiaTextu.LITURHIJA))
                         }
@@ -949,22 +952,10 @@ fun Bogaslujbovyia(
                                             DropdownMenuItem(onClick = {
                                                 expandedUp = false
                                                 autoScroll = false
-                                                val intent = Intent(context, PasochnicaList::class.java)
+                                                Settings.bibleTime = true
                                                 val resAminEdit = if (iskniga) listResource[adminResourceEditPosition].resource
                                                 else resursEncode
-                                                val t1 = resAminEdit.lastIndexOf("/")
-                                                val t2 = resAminEdit.lastIndexOf(".")
-                                                val resursAdmin = if (t1 != -1) {
-                                                    if (t2 != -1) resAminEdit.substring(t1 + 1, t2)
-                                                    else resAminEdit.substring(t1 + 1)
-                                                } else {
-                                                    if (t2 != -1) resAminEdit.substring(0, t2)
-                                                    else resAminEdit
-                                                }
-                                                intent.putExtra("resours", resursAdmin)
-                                                intent.putExtra("title", if (iskniga) listResource[adminResourceEditPosition].title else title)
-                                                intent.putExtra("text", if (iskniga) subText else htmlText.replace("#ff6666", "#d00505", true))
-                                                context.startActivity(intent)
+                                                navigationActions.navigateToPiasochnicaList(resAminEdit)
                                             }, text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                                 Icon(
                                                     painter = painterResource(R.drawable.edit), contentDescription = ""
@@ -976,22 +967,10 @@ fun Bogaslujbovyia(
                                 if (k.getBoolean("admin", false) && (isBottomBar || iskniga)) {
                                     IconButton(onClick = {
                                         autoScroll = false
-                                        val intent = Intent(context, PasochnicaList::class.java)
+                                        Settings.bibleTime = true
                                         val resAminEdit = if (iskniga) listResource[adminResourceEditPosition].resource
                                         else resursEncode
-                                        val t1 = resAminEdit.lastIndexOf("/")
-                                        val t2 = resAminEdit.lastIndexOf(".")
-                                        val resursAdmin = if (t1 != -1) {
-                                            if (t2 != -1) resAminEdit.substring(t1 + 1, t2)
-                                            else resAminEdit.substring(t1 + 1)
-                                        } else {
-                                            if (t2 != -1) resAminEdit.substring(0, t2)
-                                            else resAminEdit
-                                        }
-                                        intent.putExtra("resours", resursAdmin)
-                                        intent.putExtra("title", if (iskniga) listResource[adminResourceEditPosition].title else title)
-                                        intent.putExtra("text", if (iskniga) subText else htmlText.replace("#ff6666", "#d00505", true))
-                                        context.startActivity(intent)
+                                        navigationActions.navigateToPiasochnicaList(resAminEdit)
                                     }) {
                                         Icon(
                                             painter = painterResource(R.drawable.edit), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary

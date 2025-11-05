@@ -562,7 +562,7 @@ private suspend fun getBibliateka(
                     mySqlList.add(pdfFileSize)
                     mySqlList.add(rubrika)
                     val t1 = pdf.lastIndexOf(".")
-                    val imageName = pdf.substring(0, t1) + ".png"
+                    val imageName = pdf.take(t1) + ".png"
                     saveImagePdf(context, imageName)
                     mySqlList.add(imageName)
                     temp.add(mySqlList)

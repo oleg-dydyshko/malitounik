@@ -154,7 +154,7 @@ class CytanniListItems(
     private val t1 = cytanne.indexOf(";")
     private val knigaText = if (t1 == -1) cytanne.substringBeforeLast(" ")
     else {
-        val sb = cytanne.substring(0, t1)
+        val sb = cytanne.take(t1)
         sb.substringBeforeLast(" ")
     }
     private val chteniaNewPage = knigaText + " ${page + 1}"
@@ -200,7 +200,7 @@ fun CytanniList(
             if (biblia == Settings.CHYTANNI_BIBLIA || biblia == Settings.CHYTANNI_VYBRANAE) {
                 if (t1 == -1) newCytanne.substringBeforeLast(" ")
                 else {
-                    val sb = newCytanne.substring(0, t1)
+                    val sb = newCytanne.take(t1)
                     sb.substringBeforeLast(" ")
                 }
             } else newCytanne
@@ -1678,7 +1678,7 @@ fun getBible(
                         if (check.isNotEmpty() && !check.isDigitsOnly()) {
                             t1 = itemList2.indexOf(" ", t1 + 1)
                         }
-                        knigaText = itemList2.substring(0, t1)
+                        knigaText = itemList2.take(t1)
                     } else {
                         if (list.size > 1) glavaStart = glavaEnd
                     }
@@ -1705,7 +1705,7 @@ fun getBible(
                         val subItemList = itemList2.substring(t1 + 1, t2)
                         t3 = subItemList.indexOf(".")
                         if (t3 != -1) {
-                            glavaStart = subItemList.substring(0, t3).toInt()
+                            glavaStart = subItemList.take(t3).toInt()
                             styxStart = subItemList.substring(t3 + 1).toInt()
                         } else {
                             if (list2.size > 1) {
@@ -1717,7 +1717,7 @@ fun getBible(
                         val subItemList2 = itemList2.substring(t2 + 1)
                         val t4 = subItemList2.indexOf(".")
                         if (t4 != -1) {
-                            glavaEnd = subItemList2.substring(0, t4).toInt()
+                            glavaEnd = subItemList2.take(t4).toInt()
                             styxEnd = subItemList2.substring(t4 + 1).toInt()
                         } else {
                             if (t3 != -1) {
@@ -1842,9 +1842,7 @@ fun getBible(
                                     var text = textBibleItem
                                     if (isInt) {
                                         val styx = textBibleItem.substring(t5, t6).toInt()
-                                        text = textBibleItem.substring(
-                                            0, t5
-                                        ) + "<font color=#D00505>$styx. </font>" + textBibleItem.substring(t6)
+                                        text = textBibleItem.take(t5) + "<font color=#D00505>$styx. </font>" + textBibleItem.substring(t6)
                                     }
                                     result.add(
                                         CytanniListData(

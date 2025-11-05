@@ -86,7 +86,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
         }
     }
 
-    override fun onScroll(t: Int, oldt: Int) {
+    override fun onScroll(t: Int) {
         positionY = t
     }
 
@@ -102,14 +102,14 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                 }
             }
             text.setSpan(URLSpan(url), startSelect, endSelect, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            text.append(text.substring(0, startSelect))
+            text.append(text.take(startSelect))
             text.append(titleUrl)
             text.append(text.substring(endSelect))
             binding.apisanne.text = text
         } else {
             val text = binding.apisanne.text.toString()
             val build = with(StringBuilder()) {
-                append(text.substring(0, startSelect))
+                append(text.take(startSelect))
                 append("<a href=\"$url\">")
                 append(titleUrl)
                 append("</a>")
@@ -385,14 +385,14 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                     }.await()
                     val t3 = dirToFile.lastIndexOf("/")
                     var newFile = dirToFile.substring(t3 + 1)
-                    val newDir = dirToFile.substring(0, t3 + 1)
+                    val newDir = dirToFile.take(t3 + 1)
                     if (!newFile.contains(".php", true)) {
                         newFile = newFile.replace("-", "_")
                     }
                     newFile = newFile.replace(" ", "_").lowercase()
                     val t7 = newFile.lastIndexOf(".")
                     if (t7 != -1) {
-                        var checkName = newFile.substring(0, t7)
+                        var checkName = newFile.take(t7)
                         val t2 = checkName.indexOf(".")
                         if (t2 != -1) {
                             checkName = checkName.replace(".", "_")
@@ -406,8 +406,8 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                     Malitounik.referens.child("/admin/piasochnica/" + fileName.replace("\n", " ")).delete().await()
                     val t6 = newFile.lastIndexOf(".")
                     if (t6 != -1) {
-                        this@Pasochnica.fileName = "(" + newFile.substring(0, t6) + ") " + newFile
-                        resours = newFile.substring(0, t6)
+                        this@Pasochnica.fileName = "(" + newFile.take(t6) + ") " + newFile
+                        resours = newFile.take(t6)
                         PasochnicaList.findDirAsSave.add("/$newDir$newFile")
                     }
                     var oldFile = ""
@@ -417,7 +417,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
                         oldFile = "(" + dirToFile.substring(t1 + 1) + ") "
                         val t2 = oldFile.lastIndexOf(".")
                         if (t2 != -1) {
-                            oldFile = oldFile.substring(0, t2) + ") "
+                            oldFile = oldFile.take(t2) + ") "
                         }
                         if (fileName.contains(".html")) {
                             val rt = localFile.readText()
@@ -787,7 +787,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
             stringres = stringres.replace("<u>", "")
             stringres = stringres.replace("</u>", "")
             val t3 = stringres.lastIndexOf("<br>")
-            result = stringres.substring(0, t3)
+            result = stringres.take(t3)
         }
         return result
     }
@@ -950,7 +950,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
             } else {
                 val text = binding.apisanne.text.toString()
                 val build = with(StringBuilder()) {
-                    append(text.substring(0, startSelect))
+                    append(text.take(startSelect))
                     append("<strong>")
                     append(text.substring(startSelect, endSelect))
                     append("</strong>")
@@ -981,7 +981,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
             } else {
                 val text = binding.apisanne.text.toString()
                 val build = with(StringBuilder()) {
-                    append(text.substring(0, startSelect))
+                    append(text.take(startSelect))
                     append("<em>")
                     append(text.substring(startSelect, endSelect))
                     append("</em>")
@@ -1012,7 +1012,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
             } else {
                 val text = binding.apisanne.text.toString()
                 val build = with(StringBuilder()) {
-                    append(text.substring(0, startSelect))
+                    append(text.take(startSelect))
                     append("<font color=\"#d00505\">")
                     append(text.substring(startSelect, endSelect))
                     append("</font>")
@@ -1028,7 +1028,7 @@ class Pasochnica : BaseActivity(), View.OnClickListener, DialogFileExists.Dialog
             val endSelect = binding.apisanne.selectionEnd
             val text = binding.apisanne.text.toString()
             val build = with(StringBuilder()) {
-                append(text.substring(0, endSelect))
+                append(text.take(endSelect))
                 append("<br>")
                 append(text.substring(endSelect))
                 toString()

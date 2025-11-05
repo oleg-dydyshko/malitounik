@@ -100,6 +100,7 @@ import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
+import by.carkva_gazeta.malitounik.views.AppNavigationActions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -111,6 +112,9 @@ import java.io.File
 fun SettingsView(navController: NavHostController) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+    val navigationActions = remember(navController) {
+        AppNavigationActions(navController, k)
+    }
     val view = LocalView.current
     SideEffect {
         val window = (view.context as Activity).window
@@ -466,6 +470,17 @@ fun SettingsView(navController: NavHostController) {
                     ), shape = MaterialTheme.shapes.small
                 ) {
                     Text(stringResource(R.string.site_admin), fontSize = (Settings.fontInterface - 2).sp, color = PrimaryText)
+                }
+                TextButton(
+                    onClick = {
+                        navigationActions.navigateToPiasochnicaList()
+                    }, modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(5.dp), colors = ButtonColors(
+                        Divider, Color.Unspecified, Color.Unspecified, Color.Unspecified
+                    ), shape = MaterialTheme.shapes.small
+                ) {
+                    Text(stringResource(R.string.pasochnica), fontSize = (Settings.fontInterface - 2).sp, color = PrimaryText)
                 }
             }
             Text(
