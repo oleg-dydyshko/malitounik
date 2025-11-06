@@ -355,9 +355,8 @@ fun PasochnicaListNew(navController: NavHostController, dirToFile: String) {
     if (dialogSetFileName) {
         DialogSetNameFile(fileList[position], setFileName = { fileName ->
             val oldFileName = fileList[position]
-            val isSite = !oldFileName.contains("/admin/piasochnica")
             fileList[position] = fileList[position].replace(oldFileName, fileName)
-            Piasochnica.getFileRenamePostRequest(oldFileName, fileName, isSite)
+            Piasochnica.getFileRenamePostRequest(oldFileName, fileName, false)
             dialogSetFileName = false
         }) {
             dialogSetFileName = false
