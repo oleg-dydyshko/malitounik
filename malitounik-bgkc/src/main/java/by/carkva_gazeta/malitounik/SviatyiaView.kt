@@ -7,11 +7,10 @@ import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -25,6 +24,7 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +34,8 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -41,17 +43,26 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
@@ -70,20 +81,29 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
@@ -96,13 +116,16 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavHostController
-import by.carkva_gazeta.malitounik.admin.Sviaty
-import by.carkva_gazeta.malitounik.admin.Sviatyia
+import by.carkva_gazeta.malitounik.ui.theme.Divider
+import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik.views.DropdownMenuBox
 import by.carkva_gazeta.malitounik.views.HtmlText
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -174,6 +197,11 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
     var checkPiarliny by remember { mutableStateOf(false) }
     var viewPiarliny by remember { mutableStateOf(false) }
     var fullImagePathVisable by remember { mutableStateOf("") }
+    var edit by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
+    var textFieldLoaded by remember { mutableStateOf(false) }
+    var textFieldValueStateTitle by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
+    val interactionSourse = remember { MutableInteractionSource() }
     BackHandler(!backPressHandled || imageFull || showDropdown) {
         when {
             imageFull -> imageFull = false
@@ -193,11 +221,13 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
             viewPiarliny = false
         }
     }
+    val svaity = remember { mutableStateListOf<ArrayList<String>>() }
+    var sviatyPosotion by rememberSaveable { mutableIntStateOf(0) }
+    val fileOpisanie = File("${context.filesDir}/sviatyja/opisanie$mun.json")
+    val fileSvity = File("${context.filesDir}/sviaty.json")
     LaunchedEffect(Unit) {
         coroutineScope.launch {
             isProgressVisable = true
-            val fileOpisanie = File("${context.filesDir}/sviatyja/opisanie$mun.json")
-            val fileSvity = File("${context.filesDir}/sviaty.json")
             if (!Settings.isNetworkAvailable(context)) {
                 if (svity) {
                     if (fileSvity.exists()) {
@@ -253,46 +283,6 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
             isProgressVisable = false
         }
     }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == 700) {
-            coroutineScope.launch {
-                try {
-                    if (Settings.isNetworkAvailable(context)) {
-                        val fileOpisanie = File("${context.filesDir}/sviatyja/opisanie$mun.json")
-                        val fileSvity = File("${context.filesDir}/sviaty.json")
-                        if (svity) {
-                            if (fileSvity.exists()) {
-                                sviatyiaList.clear()
-                                sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviat(context, position), true, position))
-                            }
-                            downloadOpisanieSviat(context)
-                            getIcons(context, dirList, loadOpisanieSviat(context, position), true, isloadIcons, position, wiFiExists = { dialoNoWIFI = true })
-                            if (!dialoNoWIFI) {
-                                sviatyiaList.clear()
-                                sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviat(context, position), true, position))
-                            }
-                        } else {
-                            if (fileOpisanie.exists()) {
-                                sviatyiaList.clear()
-                                sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviatyia(context, year, mun, day), false, position))
-                            }
-                            downloadOpisanieSviatyia(context, mun)
-                            getIcons(context, dirList, loadOpisanieSviatyia(context, year, mun, day), false, isloadIcons, position, wiFiExists = { dialoNoWIFI = true })
-                            if (!dialoNoWIFI) {
-                                sviatyiaList.clear()
-                                sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviatyia(context, year, mun, day), false, position))
-                            }
-                        }
-                        getPiarliny(context)
-                        checkPiarliny = checkParliny(context, mun, day)
-                    } else {
-                        dialoNoIntent = true
-                    }
-                } catch (_: Throwable) {
-                }
-            }
-        }
-    }
     var zoomAll by remember { mutableFloatStateOf(1f) }
     var offsetX by remember { mutableFloatStateOf(0f) }
     var offsetY by remember { mutableFloatStateOf(0f) }
@@ -300,6 +290,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
         offsetX = 0f
         offsetY = 0f
     }
+    var positionPasha by remember { mutableIntStateOf(0) }
     LaunchedEffect(fullscreen) {
         val controller =
             WindowCompat.getInsetsController((view.context as Activity).window, view)
@@ -311,6 +302,26 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
         } else {
             controller.show(WindowInsetsCompat.Type.systemBars())
             controller.show(WindowInsetsCompat.Type.navigationBars())
+        }
+    }
+    LaunchedEffect(edit) {
+        if (edit) {
+            coroutineScope.launch {
+                getSviatyiaFile(context = context, isLoad = {
+                    isProgressVisable = it
+                }) { list, svityia ->
+                    sviatyPosotion = 0
+                    svaity.clear()
+                    svaity.addAll(list)
+                    textFieldValueStateTitle = TextFieldValue(svityia)
+                    val arrayList = ArrayList<String>()
+                    arrayList.add("0")
+                    arrayList.add("0")
+                    arrayList.add("-1")
+                    arrayList.add(textFieldValueStateTitle.text)
+                    svaity.add(0, arrayList)
+                }
+            }
         }
     }
     Scaffold(
@@ -343,88 +354,214 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                         }
                     },
                     navigationIcon = {
-                        if (imageFull) {
-                            IconButton(
-                                onClick = {
-                                    imageFull = false
-                                },
-                                content = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.close),
-                                        tint = MaterialTheme.colorScheme.onSecondary,
-                                        contentDescription = ""
-                                    )
-                                })
+                        if (edit) {
+                            IconButton(onClick = {
+                                edit = false
+                            }, content = {
+                                Icon(
+                                    painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                                )
+                            })
                         } else {
-                            IconButton(
-                                onClick = {
-                                    when {
-                                        showDropdown -> {
-                                            showDropdown = false
-                                        }
+                            if (imageFull) {
+                                IconButton(
+                                    onClick = {
+                                        imageFull = false
+                                    },
+                                    content = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.close),
+                                            tint = MaterialTheme.colorScheme.onSecondary,
+                                            contentDescription = ""
+                                        )
+                                    })
+                            } else {
+                                IconButton(
+                                    onClick = {
+                                        when {
+                                            showDropdown -> {
+                                                showDropdown = false
+                                            }
 
-                                        else -> {
-                                            if (!backPressHandled) {
-                                                backPressHandled = true
-                                                navController.popBackStack()
+                                            else -> {
+                                                if (!backPressHandled) {
+                                                    backPressHandled = true
+                                                    navController.popBackStack()
+                                                }
                                             }
                                         }
-                                    }
-                                },
-                                content = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.arrow_back),
-                                        tint = MaterialTheme.colorScheme.onSecondary,
-                                        contentDescription = ""
-                                    )
-                                })
+                                    },
+                                    content = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.arrow_back),
+                                            tint = MaterialTheme.colorScheme.onSecondary,
+                                            contentDescription = ""
+                                        )
+                                    })
+                            }
                         }
                     },
                     actions = {
-                        if (checkPiarliny) {
+                        if (edit) {
                             IconButton({
-                                viewPiarliny = true
+                                saveFilesSvaityxISvait(context, svaity, sviatyPosotion, positionPasha, textFieldValueStateTitle.text, isLoad = {
+                                    isProgressVisable = it
+                                }) {
+                                    if (svity) {
+                                        if (fileSvity.exists()) {
+                                            val sviatyiaListLocale = loadOpisanieSviat(context, position)
+                                            sviatyiaList.clear()
+                                            sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, true, position))
+                                        } else {
+                                            dialoNoIntent = true
+                                        }
+                                    } else {
+                                        if (fileOpisanie.exists()) {
+                                            val sviatyiaListLocale = loadOpisanieSviatyia(context, year, mun, day)
+                                            sviatyiaList.clear()
+                                            sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, false, position))
+                                        } else {
+                                            dialoNoIntent = true
+                                        }
+                                    }
+                                }
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.book_white),
+                                    painter = painterResource(R.drawable.save),
                                     tint = PrimaryTextBlack,
                                     contentDescription = ""
                                 )
                             }
-                        }
-                        IconButton(onClick = {
-                            fullscreen = true
-                        }) {
-                            Icon(
-                                painter = painterResource(R.drawable.fullscreen),
-                                contentDescription = "",
-                                tint = MaterialTheme.colorScheme.onSecondary
-                            )
-                        }
-                        if (k.getBoolean("admin", false)) {
-                            VerticalDivider()
-                            IconButton(onClick = {
-                                if (svity) {
-                                    val intent = Intent(context, Sviaty::class.java)
-                                    intent.putExtra("day", sviatyiaList[0].date)
-                                    intent.putExtra("mun", sviatyiaList[0].mun)
-                                    launcher.launch(intent)
-                                } else {
-                                    val intent = Intent(context, Sviatyia::class.java)
-                                    intent.putExtra("dayOfYear", Settings.data[Settings.caliandarPosition][24].toInt())
-                                    launcher.launch(intent)
+                        } else {
+                            if (checkPiarliny) {
+                                IconButton({
+                                    viewPiarliny = true
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.book_white),
+                                        tint = PrimaryTextBlack,
+                                        contentDescription = ""
+                                    )
                                 }
+                            }
+                            IconButton(onClick = {
+                                fullscreen = true
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.edit),
+                                    painter = painterResource(R.drawable.fullscreen),
                                     contentDescription = "",
                                     tint = MaterialTheme.colorScheme.onSecondary
                                 )
+                            }
+                            if (k.getBoolean("admin", false)) {
+                                VerticalDivider()
+                                IconButton(onClick = {
+                                    imageFull = false
+                                    edit = true
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.edit),
+                                        contentDescription = "",
+                                        tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
                             }
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
                 )
+            }
+        },
+        bottomBar = {
+            if (edit) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .imePadding()
+                        .clickable(interactionSource = interactionSourse, indication = null) {}
+                        .padding(top = 10.dp)
+                        .background(MaterialTheme.colorScheme.onTertiary)
+                        .navigationBarsPadding(),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    IconButton(onClick = {
+                        val startSelect = textFieldValueStateTitle.selection.start
+                        val endSelect = textFieldValueStateTitle.selection.end
+                        val text = textFieldValueStateTitle.text
+                        val build = with(StringBuilder()) {
+                            append(text.take(startSelect))
+                            append("<strong>")
+                            append(text.substring(startSelect, endSelect))
+                            append("</strong>")
+                            append(text.substring(endSelect))
+                            toString()
+                        }
+                        textFieldValueStateTitle = TextFieldValue(build, TextRange(endSelect + 17))
+                    }) {
+                        Icon(
+                            painter = painterResource(R.drawable.bold_menu),
+                            contentDescription = "",
+                            tint = MaterialTheme.colorScheme.onSecondary
+                        )
+                    }
+                    IconButton(onClick = {
+                        val startSelect = textFieldValueStateTitle.selection.start
+                        val endSelect = textFieldValueStateTitle.selection.end
+                        val text = textFieldValueStateTitle.text
+                        val build = with(StringBuilder()) {
+                            append(text.take(startSelect))
+                            append("<em>")
+                            append(text.substring(startSelect, endSelect))
+                            append("</em>")
+                            append(text.substring(endSelect))
+                            toString()
+                        }
+                        textFieldValueStateTitle = TextFieldValue(build, TextRange(endSelect + 9))
+                    }) {
+                        Icon(
+                            painter = painterResource(R.drawable.italic),
+                            contentDescription = "",
+                            tint = MaterialTheme.colorScheme.onSecondary
+                        )
+                    }
+                    IconButton(onClick = {
+                        val startSelect = textFieldValueStateTitle.selection.start
+                        val endSelect = textFieldValueStateTitle.selection.end
+                        val text = textFieldValueStateTitle.text
+                        val build = with(StringBuilder()) {
+                            append(text.take(startSelect))
+                            append("<font color=\"#d00505\">")
+                            append(text.substring(startSelect, endSelect))
+                            append("</font>")
+                            append(text.substring(endSelect))
+                            toString()
+                        }
+                        textFieldValueStateTitle = TextFieldValue(build, TextRange(endSelect + 29))
+                    }) {
+                        Image(
+                            painter = painterResource(R.drawable.red_menu),
+                            contentDescription = ""
+                        )
+                    }
+                    IconButton(onClick = {
+                        val endSelect = textFieldValueStateTitle.selection.start
+                        val text = textFieldValueStateTitle.text
+                        val build = with(StringBuilder()) {
+                            append(text.take(endSelect))
+                            append("<br>")
+                            append(text.substring(endSelect))
+                            toString()
+                        }
+                        textFieldValueStateTitle = TextFieldValue(build, TextRange(endSelect + 4))
+                    }) {
+                        val icon = painterResource(R.drawable.br_menu)
+                        Icon(
+                            painter = icon,
+                            contentDescription = "",
+                            tint = MaterialTheme.colorScheme.onSecondary
+                        )
+                    }
+                }
             }
         }
     ) { innerPadding ->
@@ -507,82 +644,125 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                         item {
                             Spacer(Modifier.padding(top = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp))
                         }
-                        items(sviatyiaList.size) { index ->
-                            val file = File(sviatyiaList[index].image)
-                            SelectionContainer {
-                                Column {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Text(
-                                            modifier = Modifier
-                                                .padding(10.dp)
-                                                .weight(1f), text = sviatyiaList[index].title, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary
-                                        )
-                                        Icon(
-                                            modifier = Modifier
-                                                .padding(end = 10.dp)
-                                                .clickable {
-                                                    val sb = StringBuilder()
-                                                    sb.append(sviatyiaList[index].text)
-                                                    sb.append(sviatyiaList[index].text.trim())
-                                                    val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-                                                    val clip = ClipData.newPlainText(context.getString(R.string.copy_text), sb.toString())
-                                                    clipboard.setPrimaryClip(clip)
-                                                    if (file.exists()) {
-                                                        val sendIntent = Intent(Intent.ACTION_SEND)
-                                                        sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "by.carkva_gazeta.malitounik.fileprovider", file))
-                                                        sendIntent.putExtra(Intent.EXTRA_TEXT, sviatyiaList[index].text.trim())
-                                                        sendIntent.putExtra(Intent.EXTRA_SUBJECT, sviatyiaList[index].text.trim())
-                                                        sendIntent.type = "image/*"
-                                                        context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.zmiest)))
-                                                    } else {
-                                                        val sendIntent = Intent(Intent.ACTION_SEND)
-                                                        sendIntent.putExtra(Intent.EXTRA_TEXT, sb.toString())
-                                                        sendIntent.putExtra(Intent.EXTRA_SUBJECT, context.getText(R.string.zmiest))
-                                                        sendIntent.type = "text/plain"
-                                                        context.startActivity(Intent.createChooser(sendIntent, context.getText(R.string.zmiest)))
-                                                    }
-                                                    Toast.makeText(context, context.getString(R.string.copy), Toast.LENGTH_SHORT).show()
-                                                }, painter = painterResource(R.drawable.share), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
-                                        )
-                                    }
-                                    if (file.exists()) {
-                                        try {
-                                            BitmapFactory.decodeFile(sviatyiaList[index].image).asImageBitmap()
-                                        } catch (_: Throwable) {
-                                            file.delete()
+                        if (edit) {
+                            item {
+                                Column(modifier = Modifier.fillMaxWidth()) {
+                                    if (svaity.isNotEmpty()) {
+                                        DropdownMenuBoxSvityia(
+                                            menuList = svaity
+                                        ) {
+                                            sviatyPosotion = it
+                                            positionPasha = svaity[sviatyPosotion][2].toInt()
+                                            textFieldValueStateTitle = TextFieldValue(svaity[sviatyPosotion][3])
                                         }
                                     }
-                                    if (file.exists()) {
-                                        val image = BitmapFactory.decodeFile(sviatyiaList[index].image).asImageBitmap()
-                                        var imW = image.width.toFloat()
-                                        var imH = image.height.toFloat()
-                                        val imageScale: Float = imW / imH
-                                        if (imW > 150F) {
-                                            imW = 150F
-                                            imH = 150F / imageScale
+                                    if (svaity.isNotEmpty() && svaity[sviatyPosotion][2].toInt() >= 0) {
+                                        DropdownMenuBox(
+                                            initValue = positionPasha,
+                                            menuList = stringArrayResource(R.array.admin_svity_data)
+                                        ) {
+                                            positionPasha = it
                                         }
-                                        Image(
-                                            modifier = Modifier
-                                                .size(imW.dp, imH.dp)
-                                                .align(Alignment.CenterHorizontally)
-                                                .clickable {
-                                                    fullImagePathVisable = file.absolutePath
-                                                    imageFull = true
-                                                }, bitmap = image, contentDescription = ""
-                                        )
-                                        val t3 = file.name.lastIndexOf(".")
-                                        val fileNameT = file.name.substring(0, t3) + ".txt"
-                                        val fileImageOpis = File("${context.filesDir}/iconsApisanne/$fileNameT")
-                                        if (fileImageOpis.exists()) {
+                                    }
+                                    TextField(
+                                        textStyle = TextStyle(fontSize = Settings.fontInterface.sp),
+                                        placeholder = { Text(stringResource(R.string.sviatyia), fontSize = Settings.fontInterface.sp) },
+                                        value = textFieldValueStateTitle,
+                                        onValueChange = {
+                                            textFieldValueStateTitle = it
+                                        },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .imePadding()
+                                            .focusRequester(focusRequester)
+                                            .onGloballyPositioned {
+                                                if (!textFieldLoaded) {
+                                                    focusRequester.requestFocus()
+                                                    textFieldLoaded = true
+                                                }
+                                            },
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Default)
+                                    )
+                                }
+                            }
+                        } else {
+                            items(sviatyiaList.size) { index ->
+                                val file = File(sviatyiaList[index].image)
+                                SelectionContainer {
+                                    Column {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
                                             Text(
                                                 modifier = Modifier
                                                     .padding(10.dp)
-                                                    .fillMaxWidth(), text = fileImageOpis.readText(), fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary, textAlign = TextAlign.Center, fontStyle = FontStyle.Italic
+                                                    .weight(1f), text = sviatyiaList[index].title, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary
+                                            )
+                                            Icon(
+                                                modifier = Modifier
+                                                    .padding(end = 10.dp)
+                                                    .clickable {
+                                                        val sb = StringBuilder()
+                                                        sb.append(sviatyiaList[index].text)
+                                                        sb.append(sviatyiaList[index].text.trim())
+                                                        val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                                                        val clip = ClipData.newPlainText(context.getString(R.string.copy_text), sb.toString())
+                                                        clipboard.setPrimaryClip(clip)
+                                                        if (file.exists()) {
+                                                            val sendIntent = Intent(Intent.ACTION_SEND)
+                                                            sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "by.carkva_gazeta.malitounik.fileprovider", file))
+                                                            sendIntent.putExtra(Intent.EXTRA_TEXT, sviatyiaList[index].text.trim())
+                                                            sendIntent.putExtra(Intent.EXTRA_SUBJECT, sviatyiaList[index].text.trim())
+                                                            sendIntent.type = "image/*"
+                                                            context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.zmiest)))
+                                                        } else {
+                                                            val sendIntent = Intent(Intent.ACTION_SEND)
+                                                            sendIntent.putExtra(Intent.EXTRA_TEXT, sb.toString())
+                                                            sendIntent.putExtra(Intent.EXTRA_SUBJECT, context.getText(R.string.zmiest))
+                                                            sendIntent.type = "text/plain"
+                                                            context.startActivity(Intent.createChooser(sendIntent, context.getText(R.string.zmiest)))
+                                                        }
+                                                        Toast.makeText(context, context.getString(R.string.copy), Toast.LENGTH_SHORT).show()
+                                                    }, painter = painterResource(R.drawable.share), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
                                             )
                                         }
-                                    }
-                                    if (sviatyiaList[index].text.isNotEmpty()) {
-                                        Text(modifier = Modifier.padding(10.dp), text = sviatyiaList[index].text, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary)
+                                        if (file.exists()) {
+                                            try {
+                                                BitmapFactory.decodeFile(sviatyiaList[index].image).asImageBitmap()
+                                            } catch (_: Throwable) {
+                                                file.delete()
+                                            }
+                                        }
+                                        if (file.exists()) {
+                                            val image = BitmapFactory.decodeFile(sviatyiaList[index].image).asImageBitmap()
+                                            var imW = image.width.toFloat()
+                                            var imH = image.height.toFloat()
+                                            val imageScale: Float = imW / imH
+                                            if (imW > 150F) {
+                                                imW = 150F
+                                                imH = 150F / imageScale
+                                            }
+                                            Image(
+                                                modifier = Modifier
+                                                    .size(imW.dp, imH.dp)
+                                                    .align(Alignment.CenterHorizontally)
+                                                    .clickable {
+                                                        fullImagePathVisable = file.absolutePath
+                                                        imageFull = true
+                                                    }, bitmap = image, contentDescription = ""
+                                            )
+                                            val t3 = file.name.lastIndexOf(".")
+                                            val fileNameT = file.name.substring(0, t3) + ".txt"
+                                            val fileImageOpis = File("${context.filesDir}/iconsApisanne/$fileNameT")
+                                            if (fileImageOpis.exists()) {
+                                                Text(
+                                                    modifier = Modifier
+                                                        .padding(10.dp)
+                                                        .fillMaxWidth(), text = fileImageOpis.readText(), fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary, textAlign = TextAlign.Center, fontStyle = FontStyle.Italic
+                                                )
+                                            }
+                                        }
+                                        if (sviatyiaList[index].text.isNotEmpty()) {
+                                            Text(modifier = Modifier.padding(10.dp), text = sviatyiaList[index].text, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary)
+                                        }
                                     }
                                 }
                             }
@@ -595,6 +775,177 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
             }
         }
     }
+}
+
+fun saveFilesSvaityxISvait(context: Context, svityList: SnapshotStateList<ArrayList<String>>, sviatyPosotion: Int, pasxaPosition: Int, apisanne: String, isLoad: (Boolean) -> Unit, finishSave: () -> Unit) {
+    if (Settings.isNetworkAvailable(context)) {
+        CoroutineScope(Dispatchers.Main).launch {
+            isLoad(true)
+            try {
+                val checkSaveFile = svityList[sviatyPosotion][2].toInt()
+                when (checkSaveFile) {
+                    -1 -> {
+                        try {
+                            val mun = Settings.data[Settings.caliandarPosition][2].toInt()
+                            val data = Settings.data[Settings.caliandarPosition][1].toInt()
+                            val localFile = File("${context.filesDir}/cache/cache.txt")
+                            val localFile4 = File("${context.filesDir}/sviatyja/opisanie" + (mun + 1) + ".json")
+                            var builder = ""
+                            Malitounik.referens.child("/chytanne/sviatyja/opisanie" + (mun + 1) + ".json").getFile(localFile).addOnCompleteListener {
+                                if (it.isSuccessful) {
+                                    builder = localFile.readText()
+                                } else {
+                                    Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
+                                }
+                            }.await()
+                            val gson = Gson()
+                            if (builder != "") {
+                                val type = TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
+                                val arrayList: ArrayList<String> = gson.fromJson(builder, type)
+                                arrayList[data - 1] = apisanne.replace(" ", " ")
+                                localFile4.writer().use {
+                                    it.write(gson.toJson(arrayList, type))
+                                }
+                                Malitounik.referens.child("/chytanne/sviatyja/opisanie" + (mun + 1) + ".json").putFile(Uri.fromFile(localFile4)).addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        Toast.makeText(context, context.getString(R.string.save), Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
+                                    }
+                                }.await()
+                                finishSave()
+                            }
+                        } catch (_: Throwable) {
+                            Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                    -2 -> {
+                        try {
+                            val arrayList = ArrayList<ArrayList<String>>()
+                            for (i in svityList.indices) {
+                                if (svityList[i][2].toInt() == -2) {
+                                    val preList = ArrayList<String>()
+                                    preList.add(svityList[i][0])
+                                    preList.add(svityList[i][1])
+                                    preList.add(if (sviatyPosotion == i) apisanne else svityList[i][3])
+                                    arrayList.add(preList)
+                                }
+                            }
+                            val localFile = File("${context.filesDir}/sviatyja/opisanie13.json")
+                            val gson = Gson()
+                            val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
+                            localFile.writer().use {
+                                it.write(gson.toJson(arrayList, type))
+                            }
+                            Malitounik.referens.child("/chytanne/sviatyja/opisanie13.json").putFile(Uri.fromFile(localFile)).addOnCompleteListener {
+                                if (it.isSuccessful) {
+                                    Toast.makeText(context, context.getString(R.string.save), Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
+                                }
+                            }.await()
+                            finishSave()
+                        } catch (_: Throwable) {
+                            Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                    else -> {
+                        try {
+                            val newArrayList = ArrayList<ArrayList<String>>()
+                            for (i in svityList.indices) {
+                                if (svityList[i][2].toInt() >= 0) {
+                                    val preList = ArrayList<String>()
+                                    preList.add(svityList[i][0])
+                                    preList.add(svityList[i][1])
+                                    preList.add(if (sviatyPosotion == i) pasxaPosition.toString() else svityList[i][2])
+                                    preList.add(if (sviatyPosotion == i) apisanne else svityList[i][3])
+                                    newArrayList.add(preList)
+                                }
+                            }
+                            val localFile = File("${context.filesDir}/sviaty.json")
+                            val gson = Gson()
+                            val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
+                            localFile.writer().use {
+                                it.write(gson.toJson(newArrayList, type))
+                            }
+                            Malitounik.referens.child("/sviaty.json").putFile(Uri.fromFile(localFile)).addOnCompleteListener {
+                                if (it.isSuccessful) {
+                                    Toast.makeText(context, context.getString(R.string.save), Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
+                                }
+                            }.await()
+                            finishSave()
+                        } catch (_: Throwable) {
+                            Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            } catch (_: Throwable) {
+                Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+            }
+            isLoad(false)
+        }
+    }
+}
+
+suspend fun getSviatyiaFile(context: Context, isLoad: (Boolean) -> Unit, setSviatyia: (ArrayList<ArrayList<String>>, String) -> Unit) {
+    isLoad(true)
+    val localFile = File("${context.filesDir}/cache/cache2.txt")
+    val arrayList = ArrayList<String>()
+    val pyxomyiaList = ArrayList<ArrayList<String>>()
+    Malitounik.referens.child("/chytanne/sviatyja/opisanie" + (Settings.data[Settings.caliandarPosition][2].toInt() + 1) + ".json").getFile(localFile).addOnCompleteListener {
+        if (it.isSuccessful) {
+            try {
+                val builder = localFile.readText()
+                val gson = Gson()
+                val type = TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
+                arrayList.addAll(gson.fromJson(builder, type))
+            } catch (_: Throwable) {
+                Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
+        }
+    }.await()
+    val localFile2 = File("${context.filesDir}/cache/cache3.txt")
+    Malitounik.referens.child("/chytanne/sviatyja/opisanie13.json").getFile(localFile2).addOnCompleteListener {
+        if (it.isSuccessful) {
+            try {
+                val gson = Gson()
+                val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
+                pyxomyiaList.addAll(gson.fromJson(localFile2.readText(), type))
+                pyxomyiaList.forEach { list ->
+                    list.add(2, "-2")
+                }
+            } catch (_: Throwable) {
+                Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
+        }
+    }.await()
+    val newArrayList = ArrayList<ArrayList<String>>()
+    val localFile1 = File("${context.filesDir}/cache/cache1.txt")
+    Malitounik.referens.child("/sviaty.json").getFile(localFile1).addOnCompleteListener {
+        if (it.isSuccessful) {
+            try {
+                val builder = localFile1.readText()
+                val gson = Gson()
+                val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
+                newArrayList.addAll(gson.fromJson(builder, type))
+                newArrayList.addAll(pyxomyiaList)
+                setSviatyia(newArrayList, arrayList[Settings.data[Settings.caliandarPosition][1].toInt() - 1])
+            } catch (_: Throwable) {
+                Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
+        }
+    }.await()
+    isLoad(false)
 }
 
 suspend fun downloadOpisanieSviat(context: Context, count: Int = 0) {
@@ -1129,6 +1480,72 @@ fun DialogPairlinyView(
                         Text(stringResource(R.string.close), fontSize = 18.sp)
                     }
                 }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DropdownMenuBoxSvityia(
+    menuList: SnapshotStateList<ArrayList<String>>,
+    onClickItem: (Int) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val datam = menuList[0][3]
+    val t1 = datam.indexOf("</strong>")
+    val title = if (t1 != -1) AnnotatedString.fromHtml(datam.take(t1)).toString()
+    else AnnotatedString.fromHtml(datam.take(30)).toString()
+    val textFieldNotificstionState = rememberTextFieldState(title)
+    ExposedDropdownMenuBox(
+        modifier = Modifier.padding(10.dp),
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+    ) {
+        Row(
+            modifier = Modifier
+                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                .clip(MaterialTheme.shapes.small)
+                .clickable {}
+                .background(Divider)
+                .fillMaxWidth()
+                .padding(horizontal = 5.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .weight(1f),
+                text = textFieldNotificstionState.text.toString(),
+                fontSize = (Settings.fontInterface - 2).sp,
+                color = PrimaryText,
+            )
+            Icon(
+                modifier = Modifier
+                    .padding(start = 21.dp, end = 2.dp)
+                    .size(22.dp, 22.dp),
+                painter = painterResource(if (expanded) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
+                tint = PrimaryText,
+                contentDescription = ""
+            )
+        }
+        ExposedDropdownMenu(
+            containerColor = Divider,
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+            menuList.forEachIndexed { index, option ->
+                val datam = option[3]
+                val t1 = datam.indexOf("</strong>")
+                val title = if (t1 != -1) AnnotatedString.fromHtml(datam.take(t1)).toString()
+                else AnnotatedString.fromHtml(datam.take(30)).toString()
+                DropdownMenuItem(
+                    text = { Text(title, fontSize = Settings.fontInterface.sp) }, onClick = {
+                        textFieldNotificstionState.setTextAndPlaceCursorAtEnd(title)
+                        expanded = false
+                        onClickItem(index)
+                    }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding, colors = MenuDefaults.itemColors(textColor = PrimaryText)
+                )
             }
         }
     }

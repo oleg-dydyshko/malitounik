@@ -16,6 +16,7 @@ import android.text.style.URLSpan
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -614,6 +615,145 @@ object Piasochnica {
             getOrSendFilePostRequest(resours, htmlText.toString(), saveAs)
         }
     }
+
+    fun sendPostRequest(svityia: String, chtenieSvaitomu: String, style: Int, tipicon: String, titleCytanne: String, cytanne: String, dayOfPascha: Int, isLoad: (Boolean) -> Unit) {
+        val context = Malitounik.applicationContext()
+        if (Settings.isNetworkAvailable(context)) {
+            CoroutineScope(Dispatchers.Main).launch {
+                isLoad(true)
+                var myTipicon = tipicon
+                if (myTipicon == "0") myTipicon = ""
+                if (svityia != "") {
+                    var myStyle = 8
+                    when (style) {
+                        0 -> myStyle = 6
+                        1 -> myStyle = 7
+                        2 -> myStyle = 8
+                    }
+                    val localFile2 = File("${context.filesDir}/cache/cache.txt")
+                    val sviatyiaNewList = ArrayList<ArrayList<String>>()
+                    Malitounik.referens.child("/calendarsviatyia.txt").getFile(localFile2).addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            val sviatyiaNew = localFile2.readLines()
+                            for (element in sviatyiaNew) {
+                                val re1 = element.split("<>")
+                                val list = ArrayList<String>()
+                                for (element2 in re1) {
+                                    list.add(element2)
+                                }
+                                sviatyiaNewList.add(list)
+                            }
+                            if (sviatyiaNewList[Settings.data[Settings.caliandarPosition][24].toInt() - 1][0] != svityia || sviatyiaNewList[Settings.data[Settings.caliandarPosition][24].toInt() - 1][1] != chtenieSvaitomu || sviatyiaNewList[Settings.data[Settings.caliandarPosition][24].toInt() - 1][2] != myStyle.toString() || sviatyiaNewList[Settings.data[Settings.caliandarPosition][24].toInt() - 1][3] != myTipicon) {
+                                sviatyiaNewList[Settings.data[Settings.caliandarPosition][24].toInt() - 1][0] = svityia
+                                sviatyiaNewList[Settings.data[Settings.caliandarPosition][24].toInt() - 1][1] = chtenieSvaitomu
+                                sviatyiaNewList[Settings.data[Settings.caliandarPosition][24].toInt() - 1][2] = myStyle.toString()
+                                sviatyiaNewList[Settings.data[Settings.caliandarPosition][24].toInt() - 1][3] = myTipicon
+                            }
+                        } else {
+                            Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
+                        }
+                    }.await()
+                    val sb = StringBuilder()
+                    for (i in 0 until 366) {
+                        sb.append(sviatyiaNewList[i][0] + "<>" + sviatyiaNewList[i][1] + "<>" + sviatyiaNewList[i][2] + "<>" + sviatyiaNewList[i][3] + "\n")
+                    }
+                    val localFile3 = File("${context.filesDir}/cache/cache2.txt")
+                    if (sviatyiaNewList.isNotEmpty()) {
+                        localFile3.writer().use {
+                            it.write(sb.toString())
+                        }
+                    }
+                    sb.clear()
+                    if (sviatyiaNewList.isNotEmpty()) {
+                        Malitounik.referens.child("/calendarsviatyia.txt").putFile(Uri.fromFile(localFile3)).await()
+                    }
+                } else {
+                    Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
+                }
+                val localFile1 = File("${context.filesDir}/cache/cache3.txt")
+                val localFile3 = File("${context.filesDir}/cache/cache4.txt")
+                val year = Settings.data[Settings.caliandarPosition][3].toInt()
+                val sb = StringBuilder()
+                val preList = "<?php\n" +
+                        "/***********************************************************************\n" +
+                        "*                      Літургічны каляндар                             *\n" +
+                        "* ==================================================================== *\n" +
+                        "*                                                                      *\n" +
+                        "* Copyright (c) 2014 by Oleg Dydyshko                                  *\n" +
+                        "* http://carkva-gazeta.by                                              *\n" +
+                        "*                                                                      *\n" +
+                        "* This program is free software. You can redistribute it and/or modify *\n" +
+                        "* it under the terms of the GNU General Public License as published by *\n" +
+                        "* the Free Software Foundation; either version 2 of the License.       *\n" +
+                        "*                                                                      *\n" +
+                        "***********************************************************************/\n" +
+                        "\n" +
+                        "//Здесь Очередные чтения, Святые и праздники привязаные к Пасхе\n" +
+                        "//\n" +
+                        "/*******************************************************************************\n" +
+                        "* Основной формат: Лк 10.38-11.2, Лк 10.38-42                                  *\n" +
+                        "* Допустимые значения: Лк 10.38, 10.38-11.2, 10.38-42, 10.38, 38               *\n" +
+                        "* Недостающие элементы чтений автоматически добавляются из предыдущего чтения  *\n" +
+                        "* Расположение других элементов - произвольно                                  *\n" +
+                        "* Тэг <br> - перенос строки                                                    *\n" +
+                        "* BAG(ошибка): чтение Дз 6.8-7.5, 47-60 выведет Дз 6.8-7.5, Дз 6.47-60         *\n" +
+                        "* BAG 2: Ян 6.35б-39 выведет Ян 6.35-39                                        *\n" +
+                        "********************************************************************************/\n"
+                sb.append(preList)
+                Malitounik.referens.child("/calendar-cytanne_$year.php").getFile(localFile1).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        var countDay = 0
+                        var countDayNovyGog = 0
+                        var calPos = 0
+                        var calPosNovyGod = -1
+                        Settings.data.forEachIndexed { index, strings ->
+                            if (strings[3].toInt() == year && calPosNovyGod == -1) {
+                                calPosNovyGod = index
+                            }
+                            if (strings[22].toInt() == 0 && strings[3].toInt() == year) {
+                                calPos = index
+                                return@forEachIndexed
+                            }
+                        }
+                        localFile1.forEachLine { fw ->
+                            if (fw.contains($$"$calendar[]")) {
+                                var c = Settings.data[calPos + countDay]//GregorianCalendar(year, monthP - 1, dataP + countDay)
+                                var myDayOfPasha = c[22].toInt()
+                                if (c[3].toInt() != year) {
+                                    c = Settings.data[calPosNovyGod + countDayNovyGog]
+                                    myDayOfPasha = c[22].toInt()
+                                    countDayNovyGog++
+                                }
+                                countDay++
+                                if (dayOfPascha == myDayOfPasha) {
+                                    sb.append($$"$calendar[]=array(\"cviaty\"=>\"$${titleCytanne}\", \"cytanne\"=>\"\".$ahref.\"$${cytanne}</a>\");\n")
+                                } else {
+                                    sb.append("$fw\n")
+                                }
+                            }
+                        }
+                        sb.append("?>")
+                        localFile3.writer().use {
+                            it.write(sb.toString())
+                        }
+                    } else {
+                        Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
+                    }
+                }.await()
+                Malitounik.referens.child("/calendar-cytanne_$year.php").putFile(Uri.fromFile(localFile3)).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Toast.makeText(context, context.getString(R.string.save), Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
+                    }
+                }.await()
+                saveLogFile()
+                isLoad(false)
+            }
+        } else {
+            Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+        }
+    }
 }
 
 @Suppress("COMPOSE_APPLIER_CALL_MISMATCH")
@@ -723,10 +863,6 @@ fun PiasochnicaNew(
                     }
                 }
                 text.setSpan(URLSpan(dialogUrl), startSelect, endSelect, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                /*text.append(text.substring(0, startSelect))
-                text.append(text.substring(startSelect, endSelect))
-                text.append(text.substring(endSelect))
-                editText.text = text*/
             } else {
                 val text = editText.text.toString()
                 val build = with(StringBuilder()) {
@@ -995,10 +1131,9 @@ fun PiasochnicaNew(
                     }
                     Piasochnica.addHistory(editText.text, editText.selectionEnd)
                 }) {
-                    Icon(
+                    Image(
                         painter = painterResource(R.drawable.red_menu),
-                        contentDescription = "",
-                        tint = MaterialTheme.colorScheme.onSecondary
+                        contentDescription = ""
                     )
                 }
                 if (!Piasochnica.isHTML) {

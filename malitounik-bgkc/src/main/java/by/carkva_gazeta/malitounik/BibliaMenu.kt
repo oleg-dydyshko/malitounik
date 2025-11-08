@@ -59,6 +59,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -75,6 +76,7 @@ import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.TitleCalendarMounth
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
+import by.carkva_gazeta.malitounik.views.DropdownMenuBox
 import by.carkva_gazeta.malitounik.views.HtmlText
 import by.carkva_gazeta.malitounik.views.openAssetsResources
 import com.google.gson.Gson
@@ -235,7 +237,15 @@ fun BibliaMenu(
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     if (perevod != Settings.PEREVODNADSAN) {
-                        DropdownMenuBox(onSearchStart = { searchSettings = true })
+                        DropdownMenuBox(
+                            initValue = k.getInt("biblia_seash", 0),
+                            menuList = stringArrayResource(R.array.serche_bible)
+                        ) { index ->
+                            k.edit {
+                                putInt("biblia_seash", index)
+                            }
+                            searchSettings = true
+                        }
                     }
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -1071,7 +1081,9 @@ fun DialogImage(
                         .fillMaxWidth(), contentScale = ContentScale.FillWidth
                 )
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 2.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(

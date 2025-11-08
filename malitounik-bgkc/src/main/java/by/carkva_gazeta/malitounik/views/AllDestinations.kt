@@ -30,6 +30,7 @@ import by.carkva_gazeta.malitounik.views.AllDestinations.PIASOCHNICA_LIST
 import by.carkva_gazeta.malitounik.views.AllDestinations.PRANAS
 import by.carkva_gazeta.malitounik.views.AllDestinations.SEARCH_BIBLIA
 import by.carkva_gazeta.malitounik.views.AllDestinations.SETTINGS_VIEW
+import by.carkva_gazeta.malitounik.views.AllDestinations.SVIATY
 import by.carkva_gazeta.malitounik.views.AllDestinations.SVITYIA_VIEW
 import by.carkva_gazeta.malitounik.views.AllDestinations.UMOUNIA_ZNACHENNI
 import by.carkva_gazeta.malitounik.views.AllDestinations.UNDER_PADRYXTOUKA
@@ -87,6 +88,7 @@ object AllDestinations {
     const val CYTATY_MENU = "cytaty"
     const val PIASOCHNICA_LIST = "Piasochnica_List"
     const val PIASOCHNICA = "Piasochnica"
+    const val SVIATY = "Sviaty"
 }
 
 class AppNavigationActions(private val navController: NavHostController, k: SharedPreferences) {
@@ -394,6 +396,12 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
     fun navigateToPiasochnica(resurs: String) {
         navController.navigate("$PIASOCHNICA/" + URLEncoder.encode(resurs, "UTF8")) {
             PIASOCHNICA
+        }
+    }
+
+    fun navigateToSvity() {
+        navController.navigate(SVIATY) {
+            SVIATY
         }
     }
 }

@@ -1079,6 +1079,7 @@ fun getFontInterface(context: Context): Float {
 class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMaryia.ServiceRadyjoMaryiaListener {
     private var backPressed: Long = 0
     private var isGesture = false
+    var savedInstanceState: Bundle? = null
     var isConnectServise = false
     var mRadyjoMaryiaService: ServiceRadyjoMaryia? = null
     val mConnection = object : ServiceConnection {
@@ -1125,6 +1126,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        this.savedInstanceState = savedInstanceState
         val k = getSharedPreferences("biblia", MODE_PRIVATE)
         if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) {
             setlightSensor()

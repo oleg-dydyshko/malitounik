@@ -348,69 +348,6 @@ fun SearchBible(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DropdownMenuBox(
-    onSearchStart: () -> Unit
-) {
-    val context = LocalContext.current
-    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-    val options = stringArrayResource(R.array.serche_bible)
-    var expanded by remember { mutableStateOf(false) }
-    val textFieldNotificstionState = rememberTextFieldState(options[k.getInt("biblia_seash", 0)])
-    ExposedDropdownMenuBox(
-        modifier = Modifier.padding(10.dp),
-        expanded = expanded,
-        onExpandedChange = { expanded = it },
-    ) {
-        Row(
-            modifier = Modifier
-                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-                .clip(MaterialTheme.shapes.small)
-                .clickable {}
-                .background(Divider)
-                .fillMaxWidth()
-                .padding(horizontal = 5.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .weight(1f),
-                text = textFieldNotificstionState.text.toString(),
-                fontSize = (Settings.fontInterface - 2).sp,
-                color = PrimaryText,
-            )
-            Icon(
-                modifier = Modifier
-                    .padding(start = 21.dp, end = 2.dp)
-                    .size(22.dp, 22.dp),
-                painter = painterResource(if (expanded) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
-                tint = PrimaryText,
-                contentDescription = ""
-            )
-        }
-        ExposedDropdownMenu(
-            containerColor = Divider,
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-        ) {
-            options.forEachIndexed { index, option ->
-                DropdownMenuItem(
-                    text = { Text(option, fontSize = Settings.fontInterface.sp) }, onClick = {
-                        textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option)
-                        expanded = false
-                        k.edit {
-                            putInt("biblia_seash", index)
-                        }
-                        onSearchStart()
-                    }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding, colors = MenuDefaults.itemColors(textColor = PrimaryText)
-                )
-            }
-        }
-    }
-}
-
 fun doInBackground(
     context: Context, searche: String, perevod: String, isBogaslujbovyiaSearch: Boolean
 ): ArrayList<SearchBibleItem> {

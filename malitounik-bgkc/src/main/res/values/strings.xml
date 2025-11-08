@@ -119,6 +119,7 @@
     <string name="No_post">Посту\nняма</string>
     <string name="No_post_n">Посту няма</string>
     <string name="niadzeli_i_sviaty">Нядзелі і сьвяты</string>
+    <string name="niadzel">Нядзеля</string>
     <string name="zvychaynye_dny">Звычайныя дні</string>
     <string name="Znaki_cviat">ЗНАЧКІ СЬВЯТАЎ:</string>
     <string name="Z_Lic_na_ve">З ліцьцёй на вячэрні</string>
@@ -808,5 +809,14 @@
     <string name="cytaty">ЦЫТАТЫ З БІБЛІІ</string>
     <string name="title_biblia_catolik">НОВЫ ЗАПАВЕТ (пераклад Рыма-Каталіцкага Касцёла)</string>
     <string name="title_biblia_catolik2">Пераклад Рыма-Каталіцкага Касцёла</string>
+    <array name="admin_edit_list">
+        <item>Пясочніца</item>
+        <item>Сьвятыя</item>
+        <item>Царкоўныя сьвяты</item>
+        <item>Кіраваньне рэсурсамі праграмы</item>
+        <!--<item></item>
+        <item></item>
+        <item></item>-->
+    </array>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>
