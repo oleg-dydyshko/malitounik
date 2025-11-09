@@ -168,6 +168,7 @@ import by.carkva_gazeta.malitounik.SviatyList
 import by.carkva_gazeta.malitounik.SviatyiaView
 import by.carkva_gazeta.malitounik.VybranaeList
 import by.carkva_gazeta.malitounik.admin.BibliatekaList
+import by.carkva_gazeta.malitounik.admin.Icony
 import by.carkva_gazeta.malitounik.admin.PasochnicaListNew
 import by.carkva_gazeta.malitounik.admin.Piasochnica
 import by.carkva_gazeta.malitounik.admin.PiasochnicaNew
@@ -733,7 +734,8 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
             PiasochnicaNew(navController, resurs)
         }
 
-        composable(AllDestinations.SVIATY) {
+        composable(AllDestinations.EDIT_ICON) {
+            Icony(navController)
         }
     }
 }
@@ -2364,7 +2366,7 @@ fun DialogEditSvityiaAndSviaty(onDismiss: () -> Unit) {
                         }
                     }
                     item {
-                        Box(modifier = Modifier.imePadding().padding(bottom = 10.dp))
+                        Spacer(modifier = Modifier.imePadding().padding(bottom = 10.dp))
                     }
                 }
             }

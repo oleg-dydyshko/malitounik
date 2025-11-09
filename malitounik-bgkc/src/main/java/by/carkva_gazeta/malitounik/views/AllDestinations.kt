@@ -17,6 +17,7 @@ import by.carkva_gazeta.malitounik.views.AllDestinations.BOGASLUJBOVYIA_MENU
 import by.carkva_gazeta.malitounik.views.AllDestinations.CHASASLOU_MENU
 import by.carkva_gazeta.malitounik.views.AllDestinations.CYTANNI_LIST
 import by.carkva_gazeta.malitounik.views.AllDestinations.CYTATY_MENU
+import by.carkva_gazeta.malitounik.views.AllDestinations.EDIT_ICON
 import by.carkva_gazeta.malitounik.views.AllDestinations.HELP
 import by.carkva_gazeta.malitounik.views.AllDestinations.KALIANDAR
 import by.carkva_gazeta.malitounik.views.AllDestinations.KALIANDAR_YEAR
@@ -30,7 +31,6 @@ import by.carkva_gazeta.malitounik.views.AllDestinations.PIASOCHNICA_LIST
 import by.carkva_gazeta.malitounik.views.AllDestinations.PRANAS
 import by.carkva_gazeta.malitounik.views.AllDestinations.SEARCH_BIBLIA
 import by.carkva_gazeta.malitounik.views.AllDestinations.SETTINGS_VIEW
-import by.carkva_gazeta.malitounik.views.AllDestinations.SVIATY
 import by.carkva_gazeta.malitounik.views.AllDestinations.SVITYIA_VIEW
 import by.carkva_gazeta.malitounik.views.AllDestinations.UMOUNIA_ZNACHENNI
 import by.carkva_gazeta.malitounik.views.AllDestinations.UNDER_PADRYXTOUKA
@@ -88,7 +88,7 @@ object AllDestinations {
     const val CYTATY_MENU = "cytaty"
     const val PIASOCHNICA_LIST = "Piasochnica_List"
     const val PIASOCHNICA = "Piasochnica"
-    const val SVIATY = "Sviaty"
+    const val EDIT_ICON = "Edit_Icon"
 }
 
 class AppNavigationActions(private val navController: NavHostController, k: SharedPreferences) {
@@ -399,9 +399,9 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
         }
     }
 
-    fun navigateToSvity() {
-        navController.navigate(SVIATY) {
-            SVIATY
+    fun navigateToEditIcon() {
+        navController.navigate(EDIT_ICON) {
+            EDIT_ICON
         }
     }
 }

@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -100,7 +101,6 @@ class FilterBiblijatekaModel : ViewModel() {
 
 var biblijatekaJob: Job? = null
 
-@Suppress("DEPRECATION")
 @Composable
 fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerPadding: PaddingValues, searchText: Boolean) {
     val context = LocalContext.current
@@ -115,7 +115,7 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
     var isDialogBiblijatekaVisable by remember { mutableStateOf(false) }
     var isDialogNoWIFIVisable by remember { mutableStateOf(false) }
     var isDialogNoIntent by remember { mutableStateOf(false) }
-    val bibliatekaList = remember { SnapshotStateList<ArrayList<String>>() }
+    val bibliatekaList = remember { mutableStateListOf<ArrayList<String>>() }
     LaunchedEffect(Unit) {
         biblijatekaJob?.cancel()
         biblijatekaJob = CoroutineScope(Dispatchers.IO).launch {
@@ -471,10 +471,7 @@ fun writeFile(
         inProcess(true)
         var error = false
         try {
-            (0..2).forEach { _ ->
-                error = downloadPdfFile(context, url)
-                if (!error) return@forEach
-            }
+            downloadPdfFile(context, url)
         } catch (_: Throwable) {
             error = true
         }
@@ -503,7 +500,7 @@ private fun saveFile(context: Context, fileName: String) {
     fileInput.delete()
 }
 
-private suspend fun downloadPdfFile(context: Context, url: String, count: Int = 0): Boolean {
+private suspend fun downloadPdfFile(context: Context, url: String, count: Int = 0) {
     var error = false
     val dir = File("${context.filesDir}/cache")
     if (!dir.exists()) dir.mkdir()
@@ -513,7 +510,7 @@ private suspend fun downloadPdfFile(context: Context, url: String, count: Int = 
     }.await()
     if (error && count < 3) {
         downloadPdfFile(context, url, count + 1)
-        return error
+        return
     }
     val size = metadata.sizeBytes
     val localFile = File("${context.filesDir}/cache/$url")
@@ -524,7 +521,6 @@ private suspend fun downloadPdfFile(context: Context, url: String, count: Int = 
     if (error && count < 3) {
         downloadPdfFile(context, url, count + 1)
     }
-    return error
 }
 
 private suspend fun getBibliateka(
@@ -536,12 +532,7 @@ private suspend fun getBibliateka(
         progressVisable(true)
         try {
             val temp = ArrayList<ArrayList<String>>()
-            var sb = ""
-            (0..2).forEach { _ ->
-                sb = getBibliatekaJson(context)
-                if (sb != "") return@forEach
-            }
-            if (sb != "") {
+            getBibliatekaJson(context) { sb ->
                 val gson = Gson()
                 val type = TypeToken.getParameterized(
                     ArrayList::class.java,
@@ -563,20 +554,13 @@ private suspend fun getBibliateka(
                     mySqlList.add(rubrika)
                     val t1 = pdf.lastIndexOf(".")
                     val imageName = pdf.take(t1) + ".png"
-                    saveImagePdf(context, imageName)
+                    CoroutineScope(Dispatchers.Main).launch {
+                        saveImagePdf(context, imageName)
+                    }
                     mySqlList.add(imageName)
                     temp.add(mySqlList)
                 }
                 bibliatekaList(temp)
-            } else {
-                withContext(Dispatchers.Main) {
-                    val toast = Toast.makeText(
-                        context,
-                        context.getString(R.string.error),
-                        Toast.LENGTH_SHORT
-                    )
-                    toast.show()
-                }
             }
             progressVisable(false)
         } catch (_: Throwable) {
@@ -584,33 +568,33 @@ private suspend fun getBibliateka(
     }
 }
 
-private suspend fun getBibliatekaJson(context: Context, count: Int = 0): String {
-    var text = ""
-    val dir = File("${context.filesDir}/cache")
-    if (!dir.exists()) dir.mkdir()
-    val localFile = File("${context.filesDir}/cache/cache.txt")
-    val pathReference = Malitounik.referens.child("/bibliateka.json")
+private suspend fun getBibliatekaJson(context: Context, count: Int = 0, result: (String) -> Unit) {
+    val localFile = File("${context.filesDir}/bibliateka.json")
     var error = false
-    val metadata = pathReference.metadata.addOnFailureListener {
+    val metadata = Malitounik.referens.child("/bibliateka.json").metadata.addOnFailureListener {
         error = true
     }.await()
     val size = metadata.sizeBytes
-    if (!localFile.exists() && Settings.isNetworkAvailable(context)) {
-        pathReference.getFile(localFile).addOnCompleteListener {
-            if (it.isSuccessful) text = localFile.readText()
-            else error = true
-        }.await()
-        if (size != localFile.length()) error = true
+    if (localFile.length() != size) {
+        if (Settings.isNetworkAvailable(context)) {
+            Malitounik.referens.child("/bibliateka.json").getFile(localFile).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    result(localFile.readText())
+                } else {
+                    error = true
+                }
+            }.await()
+            if (size != localFile.length()) error = true
+        } else {
+            Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+        }
+        if (error && count < 3) {
+            getBibliatekaJson(context, count + 1, result = {})
+            return
+        }
     } else {
-        text = localFile.readText()
+        result(localFile.readText())
     }
-    if (error && count < 3) {
-        getBibliatekaJson(context, count + 1)
-        return text
-    }
-    val localFileResult = File("${context.filesDir}/bibliateka.json")
-    localFile.copyTo(localFileResult, overwrite = true)
-    return text
 }
 
 private suspend fun saveImagePdf(context: Context, image: String) {

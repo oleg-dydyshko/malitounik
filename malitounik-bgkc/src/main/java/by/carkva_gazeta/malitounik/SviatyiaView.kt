@@ -119,6 +119,7 @@ import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik.views.AppNavigationActions
 import by.carkva_gazeta.malitounik.views.DropdownMenuBox
 import by.carkva_gazeta.malitounik.views.HtmlText
 import com.google.gson.Gson
@@ -155,6 +156,10 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
         }
     }
     val context = LocalContext.current
+    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+    val navigationActions = remember(navController) {
+        AppNavigationActions(navController, k)
+    }
     val sviatyiaList = remember { SnapshotStateList<OpisanieData>() }
     val dirList = remember { mutableStateListOf<DirList>() }
     var dialoNoIntent by remember { mutableStateOf(false) }
@@ -191,7 +196,6 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
     var showDropdown by remember { mutableStateOf(false) }
     var fullscreen by rememberSaveable { mutableStateOf(false) }
     var backPressHandled by remember { mutableStateOf(false) }
-    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var fontSize by remember { mutableFloatStateOf(k.getFloat("font_biblia", 22F)) }
     var imageFull by remember { mutableStateOf(false) }
     var checkPiarliny by remember { mutableStateOf(false) }
@@ -403,6 +407,16 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                     },
                     actions = {
                         if (edit) {
+                            IconButton({
+                                navigationActions.navigateToEditIcon()
+                            }) {
+                                Icon(
+                                    modifier = Modifier.size(24.dp, 24.dp),
+                                    painter = painterResource(R.drawable.image_icon_file),
+                                    tint = PrimaryTextBlack,
+                                    contentDescription = ""
+                                )
+                            }
                             IconButton({
                                 saveFilesSvaityxISvait(context, svaity, sviatyPosotion, positionPasha, textFieldValueStateTitle.text, isLoad = {
                                     isProgressVisable = it

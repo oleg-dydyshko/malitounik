@@ -174,7 +174,8 @@
     <string name="pesni">Песьні Сьвятога Пісаньня</string>
     <string name="malitva_pered">Малітвы перад\nчытаньнем Псалтыра</string>
     <string name="malitva_posle">Малітвы пасьля\nчытаньня Псалтыра</string>
-    <string name="niama">Няма</string>
+    <string name="niama_icony">Няма іконы</string>
+    <string name="niama_apisannia">Няма апісаньня</string>
     <string name="searche_text">Пошук у тэксьце</string>
     <string name="title_biblijateka">Бібліятэка Царквы</string>
     <string name="settings_notifi_sviata">Налады апавяшчэньня сьвятаў</string>
