@@ -207,6 +207,8 @@
     <string name="sabytie_del_all">Усё</string>
     <string name="sabytie_del_old">Старыя</string>
     <string name="del_sabytie">Выдаліць падзеі</string>
+    <string name="del_icon_apis">Вы сапраўды жадаеце выдаліць ікону і апісаньне?</string>
+    <string name="del_apis">Вы сапраўды жадаеце выдаліць апісаньне?</string>
     <string name="save_sabytie">Захаваць</string>
     <string name="download_file">Спампаваць файл?</string>
     <string name="tydzen_name2">%1$s %2$s %3$s</string>

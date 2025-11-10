@@ -17,6 +17,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -81,6 +82,7 @@ import androidx.core.graphics.scale
 import androidx.core.text.isDigitsOnly
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
+import by.carkva_gazeta.malitounik.DialogDelite
 import by.carkva_gazeta.malitounik.Malitounik
 import by.carkva_gazeta.malitounik.R
 import by.carkva_gazeta.malitounik.Settings
@@ -117,8 +119,8 @@ fun Icony(navController: NavHostController) {
     var isProgressVisable by remember { mutableStateOf(false) }
     var position by remember { mutableIntStateOf(0) }
     var isDialodApisanne by rememberSaveable { mutableStateOf(false) }
-    val dir = File("${context.filesDir}/iconsApisanne")
-    if (!dir.exists()) dir.mkdir()
+    var isDialodDeliteIcon by rememberSaveable { mutableStateOf(false) }
+    var isDialodDeliteApisanne by rememberSaveable { mutableStateOf(false) }
     val mActivityResultFile = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == RESULT_OK) {
             val imageUri = it.data?.data
@@ -138,12 +140,68 @@ fun Icony(navController: NavHostController) {
             }
         }
     }
+    if (isDialodDeliteIcon) {
+        DialogDelite(title = stringResource(R.string.del_icon_apis), onConfirmation = {
+            if (Settings.isNetworkAvailable(context)) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    isProgressVisable = true
+                    try {
+                        val day = Settings.data[Settings.caliandarPosition][1].toInt()
+                        val mun = Settings.data[Settings.caliandarPosition][2].toInt() + 1
+                        val fileName = "s_${day}_${mun}_${position + 1}.jpg"
+                        val t1 = fileName.lastIndexOf(".")
+                        val fileNameT = fileName.take(t1) + ".txt"
+                        val file = iconList[position].file
+                        Malitounik.referens.child("/chytanne/icons/" + file.name).delete().await()
+                        Malitounik.referens.child("/chytanne/iconsApisanne/$fileNameT").delete().await()
+                        val imageFile = File("${context.filesDir}/icons/" + file.name)
+                        if (imageFile.exists()) imageFile.delete()
+                        val localFile = File("${context.filesDir}/iconsApisanne/$fileNameT")
+                        if (localFile.exists()) localFile.delete()
+                        iconList[position] = DataImages(iconList[position].title, 0, File(""), iconList[position].position, "")
+                    } catch (_: Throwable) {
+                    }
+                }
+                isProgressVisable = false
+                isDialodDeliteIcon = false
+            }
+        }) {
+            isDialodDeliteIcon = false
+        }
+    }
+    if (isDialodDeliteApisanne) {
+        DialogDelite(title = stringResource(R.string.del_apis), onConfirmation = {
+            if (Settings.isNetworkAvailable(context)) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    isProgressVisable = true
+                    try {
+                        val day = Settings.data[Settings.caliandarPosition][1].toInt()
+                        val mun = Settings.data[Settings.caliandarPosition][2].toInt() + 1
+                        val fileName = "s_${day}_${mun}_${position + 1}.jpg"
+                        val t1 = fileName.lastIndexOf(".")
+                        val fileNameT = fileName.take(t1) + ".txt"
+                        Malitounik.referens.child("/chytanne/iconsApisanne/$fileNameT").delete().await()
+                        val localFile = File("${context.filesDir}/iconsApisanne/$fileNameT")
+                        if (localFile.exists()) localFile.delete()
+                        iconList[position] = DataImages(iconList[position].title, iconList[position].size, iconList[position].file, iconList[position].position, "")
+                    } catch (_: Throwable) {
+                    }
+                }
+                isProgressVisable = false
+                isDialodDeliteApisanne = false
+            }
+        }) {
+            isDialodDeliteApisanne = false
+        }
+    }
     if (isDialodApisanne) {
         DialogApisanneIcony(iconList[position].iconApisanne, saveApisanne = { iconApisanne ->
             if (Settings.isNetworkAvailable(context)) {
                 CoroutineScope(Dispatchers.Main).launch {
                     isProgressVisable = true
                     try {
+                        val dir = File("${context.filesDir}/iconsApisanne")
+                        if (!dir.exists()) dir.mkdir()
                         val day = Settings.data[Settings.caliandarPosition][1].toInt()
                         val mun = Settings.data[Settings.caliandarPosition][2].toInt() + 1
                         val fileName = "s_${day}_${mun}_${position + 1}.jpg"
@@ -209,14 +267,6 @@ fun Icony(navController: NavHostController) {
                             )
                         })
                 },
-                actions = {
-                    IconButton(onClick = {
-                    }) {
-                        Icon(
-                            painter = painterResource(R.drawable.save), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                        )
-                    }
-                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
             )
         }
@@ -254,14 +304,23 @@ fun Icony(navController: NavHostController) {
                             Image(
                                 modifier = Modifier
                                     .padding(vertical = 10.dp)
-                                    .clickable {
-                                        position = newPosition
-                                        val intent = Intent()
-                                        intent.type = "*/*"
-                                        intent.action = Intent.ACTION_GET_CONTENT
-                                        intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/jpeg", "image/png"))
-                                        mActivityResultFile.launch(Intent.createChooser(intent, context.getString(R.string.vybrac_file)))
-                                    }, bitmap = myBitmap.asImageBitmap(), contentDescription = ""
+                                    .combinedClickable(
+                                        onClick = {
+                                            position = newPosition
+                                            val intent = Intent()
+                                            intent.type = "*/*"
+                                            intent.action = Intent.ACTION_GET_CONTENT
+                                            intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/jpeg", "image/png"))
+                                            mActivityResultFile.launch(Intent.createChooser(intent, context.getString(R.string.vybrac_file)))
+                                        },
+                                        onLongClick = {
+                                            if (iconList[position].size > 0) {
+                                                position = newPosition
+                                                isDialodDeliteIcon = true
+                                            }
+                                        }
+                                    )
+                                , bitmap = myBitmap.asImageBitmap(), contentDescription = ""
                             )
                             Text(
                                 modifier = Modifier
@@ -274,10 +333,18 @@ fun Icony(navController: NavHostController) {
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(10.dp)
-                                    .clickable {
-                                        position = newPosition
-                                        isDialodApisanne = true
-                                    },
+                                    .combinedClickable(
+                                        onClick = {
+                                            position = newPosition
+                                            isDialodApisanne = true
+                                        },
+                                        onLongClick = {
+                                            if (iconList[newPosition].iconApisanne.isNotEmpty()) {
+                                                position = newPosition
+                                                isDialodDeliteApisanne = true
+                                            }
+                                        }
+                                    ),
                                 fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary, textAlign = TextAlign.Center, fontStyle = FontStyle.Italic
                             )
                         } else {

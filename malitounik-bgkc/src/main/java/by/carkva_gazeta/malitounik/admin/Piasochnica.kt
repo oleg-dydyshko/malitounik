@@ -140,20 +140,27 @@ object Piasochnica {
                 val t5 = dirToFile.lastIndexOf("/")
                 val fileName = dirToFile.substring(t5 + 1)
                 val localFile = File("${context.filesDir}/cache/cache.txt")
+                var error = false
                 try {
                     Malitounik.referens.child("/$dirToFile").getFile(localFile).addOnFailureListener {
                         Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
+                        error = true
                     }.await()
                 } catch (_: Throwable) {
+                    error = true
                     Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
                 }
                 val newFileName = fileName.replace("\n", " ")
                 try {
-                    Malitounik.referens.child("/admin/piasochnica/$newFileName").putFile(Uri.fromFile(localFile)).await()
+                    Malitounik.referens.child("/admin/piasochnica/$newFileName").putFile(Uri.fromFile(localFile)).addOnFailureListener {
+                        Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
+                        error = true
+                    }.await()
                 } catch (_: Throwable) {
+                    error = true
                     Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
                 }
-                var text = localFile.readText()
+                var text = if (error) "" else localFile.readText()
                 text = if (Settings.dzenNoch.value) text.replace("#d00505", "#ff6666", true)
                 else text
                 result(text, newFileName)
@@ -231,17 +238,11 @@ object Piasochnica {
         }
     }
 
-    fun getFindFileListAsSave() {
-        if (Settings.isNetworkAvailable(Malitounik.applicationContext())) {
-            CoroutineScope(Dispatchers.Main).launch {
-                try {
-                    findFile()
-                } catch (_: Throwable) {
-                    Toast.makeText(Malitounik.applicationContext(), Malitounik.applicationContext().getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
-                }
-            }
-        } else {
-            Toast.makeText(Malitounik.applicationContext(), Malitounik.applicationContext().getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+    suspend fun getFindFileListAsSave() {
+        try {
+            findFile()
+        } catch (_: Throwable) {
+            Toast.makeText(Malitounik.applicationContext(), Malitounik.applicationContext().getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -286,7 +287,7 @@ object Piasochnica {
         return resours
     }
 
-    private suspend fun saveLogFile(count: Int = 0) {
+    suspend fun saveLogFile(count: Int = 0) {
         val context = Malitounik.applicationContext()
         val logFile = File("${context.filesDir}/cache/log.txt")
         var error = false
@@ -360,12 +361,12 @@ object Piasochnica {
         if (Settings.isNetworkAvailable(context)) {
             CoroutineScope(Dispatchers.Main).launch {
                 isProgressVisable = true
+                if (findDirAsSave.isEmpty()) {
+                    getFindFileListAsSave()
+                }
                 try {
                     Malitounik.referens.child("/admin/piasochnica/$resours").putFile(Uri.fromFile(file)).addOnCompleteListener {
                         if (it.isSuccessful) {
-                            if (findDirAsSave.isEmpty()) {
-                                getFindFileListAsSave()
-                            }
                             if (saveAs) {
                                 if (findDirAsSave(resours)) {
                                     sendSaveAsPostRequest(getDirAsSave(resours), resours)

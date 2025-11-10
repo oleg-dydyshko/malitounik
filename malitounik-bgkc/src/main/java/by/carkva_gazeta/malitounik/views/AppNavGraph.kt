@@ -2178,8 +2178,6 @@ fun DialogEditSvityiaAndSviaty(onDismiss: () -> Unit) {
             val activity = LocalActivity.current as? MainActivity
             val page = Settings.caliandarPosition
             val munName = stringArrayResource(R.array.meciac_smoll)
-            val focusRequester = remember { FocusRequester() }
-            var textFieldLoaded by remember { mutableStateOf(false) }
             var textFieldValueStateTitle by rememberSaveable { mutableStateOf("") }
             var textFieldValueStateCytanne by rememberSaveable { mutableStateOf("") }
             var textFieldStateTitleCytanne by rememberSaveable { mutableStateOf("") }
@@ -2254,14 +2252,7 @@ fun DialogEditSvityiaAndSviaty(onDismiss: () -> Unit) {
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(10.dp)
-                                .focusRequester(focusRequester)
-                                .onGloballyPositioned {
-                                    if (!textFieldLoaded) {
-                                        focusRequester.requestFocus()
-                                        textFieldLoaded = true
-                                    }
-                                },
+                                .padding(10.dp),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
                             keyboardActions = KeyboardActions(onDone = {
                                 Piasochnica.sendPostRequest(textFieldValueStateTitle, textFieldValueStateCytanne, style, tipicon.toString(), textFieldStateTitleCytanne, textFieldStateCytanne, dayPascha) {
