@@ -135,6 +135,14 @@ import java.util.Calendar
 import java.util.GregorianCalendar
 import kotlin.math.roundToInt
 
+object SviatyiaView {
+    var edit by mutableStateOf(false)
+    val svaity = mutableStateListOf<ArrayList<String>>()
+    var sviatyPosotion by mutableIntStateOf(0)
+    var positionPasha by mutableIntStateOf(0)
+    var initState by mutableStateOf(true)
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int) {
@@ -160,7 +168,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
-    val sviatyiaList = remember { SnapshotStateList<OpisanieData>() }
+    val sviatyiaList = remember { mutableStateListOf<OpisanieData>() }
     val dirList = remember { mutableStateListOf<DirList>() }
     var dialoNoIntent by remember { mutableStateOf(false) }
     var dialoNoWIFI by remember { mutableStateOf(false) }
@@ -201,7 +209,6 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
     var checkPiarliny by remember { mutableStateOf(false) }
     var viewPiarliny by remember { mutableStateOf(false) }
     var fullImagePathVisable by remember { mutableStateOf("") }
-    var edit by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
     var textFieldValueStateTitle by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
@@ -225,8 +232,6 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
             viewPiarliny = false
         }
     }
-    val svaity = remember { mutableStateListOf<ArrayList<String>>() }
-    var sviatyPosotion by rememberSaveable { mutableIntStateOf(0) }
     val fileOpisanie = File("${context.filesDir}/sviatyja/opisanie$mun.json")
     val fileSvity = File("${context.filesDir}/sviaty.json")
     LaunchedEffect(Unit) {
@@ -294,7 +299,6 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
         offsetX = 0f
         offsetY = 0f
     }
-    var positionPasha by remember { mutableIntStateOf(0) }
     LaunchedEffect(fullscreen) {
         val controller =
             WindowCompat.getInsetsController((view.context as Activity).window, view)
@@ -308,22 +312,31 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
             controller.show(WindowInsetsCompat.Type.navigationBars())
         }
     }
-    LaunchedEffect(edit) {
-        if (edit) {
+    LaunchedEffect(SviatyiaView.edit) {
+        if (SviatyiaView.edit) {
             coroutineScope.launch {
                 getSviatyiaFile(context = context, isLoad = {
                     isProgressVisable = it
                 }) { list, svityia ->
-                    sviatyPosotion = 0
-                    svaity.clear()
-                    svaity.addAll(list)
-                    textFieldValueStateTitle = TextFieldValue(svityia)
+                    SviatyiaView.svaity.clear()
+                    SviatyiaView.svaity.addAll(list)
                     val arrayList = ArrayList<String>()
                     arrayList.add("0")
                     arrayList.add("0")
                     arrayList.add("-1")
-                    arrayList.add(textFieldValueStateTitle.text)
-                    svaity.add(0, arrayList)
+                    arrayList.add(svityia)
+                    SviatyiaView.svaity.add(0, arrayList)
+                    if (SviatyiaView.initState && svity) {
+                        SviatyiaView.initState = false
+                        for (i in SviatyiaView.svaity.indices) {
+                            if (SviatyiaView.svaity[i][0].toInt() == sviatyiaList[0].date && SviatyiaView.svaity[i][1].toInt() == sviatyiaList[0].mun) {
+                                SviatyiaView.sviatyPosotion = i
+                                SviatyiaView.positionPasha = SviatyiaView.svaity[i][2].toInt()
+                                break
+                            }
+                        }
+                    }
+                    textFieldValueStateTitle = TextFieldValue(SviatyiaView.svaity[SviatyiaView.sviatyPosotion][3])
                 }
             }
         }
@@ -358,9 +371,9 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                         }
                     },
                     navigationIcon = {
-                        if (edit) {
+                        if (SviatyiaView.edit) {
                             IconButton(onClick = {
-                                edit = false
+                                SviatyiaView.edit = false
                             }, content = {
                                 Icon(
                                     painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
@@ -406,7 +419,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                         }
                     },
                     actions = {
-                        if (edit) {
+                        if (SviatyiaView.edit) {
                             IconButton({
                                 navigationActions.navigateToEditIcon()
                             }) {
@@ -418,7 +431,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                 )
                             }
                             IconButton({
-                                saveFilesSvaityxISvait(context, svaity, sviatyPosotion, positionPasha, textFieldValueStateTitle.text, isLoad = {
+                                saveFilesSvaityxISvait(context, SviatyiaView.svaity, SviatyiaView.sviatyPosotion, SviatyiaView.positionPasha, textFieldValueStateTitle.text, isLoad = {
                                     isProgressVisable = it
                                 }) {
                                     if (svity) {
@@ -470,8 +483,9 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                             if (k.getBoolean("admin", false)) {
                                 VerticalDivider()
                                 IconButton(onClick = {
+                                    if (SviatyiaView.svaity.isNotEmpty()) textFieldValueStateTitle = TextFieldValue(SviatyiaView.svaity[SviatyiaView.sviatyPosotion][3])
                                     imageFull = false
-                                    edit = true
+                                    SviatyiaView.edit = true
                                 }) {
                                     Icon(
                                         painter = painterResource(R.drawable.edit),
@@ -487,7 +501,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
             }
         },
         bottomBar = {
-            if (edit) {
+            if (SviatyiaView.edit) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -658,24 +672,24 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                         item {
                             Spacer(Modifier.padding(top = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp))
                         }
-                        if (edit) {
+                        if (SviatyiaView.edit) {
                             item {
                                 Column(modifier = Modifier.fillMaxWidth()) {
-                                    if (svaity.isNotEmpty()) {
+                                    if (SviatyiaView.svaity.isNotEmpty() && !SviatyiaView.initState) {
                                         DropdownMenuBoxSvityia(
-                                            menuList = svaity
+                                            menuList = SviatyiaView.svaity
                                         ) {
-                                            sviatyPosotion = it
-                                            positionPasha = svaity[sviatyPosotion][2].toInt()
-                                            textFieldValueStateTitle = TextFieldValue(svaity[sviatyPosotion][3])
+                                            SviatyiaView.sviatyPosotion = it
+                                            SviatyiaView.positionPasha = SviatyiaView.svaity[SviatyiaView.sviatyPosotion][2].toInt()
+                                            textFieldValueStateTitle = TextFieldValue(SviatyiaView.svaity[SviatyiaView.sviatyPosotion][3])
                                         }
                                     }
-                                    if (svaity.isNotEmpty() && svaity[sviatyPosotion][2].toInt() >= 0) {
+                                    if (SviatyiaView.svaity.isNotEmpty() && SviatyiaView.svaity[SviatyiaView.sviatyPosotion][2].toInt() >= 0 && !SviatyiaView.initState) {
                                         DropdownMenuBox(
-                                            initValue = positionPasha,
+                                            initValue = SviatyiaView.positionPasha,
                                             menuList = stringArrayResource(R.array.admin_svity_data)
                                         ) {
-                                            positionPasha = it
+                                            SviatyiaView.positionPasha = it
                                         }
                                     }
                                     TextField(
@@ -1231,7 +1245,7 @@ suspend fun getIcons(
     var size = 0L
     var error = false
     val sb = StringBuilder()
-    val fileIconMataData = File("${context.filesDir}/cache/cache.txt")
+    val fileIconMataData = File("${context.filesDir}/iconsMataData.txt")
     val pathReferenceMataData = Malitounik.referens.child("/chytanne/iconsMataData.txt")
     val metadata = pathReferenceMataData.metadata.addOnFailureListener {
         error = true
@@ -1249,8 +1263,6 @@ suspend fun getIcons(
         getIcons(context, dirList, sviatyiaList, svity, isLoadIcon, position, wiFiExists, count + 1)
         return
     }
-    val fileIconMataDataResult = File("${context.filesDir}/iconsMataData.txt")
-    fileIconMataData.copyTo(fileIconMataDataResult, overwrite = true)
     val list = fileIconMataData.readText().split("\n")
     for (i in 0 until sviatyiaList.size) {
         list.forEach {
@@ -1506,7 +1518,7 @@ fun DropdownMenuBoxSvityia(
     onClickItem: (Int) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val datam = menuList[0][3]
+    val datam = menuList[SviatyiaView.sviatyPosotion][3]
     val t1 = datam.indexOf("</strong>")
     val title = if (t1 != -1) AnnotatedString.fromHtml(datam.take(t1)).toString()
     else AnnotatedString.fromHtml(datam.take(30)).toString()

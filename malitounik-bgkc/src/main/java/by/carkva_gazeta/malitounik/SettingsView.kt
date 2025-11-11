@@ -12,11 +12,6 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -106,7 +101,6 @@ import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
-import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -466,94 +460,45 @@ fun SettingsView(navController: NavHostController) {
                             }
                         })
                 }
-                val title = stringResource(R.string.site_admin)
                 val list = stringArrayResource(R.array.admin_edit_list)
-                var collapsedState by remember { mutableStateOf(AppNavGraphState.setItemsValue(title, true)) }
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier
-                            .clickable {
-                                AppNavGraphState.setItemsValue(title)
-                                collapsedState = !collapsedState
-                            }
-                            .clip(MaterialTheme.shapes.small)
-                            .background(Divider)
-                            .align(Alignment.CenterHorizontally)
-                    ) {
-                        Text(
-                            text = title,
+                Column {
+                    for (index in list.indices) {
+                        Row(
                             modifier = Modifier
-                                .padding(vertical = 8.dp)
-                                .weight(1f),
-                            color = PrimaryText,
-                            fontSize = Settings.fontInterface.sp,
-                            textAlign = TextAlign.Center
-                        )
-                        Icon(
-                            painter = if (!collapsedState)
-                                painterResource(R.drawable.keyboard_arrow_down)
-                            else
-                                painterResource(R.drawable.keyboard_arrow_up),
-                            contentDescription = "",
-                            tint = PrimaryText,
-                        )
-                    }
-                }
-                AnimatedVisibility(
-                    !collapsedState, enter = fadeIn(
-                        tween(
-                            durationMillis = 700, easing = LinearOutSlowInEasing
-                        )
-                    ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-                ) {
-                    Column {
-                        for (index in list.indices) {
-                            Row(
-                                modifier = Modifier
-                                    .clickable {
-                                        when (index) {
-                                            0 -> {
-                                                navigationActions.navigateToPiasochnicaList()
-                                            }
+                                .clickable {
+                                    when (index) {
+                                        0 -> {
+                                            navigationActions.navigateToPiasochnicaList()
+                                        }
 
-                                            1 -> {
-                                            }
+                                        1 -> {
+                                        }
 
-                                            2 -> {
-                                            }
-
-                                            3 -> {
-                                                val intent = Intent(context, AdminMain::class.java)
-                                                context.startActivity(intent)
-                                            }
+                                        2 -> {
+                                            val intent = Intent(context, AdminMain::class.java)
+                                            context.startActivity(intent)
                                         }
                                     }
-                                    .padding(start = 10.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    modifier = Modifier.size(5.dp, 5.dp),
-                                    painter = painterResource(R.drawable.poiter),
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    contentDescription = ""
-                                )
-                                Text(
-                                    list[index],
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(10.dp),
-                                    color = MaterialTheme.colorScheme.secondary,
-                                    fontSize = Settings.fontInterface.sp
-                                )
-                            }
-                            HorizontalDivider()
+                                }
+                                .padding(start = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(5.dp, 5.dp),
+                                painter = painterResource(R.drawable.poiter),
+                                tint = MaterialTheme.colorScheme.primary,
+                                contentDescription = ""
+                            )
+                            Text(
+                                list[index],
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(10.dp),
+                                color = MaterialTheme.colorScheme.secondary,
+                                fontSize = Settings.fontInterface.sp
+                            )
                         }
+                        HorizontalDivider()
                     }
                 }
             }

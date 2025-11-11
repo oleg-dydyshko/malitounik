@@ -814,12 +814,8 @@
     <string name="title_biblia_catolik2">Пераклад Рыма-Каталіцкага Касцёла</string>
     <array name="admin_edit_list">
         <item>Пясочніца</item>
-        <item>Сьвятыя</item>
-        <item>Царкоўныя сьвяты</item>
+        <item>Пярліны</item>
         <item>Кіраваньне рэсурсамі праграмы</item>
-        <!--<item></item>
-        <item></item>
-        <item></item>-->
     </array>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

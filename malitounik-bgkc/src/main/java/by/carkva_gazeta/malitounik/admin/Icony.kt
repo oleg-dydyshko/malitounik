@@ -86,6 +86,7 @@ import by.carkva_gazeta.malitounik.DialogDelite
 import by.carkva_gazeta.malitounik.Malitounik
 import by.carkva_gazeta.malitounik.R
 import by.carkva_gazeta.malitounik.Settings
+import by.carkva_gazeta.malitounik.SviatyiaView
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -154,6 +155,7 @@ fun Icony(navController: NavHostController) {
                         val file = iconList[position].file
                         Malitounik.referens.child("/chytanne/icons/" + file.name).delete().await()
                         Malitounik.referens.child("/chytanne/iconsApisanne/$fileNameT").delete().await()
+                        loadFilesMetaData(context)
                         val imageFile = File("${context.filesDir}/icons/" + file.name)
                         if (imageFile.exists()) imageFile.delete()
                         val localFile = File("${context.filesDir}/iconsApisanne/$fileNameT")
@@ -161,8 +163,8 @@ fun Icony(navController: NavHostController) {
                         iconList[position] = DataImages(iconList[position].title, 0, File(""), iconList[position].position, "")
                     } catch (_: Throwable) {
                     }
+                    isProgressVisable = false
                 }
-                isProgressVisable = false
                 isDialodDeliteIcon = false
             }
         }) {
@@ -186,8 +188,8 @@ fun Icony(navController: NavHostController) {
                         iconList[position] = DataImages(iconList[position].title, iconList[position].size, iconList[position].file, iconList[position].position, "")
                     } catch (_: Throwable) {
                     }
+                    isProgressVisable = false
                 }
-                isProgressVisable = false
                 isDialodDeliteApisanne = false
             }
         }) {
@@ -319,8 +321,7 @@ fun Icony(navController: NavHostController) {
                                                 isDialodDeliteIcon = true
                                             }
                                         }
-                                    )
-                                , bitmap = myBitmap.asImageBitmap(), contentDescription = ""
+                                    ), bitmap = myBitmap.asImageBitmap(), contentDescription = ""
                             )
                             Text(
                                 modifier = Modifier
@@ -474,10 +475,12 @@ suspend fun getIcons(context: Context, resultList: (ArrayList<DataImages>) -> Un
         val images = ArrayList<DataImages>()
         val itPos = StringBuilder()
         val list = Malitounik.referens.child("/chytanne/icons").list(1000).await()
-        val day = Settings.data[Settings.caliandarPosition][1].toInt()
-        val mun = Settings.data[Settings.caliandarPosition][2].toInt() + 1
+        val day = SviatyiaView.svaity[SviatyiaView.sviatyPosotion][0].toInt()
+        val mun = SviatyiaView.svaity[SviatyiaView.sviatyPosotion][1].toInt()
+        val type = SviatyiaView.svaity[SviatyiaView.sviatyPosotion][2].toInt()
+        val fileName = if (type >= 0) "v_${day}_${mun}_" else "s_${day}_${mun}_"
         list.items.forEach {
-            if (it.name.contains("s_${day}_${mun}_")) {
+            if (it.name.contains(fileName)) {
                 val fileIcon = File("${context.filesDir}/icons/" + it.name)
                 it.getFile(fileIcon).addOnFailureListener {
                     Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
@@ -495,11 +498,20 @@ suspend fun getIcons(context: Context, resultList: (ArrayList<DataImages>) -> Un
                 val s1 = "s_${day}_${mun}".length
                 val s3 = it.name.substring(s1 + 1, s1 + 2)
                 if (s3.isDigitsOnly()) e = s3.toInt()
-                images.add(DataImages(getSviatyia(context, e - 1), fileIcon.length(), fileIcon, e.toLong(), iconApisanne))
+                var title = ""
+                if (type != -1) {
+                    val text = SviatyiaView.svaity[SviatyiaView.sviatyPosotion][3]
+                    val t1 = text.indexOf("<strong>")
+                    val t2 = text.indexOf("</strong>")
+                    if (t1 != -1 && t2 != -1) title = text.substring(t1 + 8, t2)
+                } else {
+                    title = getSviatyia(context, e - 1)
+                }
+                images.add(DataImages(title, fileIcon.length(), fileIcon, e.toLong(), iconApisanne))
                 itPos.append(e)
             }
         }
-        for (i in 1..4) {
+        for (i in if (type < 0) 1..4 else 1..1) {
             if (!itPos.contains(i.toString())) images.add(DataImages(getSviatyia(context, i - 1), 0, File(""), i.toLong(), ""))
         }
         images.sortBy { it.position }
@@ -581,9 +593,7 @@ fun fileUpload(context: Context, position: Int, bitmap: Bitmap?, isLoad: (Boolea
                     result(localFile)
                 }.await()
             }
-            withContext(Dispatchers.IO) {
-                loadFilesMetaData(context)
-            }
+            loadFilesMetaData(context)
             isLoad(false)
         }
     } else {
