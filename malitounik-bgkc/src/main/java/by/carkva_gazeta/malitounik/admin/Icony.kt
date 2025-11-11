@@ -475,10 +475,16 @@ suspend fun getIcons(context: Context, resultList: (ArrayList<DataImages>) -> Un
         val images = ArrayList<DataImages>()
         val itPos = StringBuilder()
         val list = Malitounik.referens.child("/chytanne/icons").list(1000).await()
-        val day = SviatyiaView.svaity[SviatyiaView.sviatyPosotion][0].toInt()
-        val mun = SviatyiaView.svaity[SviatyiaView.sviatyPosotion][1].toInt()
+        var day = SviatyiaView.svaity[SviatyiaView.sviatyPosotion][0].toInt()
+        var mun = SviatyiaView.svaity[SviatyiaView.sviatyPosotion][1].toInt()
         val type = SviatyiaView.svaity[SviatyiaView.sviatyPosotion][2].toInt()
-        val fileName = if (type >= 0) "v_${day}_${mun}_" else "s_${day}_${mun}_"
+        var fileName = "v_${day}_${mun}_"
+        if (type == -2) fileName = "s_${day}_${mun}_"
+        if (type == -1) {
+            day = Settings.data[Settings.caliandarPosition][1].toInt()
+            mun = Settings.data[Settings.caliandarPosition][2].toInt() + 1
+            fileName = "s_${day}_${mun}_"
+        }
         list.items.forEach {
             if (it.name.contains(fileName)) {
                 val fileIcon = File("${context.filesDir}/icons/" + it.name)

@@ -327,7 +327,6 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                     arrayList.add(svityia)
                     SviatyiaView.svaity.add(0, arrayList)
                     if (SviatyiaView.initState && svity) {
-                        SviatyiaView.initState = false
                         for (i in SviatyiaView.svaity.indices) {
                             if (SviatyiaView.svaity[i][0].toInt() == sviatyiaList[0].date && SviatyiaView.svaity[i][1].toInt() == sviatyiaList[0].mun) {
                                 SviatyiaView.sviatyPosotion = i
@@ -336,6 +335,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                             }
                         }
                     }
+                    SviatyiaView.initState = false
                     textFieldValueStateTitle = TextFieldValue(SviatyiaView.svaity[SviatyiaView.sviatyPosotion][3])
                 }
             }
