@@ -203,7 +203,7 @@ fun KaliandarScreenInfo(navController: NavHostController) {
                 color = PrimaryText
             )
             Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.fishe), contentDescription = "", tint = MaterialTheme.colorScheme.secondary)
+                Icon(modifier = Modifier.size(22.dp), painter = painterResource(R.drawable.fishe), contentDescription = "", tint = MaterialTheme.colorScheme.secondary)
                 Text(
                     modifier = Modifier
                         .padding(start = 10.dp)
@@ -215,7 +215,7 @@ fun KaliandarScreenInfo(navController: NavHostController) {
                 )
             }
             Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.fishe), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                Icon(modifier = Modifier.size(22.dp), painter = painterResource(R.drawable.fishe), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
                 Text(
                     modifier = Modifier
                         .padding(start = 10.dp)

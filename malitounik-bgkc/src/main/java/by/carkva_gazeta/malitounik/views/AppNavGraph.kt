@@ -1311,6 +1311,7 @@ fun MainConteiner(
                                 pasochnicaAction = PasochnicaList.FILE
                             }) {
                                 Icon(
+                                    modifier = Modifier.size(24.dp),
                                     painter = painterResource(R.drawable.directory_icon_menu), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
@@ -1318,6 +1319,7 @@ fun MainConteiner(
                                 pasochnicaAction = PasochnicaList.WWW
                             }) {
                                 Icon(
+                                    modifier = Modifier.size(24.dp),
                                     painter = painterResource(R.drawable.www_icon), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
@@ -1325,6 +1327,7 @@ fun MainConteiner(
                                 pasochnicaAction = PasochnicaList.ADD
                             }) {
                                 Icon(
+                                    modifier = Modifier.size(24.dp),
                                     painter = painterResource(R.drawable.plus), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
@@ -1986,7 +1989,7 @@ fun SearchSviatyia(lazyColumnStateSearchSvityia: LazyListState, innerPadding: Pa
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier.size(5.dp, 5.dp),
+                        modifier = Modifier.size(5.dp),
                         painter = painterResource(R.drawable.poiter),
                         tint = MaterialTheme.colorScheme.primary,
                         contentDescription = ""

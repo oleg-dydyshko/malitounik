@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -1015,6 +1016,7 @@ fun PiasochnicaNew(
                         editText.addTextChangedListener(textWatcher)
                     }) {
                         Icon(
+                            modifier = Modifier.size(24.dp),
                             painter = painterResource(R.drawable.back),
                             contentDescription = "",
                             tint = MaterialTheme.colorScheme.onSecondary
@@ -1055,6 +1057,7 @@ fun PiasochnicaNew(
                     Piasochnica.addHistory(editText.text, editText.selectionEnd)
                 }) {
                     Icon(
+                        modifier = Modifier.size(24.dp),
                         painter = painterResource(R.drawable.bold_menu),
                         contentDescription = "",
                         tint = MaterialTheme.colorScheme.onSecondary
@@ -1094,6 +1097,7 @@ fun PiasochnicaNew(
                     Piasochnica.addHistory(editText.text, editText.selectionEnd)
                 }) {
                     Icon(
+                        modifier = Modifier.size(24.dp),
                         painter = painterResource(R.drawable.italic),
                         contentDescription = "",
                         tint = MaterialTheme.colorScheme.onSecondary
@@ -1133,6 +1137,7 @@ fun PiasochnicaNew(
                     Piasochnica.addHistory(editText.text, editText.selectionEnd)
                 }) {
                     Image(
+                        modifier = Modifier.size(24.dp),
                         painter = painterResource(R.drawable.red_menu),
                         contentDescription = ""
                     )
@@ -1153,9 +1158,9 @@ fun PiasochnicaNew(
                         editText.addTextChangedListener(textWatcher)
                         Piasochnica.addHistory(editText.text, editText.selectionEnd)
                     }) {
-                        val icon = painterResource(R.drawable.br_menu)
                         Icon(
-                            painter = icon,
+                            modifier = Modifier.size(24.dp),
+                            painter = painterResource(R.drawable.br_menu),
                             contentDescription = "",
                             tint = MaterialTheme.colorScheme.onSecondary
                         )
@@ -1175,9 +1180,9 @@ fun PiasochnicaNew(
                         dialogCrateUrl = true
                     }
                 }) {
-                    val icon = painterResource(R.drawable.a_menu)
                     Icon(
-                        painter = icon,
+                        modifier = Modifier.size(24.dp),
+                        painter = painterResource(R.drawable.a_menu),
                         contentDescription = "",
                         tint = MaterialTheme.colorScheme.onSecondary
                     )

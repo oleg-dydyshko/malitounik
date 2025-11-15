@@ -195,7 +195,7 @@ fun CalendarMun(context: Context) {
             if (!(Settings.GET_CALIANDAR_YEAR_MIN == year && mun == Calendar.JANUARY)) {
                 Box(modifier = GlanceModifier.padding(10.dp).clickable(getImageActionCallback(UpdateDataClickActionCallback.TYPE_MINUS))) {
                     Image(
-                        modifier = GlanceModifier.size(24.dp, 24.dp), provider = ImageProvider(R.drawable.levo_catedra_blak_31), contentDescription = "", colorFilter = ColorFilter.tint(if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText))
+                        modifier = GlanceModifier.size(24.dp), provider = ImageProvider(R.drawable.levo_catedra_blak_31), contentDescription = "", colorFilter = ColorFilter.tint(if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText))
                     )
                 }
             }
@@ -207,7 +207,7 @@ fun CalendarMun(context: Context) {
             if (!(Settings.GET_CALIANDAR_YEAR_MAX == year && mun == Calendar.DECEMBER)) {
                 Box(modifier = GlanceModifier.padding(10.dp).clickable(getImageActionCallback(UpdateDataClickActionCallback.TYPE_PLUS))) {
                     Image(
-                        modifier = GlanceModifier.size(24.dp, 24.dp), provider = ImageProvider(R.drawable.pravo_catedra_blak_31), contentDescription = "", colorFilter = ColorFilter.tint(if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText))
+                        modifier = GlanceModifier.size(24.dp), provider = ImageProvider(R.drawable.pravo_catedra_blak_31), contentDescription = "", colorFilter = ColorFilter.tint(if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText))
                     )
                 }
             }

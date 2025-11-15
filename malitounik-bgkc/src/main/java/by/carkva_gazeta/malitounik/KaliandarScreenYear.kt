@@ -127,7 +127,7 @@ fun KaliandarScreenYear(
                         if (data[index][7].toInt() != 1) {
                             Icon(modifier = Modifier
                                 .padding(end = 10.dp)
-                                .size(22.dp, 22.dp), painter = painterResource(R.drawable.fishe), contentDescription = "", tint = colorIcon)
+                                .size(22.dp), painter = painterResource(R.drawable.fishe), contentDescription = "", tint = colorIcon)
                         }
                         Text(
                             text = text,

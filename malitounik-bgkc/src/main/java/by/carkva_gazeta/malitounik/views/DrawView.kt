@@ -108,7 +108,7 @@ fun DrawView(
             },
             icon = {
                 Icon(
-                    modifier = Modifier.size(22.dp, 22.dp),
+                    modifier = Modifier.size(22.dp),
                     painter = painterResource(R.drawable.krest),
                     contentDescription = "",
                     tint = MaterialTheme.colorScheme.primary
@@ -124,7 +124,7 @@ fun DrawView(
             icon = {
                 Icon(
                     modifier = Modifier
-                        .size(22.dp, 22.dp),
+                        .size(22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = ""
@@ -139,7 +139,7 @@ fun DrawView(
             },
             icon = {
                 Icon(
-                    modifier = Modifier.size(22.dp, 22.dp),
+                    modifier = Modifier.size(22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = ""
@@ -154,7 +154,7 @@ fun DrawView(
             },
             icon = {
                 Icon(
-                    modifier = Modifier.size(22.dp, 22.dp),
+                    modifier = Modifier.size(22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = ""
@@ -169,7 +169,7 @@ fun DrawView(
             },
             icon = {
                 Icon(
-                    modifier = Modifier.size(22.dp, 22.dp),
+                    modifier = Modifier.size(22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = ""
@@ -184,7 +184,7 @@ fun DrawView(
             },
             icon = {
                 Icon(
-                    modifier = Modifier.size(22.dp, 22.dp),
+                    modifier = Modifier.size(22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = ""
@@ -199,7 +199,7 @@ fun DrawView(
             },
             icon = {
                 Icon(
-                    modifier = Modifier.size(22.dp, 22.dp),
+                    modifier = Modifier.size(22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = ""
@@ -214,7 +214,7 @@ fun DrawView(
             },
             icon = {
                 Icon(
-                    modifier = Modifier.size(22.dp, 22.dp),
+                    modifier = Modifier.size(22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = ""
@@ -230,7 +230,7 @@ fun DrawView(
                 },
                 icon = {
                     Icon(
-                        modifier = Modifier.size(22.dp, 22.dp),
+                        modifier = Modifier.size(22.dp),
                         painter = painterResource(R.drawable.krest),
                         tint = MaterialTheme.colorScheme.primary,
                         contentDescription = ""
@@ -260,7 +260,7 @@ fun DrawView(
                 Icon(
                     modifier = Modifier
                         .padding(start = 20.dp)
-                        .size(22.dp, 22.dp),
+                        .size(22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = ""
@@ -276,7 +276,7 @@ fun DrawView(
                 Icon(
                     modifier = Modifier
                         .padding(horizontal = 10.dp)
-                        .size(22.dp, 22.dp),
+                        .size(22.dp),
                     painter = painterResource(if (AppNavGraphState.bibleItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
                     contentDescription = ""
@@ -392,7 +392,7 @@ fun DrawView(
             Icon(
                 modifier = Modifier
                     .padding(start = 20.dp)
-                    .size(22.dp, 22.dp),
+                    .size(22.dp),
                 painter = painterResource(R.drawable.krest),
                 tint = MaterialTheme.colorScheme.primary,
                 contentDescription = ""
@@ -409,7 +409,7 @@ fun DrawView(
                 CircularProgressIndicator(
                     modifier = Modifier
                         .padding(horizontal = 10.dp)
-                        .size(22.dp, 22.dp)
+                        .size(22.dp)
                 )
             }
             Icon(
@@ -485,7 +485,7 @@ fun DrawView(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier.size(5.dp, 5.dp),
+                        modifier = Modifier.size(5.dp),
                         painter = painterResource(R.drawable.poiter),
                         tint = MaterialTheme.colorScheme.primary,
                         contentDescription = ""
@@ -528,7 +528,7 @@ fun DrawView(
                         Icon(
                             modifier = Modifier
                                 .padding(start = 21.dp, end = 2.dp)
-                                .size(22.dp, 22.dp),
+                                .size(22.dp),
                             painter = painterResource(if (expandedSviaty) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                             tint = PrimaryText,
                             contentDescription = ""
@@ -610,7 +610,7 @@ fun DrawView(
                 Icon(
                     modifier = Modifier
                         .padding(start = 20.dp)
-                        .size(22.dp, 22.dp),
+                        .size(22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = ""
@@ -626,7 +626,7 @@ fun DrawView(
                 Icon(
                     modifier = Modifier
                         .padding(horizontal = 10.dp)
-                        .size(22.dp, 22.dp),
+                        .size(22.dp),
                     painter = painterResource(if (AppNavGraphState.biblijatekaItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
                     contentDescription = ""
@@ -751,7 +751,7 @@ fun DrawView(
                 Icon(
                     modifier = Modifier
                         .padding(start = 20.dp)
-                        .size(22.dp, 22.dp),
+                        .size(22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = ""
@@ -767,7 +767,7 @@ fun DrawView(
                 Icon(
                     modifier = Modifier
                         .padding(horizontal = 10.dp)
-                        .size(22.dp, 22.dp),
+                        .size(22.dp),
                     painter = painterResource(if (AppNavGraphState.piesnyItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
                     contentDescription = ""
@@ -881,7 +881,7 @@ fun DrawView(
                 Icon(
                     modifier = Modifier
                         .padding(start = 20.dp)
-                        .size(22.dp, 22.dp),
+                        .size(22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = ""
@@ -897,7 +897,7 @@ fun DrawView(
                 Icon(
                     modifier = Modifier
                         .padding(horizontal = 10.dp)
-                        .size(22.dp, 22.dp),
+                        .size(22.dp),
                     painter = painterResource(if (AppNavGraphState.underItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
                     contentDescription = ""
@@ -919,7 +919,7 @@ fun DrawView(
                         },
                         icon = {
                             Icon(
-                                modifier = Modifier.size(5.dp, 5.dp),
+                                modifier = Modifier.size(5.dp),
                                 painter = painterResource(R.drawable.poiter),
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
@@ -934,7 +934,7 @@ fun DrawView(
                         },
                         icon = {
                             Icon(
-                                modifier = Modifier.size(5.dp, 5.dp),
+                                modifier = Modifier.size(5.dp),
                                 painter = painterResource(R.drawable.poiter),
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
@@ -949,7 +949,7 @@ fun DrawView(
                         },
                         icon = {
                             Icon(
-                                modifier = Modifier.size(5.dp, 5.dp),
+                                modifier = Modifier.size(5.dp),
                                 painter = painterResource(R.drawable.poiter),
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
@@ -964,7 +964,7 @@ fun DrawView(
                         },
                         icon = {
                             Icon(
-                                modifier = Modifier.size(5.dp, 5.dp),
+                                modifier = Modifier.size(5.dp),
                                 painter = painterResource(R.drawable.poiter),
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
@@ -979,7 +979,7 @@ fun DrawView(
                         },
                         icon = {
                             Icon(
-                                modifier = Modifier.size(5.dp, 5.dp),
+                                modifier = Modifier.size(5.dp),
                                 painter = painterResource(R.drawable.poiter),
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
@@ -994,7 +994,7 @@ fun DrawView(
                         },
                         icon = {
                             Icon(
-                                modifier = Modifier.size(5.dp, 5.dp),
+                                modifier = Modifier.size(5.dp),
                                 painter = painterResource(R.drawable.poiter),
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""
@@ -1009,7 +1009,7 @@ fun DrawView(
                         },
                         icon = {
                             Icon(
-                                modifier = Modifier.size(5.dp, 5.dp),
+                                modifier = Modifier.size(5.dp),
                                 painter = painterResource(R.drawable.poiter),
                                 tint = MaterialTheme.colorScheme.primary,
                                 contentDescription = ""

@@ -128,7 +128,7 @@ fun KaliandarKnigaView(
                         Icon(
                             painterResource(R.drawable.moon2_white), contentDescription = "", modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
-                                .size(40.dp, 40.dp), tint = newTint
+                                .size(40.dp), tint = newTint
                         )
                         Text(
                             text = stringResource(R.string.viachernia), modifier = Modifier
@@ -155,7 +155,7 @@ fun KaliandarKnigaView(
                         Icon(
                             painterResource(R.drawable.moon_white), contentDescription = "", modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
-                                .size(40.dp, 40.dp), tint = newTint
+                                .size(40.dp), tint = newTint
                         )
                         Text(
                             text = stringResource(R.string.raviachernica), modifier = Modifier
@@ -181,7 +181,7 @@ fun KaliandarKnigaView(
                         Icon(
                             painterResource(R.drawable.sun2_white), contentDescription = "", modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
-                                .size(40.dp, 40.dp), tint = newTint
+                                .size(40.dp), tint = newTint
                         )
                         Text(
                             text = stringResource(R.string.paunochnica), modifier = Modifier
@@ -212,7 +212,7 @@ fun KaliandarKnigaView(
                         Icon(
                             painterResource(R.drawable.sun_white), contentDescription = "", modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
-                                .size(40.dp, 40.dp), tint = newTint
+                                .size(40.dp), tint = newTint
                         )
                         Text(
                             text = stringResource(R.string.utran), modifier = Modifier
@@ -238,7 +238,7 @@ fun KaliandarKnigaView(
                         Icon(
                             painterResource(R.drawable.clock_white), contentDescription = "", modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
-                                .size(40.dp, 40.dp), tint = newTint
+                                .size(40.dp), tint = newTint
                         )
                         Text(
                             text = stringResource(R.string.gadziny), modifier = Modifier
@@ -265,7 +265,7 @@ fun KaliandarKnigaView(
                         Icon(
                             painterResource(R.drawable.carkva_white), contentDescription = "", modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
-                                .size(40.dp, 40.dp), tint = newTint
+                                .size(40.dp), tint = newTint
                         )
                         Text(
                             text = stringResource(R.string.liturgia), modifier = Modifier
@@ -280,7 +280,7 @@ fun KaliandarKnigaView(
                         Icon(
                             painterResource(R.drawable.kanon_white), contentDescription = "", modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
-                                .size(40.dp, 40.dp), tint = newTint
+                                .size(40.dp), tint = newTint
                         )
                         Text(
                             text = stringResource(R.string.ustau), modifier = Modifier
@@ -299,7 +299,7 @@ fun KaliandarKnigaView(
                         Icon(
                             painterResource(R.drawable.man_white), contentDescription = "", modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
-                                .size(40.dp, 40.dp), tint = newTint
+                                .size(40.dp), tint = newTint
                         )
                         Text(
                             text = stringResource(R.string.jyci), modifier = Modifier
@@ -318,7 +318,7 @@ fun KaliandarKnigaView(
                         Icon(
                             painterResource(R.drawable.book_white), contentDescription = "", modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
-                                .size(40.dp, 40.dp), tint = newTint
+                                .size(40.dp), tint = newTint
                         )
                         Text(
                             text = stringResource(R.string.piarliny), modifier = Modifier
@@ -381,7 +381,7 @@ fun DialogKniga(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            modifier = Modifier.size(5.dp, 5.dp),
+                            modifier = Modifier.size(5.dp),
                             painter = painterResource(R.drawable.poiter),
                             tint = MaterialTheme.colorScheme.primary,
                             contentDescription = ""

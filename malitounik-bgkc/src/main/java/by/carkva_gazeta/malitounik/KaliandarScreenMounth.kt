@@ -424,7 +424,7 @@ fun DialogSetDataCaliandar(
                                     }, verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
-                                    modifier = Modifier.size(5.dp, 5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                                    modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
                                 )
                                 Text(
                                     text = list[i], modifier = Modifier
@@ -449,7 +449,7 @@ fun DialogSetDataCaliandar(
                                     }, verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
-                                    modifier = Modifier.size(5.dp, 5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                                    modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
                                 )
                                 Text(
                                     text = i.toString(), modifier = Modifier

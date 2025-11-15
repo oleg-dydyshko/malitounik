@@ -431,7 +431,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                 viewPiarlinyEdit = true
                             }) {
                                 Icon(
-                                    modifier = Modifier.size(24.dp, 24.dp),
+                                    modifier = Modifier.size(24.dp),
                                     painter = painterResource(R.drawable.book_white_edit),
                                     tint = PrimaryTextBlack,
                                     contentDescription = ""
@@ -441,7 +441,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                 navigationActions.navigateToEditIcon()
                             }) {
                                 Icon(
-                                    modifier = Modifier.size(24.dp, 24.dp),
+                                    modifier = Modifier.size(24.dp),
                                     painter = painterResource(R.drawable.image_icon_file),
                                     tint = PrimaryTextBlack,
                                     contentDescription = ""
@@ -482,7 +482,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                     viewPiarliny = true
                                 }) {
                                     Icon(
-                                        modifier = Modifier.size(24.dp, 24.dp),
+                                        modifier = Modifier.size(24.dp),
                                         painter = painterResource(R.drawable.book_white),
                                         tint = PrimaryTextBlack,
                                         contentDescription = ""
@@ -545,6 +545,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                         textFieldValueStateTitle = TextFieldValue(build, TextRange(endSelect + 17))
                     }) {
                         Icon(
+                            modifier = Modifier.size(24.dp),
                             painter = painterResource(R.drawable.bold_menu),
                             contentDescription = "",
                             tint = MaterialTheme.colorScheme.onSecondary
@@ -565,6 +566,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                         textFieldValueStateTitle = TextFieldValue(build, TextRange(endSelect + 9))
                     }) {
                         Icon(
+                            modifier = Modifier.size(24.dp),
                             painter = painterResource(R.drawable.italic),
                             contentDescription = "",
                             tint = MaterialTheme.colorScheme.onSecondary
@@ -585,6 +587,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                         textFieldValueStateTitle = TextFieldValue(build, TextRange(endSelect + 29))
                     }) {
                         Image(
+                            modifier = Modifier.size(24.dp),
                             painter = painterResource(R.drawable.red_menu),
                             contentDescription = ""
                         )
@@ -600,9 +603,9 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                         }
                         textFieldValueStateTitle = TextFieldValue(build, TextRange(endSelect + 4))
                     }) {
-                        val icon = painterResource(R.drawable.br_menu)
                         Icon(
-                            painter = icon,
+                            modifier = Modifier.size(24.dp),
+                            painter = painterResource(R.drawable.br_menu),
                             contentDescription = "",
                             tint = MaterialTheme.colorScheme.onSecondary
                         )

@@ -401,7 +401,7 @@ fun PasochnicaList(navController: NavHostController, pasochnicaAction: Int, inne
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    modifier = Modifier.size(5.dp, 5.dp),
+                    modifier = Modifier.size(5.dp),
                     painter = painterResource(R.drawable.poiter),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = ""
@@ -443,7 +443,7 @@ fun PasochnicaList(navController: NavHostController, pasochnicaAction: Int, inne
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    modifier = Modifier.size(5.dp, 5.dp),
+                    modifier = Modifier.size(5.dp),
                     painter = painterResource(R.drawable.poiter),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = ""

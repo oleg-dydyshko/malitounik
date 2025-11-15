@@ -141,7 +141,6 @@ object Settings {
     const val MENU_MALITVY_RUJANEC = 125
     const val MENU_MAE_NATATKI = 126
     const val MENU_LITURGIKON = 127
-    const val MUNU_PIASOCHNICA_LIST = 128
     const val CALAINDAR = 0
     const val PASHA = 1
     const val UNDER = 2
@@ -1138,11 +1137,11 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         /*CoroutineScope(Dispatchers.IO).launch {
             withContext(Dispatchers.IO) {
                 val glav = 28
-                var knigaFile = 2
-                for (kniga in 41..66) {
+                var knigaFile = 1
+                for (kniga in 40..66) {
                     val result = StringBuilder("\n===")
                     for (page in 1..glav) {
-                        val url = URL("https://bible.by/bcat/$kniga/$page/")
+                        val url = URL("https://bible.by/esv/$kniga/$page/")
                         val urlConnection = url.openConnection() as HttpURLConnection
                         try {
                             var text = urlConnection.inputStream.bufferedReader().readText()
@@ -1152,7 +1151,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
                             text = text.replace("</span>", "</em><br><br>")
                             text = text.replace("<p class=\"quote\">", "")
                             text = text.replace("</p>", "")
-                            val t1 = text.indexOf("<div class=\"text by\">")
+                            val t1 = text.indexOf("<div class=\"text en\">")
                             val t2 = text.indexOf("<div class=\"clearfix\">")
                             if (t1 == -1) break
                             if (t2 != -1) {
@@ -1165,7 +1164,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
                             urlConnection.disconnect()
                         }
                     }
-                    val file = File( "$filesDir/catolikn${knigaFile}.txt")
+                    val file = File( "$filesDir/englishn${knigaFile}.txt")
                     file.writer().use {
                         it.write(result.toString())
                     }

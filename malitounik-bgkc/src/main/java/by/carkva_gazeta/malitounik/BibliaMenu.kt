@@ -552,7 +552,7 @@ fun BibliaMenu(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
-                                    modifier = Modifier.size(5.dp, 5.dp),
+                                    modifier = Modifier.size(5.dp),
                                     painter = painterResource(R.drawable.poiter),
                                     tint = MaterialTheme.colorScheme.primary,
                                     contentDescription = ""
@@ -844,7 +844,7 @@ fun BibliaMenu(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
-                                    modifier = Modifier.size(5.dp, 5.dp),
+                                    modifier = Modifier.size(5.dp),
                                     painter = painterResource(R.drawable.poiter),
                                     tint = MaterialTheme.colorScheme.primary,
                                     contentDescription = ""
