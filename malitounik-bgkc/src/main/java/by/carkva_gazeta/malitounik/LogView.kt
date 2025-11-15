@@ -80,8 +80,6 @@ class LogView {
         oldCheckSB = localFile.readText()
         val list = Malitounik.referens.child("/admin").list(1000).await()
         runPrefixes(list, oldCheckSB)
-        val list2 = Malitounik.referens.child("/chytanne/Semucha").list(1000).await()
-        runItems(list2, oldCheckSB)
         var pathReference = Malitounik.referens.child("/calendarsviatyia.txt")
         addItems(pathReference.path, pathReference.name, oldCheckSB)
         for (year in Settings.GET_CALIANDAR_YEAR_MIN..Settings.GET_CALIANDAR_YEAR_MAX) {

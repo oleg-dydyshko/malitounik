@@ -75,7 +75,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
@@ -95,13 +94,11 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.Settings.NOTIFICATION_CHANNEL_ID_SVIATY
 import by.carkva_gazeta.malitounik.Settings.setNotifications
-import by.carkva_gazeta.malitounik.admin.AdminMain
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
-import by.carkva_gazeta.malitounik.views.AppNavigationActions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -113,9 +110,6 @@ import java.io.File
 fun SettingsView(navController: NavHostController) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-    val navigationActions = remember(navController) {
-        AppNavigationActions(navController, k)
-    }
     val view = LocalView.current
     SideEffect {
         val window = (view.context as Activity).window
@@ -460,50 +454,9 @@ fun SettingsView(navController: NavHostController) {
                             }
                         })
                 }
-                val list = stringArrayResource(R.array.admin_edit_list)
-                Column {
-                    for (index in list.indices) {
-                        Row(
-                            modifier = Modifier
-                                .clickable {
-                                    when (index) {
-                                        0 -> {
-                                            navigationActions.navigateToPiasochnicaList()
-                                        }
-
-                                        1 -> {
-                                        }
-
-                                        2 -> {
-                                            val intent = Intent(context, AdminMain::class.java)
-                                            context.startActivity(intent)
-                                        }
-                                    }
-                                }
-                                .padding(start = 10.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                modifier = Modifier.size(5.dp, 5.dp),
-                                painter = painterResource(R.drawable.poiter),
-                                tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
-                            )
-                            Text(
-                                list[index],
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(10.dp),
-                                color = MaterialTheme.colorScheme.secondary,
-                                fontSize = Settings.fontInterface.sp
-                            )
-                        }
-                        HorizontalDivider()
-                    }
-                }
             }
             Text(
-                modifier = Modifier.padding(top = 20.dp), text = stringResource(R.string.econom_enargi), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.primary
+                modifier = Modifier.padding(top = 10.dp), text = stringResource(R.string.econom_enargi), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.primary
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
             var power by remember { mutableStateOf(k.getBoolean("power", false)) }

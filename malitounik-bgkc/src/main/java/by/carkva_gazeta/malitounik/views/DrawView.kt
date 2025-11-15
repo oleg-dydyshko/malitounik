@@ -221,6 +221,23 @@ fun DrawView(
                 )
             }
         )
+        if (k.getBoolean("admin", false)) {
+            NavigationItem(
+                label = stringResource(id = R.string.pasochnica_up),
+                selected = route == AllDestinations.PIASOCHNICA_LIST,
+                onClick = {
+                    navigateToRazdel(AllDestinations.PIASOCHNICA_LIST)
+                },
+                icon = {
+                    Icon(
+                        modifier = Modifier.size(22.dp, 22.dp),
+                        painter = painterResource(R.drawable.krest),
+                        tint = MaterialTheme.colorScheme.primary,
+                        contentDescription = ""
+                    )
+                }
+            )
+        }
         HorizontalDivider(
             modifier = Modifier.padding(vertical = 5.dp),
             color = MaterialTheme.colorScheme.secondary

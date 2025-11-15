@@ -1,10 +1,8 @@
 <resources>
     <string name="app_name">Малітоўнік</string>
-    <string name="kaliandar">Каляндар БГКЦ</string>
     <string name="kaliandar2">КАЛЯНДАР БГКЦ</string>
     <string name="stary_zapaviet">Стары Запавет</string>
     <string name="novy_zapaviet">Новы Запавет</string>
-    <string name="title_activity_stary_zapaviet2">Стары Запавет</string>
     <string name="exit">Націсьніце другі раз, каб закрыць</string>
     <string name="error">Памылка</string>
     <string name="ok">Добра</string>
@@ -20,15 +18,12 @@
     <string name="tools_item">Налады</string>
     <string name="search_call">Абраць сёньняшні дзень</string>
     <string name="data_search">ВЫБЯРЫЦЕ РАЗЬДЗЕЛ</string>
-    <string name="razdzel">Разьдзел</string>
-    <string name="psalom">Псальма</string>
     <string name="bogaslugbovyia_teksty">БОГАСЛУЖБОВЫЯ ТЭКСТЫ</string>
     <string name="malitvy">МАЛІТВЫ</string>
     <string name="akafisty">АКАФІСТЫ</string>
     <string name="other">ІНШАЕ</string>
     <string name="czytanne">Чытаньне</string>
     <string name="czytanne3">Чытаньне, за %1$d %2$s</string>
-    <string name="czytanne2">Чытаньні</string>
     <string name="menu_font_size_app">Выбраць памер шрыфту</string>
     <string name="pazdel">Выбраць разьдзел</string>
     <string name="settings_battom_panel">Ніжняй панэлі</string>
@@ -110,7 +105,6 @@
     <string name="Sabytie_install_kolkast_paz">Усталяваць колькасьць разоў</string>
     <string name="Sabytie_paz">Раз (-оў)</string>
     <string name="Sabytie_install_data_end">Усталяваць дату заканчэньня</string>
-    <string name="seashmin">ня менш за тры сымбалі</string>
     <string name="settings_default">Налады па змаўчаньні</string>
     <string name="tipicon_fon">ФОН У КАЛЕНДАРЫ:</string>
     <string name="Post">Пост</string>
@@ -119,7 +113,6 @@
     <string name="No_post">Посту\nняма</string>
     <string name="No_post_n">Посту няма</string>
     <string name="niadzeli_i_sviaty">Нядзелі і сьвяты</string>
-    <string name="niadzel">Нядзеля</string>
     <string name="zvychaynye_dny">Звычайныя дні</string>
     <string name="Znaki_cviat">ЗНАЧКІ СЬВЯТАЎ:</string>
     <string name="Z_Lic_na_ve">З ліцьцёй на вячэрні</string>
@@ -157,14 +150,12 @@
     <string name="check_internet">Праверце налады злучэньня</string>
     <string name="alesyaSemukha">ПРА ПЕРАКЛАД І ЎМОВЫ КАРЫСТАНЬНЯ ТЭКСТАМІ</string>
     <string name="alesyaSemukha2">Пра пераклад і ўмовы карыстаньня тэкстамі</string>
-    <string name="vybor_daty">Выбраць дату</string>
     <string name="vybor_mun">МЕСЯЦ</string>
     <string name="vybor_year">ГОД</string>
     <string name="copy">Скапіявана</string>
     <string name="delite_all_natatki">Вы сапраўды жадаеце выдаліць усе нататкі?</string>
     <string name="vybranae_add">Дадаць у Выбранае</string>
     <string name="vybranae_remove">Выдаліць з Выбранага</string>
-    <string name="get_date">Выберыце дату</string>
     <string name="title_psalter">ПСАЛТЫР (пераклад А. Надсана)</string>
     <string name="title_psalter_privila">Правілы чытаньня Псалтыра</string>
     <string name="psalter">Псалмы</string>
@@ -175,7 +166,9 @@
     <string name="malitva_pered">Малітвы перад\nчытаньнем Псалтыра</string>
     <string name="malitva_posle">Малітвы пасьля\nчытаньня Псалтыра</string>
     <string name="niama_icony">Няма іконы</string>
+    <string name="niama_malunka">Няма малюнка</string>
     <string name="niama_apisannia">Няма апісаньня</string>
+    <string name="niama_pdf">Няма PDF файла</string>
     <string name="searche_text">Пошук у тэксьце</string>
     <string name="title_biblijateka">Бібліятэка Царквы</string>
     <string name="settings_notifi_sviata">Налады апавяшчэньня сьвятаў</string>
@@ -191,7 +184,6 @@
     <string name="bibliateka_malitouniki">Малітоўнікі</string>
     <string name="bibliateka_speuniki">Сьпеўнікі</string>
     <string name="bibliateka_rel_litaratura">Рэлігійная літаратура</string>
-    <string name="bibliateka_file">Выбраць файл</string>
     <string name="del_all_vybranoe">Вы сапраўды жадаеце выдаліць усё Выбранае?</string>
     <string name="share">Падзяліцца&#8230;</string>
     <string name="searche_bogasluz_text">Пошук па тэкстах</string>
@@ -200,8 +192,6 @@
     <string name="pavedamiс_title">Паведамляць:</string>
     <string name="pavedamic">а %1$d-й гадзіне</string>
     <string name="save">Захавана</string>
-    <string name="mun">Месяц</string>
-    <string name="niadzelia">Тыдзень</string>
     <string name="remove_padzea">Выдалена</string>
     <string name="remove_sabytie_iak">Якія падзеі Вы жадаеце выдаліць?</string>
     <string name="sabytie_del_all">Усё</string>
@@ -211,11 +201,8 @@
     <string name="del_apis">Вы сапраўды жадаеце выдаліць апісаньне?</string>
     <string name="save_sabytie">Захаваць</string>
     <string name="download_file">Спампаваць файл?</string>
-    <string name="tydzen_name2">%1$s %2$s %3$s</string>
-    <string name="tydzen_name3">%1$s %2$s %3$s, %4$s</string>
     <string name="sabytie_kali">Калі: %1$s %2$s\n%3$s</string>
     <string name="sabytie_pachatak_show">Пачатак: %1$s %2$s\nКанец: %3$s %4$s\n%5$s</string>
-    <string name="empty"> </string>
     <string name="chytanne">Чытаньне:</string>
     <string name="vybranoe_biblia_delite">Вы сапраўды жадаеце выдаліць \"%1$s\"?</string>
     <string name="color_padzei">Колер:</string>
@@ -343,22 +330,14 @@
         <item>лістапада</item>
         <item>сьнежня</item>
     </string-array>
-    <string name="site_admin">Кіраваньне рэсурсамі праграмы</string>
     <string name="admin_panel">Панэль кіраваньня</string>
-    <string name="pre_view">Прадпрагляд</string>
-    <string name="fing_count">%1$d/%2$d</string>
     <string name="pasochnica">Пясочніца</string>
+    <string name="pasochnica_up">ПЯСОЧНІЦА</string>
     <string name="set_file_name">ВЫБЯРЫЦЕ ІМЯ ФАЙЛА</string>
     <string name="add_file">Дадаць файл</string>
     <string name="rename_file">Перайменаваць</string>
-    <string name="save_as_up">ЗАХАВАЦЬ ЯК&#8230;</string>
-    <string name="file_name2">Імя файла</string>
-    <string name="file_perazapisac">Перазапісаць</string>
     <string name="file_exists">ФАЙЛ ІСНУЕ</string>
     <string name="file_exists_opis">Перазапісаць існуючы файл \"%1$s\"?</string>
-    <string name="mk_dir">СТВАРЫЦЬ КАТАЛОГ</string>
-    <string name="set_file_dir">ВЫБЯРЫЦЕ ІМЯ КАТАЛОГА</string>
-    <string name="image_upload">Загрузіць ікону</string>
     <string name="sabytie_data_name">%1$s %2$s</string>
     <string name="update_title2">АБНАЎЛЕНЬНЕ ПРАГРАМЫ</string>
     <string-array name="admin_svity">
@@ -375,8 +354,6 @@
     <string name="admin_day_in_year">Дзень ад пачатку года (да і пасьля Пасxi)</string>
     <string name="admin_show_day_in_year">Год (Пасха): %1$s (%2$s)</string>
     <string name="admin_set_name_link">СПАСЫЛКА</string>
-    <string name="admin_link">Спасылка:</string>
-    <string name="admin_title_link">Імя спасылкі:</string>
     <string name="malitva_za_paclicanyx_i_jyvyx">УСПАМІН ПАМЕРЛЫХ І ЖЫВЫХ</string>
     <string name="help_notifications_api33">Для паказу апавяшчэньняў пра падзеі і сьвяты, патрабуецца дазвол на ўстаноўку будзільнікаў і паказ апавяшчэньняў.</string>
     <string name="log">ЛОГ</string>
@@ -394,9 +371,6 @@
     <string name="program_radio_maryia">Праграма перадач Радыё Марыя</string>
     <string name="widget_title">Каляндар на дзень</string>
     <string name="widget_mun_title">Каляндар на месяц</string>
-    <string name="convert_to_html">Канвертаваньне ў html</string>
-    <string name="is_html_title">ФАРМАТ HTML</string>
-    <string name="is_html">Тэкст у фармаце HTML?</string>
     <string name="vybrac_file">ВЫБЕРЫЦЕ ФАЙЛ</string>
     <string name="dvunad_sv">ДВУНАДЗЯСЯТЫЯ СЬВЯТЫ</string>
     <string name="vial_sv">ВЯЛІКІЯ СЬВЯТЫ</string>
@@ -425,8 +399,6 @@
     <string name="chto_novaga_title">Што новага?</string>
     <string name="admin_upload_contine">Праверка скончана. Няма зьмен.</string>
     <string name="admin_upload_log_contine">У логу няма зьмен. Усё роўна праверыць?</string>
-    <string name="admin_sviatya_pyxomyia">Сьвятыя рухомыя</string>
-    <string name="admin_update_meta">Абнавіць метададзеныя</string>
     <string-array name="psalter_list">
         <item>Псалмы</item>
     </string-array>
@@ -777,7 +749,6 @@
         <item>ТРЭБНІК</item>
     </array>
     <string name="open_in">Адчыніць у&#8230;</string>
-    <string name="admin_cyrylic_no_support">Кірыліца не падтрымліваецца</string>
     <string name="searh_sviatyia_result">Знойдзена %1$d</string>
     <string name="clear_chash">Ачыстка кэшу</string>
     <string name="clear_chash_opis">Пры неабходнасці, файлы будуць спампаваныя зноў.</string>
@@ -812,10 +783,12 @@
     <string name="cytaty">ЦЫТАТЫ З БІБЛІІ</string>
     <string name="title_biblia_catolik">НОВЫ ЗАПАВЕТ (пераклад Рыма-Каталіцкага Касцёла)</string>
     <string name="title_biblia_catolik2">Пераклад Рыма-Каталіцкага Касцёла</string>
-    <array name="admin_edit_list">
-        <item>Пясочніца</item>
-        <item>Пярліны</item>
-        <item>Кіраваньне рэсурсамі праграмы</item>
+    <array name="amin_title_book">
+        <item>Гісторыя Царквы</item>
+        <item>Малітоўнікі</item>
+        <item>Сьпеўнікі</item>
+        <item>Рэлігійная літаратура</item>
+        <item>Архіў нумароў газеты</item>
     </array>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

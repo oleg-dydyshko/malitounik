@@ -15,19 +15,15 @@ featureDeliveryKtx = "2.1.0"
 appUpdateKtx = "2.1.0"
 #documentfile = "1.1.0"
 pagingCompose = "3.3.6"
-constraintlayout = "2.2.1"
-material = "1.13.0"
 commonsText = "1.14.0"
 #featureDelivery = "2.1.0"
 #firebaseAppcheckPlayintegrity = "18.0.0"
-fragmentKtx = "1.8.9"
 coil = "3.3.0"
 material3 = "1.4.0"
 navigation = "2.9.6"
 compose-bom = "2025.11.00"
 activity-compose = "1.11.0"
 firebase-bom = "34.5.0"
-viewbinding = "8.13.1"
 glanceAppwidget = "1.1.1"
 
 [libraries]
@@ -60,14 +56,10 @@ androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", versi
 androidx-media3-exoplayer-smoothstreaming = { module = "androidx.media3:media3-exoplayer-smoothstreaming", version.ref = "media3Exoplayer" }
 #androidx-documentfile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentfile" }
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "pagingCompose" }
-androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
-material = { module = "com.google.android.material:material", version.ref = "material" }
 commons-text = { module = "org.apache.commons:commons-text", version.ref = "commonsText" }
 #feature-delivery = { module = "com.google.android.play:feature-delivery", version.ref = "featureDelivery" }
 #google-firebase-appcheck-playintegrity = { group = "com.google.firebase", name = "firebase-appcheck-playintegrity", version.ref = "firebaseAppcheckPlayintegrity" }
-androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx" }
 coil3 = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
-androidx-viewbinding = { group = "androidx.databinding", name = "viewbinding", version.ref = "viewbinding" }
 androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glanceAppwidget" }
 
 [plugins]

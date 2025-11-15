@@ -8,6 +8,7 @@ import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
 import android.print.PrintAttributes
 import android.print.PrintManager
+import android.text.SpannableStringBuilder
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -53,6 +54,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
@@ -82,6 +84,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -120,11 +123,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.edit
+import androidx.core.text.HtmlCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.navigation.NavHostController
+import by.carkva_gazeta.malitounik.admin.Piasochnica
+import by.carkva_gazeta.malitounik.admin.getPasochnicaFileList
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik.ui.theme.Button
 import by.carkva_gazeta.malitounik.ui.theme.Divider
@@ -373,6 +379,7 @@ fun Bogaslujbovyia(
     val result = remember { mutableStateListOf<ArrayList<Int>>() }
     var resultPosition by remember { mutableIntStateOf(0) }
     val textLayout = remember { mutableStateOf<TextLayoutResult?>(null) }
+    var isProgressVisable by remember { mutableStateOf(false) }
     LaunchedEffect(searshString.text) {
         if (searshString.text.trim().length >= 3) {
             searchJob?.cancel()
@@ -952,10 +959,53 @@ fun Bogaslujbovyia(
                                             DropdownMenuItem(onClick = {
                                                 expandedUp = false
                                                 autoScroll = false
-                                                Settings.bibleTime = true
-                                                val resAminEdit = if (iskniga) listResource[adminResourceEditPosition].resource
-                                                else resursEncode
-                                                navigationActions.navigateToPiasochnicaList(resAminEdit)
+                                                coroutineScope.launch {
+                                                    isProgressVisable = true
+                                                    if (Piasochnica.findDirAsSave.isEmpty()) {
+                                                        Piasochnica.getFindFileListAsSave()
+                                                    }
+                                                    val fileList = SnapshotStateList<String>()
+                                                    fileList.addAll(getPasochnicaFileList())
+                                                    fileList.sort()
+                                                    val dirToFile = if (iskniga) listResource[adminResourceEditPosition].resource
+                                                    else resursEncode
+                                                    Settings.bibleTime = false
+                                                    Piasochnica.isHTML = dirToFile.contains(".html")
+                                                    Piasochnica.history.clear()
+                                                    val t1 = dirToFile.lastIndexOf("/")
+                                                    val fileName = if (t1 != -1) dirToFile.substring(t1 + 1)
+                                                    else dirToFile
+                                                    if (Piasochnica.isFilePiasochnicaExitst(fileName, fileList)) {
+                                                        coroutineScope.launch {
+                                                            isProgressVisable = true
+                                                            Piasochnica.getPasochnicaFile(fileName, result = { sb, text ->
+                                                                Piasochnica.addHistory(sb, 0)
+                                                                val html = if (Piasochnica.isHTML) {
+                                                                    sb
+                                                                } else {
+                                                                    SpannableStringBuilder(text)
+                                                                }
+                                                                Piasochnica.htmlText = html
+                                                                navigationActions.navigateToPiasochnica(fileName)
+                                                            })
+                                                        }
+                                                    } else {
+                                                        Piasochnica.getFileCopyPostRequest(dirToFile = Piasochnica.findResoursDir(fileName), isProgressVisable = {
+                                                            isProgressVisable = it
+                                                        }) { text, fileName ->
+                                                            val html = if (Piasochnica.isHTML) {
+                                                                SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
+                                                            } else {
+                                                                SpannableStringBuilder(text)
+                                                            }
+                                                            Piasochnica.addHistory(html, 0)
+                                                            Piasochnica.htmlText = html
+                                                            navigationActions.navigateToPiasochnica(fileName)
+                                                            isProgressVisable = false
+                                                        }
+                                                    }
+                                                    isProgressVisable = false
+                                                }
                                             }, text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                                 Icon(
                                                     painter = painterResource(R.drawable.edit), contentDescription = ""
@@ -967,10 +1017,53 @@ fun Bogaslujbovyia(
                                 if (k.getBoolean("admin", false) && (isBottomBar || iskniga)) {
                                     IconButton(onClick = {
                                         autoScroll = false
-                                        Settings.bibleTime = true
-                                        val resAminEdit = if (iskniga) listResource[adminResourceEditPosition].resource
-                                        else resursEncode
-                                        navigationActions.navigateToPiasochnicaList(resAminEdit)
+                                        coroutineScope.launch {
+                                            isProgressVisable = true
+                                            if (Piasochnica.findDirAsSave.isEmpty()) {
+                                                Piasochnica.getFindFileListAsSave()
+                                            }
+                                            val fileList = SnapshotStateList<String>()
+                                            fileList.addAll(getPasochnicaFileList())
+                                            fileList.sort()
+                                            val dirToFile = if (iskniga) listResource[adminResourceEditPosition].resource
+                                            else resursEncode
+                                            Settings.bibleTime = false
+                                            Piasochnica.isHTML = dirToFile.contains(".html")
+                                            Piasochnica.history.clear()
+                                            val t1 = dirToFile.lastIndexOf("/")
+                                            val fileName = if (t1 != -1) dirToFile.substring(t1 + 1)
+                                            else dirToFile
+                                            if (Piasochnica.isFilePiasochnicaExitst(fileName, fileList)) {
+                                                coroutineScope.launch {
+                                                    isProgressVisable = true
+                                                    Piasochnica.getPasochnicaFile(fileName, result = { sb, text ->
+                                                        Piasochnica.addHistory(sb, 0)
+                                                        val html = if (Piasochnica.isHTML) {
+                                                            sb
+                                                        } else {
+                                                            SpannableStringBuilder(text)
+                                                        }
+                                                        Piasochnica.htmlText = html
+                                                        navigationActions.navigateToPiasochnica(fileName)
+                                                    })
+                                                }
+                                            } else {
+                                                Piasochnica.getFileCopyPostRequest(dirToFile = Piasochnica.findResoursDir(fileName), isProgressVisable = {
+                                                    isProgressVisable = it
+                                                }) { text, fileName ->
+                                                    val html = if (Piasochnica.isHTML) {
+                                                        SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
+                                                    } else {
+                                                        SpannableStringBuilder(text)
+                                                    }
+                                                    Piasochnica.addHistory(html, 0)
+                                                    Piasochnica.htmlText = html
+                                                    navigationActions.navigateToPiasochnica(fileName)
+                                                    isProgressVisable = false
+                                                }
+                                            }
+                                            isProgressVisable = false
+                                        }
                                     }) {
                                         Icon(
                                             painter = painterResource(R.drawable.edit), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
@@ -1188,6 +1281,9 @@ fun Bogaslujbovyia(
                         .verticalScroll(scrollState),
                     verticalArrangement = Arrangement.Top
                 ) {
+                    if (isProgressVisable) {
+                        LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                    }
                     val padding = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp
                     if (autoScrollSensor) {
                         HtmlText(

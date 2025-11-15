@@ -116,6 +116,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavHostController
+import by.carkva_gazeta.malitounik.admin.DialogPairlinyEdit
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
@@ -208,6 +209,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
     var imageFull by remember { mutableStateOf(false) }
     var checkPiarliny by remember { mutableStateOf(false) }
     var viewPiarliny by remember { mutableStateOf(false) }
+    var viewPiarlinyEdit by remember { mutableStateOf(false) }
     var fullImagePathVisable by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
@@ -225,6 +227,11 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                 backPressHandled = true
                 navController.popBackStack()
             }
+        }
+    }
+    if (viewPiarlinyEdit) {
+        DialogPairlinyEdit(day, mun) {
+            viewPiarlinyEdit = false
         }
     }
     if (viewPiarliny) {
@@ -421,6 +428,16 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                     actions = {
                         if (SviatyiaView.edit) {
                             IconButton({
+                                viewPiarlinyEdit = true
+                            }) {
+                                Icon(
+                                    modifier = Modifier.size(24.dp, 24.dp),
+                                    painter = painterResource(R.drawable.book_white_edit),
+                                    tint = PrimaryTextBlack,
+                                    contentDescription = ""
+                                )
+                            }
+                            IconButton({
                                 navigationActions.navigateToEditIcon()
                             }) {
                                 Icon(
@@ -465,6 +482,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                     viewPiarliny = true
                                 }) {
                                     Icon(
+                                        modifier = Modifier.size(24.dp, 24.dp),
                                         painter = painterResource(R.drawable.book_white),
                                         tint = PrimaryTextBlack,
                                         contentDescription = ""
@@ -1450,22 +1468,24 @@ fun DialogPairlinyView(
 ) {
     val context = LocalActivity.current as MainActivity
     var result by remember { mutableStateOf("") }
-    val piarlin = ArrayList<ArrayList<String>>()
-    val localFile = File("${context.filesDir}/piarliny.json")
-    if (localFile.exists()) {
-        try {
-            val builder = localFile.readText()
-            val gson = Gson()
-            val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
-            piarlin.addAll(gson.fromJson(builder, type))
-        } catch (_: Throwable) {
+    LaunchedEffect(Unit) {
+        val piarlin = ArrayList<ArrayList<String>>()
+        val localFile = File("${context.filesDir}/piarliny.json")
+        if (localFile.exists()) {
+            try {
+                val builder = localFile.readText()
+                val gson = Gson()
+                val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
+                piarlin.addAll(gson.fromJson(builder, type))
+            } catch (_: Throwable) {
+            }
         }
-    }
-    val cal = GregorianCalendar()
-    piarlin.forEach { piarliny ->
-        cal.timeInMillis = piarliny[0].toLong() * 1000
-        if (day == cal.get(Calendar.DATE) && mun - 1 == cal.get(Calendar.MONTH)) {
-            result = piarliny[1]
+        val cal = GregorianCalendar()
+        piarlin.forEach { piarliny ->
+            cal.timeInMillis = piarliny[0].toLong() * 1000
+            if (day == cal.get(Calendar.DATE) && mun - 1 == cal.get(Calendar.MONTH)) {
+                result = piarliny[1]
+            }
         }
     }
     Dialog(onDismissRequest = { onDismiss() }) {
@@ -1485,7 +1505,7 @@ fun DialogPairlinyView(
                 Column(
                     modifier = Modifier
                         .padding(10.dp)
-                        .weight(1f)
+                        .weight(1f, false)
                         .verticalScroll(rememberScrollState())
                 ) {
                     HtmlText(

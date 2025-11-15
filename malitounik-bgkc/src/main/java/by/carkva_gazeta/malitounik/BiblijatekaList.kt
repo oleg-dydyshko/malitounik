@@ -7,7 +7,7 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,6 +58,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import by.carkva_gazeta.malitounik.admin.DialogEditBiblijteka
+import by.carkva_gazeta.malitounik.admin.saveBibliateka
 import by.carkva_gazeta.malitounik.views.AllDestinations
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
 import by.carkva_gazeta.malitounik.views.HtmlText
@@ -78,10 +80,24 @@ import java.math.RoundingMode
 import java.text.DecimalFormat
 
 class FilterBiblijatekaModel : ViewModel() {
-    private val items = SnapshotStateList<ArrayList<String>>()
+    val listAllBiblijateka = ArrayList<ArrayList<String>>()
+    private val items = mutableStateListOf<ArrayList<String>>()
 
     private val _filteredItems = MutableStateFlow(items)
     var filteredItems: MutableStateFlow<SnapshotStateList<ArrayList<String>>> = _filteredItems
+
+    fun addAllBiblijateka(list: ArrayList<ArrayList<String>>) {
+        listAllBiblijateka.addAll(list)
+    }
+
+    fun findIndex(fileSize: Long): Int {
+        for (i in listAllBiblijateka.indices) {
+            if (listAllBiblijateka[i][3].toLong() == fileSize) {
+                return i
+            }
+        }
+        return 0
+    }
 
     fun clear() {
         items.clear()
@@ -102,7 +118,7 @@ class FilterBiblijatekaModel : ViewModel() {
 var biblijatekaJob: Job? = null
 
 @Composable
-fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerPadding: PaddingValues, searchText: Boolean) {
+fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerPadding: PaddingValues, searchText: Boolean, addItem: Boolean, editDismiss: () -> Unit) {
     val context = LocalContext.current
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
@@ -116,12 +132,54 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
     var isDialogNoWIFIVisable by remember { mutableStateOf(false) }
     var isDialogNoIntent by remember { mutableStateOf(false) }
     val bibliatekaList = remember { mutableStateListOf<ArrayList<String>>() }
+    val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
+    val editList = remember { ArrayList<String>() }
+    var editItem by remember { mutableStateOf(false) }
+    var allPosition by remember { mutableIntStateOf(0) }
+    if (addItem || editItem) {
+        if (addItem) {
+            allPosition = -1
+            editList.clear()
+            editList.add("")
+            editList.add("")
+            editList.add(stringResource(R.string.niama_pdf))
+            editList.add("0")
+            editList.add("1")
+            editList.add("")
+        }
+        DialogEditBiblijteka(editList, onSave = { title: String, rubrika: Int, apisanne: String, pdfFile: String ->
+            saveBibliateka(context, viewModel.listAllBiblijateka, allPosition, title, rubrika, apisanne, pdfFile) {
+                isProgressVisable = it
+                if (!isProgressVisable) {
+                    editDismiss()
+                    editItem = false
+                }
+            }
+        }) { fileName ->
+            val cacheImage = File("${context.filesDir}/cache/cache.png")
+            if (cacheImage.exists() && fileName.isNotEmpty()) {
+                val t1 = fileName.lastIndexOf("/")
+                val image = File("${context.filesDir}/bibliatekaImage/" + fileName.substring(t1 + 1))
+                cacheImage.copyTo(image, overwrite = true)
+                cacheImage.delete()
+            }
+            val image = File("${context.filesDir}/bibliatekaImage/cacheNew.png")
+            if (image.exists()) image.delete()
+            val localPdfFile = File("${context.filesDir}/cache/cache.pdf")
+            if(localPdfFile.exists()) {
+                localPdfFile.delete()
+            }
+            editDismiss()
+            editItem = false
+        }
+    }
     LaunchedEffect(Unit) {
         biblijatekaJob?.cancel()
         biblijatekaJob = CoroutineScope(Dispatchers.IO).launch {
             getBibliateka(
                 context,
                 bibliatekaList = { list ->
+                    viewModel.addAllBiblijateka(list)
                     when (biblijateka) {
                         AllDestinations.BIBLIJATEKA_NIADAUNIA -> {
                             val gson = Gson()
@@ -183,7 +241,6 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
         viewModel.addAllItemList(bibliatekaList)
         viewModel.filterItem(Settings.textFieldValueState.value)
     }
-    val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
     if (isDialogBiblijatekaVisable) {
         fileName = if (searchText) filteredItems[fileListPosition][2]
         else {
@@ -281,19 +338,17 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
         }
     }
     Column {
-        if (searchText) {
-            BiblijatekaListItems(
-                filteredItems, navigationActions, innerPadding,
-                setFileListPosition = { fileListPosition = it },
-                setIsDialogBiblijatekaVisable = { isDialogBiblijatekaVisable = it }
-            )
-        } else {
-            BiblijatekaListItems(
-                bibliatekaList, navigationActions, innerPadding,
-                setFileListPosition = { fileListPosition = it },
-                setIsDialogBiblijatekaVisable = { isDialogBiblijatekaVisable = it }
-            )
-        }
+        BiblijatekaListItems(
+            if (searchText) filteredItems else bibliatekaList, navigationActions, innerPadding, searchText,
+            setFileListPosition = { fileListPosition = it },
+            setIsDialogBiblijatekaVisable = { isDialogBiblijatekaVisable = it },
+            editListItem = {
+                allPosition = viewModel.findIndex(it[3].toLong())
+                editList.clear()
+                editList.addAll(it)
+                editItem = true
+            }
+        )
     }
     if (isProgressVisable) {
         Box(
@@ -306,9 +361,10 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
 
 @Composable
 fun BiblijatekaListItems(
-    listItem: SnapshotStateList<ArrayList<String>>, navigationActions: AppNavigationActions, innerPadding: PaddingValues,
+    listItem: SnapshotStateList<ArrayList<String>>, navigationActions: AppNavigationActions, innerPadding: PaddingValues, searchText: Boolean,
     setFileListPosition: (Int) -> Unit,
-    setIsDialogBiblijatekaVisable: (Boolean) -> Unit
+    setIsDialogBiblijatekaVisable: (Boolean) -> Unit,
+    editListItem: (ArrayList<String>) -> Unit
 ) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
@@ -332,18 +388,25 @@ fun BiblijatekaListItems(
                 Row(
                     modifier = Modifier
                         .padding(start = 10.dp)
-                        .clickable {
-                            if (fileExistsBiblijateka(context, listItem[index][2])) {
-                                addNiadaunia(context, listItem[index])
-                                navigationActions.navigateToBiblijateka(
-                                    listItem[index][0],
-                                    listItem[index][2]
-                                )
-                            } else {
-                                setFileListPosition(index)
-                                setIsDialogBiblijatekaVisable(true)
+                        .combinedClickable(
+                            onClick = {
+                                if (fileExistsBiblijateka(context, listItem[index][2])) {
+                                    addNiadaunia(context, listItem[index])
+                                    navigationActions.navigateToBiblijateka(
+                                        listItem[index][0],
+                                        listItem[index][2]
+                                    )
+                                } else {
+                                    setFileListPosition(index)
+                                    setIsDialogBiblijatekaVisable(true)
+                                }
+                            },
+                            onLongClick = {
+                                if (!searchText) {
+                                    editListItem(listItem[index])
+                                }
                             }
-                        },
+                        ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
@@ -369,36 +432,45 @@ fun BiblijatekaListItems(
                         "${context.filesDir}/bibliatekaImage/${listItem[index][5]}",
                         options
                     )
-                    val aspectRatio = bitmap.width.toFloat() / bitmap.height.toFloat()
-                    Image(
-                        modifier = Modifier
-                            .padding(bottom = 10.dp)
-                            .border(
-                                width = 1.dp,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                shape = RectangleShape
-                            )
-                            .size(width = 200.dp, height = (200 / aspectRatio).dp)
-                            .align(Alignment.CenterHorizontally)
-                            .clickable {
-                                if (fileExistsBiblijateka(
-                                        context,
-                                        listItem[index][2]
-                                    )
-                                ) {
-                                    navigationActions.navigateToBiblijateka(
-                                        listItem[index][0],
-                                        listItem[index][2]
-                                    )
-                                    addNiadaunia(context, listItem[index])
-                                } else {
-                                    setFileListPosition(index)
-                                    setIsDialogBiblijatekaVisable(true)
-                                }
-                            },
-                        bitmap = bitmap.asImageBitmap(),
-                        contentDescription = ""
-                    )
+                    if (bitmap != null) {
+                        val aspectRatio = bitmap.width.toFloat() / bitmap.height.toFloat()
+                        Image(
+                            modifier = Modifier
+                                .padding(bottom = 10.dp)
+                                .border(
+                                    width = 1.dp,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    shape = RectangleShape
+                                )
+                                .size(width = 200.dp, height = (200 / aspectRatio).dp)
+                                .align(Alignment.CenterHorizontally)
+                                .combinedClickable(
+                                    onClick = {
+                                        if (fileExistsBiblijateka(
+                                                context,
+                                                listItem[index][2]
+                                            )
+                                        ) {
+                                            navigationActions.navigateToBiblijateka(
+                                                listItem[index][0],
+                                                listItem[index][2]
+                                            )
+                                            addNiadaunia(context, listItem[index])
+                                        } else {
+                                            setFileListPosition(index)
+                                            setIsDialogBiblijatekaVisable(true)
+                                        }
+                                    },
+                                    onLongClick = {
+                                        if (!searchText) {
+                                            editListItem(listItem[index])
+                                        }
+                                    }
+                                ),
+                            bitmap = bitmap.asImageBitmap(),
+                            contentDescription = ""
+                        )
+                    }
                 }
             }
             HorizontalDivider()

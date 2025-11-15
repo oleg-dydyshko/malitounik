@@ -389,10 +389,14 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
         }
     }
 
-    fun navigateToPiasochnicaList(dirToFile: String = "") {
-        navController.navigate("PIASOCHNICA_LIST/" + URLEncoder.encode(dirToFile, "UTF8")) {
-            PIASOCHNICA_LIST
+    fun navigateToPiasochnicaList() {
+        navController.navigate(PIASOCHNICA_LIST) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: PIASOCHNICA_LIST) {
+                inclusive = true
+            }
         }
+        edit.putString("navigate", PIASOCHNICA_LIST)
+        edit.apply()
     }
 
     fun navigateToPiasochnica(resurs: String) {
