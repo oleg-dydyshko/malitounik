@@ -166,7 +166,7 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
             val image = File("${context.filesDir}/bibliatekaImage/cacheNew.png")
             if (image.exists()) image.delete()
             val localPdfFile = File("${context.filesDir}/cache/cache.pdf")
-            if(localPdfFile.exists()) {
+            if (localPdfFile.exists()) {
                 localPdfFile.delete()
             }
             editDismiss()
@@ -175,65 +175,67 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
     }
     LaunchedEffect(Unit) {
         biblijatekaJob?.cancel()
-        biblijatekaJob = CoroutineScope(Dispatchers.IO).launch {
-            getBibliateka(
-                context,
-                bibliatekaList = { list ->
-                    viewModel.addAllBiblijateka(list)
-                    when (biblijateka) {
-                        AllDestinations.BIBLIJATEKA_NIADAUNIA -> {
-                            val gson = Gson()
-                            val type = TypeToken.getParameterized(
-                                ArrayList::class.java,
-                                TypeToken.getParameterized(
+        if (Settings.isNetworkAvailable(context)) {
+            biblijatekaJob = CoroutineScope(Dispatchers.IO).launch {
+                getBibliateka(
+                    context,
+                    bibliatekaList = { list ->
+                        viewModel.addAllBiblijateka(list)
+                        when (biblijateka) {
+                            AllDestinations.BIBLIJATEKA_NIADAUNIA -> {
+                                val gson = Gson()
+                                val type = TypeToken.getParameterized(
                                     ArrayList::class.java,
-                                    String::class.java
+                                    TypeToken.getParameterized(
+                                        ArrayList::class.java,
+                                        String::class.java
+                                    ).type
                                 ).type
-                            ).type
-                            val fileNadaunia = File("${context.filesDir}/biblijateka_latest.json")
-                            if (fileNadaunia.exists()) {
-                                bibliatekaList.addAll(gson.fromJson(fileNadaunia.readText(), type))
+                                val fileNadaunia = File("${context.filesDir}/biblijateka_latest.json")
+                                if (fileNadaunia.exists()) {
+                                    bibliatekaList.addAll(gson.fromJson(fileNadaunia.readText(), type))
+                                }
                             }
-                        }
 
-                        AllDestinations.BIBLIJATEKA_GISTORYIA -> {
-                            val newList = list.filter { it[4].toInt() == 1 } as ArrayList<ArrayList<String>>
-                            bibliatekaList.addAll(newList)
-                        }
+                            AllDestinations.BIBLIJATEKA_GISTORYIA -> {
+                                val newList = list.filter { it[4].toInt() == 1 } as ArrayList<ArrayList<String>>
+                                bibliatekaList.addAll(newList)
+                            }
 
-                        AllDestinations.BIBLIJATEKA_MALITOUNIKI -> {
-                            val newList = list.filter { it[4].toInt() == 2 } as ArrayList<ArrayList<String>>
-                            bibliatekaList.addAll(newList)
-                        }
+                            AllDestinations.BIBLIJATEKA_MALITOUNIKI -> {
+                                val newList = list.filter { it[4].toInt() == 2 } as ArrayList<ArrayList<String>>
+                                bibliatekaList.addAll(newList)
+                            }
 
-                        AllDestinations.BIBLIJATEKA_SPEUNIKI -> {
-                            val newList = list.filter { it[4].toInt() == 3 } as ArrayList<ArrayList<String>>
-                            bibliatekaList.addAll(newList)
-                        }
+                            AllDestinations.BIBLIJATEKA_SPEUNIKI -> {
+                                val newList = list.filter { it[4].toInt() == 3 } as ArrayList<ArrayList<String>>
+                                bibliatekaList.addAll(newList)
+                            }
 
-                        AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA -> {
-                            val newList = list.filter { it[4].toInt() == 4 } as ArrayList<ArrayList<String>>
-                            bibliatekaList.addAll(newList)
-                        }
+                            AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA -> {
+                                val newList = list.filter { it[4].toInt() == 4 } as ArrayList<ArrayList<String>>
+                                bibliatekaList.addAll(newList)
+                            }
 
-                        AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU -> {
-                            val newList = list.filter { it[4].toInt() == 5 } as ArrayList<ArrayList<String>>
-                            bibliatekaList.addAll(newList)
-                            bibliatekaList.sortByDescending {
-                                val t1 = it[0].indexOf("(")
-                                val t2 = it[0].indexOf(")")
-                                if (t2 != -1) {
-                                    it[0].substring(t1 + 1, t2)
-                                } else {
-                                    it[0]
+                            AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU -> {
+                                val newList = list.filter { it[4].toInt() == 5 } as ArrayList<ArrayList<String>>
+                                bibliatekaList.addAll(newList)
+                                bibliatekaList.sortByDescending {
+                                    val t1 = it[0].indexOf("(")
+                                    val t2 = it[0].indexOf(")")
+                                    if (t2 != -1) {
+                                        it[0].substring(t1 + 1, t2)
+                                    } else {
+                                        it[0]
+                                    }
                                 }
                             }
                         }
-                    }
-                },
-                progressVisable = { progress ->
-                    isProgressVisable = progress
-                })
+                    },
+                    progressVisable = { progress ->
+                        isProgressVisable = progress
+                    })
+            }
         }
     }
     if (searchText) {
@@ -604,45 +606,43 @@ private suspend fun getBibliateka(
         progressVisable(true)
         try {
             val temp = ArrayList<ArrayList<String>>()
-            getBibliatekaJson(context) { sb ->
-                val gson = Gson()
-                val type = TypeToken.getParameterized(
-                    ArrayList::class.java,
-                    TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
-                ).type
-                val biblioteka: ArrayList<ArrayList<String>> = gson.fromJson(sb, type)
-                for (i in 0 until biblioteka.size) {
-                    val mySqlList = ArrayList<String>()
-                    val kniga = biblioteka[i]
-                    val rubrika = kniga[4]
-                    val link = kniga[0]
-                    val str = kniga[1]
-                    val pdf = kniga[2]
-                    val pdfFileSize = kniga[3]
-                    mySqlList.add(link)
-                    mySqlList.add(str)
-                    mySqlList.add(pdf)
-                    mySqlList.add(pdfFileSize)
-                    mySqlList.add(rubrika)
-                    val t1 = pdf.lastIndexOf(".")
-                    val imageName = pdf.take(t1) + ".png"
-                    CoroutineScope(Dispatchers.Main).launch {
-                        saveImagePdf(context, imageName)
-                    }
-                    mySqlList.add(imageName)
-                    temp.add(mySqlList)
-                }
-                bibliatekaList(temp)
+            val sb = getBibliatekaJson(context)
+            val gson = Gson()
+            val type = TypeToken.getParameterized(
+                ArrayList::class.java,
+                TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
+            ).type
+            val biblioteka: ArrayList<ArrayList<String>> = gson.fromJson(sb, type)
+            for (i in 0 until biblioteka.size) {
+                val mySqlList = ArrayList<String>()
+                val kniga = biblioteka[i]
+                val rubrika = kniga[4]
+                val link = kniga[0]
+                val str = kniga[1]
+                val pdf = kniga[2]
+                val pdfFileSize = kniga[3]
+                mySqlList.add(link)
+                mySqlList.add(str)
+                mySqlList.add(pdf)
+                mySqlList.add(pdfFileSize)
+                mySqlList.add(rubrika)
+                val t1 = pdf.lastIndexOf(".")
+                val imageName = pdf.take(t1) + ".png"
+                saveImagePdf(context, imageName)
+                mySqlList.add(imageName)
+                temp.add(mySqlList)
             }
+            bibliatekaList(temp)
             progressVisable(false)
         } catch (_: Throwable) {
         }
     }
 }
 
-private suspend fun getBibliatekaJson(context: Context, count: Int = 0, result: (String) -> Unit) {
+private suspend fun getBibliatekaJson(context: Context, count: Int = 0): String {
     val localFile = File("${context.filesDir}/bibliateka.json")
     var error = false
+    var result = ""
     val metadata = Malitounik.referens.child("/bibliateka.json").metadata.addOnFailureListener {
         error = true
     }.await()
@@ -651,7 +651,7 @@ private suspend fun getBibliatekaJson(context: Context, count: Int = 0, result: 
         if (Settings.isNetworkAvailable(context)) {
             Malitounik.referens.child("/bibliateka.json").getFile(localFile).addOnCompleteListener {
                 if (it.isSuccessful) {
-                    result(localFile.readText())
+                    result = localFile.readText()
                 } else {
                     error = true
                 }
@@ -661,12 +661,13 @@ private suspend fun getBibliatekaJson(context: Context, count: Int = 0, result: 
             Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
         }
         if (error && count < 3) {
-            getBibliatekaJson(context, count + 1, result = {})
-            return
+            getBibliatekaJson(context, count + 1)
+            return ""
         }
     } else {
-        result(localFile.readText())
+        result = localFile.readText()
     }
+    return result
 }
 
 private suspend fun saveImagePdf(context: Context, image: String) {
