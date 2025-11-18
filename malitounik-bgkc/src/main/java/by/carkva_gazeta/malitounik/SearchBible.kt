@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.os.Build
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,23 +14,15 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.Scaffold
@@ -51,7 +42,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
@@ -64,7 +54,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -86,7 +75,6 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
-import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryBlack
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
@@ -478,6 +466,7 @@ fun biblia(
                 Settings.PEREVODCATOLIK -> "chytanne/Catolik/catolik"
                 Settings.PEREVODNADSAN -> "chytanne/psaltyr_nadsan.txt"
                 Settings.PEREVODSINOIDAL -> "chytanne/Sinodal/sinaidal"
+                Settings.PEREVODNEWKINGJAMES -> "chytanne/NewKingJames/english"
                 else -> "chytanne/Semucha/biblia"
             }
             var glava = 0

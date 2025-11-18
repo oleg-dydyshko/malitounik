@@ -103,6 +103,7 @@ object Settings {
     const val PEREVODBOKUNA = "4"
     const val PEREVODCARNIAUSKI = "5"
     const val PEREVODCATOLIK = "6"
+    const val PEREVODNEWKINGJAMES = "7"
     const val MODE_NIGHT_SYSTEM = 1
     const val MODE_NIGHT_NO = 2
     const val MODE_NIGHT_YES = 3
@@ -1082,6 +1083,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
     var savedInstanceState: Bundle? = null
     var isConnectServise = false
     var mRadyjoMaryiaService: ServiceRadyjoMaryia? = null
+    //var bibleJob: Job? = null
     val mConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             val binder = service as ServiceRadyjoMaryia.ServiceRadyjoMaryiaBinder
@@ -1134,43 +1136,70 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         if (k.getBoolean("power", false)) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
-        /*CoroutineScope(Dispatchers.IO).launch {
-            withContext(Dispatchers.IO) {
-                val glav = 28
-                var knigaFile = 1
-                for (kniga in 40..66) {
-                    val result = StringBuilder("\n===")
-                    for (page in 1..glav) {
-                        val url = URL("https://bible.by/esv/$kniga/$page/")
-                        val urlConnection = url.openConnection() as HttpURLConnection
-                        try {
-                            var text = urlConnection.inputStream.bufferedReader().readText()
-                            text = text.replace("<br><br>", "<p>")
-                            text = text.replace("<br>", " ")
-                            text = text.replace("<span class=\"subtitle\">", "<br><em>")//<p class="quote">
-                            text = text.replace("</span>", "</em><br><br>")
-                            text = text.replace("<p class=\"quote\">", "")
-                            text = text.replace("</p>", "")
-                            val t1 = text.indexOf("<div class=\"text en\">")
-                            val t2 = text.indexOf("<div class=\"clearfix\">")
-                            if (t1 == -1) break
-                            if (t2 != -1) {
-                                result.append(AnnotatedString.fromHtml(text.substring(t1, t2)).toString())
-                                if (page < glav) {
-                                    result.append("\n===")
+        /*if (bibleJob?.isActive != true) {
+            bibleJob = CoroutineScope(Dispatchers.IO).launch {
+                withContext(Dispatchers.IO) {
+                    val glav = 30
+                    var knigaFile = 1
+                    for (kniga in 40..66) {
+                        val result = StringBuilder("\n===\n")
+                        for (page in 1..glav) {
+                            val url = URL("https://bible.by/nkjv/$kniga/$page/")
+                            val urlConnection = url.openConnection() as HttpURLConnection
+                            try {
+                                var text = urlConnection.inputStream.bufferedReader().readText()
+                                val t1 = text.indexOf("<div class=\"text en\">")
+                                val t2 = text.indexOf("<div class=\"clearfix\">")
+                                if (t1 == -1) break
+                                if (t2 != -1) {
+                                    text = text.substring(t1 + 21, t2)
+                                    val listStyx = text.split("\n")
+                                    val sb = StringBuilder("")
+                                    for (i in listStyx.indices) {
+                                        var item = listStyx[i].trim()
+                                        if (item.isEmpty()) continue
+                                        val t3 = item.indexOf("\">")
+                                        item = item.substring(t3 + 2)
+                                        val t4 = item.indexOf("<span class=\"subtitle\">")
+                                        item = item.replace(" <br>", " ")
+                                        item = item.replace("<span class=\"subtitle\">", "<br><font color=\"#999999\">")
+                                        if (t4 != -1) {
+                                            item = item.replace("<br><br></span>", "</font><br><br>")
+                                        }
+                                        var t5 = item.indexOf("<span class=\"sup2\"><i")
+                                        var t6 = item.indexOf("</i></span>")
+                                        if (t5 != -1 && t6 != -1) {
+                                            item = item.take(t5) + item.substring(t6 + 11)
+                                            t5 = item.indexOf("<span class=\"sup2\"><i")
+                                            t6 = item.indexOf("</i></span>")
+                                            if (t5 != -1 && t6 != -1) {
+                                                item = item.take(t5) + item.substring(t6 + 11)
+                                            }
+                                        }
+                                        item = item.replace("<sup>", "")
+                                        item = item.replace("</sup>", "")
+                                        item = item.replace("</div>", "")
+                                        item = item.replace("<em>", "<font color=\"#999999\"><em>")
+                                        item = item.replace("</em>", "</em></font>")
+                                        sb.append(item).append("\n")
+                                    }
+                                    result.append(sb.toString())
+                                    result.append("\n===\n")
                                 }
+                            } finally {
+                                urlConnection.disconnect()
                             }
-                        } finally {
-                            urlConnection.disconnect()
                         }
+                        val t1 = result.lastIndexOf("\n===\n")
+                        val newResult = result.toString().take(t1)
+                        val file = File("$filesDir/englishn${knigaFile}.txt")
+                        file.writer().use {
+                            it.write(newResult)
+                        }
+                        Log.d("Oleg", kniga.toString())
+                        knigaFile++
                     }
-                    val file = File( "$filesDir/englishn${knigaFile}.txt")
-                    file.writer().use {
-                        it.write(result.toString())
-                    }
-                    knigaFile++
                 }
-                val test = 1
             }
         }*/
         val start = k.getString("navigate", AllDestinations.KALIANDAR) ?: AllDestinations.KALIANDAR
@@ -1324,7 +1353,6 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         super.onPause()
         removelightSensor()
         searchJob?.cancel()
-        biblijatekaJob?.cancel()
         autoScrollJob?.cancel()
         autoScrollTextVisableJob?.cancel()
     }
@@ -1368,7 +1396,6 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
             AppNavGraphState.setAlarm = true
             AppNavGraphState.appUpdate = true
             searchJob?.cancel()
-            biblijatekaJob?.cancel()
             autoScrollJob?.cancel()
             autoScrollTextVisableJob?.cancel()
             finish()

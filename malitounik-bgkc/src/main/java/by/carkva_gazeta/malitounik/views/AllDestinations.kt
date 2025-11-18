@@ -10,6 +10,7 @@ import by.carkva_gazeta.malitounik.views.AllDestinations.BIBLIA_CATOLIK
 import by.carkva_gazeta.malitounik.views.AllDestinations.BIBLIA_CHARNIAUSKI
 import by.carkva_gazeta.malitounik.views.AllDestinations.BIBLIA_LIST
 import by.carkva_gazeta.malitounik.views.AllDestinations.BIBLIA_NADSAN
+import by.carkva_gazeta.malitounik.views.AllDestinations.BIBLIA_NEW_KING_JAMES
 import by.carkva_gazeta.malitounik.views.AllDestinations.BIBLIA_SEMUXA
 import by.carkva_gazeta.malitounik.views.AllDestinations.BIBLIA_SINODAL
 import by.carkva_gazeta.malitounik.views.AllDestinations.BIBLIJATEKA
@@ -56,6 +57,7 @@ object AllDestinations {
     const val BIBLIA_CHARNIAUSKI = "Biblia_Charniauski"
     const val BIBLIA_SINODAL = "Biblia_Sinodal"
     const val BIBLIA_CATOLIK = "Biblia_Catolik"
+    const val BIBLIA_NEW_KING_JAMES = "Biblia_new_king_james"
     const val BIBLIA_LIST = "Biblia_List"
     const val VYBRANAE_LIST = "Bybranae_List"
     const val SEARCH_BIBLIA = "Search_Biblia"
@@ -235,6 +237,16 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
             }
         }
         edit.putString("navigate", BIBLIA_SINODAL)
+        edit.apply()
+    }
+
+    fun navigateToBibliaNewKingJames() {
+        navController.navigate(BIBLIA_NEW_KING_JAMES) {
+            popUpTo(navController.currentBackStackEntry?.destination?.route ?: BIBLIA_NEW_KING_JAMES) {
+                inclusive = true
+            }
+        }
+        edit.putString("navigate", BIBLIA_NEW_KING_JAMES)
         edit.apply()
     }
 

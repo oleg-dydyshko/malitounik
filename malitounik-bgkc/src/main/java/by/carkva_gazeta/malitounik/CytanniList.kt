@@ -148,9 +148,7 @@ val cytanniListItemData = MutableStateFlow(ArrayList<CytanniListItemData>())
 var autoScrollJob: Job? = null
 var autoScrollTextVisableJob: Job? = null
 
-class CytanniListItems(
-    biblia: Int, private val page: Int, cytanne: String, perevod: String
-) {
+class CytanniListItems(biblia: Int, private val page: Int, cytanne: String, perevod: String) {
     private val t1 = cytanne.indexOf(";")
     private val knigaText = if (t1 == -1) cytanne.substringBeforeLast(" ")
     else {
@@ -171,6 +169,7 @@ class CytanniListItems(
             mChekList
         }
     )
+    //val translate = MutableStateFlow(getBible(cytanne, Settings.PEREVODCARNIAUSKI, biblia))
     var filteredItems: StateFlow<ArrayList<CytanniListData>> = _filteredItems
     private fun checkList(): ArrayList<CytanniListData> {
         val result = ArrayList<CytanniListData>()
@@ -285,6 +284,7 @@ fun CytanniList(
         Settings.PEREVODCATOLIK -> "catolik"
         Settings.PEREVODNADSAN -> "nadsan"
         Settings.PEREVODSINOIDAL -> "sinaidal"
+        Settings.PEREVODNEWKINGJAMES -> "english"
         else -> "biblia"
     }
     val titleBible = title.ifEmpty {
@@ -295,6 +295,7 @@ fun CytanniList(
             Settings.PEREVODCATOLIK -> stringResource(R.string.title_biblia_catolik)
             Settings.PEREVODNADSAN -> stringResource(R.string.title_psalter)
             Settings.PEREVODSINOIDAL -> stringResource(R.string.bsinaidal)
+            Settings.PEREVODNEWKINGJAMES -> stringResource(R.string.perevod_new_king_james)
             else -> stringResource(R.string.title_biblia)
         }
     }
@@ -323,12 +324,12 @@ fun CytanniList(
             }
         }
     }
-    if (perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODCARNIAUSKI) {
+    if (perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODNEWKINGJAMES) {
         if (knigaBiblii(knigaText) == 21) {
             if (selectedIndex > 149) selectedIndex = 149
         }
     }
-    if (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODBOKUNA) {
+    if (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODNEWKINGJAMES) {
         if (knigaBiblii(knigaText) == 33) {
             if (selectedIndex > 11) selectedIndex = 11
         }
@@ -338,8 +339,8 @@ fun CytanniList(
     }
     if (biblia == Settings.CHYTANNI_BIBLIA && selectPerevod) {
         selectPerevod = false
-        if (!(selectOldPerevod == Settings.PEREVODCARNIAUSKI || selectOldPerevod == Settings.PEREVODBOKUNA)) {
-            if (perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODBOKUNA) {
+        if (!(selectOldPerevod == Settings.PEREVODCARNIAUSKI || selectOldPerevod == Settings.PEREVODBOKUNA || selectOldPerevod == Settings.PEREVODNEWKINGJAMES)) {
+            if (perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODNEWKINGJAMES) {
                 if (knigaBiblii(knigaText) == 21) {
                     if (selectedIndex in 10..112) selectedIndex += 1
                     if (selectedIndex == 113) selectedIndex = 114
@@ -984,6 +985,39 @@ fun CytanniList(
                                         stringResource(R.string.bsinaidal2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                                     )
                                 }
+                                if (getRealBook(knigaBiblii(knigaText), Settings.PEREVODNEWKINGJAMES) != -1) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                cytanniListItemData.value.clear()
+                                                selectOldPerevod = perevod
+                                                perevod = Settings.PEREVODNEWKINGJAMES
+                                                initVybranoe = true
+                                                selectPerevod = true
+                                                if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
+                                                    "perevodMaranata", perevod
+                                                )
+                                                edit.apply()
+                                            }, verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        RadioButton(
+                                            selected = perevod == Settings.PEREVODNEWKINGJAMES, onClick = {
+                                                cytanniListItemData.value.clear()
+                                                selectOldPerevod = perevod
+                                                perevod = Settings.PEREVODNEWKINGJAMES
+                                                initVybranoe = true
+                                                selectPerevod = true
+                                                if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
+                                                    "perevodMaranata", perevod
+                                                )
+                                                edit.apply()
+                                            })
+                                        Text(
+                                            stringResource(R.string.perevod_new_king_james_2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -1232,6 +1266,7 @@ fun CytanniList(
                 ) { page ->
                     val viewModel = CytanniListItems(biblia, page, newCytanne, perevod)
                     val resultPage by viewModel.filteredItems.collectAsStateWithLifecycle()
+                    //val translate by viewModel.translate.collectAsStateWithLifecycle()
                     if (biblia != Settings.CHYTANNI_BIBLIA && positionRemember != -1) {
                         var resultCount = 0
                         if (positionRemember != 0) {
@@ -1362,6 +1397,7 @@ fun CytanniList(
                                         Settings.PEREVODBOKUNA -> stringResource(R.string.title_biblia_bokun2)
                                         Settings.PEREVODCARNIAUSKI -> stringResource(R.string.title_biblia_charniauski2)
                                         Settings.PEREVODCATOLIK -> stringResource(R.string.title_biblia_catolik2)
+                                        Settings.PEREVODNEWKINGJAMES -> stringResource(R.string.perevod_new_king_james_2)
                                         else -> stringResource(R.string.title_biblia2)
                                     }
                                     Text(
@@ -1380,7 +1416,6 @@ fun CytanniList(
                                 HtmlText(
                                     modifier = if (!autoScrollSensor && !showDropdown) {
                                         Modifier
-                                            .fillMaxWidth()
                                             .pointerInput(Unit) {
                                                 detectTapGestures(onTap = {
                                                     if (!isSelectMode && isParallel && resultPage[index].parallel != "+-+") {
@@ -1401,7 +1436,6 @@ fun CytanniList(
                                             }
                                     } else {
                                         Modifier
-                                            .fillMaxWidth()
                                             .pointerInput(Unit) {
                                                 detectTapGestures(
                                                     onDoubleTap = {
@@ -1409,11 +1443,41 @@ fun CytanniList(
                                                     })
                                             }
                                     }
+                                        .fillMaxWidth()
                                         .padding(horizontal = 10.dp), text = resultPage[index].text, fontSize = fontSize.sp, color = MaterialTheme.colorScheme.secondary)
                             }
+                            //if (index < translate.size) Text(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp), text = AnnotatedString.fromHtml(translate[index].text).toString(), fontSize = fontSize.sp, color = SecondaryText)
                             if (isParallel && resultPage[index].parallel != "+-+") {
                                 Text(
-                                    text = resultPage[index].parallel, modifier = Modifier
+                                    text = resultPage[index].parallel, modifier = if (!autoScrollSensor && !showDropdown) {
+                                        Modifier
+                                            .pointerInput(Unit) {
+                                                detectTapGestures(onTap = {
+                                                    if (!isSelectMode && isParallel && resultPage[index].parallel != "+-+") {
+                                                        isParallelVisable = true
+                                                        paralelChtenia = resultPage[index].parallel
+                                                    }
+                                                    if (isSelectMode) {
+                                                        selectState[index] = !selectState[index]
+                                                    }
+                                                }, onLongPress = {
+                                                    if (!fullscreen) {
+                                                        isSelectMode = true
+                                                        selectState[index] = !selectState[index]
+                                                    }
+                                                }, onDoubleTap = {
+                                                    fullscreen = !fullscreen
+                                                })
+                                            }
+                                    } else {
+                                        Modifier
+                                            .pointerInput(Unit) {
+                                                detectTapGestures(
+                                                    onDoubleTap = {
+                                                        fullscreen = !fullscreen
+                                                    })
+                                            }
+                                    }
                                         .fillMaxWidth()
                                         .padding(horizontal = 10.dp), fontSize = (Settings.fontInterface - 4).sp, lineHeight = (Settings.fontInterface - 4).sp * 1.15, color = SecondaryText
                                 )
@@ -1641,15 +1705,13 @@ fun DialogRazdzel(
     }
 }
 
-fun getBible(
-    cytanne: String, perevod: String, biblia: Int, isTitle: Boolean = false
-): ArrayList<CytanniListData> {
+fun getBible(cytanne: String, perevod: String, biblia: Int, isTitle: Boolean = false): ArrayList<CytanniListData> {
     val context = Malitounik.applicationContext()
     val result = ArrayList<CytanniListData>()
     var id = 0
     try {
         var chytNew = cytanne
-        if (cytanne.contains("Пасл Ер 1") && (perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODSEMUXI)) {
+        if (cytanne.contains("Пасл Ер 1") && (perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODNEWKINGJAMES)) {
             chytNew = chytNew.replace("Пасл Ер 1", "Вар 6")
         }
         val list = chytNew.split(";")
@@ -1749,7 +1811,7 @@ fun getBible(
                             perevodNew = Settings.PEREVODSINOIDAL
                             kniga = getRealBook(knigiBiblii, perevodNew)
                         }
-                        if ((knigiBiblii == 33 && (glavaEnd == 13 || glavaEnd == 14)) && (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODBOKUNA)) {
+                        if ((knigiBiblii == 33 && (glavaEnd == 13 || glavaEnd == 14)) && (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODNEWKINGJAMES)) {
                             perevodNew = Settings.PEREVODCARNIAUSKI
                             kniga = getRealBook(knigiBiblii, perevodNew)
                         }
@@ -1766,6 +1828,7 @@ fun getBible(
                                 Settings.PEREVODBOKUNA -> titlePerevod = "<br><font color=\"#999999\">" + context.getString(R.string.title_biblia_bokun2) + "</font><br>"
                                 Settings.PEREVODCARNIAUSKI -> titlePerevod = "<br><font color=\"#999999\">" + context.getString(R.string.title_biblia_charniauski2) + "</font><br>"
                                 Settings.PEREVODCATOLIK -> titlePerevod = "<br><font color=\"#999999\">" + context.getString(R.string.title_biblia_catolik2) + "</font><br>"
+                                Settings.PEREVODNEWKINGJAMES -> titlePerevod = "<br><font color=\"#999999\">" + context.getString(R.string.perevod_new_king_james_2) + "</font><br>"
                             }
                             perevodOld = perevodNew
                         }

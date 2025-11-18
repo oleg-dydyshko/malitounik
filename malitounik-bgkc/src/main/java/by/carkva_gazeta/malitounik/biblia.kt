@@ -48,6 +48,10 @@ fun biblia(
                 "chytanne/Sinodal/sinaidal"
             }
 
+            Settings.PEREVODNEWKINGJAMES -> {
+                "chytanne/NewKingJames/english"
+            }
+
             else -> {
                 "chytanne/Semucha/biblia"
             }
@@ -159,7 +163,7 @@ fun getRealBook(kniga: Int, perevod: String): Int {
             else -> -1
         }
     }
-    if ((perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODBOKUNA) && kniga < 50) {
+    if ((perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODNEWKINGJAMES) && kniga < 50) {
         knigaNew = when (knigaNew) {
             0 -> 0
             1 -> 1
@@ -295,6 +299,14 @@ fun getNameBook(context: Context, kniga: Int, perevod: String, novyZapavet: Bool
     if (perevod == Settings.PEREVODNADSAN) {
         return context.resources.getStringArray(R.array.psalter_list)[0]
     }
+    if (perevod == Settings.PEREVODNEWKINGJAMES) {
+        val bookList = if (novyZapavet) {
+            context.resources.getStringArray(R.array.englishn)
+        } else {
+            context.resources.getStringArray(R.array.englishs)
+        }
+        return bookList[kniga]
+    }
     return ""
 }
 
@@ -334,6 +346,14 @@ fun getNameBook(context: Context, perevod: String, novyZapavet: Boolean): Array<
     }
     if (perevod == Settings.PEREVODNADSAN) {
         return context.resources.getStringArray(R.array.psalter_list)
+    }
+    if (perevod == Settings.PEREVODNEWKINGJAMES) {
+        val bookList = if (novyZapavet) {
+            context.resources.getStringArray(R.array.englishn)
+        } else {
+            context.resources.getStringArray(R.array.englishs)
+        }
+        return bookList
     }
     return arrayOf("")
 }

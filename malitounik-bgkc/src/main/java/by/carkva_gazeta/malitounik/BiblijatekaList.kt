@@ -9,7 +9,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -23,9 +22,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -36,6 +35,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -67,11 +67,9 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -115,8 +113,6 @@ class FilterBiblijatekaModel : ViewModel() {
     }
 }
 
-var biblijatekaJob: Job? = null
-
 @Composable
 fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerPadding: PaddingValues, searchText: Boolean, addItem: Boolean, editDismiss: () -> Unit) {
     val context = LocalContext.current
@@ -136,6 +132,7 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
     val editList = remember { ArrayList<String>() }
     var editItem by remember { mutableStateOf(false) }
     var allPosition by remember { mutableIntStateOf(0) }
+    val coroutineScope = rememberCoroutineScope()
     if (addItem || editItem) {
         if (addItem) {
             allPosition = -1
@@ -174,11 +171,11 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
         }
     }
     LaunchedEffect(Unit) {
-        biblijatekaJob?.cancel()
         if (Settings.isNetworkAvailable(context)) {
-            biblijatekaJob = CoroutineScope(Dispatchers.IO).launch {
+            coroutineScope.launch {
                 getBibliateka(
                     context,
+                    biblijateka,
                     bibliatekaList = { list ->
                         viewModel.addAllBiblijateka(list)
                         when (biblijateka) {
@@ -340,8 +337,11 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
         }
     }
     Column {
+        if (isProgressVisable) {
+            LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+        }
         BiblijatekaListItems(
-            if (searchText) filteredItems else bibliatekaList, navigationActions, innerPadding, searchText,
+            if (searchText) filteredItems else bibliatekaList, biblijateka, navigationActions, innerPadding, searchText,
             setFileListPosition = { fileListPosition = it },
             setIsDialogBiblijatekaVisable = { isDialogBiblijatekaVisable = it },
             editListItem = {
@@ -352,18 +352,11 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
             }
         )
     }
-    if (isProgressVisable) {
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        }
-    }
 }
 
 @Composable
 fun BiblijatekaListItems(
-    listItem: SnapshotStateList<ArrayList<String>>, navigationActions: AppNavigationActions, innerPadding: PaddingValues, searchText: Boolean,
+    listItem: SnapshotStateList<ArrayList<String>>, biblijateka: String, navigationActions: AppNavigationActions, innerPadding: PaddingValues, searchText: Boolean,
     setFileListPosition: (Int) -> Unit,
     setIsDialogBiblijatekaVisable: (Boolean) -> Unit,
     editListItem: (ArrayList<String>) -> Unit
@@ -404,7 +397,7 @@ fun BiblijatekaListItems(
                                 }
                             },
                             onLongClick = {
-                                if (!searchText) {
+                                if (k.getBoolean("admin", false) && biblijateka != AllDestinations.BIBLIJATEKA_NIADAUNIA && !searchText) {
                                     editListItem(listItem[index])
                                 }
                             }
@@ -464,7 +457,7 @@ fun BiblijatekaListItems(
                                         }
                                     },
                                     onLongClick = {
-                                        if (!searchText) {
+                                        if (k.getBoolean("admin", false) && biblijateka != AllDestinations.BIBLIJATEKA_NIADAUNIA && !searchText) {
                                             editListItem(listItem[index])
                                         }
                                     }
@@ -565,7 +558,7 @@ private fun saveFile(context: Context, fileName: String) {
     val fileInputStream = FileInputStream(fileInput)
     val output = FileOutputStream(file)
     val buffer = ByteArray(1024)
-    var size: Int
+    var size = 0
     while ((fileInputStream.read(buffer).also { size = it }) != -1) {
         output.write(buffer, 0, size)
     }
@@ -599,43 +592,50 @@ private suspend fun downloadPdfFile(context: Context, url: String, count: Int = 
 
 private suspend fun getBibliateka(
     context: Context,
+    biblijateka: String,
     progressVisable: (Boolean) -> Unit = { },
     bibliatekaList: (ArrayList<ArrayList<String>>) -> Unit = { }
 ) {
-    withContext(Dispatchers.IO) {
-        progressVisable(true)
-        try {
-            val temp = ArrayList<ArrayList<String>>()
-            val sb = getBibliatekaJson(context)
-            val gson = Gson()
-            val type = TypeToken.getParameterized(
-                ArrayList::class.java,
-                TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
-            ).type
-            val biblioteka: ArrayList<ArrayList<String>> = gson.fromJson(sb, type)
-            for (i in 0 until biblioteka.size) {
-                val mySqlList = ArrayList<String>()
-                val kniga = biblioteka[i]
-                val rubrika = kniga[4]
-                val link = kniga[0]
-                val str = kniga[1]
-                val pdf = kniga[2]
-                val pdfFileSize = kniga[3]
-                mySqlList.add(link)
-                mySqlList.add(str)
-                mySqlList.add(pdf)
-                mySqlList.add(pdfFileSize)
-                mySqlList.add(rubrika)
-                val t1 = pdf.lastIndexOf(".")
-                val imageName = pdf.take(t1) + ".png"
-                saveImagePdf(context, imageName)
-                mySqlList.add(imageName)
-                temp.add(mySqlList)
+    progressVisable(true)
+    try {
+        val temp = ArrayList<ArrayList<String>>()
+        val sb = getBibliatekaJson(context)
+        val gson = Gson()
+        val type = TypeToken.getParameterized(
+            ArrayList::class.java,
+            TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
+        ).type
+        val biblioteka: ArrayList<ArrayList<String>> = gson.fromJson(sb, type)
+        for (i in 0 until biblioteka.size) {
+            val mySqlList = ArrayList<String>()
+            val kniga = biblioteka[i]
+            val rubrika = kniga[4]
+            val link = kniga[0]
+            val str = kniga[1]
+            val pdf = kniga[2]
+            val pdfFileSize = kniga[3]
+            mySqlList.add(link)
+            mySqlList.add(str)
+            mySqlList.add(pdf)
+            mySqlList.add(pdfFileSize)
+            mySqlList.add(rubrika)
+            val t1 = pdf.lastIndexOf(".")
+            val imageName = pdf.take(t1) + ".png"
+            var rub = "2"
+            when (biblijateka) {
+                AllDestinations.BIBLIJATEKA_GISTORYIA -> rub = "1"
+                AllDestinations.BIBLIJATEKA_MALITOUNIKI -> rub = "2"
+                AllDestinations.BIBLIJATEKA_SPEUNIKI -> rub = "3"
+                AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA -> rub = "4"
+                AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU -> rub = "5"
             }
-            bibliatekaList(temp)
-            progressVisable(false)
-        } catch (_: Throwable) {
+            if (rubrika == rub) saveImagePdf(context, imageName)
+            mySqlList.add(imageName)
+            temp.add(mySqlList)
         }
+        bibliatekaList(temp)
+        progressVisable(false)
+    } catch (_: Throwable) {
     }
 }
 
@@ -703,7 +703,7 @@ fun DialogBiblijateka(
                 Column(
                     modifier = Modifier
                         .verticalScroll(rememberScrollState())
-                        .weight(1f)
+                        .weight(1f, false)
                 ) {
                     HtmlText(text = content, modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
                 }

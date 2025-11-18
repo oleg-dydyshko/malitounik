@@ -382,6 +382,21 @@ fun DrawView(
                             }
                         )
                     }
+                    NavigationItem(
+                        label = stringResource(id = R.string.perevod_new_king_james),
+                        selected = route == AllDestinations.BIBLIA_NEW_KING_JAMES,
+                        onClick = {
+                            navigateToRazdel(AllDestinations.BIBLIA_NEW_KING_JAMES)
+                        },
+                        icon = {
+                            Icon(
+                                modifier = Modifier.size(12.dp, 12.dp),
+                                painter = painterResource(R.drawable.krest),
+                                tint = MaterialTheme.colorScheme.primary,
+                                contentDescription = ""
+                            )
+                        }
+                    )
                 }
             }
         }

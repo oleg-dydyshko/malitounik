@@ -75,7 +75,8 @@ fun BibliaList(
         Settings.PEREVODCATOLIK -> stringResource(R.string.title_biblia_catolik)
         Settings.PEREVODNADSAN -> stringResource(R.string.title_psalter)
         Settings.PEREVODSINOIDAL -> stringResource(R.string.bsinaidal)
-        else -> stringResource(R.string.kaliandar2)
+        Settings.PEREVODNEWKINGJAMES -> stringResource(R.string.perevod_new_king_james)
+        else -> stringResource(R.string.title_biblia)
     }
     val context = LocalContext.current
     val lazyColumnState = rememberLazyListState()
@@ -92,6 +93,7 @@ fun BibliaList(
                 Settings.PEREVODCARNIAUSKI -> "carniauski"
                 Settings.PEREVODCATOLIK -> "catolik"
                 Settings.PEREVODSINOIDAL -> "sinaidal"
+                Settings.PEREVODNEWKINGJAMES -> "english"
                 else -> "biblia"
             }
             val knigaText = k.getString("bible_time_${prevodName}_kniga", "Быц") ?: "Быц"
@@ -328,6 +330,16 @@ fun bibleCount(perevod: String, isNovyZapavet: Boolean): ArrayList<BibliaList> {
             }
         }
 
+        Settings.PEREVODNEWKINGJAMES -> {
+            if (isNovyZapavet) {
+                val list = stringArrayResource(R.array.englishn)
+                result.addAll(setNovyZapavet(list, perevod))
+            } else {
+                val list = stringArrayResource(R.array.englishs)
+                result.addAll(setStaryZapavet(list, perevod))
+            }
+        }
+
         else -> {
             if (isNovyZapavet) {
                 val list = stringArrayResource(R.array.semuxan)
@@ -470,7 +482,7 @@ fun setStaryZapavet(list: Array<String>, perevod: String): ArrayList<BibliaList>
     result.add(BibliaList(list[13], "2 Лет", bibleCount(knigaBiblii("2 Лет"), perevod)))
     result.add(BibliaList(list[14], "1 Эзд", 10))
     result.add(BibliaList(list[15], "Нээм", 13))
-    if (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODCARNIAUSKI) {
+    if (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODNEWKINGJAMES) {
         result.add(BibliaList(list[16], "Эст", 10))
         result.add(BibliaList(list[17], "Ёва", 42))
         result.add(BibliaList(list[18], "Пс", bibleCount(knigaBiblii("Пс"), perevod)))

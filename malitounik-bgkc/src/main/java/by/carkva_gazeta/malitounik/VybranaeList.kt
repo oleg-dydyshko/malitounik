@@ -89,6 +89,7 @@ fun VybranaeList(
                 Settings.PEREVODCATOLIK -> "catolik"
                 Settings.PEREVODNADSAN -> "nadsan"
                 Settings.PEREVODSINOIDAL -> "sinaidal"
+                Settings.PEREVODNEWKINGJAMES -> "english"
                 else -> "biblia"
             }
             val titlePerevod = when (i.toString()) {
@@ -98,6 +99,7 @@ fun VybranaeList(
                 Settings.PEREVODBOKUNA -> stringResource(R.string.title_biblia_bokun2)
                 Settings.PEREVODCARNIAUSKI -> stringResource(R.string.title_biblia_charniauski2)
                 Settings.PEREVODCATOLIK -> stringResource(R.string.title_biblia_catolik2)
+                Settings.PEREVODNEWKINGJAMES -> stringResource(R.string.perevod_new_king_james_2)
                 else -> stringResource(R.string.title_biblia2)
             }
             val file = File("${LocalContext.current.filesDir}/vybranoe_${prevodName}.json")

@@ -132,6 +132,10 @@ fun BibliaMenu(
                 "sinaidal"
             }
 
+            Settings.PEREVODNEWKINGJAMES -> {
+                "english"
+            }
+
             else -> "biblia"
         }
         val knigaText = k.getString("bible_time_${prevodName}_kniga", "Быц") ?: "Быц"
@@ -179,6 +183,7 @@ fun BibliaMenu(
             Settings.PEREVODBOKUNA -> stringResource(R.string.title_biblia_bokun2)
             Settings.PEREVODCARNIAUSKI -> stringResource(R.string.title_biblia_charniauski2)
             Settings.PEREVODCATOLIK -> stringResource(R.string.title_biblia_catolik2)
+            Settings.PEREVODNEWKINGJAMES -> stringResource(R.string.perevod_new_king_james_2)
             else -> stringResource(R.string.title_biblia2)
         }
         DialogDelite(
@@ -429,6 +434,7 @@ fun BibliaMenu(
                 Settings.PEREVODNADSAN -> "nadsan"
                 Settings.PEREVODCATOLIK -> "catolik"
                 Settings.PEREVODSINOIDAL -> "sinaidal"
+                Settings.PEREVODNEWKINGJAMES -> "english"
                 else -> "biblia"
             }
             val titlePerevod = stringResource(R.string.str_short_label1)

@@ -447,6 +447,13 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
             )
         }
 
+        composable(AllDestinations.BIBLIA_NEW_KING_JAMES) {
+            Settings.destinations = AllDestinations.BIBLIA_NEW_KING_JAMES
+            MainConteiner(
+                navController = navController, drawerScrollStete = drawerScrollStete
+            )
+        }
+
         composable(AllDestinations.KALIANDAR_YEAR) {
             Settings.destinations = AllDestinations.KALIANDAR_YEAR
             MainConteiner(
@@ -982,6 +989,7 @@ fun MainConteiner(
                             Settings.PEREVODCATOLIK -> "catolik"
                             Settings.PEREVODNADSAN -> "nadsan"
                             Settings.PEREVODSINOIDAL -> "sinaidal"
+                            Settings.PEREVODNEWKINGJAMES -> "english"
                             else -> "biblia"
                         }
                         val file = File("${context.filesDir}/vybranoe_${prevodName}.json")
@@ -1062,6 +1070,10 @@ fun MainConteiner(
                                 navigationActions.navigateToBibliaSinodal()
                             }
 
+                            AllDestinations.BIBLIA_NEW_KING_JAMES -> {
+                                navigationActions.navigateToBibliaNewKingJames()
+                            }
+
                             AllDestinations.VYBRANAE_LIST -> navigationActions.navigateToVybranaeList()
                             AllDestinations.AKAFIST_MENU -> navigationActions.navigateToAkafistMenu()
                             AllDestinations.LITURGIKON_MENU -> navigationActions.navigateToLiturgikonMenu()
@@ -1130,6 +1142,7 @@ fun MainConteiner(
             AllDestinations.BIBLIA_CHARNIAUSKI -> stringResource(R.string.title_biblia_charniauski)
             AllDestinations.BIBLIA_CATOLIK -> stringResource(R.string.title_biblia_catolik)
             AllDestinations.BIBLIA_SINODAL -> stringResource(R.string.bsinaidal)
+            AllDestinations.BIBLIA_NEW_KING_JAMES -> stringResource(R.string.perevod_new_king_james)
             AllDestinations.PIASOCHNICA_LIST -> stringResource(R.string.pasochnica)
             else -> ""
         }
@@ -1262,7 +1275,7 @@ fun MainConteiner(
                                 sortedNatatki = if (sortedNatatki == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
                                 else Settings.SORT_BY_ABC
                                 k.edit {
-                                    if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.BIBLIA_SEMUXA || currentRoute == AllDestinations.BIBLIA_BOKUNA || currentRoute == AllDestinations.BIBLIA_NADSAN || currentRoute == AllDestinations.BIBLIA_CHARNIAUSKI || currentRoute == AllDestinations.BIBLIA_SINODAL || currentRoute == AllDestinations.BIBLIA_CATOLIK) {
+                                    if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.BIBLIA_SEMUXA || currentRoute == AllDestinations.BIBLIA_BOKUNA || currentRoute == AllDestinations.BIBLIA_NADSAN || currentRoute == AllDestinations.BIBLIA_CHARNIAUSKI || currentRoute == AllDestinations.BIBLIA_SINODAL || currentRoute == AllDestinations.BIBLIA_CATOLIK || currentRoute == AllDestinations.BIBLIA_NEW_KING_JAMES) {
                                         putInt(
                                             "sortedVybranae", sortedVybranae
                                         )
@@ -1271,7 +1284,7 @@ fun MainConteiner(
                             }) {
                                 Icon(
                                     modifier = Modifier.size(24.dp),
-                                    painter = if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.BIBLIA_SEMUXA || currentRoute == AllDestinations.BIBLIA_BOKUNA || currentRoute == AllDestinations.BIBLIA_NADSAN || currentRoute == AllDestinations.BIBLIA_CHARNIAUSKI || currentRoute == AllDestinations.BIBLIA_SINODAL || currentRoute == AllDestinations.BIBLIA_CATOLIK) {
+                                    painter = if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.BIBLIA_SEMUXA || currentRoute == AllDestinations.BIBLIA_BOKUNA || currentRoute == AllDestinations.BIBLIA_NADSAN || currentRoute == AllDestinations.BIBLIA_CHARNIAUSKI || currentRoute == AllDestinations.BIBLIA_SINODAL || currentRoute == AllDestinations.BIBLIA_CATOLIK || currentRoute == AllDestinations.BIBLIA_NEW_KING_JAMES) {
                                         if (sortedVybranae == Settings.SORT_BY_TIME) {
                                             painterResource(R.drawable.sort_by_az)
                                         } else {
@@ -1850,6 +1863,20 @@ fun MainConteiner(
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
                         BibliaMenu(navController, Settings.PEREVODSINOIDAL, innerPadding, searchText, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
+                            isIconSort = isIconSortVisibility
+                        }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
+                            navigationActions.navigateToCytanniList(
+                                "", chytanne, biblia, perevod2, position
+                            )
+                        }, navigateToBogaslujbovyia = { title, resurs ->
+                            navigationActions.navigateToBogaslujbovyia(title, resurs)
+                        })
+                    }
+
+                    AllDestinations.BIBLIA_NEW_KING_JAMES -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
+                        BibliaMenu(navController, Settings.PEREVODNEWKINGJAMES, innerPadding, searchText, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
                             isIconSort = isIconSortVisibility
                         }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
                             navigationActions.navigateToCytanniList(

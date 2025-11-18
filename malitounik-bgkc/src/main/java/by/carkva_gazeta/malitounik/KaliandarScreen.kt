@@ -653,7 +653,7 @@ fun removeZnakiAndSlovy(ctenie: String): String {
     cytanne = cytanne.replace("Муч.", "")
     cytanne = cytanne.replace("Крыжу", "")
     cytanne = cytanne.replace("Вобр.", "")
-    cytanne = cytanne.replace("Новаму году.", "")
+    cytanne = cytanne.replace("Новаму году", "")
     cytanne = cytanne.replace("Вял.", "")
     cytanne = cytanne.replace("Арх.", "")
     cytanne = cytanne.replace("Абнаўл.", "")
