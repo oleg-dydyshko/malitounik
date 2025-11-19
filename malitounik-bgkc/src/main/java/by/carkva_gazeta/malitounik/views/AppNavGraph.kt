@@ -152,6 +152,7 @@ import by.carkva_gazeta.malitounik.VybranaeList
 import by.carkva_gazeta.malitounik.admin.DialogEditSvityiaAndSviaty
 import by.carkva_gazeta.malitounik.admin.Icony
 import by.carkva_gazeta.malitounik.admin.PasochnicaList
+import by.carkva_gazeta.malitounik.admin.Piasochnica
 import by.carkva_gazeta.malitounik.admin.PiasochnicaNew
 import by.carkva_gazeta.malitounik.formatFigureTwoPlaces
 import by.carkva_gazeta.malitounik.rawAsset
@@ -1108,7 +1109,6 @@ fun MainConteiner(
         var tollBarColor by remember { mutableStateOf(if (Settings.dzenNoch.value) BackgroundTolBarDark else Primary) }
         var textTollBarColor by remember { mutableStateOf(PrimaryTextBlack) }
         var title by rememberSaveable { mutableStateOf("") }
-        var pasochnicaAction by remember { mutableIntStateOf(PasochnicaList.NONE) }
         var isBottomBar by remember { mutableStateOf(k.getBoolean("bottomBar", false)) }
         var isIconSort by remember { mutableStateOf(false) }
         isIconSort = currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.MAE_NATATKI_MENU
@@ -1321,7 +1321,7 @@ fun MainConteiner(
                         }
                         if (currentRoute == AllDestinations.PIASOCHNICA_LIST) {
                             IconButton(onClick = {
-                                pasochnicaAction = PasochnicaList.FILE
+                                PasochnicaList.pasochnicaAction = PasochnicaList.FILE
                             }) {
                                 Icon(
                                     modifier = Modifier.size(24.dp),
@@ -1329,7 +1329,7 @@ fun MainConteiner(
                                 )
                             }
                             IconButton(onClick = {
-                                pasochnicaAction = PasochnicaList.WWW
+                                PasochnicaList.pasochnicaAction = PasochnicaList.WWW
                             }) {
                                 Icon(
                                     modifier = Modifier.size(24.dp),
@@ -1337,7 +1337,7 @@ fun MainConteiner(
                                 )
                             }
                             IconButton(onClick = {
-                                pasochnicaAction = PasochnicaList.ADD
+                                PasochnicaList.pasochnicaAction = PasochnicaList.ADD
                             }) {
                                 Icon(
                                     modifier = Modifier.size(24.dp),
@@ -1370,7 +1370,7 @@ fun MainConteiner(
                         })
                         if (currentRoute == AllDestinations.PIASOCHNICA_LIST) {
                             DropdownMenuItem(onClick = {
-                                pasochnicaAction = PasochnicaList.DEL_ALL_BACK_COPY
+                                PasochnicaList.pasochnicaAction = PasochnicaList.DEL_ALL_BACK_COPY
                                 expandedUp = false
                             }, text = { Text(stringResource(R.string.del_all_copy), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                 Icon(
@@ -1378,7 +1378,7 @@ fun MainConteiner(
                                 )
                             })
                             DropdownMenuItem(onClick = {
-                                pasochnicaAction = PasochnicaList.DEL_ALL_PASOCHNICA
+                                PasochnicaList.pasochnicaAction = PasochnicaList.DEL_ALL_PASOCHNICA
                                 expandedUp = false
                             }, text = { Text(stringResource(R.string.del_pasochnica), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                 Icon(
@@ -1930,7 +1930,7 @@ fun MainConteiner(
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
                         PasochnicaList(
-                            navController, pasochnicaAction, innerPadding
+                            navController, innerPadding
                         )
                     }
                 }

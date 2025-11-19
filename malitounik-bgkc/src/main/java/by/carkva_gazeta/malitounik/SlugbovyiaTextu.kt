@@ -1883,6 +1883,11 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
+                330, "Адданьне сьвята Ўводзінаў Багародзіцы, сьв. Клімента, папы Рымскага і сьв. Пятра, архібіскупа Александрыйскага", "bogashlugbovya/mm_25_11_addannie_uvachodu_baharodzicy_klimenta_papy_piatra_aleksandryjskaha_viaczernia.html", VIACZERNIA
+            )
+        )
+        datMinALL.add(
+            SlugbovyiaTextuData(
                 335, "Сьвятога апостала Андрэя Першапакліканага", "bogashlugbovya/mm_30_11_apostala_andreja_pierszapaklikanaha_liturhija.html", LITURHIJA
             )
         )

@@ -580,25 +580,6 @@ object Piasochnica {
         return result
     }
 
-    fun convertView() {
-        if (isHTML) {
-            if (history.size > 1) {
-                isBackPressVisable = true
-            }
-        } else {
-            var result = htmlText.toHtml(HtmlCompat.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL)
-            result = StringEscapeUtils.unescapeHtml4(result)
-            result = clearHtml(result)
-            result = clearColor(result)
-            result = clearEm(result)
-            result = clearBold(result)
-            result = clearEm(result)
-            result = clearColor(result)
-            result = clearBold(result)
-            result = clearEm(result)
-        }
-    }
-
     fun saveResult(resours: String, saveAs: Boolean) {
         if (isHTML) {
             var result = htmlText.toHtml(HtmlCompat.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL)
@@ -611,6 +592,7 @@ object Piasochnica {
             result = clearColor(result)
             result = clearBold(result)
             result = clearEm(result)
+            result = result.replace(" ", "")
             if (!result.contains("<!DOCTYPE HTML>")) result = "<!DOCTYPE HTML>$result"
             getOrSendFilePostRequest(resours, result, saveAs)
         } else {
@@ -719,7 +701,7 @@ object Piasochnica {
                         }
                         localFile1.forEachLine { fw ->
                             if (fw.contains($$"$calendar[]")) {
-                                var c = Settings.data[calPos + countDay]//GregorianCalendar(year, monthP - 1, dataP + countDay)
+                                var c = Settings.data[calPos + countDay]
                                 var myDayOfPasha = c[22].toInt()
                                 if (c[3].toInt() != year) {
                                     c = Settings.data[calPosNovyGod + countDayNovyGog]
@@ -773,19 +755,20 @@ fun PiasochnicaNew(
     var isProgressVisable by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val editText = remember { EditText(context) }
+    var startEditPosition by remember { mutableIntStateOf(0) }
+    var endEditPosition by remember { mutableIntStateOf(0) }
     val textWatcher = remember {
         object : TextWatcher {
-            var editPosition = 0
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                editPosition = start + count
+                startEditPosition = 0
+                endEditPosition = start + count
             }
 
             override fun afterTextChanged(s: Editable?) {
-                Piasochnica.addHistory(s, editPosition)
+                Piasochnica.addHistory(s, endEditPosition)
                 editText.removeTextChangedListener(this)
                 s?.let {
                     Piasochnica.htmlText = it as SpannableStringBuilder
@@ -797,6 +780,7 @@ fun PiasochnicaNew(
     }
     LifecycleResumeEffect(Unit) {
         onPauseOrDispose {
+            Piasochnica.htmlText = editText.text as SpannableStringBuilder
             Piasochnica.saveResult(resours, false)
         }
     }
@@ -854,32 +838,33 @@ fun PiasochnicaNew(
     var dialogUrl by remember { mutableStateOf("") }
     if (dialogCrateUrl) {
         DialogCrateURL(setURL = {
-            val startSelect = editText.selectionStart
-            val endSelect = editText.selectionEnd
+            startEditPosition = editText.selectionStart
+            endEditPosition = editText.selectionEnd
             if (Piasochnica.isHTML) {
                 val text = editText.text
-                val subtext = text.getSpans(startSelect, endSelect, URLSpan::class.java)
+                val subtext = text.getSpans(startEditPosition, endEditPosition, URLSpan::class.java)
                 subtext.forEach {
                     if (it.url.contains(dialogUrl)) {
                         text.removeSpan(it)
                     }
                 }
-                text.setSpan(URLSpan(dialogUrl), startSelect, endSelect, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                text.setSpan(URLSpan(dialogUrl), startEditPosition, endEditPosition, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             } else {
                 val text = editText.text.toString()
                 val build = with(StringBuilder()) {
-                    append(text.take(startSelect))
+                    append(text.take(startEditPosition))
                     append("<a href=\"$dialogUrl\">")
-                    append(text.substring(startSelect, endSelect))
+                    append(text.substring(startEditPosition, endEditPosition))
                     append("</a>")
-                    append(text.substring(endSelect))
+                    append(text.substring(endEditPosition))
                     toString()
                 }
                 editText.removeTextChangedListener(textWatcher)
                 editText.setText(build)
-                editText.setSelection(endSelect + 29)
+                endEditPosition += 29
                 editText.addTextChangedListener(textWatcher)
             }
+            Piasochnica.htmlText = editText.text as SpannableStringBuilder
             Piasochnica.addHistory(editText.text, editText.selectionEnd)
             dialogCrateUrl = false
         }) {
@@ -932,6 +917,7 @@ fun PiasochnicaNew(
                 },
                 actions = {
                     IconButton(onClick = {
+                        Piasochnica.htmlText = editText.text as SpannableStringBuilder
                         Piasochnica.saveResult(resours, true)
                     }) {
                         Icon(
@@ -1007,9 +993,10 @@ fun PiasochnicaNew(
                         editText.removeTextChangedListener(textWatcher)
                         if (Piasochnica.history.size > 1) {
                             editText.setText(Piasochnica.history[Piasochnica.history.size - 2].spannable)
-                            val editPosition = if (Piasochnica.history[Piasochnica.history.size - 2].editPosition == 0) textWatcher.editPosition
+                            val editPosition = if (Piasochnica.history[Piasochnica.history.size - 2].editPosition == 0) endEditPosition
                             else Piasochnica.history[Piasochnica.history.size - 2].editPosition
-                            editText.setSelection(editPosition)
+                            endEditPosition = editPosition
+                            editText.setSelection(endEditPosition)
                             Piasochnica.history.removeAt(Piasochnica.history.size - 1)
                         }
                         Piasochnica.isBackPressVisable = Piasochnica.history.size > 1
@@ -1024,12 +1011,12 @@ fun PiasochnicaNew(
                     }
                 }
                 IconButton(onClick = {
-                    val startSelect = editText.selectionStart
-                    val endSelect = editText.selectionEnd
+                    startEditPosition = editText.selectionStart
+                    endEditPosition = editText.selectionEnd
                     if (Piasochnica.isHTML) {
                         val text = editText.text
                         text?.let { editable ->
-                            val subtext = editable.getSpans(startSelect, endSelect, StyleSpan(Typeface.BOLD)::class.java)
+                            val subtext = editable.getSpans(startEditPosition, endEditPosition, StyleSpan(Typeface.BOLD)::class.java)
                             var check = false
                             subtext.forEach {
                                 if (it.style == Typeface.BOLD) {
@@ -1037,23 +1024,24 @@ fun PiasochnicaNew(
                                     editable.removeSpan(it)
                                 }
                             }
-                            if (!check) editable.setSpan(StyleSpan(Typeface.BOLD), startSelect, endSelect, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            if (!check) editable.setSpan(StyleSpan(Typeface.BOLD), startEditPosition, endEditPosition, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                         }
                     } else {
                         val text = editText.text.toString()
                         val build = with(StringBuilder()) {
-                            append(text.take(startSelect))
+                            append(text.take(startEditPosition))
                             append("<strong>")
-                            append(text.substring(startSelect, endSelect))
+                            append(text.substring(startEditPosition, endEditPosition))
                             append("</strong>")
-                            append(text.substring(endSelect))
+                            append(text.substring(endEditPosition))
                             toString()
                         }
                         editText.removeTextChangedListener(textWatcher)
                         editText.setText(build)
-                        editText.setSelection(endSelect + 17)
+                        endEditPosition += 17
                         editText.addTextChangedListener(textWatcher)
                     }
+                    Piasochnica.htmlText = editText.text as SpannableStringBuilder
                     Piasochnica.addHistory(editText.text, editText.selectionEnd)
                 }) {
                     Icon(
@@ -1064,12 +1052,12 @@ fun PiasochnicaNew(
                     )
                 }
                 IconButton(onClick = {
-                    val startSelect = editText.selectionStart
-                    val endSelect = editText.selectionEnd
+                    startEditPosition = editText.selectionStart
+                    endEditPosition = editText.selectionEnd
                     if (Piasochnica.isHTML) {
                         val text = editText.text
                         text?.let { editable ->
-                            val subtext = editable.getSpans(startSelect, endSelect, StyleSpan(Typeface.ITALIC)::class.java)
+                            val subtext = editable.getSpans(startEditPosition, endEditPosition, StyleSpan(Typeface.ITALIC)::class.java)
                             var check = false
                             subtext.forEach {
                                 if (it.style == Typeface.ITALIC) {
@@ -1077,23 +1065,24 @@ fun PiasochnicaNew(
                                     editable.removeSpan(it)
                                 }
                             }
-                            if (!check) editable.setSpan(StyleSpan(Typeface.ITALIC), startSelect, endSelect, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            if (!check) editable.setSpan(StyleSpan(Typeface.ITALIC), startEditPosition, endEditPosition, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                         }
                     } else {
                         val text = editText.text.toString()
                         val build = with(StringBuilder()) {
-                            append(text.take(startSelect))
+                            append(text.take(startEditPosition))
                             append("<em>")
-                            append(text.substring(startSelect, endSelect))
+                            append(text.substring(startEditPosition, endEditPosition))
                             append("</em>")
-                            append(text.substring(endSelect))
+                            append(text.substring(endEditPosition))
                             toString()
                         }
                         editText.removeTextChangedListener(textWatcher)
                         editText.setText(build)
-                        editText.setSelection(endSelect + 9)
+                        endEditPosition += 9
                         editText.addTextChangedListener(textWatcher)
                     }
+                    Piasochnica.htmlText = editText.text as SpannableStringBuilder
                     Piasochnica.addHistory(editText.text, editText.selectionEnd)
                 }) {
                     Icon(
@@ -1104,12 +1093,12 @@ fun PiasochnicaNew(
                     )
                 }
                 IconButton(onClick = {
-                    val startSelect = editText.selectionStart
-                    val endSelect = editText.selectionEnd
+                    startEditPosition = editText.selectionStart
+                    endEditPosition = editText.selectionEnd
                     if (Piasochnica.isHTML) {
                         val text = editText.text
                         text?.let { editable ->
-                            val subtext = editable.getSpans(startSelect, endSelect, ForegroundColorSpan::class.java)
+                            val subtext = editable.getSpans(startEditPosition, endEditPosition, ForegroundColorSpan::class.java)
                             var check = false
                             subtext.forEach {
                                 if (it.foregroundColor == ContextCompat.getColor(context, if (Settings.dzenNoch.value) R.color.colorPrimary_black else R.color.colorPrimary)) {
@@ -1117,23 +1106,24 @@ fun PiasochnicaNew(
                                     editable.removeSpan(it)
                                 }
                             }
-                            if (!check) editable.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, if (Settings.dzenNoch.value) R.color.colorPrimary_black else R.color.colorPrimary)), startSelect, endSelect, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            if (!check) editable.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, if (Settings.dzenNoch.value) R.color.colorPrimary_black else R.color.colorPrimary)), startEditPosition, endEditPosition, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                         }
                     } else {
                         val text = editText.text.toString()
                         val build = with(StringBuilder()) {
-                            append(text.take(startSelect))
+                            append(text.take(startEditPosition))
                             append("<font color=\"#d00505\">")
-                            append(text.substring(startSelect, endSelect))
+                            append(text.substring(startEditPosition, endEditPosition))
                             append("</font>")
-                            append(text.substring(endSelect))
+                            append(text.substring(endEditPosition))
                             toString()
                         }
                         editText.removeTextChangedListener(textWatcher)
                         editText.setText(build)
-                        editText.setSelection(endSelect + 29)
+                        endEditPosition += 29
                         editText.addTextChangedListener(textWatcher)
                     }
+                    Piasochnica.htmlText = editText.text as SpannableStringBuilder
                     Piasochnica.addHistory(editText.text, editText.selectionEnd)
                 }) {
                     Image(
@@ -1144,17 +1134,19 @@ fun PiasochnicaNew(
                 }
                 if (!Piasochnica.isHTML) {
                     IconButton(onClick = {
-                        val endSelect = editText.selectionEnd
+                        endEditPosition = editText.selectionEnd
                         val text = editText.text.toString()
                         val build = with(StringBuilder()) {
-                            append(text.take(endSelect))
+                            append(text.take(endEditPosition))
                             append("<br>")
-                            append(text.substring(endSelect))
+                            append(text.substring(endEditPosition))
                             toString()
                         }
                         editText.removeTextChangedListener(textWatcher)
                         editText.setText(build)
-                        editText.setSelection(endSelect + 4)
+                        Piasochnica.htmlText = editText.text as SpannableStringBuilder
+                        startEditPosition = 0
+                        endEditPosition += 4
                         editText.addTextChangedListener(textWatcher)
                         Piasochnica.addHistory(editText.text, editText.selectionEnd)
                     }) {
@@ -1220,7 +1212,8 @@ fun PiasochnicaNew(
                     update = { editText ->
                         editText.removeTextChangedListener(textWatcher)
                         editText.setText(Piasochnica.htmlText)
-                        editText.setSelection(textWatcher.editPosition)
+                        if (startEditPosition == 0) editText.setSelection(endEditPosition)
+                        else editText.setSelection(startEditPosition, endEditPosition)
                         editText.setTextColor(ContextCompat.getColor(context, if (Settings.dzenNoch.value) R.color.colorWhite else R.color.colorPrimary_text))
                         editText.textSize = fontSize
                         editText.addTextChangedListener(textWatcher)

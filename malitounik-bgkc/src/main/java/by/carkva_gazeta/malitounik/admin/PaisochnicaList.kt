@@ -85,11 +85,12 @@ object PasochnicaList {
     const val ADD = 3
     const val DEL_ALL_BACK_COPY = 4
     const val DEL_ALL_PASOCHNICA = 5
+    var pasochnicaAction by mutableIntStateOf(NONE)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PasochnicaList(navController: NavHostController, pasochnicaAction: Int, innerPadding: PaddingValues) {
+fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues) {
     val view = LocalView.current
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -323,18 +324,20 @@ fun PasochnicaList(navController: NavHostController, pasochnicaAction: Int, inne
             dialogSetFileName = false
         }
     }
-    LaunchedEffect(pasochnicaAction) {
-        when (pasochnicaAction) {
+    LaunchedEffect(PasochnicaList.pasochnicaAction) {
+        when (PasochnicaList.pasochnicaAction) {
             PasochnicaList.FILE -> {
                 val intent = Intent()
                 intent.type = "*/*"
                 intent.action = Intent.ACTION_GET_CONTENT
                 intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("text/html", "text/plain"))
                 mActivityResultFile.launch(Intent.createChooser(intent, context.getString(R.string.vybrac_file)))
+                PasochnicaList.pasochnicaAction = PasochnicaList.NONE
             }
 
             PasochnicaList.WWW -> {
                 isDialogNet = true
+                PasochnicaList.pasochnicaAction = PasochnicaList.NONE
             }
 
             PasochnicaList.ADD -> {
@@ -353,18 +356,21 @@ fun PasochnicaList(navController: NavHostController, pasochnicaAction: Int, inne
                 Piasochnica.htmlText = text
                 Piasochnica.crateNewFilePiasochnica(resours)
                 navigationActions.navigateToPiasochnica(resours)
+                PasochnicaList.pasochnicaAction = PasochnicaList.NONE
             }
 
             PasochnicaList.DEL_ALL_BACK_COPY -> {
                 if (backCopy.isNotEmpty()) {
                     dialogDeliteAllBackCopy = true
                 }
+                PasochnicaList.pasochnicaAction = PasochnicaList.NONE
             }
 
             PasochnicaList.DEL_ALL_PASOCHNICA -> {
                 if (fileList.isNotEmpty()) {
                     dialogDeliteAllPiasochnica = true
                 }
+                PasochnicaList.pasochnicaAction = PasochnicaList.NONE
             }
         }
     }
@@ -499,7 +505,7 @@ fun DialogNetFileExplorer(
     if (dialogDelite) {
         DialogDelite(title = dir + "/" + Piasochnica.fileList[position].title, onConfirmation = {
             val title = dir + "/" + Piasochnica.fileList[position].title
-            val isSite = !title.contains("/admin/piasochnica")
+            val isSite = title.contains("/admin/piasochnica")
             Piasochnica.getFileUnlinkPostRequest(title, isSite)
             Piasochnica.fileList.removeAt(position)
             dialogDelite = false
