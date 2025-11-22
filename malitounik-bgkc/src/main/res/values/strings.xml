@@ -80,7 +80,7 @@
     <string name="pesny4">Калядныя</string>
     <string name="pesny5">Сьпевы Taize</string>
     <string name="prynagodnyia">Прынагодныя малітвы</string>
-    <string name="bsinaidal">БІБЛІЯ (Сінадальны пераклад Маскоўскага патрыярхата)</string>
+    <string name="bsinaidal">БІБЛІЯ (Сінадальны пераклад выданьня Маскоўскага патрыярхату)</string>
     <string name="bsinaidal2">Сінадальны пераклад (МП)</string>
     <string name="maranata">Штодзённае чытаньне Бібліі за год:</string>
     <string name="maranata2">Штодзённае чытаньне Бібліі за год, за %1$d %2$s</string>
@@ -853,8 +853,8 @@
         <item>https://server.radiorm.by:8443/start32</item>
     </array>
     <string name="cytaty">ЦЫТАТЫ З БІБЛІІ</string>
-    <string name="title_biblia_catolik">НОВЫ ЗАПАВЕТ (пераклад Рыма-Каталіцкага Касцёла)</string>
-    <string name="title_biblia_catolik2">Пераклад Рыма-Каталіцкага Касцёла</string>
+    <string name="title_biblia_catolik">НОВЫ ЗАПАВЕТ (пераклад Рыма-Каталіцкага Касьцёла)</string>
+    <string name="title_biblia_catolik2">Пераклад Рыма-Каталіцкага Касьцёла</string>
     <array name="amin_title_book">
         <item>Гісторыя Царквы</item>
         <item>Малітоўнікі</item>
@@ -862,5 +862,8 @@
         <item>Рэлігійная літаратура</item>
         <item>Архіў нумароў газеты</item>
     </array>
+    <string name="title_down_load">СПАМПАВАЦЬ БІБЛІЮ</string>
+    <string name="content_down_load">Спампаваць %1$s памерам у %2$s?</string>
+    <string name="translate">З перакладам</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

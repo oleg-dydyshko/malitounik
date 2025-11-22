@@ -152,7 +152,6 @@ import by.carkva_gazeta.malitounik.VybranaeList
 import by.carkva_gazeta.malitounik.admin.DialogEditSvityiaAndSviaty
 import by.carkva_gazeta.malitounik.admin.Icony
 import by.carkva_gazeta.malitounik.admin.PasochnicaList
-import by.carkva_gazeta.malitounik.admin.Piasochnica
 import by.carkva_gazeta.malitounik.admin.PiasochnicaNew
 import by.carkva_gazeta.malitounik.formatFigureTwoPlaces
 import by.carkva_gazeta.malitounik.rawAsset
@@ -278,6 +277,20 @@ object AppNavGraphState {
             addStyle(SpanStyle(fontFamily = FontFamily(Font(R.font.comici))), 1, this.length)
         }.toAnnotatedString()
     }
+}
+
+fun openBibleResources(context: Context, fileName: String): String {
+    var result: String
+    try {
+        val file = File("${context.filesDir}$fileName")
+        result = file.readText()
+    } catch (_: FileNotFoundException) {
+        val inputStream = context.assets.open("bogashlugbovya_error.html")
+        val isr = InputStreamReader(inputStream)
+        val reader = BufferedReader(isr)
+        result = reader.readText()
+    }
+    return result
 }
 
 fun openAssetsResources(context: Context, fileName: String): String {

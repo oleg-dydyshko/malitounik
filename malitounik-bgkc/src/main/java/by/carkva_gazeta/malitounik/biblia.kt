@@ -2,6 +2,7 @@ package by.carkva_gazeta.malitounik
 
 import android.content.Context
 import by.carkva_gazeta.malitounik.views.openAssetsResources
+import by.carkva_gazeta.malitounik.views.openBibleResources
 
 fun biblia(
     context: Context, kniga: Int, glavaStart: Int, glavaEnd: Int, styxStart: Int, styxEnd: Int, perevod: String
@@ -41,15 +42,15 @@ fun biblia(
             }
 
             Settings.PEREVODCATOLIK -> {
-                "chytanne/Catolik/catolik"
+                "/Catolik/catolik"
             }
 
             Settings.PEREVODSINOIDAL -> {
-                "chytanne/Sinodal/sinaidal"
+                "/Sinodal/sinaidal"
             }
 
             Settings.PEREVODNEWKINGJAMES -> {
-                "chytanne/NewKingJames/english"
+                "/NewKingJames/english"
             }
 
             else -> {
@@ -59,7 +60,11 @@ fun biblia(
         fileName = "$prevodName$zavet${knigaNew + 1}.txt"
     }
     val isPsaltyrGreek = perevodNew == Settings.PEREVODSEMUXI || perevodNew == Settings.PEREVODNADSAN || perevodNew == Settings.PEREVODSINOIDAL
-    val listGlav = openAssetsResources(context, fileName).split("===")
+    val listGlav = if (perevod == Settings.PEREVODSINOIDAL || perevod == Settings.PEREVODCATOLIK || perevod == Settings.PEREVODNEWKINGJAMES) {
+        openBibleResources(context, fileName).split("===")
+    } else {
+        openAssetsResources(context, fileName).split("===")
+    }
     for (glava in glavaStart..glavaEnd) {
         val spisStyxov = listGlav[glava].trim().split("\n")
         if (glava == glavaStart) {
@@ -69,7 +74,8 @@ fun biblia(
                         BibliaDataItem(
                             glava, spisStyxov[styx].replace(
                                 "\\n", "<br>"
-                            ), getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
+                            ), getParalel(kniga, glava, styx + 1, isPsaltyrGreek),
+                            getTranslate(context, kniga, glavaStart, styx, listGlav[glavaStart].trim().split("\n"), perevod)
                         )
                     )
                 } else {
@@ -78,13 +84,15 @@ fun biblia(
                             BibliaDataItem(
                                 glava, spisStyxov[styx].replace(
                                     "\\n", "<br>"
-                                ), getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
+                                ), getParalel(kniga, glava, styx + 1, isPsaltyrGreek),
+                                getTranslate(context, kniga, glavaStart, styx, listGlav[glavaStart].trim().split("\n"), perevod)
                             )
                         )
                     } else {
                         result.add(
                             BibliaDataItem(
-                                glava, spisStyxov[styx].replace("\\n", "<br>"), getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
+                                glava, spisStyxov[styx].replace("\\n", "<br>"), getParalel(kniga, glava, styx + 1, isPsaltyrGreek),
+                                getTranslate(context, kniga, glavaStart, styx, listGlav[glavaStart].trim().split("\n"), perevod)
                             )
                         )
                     }
@@ -95,7 +103,8 @@ fun biblia(
             for (styx in spisStyxov.indices) {
                 result.add(
                     BibliaDataItem(
-                        glava, spisStyxov[styx].replace("\\n", "<br>"), getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
+                        glava, spisStyxov[styx].replace("\\n", "<br>"), getParalel(kniga, glava, styx + 1, isPsaltyrGreek),
+                        getTranslate(context, kniga, glavaStart, styx, listGlav[glavaStart].trim().split("\n"), perevod)
                     )
                 )
             }
@@ -107,13 +116,14 @@ fun biblia(
                         BibliaDataItem(
                             glava, spisStyxov[styx].replace(
                                 "\\n", "<br>"
-                            ), getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
+                            ), getParalel(kniga, glava, styx + 1, isPsaltyrGreek), getTranslate(context, kniga, glavaStart, styx, listGlav[glavaStart].trim().split("\n"), perevod)
                         )
                     )
                 } else {
                     result.add(
                         BibliaDataItem(
-                            glava, spisStyxov[styx].replace("\\n", "<br>"), getParalel(kniga, glava, styx + 1, isPsaltyrGreek)
+                            glava, spisStyxov[styx].replace("\\n", "<br>"), getParalel(kniga, glava, styx + 1, isPsaltyrGreek),
+                            getTranslate(context, kniga, glavaStart, styx, listGlav[glavaStart].trim().split("\n"), perevod)
                         )
                     )
                 }
@@ -121,6 +131,39 @@ fun biblia(
         }
     }
     return result
+}
+
+fun getTranslate(context: Context, kniga: Int, glava: Int, styx: Int, originalList: List<String>, perevod: String): String {
+    var result = ""
+    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+    if (!k.getBoolean("newkingjames_translate", false) || perevod != Settings.PEREVODNEWKINGJAMES) return result
+    val knigaNew = getRealBook(kniga, Settings.PEREVODBOKUNA)
+    val zavet = if (kniga >= 50) {
+        "n"
+    } else {
+        "s"
+    }
+    val fileName = "chytanne/Bokun/bokuna$zavet${knigaNew + 1}.txt"
+    val listGlav = openAssetsResources(context, fileName).split("===")
+    val spisStyxov = listGlav[glava].trim().split("\n")
+    val charniauskiSize = spisStyxov.size
+    for (mystyx in originalList.indices) {
+        if (styx == mystyx) {
+            if (originalList.size != charniauskiSize) {
+                if (styx == 0) {
+                    result = spisStyxov[1]
+                }
+                if (styx > 0) {
+                    result = spisStyxov[mystyx + 1]
+                }
+            } else {
+                result = spisStyxov[mystyx]
+            }
+            break
+        }
+    }
+    val t1 = result.indexOf(" ")
+    return result.substring(t1 + 1)
 }
 
 fun getRealBook(kniga: Int, perevod: String): Int {
@@ -358,4 +401,4 @@ fun getNameBook(context: Context, perevod: String, novyZapavet: Boolean): Array<
     return arrayOf("")
 }
 
-data class BibliaDataItem(val glava: Int, val styx: String, val paralelStyx: String)
+data class BibliaDataItem(val glava: Int, val styx: String, val paralelStyx: String, val translate: String)

@@ -187,8 +187,23 @@ fun SettingsView(navController: NavHostController) {
             if (file.exists()) file.delete()
             file = File("${context.filesDir}/piarliny.json")
             if (file.exists()) file.delete()
+            file = File("${context.filesDir}/Catolik")
+            if (file.exists()) file.deleteRecursively()
+            file = File("${context.filesDir}/Sinodal")
+            if (file.exists()) file.deleteRecursively()
+            file = File("${context.filesDir}/NewKingJames")
+            if (file.exists()) file.deleteRecursively()
         }) {
             dialodClearChache = false
+        }
+    }
+    var dialogDownLoad by remember { mutableStateOf(false) }
+    var perevod by remember { mutableStateOf(Settings.PEREVODSINOIDAL) }
+    if (dialogDownLoad) {
+        DialogDownLoadBible(perevod, onConfirmation = {
+            dialogDownLoad = false
+        }) {
+            dialogDownLoad = false
         }
     }
     Scaffold(
@@ -498,6 +513,13 @@ fun SettingsView(navController: NavHostController) {
                         k.edit {
                             putBoolean("sinoidal_bible", sinoidalState)
                         }
+                        if (sinoidalState) {
+                            val dir = File("${context.filesDir}/Sinodal")
+                            if (!dir.exists()) {
+                                perevod = Settings.PEREVODSINOIDAL
+                                dialogDownLoad = true
+                            }
+                        }
                     }
                     .padding(vertical = 5.dp)) {
                 Text(
@@ -511,12 +533,138 @@ fun SettingsView(navController: NavHostController) {
                         k.edit {
                             putBoolean("sinoidal_bible", sinoidalState)
                         }
+                        if (sinoidalState) {
+                            val dir = File("${context.filesDir}/Sinodal")
+                            if (!dir.exists()) {
+                                perevod = Settings.PEREVODSINOIDAL
+                                dialogDownLoad = true
+                            }
+                        }
                     })
+            }
+            var catolikState by remember { mutableStateOf(k.getBoolean("catolik_bible", false)) }
+            Row(
+                verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                    .clickable {
+                        catolikState = !catolikState
+                        k.edit {
+                            putBoolean("catolik_bible", catolikState)
+                        }
+                        if (catolikState) {
+                            val dir = File("${context.filesDir}/Catolik")
+                            if (!dir.exists()) {
+                                perevod = Settings.PEREVODCATOLIK
+                                dialogDownLoad = true
+                            }
+                        }
+                    }
+                    .padding(vertical = 5.dp)) {
+                Text(
+                    stringResource(R.string.title_biblia_catolik), modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                )
+                Switch(
+                    modifier = Modifier.scale(0.8f), checked = catolikState, onCheckedChange = {
+                        catolikState = it
+                        k.edit {
+                            putBoolean("catolik_bible", catolikState)
+                        }
+                        if (catolikState) {
+                            val dir = File("${context.filesDir}/Catolik")
+                            if (!dir.exists()) {
+                                perevod = Settings.PEREVODCATOLIK
+                                dialogDownLoad = true
+                            }
+                        }
+                    })
+            }
+            var newkingjamesState by remember { mutableStateOf(k.getBoolean("newkingjames_bible", false)) }
+            var newkingjamesTranslate by remember { mutableStateOf(k.getBoolean("newkingjames_translate", false)) }
+            Column(
+                modifier = Modifier
+                    .clip(shape = RoundedCornerShape(10.dp))
+                    .border(
+                        width = 1.dp,
+                        color = SecondaryText,
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                    .padding(horizontal = 10.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                        .clickable {
+                            newkingjamesState = !newkingjamesState
+                            k.edit {
+                                putBoolean("newkingjames_bible", newkingjamesState)
+                                if (newkingjamesState) {
+                                    putBoolean("newkingjames_translate", false)
+                                    newkingjamesTranslate = false
+                                }
+                            }
+                            if (newkingjamesState) {
+                                val dir = File("${context.filesDir}/NewKingJames")
+                                if (!dir.exists()) {
+                                    perevod = Settings.PEREVODNEWKINGJAMES
+                                    dialogDownLoad = true
+                                }
+                            }
+                        }
+                        .padding(vertical = 5.dp)) {
+                    Text(
+                        stringResource(R.string.perevod_new_king_james), modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                    )
+                    Switch(
+                        modifier = Modifier.scale(0.8f), checked = newkingjamesState, onCheckedChange = {
+                            newkingjamesState = it
+                            k.edit {
+                                putBoolean("newkingjames_bible", newkingjamesState)
+                                if (newkingjamesState) {
+                                    putBoolean("newkingjames_translate", false)
+                                    newkingjamesTranslate = false
+                                }
+                            }
+                            if (newkingjamesState) {
+                                val dir = File("${context.filesDir}/NewKingJames")
+                                if (!dir.exists()) {
+                                    perevod = Settings.PEREVODNEWKINGJAMES
+                                    dialogDownLoad = true
+                                }
+                            }
+                        })
+                }
+                if (newkingjamesState) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                            .clickable {
+                                newkingjamesTranslate = !newkingjamesTranslate
+                                k.edit {
+                                    putBoolean("newkingjames_translate", newkingjamesTranslate)
+                                }
+                            }
+                            .padding(vertical = 5.dp)) {
+                        Text(
+                            stringResource(R.string.translate), modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                        )
+                        Switch(
+                            modifier = Modifier.scale(0.8f), checked = newkingjamesTranslate, onCheckedChange = {
+                                newkingjamesTranslate = it
+                                k.edit {
+                                    putBoolean("newkingjames_translate", newkingjamesTranslate)
+                                }
+                            })
+                    }
+                }
             }
             var maranafaState by remember { mutableStateOf(k.getBoolean("maranafa", false)) }
             var paralelState by remember { mutableStateOf(k.getBoolean("paralel_maranata", true)) }
             Column(
                 modifier = Modifier
+                    .padding(top = 10.dp)
                     .clip(shape = RoundedCornerShape(10.dp))
                     .border(
                         width = 1.dp,
@@ -531,6 +679,10 @@ fun SettingsView(navController: NavHostController) {
                             maranafaState = !maranafaState
                             k.edit {
                                 putBoolean("maranafa", maranafaState)
+                                if (maranafaState) {
+                                    putBoolean("paralel_maranata", true)
+                                    paralelState = true
+                                }
                             }
                         }
                         .padding(vertical = 5.dp)) {
@@ -544,30 +696,36 @@ fun SettingsView(navController: NavHostController) {
                             maranafaState = it
                             k.edit {
                                 putBoolean("maranafa", maranafaState)
+                                if (maranafaState) {
+                                    putBoolean("paralel_maranata", true)
+                                    paralelState = true
+                                }
                             }
                         })
                 }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                        .clickable {
-                            paralelState = !paralelState
-                            k.edit {
-                                putBoolean("paralel_maranata", paralelState)
+                if (maranafaState) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                            .clickable {
+                                paralelState = !paralelState
+                                k.edit {
+                                    putBoolean("paralel_maranata", paralelState)
+                                }
                             }
-                        }
-                        .padding(vertical = 5.dp)) {
-                    Text(
-                        stringResource(R.string.paralel), modifier = Modifier
-                            .weight(1f)
-                            .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
-                    )
-                    Switch(
-                        modifier = Modifier.scale(0.8f), checked = paralelState, onCheckedChange = {
-                            paralelState = it
-                            k.edit {
-                                putBoolean("paralel_maranata", paralelState)
-                            }
-                        })
+                            .padding(vertical = 5.dp)) {
+                        Text(
+                            stringResource(R.string.paralel), modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                        )
+                        Switch(
+                            modifier = Modifier.scale(0.8f), checked = paralelState, onCheckedChange = {
+                                paralelState = it
+                                k.edit {
+                                    putBoolean("paralel_maranata", paralelState)
+                                }
+                            })
+                    }
                 }
             }
             Text(
@@ -891,10 +1049,13 @@ fun SettingsView(navController: NavHostController) {
                         putBoolean("s_gosud", false)
                         putBoolean("s_pafesii", false)
                         putInt("notification", Settings.NOTIFICATION_SVIATY_FULL)
-                        putInt("sinoidal", 0)
-                        putInt("maranata", 0)
                         putString("perevod", Settings.PEREVODSEMUXI)
                         putString("perevodMaranata", Settings.PEREVODSEMUXI)
+                        putBoolean("sinoidal_bible", false)
+                        putBoolean("catolik_bible", false)
+                        putBoolean("newkingjames_bible", false)
+                        putBoolean("newkingjames_translate", false)
+                        putBoolean("maranafa", false)
                         putBoolean("pegistrbukv", true)
                         putInt("slovocalkam", 0)
                         putBoolean("admin", false)
@@ -918,7 +1079,7 @@ fun SettingsView(navController: NavHostController) {
                     admin = false
                     Settings.fontInterface = 22f
                     adminDayInYearState = false
-                    sinoidalState = false
+                    catolikState = false
                     paralelState = false
                     modePkcSvaity = false
                     modePravasSvaity = false

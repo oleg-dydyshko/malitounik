@@ -111,7 +111,7 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
     var isProgressVisable by remember { mutableStateOf(false) }
     val fileList = remember { mutableStateListOf<String>() }
     val backCopy = remember { mutableStateListOf<String>() }
-    LaunchedEffect(Unit, Settings.bibleTime) {
+    LaunchedEffect(Unit) {
         val dir = context.getExternalFilesDir("PiasochnicaBackCopy")
         if (dir?.exists() == true) {
             var list = dir.list()
@@ -134,9 +134,6 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
         if (Settings.isNetworkAvailable(context)) {
             coroutineScope.launch {
                 isProgressVisable = true
-                if (Piasochnica.findDirAsSave.isEmpty()) {
-                    Piasochnica.getFindFileListAsSave()
-                }
                 fileList.clear()
                 fileList.addAll(getPasochnicaFileList())
                 fileList.sort()

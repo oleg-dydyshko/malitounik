@@ -1,6 +1,8 @@
 package by.carkva_gazeta.malitounik
 
 import android.content.Context
+import android.widget.Toast
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -33,6 +35,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
@@ -42,8 +45,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -84,8 +89,13 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.FileOutputStream
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.util.zip.ZipFile
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -206,6 +216,16 @@ fun BibliaMenu(
             }
         ) {
             isDeliteVybranaeAll = false
+        }
+    }
+    var dialogDownLoad by remember { mutableStateOf(false) }
+    var novyZapavet by remember { mutableStateOf(false) }
+    if (dialogDownLoad) {
+        DialogDownLoadBible(perevod, onConfirmation = {
+            navigationActions.navigateToBibliaList(novyZapavet, perevod)
+            dialogDownLoad = false
+        }) {
+            dialogDownLoad = false
         }
     }
     LaunchedEffect(searchSettings, Settings.textFieldValueState.value) {
@@ -361,7 +381,28 @@ fun BibliaMenu(
             if (perevod != Settings.PEREVODCATOLIK) {
                 TextButton(
                     onClick = {
-                        navigationActions.navigateToBibliaList(false, perevod)
+                        novyZapavet = false
+                        when (perevod) {
+                            Settings.PEREVODSINOIDAL -> {
+                                val dir = File("${context.filesDir}/Sinodal")
+                                if (!dir.exists()) {
+                                    dialogDownLoad = true
+                                } else {
+                                    navigationActions.navigateToBibliaList(false, perevod)
+                                }
+                            }
+
+                            Settings.PEREVODNEWKINGJAMES -> {
+                                val dir = File("${context.filesDir}/NewKingJames")
+                                if (!dir.exists()) {
+                                    dialogDownLoad = true
+                                } else {
+                                    navigationActions.navigateToBibliaList(false, perevod)
+                                }
+                            }
+
+                            else -> navigationActions.navigateToBibliaList(false, perevod)
+                        }
                     },
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
@@ -387,7 +428,37 @@ fun BibliaMenu(
             if (perevod != Settings.PEREVODNADSAN) {
                 TextButton(
                     onClick = {
-                        navigationActions.navigateToBibliaList(true, perevod)
+                        novyZapavet = true
+                        when (perevod) {
+                            Settings.PEREVODCATOLIK -> {
+                                val dir = File("${context.filesDir}/Catolik")
+                                if (!dir.exists()) {
+                                    dialogDownLoad = true
+                                } else {
+                                    navigationActions.navigateToBibliaList(true, perevod)
+                                }
+                            }
+
+                            Settings.PEREVODSINOIDAL -> {
+                                val dir = File("${context.filesDir}/Sinodal")
+                                if (!dir.exists()) {
+                                    dialogDownLoad = true
+                                } else {
+                                    navigationActions.navigateToBibliaList(true, perevod)
+                                }
+                            }
+
+                            Settings.PEREVODNEWKINGJAMES -> {
+                                val dir = File("${context.filesDir}/NewKingJames")
+                                if (!dir.exists()) {
+                                    dialogDownLoad = true
+                                } else {
+                                    navigationActions.navigateToBibliaList(true, perevod)
+                                }
+                            }
+
+                            else -> navigationActions.navigateToBibliaList(true, perevod)
+                        }
                     },
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
@@ -1018,6 +1089,139 @@ fun DialogSemuxa(
 }
 
 @Composable
+fun DialogDownLoadBible(
+    perevod: String,
+    onConfirmation: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    val titleBible = when (perevod) {
+        Settings.PEREVODCATOLIK -> stringResource(R.string.title_biblia_catolik2)
+        Settings.PEREVODSINOIDAL -> stringResource(R.string.bsinaidal2)
+        Settings.PEREVODNEWKINGJAMES -> stringResource(R.string.perevod_new_king_james_2)
+        else -> stringResource(R.string.bsinaidal2)
+    }
+    val context = LocalActivity.current as MainActivity
+    var download by remember { mutableStateOf(false) }
+    var isProgressVisable by remember { mutableStateOf(false) }
+    var dirCount by remember { mutableLongStateOf(0) }
+    var izm by remember { mutableStateOf("O Кб") }
+    val coroutineScope = rememberCoroutineScope()
+    LaunchedEffect(Unit) {
+        if (Settings.isNetworkAvailable(context)) {
+            coroutineScope.launch {
+                val result = when (perevod) {
+                    Settings.PEREVODCATOLIK -> Malitounik.referens.child("/chytanne/Catolik/catolik.zip").metadata.await()
+                    Settings.PEREVODSINOIDAL -> Malitounik.referens.child("/chytanne/Sinodal/sinaidal.zip").metadata.await()
+                    Settings.PEREVODNEWKINGJAMES -> Malitounik.referens.child("/chytanne/NewKingJames/newkingjames.zip").metadata.await()
+                    else -> Malitounik.referens.child("/chytanne/Sinodal/sinaidal.zip").metadata.await()
+                }
+                dirCount = result.sizeBytes
+                izm = if (dirCount / 1024 > 1000) {
+                    formatFigureTwoPlaces(
+                        BigDecimal
+                            .valueOf(dirCount.toFloat() / 1024 / 1024.toDouble())
+                            .setScale(2, RoundingMode.HALF_UP)
+                            .toFloat()
+                    ) + " Мб"
+                } else {
+                    formatFigureTwoPlaces(
+                        BigDecimal
+                            .valueOf(dirCount.toFloat() / 1024.toDouble())
+                            .setScale(2, RoundingMode.HALF_UP)
+                            .toFloat()
+                    ) + " Кб"
+                }
+            }
+        } else {
+            Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+        }
+    }
+    LaunchedEffect(download) {
+        if (download) {
+            if (Settings.isNetworkAvailable(context)) {
+                coroutineScope.launch {
+                    isProgressVisable = true
+                    downLoadBibile(context, perevod)
+                    val destinationDir = when (perevod) {
+                        Settings.PEREVODCATOLIK -> "${context.filesDir}/Catolik"
+
+                        Settings.PEREVODSINOIDAL -> "${context.filesDir}/Sinodal"
+
+                        Settings.PEREVODNEWKINGJAMES -> "${context.filesDir}/NewKingJames"
+
+                        else -> "${context.filesDir}/Sinodal"
+                    }
+                    val dir = File(destinationDir)
+                    if (!dir.exists()) dir.mkdir()
+                    val zipFile = File("${context.filesDir}/cache/cache.zip")
+                    ZipFile(zipFile).use { zip ->
+                        zip.entries().asSequence().forEach { entry ->
+                            val entryFile = File(destinationDir, entry.name)
+                            zip.getInputStream(entry).use { input ->
+                                FileOutputStream(entryFile).use { output ->
+                                    input.copyTo(output)
+                                }
+                            }
+                        }
+                    }
+                    isProgressVisable = false
+                    zipFile.delete()
+                    onConfirmation()
+                }
+            } else {
+                Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+                Text(
+                    text = stringResource(R.string.title_down_load).uppercase(), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.onTertiary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
+                )
+                if (isProgressVisable) {
+                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                }
+                Text(
+                    modifier = Modifier
+                        .padding(10.dp),
+                    text = stringResource(R.string.content_down_load, titleBible, izm), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
+                )
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = { onDismiss() },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Text(stringResource(R.string.cansel), fontSize = 18.sp)
+                    }
+                    TextButton(
+                        onClick = { download = true },
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Text(stringResource(R.string.ok), fontSize = 18.sp)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun DialogPeryaidy(
     onDismiss: () -> Unit
 ) {
@@ -1102,5 +1306,30 @@ fun DialogImage(
                 }
             }
         }
+    }
+}
+
+suspend fun downLoadBibile(context: Context, perevod: String, count: Int = 0) {
+    var error = false
+    try {
+        val file = File("${context.filesDir}/cache/cache.zip")
+        when (perevod) {
+            Settings.PEREVODCATOLIK -> Malitounik.referens.child("/chytanne/Catolik/catolik.zip").getFile(file).addOnFailureListener {
+                error = true
+            }.await()
+
+            Settings.PEREVODSINOIDAL -> Malitounik.referens.child("/chytanne/Sinodal/sinaidal.zip").getFile(file).addOnFailureListener {
+                error = true
+            }.await()
+
+            Settings.PEREVODNEWKINGJAMES -> Malitounik.referens.child("/chytanne/NewKingJames/newkingjames.zip").getFile(file).addOnFailureListener {
+                error = true
+            }.await()
+        }
+    } catch (_: Throwable) {
+        error = true
+    }
+    if (error && count < 3) {
+        downLoadBibile(context, perevod, count + 1)
     }
 }

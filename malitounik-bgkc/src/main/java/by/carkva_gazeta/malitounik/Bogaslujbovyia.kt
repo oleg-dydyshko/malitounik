@@ -961,9 +961,6 @@ fun Bogaslujbovyia(
                                                 autoScroll = false
                                                 coroutineScope.launch {
                                                     isProgressVisable = true
-                                                    if (Piasochnica.findDirAsSave.isEmpty()) {
-                                                        Piasochnica.getFindFileListAsSave()
-                                                    }
                                                     val fileList = SnapshotStateList<String>()
                                                     fileList.addAll(getPasochnicaFileList())
                                                     fileList.sort()
@@ -1019,9 +1016,6 @@ fun Bogaslujbovyia(
                                         autoScroll = false
                                         coroutineScope.launch {
                                             isProgressVisable = true
-                                            if (Piasochnica.findDirAsSave.isEmpty()) {
-                                                Piasochnica.getFindFileListAsSave()
-                                            }
                                             val fileList = SnapshotStateList<String>()
                                             fileList.addAll(getPasochnicaFileList())
                                             fileList.sort()
