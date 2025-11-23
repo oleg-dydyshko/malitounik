@@ -87,16 +87,24 @@ fun BibliaList(
             Settings.bibleTime = false
             Settings.bibleTimeList = true
             val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+            var defKniga = "Быц"
             val prevodName = when (perevod) {
                 Settings.PEREVODSEMUXI -> "biblia"
                 Settings.PEREVODBOKUNA -> "bokuna"
+                Settings.PEREVODNADSAN -> {
+                    defKniga = "Пс"
+                    "nadsan"
+                }
                 Settings.PEREVODCARNIAUSKI -> "carniauski"
-                Settings.PEREVODCATOLIK -> "catolik"
+                Settings.PEREVODCATOLIK -> {
+                    defKniga = "Мц"
+                    "catolik"
+                }
                 Settings.PEREVODSINOIDAL -> "sinaidal"
                 Settings.PEREVODNEWKINGJAMES -> "english"
                 else -> "biblia"
             }
-            val knigaText = k.getString("bible_time_${prevodName}_kniga", "Быц") ?: "Быц"
+            val knigaText = k.getString("bible_time_${prevodName}_kniga", defKniga) ?: defKniga
             val glava = k.getInt("bible_time_${prevodName}_glava", 0)
             navigateToCytanniList("$knigaText ${glava + 1}", perevod)
         }
@@ -232,7 +240,7 @@ fun BibliaList(
                                             placeable.placeRelative(0, 0)
                                         }
                                     },
-                                columns = GridCells.Adaptive(60.dp)
+                                columns = GridCells.Adaptive(70.dp)
                             ) {
                                 items(dataItem.count) { item ->
                                     Box(

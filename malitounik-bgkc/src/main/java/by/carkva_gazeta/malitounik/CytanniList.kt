@@ -5,6 +5,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -71,6 +72,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -115,8 +117,10 @@ import androidx.core.text.isDigitsOnly
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik.ui.theme.Button
@@ -138,7 +142,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -148,49 +151,50 @@ val cytanniListItemData = MutableStateFlow(ArrayList<CytanniListItemData>())
 var autoScrollJob: Job? = null
 var autoScrollTextVisableJob: Job? = null
 
-class CytanniListItems(biblia: Int, private val page: Int, cytanne: String, perevod: String) {
-    private val t1 = cytanne.indexOf(";")
-    private val knigaText = if (t1 == -1) cytanne.substringBeforeLast(" ")
-    else {
-        val sb = cytanne.take(t1)
-        sb.substringBeforeLast(" ")
+class CytanniListItems : ViewModel() {
+    val listState = mutableStateListOf<CytanniListItemData>()
+
+    fun initViewModel(biblia: Int, knigaText: String, perevod: String) {
+        if (listState.isEmpty()) {
+            val count = if (biblia == Settings.CHYTANNI_BIBLIA) bibleCount(knigaBiblii(knigaText), perevod)
+            else 1
+            if (count != listState.size) {
+                (0 until count).forEach { _ ->
+                    listState.add(CytanniListItemData(SnapshotStateList(), LazyListState()))
+                }
+            }
+        }
     }
-    private val chteniaNewPage = knigaText + " ${page + 1}"
-    private val mChekList = checkList()
-    private val _filteredItems = MutableStateFlow(
-        if (mChekList.isEmpty()) {
-            val resultPage = if (biblia == Settings.CHYTANNI_BIBLIA) getBible(
-                chteniaNewPage, perevod, biblia
-            )
-            else getBible(cytanne, perevod, biblia, true)
-            cytanniListItemData.value.add(CytanniListItemData(page, resultPage))
-            resultPage
-        } else {
-            mChekList
-        }
-    )
-    var filteredItems: StateFlow<ArrayList<CytanniListData>> = _filteredItems
-    private fun checkList(): ArrayList<CytanniListData> {
-        val result = ArrayList<CytanniListData>()
-        val removeList = ArrayList<CytanniListItemData>()
-        for (i in 0 until cytanniListItemData.value.size) {
-            if (cytanniListItemData.value[i].page !in page - 2..page + 2) {
-                removeList.add(cytanniListItemData.value[i])
-            }
-            if (cytanniListItemData.value[i].page == page) {
-                result.addAll(cytanniListItemData.value[i].item)
+
+    fun updatePage(biblia: Int, page: Int, cytanne: String, perevod: String) {
+        if (listState[page].item.isEmpty()) {
+            viewModelScope.launch {
+                withContext(Dispatchers.IO) {
+                    val t1 = cytanne.indexOf(";")
+                    val knigaText = if (t1 == -1) cytanne.substringBeforeLast(" ")
+                    else {
+                        val sb = cytanne.take(t1)
+                        sb.substringBeforeLast(" ")
+                    }
+                    val chteniaNewPage = knigaText + " ${page + 1}"
+                    val resultPage = if (biblia == Settings.CHYTANNI_BIBLIA) {
+                        getBible(chteniaNewPage, perevod, biblia)
+                    } else {
+                        getBible(cytanne, perevod, biblia, true)
+                    }
+                    listState[page].item.addAll(resultPage)
+                }
             }
         }
-        cytanniListItemData.value.removeAll(removeList.toSet())
-        return result
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CytanniList(
-    navController: NavHostController, title: String, cytanne: String, biblia: Int, perevodRoot: String, position: Int
+    navController: NavHostController, title: String, cytanne: String, biblia: Int, perevodRoot: String, position: Int, viewModel: CytanniListItems = viewModel()
 ) {
+    Log.d("Oleg", cytanne)
     var newCytanne = cytanne
     val t1 = newCytanne.indexOf(";")
     var knigaText by remember {
@@ -216,15 +220,8 @@ fun CytanniList(
             }
         )
     }
-    val listState = remember { SnapshotStateList<LazyListState>() }
-    val count = if (biblia == Settings.CHYTANNI_BIBLIA) bibleCount(knigaBiblii(knigaText), perevod)
-    else 1
-    if (count != listState.size) {
-        listState.clear()
-        (0 until count).forEach { _ ->
-            listState.add(rememberLazyListState())
-        }
-    }
+    viewModel.initViewModel(biblia, knigaText, perevod)
+    val listState = viewModel.listState
     var skipUtran by remember { mutableStateOf(position == -2) }
     var positionRemember by rememberSaveable { mutableIntStateOf(position) }
     var utranEndPosition by remember { mutableIntStateOf(0) }
@@ -276,7 +273,7 @@ fun CytanniList(
     var isParallelVisable by remember { mutableStateOf(false) }
     var paralelChtenia by rememberSaveable { mutableStateOf("") }
     var menuPosition by remember { mutableIntStateOf(0) }
-    val prevodName = when (perevod) {
+    val perevodName = when (perevod) {
         Settings.PEREVODSEMUXI -> "biblia"
         Settings.PEREVODBOKUNA -> "bokuna"
         Settings.PEREVODCARNIAUSKI -> "carniauski"
@@ -299,7 +296,7 @@ fun CytanniList(
         }
     }
     val initPage = if (biblia == Settings.CHYTANNI_BIBLIA) {
-        if (Settings.bibleTimeList) k.getInt("bible_time_${prevodName}_glava", 0)
+        if (Settings.bibleTimeList) k.getInt("bible_time_${perevodName}_glava", 0)
         else newCytanne.substringAfterLast(" ").toInt() - 1
     } else 0
     val pagerState = rememberPagerState(pageCount = {
@@ -315,11 +312,11 @@ fun CytanniList(
     var selectPerevod by remember { mutableStateOf(false) }
     var selectOldPerevod by remember { mutableStateOf(perevod) }
     var isBottomBar by remember { mutableStateOf(k.getBoolean("bottomBar", false)) }
-    if (Settings.bibleTimeList) {
+    if (listState[selectedIndex].item.isNotEmpty() && Settings.bibleTimeList) {
         Settings.bibleTimeList = false
         LaunchedEffect(Unit) {
             coroutineScope.launch {
-                listState[selectedIndex].scrollToItem(k.getInt("bible_time_${prevodName}_stix", 0))
+                listState[selectedIndex].lazyListState.scrollToItem(k.getInt("bible_time_${perevodName}_stix", 0))
             }
         }
     }
@@ -380,7 +377,7 @@ fun CytanniList(
         if (perevod == Settings.PEREVODCARNIAUSKI) {
             if (knigaBiblii(knigaText) == 30) {
                 (1..5).forEach { _ ->
-                    listState.add(rememberLazyListState())
+                    listState.add(CytanniListItemData(SnapshotStateList(), rememberLazyListState()))
                 }
                 selectedIndex = 5
                 knigaText = "Вар"
@@ -389,14 +386,13 @@ fun CytanniList(
         }
     }
     val vybranoeList = remember { SnapshotStateList<VybranaeData>() }
-    var isPerevodError by remember { mutableStateOf(false) }
     var initVybranoe by remember { mutableStateOf(true) }
     var isVybranoe by remember { mutableStateOf(false) }
     var saveVybranoe by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val gson = Gson()
     val type = TypeToken.getParameterized(ArrayList::class.java, VybranaeData::class.java).type
-    val file = File("${LocalContext.current.filesDir}/vybranoe_${prevodName}.json")
+    val file = File("${LocalContext.current.filesDir}/vybranoe_${perevodName}.json")
     if (initVybranoe) {
         vybranoeList.clear()
         if (file.exists()) {
@@ -464,8 +460,8 @@ fun CytanniList(
                 withContext(Dispatchers.Main) {
                     while (true) {
                         delay(autoScrollSpeed.toLong())
-                        listState[selectedIndex].scrollBy(2f)
-                        AppNavGraphState.setScrollValuePosition(title, listState[selectedIndex].firstVisibleItemIndex)
+                        listState[selectedIndex].lazyListState.scrollBy(2f)
+                        AppNavGraphState.setScrollValuePosition(title, listState[selectedIndex].lazyListState.firstVisibleItemIndex)
                     }
                 }
             }
@@ -495,10 +491,11 @@ fun CytanniList(
                 fullscreen = false
                 val prefEditors = k.edit()
                 if (biblia == Settings.CHYTANNI_BIBLIA) {
-                    prefEditors.putString("bible_time_${prevodName}_kniga", knigaText)
-                    prefEditors.putInt("bible_time_${prevodName}_glava", selectedIndex)
+                    Log.d("Oleg2", "$perevodName $knigaText $selectedIndex")
+                    prefEditors.putString("bible_time_${perevodName}_kniga", knigaText)
+                    prefEditors.putInt("bible_time_${perevodName}_glava", selectedIndex)
                     prefEditors.putInt(
-                        "bible_time_${prevodName}_stix", listState[selectedIndex].firstVisibleItemIndex
+                        "bible_time_${perevodName}_stix", listState[selectedIndex].lazyListState.firstVisibleItemIndex
                     )
                 }
                 prefEditors.apply()
@@ -515,7 +512,7 @@ fun CytanniList(
         LaunchedEffect(Unit) {
             isUpList = false
             coroutineScope.launch {
-                listState[selectedIndex].animateScrollToItem(0)
+                listState[selectedIndex].lazyListState.animateScrollToItem(0)
             }
         }
     }
@@ -536,7 +533,7 @@ fun CytanniList(
     var dialogRazdel by remember { mutableStateOf(false) }
     val interactionSourse = remember { MutableInteractionSource() }
     if (dialogRazdel) {
-        DialogRazdzel(listState, autoScrollSensor, setSelectedIndex = { selectedIndex = it }, setAutoScroll = { autoScroll = it }) {
+        DialogRazdzel(listState.size, autoScrollSensor, setSelectedIndex = { selectedIndex = it }, setAutoScroll = { autoScroll = it }) {
             dialogRazdel = false
         }
     }
@@ -632,10 +629,10 @@ fun CytanniList(
                                         fullscreen = false
                                         k.edit {
                                             if (biblia == Settings.CHYTANNI_BIBLIA) {
-                                                putString("bible_time_${prevodName}_kniga", knigaText)
-                                                putInt("bible_time_${prevodName}_glava", selectedIndex)
+                                                putString("bible_time_${perevodName}_kniga", knigaText)
+                                                putInt("bible_time_${perevodName}_glava", selectedIndex)
                                                 putInt(
-                                                    "bible_time_${prevodName}_stix", listState[selectedIndex].firstVisibleItemIndex
+                                                    "bible_time_${perevodName}_stix", listState[selectedIndex].lazyListState.firstVisibleItemIndex
                                                 )
                                             }
                                         }
@@ -678,7 +675,7 @@ fun CytanniList(
                     } else {
                         if (!isBottomBar) {
                             var expandedUp by remember { mutableStateOf(false) }
-                            if (listState[selectedIndex].canScrollForward) {
+                            if (listState[selectedIndex].lazyListState.canScrollForward) {
                                 val iconAutoScroll = if (autoScrollSensor) painterResource(R.drawable.stop_circle)
                                 else painterResource(R.drawable.play_circle)
                                 IconButton(onClick = {
@@ -696,7 +693,7 @@ fun CytanniList(
                                         iconAutoScroll, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
-                            } else if (listState[selectedIndex].canScrollBackward) {
+                            } else if (listState[selectedIndex].lazyListState.canScrollBackward) {
                                 IconButton(onClick = {
                                     isUpList = true
                                 }) {
@@ -780,11 +777,6 @@ fun CytanniList(
                 Column {
                     if (menuPosition == 2) {
                         Column(Modifier.selectableGroup()) {
-                            if (isPerevodError) {
-                                Text(
-                                    stringResource(R.string.biblia_error), modifier = Modifier.padding(start = 10.dp, top = 10.dp), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.primary, fontSize = Settings.fontInterface.sp
-                                )
-                            }
                             Text(
                                 stringResource(R.string.perevody), modifier = Modifier.padding(start = 10.dp, top = 10.dp), textAlign = TextAlign.Center, fontStyle = FontStyle.Italic, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                             )
@@ -1166,7 +1158,7 @@ fun CytanniList(
                             }
                         }
                         if (!isParallelVisable) {
-                            if (listState[selectedIndex].canScrollForward) {
+                            if (listState[selectedIndex].lazyListState.canScrollForward) {
                                 val iconAutoScroll = if (autoScrollSensor) painterResource(R.drawable.stop_circle)
                                 else painterResource(R.drawable.play_circle)
                                 IconButton(onClick = {
@@ -1184,7 +1176,7 @@ fun CytanniList(
                                         painter = iconAutoScroll, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
-                            } else if (listState[selectedIndex].canScrollBackward) {
+                            } else if (listState[selectedIndex].lazyListState.canScrollBackward) {
                                 IconButton(onClick = {
                                     isUpList = true
                                 }) {
@@ -1250,6 +1242,8 @@ fun CytanniList(
                         }
                     }
                 }
+            } else {
+                viewModel.updatePage(biblia, 0, cytanne, perevod)
             }
             Column {
                 if (!fullscreen && biblia == Settings.CHYTANNI_BIBLIA && listState.size - 1 != 0) {
@@ -1283,7 +1277,7 @@ fun CytanniList(
                             available: Offset, source: NestedScrollSource
                         ): Offset {
                             isScrollRun = true
-                            AppNavGraphState.setScrollValuePosition(title, listState[selectedIndex].firstVisibleItemIndex)
+                            AppNavGraphState.setScrollValuePosition(title, listState[selectedIndex].lazyListState.firstVisibleItemIndex)
                             return super.onPreScroll(available, source)
                         }
 
@@ -1296,37 +1290,38 @@ fun CytanniList(
                         }
                     }
                 }
-                LaunchedEffect(Unit) {
-                    coroutineScope.launch {
-                        listState[selectedIndex].scrollToItem(AppNavGraphState.getScrollValuePosition(title))
-                    }
-                }
-                if (biblia == Settings.CHYTANNI_BIBLIA && positionRemember != -1) {
-                    LaunchedEffect(positionRemember) {
+                if (listState[selectedIndex].item.isNotEmpty()) {
+                    LaunchedEffect(Unit) {
                         coroutineScope.launch {
-                            listState[selectedIndex].scrollToItem(positionRemember)
-                            positionRemember = -1
+                            listState[selectedIndex].lazyListState.scrollToItem(AppNavGraphState.getScrollValuePosition(title))
                         }
                     }
-                }
-                if (biblia == Settings.CHYTANNI_LITURGICHNYIA && skipUtran && utranEndPosition > 0) {
-                    var pos = AppNavGraphState.getScrollValuePosition(title)
-                    if (pos == 0) pos = utranEndPosition
-                    LaunchedEffect(pos) {
-                        coroutineScope.launch {
-                            listState[selectedIndex].scrollToItem(pos)
-                            positionRemember = -1
-                            skipUtran = false
+                    if (biblia == Settings.CHYTANNI_BIBLIA && positionRemember != -1) {
+                        LaunchedEffect(positionRemember) {
+                            coroutineScope.launch {
+                                listState[selectedIndex].lazyListState.scrollToItem(positionRemember)
+                                positionRemember = -1
+                            }
+                        }
+                    }
+                    if (biblia == Settings.CHYTANNI_LITURGICHNYIA && skipUtran && utranEndPosition > 0) {
+                        var pos = AppNavGraphState.getScrollValuePosition(title)
+                        if (pos == 0) pos = utranEndPosition
+                        LaunchedEffect(pos) {
+                            coroutineScope.launch {
+                                listState[selectedIndex].lazyListState.scrollToItem(pos)
+                                positionRemember = -1
+                                skipUtran = false
+                            }
                         }
                     }
                 }
                 HorizontalPager(
                     pageSpacing = 10.dp, state = pagerState, flingBehavior = fling, verticalAlignment = Alignment.Top, userScrollEnabled = biblia == Settings.CHYTANNI_BIBLIA
                 ) { page ->
-                    val viewModel = CytanniListItems(biblia, page, newCytanne, perevod)
-                    val resultPage by viewModel.filteredItems.collectAsStateWithLifecycle()
-                    //val translate by viewModel.translate.collectAsStateWithLifecycle()
-                    if (biblia != Settings.CHYTANNI_BIBLIA && positionRemember != -1) {
+                    viewModel.updatePage(biblia, page, cytanne, perevod)
+                    val resultPage = listState[page].item
+                    if (resultPage.isNotEmpty() && biblia != Settings.CHYTANNI_BIBLIA && positionRemember != -1) {
                         var resultCount = 0
                         if (positionRemember != 0) {
                             var tit = ""
@@ -1344,18 +1339,12 @@ fun CytanniList(
                         }
                         LaunchedEffect(resultCount) {
                             coroutineScope.launch {
-                                listState[selectedIndex].scrollToItem(resultCount)
+                                listState[selectedIndex].lazyListState.scrollToItem(resultCount)
+                                positionRemember = -1
                             }
                         }
-                        positionRemember = -1
                     }
-                    if (resultPage.isEmpty()) {
-                        resultPage.add(CytanniListData(id = 0, title = subTitle, text = openAssetsResources(context, "biblia_error.txt")))
-                        isPerevodError = true
-                    } else {
-                        isPerevodError = false
-                    }
-                    if (skipUtran && !isPerevodError) {
+                    if (resultPage.isNotEmpty() && skipUtran) {
                         val tit = resultPage[0].title
                         for (i in 0 until resultPage.size) {
                             if (resultPage[i].title != tit) {
@@ -1364,14 +1353,21 @@ fun CytanniList(
                             }
                         }
                     }
-                    val selectState = remember(resultPage) { resultPage.map { false }.toMutableStateList() }
-                    if (biblia == Settings.CHYTANNI_BIBLIA && !isPerevodError && perevodRoot != Settings.PEREVODNADSAN) {
-                        subTitle = resultPage[0].title.substringBeforeLast(" ")
+                    val selectState = remember { mutableStateListOf<Boolean>() }
+                    if (resultPage.isNotEmpty() && selectState.isEmpty()) {
+                        selectState.addAll(resultPage.map { false }.toMutableStateList())
                     }
-                    if (biblia != Settings.CHYTANNI_BIBLIA) {
-                        LaunchedEffect(listState[page]) {
-                            snapshotFlow { listState[page].firstVisibleItemIndex }.collect { index ->
-                                if (subTitle != resultPage[index].title) subTitle = resultPage[index].title
+                    if (resultPage.isNotEmpty()) {
+                        if (biblia == Settings.CHYTANNI_BIBLIA && perevodRoot != Settings.PEREVODNADSAN) {
+                            subTitle = resultPage[0].title.substringBeforeLast(" ")
+                        }
+                        if (biblia != Settings.CHYTANNI_BIBLIA) {
+                            LaunchedEffect(listState[page]) {
+                                snapshotFlow { listState[page].lazyListState.firstVisibleItemIndex }.collect { index ->
+                                    if (subTitle != resultPage[index].title) {
+                                        subTitle = resultPage[index].title
+                                    }
+                                }
                             }
                         }
                     }
@@ -1444,7 +1440,7 @@ fun CytanniList(
                                     }
                                 }
                             }
-                            .nestedScroll(nestedScrollConnection), state = listState[page]) {
+                            .nestedScroll(nestedScrollConnection), state = listState[page].lazyListState) {
                         items(resultPage.size, key = { index -> resultPage[index].id }) { index ->
                             if (index == 0) {
                                 Spacer(Modifier.padding(top = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp))
@@ -1568,7 +1564,7 @@ fun CytanniList(
                         }
                         item {
                             Spacer(Modifier.padding(bottom = if (fullscreen) 10.dp else innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp)))
-                            if (listState[page].lastScrolledForward && !listState[page].canScrollForward) {
+                            if (listState[page].lazyListState.lastScrolledForward && !listState[page].lazyListState.canScrollForward) {
                                 autoScroll = false
                                 autoScrollSensor = false
                                 if (!k.getBoolean("power", false)) {
@@ -1707,7 +1703,7 @@ fun CytanniList(
 
 @Composable
 fun DialogRazdzel(
-    listState: SnapshotStateList<LazyListState>, autoScrollSensor: Boolean, setSelectedIndex: (Int) -> Unit, setAutoScroll: (Boolean) -> Unit, onDismiss: () -> Unit
+    listSize: Int, autoScrollSensor: Boolean, setSelectedIndex: (Int) -> Unit, setAutoScroll: (Boolean) -> Unit, onDismiss: () -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
@@ -1731,7 +1727,7 @@ fun DialogRazdzel(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(10.dp),
-                    text = stringResource(R.string.razdzel_count, listState.size), fontSize = 18.sp, fontStyle = FontStyle.Italic
+                    text = stringResource(R.string.razdzel_count, listSize), fontSize = 18.sp, fontStyle = FontStyle.Italic
                 )
                 TextField(
                     textStyle = TextStyle(fontSize = Settings.fontInterface.sp),
@@ -1751,7 +1747,7 @@ fun DialogRazdzel(
                         },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
-                        if (textFieldValueState.isNotEmpty() && textFieldValueState.toInt() > 0 && textFieldValueState.toInt() <= listState.size) {
+                        if (textFieldValueState.isNotEmpty() && textFieldValueState.toInt() > 0 && textFieldValueState.toInt() <= listSize) {
                             setSelectedIndex(textFieldValueState.toInt() - 1)
                         }
                         if (autoScrollSensor) setAutoScroll(true)
@@ -1772,7 +1768,7 @@ fun DialogRazdzel(
                     }
                     TextButton(
                         onClick = {
-                            if (textFieldValueState.isNotEmpty() && textFieldValueState.toInt() > 0 && textFieldValueState.toInt() <= listState.size) {
+                            if (textFieldValueState.isNotEmpty() && textFieldValueState.toInt() > 0 && textFieldValueState.toInt() <= listSize) {
                                 setSelectedIndex(textFieldValueState.toInt() - 1)
                             }
                             if (autoScrollSensor) setAutoScroll(true)
@@ -2407,7 +2403,7 @@ fun getParalel(kniga: Int, glava: Int, styx: Int, isPsaltyrGreek: Boolean): Stri
     return translateToBelarus(res)
 }
 
-data class CytanniListItemData(val page: Int, val item: ArrayList<CytanniListData>)
+data class CytanniListItemData(val item: SnapshotStateList<CytanniListData>, val lazyListState: LazyListState)
 
 data class CytanniListData(
     val id: Int, val title: String, val text: String = "", val parallel: String = "+-+", val translate: String = ""

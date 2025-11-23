@@ -1195,7 +1195,7 @@ fun MainConteiner(
                                 var edit = newText.text
                                 var selection = newText.selection
                                 val oldEdit = edit
-                                edit = zamena(edit)
+                                if (!currentRoute.contains("Biblia_")) edit = zamena(edit)
                                 if (oldEdit != edit) selection = TextRange(edit.length)
                                 searshString = TextFieldValue(edit, selection)
                                 Settings.textFieldValueState.value = edit

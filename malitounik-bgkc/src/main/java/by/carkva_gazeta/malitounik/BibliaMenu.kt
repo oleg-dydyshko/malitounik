@@ -117,6 +117,7 @@ fun BibliaMenu(
     }
     var bibleTime by remember { mutableStateOf(false) }
     if (bibleTime) {
+        var defKniga = "Быц"
         val prevodName = when (perevod) {
             Settings.PEREVODSEMUXI -> {
                 "biblia"
@@ -127,6 +128,7 @@ fun BibliaMenu(
             }
 
             Settings.PEREVODNADSAN -> {
+                defKniga = "Пс"
                 "nadsan"
             }
 
@@ -135,6 +137,7 @@ fun BibliaMenu(
             }
 
             Settings.PEREVODCATOLIK -> {
+                defKniga = "Мц"
                 "catolik"
             }
 
@@ -148,7 +151,7 @@ fun BibliaMenu(
 
             else -> "biblia"
         }
-        val knigaText = k.getString("bible_time_${prevodName}_kniga", "Быц") ?: "Быц"
+        val knigaText = k.getString("bible_time_${prevodName}_kniga", defKniga) ?: defKniga
         val kniga = knigaBiblii(knigaText)
         Settings.bibleTime = true
         bibleTime = false

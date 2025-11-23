@@ -80,8 +80,8 @@
     <string name="pesny4">Калядныя</string>
     <string name="pesny5">Сьпевы Taize</string>
     <string name="prynagodnyia">Прынагодныя малітвы</string>
-    <string name="bsinaidal">БІБЛІЯ (Сінадальны пераклад выданьня Маскоўскага патрыярхату)</string>
-    <string name="bsinaidal2">Сінадальны пераклад (МП)</string>
+    <string name="bsinaidal">БИБЛИЯ (Синодальный перевод)</string>
+    <string name="bsinaidal2">Синодальный перевод</string>
     <string name="maranata">Штодзённае чытаньне Бібліі за год:</string>
     <string name="maranata2">Штодзённае чытаньне Бібліі за год, за %1$d %2$s</string>
     <string name="maranata_opis">Штодзённае чытаньне Бібліі за год, паводле плану супольнасьці «Μαραν αθα»</string>

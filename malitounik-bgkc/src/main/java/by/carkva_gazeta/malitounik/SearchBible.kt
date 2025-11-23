@@ -81,6 +81,7 @@ import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.openAssetsResources
+import by.carkva_gazeta.malitounik.views.openBibleResources
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -463,15 +464,20 @@ fun biblia(
                 Settings.PEREVODSEMUXI -> "chytanne/Semucha/biblia"
                 Settings.PEREVODBOKUNA -> "chytanne/Bokun/bokuna"
                 Settings.PEREVODCARNIAUSKI -> "chytanne/Carniauski/carniauski"
-                Settings.PEREVODCATOLIK -> "chytanne/Catolik/catolik"
+                Settings.PEREVODCATOLIK -> "/Catolik/catolik"
                 Settings.PEREVODNADSAN -> "chytanne/psaltyr_nadsan.txt"
-                Settings.PEREVODSINOIDAL -> "chytanne/Sinodal/sinaidal"
-                Settings.PEREVODNEWKINGJAMES -> "chytanne/NewKingJames/english"
+                Settings.PEREVODSINOIDAL -> "/Sinodal/sinaidal"
+                Settings.PEREVODNEWKINGJAMES -> "/NewKingJames/english"
                 else -> "chytanne/Semucha/biblia"
             }
+            val fileName = if (perevod == Settings.PEREVODNADSAN) prevodName
+            else "$prevodName$zavet${i + 1}.txt"
             var glava = 0
-            val split = if (perevod == Settings.PEREVODNADSAN) openAssetsResources(context, prevodName).split("===")
-            else openAssetsResources(context, "$prevodName$zavet${i + 1}.txt").split("===")
+            val split = if (perevod == Settings.PEREVODSINOIDAL || perevod == Settings.PEREVODCATOLIK || perevod == Settings.PEREVODNEWKINGJAMES) {
+                openBibleResources(context, fileName).split("===")
+            } else {
+                openAssetsResources(context, fileName).split("===")
+            }
             for (e in 1 until split.size) {
                 glava++
                 val bibleline = split[e].split("\n")
