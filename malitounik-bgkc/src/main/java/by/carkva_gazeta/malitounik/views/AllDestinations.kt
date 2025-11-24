@@ -3,7 +3,6 @@ package by.carkva_gazeta.malitounik.views
 import android.content.SharedPreferences
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.SviatyiaView
-import by.carkva_gazeta.malitounik.cytanniListItemData
 import by.carkva_gazeta.malitounik.views.AllDestinations.AKAFIST_MENU
 import by.carkva_gazeta.malitounik.views.AllDestinations.BIBLIA_BOKUNA
 import by.carkva_gazeta.malitounik.views.AllDestinations.BIBLIA_CATOLIK
@@ -355,7 +354,6 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
     }
 
     fun navigateToCytanniList(title: String, cytanne: String, biblia: Int, perevod: String, position: Int) {
-        cytanniListItemData.value.clear()
         navController.navigate("$CYTANNI_LIST/$cytanne/$title/$biblia/$perevod/$position") {
             CYTANNI_LIST
         }

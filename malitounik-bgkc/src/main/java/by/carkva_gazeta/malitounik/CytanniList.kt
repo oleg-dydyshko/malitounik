@@ -5,7 +5,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -141,27 +140,31 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Calendar
 
-val cytanniListItemData = MutableStateFlow(ArrayList<CytanniListItemData>())
 var autoScrollJob: Job? = null
 var autoScrollTextVisableJob: Job? = null
 
 class CytanniListItems : ViewModel() {
     val listState = mutableStateListOf<CytanniListItemData>()
 
-    fun initViewModel(biblia: Int, knigaText: String, perevod: String) {
+    fun initViewModel(biblia: Int, cytanne: String, perevod: String) {
         if (listState.isEmpty()) {
+            val t1 = cytanne.indexOf(";")
+            val knigaText = if (biblia == Settings.CHYTANNI_BIBLIA || biblia == Settings.CHYTANNI_VYBRANAE) {
+                if (t1 == -1) cytanne.substringBeforeLast(" ")
+                else {
+                    val sb = cytanne.take(t1)
+                    sb.substringBeforeLast(" ")
+                }
+            } else cytanne
             val count = if (biblia == Settings.CHYTANNI_BIBLIA) bibleCount(knigaBiblii(knigaText), perevod)
             else 1
-            if (count != listState.size) {
-                (0 until count).forEach { _ ->
-                    listState.add(CytanniListItemData(SnapshotStateList(), LazyListState()))
-                }
+            (0 until count).forEach { _ ->
+                listState.add(CytanniListItemData(SnapshotStateList(), LazyListState()))
             }
         }
     }
@@ -187,6 +190,11 @@ class CytanniListItems : ViewModel() {
             }
         }
     }
+
+    fun setPerevod(biblia: Int, cytanne: String, perevod: String) {
+        listState.clear()
+        initViewModel(biblia, cytanne, perevod)
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -194,7 +202,6 @@ class CytanniListItems : ViewModel() {
 fun CytanniList(
     navController: NavHostController, title: String, cytanne: String, biblia: Int, perevodRoot: String, position: Int, viewModel: CytanniListItems = viewModel()
 ) {
-    Log.d("Oleg", cytanne)
     var newCytanne = cytanne
     val t1 = newCytanne.indexOf(";")
     var knigaText by remember {
@@ -367,7 +374,7 @@ fun CytanniList(
         if (perevod == Settings.PEREVODSINOIDAL) {
             if (knigaBiblii(knigaText) == 31) {
                 if (selectedIndex == 5) {
-                    for (i in 4 downTo 1) listState.removeAt(i)
+                    //for (i in 4 downTo 1) listState.removeAt(i)
                     selectedIndex = 0
                     knigaText = "Пасл Ер"
                     newCytanne = "Пасл Ер 1"
@@ -376,9 +383,9 @@ fun CytanniList(
         }
         if (perevod == Settings.PEREVODCARNIAUSKI) {
             if (knigaBiblii(knigaText) == 30) {
-                (1..5).forEach { _ ->
+                /*(1..5).forEach { _ ->
                     listState.add(CytanniListItemData(SnapshotStateList(), rememberLazyListState()))
-                }
+                }*/
                 selectedIndex = 5
                 knigaText = "Вар"
                 newCytanne = "Вар 6"
@@ -491,7 +498,6 @@ fun CytanniList(
                 fullscreen = false
                 val prefEditors = k.edit()
                 if (biblia == Settings.CHYTANNI_BIBLIA) {
-                    Log.d("Oleg2", "$perevodName $knigaText $selectedIndex")
                     prefEditors.putString("bible_time_${perevodName}_kniga", knigaText)
                     prefEditors.putInt("bible_time_${perevodName}_glava", selectedIndex)
                     prefEditors.putInt(
@@ -541,7 +547,6 @@ fun CytanniList(
     var setPerevod by remember { mutableStateOf(Settings.PEREVODSINOIDAL) }
     if (dialogDownLoad) {
         DialogDownLoadBible(setPerevod, onConfirmation = {
-            cytanniListItemData.value.clear()
             selectOldPerevod = perevod
             perevod = setPerevod
             initVybranoe = true
@@ -786,7 +791,6 @@ fun CytanniList(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
-                                            cytanniListItemData.value.clear()
                                             selectOldPerevod = perevod
                                             perevod = Settings.PEREVODSEMUXI
                                             initVybranoe = true
@@ -798,11 +802,11 @@ fun CytanniList(
                                                 "perevod", perevod
                                             )
                                             edit.apply()
+                                            viewModel.setPerevod(biblia, cytanne, perevod)
                                         }, verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     RadioButton(
                                         selected = perevod == Settings.PEREVODSEMUXI, onClick = {
-                                            cytanniListItemData.value.clear()
                                             selectOldPerevod = perevod
                                             perevod = Settings.PEREVODSEMUXI
                                             initVybranoe = true
@@ -814,6 +818,7 @@ fun CytanniList(
                                                 "perevod", perevod
                                             )
                                             edit.apply()
+                                            viewModel.setPerevod(biblia, cytanne, perevod)
                                         })
                                     Text(
                                         stringResource(R.string.title_biblia2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
@@ -825,7 +830,6 @@ fun CytanniList(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
-                                            cytanniListItemData.value.clear()
                                             selectOldPerevod = perevod
                                             perevod = Settings.PEREVODBOKUNA
                                             initVybranoe = true
@@ -837,11 +841,11 @@ fun CytanniList(
                                                 "perevod", perevod
                                             )
                                             edit.apply()
+                                            viewModel.setPerevod(biblia, cytanne, perevod)
                                         }, verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     RadioButton(
                                         selected = perevod == Settings.PEREVODBOKUNA, onClick = {
-                                            cytanniListItemData.value.clear()
                                             selectOldPerevod = perevod
                                             perevod = Settings.PEREVODBOKUNA
                                             initVybranoe = true
@@ -853,6 +857,7 @@ fun CytanniList(
                                                 "perevod", perevod
                                             )
                                             edit.apply()
+                                            viewModel.setPerevod(biblia, cytanne, perevod)
                                         })
                                     Text(
                                         stringResource(R.string.title_biblia_bokun2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
@@ -864,7 +869,6 @@ fun CytanniList(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
-                                            cytanniListItemData.value.clear()
                                             selectOldPerevod = perevod
                                             perevod = Settings.PEREVODCARNIAUSKI
                                             initVybranoe = true
@@ -876,11 +880,11 @@ fun CytanniList(
                                                 "perevod", perevod
                                             )
                                             edit.apply()
+                                            viewModel.setPerevod(biblia, cytanne, perevod)
                                         }, verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     RadioButton(
                                         selected = perevod == Settings.PEREVODCARNIAUSKI, onClick = {
-                                            cytanniListItemData.value.clear()
                                             selectOldPerevod = perevod
                                             perevod = Settings.PEREVODCARNIAUSKI
                                             initVybranoe = true
@@ -892,6 +896,7 @@ fun CytanniList(
                                                 "perevod", perevod
                                             )
                                             edit.apply()
+                                            viewModel.setPerevod(biblia, cytanne, perevod)
                                         })
                                     Text(
                                         stringResource(R.string.title_biblia_charniauski2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
@@ -908,7 +913,6 @@ fun CytanniList(
                                                 setPerevod = Settings.PEREVODCATOLIK
                                                 dialogDownLoad = true
                                             } else {
-                                                cytanniListItemData.value.clear()
                                                 selectOldPerevod = perevod
                                                 perevod = Settings.PEREVODCATOLIK
                                                 initVybranoe = true
@@ -920,6 +924,7 @@ fun CytanniList(
                                                     "perevod", perevod
                                                 )
                                                 edit.apply()
+                                                viewModel.setPerevod(biblia, cytanne, perevod)
                                             }
                                         }, verticalAlignment = Alignment.CenterVertically
                                 ) {
@@ -930,7 +935,6 @@ fun CytanniList(
                                                 setPerevod = Settings.PEREVODCATOLIK
                                                 dialogDownLoad = true
                                             } else {
-                                                cytanniListItemData.value.clear()
                                                 selectOldPerevod = perevod
                                                 perevod = Settings.PEREVODCATOLIK
                                                 initVybranoe = true
@@ -942,6 +946,7 @@ fun CytanniList(
                                                     "perevod", perevod
                                                 )
                                                 edit.apply()
+                                                viewModel.setPerevod(biblia, cytanne, perevod)
                                             }
                                         })
                                     Text(
@@ -954,20 +959,20 @@ fun CytanniList(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
-                                            cytanniListItemData.value.clear()
                                             selectOldPerevod = perevod
                                             perevod = Settings.PEREVODNADSAN
                                             initVybranoe = true
                                             selectPerevod = true
+                                            viewModel.setPerevod(biblia, cytanne, perevod)
                                         }, verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     RadioButton(
                                         selected = perevod == Settings.PEREVODNADSAN, onClick = {
-                                            cytanniListItemData.value.clear()
                                             selectOldPerevod = perevod
                                             perevod = Settings.PEREVODNADSAN
                                             initVybranoe = true
                                             selectPerevod = true
+                                            viewModel.setPerevod(biblia, cytanne, perevod)
                                         })
                                     Text(
                                         stringResource(R.string.title_psalter), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
@@ -984,7 +989,6 @@ fun CytanniList(
                                                 setPerevod = Settings.PEREVODSINOIDAL
                                                 dialogDownLoad = true
                                             } else {
-                                                cytanniListItemData.value.clear()
                                                 selectOldPerevod = perevod
                                                 perevod = Settings.PEREVODSINOIDAL
                                                 initVybranoe = true
@@ -995,6 +999,7 @@ fun CytanniList(
                                                     )
                                                 }
                                                 edit.apply()
+                                                viewModel.setPerevod(biblia, cytanne, perevod)
                                             }
                                         }, verticalAlignment = Alignment.CenterVertically
                                 ) {
@@ -1005,7 +1010,6 @@ fun CytanniList(
                                                 setPerevod = Settings.PEREVODSINOIDAL
                                                 dialogDownLoad = true
                                             } else {
-                                                cytanniListItemData.value.clear()
                                                 selectOldPerevod = perevod
                                                 perevod = Settings.PEREVODSINOIDAL
                                                 initVybranoe = true
@@ -1016,6 +1020,7 @@ fun CytanniList(
                                                     )
                                                 }
                                                 edit.apply()
+                                                viewModel.setPerevod(biblia, cytanne, perevod)
                                             }
                                         })
                                     Text(
@@ -1034,7 +1039,6 @@ fun CytanniList(
                                                     setPerevod = Settings.PEREVODNEWKINGJAMES
                                                     dialogDownLoad = true
                                                 } else {
-                                                    cytanniListItemData.value.clear()
                                                     selectOldPerevod = perevod
                                                     perevod = Settings.PEREVODNEWKINGJAMES
                                                     initVybranoe = true
@@ -1043,6 +1047,7 @@ fun CytanniList(
                                                         "perevodMaranata", perevod
                                                     )
                                                     edit.apply()
+                                                    viewModel.setPerevod(biblia, cytanne, perevod)
                                                 }
                                             }, verticalAlignment = Alignment.CenterVertically
                                     ) {
@@ -1053,7 +1058,6 @@ fun CytanniList(
                                                     setPerevod = Settings.PEREVODNEWKINGJAMES
                                                     dialogDownLoad = true
                                                 } else {
-                                                    cytanniListItemData.value.clear()
                                                     selectOldPerevod = perevod
                                                     perevod = Settings.PEREVODNEWKINGJAMES
                                                     initVybranoe = true
@@ -1062,6 +1066,7 @@ fun CytanniList(
                                                         "perevodMaranata", perevod
                                                     )
                                                     edit.apply()
+                                                    viewModel.setPerevod(biblia, cytanne, perevod)
                                                 }
                                             })
                                         Text(
@@ -1242,8 +1247,6 @@ fun CytanniList(
                         }
                     }
                 }
-            } else {
-                viewModel.updatePage(biblia, 0, cytanne, perevod)
             }
             Column {
                 if (!fullscreen && biblia == Settings.CHYTANNI_BIBLIA && listState.size - 1 != 0) {
