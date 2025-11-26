@@ -125,7 +125,7 @@ fun SettingsView(navController: NavHostController) {
     var modeNight by remember { mutableIntStateOf(k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM)) }
     var dialodLogin by rememberSaveable { mutableStateOf(false) }
     var dialodNotificatin by rememberSaveable { mutableStateOf(false) }
-    var admin by remember { mutableStateOf(k.getBoolean("admin", false)) }
+    var admin by remember { mutableStateOf(k.getBoolean("admin", false) || k.getBoolean("adminOnlyNotifications", false)) }
     var backPressHandled by remember { mutableStateOf(false) }
     Settings.fontInterface = remember { getFontInterface(context) }
     if (dialodLogin) {
@@ -236,6 +236,7 @@ fun SettingsView(navController: NavHostController) {
                             admin = false
                             k.edit {
                                 putBoolean("admin", false)
+                                putBoolean("adminOnlyNotifications", false)
                             }
                         }) {
                             Icon(
@@ -446,6 +447,7 @@ fun SettingsView(navController: NavHostController) {
                 }
             }
             var adminDayInYearState by remember { mutableStateOf(k.getBoolean("adminDayInYear", false)) }
+            var adminOnlyNotificationsState by remember { mutableStateOf(k.getBoolean("adminOnlyNotifications", false)) }
             if (admin) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically, modifier = Modifier
@@ -466,6 +468,30 @@ fun SettingsView(navController: NavHostController) {
                             adminDayInYearState = it
                             k.edit {
                                 putBoolean("adminDayInYear", adminDayInYearState)
+                            }
+                        })
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                        .padding(vertical = 10.dp)
+                        .clickable {
+                            adminOnlyNotificationsState = !adminOnlyNotificationsState
+                            k.edit {
+                                putBoolean("adminOnlyNotifications", adminOnlyNotificationsState)
+                                putBoolean("admin", !adminOnlyNotificationsState)
+                            }
+                        }) {
+                    Text(
+                        stringResource(R.string.update_resourse_only), modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                    )
+                    Switch(
+                        modifier = Modifier.scale(0.8f), checked = adminOnlyNotificationsState, onCheckedChange = {
+                            adminOnlyNotificationsState = it
+                            k.edit {
+                                putBoolean("adminOnlyNotifications", adminOnlyNotificationsState)
+                                putBoolean("admin", !adminOnlyNotificationsState)
                             }
                         })
                 }

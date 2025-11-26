@@ -1247,7 +1247,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
                 }
             }
         }
-        if (k.getBoolean("admin", false)) {
+        if (k.getBoolean("admin", false) || k.getBoolean("adminOnlyNotifications", false)) {
             CoroutineScope(Dispatchers.IO).launch {
                 if (isNetworkAvailable(this@MainActivity)) {
                     val dir = File("$filesDir/cache")
