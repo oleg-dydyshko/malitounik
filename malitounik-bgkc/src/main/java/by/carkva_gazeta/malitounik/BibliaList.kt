@@ -42,7 +42,6 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -80,7 +79,7 @@ fun BibliaList(
     }
     val context = LocalContext.current
     val lazyColumnState = rememberLazyListState()
-    val bibleList = bibleCount(perevod, isNovyZapavet)
+    val bibleList = bibleCount(context, perevod, isNovyZapavet)
     val collapsedState = remember(bibleList) { bibleList.map { AppNavGraphState.setItemsValue(it.title, true) }.toMutableStateList() }
     LaunchedEffect(Settings.bibleTime) {
         if (Settings.bibleTime) {
@@ -284,76 +283,75 @@ fun BibliaList(
     }
 }
 
-@Composable
-fun bibleCount(perevod: String, isNovyZapavet: Boolean): ArrayList<BibliaList> {
+fun bibleCount(context: Context, perevod: String, isNovyZapavet: Boolean): ArrayList<BibliaList> {
     val result = ArrayList<BibliaList>()
     when (perevod) {
         Settings.PEREVODSEMUXI -> {
             if (isNovyZapavet) {
-                val list = stringArrayResource(R.array.semuxan)
+                val list = context.resources.getStringArray(R.array.semuxan)
                 result.addAll(setNovyZapavet(list, perevod))
             } else {
-                val list = stringArrayResource(R.array.semuxas)
+                val list = context.resources.getStringArray(R.array.semuxas)
                 result.addAll(setStaryZapavet(list, perevod))
             }
         }
 
         Settings.PEREVODBOKUNA -> {
             if (isNovyZapavet) {
-                val list = stringArrayResource(R.array.bokunan)
+                val list = context.resources.getStringArray(R.array.bokunan)
                 result.addAll(setNovyZapavet(list, perevod))
             } else {
-                val list = stringArrayResource(R.array.bokunas)
+                val list = context.resources.getStringArray(R.array.bokunas)
                 result.addAll(setStaryZapavet(list, perevod))
             }
         }
 
         Settings.PEREVODCARNIAUSKI -> {
             if (isNovyZapavet) {
-                val list = stringArrayResource(R.array.charniauskin)
+                val list = context.resources.getStringArray(R.array.charniauskin)
                 result.addAll(setNovyZapavet(list, perevod))
             } else {
-                val list = stringArrayResource(R.array.charniauskis)
+                val list = context.resources.getStringArray(R.array.charniauskis)
                 result.addAll(setStaryZapavet(list, perevod))
             }
         }
 
         Settings.PEREVODCATOLIK -> {
-            val list = stringArrayResource(R.array.catolikn)
+            val list = context.resources.getStringArray(R.array.catolikn)
             result.addAll(setNovyZapavet(list, perevod))
         }
 
         Settings.PEREVODNADSAN -> {
-            val list = stringArrayResource(R.array.psalter_list)
+            val list = context.resources.getStringArray(R.array.psalter_list)
             result.addAll(setStaryZapavet(list, perevod))
         }
 
         Settings.PEREVODSINOIDAL -> {
             if (isNovyZapavet) {
-                val list = stringArrayResource(R.array.sinoidaln)
+                val list = context.resources.getStringArray(R.array.sinoidaln)
                 result.addAll(setNovyZapavet(list, perevod))
             } else {
-                val list = stringArrayResource(R.array.sinoidals)
+                val list = context.resources.getStringArray(R.array.sinoidals)
                 result.addAll(setStaryZapavet(list, perevod))
             }
         }
 
         Settings.PEREVODNEWKINGJAMES -> {
             if (isNovyZapavet) {
-                val list = stringArrayResource(R.array.englishn)
+                val list = context.resources.getStringArray(R.array.englishn)
                 result.addAll(setNovyZapavet(list, perevod))
             } else {
-                val list = stringArrayResource(R.array.englishs)
+                val list = context.resources.getStringArray(R.array.englishs)
                 result.addAll(setStaryZapavet(list, perevod))
             }
         }
 
         else -> {
             if (isNovyZapavet) {
-                val list = stringArrayResource(R.array.semuxan)
+                val list = context.resources.getStringArray(R.array.semuxan)
                 result.addAll(setNovyZapavet(list, perevod))
             } else {
-                val list = stringArrayResource(R.array.semuxas)
+                val list = context.resources.getStringArray(R.array.semuxas)
                 result.addAll(setStaryZapavet(list, perevod))
             }
         }

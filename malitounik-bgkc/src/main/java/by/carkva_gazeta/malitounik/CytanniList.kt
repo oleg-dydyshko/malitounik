@@ -152,12 +152,43 @@ class CytanniListItems : ViewModel() {
     val listState = mutableStateListOf<CytanniListItemData>()
     var selectedIndex by mutableIntStateOf(-1)
     var knigaText by mutableStateOf("")
+    val vybranoeList = mutableStateListOf<VybranaeData>()
+    var isVybranoe by mutableStateOf(false)
+    var perevodName by mutableStateOf("")
+    var dialogDownLoad by mutableStateOf(false)
+    var setPerevod by mutableStateOf(Settings.PEREVODSINOIDAL)
+    private var isFirstDialodVisable = true
     private var newCytanne = ""
+    private val gson = Gson()
+    private val type = TypeToken.getParameterized(ArrayList::class.java, VybranaeData::class.java).type
 
     fun initViewModel(biblia: Int, cytanne: String, perevod: String) {
+        val context = Malitounik.applicationContext()
+        val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+        if (isFirstDialodVisable) {
+            var isBibleEnable = k.getBoolean("catolik_bible", false)
+            var dir = File("${context.filesDir}/Catolik")
+            if (isBibleEnable && perevod == Settings.PEREVODCATOLIK && !dir.exists()) {
+                dialogDownLoad = true
+                setPerevod = Settings.PEREVODCATOLIK
+            }
+            isBibleEnable = k.getBoolean("sinoidal_bible", false)
+            dir = File("${context.filesDir}/Sinodal")
+            if (isBibleEnable && perevod == Settings.PEREVODSINOIDAL && !dir.exists()) {
+                dialogDownLoad = true
+                setPerevod = Settings.PEREVODSINOIDAL
+            }
+            isBibleEnable = k.getBoolean("newkingjames_translate", false)
+            dir = File("${context.filesDir}/NewKingJames")
+            if (isBibleEnable && perevod == Settings.PEREVODNEWKINGJAMES && !dir.exists()) {
+                dialogDownLoad = true
+                setPerevod = Settings.PEREVODNEWKINGJAMES
+            }
+            isFirstDialodVisable = false
+        }
         if (listState.isEmpty()) {
             if (newCytanne.isEmpty()) newCytanne = cytanne
-            val perevodName = when (perevod) {
+            perevodName = when (perevod) {
                 Settings.PEREVODSEMUXI -> "biblia"
                 Settings.PEREVODBOKUNA -> "bokuna"
                 Settings.PEREVODCARNIAUSKI -> "carniauski"
@@ -167,7 +198,7 @@ class CytanniListItems : ViewModel() {
                 Settings.PEREVODNEWKINGJAMES -> "english"
                 else -> "biblia"
             }
-            val k = Malitounik.applicationContext().getSharedPreferences("biblia", Context.MODE_PRIVATE)
+            initVybranoe(context)
             val initPage = if (biblia == Settings.CHYTANNI_BIBLIA) {
                 if (Settings.bibleTimeList) k.getInt("bible_time_${perevodName}_glava", 0)
                 else newCytanne.substringAfterLast(" ").toInt() - 1
@@ -195,31 +226,31 @@ class CytanniListItems : ViewModel() {
                 }
             }
             if (biblia == Settings.CHYTANNI_BIBLIA) {
-                    if (perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODNEWKINGJAMES) {
-                        if (knigaBiblii(knigaText) == 21) {
-                            if (selectedIndex in 10..112) selectedIndex += 1
-                            if (selectedIndex == 113) selectedIndex = 114
-                            if (selectedIndex == 114 || selectedIndex == 115) selectedIndex = 116
-                            if (selectedIndex in 116..145) selectedIndex += 1
-                            if (selectedIndex == 146) selectedIndex = 147
-                            if (selectedIndex == 9) {
-                                selectedIndex = 10
-                            }
+                if (perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODNEWKINGJAMES) {
+                    if (knigaBiblii(knigaText) == 21) {
+                        if (selectedIndex in 10..112) selectedIndex += 1
+                        if (selectedIndex == 113) selectedIndex = 114
+                        if (selectedIndex == 114 || selectedIndex == 115) selectedIndex = 116
+                        if (selectedIndex in 116..145) selectedIndex += 1
+                        if (selectedIndex == 146) selectedIndex = 147
+                        if (selectedIndex == 9) {
+                            selectedIndex = 10
                         }
                     }
-                    if (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODNADSAN || perevod == Settings.PEREVODSINOIDAL) {
-                        if (knigaBiblii(knigaText) == 21) {
-                            if (selectedIndex == 10) selectedIndex = 9
-                            if (selectedIndex in 11..113) selectedIndex -= 1
-                            if (selectedIndex == 114 || selectedIndex == 115) selectedIndex = 113
-                            if (selectedIndex == 116) selectedIndex = 114
-                            if (selectedIndex in 117..146) selectedIndex -= 1
-                            if (selectedIndex == 147) selectedIndex = 146
-                            if (selectedIndex == 10) {
-                                selectedIndex = 9
-                            }
+                }
+                if (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODNADSAN || perevod == Settings.PEREVODSINOIDAL) {
+                    if (knigaBiblii(knigaText) == 21) {
+                        if (selectedIndex == 10) selectedIndex = 9
+                        if (selectedIndex in 11..113) selectedIndex -= 1
+                        if (selectedIndex == 114 || selectedIndex == 115) selectedIndex = 113
+                        if (selectedIndex == 116) selectedIndex = 114
+                        if (selectedIndex in 117..146) selectedIndex -= 1
+                        if (selectedIndex == 147) selectedIndex = 146
+                        if (selectedIndex == 10) {
+                            selectedIndex = 9
                         }
                     }
+                }
             }
             if (perevod == Settings.PEREVODSINOIDAL) {
                 if (knigaBiblii(knigaText) == 31) {
@@ -262,6 +293,62 @@ class CytanniListItems : ViewModel() {
     fun setPerevod(biblia: Int, cytanne: String, perevod: String) {
         listState.clear()
         initViewModel(biblia, cytanne, perevod)
+    }
+
+    fun initVybranoe(context: Context) {
+        val file = File("${context.filesDir}/vybranoe_${perevodName}.json")
+        vybranoeList.clear()
+        if (file.exists()) {
+            vybranoeList.addAll(gson.fromJson(file.readText(), type))
+        }
+        isVybranoe = false
+        if (vybranoeList.isNotEmpty()) {
+            for (i in 0 until vybranoeList.size) {
+                if (knigaText == vybranoeList[i].knigaText && vybranoeList[i].glava == selectedIndex) {
+                    isVybranoe = true
+                    break
+                }
+            }
+        }
+    }
+
+    fun saveVybranoe(context: Context, perevod: String) {
+        val file = File("${context.filesDir}/vybranoe_${perevodName}.json")
+        if (isVybranoe) {
+            var pos = 0
+            for (i in 0 until vybranoeList.size) {
+                if (knigaText == vybranoeList[i].knigaText && vybranoeList[i].glava == selectedIndex) {
+                    pos = i
+                    break
+                }
+            }
+            vybranoeList.removeAt(pos)
+            Toast.makeText(context, context.getString(R.string.removeVybranoe), Toast.LENGTH_SHORT).show()
+        } else {
+            val kniga = knigaBiblii(knigaText)
+            val bibleCount = bibleCount(context, perevod, kniga >= 50)
+            var titleBibleVybranoe = ""
+            for (w in 0 until bibleCount.size) {
+                if (bibleCount[w].subTitle == knigaText) {
+                    titleBibleVybranoe = bibleCount[w].title
+                    break
+                }
+            }
+            vybranoeList.add(
+                0, VybranaeData(
+                    Calendar.getInstance().timeInMillis, titleBibleVybranoe, knigaText, selectedIndex, perevod
+                )
+            )
+            Toast.makeText(context, context.getString(R.string.addVybranoe), Toast.LENGTH_SHORT).show()
+        }
+        isVybranoe = !isVybranoe
+        if (vybranoeList.isEmpty() && file.exists()) {
+            file.delete()
+        } else {
+            file.writer().use {
+                it.write(gson.toJson(vybranoeList, type))
+            }
+        }
     }
 }
 
@@ -335,16 +422,6 @@ fun CytanniList(
     var isParallelVisable by remember { mutableStateOf(false) }
     var paralelChtenia by rememberSaveable { mutableStateOf("") }
     var menuPosition by remember { mutableIntStateOf(0) }
-    val perevodName = when (perevod) {
-        Settings.PEREVODSEMUXI -> "biblia"
-        Settings.PEREVODBOKUNA -> "bokuna"
-        Settings.PEREVODCARNIAUSKI -> "carniauski"
-        Settings.PEREVODCATOLIK -> "catolik"
-        Settings.PEREVODNADSAN -> "nadsan"
-        Settings.PEREVODSINOIDAL -> "sinaidal"
-        Settings.PEREVODNEWKINGJAMES -> "english"
-        else -> "biblia"
-    }
     val titleBible = title.ifEmpty {
         when (perevod) {
             Settings.PEREVODSEMUXI -> stringResource(R.string.title_biblia)
@@ -358,7 +435,7 @@ fun CytanniList(
         }
     }
     val initPage = if (biblia == Settings.CHYTANNI_BIBLIA) {
-        if (Settings.bibleTimeList) k.getInt("bible_time_${perevodName}_glava", 0)
+        if (Settings.bibleTimeList) k.getInt("bible_time_${viewModel.perevodName}_glava", 0)
         else cytanne.substringAfterLast(" ").toInt() - 1
     } else 0
     val pagerState = rememberPagerState(pageCount = {
@@ -373,72 +450,11 @@ fun CytanniList(
         Settings.bibleTimeList = false
         LaunchedEffect(Unit) {
             coroutineScope.launch {
-                listState[viewModel.selectedIndex].lazyListState.scrollToItem(k.getInt("bible_time_${perevodName}_stix", 0))
+                listState[viewModel.selectedIndex].lazyListState.scrollToItem(k.getInt("bible_time_${viewModel.perevodName}_stix", 0))
             }
         }
     }
-    val vybranoeList = remember { mutableStateListOf<VybranaeData>() }
-    var initVybranoe by remember { mutableStateOf(true) }
-    var isVybranoe by remember { mutableStateOf(false) }
-    var saveVybranoe by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val gson = Gson()
-    val type = TypeToken.getParameterized(ArrayList::class.java, VybranaeData::class.java).type
-    val file = File("${LocalContext.current.filesDir}/vybranoe_${perevodName}.json")
-    if (initVybranoe) {
-        vybranoeList.clear()
-        if (file.exists()) {
-            vybranoeList.addAll(gson.fromJson(file.readText(), type))
-        }
-        initVybranoe = false
-        isVybranoe = false
-        if (vybranoeList.isNotEmpty()) {
-            for (i in 0 until vybranoeList.size) {
-                if (viewModel.knigaText == vybranoeList[i].knigaText && vybranoeList[i].glava == viewModel.selectedIndex) {
-                    isVybranoe = true
-                    break
-                }
-            }
-        }
-    }
-    if (saveVybranoe) {
-        if (isVybranoe) {
-            var pos = 0
-            for (i in 0 until vybranoeList.size) {
-                if (viewModel.knigaText == vybranoeList[i].knigaText && vybranoeList[i].glava == viewModel.selectedIndex) {
-                    pos = i
-                    break
-                }
-            }
-            vybranoeList.removeAt(pos)
-            Toast.makeText(context, context.getString(R.string.removeVybranoe), Toast.LENGTH_SHORT).show()
-        } else {
-            val kniga = knigaBiblii(viewModel.knigaText)
-            val bibleCount = bibleCount(perevod, kniga >= 50)
-            var titleBibleVybranoe = ""
-            for (w in 0 until bibleCount.size) {
-                if (bibleCount[w].subTitle == viewModel.knigaText) {
-                    titleBibleVybranoe = bibleCount[w].title
-                    break
-                }
-            }
-            vybranoeList.add(
-                0, VybranaeData(
-                    Calendar.getInstance().timeInMillis, titleBibleVybranoe, viewModel.knigaText, viewModel.selectedIndex, perevod
-                )
-            )
-            Toast.makeText(context, context.getString(R.string.addVybranoe), Toast.LENGTH_SHORT).show()
-        }
-        isVybranoe = !isVybranoe
-        if (vybranoeList.isEmpty() && file.exists()) {
-            file.delete()
-        } else {
-            file.writer().use {
-                it.write(gson.toJson(vybranoeList, type))
-            }
-        }
-        saveVybranoe = false
-    }
     LifecycleResumeEffect(Unit) {
         if (autoScrollSensor) autoScroll = true
         onPauseOrDispose {
@@ -483,10 +499,10 @@ fun CytanniList(
                 fullscreen = false
                 val prefEditors = k.edit()
                 if (biblia == Settings.CHYTANNI_BIBLIA) {
-                    prefEditors.putString("bible_time_${perevodName}_kniga", viewModel.knigaText)
-                    prefEditors.putInt("bible_time_${perevodName}_glava", viewModel.selectedIndex)
+                    prefEditors.putString("bible_time_${viewModel.perevodName}_kniga", viewModel.knigaText)
+                    prefEditors.putInt("bible_time_${viewModel.perevodName}_glava", viewModel.selectedIndex)
                     prefEditors.putInt(
-                        "bible_time_${perevodName}_stix", listState[viewModel.selectedIndex].lazyListState.firstVisibleItemIndex
+                        "bible_time_${viewModel.perevodName}_stix", listState[viewModel.selectedIndex].lazyListState.firstVisibleItemIndex
                     )
                 }
                 prefEditors.apply()
@@ -528,12 +544,9 @@ fun CytanniList(
             dialogRazdel = false
         }
     }
-    var dialogDownLoad by remember { mutableStateOf(false) }
-    var setPerevod by remember { mutableStateOf(Settings.PEREVODSINOIDAL) }
-    if (dialogDownLoad) {
-        DialogDownLoadBible(setPerevod, onConfirmation = {
-            perevod = setPerevod
-            initVybranoe = true
+    if (viewModel.dialogDownLoad) {
+        DialogDownLoadBible(viewModel.setPerevod, onConfirmation = {
+            perevod = viewModel.setPerevod
             k.edit {
                 if (biblia == Settings.CHYTANNI_MARANATA) {
                     putString(
@@ -542,9 +555,10 @@ fun CytanniList(
                 }
                 apply()
             }
-            dialogDownLoad = false
+            viewModel.dialogDownLoad = false
+            viewModel.setPerevod(biblia, cytanne, perevod)
         }) {
-            dialogDownLoad = false
+            viewModel.dialogDownLoad = false
         }
     }
     Scaffold(topBar = {
@@ -617,10 +631,10 @@ fun CytanniList(
                                         fullscreen = false
                                         k.edit {
                                             if (biblia == Settings.CHYTANNI_BIBLIA) {
-                                                putString("bible_time_${perevodName}_kniga", viewModel.knigaText)
-                                                putInt("bible_time_${perevodName}_glava", viewModel.selectedIndex)
+                                                putString("bible_time_${viewModel.perevodName}_kniga", viewModel.knigaText)
+                                                putInt("bible_time_${viewModel.perevodName}_glava", viewModel.selectedIndex)
                                                 putInt(
-                                                    "bible_time_${perevodName}_stix", listState[viewModel.selectedIndex].lazyListState.firstVisibleItemIndex
+                                                    "bible_time_${viewModel.perevodName}_stix", listState[viewModel.selectedIndex].lazyListState.firstVisibleItemIndex
                                                 )
                                             }
                                         }
@@ -693,9 +707,9 @@ fun CytanniList(
                             if (biblia == Settings.CHYTANNI_BIBLIA) {
                                 IconButton(
                                     onClick = {
-                                        saveVybranoe = true
+                                        viewModel.saveVybranoe(context, perevod)
                                     }) {
-                                    val icon = if (isVybranoe) painterResource(R.drawable.stars)
+                                    val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
                                     else painterResource(R.drawable.star)
                                     Icon(
                                         painter = icon, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
@@ -775,7 +789,6 @@ fun CytanniList(
                                         .fillMaxWidth()
                                         .clickable {
                                             perevod = Settings.PEREVODSEMUXI
-                                            initVybranoe = true
                                             if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
                                                 "perevodMaranata", perevod
                                             )
@@ -789,7 +802,6 @@ fun CytanniList(
                                     RadioButton(
                                         selected = perevod == Settings.PEREVODSEMUXI, onClick = {
                                             perevod = Settings.PEREVODSEMUXI
-                                            initVybranoe = true
                                             if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
                                                 "perevodMaranata", perevod
                                             )
@@ -810,7 +822,6 @@ fun CytanniList(
                                         .fillMaxWidth()
                                         .clickable {
                                             perevod = Settings.PEREVODBOKUNA
-                                            initVybranoe = true
                                             if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
                                                 "perevodMaranata", perevod
                                             )
@@ -824,7 +835,6 @@ fun CytanniList(
                                     RadioButton(
                                         selected = perevod == Settings.PEREVODBOKUNA, onClick = {
                                             perevod = Settings.PEREVODBOKUNA
-                                            initVybranoe = true
                                             if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
                                                 "perevodMaranata", perevod
                                             )
@@ -845,7 +855,6 @@ fun CytanniList(
                                         .fillMaxWidth()
                                         .clickable {
                                             perevod = Settings.PEREVODCARNIAUSKI
-                                            initVybranoe = true
                                             if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
                                                 "perevodMaranata", perevod
                                             )
@@ -859,7 +868,6 @@ fun CytanniList(
                                     RadioButton(
                                         selected = perevod == Settings.PEREVODCARNIAUSKI, onClick = {
                                             perevod = Settings.PEREVODCARNIAUSKI
-                                            initVybranoe = true
                                             if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
                                                 "perevodMaranata", perevod
                                             )
@@ -881,11 +889,10 @@ fun CytanniList(
                                         .clickable {
                                             val dir = File("${context.filesDir}/Catolik")
                                             if (!dir.exists()) {
-                                                setPerevod = Settings.PEREVODCATOLIK
-                                                dialogDownLoad = true
+                                                viewModel.setPerevod = Settings.PEREVODCATOLIK
+                                                viewModel.dialogDownLoad = true
                                             } else {
                                                 perevod = Settings.PEREVODCATOLIK
-                                                initVybranoe = true
                                                 if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
                                                     "perevodMaranata", perevod
                                                 )
@@ -901,11 +908,10 @@ fun CytanniList(
                                         selected = perevod == Settings.PEREVODCATOLIK, onClick = {
                                             val dir = File("${context.filesDir}/Catolik")
                                             if (!dir.exists()) {
-                                                setPerevod = Settings.PEREVODCATOLIK
-                                                dialogDownLoad = true
+                                                viewModel.setPerevod = Settings.PEREVODCATOLIK
+                                                viewModel.dialogDownLoad = true
                                             } else {
                                                 perevod = Settings.PEREVODCATOLIK
-                                                initVybranoe = true
                                                 if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
                                                     "perevodMaranata", perevod
                                                 )
@@ -927,14 +933,12 @@ fun CytanniList(
                                         .fillMaxWidth()
                                         .clickable {
                                             perevod = Settings.PEREVODNADSAN
-                                            initVybranoe = true
                                             viewModel.setPerevod(biblia, cytanne, perevod)
                                         }, verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     RadioButton(
                                         selected = perevod == Settings.PEREVODNADSAN, onClick = {
                                             perevod = Settings.PEREVODNADSAN
-                                            initVybranoe = true
                                             viewModel.setPerevod(biblia, cytanne, perevod)
                                         })
                                     Text(
@@ -949,11 +953,10 @@ fun CytanniList(
                                         .clickable {
                                             val dir = File("${context.filesDir}/Sinodal")
                                             if (!dir.exists()) {
-                                                setPerevod = Settings.PEREVODSINOIDAL
-                                                dialogDownLoad = true
+                                                viewModel.setPerevod = Settings.PEREVODSINOIDAL
+                                                viewModel.dialogDownLoad = true
                                             } else {
                                                 perevod = Settings.PEREVODSINOIDAL
-                                                initVybranoe = true
                                                 if (biblia == Settings.CHYTANNI_MARANATA) {
                                                     edit.putString(
                                                         "perevodMaranata", perevod
@@ -968,11 +971,10 @@ fun CytanniList(
                                         selected = perevod == Settings.PEREVODSINOIDAL, onClick = {
                                             val dir = File("${context.filesDir}/Sinodal")
                                             if (!dir.exists()) {
-                                                setPerevod = Settings.PEREVODSINOIDAL
-                                                dialogDownLoad = true
+                                                viewModel.setPerevod = Settings.PEREVODSINOIDAL
+                                                viewModel.dialogDownLoad = true
                                             } else {
                                                 perevod = Settings.PEREVODSINOIDAL
-                                                initVybranoe = true
                                                 if (biblia == Settings.CHYTANNI_MARANATA) {
                                                     edit.putString(
                                                         "perevodMaranata", perevod
@@ -995,11 +997,10 @@ fun CytanniList(
                                             .clickable {
                                                 val dir = File("${context.filesDir}/NewKingJames")
                                                 if (!dir.exists()) {
-                                                    setPerevod = Settings.PEREVODNEWKINGJAMES
-                                                    dialogDownLoad = true
+                                                    viewModel.setPerevod = Settings.PEREVODNEWKINGJAMES
+                                                    viewModel.dialogDownLoad = true
                                                 } else {
                                                     perevod = Settings.PEREVODNEWKINGJAMES
-                                                    initVybranoe = true
                                                     if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
                                                         "perevodMaranata", perevod
                                                     )
@@ -1012,11 +1013,10 @@ fun CytanniList(
                                             selected = perevod == Settings.PEREVODNEWKINGJAMES, onClick = {
                                                 val dir = File("${context.filesDir}/NewKingJames")
                                                 if (!dir.exists()) {
-                                                    setPerevod = Settings.PEREVODNEWKINGJAMES
-                                                    dialogDownLoad = true
+                                                    viewModel.setPerevod = Settings.PEREVODNEWKINGJAMES
+                                                    viewModel.dialogDownLoad = true
                                                 } else {
                                                     perevod = Settings.PEREVODNEWKINGJAMES
-                                                    initVybranoe = true
                                                     if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
                                                         "perevodMaranata", perevod
                                                     )
@@ -1108,9 +1108,9 @@ fun CytanniList(
                         if (biblia == Settings.CHYTANNI_BIBLIA) {
                             IconButton(
                                 onClick = {
-                                    saveVybranoe = true
+                                    viewModel.saveVybranoe(context, perevod)
                                 }) {
-                                val icon = if (isVybranoe) painterResource(R.drawable.stars)
+                                val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
                                 else painterResource(R.drawable.star)
                                 Icon(
                                     painter = icon, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
@@ -1161,11 +1161,11 @@ fun CytanniList(
             if (biblia == Settings.CHYTANNI_BIBLIA) {
                 LaunchedEffect(viewModel.selectedIndex) {
                     coroutineScope.launch {
-                        isVybranoe = false
-                        if (vybranoeList.isNotEmpty()) {
-                            for (i in 0 until vybranoeList.size) {
-                                if (viewModel.knigaText == vybranoeList[i].knigaText && vybranoeList[i].glava == viewModel.selectedIndex) {
-                                    isVybranoe = true
+                        viewModel.isVybranoe = false
+                        if (viewModel.vybranoeList.isNotEmpty()) {
+                            for (i in 0 until viewModel.vybranoeList.size) {
+                                if (viewModel.knigaText == viewModel.vybranoeList[i].knigaText && viewModel.vybranoeList[i].glava == viewModel.selectedIndex) {
+                                    viewModel.isVybranoe = true
                                     break
                                 }
                             }
