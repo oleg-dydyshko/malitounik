@@ -996,6 +996,9 @@ fun Bogaslujbovyia(
                                                             })
                                                         }
                                                     } else {
+                                                        if (Piasochnica.findDirAsSave.isEmpty()) {
+                                                            Piasochnica.getFindFileListAsSave()
+                                                        }
                                                         Piasochnica.getFileCopyPostRequest(dirToFile = Piasochnica.findResoursDir(fileName), isProgressVisable = {
                                                             isProgressVisable = it
                                                         }) { text, fileName ->
@@ -1051,6 +1054,9 @@ fun Bogaslujbovyia(
                                                     })
                                                 }
                                             } else {
+                                                if (Piasochnica.findDirAsSave.isEmpty()) {
+                                                    Piasochnica.getFindFileListAsSave()
+                                                }
                                                 Piasochnica.getFileCopyPostRequest(dirToFile = Piasochnica.findResoursDir(fileName), isProgressVisable = {
                                                     isProgressVisable = it
                                                 }) { text, fileName ->

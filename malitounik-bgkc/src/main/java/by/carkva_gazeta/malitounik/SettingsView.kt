@@ -538,6 +538,9 @@ fun SettingsView(navController: NavHostController) {
                         sinoidalState = !sinoidalState
                         k.edit {
                             putBoolean("sinoidal_bible", sinoidalState)
+                            if (!sinoidalState && k.getString("perevodMaranata", Settings.PEREVODSEMUXI) == Settings.PEREVODSINOIDAL) {
+                                putString("perevodMaranata", Settings.PEREVODSEMUXI)
+                            }
                         }
                         if (sinoidalState) {
                             val dir = File("${context.filesDir}/Sinodal")
@@ -558,6 +561,9 @@ fun SettingsView(navController: NavHostController) {
                         sinoidalState = it
                         k.edit {
                             putBoolean("sinoidal_bible", sinoidalState)
+                            if (!sinoidalState && k.getString("perevodMaranata", Settings.PEREVODSEMUXI) == Settings.PEREVODSINOIDAL) {
+                                putString("perevodMaranata", Settings.PEREVODSEMUXI)
+                            }
                         }
                         if (sinoidalState) {
                             val dir = File("${context.filesDir}/Sinodal")
@@ -575,6 +581,9 @@ fun SettingsView(navController: NavHostController) {
                         catolikState = !catolikState
                         k.edit {
                             putBoolean("catolik_bible", catolikState)
+                            if (!catolikState && k.getString("perevod", Settings.PEREVODSEMUXI) == Settings.PEREVODCATOLIK) {
+                                putString("perevod", Settings.PEREVODSEMUXI)
+                            }
                         }
                         if (catolikState) {
                             val dir = File("${context.filesDir}/Catolik")
@@ -595,6 +604,9 @@ fun SettingsView(navController: NavHostController) {
                         catolikState = it
                         k.edit {
                             putBoolean("catolik_bible", catolikState)
+                            if (!catolikState && k.getString("perevod", Settings.PEREVODSEMUXI) == Settings.PEREVODCATOLIK) {
+                                putString("perevod", Settings.PEREVODSEMUXI)
+                            }
                         }
                         if (catolikState) {
                             val dir = File("${context.filesDir}/Catolik")
@@ -623,6 +635,9 @@ fun SettingsView(navController: NavHostController) {
                             newkingjamesState = !newkingjamesState
                             k.edit {
                                 putBoolean("newkingjames_bible", newkingjamesState)
+                                if (!newkingjamesState && k.getString("perevodMaranata", Settings.PEREVODSEMUXI) == Settings.PEREVODNEWKINGJAMES) {
+                                    putString("perevodMaranata", Settings.PEREVODSEMUXI)
+                                }
                                 if (newkingjamesState) {
                                     putBoolean("newkingjames_translate", false)
                                     newkingjamesTranslate = false
@@ -647,6 +662,9 @@ fun SettingsView(navController: NavHostController) {
                             newkingjamesState = it
                             k.edit {
                                 putBoolean("newkingjames_bible", newkingjamesState)
+                                if (!newkingjamesState && k.getString("perevodMaranata", Settings.PEREVODSEMUXI) == Settings.PEREVODNEWKINGJAMES) {
+                                    putString("perevodMaranata", Settings.PEREVODSEMUXI)
+                                }
                                 if (newkingjamesState) {
                                     putBoolean("newkingjames_translate", false)
                                     newkingjamesTranslate = false
