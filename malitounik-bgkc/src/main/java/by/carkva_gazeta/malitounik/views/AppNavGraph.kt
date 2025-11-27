@@ -1427,31 +1427,33 @@ fun MainConteiner(
                                 })
                             }
                         }
-                        if (k.getBoolean("admin", false)) {
+                        if (k.getBoolean("admin", false) || k.getBoolean("adminOnlyNotifications", false)) {
                             HorizontalDivider()
-                            if (currentRoute.contains(AllDestinations.KALIANDAR) || (currentRoute.contains("BIBLIJATEKA", ignoreCase = true) && currentRoute != AllDestinations.BIBLIJATEKA_NIADAUNIA)) {
-                                DropdownMenuItem(onClick = {
-                                    expandedUp = false
-                                    if (currentRoute.contains(AllDestinations.KALIANDAR)) {
-                                        dialogEditSvityiaAndSviaty = true
-                                    } else {
-                                        addBiblijateka = true
-                                    }
-                                }, text = { Text(stringResource(if (currentRoute.contains(AllDestinations.KALIANDAR)) R.string.redagaktirovat else R.string.add_file), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.edit), contentDescription = ""
-                                    )
-                                })
-                            }
-                            if (currentRoute == AllDestinations.LITURGIKON_MENU || currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.CHASASLOU_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU) {
-                                DropdownMenuItem(onClick = {
-                                    expandedUp = false
-                                    navigationActions.navigateToSearchBiblia(Settings.PEREVODSEMUXI, true)
-                                }, text = { Text(stringResource(R.string.searche_bogasluz_text), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.search), contentDescription = ""
-                                    )
-                                })
+                            if (!k.getBoolean("adminOnlyNotifications", false)) {
+                                if (currentRoute.contains(AllDestinations.KALIANDAR) || (currentRoute.contains("BIBLIJATEKA", ignoreCase = true) && currentRoute != AllDestinations.BIBLIJATEKA_NIADAUNIA)) {
+                                    DropdownMenuItem(onClick = {
+                                        expandedUp = false
+                                        if (currentRoute.contains(AllDestinations.KALIANDAR)) {
+                                            dialogEditSvityiaAndSviaty = true
+                                        } else {
+                                            addBiblijateka = true
+                                        }
+                                    }, text = { Text(stringResource(if (currentRoute.contains(AllDestinations.KALIANDAR)) R.string.redagaktirovat else R.string.add_file), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.edit), contentDescription = ""
+                                        )
+                                    })
+                                }
+                                if (currentRoute == AllDestinations.LITURGIKON_MENU || currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.CHASASLOU_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU) {
+                                    DropdownMenuItem(onClick = {
+                                        expandedUp = false
+                                        navigationActions.navigateToSearchBiblia(Settings.PEREVODSEMUXI, true)
+                                    }, text = { Text(stringResource(R.string.searche_bogasluz_text), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.search), contentDescription = ""
+                                        )
+                                    })
+                                }
                             }
                             DropdownMenuItem(onClick = {
                                 expandedUp = false

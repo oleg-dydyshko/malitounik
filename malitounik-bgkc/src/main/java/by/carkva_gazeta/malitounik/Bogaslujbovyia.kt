@@ -21,6 +21,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -127,7 +128,9 @@ import androidx.core.text.HtmlCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.admin.Piasochnica
 import by.carkva_gazeta.malitounik.admin.getPasochnicaFileList
@@ -147,8 +150,8 @@ import by.carkva_gazeta.malitounik.views.findCaliandarToDay
 import by.carkva_gazeta.malitounik.views.openAssetsResources
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -156,11 +159,181 @@ import java.io.File
 import java.net.URLDecoder
 import java.util.Calendar
 
+class BogaslujbovyiaViewModel : ViewModel() {
+    var autoScroll by mutableStateOf(false)
+    var autoScrollSensor by mutableStateOf(false)
+    var autoScrollSpeed by mutableIntStateOf(60)
+    var autoScrollTextVisable by mutableStateOf(false)
+    val vybranoeList = mutableStateListOf<VybranaeDataAll>()
+    var isVybranoe by mutableStateOf(false)
+    val scrollState = ScrollState(0)
+    val result = mutableStateListOf<ArrayList<Int>>()
+    var resultPosition by mutableIntStateOf(0)
+    var scrollToY = 0f
+    var find by mutableStateOf(false)
+    private var autoScrollJob: Job? = null
+    private var autoScrollTextVisableJob: Job? = null
+    private var searchJob: Job? = null
+    var searchText by mutableStateOf(AppNavGraphState.searchBogaslujbovyia.isNotEmpty())
+    var searshString by mutableStateOf(TextFieldValue(AppNavGraphState.searchBogaslujbovyia, TextRange(AppNavGraphState.searchBogaslujbovyia.length)))
+    var searchTextResult by mutableStateOf(AnnotatedString(""))
+    val searchList = mutableStateListOf<SearchBibleItem>()
+    var htmlText by mutableStateOf("")
+    private val gson = Gson()
+    private val type = TypeToken.getParameterized(ArrayList::class.java, VybranaeDataAll::class.java).type
+
+    fun search(textLayout: TextLayoutResult?) {
+        if (searshString.text.trim().length >= 3) {
+            searchJob?.cancel()
+            textLayout?.let { layout ->
+                searchJob = viewModelScope.launch {
+                    withContext(Dispatchers.IO) {
+                        result.clear()
+                        resultPosition = 0
+                        result.addAll(findAllAsanc(AnnotatedString.fromHtml(htmlText).text, searshString.text))
+                        if (result.isNotEmpty()) {
+                            val opiginalText = layout.layoutInput.text
+                            val annotatedString = buildAnnotatedString {
+                                append(opiginalText)
+                                for (i in result.indices) {
+                                    val size = result[i].size - 1
+                                    addStyle(SpanStyle(background = BezPosta, color = PrimaryText), result[i][0], result[i][size])
+                                }
+                            }
+                            searchTextResult = annotatedString
+                            val t1 = result[0][0]
+                            if (t1 != -1) {
+                                val line = layout.getLineForOffset(t1)
+                                scrollToY = layout.getLineTop(line)
+                                find = !find
+                            }
+                        } else {
+                            searchTextResult = AnnotatedString("")
+                        }
+                    }
+                }
+            }
+        } else {
+            searchTextResult = AnnotatedString("")
+        }
+    }
+
+    fun findForward(textLayout: TextLayoutResult?) {
+        textLayout?.let { layout ->
+            if (result.isNotEmpty()) {
+                if (result.size - 1 > resultPosition) {
+                    resultPosition += 1
+                }
+                val t1 = result[resultPosition][0]
+                if (t1 != -1) {
+                    val line = layout.getLineForOffset(t1)
+                    scrollToY = layout.getLineTop(line)
+                    find = !find
+                }
+            }
+        }
+    }
+
+    fun findBack(textLayout: TextLayoutResult?) {
+        textLayout?.let { layout ->
+            if (result.isNotEmpty()) {
+                if (resultPosition > 0) {
+                    resultPosition -= 1
+                }
+                val t1 = result[resultPosition][0]
+                if (t1 != -1) {
+                    val line = layout.getLineForOffset(t1)
+                    scrollToY = layout.getLineTop(line)
+                    find = !find
+                }
+            }
+        }
+    }
+
+    fun initVybranoe(context: Context, resurs: String) {
+        if (htmlText.isEmpty()) {
+            val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+            autoScrollSpeed = k.getInt("autoscrollSpid", 60)
+            htmlText = openAssetsResources(context, resurs)
+        }
+        val file = File("${context.filesDir}/vybranoe_all.json")
+        if (file.exists() && vybranoeList.isEmpty()) {
+            vybranoeList.addAll(gson.fromJson(file.readText(), type))
+            if (vybranoeList.isNotEmpty()) {
+                for (i in 0 until vybranoeList.size) {
+                    if (resurs == vybranoeList[i].resource) {
+                        isVybranoe = true
+                        break
+                    }
+                }
+            }
+        }
+    }
+
+    fun saveVybranoe(context: Context, title: String, resurs: String) {
+        if (isVybranoe) {
+            var pos = 0
+            for (i in 0 until vybranoeList.size) {
+                if (resurs == vybranoeList[i].resource) {
+                    pos = i
+                    break
+                }
+            }
+            vybranoeList.removeAt(pos)
+            Toast.makeText(context, context.getString(R.string.removeVybranoe), Toast.LENGTH_SHORT).show()
+        } else {
+            vybranoeList.add(0, VybranaeDataAll(Calendar.getInstance().timeInMillis, title, resurs))
+            Toast.makeText(context, context.getString(R.string.addVybranoe), Toast.LENGTH_SHORT).show()
+        }
+        isVybranoe = !isVybranoe
+        val file = File("${context.filesDir}/vybranoe_all.json")
+        if (vybranoeList.isEmpty() && file.exists()) {
+            file.delete()
+        } else {
+            file.writer().use {
+                it.write(gson.toJson(vybranoeList, type))
+            }
+        }
+    }
+
+    fun autoScroll(title: String, isPlay: Boolean) {
+        if (isPlay) {
+            if (autoScrollJob?.isActive != true) {
+                autoScrollJob = viewModelScope.launch {
+                    withContext(Dispatchers.Main) {
+                        while (true) {
+                            delay(autoScrollSpeed.toLong())
+                            scrollState.scrollBy(2f)
+                            AppNavGraphState.setScrollValuePosition(title, scrollState.value)
+                        }
+                    }
+                }
+            }
+        } else {
+            autoScrollJob?.cancel()
+        }
+        autoScroll = autoScrollJob?.isActive == true
+    }
+
+    fun autoScrollSpeed(context: Context) {
+        val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+        autoScrollTextVisable = true
+        autoScrollTextVisableJob?.cancel()
+        autoScrollTextVisableJob = viewModelScope.launch {
+            delay(3000)
+            autoScrollTextVisable = false
+        }
+        k.edit {
+            putInt("autoscrollSpid", autoScrollSpeed)
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Bogaslujbovyia(
     navController: NavHostController, title: String, resurs: String,
-    navigateTo: (String, skipUtran: Boolean) -> Unit = { _, _ -> }
+    navigateTo: (String, skipUtran: Boolean) -> Unit = { _, _ -> }, viewModel: BogaslujbovyiaViewModel = viewModel()
 ) {
     val resursEncode = URLDecoder.decode(resurs, "UTF8")
     val context = LocalContext.current
@@ -169,110 +342,23 @@ fun Bogaslujbovyia(
         AppNavigationActions(navController, k)
     }
     var fontSize by remember { mutableFloatStateOf(k.getFloat("font_biblia", 22F)) }
-    val vybranoeList = remember { ArrayList<VybranaeDataAll>() }
     var showDropdown by remember { mutableStateOf(false) }
     var fullscreen by rememberSaveable { mutableStateOf(false) }
-    var isVybranoe by remember { mutableStateOf(false) }
-    var autoScroll by rememberSaveable { mutableStateOf(false) }
-    var autoScrollSensor by rememberSaveable { mutableStateOf(false) }
-    var autoScrollSpeed by remember { mutableIntStateOf(k.getInt("autoscrollSpid", 60)) }
-    var autoScrollTextVisable by remember { mutableStateOf(false) }
     var autoScrollText by remember { mutableStateOf("") }
     var autoScrollTextColor by remember { mutableStateOf(Primary) }
     var autoScrollTextColor2 by remember { mutableStateOf(PrimaryTextBlack) }
-    val coroutineScope: CoroutineScope = rememberCoroutineScope()
-    var saveVybranoe by remember { mutableStateOf(false) }
-    var searchText by rememberSaveable { mutableStateOf(AppNavGraphState.searchBogaslujbovyia.isNotEmpty()) }
+    val coroutineScope = rememberCoroutineScope()
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
-    var searshString by remember { mutableStateOf(TextFieldValue(AppNavGraphState.searchBogaslujbovyia, TextRange(AppNavGraphState.searchBogaslujbovyia.length))) }
     var adminResourceEditPosition by remember { mutableIntStateOf(0) }
-    val scrollState = rememberScrollState()
     val scrollStateDop = rememberScrollState()
-    val gson = Gson()
-    val type =
-        TypeToken.getParameterized(ArrayList::class.java, VybranaeDataAll::class.java).type
-    val file = File("${LocalContext.current.filesDir}/vybranoe_all.json")
-    if (file.exists() && vybranoeList.isEmpty()) {
-        vybranoeList.addAll(gson.fromJson(file.readText(), type))
-    }
+    viewModel.initVybranoe(context, resursEncode)
     var isBottomBar by remember { mutableStateOf(k.getBoolean("bottomBar", false)) }
-    LaunchedEffect(Unit) {
-        coroutineScope.launch {
-            isVybranoe = false
-            if (vybranoeList.isNotEmpty()) {
-                for (i in 0 until vybranoeList.size) {
-                    if (resursEncode == vybranoeList[i].resource) {
-                        isVybranoe = true
-                        break
-                    }
-                }
-            }
-        }
-    }
-    LaunchedEffect(saveVybranoe) {
-        if (saveVybranoe) {
-            if (isVybranoe) {
-                var pos = 0
-                for (i in 0 until vybranoeList.size) {
-                    if (resursEncode == vybranoeList[i].resource) {
-                        pos = i
-                        break
-                    }
-                }
-                vybranoeList.removeAt(pos)
-                Toast.makeText(context, context.getString(R.string.removeVybranoe), Toast.LENGTH_SHORT).show()
-            } else {
-                vybranoeList.add(
-                    0,
-                    VybranaeDataAll(
-                        Calendar.getInstance().timeInMillis,
-                        title,
-                        resursEncode,
-                    )
-                )
-                Toast.makeText(context, context.getString(R.string.addVybranoe), Toast.LENGTH_SHORT).show()
-            }
-            isVybranoe = !isVybranoe
-            if (vybranoeList.isEmpty() && file.exists()) {
-                file.delete()
-            } else {
-                file.writer().use {
-                    it.write(gson.toJson(vybranoeList, type))
-                }
-            }
-            saveVybranoe = false
-        }
-    }
-    LifecycleResumeEffect(Unit) {
-        if (autoScrollSensor) autoScroll = true
-        onPauseOrDispose {
-            autoScroll = false
-            AppNavGraphState.searchBogaslujbovyia = searshString.text
-        }
-    }
-    LaunchedEffect(autoScroll) {
-        if (autoScroll) {
-            autoScrollJob?.cancel()
-            autoScrollJob = CoroutineScope(Dispatchers.Main).launch {
-                withContext(Dispatchers.Main) {
-                    while (true) {
-                        delay(autoScrollSpeed.toLong())
-                        scrollState.scrollBy(2f)
-                        AppNavGraphState.setScrollValuePosition(title, scrollState.value)
-                    }
-                }
-            }
-        } else {
-            autoScrollJob?.cancel()
-        }
-    }
-    var searchTextResult by remember { mutableStateOf(AnnotatedString("")) }
     var backPressHandled by remember { mutableStateOf(false) }
     var iskniga by rememberSaveable { mutableStateOf(false) }
     var bottomSheetScaffoldIsVisible by rememberSaveable { mutableStateOf(AppNavGraphState.bottomSheetScaffoldIsVisible) }
     val actyvity = LocalActivity.current as MainActivity
-    if (autoScrollSensor) {
+    if (viewModel.autoScrollSensor) {
         actyvity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
@@ -284,11 +370,19 @@ fun Bogaslujbovyia(
             initialValue = SheetValue.Hidden
         )
     )
-    BackHandler(!backPressHandled || showDropdown || iskniga || searchText) {
+    LaunchedEffect(viewModel.find) {
+        coroutineScope.launch {
+            withContext(Dispatchers.IO) {
+                viewModel.scrollState.animateScrollTo(viewModel.scrollToY.toInt())
+                AppNavGraphState.setScrollValuePosition(title, viewModel.scrollState.value)
+            }
+        }
+    }
+    BackHandler(!backPressHandled || showDropdown || iskniga || viewModel.searchText) {
         when {
-            searchText -> {
-                searchText = false
-                searchTextResult = AnnotatedString("")
+            viewModel.searchText -> {
+                viewModel.searchText = false
+                viewModel.searchTextResult = AnnotatedString("")
             }
 
             iskniga -> {
@@ -297,16 +391,16 @@ fun Bogaslujbovyia(
                         bottomSheetScaffoldState.bottomSheetState.show()
                     }
                 }
-                if (autoScrollSensor) autoScroll = true
                 iskniga = false
             }
 
             showDropdown -> {
                 showDropdown = false
-                if (autoScrollSensor) autoScroll = true
+                if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
             }
 
             !backPressHandled -> {
+                AppNavGraphState.searchBogaslujbovyia = ""
                 fullscreen = false
                 backPressHandled = true
                 if (!k.getBoolean("power", false)) actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -319,7 +413,7 @@ fun Bogaslujbovyia(
         LaunchedEffect(Unit) {
             isUpList = false
             coroutineScope.launch {
-                scrollState.animateScrollTo(0)
+                viewModel.scrollState.animateScrollTo(0)
             }
         }
     }
@@ -368,98 +462,10 @@ fun Bogaslujbovyia(
         }
     }
     val maxLine = remember { mutableIntStateOf(1) }
-    var htmlText by rememberSaveable { mutableStateOf("") }
-    LaunchedEffect(Unit) {
-        htmlText = openAssetsResources(context, resursEncode)
-    }
-    var findBack by remember { mutableStateOf(false) }
-    var findForward by remember { mutableStateOf(false) }
     var subTitle by rememberSaveable { mutableStateOf("") }
     var subText by rememberSaveable { mutableStateOf("") }
-    val result = remember { mutableStateListOf<ArrayList<Int>>() }
-    var resultPosition by remember { mutableIntStateOf(0) }
-    val textLayout = remember { mutableStateOf<TextLayoutResult?>(null) }
+    var textLayout by remember { mutableStateOf<TextLayoutResult?>(null) }
     var isProgressVisable by remember { mutableStateOf(false) }
-    LaunchedEffect(searshString.text) {
-        if (searshString.text.trim().length >= 3) {
-            searchJob?.cancel()
-            textLayout.value?.let { layout ->
-                searchJob = CoroutineScope(Dispatchers.Main).launch {
-                    result.clear()
-                    resultPosition = 0
-                    result.addAll(findAllAsanc(AnnotatedString.fromHtml(htmlText).text, searshString.text))
-                    textLayout.value?.let { layout ->
-                        if (result.isNotEmpty()) {
-                            val opiginalText = layout.layoutInput.text
-                            val annotatedString = buildAnnotatedString {
-                                append(opiginalText)
-                                for (i in result.indices) {
-                                    val size = result[i].size - 1
-                                    addStyle(SpanStyle(background = BezPosta, color = PrimaryText), result[i][0], result[i][size])
-                                }
-                            }
-                            searchTextResult = annotatedString
-                            val t1 = result[0][0]
-                            if (t1 != -1) {
-                                val line = layout.getLineForOffset(t1)
-                                val y = layout.getLineTop(line)
-                                coroutineScope.launch {
-                                    scrollState.animateScrollTo(y.toInt())
-                                    AppNavGraphState.setScrollValuePosition(title, scrollState.value)
-                                }
-                            }
-                        } else {
-                            searchTextResult = AnnotatedString("")
-                        }
-                    }
-                }
-            }
-        } else {
-            searchTextResult = AnnotatedString("")
-        }
-    }
-    LaunchedEffect(findForward) {
-        textLayout.value?.let { layout ->
-            if (findForward) {
-                if (result.isNotEmpty()) {
-                    if (result.size - 1 > resultPosition) {
-                        resultPosition += 1
-                    }
-                    val t1 = result[resultPosition][0]
-                    if (t1 != -1) {
-                        val line = layout.getLineForOffset(t1)
-                        val y = layout.getLineTop(line)
-                        coroutineScope.launch {
-                            scrollState.animateScrollTo(y.toInt())
-                            AppNavGraphState.setScrollValuePosition(title, scrollState.value)
-                        }
-                        findForward = false
-                    }
-                }
-            }
-        }
-    }
-    LaunchedEffect(findBack) {
-        textLayout.value?.let { layout ->
-            if (findBack) {
-                if (result.isNotEmpty()) {
-                    if (resultPosition > 0) {
-                        resultPosition -= 1
-                    }
-                    val t1 = result[resultPosition][0]
-                    if (t1 != -1) {
-                        val line = layout.getLineForOffset(t1)
-                        val y = layout.getLineTop(line)
-                        coroutineScope.launch {
-                            scrollState.animateScrollTo(y.toInt())
-                            AppNavGraphState.setScrollValuePosition(title, scrollState.value)
-                        }
-                        findBack = false
-                    }
-                }
-            }
-        }
-    }
     var isDialogNoWIFIVisable by remember { mutableStateOf(false) }
     var printFile by remember { mutableStateOf("") }
     if (isDialogNoWIFIVisable) {
@@ -536,8 +542,8 @@ fun Bogaslujbovyia(
                                     coroutineScope.launch {
                                         bottomSheetScaffoldState.bottomSheetState.hide()
                                     }
-                                    autoScroll = false
-                                    autoScrollSensor = false
+                                    viewModel.autoScroll(title, false)
+                                    viewModel.autoScrollSensor = false
                                 },
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -604,8 +610,8 @@ fun Bogaslujbovyia(
                                         coroutineScope.launch {
                                             bottomSheetScaffoldState.bottomSheetState.hide()
                                         }
-                                        autoScroll = false
-                                        autoScrollSensor = false
+                                        viewModel.autoScroll(title, false)
+                                        viewModel.autoScrollSensor = false
                                         navigateTo(navigate, skipUtran)
                                     },
                                 verticalAlignment = Alignment.CenterVertically
@@ -635,7 +641,7 @@ fun Bogaslujbovyia(
         paddingValues = innerPadding
         var shareIsLaunch by remember { mutableStateOf(false) }
         val launcherShare = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (autoScrollSensor) autoScroll = true
+            if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
             shareIsLaunch = false
         }
         var dialogHelpShare by remember { mutableStateOf(false) }
@@ -654,9 +660,9 @@ fun Bogaslujbovyia(
         val interactionSourse = remember { MutableInteractionSource() }
         if (shareIsLaunch) {
             val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-            val isTextFound = textLayout.value?.layoutInput?.text?.text?.contains(clipboard.primaryClip?.getItemAt(0)?.text ?: "@#$") == true
+            val isTextFound = textLayout?.layoutInput?.text?.text?.contains(clipboard.primaryClip?.getItemAt(0)?.text ?: "@#$") == true
             val sent = if (isTextFound) clipboard.primaryClip?.getItemAt(0)?.text
-            else textLayout.value?.layoutInput?.text?.text
+            else textLayout?.layoutInput?.text?.text
             sent?.let { shareText ->
                 if (!isTextFound) {
                     val clip = ClipData.newPlainText(context.getString(R.string.copy_text), shareText)
@@ -681,7 +687,7 @@ fun Bogaslujbovyia(
                 ) {
                     TopAppBar(
                         title = {
-                            if (!searchText) {
+                            if (!viewModel.searchText) {
                                 Text(
                                     modifier = Modifier.clickable {
                                         maxLine.intValue = Int.MAX_VALUE
@@ -708,7 +714,7 @@ fun Bogaslujbovyia(
                                                 textFieldLoaded = true
                                             }
                                         },
-                                    value = searshString,
+                                    value = viewModel.searshString,
                                     onValueChange = { newText ->
                                         var edit = newText.text
                                         edit = edit.replace("и", "і")
@@ -716,8 +722,10 @@ fun Bogaslujbovyia(
                                         edit = edit.replace("И", "І")
                                         edit = edit.replace("Щ", "Ў")
                                         edit = edit.replace("ъ", "'")
-                                        searchTextResult = AnnotatedString("")
-                                        searshString = TextFieldValue(edit, newText.selection)
+                                        viewModel.searchTextResult = AnnotatedString("")
+                                        viewModel.searshString = TextFieldValue(edit, newText.selection)
+                                        AppNavGraphState.searchBogaslujbovyia = viewModel.searshString.text
+                                        viewModel.search(textLayout)
                                     },
                                     singleLine = true,
                                     leadingIcon = {
@@ -729,11 +737,11 @@ fun Bogaslujbovyia(
                                     },
                                     trailingIcon = {
                                         IconButton(onClick = {
-                                            searshString = TextFieldValue("")
-                                            searchList.clear()
+                                            viewModel.searshString = TextFieldValue("")
+                                            viewModel.searchList.clear()
                                         }) {
                                             Icon(
-                                                painter = if (searshString.text.isNotEmpty()) painterResource(R.drawable.close) else painterResource(R.drawable.empty),
+                                                painter = if (viewModel.searshString.text.isNotEmpty()) painterResource(R.drawable.close) else painterResource(R.drawable.empty),
                                                 contentDescription = "",
                                                 tint = MaterialTheme.colorScheme.onSecondary
                                             )
@@ -753,7 +761,7 @@ fun Bogaslujbovyia(
                             }
                         },
                         navigationIcon = {
-                            if (iskniga || searchText) {
+                            if (iskniga || viewModel.searchText) {
                                 IconButton(
                                     onClick = {
                                         if (iskniga) {
@@ -764,11 +772,12 @@ fun Bogaslujbovyia(
                                             }
                                             iskniga = false
                                         } else {
-                                            searchText = false
-                                            searshString = TextFieldValue("")
-                                            searchTextResult = AnnotatedString("")
+                                            viewModel.searchText = false
+                                            viewModel.searshString = TextFieldValue("")
+                                            viewModel.searchTextResult = AnnotatedString("")
+                                            AppNavGraphState.searchBogaslujbovyia = ""
                                         }
-                                        if (autoScrollSensor) autoScroll = true
+                                        if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
                                     },
                                     content = {
                                         Icon(
@@ -786,12 +795,12 @@ fun Bogaslujbovyia(
                                                     bottomSheetScaffoldState.bottomSheetState.show()
                                                 }
                                                 iskniga = false
-                                                if (autoScrollSensor) autoScroll = true
+                                                if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
                                             }
 
                                             showDropdown -> {
                                                 showDropdown = false
-                                                if (autoScrollSensor) autoScroll = true
+                                                if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
                                             }
 
                                             else -> {
@@ -812,9 +821,9 @@ fun Bogaslujbovyia(
                             }
                         },
                         actions = {
-                            if (searchText) {
+                            if (viewModel.searchText) {
                                 IconButton(onClick = {
-                                    findBack = true
+                                    viewModel.findBack(textLayout)
                                 }) {
                                     Icon(
                                         painter = painterResource(R.drawable.arrow_upward),
@@ -823,7 +832,7 @@ fun Bogaslujbovyia(
                                     )
                                 }
                                 IconButton(onClick = {
-                                    findForward = true
+                                    viewModel.findForward(textLayout)
                                 }) {
                                     Icon(
                                         painter = painterResource(R.drawable.arrow_downward),
@@ -852,14 +861,14 @@ fun Bogaslujbovyia(
                                     }
                                 }
                                 if (!iskniga && !isBottomBar) {
-                                    if (scrollState.canScrollForward) {
+                                    if (viewModel.scrollState.canScrollForward) {
                                         val iconAutoScroll =
-                                            if (autoScrollSensor) painterResource(R.drawable.stop_circle)
+                                            if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
                                             else painterResource(R.drawable.play_circle)
                                         IconButton(onClick = {
-                                            autoScroll = !autoScroll
-                                            autoScrollSensor = !autoScrollSensor
-                                            if (autoScrollSensor) {
+                                            viewModel.autoScrollSensor = !viewModel.autoScrollSensor
+                                            viewModel.autoScroll(title, viewModel.autoScrollSensor)
+                                            if (viewModel.autoScrollSensor) {
                                                 actyvity.window.addFlags(
                                                     WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                                                 )
@@ -873,7 +882,7 @@ fun Bogaslujbovyia(
                                                 tint = MaterialTheme.colorScheme.onSecondary
                                             )
                                         }
-                                    } else if (scrollState.canScrollBackward) {
+                                    } else if (viewModel.scrollState.canScrollBackward) {
                                         IconButton(onClick = {
                                             isUpList = true
                                         }) {
@@ -886,9 +895,9 @@ fun Bogaslujbovyia(
                                     }
                                     if (listResource.isEmpty()) {
                                         IconButton(onClick = {
-                                            saveVybranoe = true
+                                            viewModel.saveVybranoe(context, title, resursEncode)
                                         }) {
-                                            val icon = if (isVybranoe) painterResource(R.drawable.stars)
+                                            val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
                                             else painterResource(R.drawable.star)
                                             Icon(
                                                 painter = icon,
@@ -907,9 +916,9 @@ fun Bogaslujbovyia(
                                         if (listResource.isNotEmpty()) {
                                             DropdownMenuItem(onClick = {
                                                 expandedUp = false
-                                                saveVybranoe = true
-                                            }, text = { Text(stringResource(if (isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                                val icon = if (isVybranoe) painterResource(R.drawable.stars)
+                                                viewModel.saveVybranoe(context, title, resursEncode)
+                                            }, text = { Text(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                                val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
                                                 else painterResource(R.drawable.star)
                                                 Icon(
                                                     painter = icon, contentDescription = ""
@@ -918,7 +927,7 @@ fun Bogaslujbovyia(
                                         }
                                         DropdownMenuItem(onClick = {
                                             expandedUp = false
-                                            autoScroll = false
+                                            viewModel.autoScroll(title, false)
                                             if (k.getBoolean("isShareHelp", true)) {
                                                 dialogHelpShare = true
                                             } else {
@@ -939,7 +948,7 @@ fun Bogaslujbovyia(
                                         })
                                         DropdownMenuItem(onClick = {
                                             expandedUp = false
-                                            searchText = true
+                                            viewModel.searchText = true
                                         }, text = { Text(stringResource(R.string.searche_text), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                             Icon(
                                                 painter = painterResource(R.drawable.search), contentDescription = ""
@@ -948,7 +957,7 @@ fun Bogaslujbovyia(
                                         DropdownMenuItem(onClick = {
                                             expandedUp = false
                                             showDropdown = !showDropdown
-                                            autoScroll = false
+                                            viewModel.autoScroll(title, false)
                                         }, text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                             Icon(
                                                 painter = painterResource(R.drawable.format_size), contentDescription = ""
@@ -958,7 +967,7 @@ fun Bogaslujbovyia(
                                             HorizontalDivider()
                                             DropdownMenuItem(onClick = {
                                                 expandedUp = false
-                                                autoScroll = false
+                                                viewModel.autoScroll(title, false)
                                                 coroutineScope.launch {
                                                     isProgressVisable = true
                                                     val fileList = SnapshotStateList<String>()
@@ -1013,7 +1022,7 @@ fun Bogaslujbovyia(
                                 }
                                 if (k.getBoolean("admin", false) && (isBottomBar || iskniga)) {
                                     IconButton(onClick = {
-                                        autoScroll = false
+                                        viewModel.autoScroll(title, false)
                                         coroutineScope.launch {
                                             isProgressVisable = true
                                             val fileList = SnapshotStateList<String>()
@@ -1071,7 +1080,7 @@ fun Bogaslujbovyia(
                 }
             },
             bottomBar = {
-                if (!searchText) {
+                if (!viewModel.searchText) {
                     AnimatedVisibility(
                         !fullscreen, enter = fadeIn(
                             tween(
@@ -1088,7 +1097,7 @@ fun Bogaslujbovyia(
                                     properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false),
                                     onDismissRequest = {
                                         showDropdown = false
-                                        if (autoScrollSensor) autoScroll = true
+                                        if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
                                     }
                                 ) {
                                     Column {
@@ -1126,7 +1135,7 @@ fun Bogaslujbovyia(
                                 ) {
                                     IconButton(onClick = {
                                         showDropdown = !showDropdown
-                                        autoScroll = false
+                                        viewModel.autoScroll(title, false)
                                     }) {
                                         Icon(
                                             painter = painterResource(R.drawable.format_size),
@@ -1136,7 +1145,7 @@ fun Bogaslujbovyia(
                                     }
                                     IconButton(onClick = {
                                         showDropdown = false
-                                        autoScroll = false
+                                        viewModel.autoScroll(title, false)
                                         if (k.getBoolean("isShareHelp", true)) {
                                             dialogHelpShare = true
                                         } else {
@@ -1150,7 +1159,7 @@ fun Bogaslujbovyia(
                                         )
                                     }
                                     IconButton(onClick = {
-                                        searchText = true
+                                        viewModel.searchText = true
                                     }) {
                                         Icon(
                                             painter = painterResource(R.drawable.search),
@@ -1168,9 +1177,9 @@ fun Bogaslujbovyia(
                                         )
                                     }
                                     IconButton(onClick = {
-                                        saveVybranoe = true
+                                        viewModel.saveVybranoe(context, title, resursEncode)
                                     }) {
-                                        val icon = if (isVybranoe) painterResource(R.drawable.stars)
+                                        val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
                                         else painterResource(R.drawable.star)
                                         Icon(
                                             painter = icon,
@@ -1178,14 +1187,14 @@ fun Bogaslujbovyia(
                                             tint = MaterialTheme.colorScheme.onSecondary
                                         )
                                     }
-                                    if (scrollState.canScrollForward) {
+                                    if (viewModel.scrollState.canScrollForward) {
                                         val iconAutoScroll =
-                                            if (autoScrollSensor) painterResource(R.drawable.stop_circle)
+                                            if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
                                             else painterResource(R.drawable.play_circle)
                                         IconButton(onClick = {
-                                            autoScroll = !autoScroll
-                                            autoScrollSensor = !autoScrollSensor
-                                            if (autoScrollSensor) {
+                                            viewModel.autoScrollSensor = !viewModel.autoScrollSensor
+                                            viewModel.autoScroll(title, viewModel.autoScrollSensor)
+                                            if (viewModel.autoScrollSensor) {
                                                 actyvity.window.addFlags(
                                                     WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                                                 )
@@ -1199,7 +1208,7 @@ fun Bogaslujbovyia(
                                                 tint = MaterialTheme.colorScheme.onSecondary
                                             )
                                         }
-                                    } else if (scrollState.canScrollBackward) {
+                                    } else if (viewModel.scrollState.canScrollBackward) {
                                         IconButton(onClick = {
                                             isUpList = true
                                         }) {
@@ -1234,7 +1243,7 @@ fun Bogaslujbovyia(
                             source: NestedScrollSource
                         ): Offset {
                             isScrollRun = true
-                            AppNavGraphState.setScrollValuePosition(title, scrollState.value)
+                            AppNavGraphState.setScrollValuePosition(title, viewModel.scrollState.value)
                             return super.onPreScroll(available, source)
                         }
 
@@ -1243,7 +1252,7 @@ fun Bogaslujbovyia(
                             available: Velocity
                         ): Velocity {
                             isScrollRun = false
-                            if (autoScrollSensor) autoScroll = true
+                            if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
                             return super.onPostFling(consumed, available)
                         }
                     }
@@ -1256,10 +1265,10 @@ fun Bogaslujbovyia(
                                 while (true) {
                                     val event = awaitPointerEvent()
                                     if (event.type == PointerEventType.Press) {
-                                        autoScroll = false
+                                        viewModel.autoScroll(title, false)
                                     }
-                                    if (autoScrollSensor && event.type == PointerEventType.Release && !isScrollRun) {
-                                        autoScroll = true
+                                    if (viewModel.autoScrollSensor && event.type == PointerEventType.Release && !isScrollRun) {
+                                        viewModel.autoScroll(title, true)
                                     }
                                 }
                             }
@@ -1272,14 +1281,14 @@ fun Bogaslujbovyia(
                             )
                         }
                         .nestedScroll(nestedScrollConnection)
-                        .verticalScroll(scrollState),
+                        .verticalScroll(viewModel.scrollState),
                     verticalArrangement = Arrangement.Top
                 ) {
                     if (isProgressVisable) {
                         LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                     }
                     val padding = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp
-                    if (autoScrollSensor) {
+                    if (viewModel.autoScrollSensor) {
                         HtmlText(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -1302,17 +1311,17 @@ fun Bogaslujbovyia(
                                         } while (event.changes.any { it.pressed })
                                     }
                                 },
-                            text = htmlText,
+                            text = viewModel.htmlText,
                             title = title,
                             fontSize = fontSize.sp,
                             isLiturgia = isLiturgia && isLiturgia(data),
-                            searchText = searchTextResult,
-                            scrollState = scrollState,
+                            searchText = viewModel.searchTextResult,
+                            scrollState = viewModel.scrollState,
                             navigateTo = { navigate ->
                                 navigateTo(navigate, false)
                             },
                             textLayoutResult = { layout ->
-                                textLayout.value = layout
+                                textLayout = layout
                             },
                             isDialogListinner = { dialog, chastka ->
                                 when (dialog) {
@@ -1355,12 +1364,12 @@ fun Bogaslujbovyia(
                                             } while (event.changes.any { it.pressed })
                                         }
                                     },
-                                text = htmlText,
+                                text = viewModel.htmlText,
                                 title = title,
                                 fontSize = fontSize.sp,
                                 isLiturgia = isLiturgia && isLiturgia(data),
-                                searchText = searchTextResult,
-                                scrollState = scrollState,
+                                searchText = viewModel.searchTextResult,
+                                scrollState = viewModel.scrollState,
                                 navigateTo = { navigate ->
                                     var skipUtran = false
                                     if (navigate == "cytanne") {
@@ -1376,12 +1385,12 @@ fun Bogaslujbovyia(
                                     navigateTo(navigate, skipUtran)
                                 },
                                 textLayoutResult = { layout ->
-                                    if (!searchText) {
+                                    if (!viewModel.searchText) {
                                         coroutineScope.launch {
-                                            scrollState.animateScrollTo(AppNavGraphState.getScrollValuePosition(title))
+                                            viewModel.scrollState.animateScrollTo(AppNavGraphState.getScrollValuePosition(title))
                                         }
                                     }
-                                    textLayout.value = layout
+                                    textLayout = layout
                                 },
                                 isDialogListinner = { dialog, chastka ->
                                     when (dialog) {
@@ -1402,9 +1411,9 @@ fun Bogaslujbovyia(
                             )
                         }
                     }
-                    if (scrollState.lastScrolledForward && !scrollState.canScrollForward) {
-                        autoScroll = false
-                        autoScrollSensor = false
+                    if (viewModel.scrollState.lastScrolledForward && !viewModel.scrollState.canScrollForward) {
+                        viewModel.autoScroll(title, false)
+                        viewModel.autoScrollSensor = false
                         if (!k.getBoolean("power", false)) {
                             actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                         }
@@ -1421,7 +1430,7 @@ fun Bogaslujbovyia(
                         .align(Alignment.BottomEnd)
                 ) {
                     AnimatedVisibility(
-                        autoScrollTextVisable, enter = fadeIn(
+                        viewModel.autoScrollTextVisable, enter = fadeIn(
                             tween(
                                 durationMillis = 700, easing = LinearOutSlowInEasing
                             )
@@ -1447,7 +1456,7 @@ fun Bogaslujbovyia(
                         }
                     }
                     AnimatedVisibility(
-                        autoScrollSensor, enter = fadeIn(
+                        viewModel.autoScrollSensor, enter = fadeIn(
                             tween(
                                 durationMillis = 700, easing = LinearOutSlowInEasing
                             )
@@ -1472,22 +1481,14 @@ fun Bogaslujbovyia(
                                         .size(40.dp)
                                         .padding(5.dp)
                                         .clickable {
-                                            if (autoScrollSpeed in 10..125) {
-                                                autoScrollSpeed += 5
-                                                val proc = 100 - (autoScrollSpeed - 15) * 100 / 115
+                                            if (viewModel.autoScrollSpeed in 10..125) {
+                                                viewModel.autoScrollSpeed += 5
+                                                val proc = 100 - (viewModel.autoScrollSpeed - 15) * 100 / 115
                                                 autoScrollTextColor = Post
                                                 autoScrollTextColor2 = PrimaryText
                                                 autoScrollText = "$proc%"
-                                                autoScrollTextVisable = true
-                                                autoScrollTextVisableJob?.cancel()
-                                                autoScrollTextVisableJob =
-                                                    coroutineScope.launch {
-                                                        delay(3000)
-                                                        autoScrollTextVisable = false
-                                                    }
-                                                k.edit {
-                                                    putInt("autoscrollSpid", autoScrollSpeed)
-                                                }
+                                                viewModel.autoScrollTextVisable = true
+                                                viewModel.autoScrollSpeed(context)
                                             }
                                         }
                                 )
@@ -1502,22 +1503,14 @@ fun Bogaslujbovyia(
                                     .size(40.dp)
                                     .padding(5.dp)
                                     .clickable {
-                                        if (autoScrollSpeed in 20..135) {
-                                            autoScrollSpeed -= 5
-                                            val proc = 100 - (autoScrollSpeed - 15) * 100 / 115
+                                        if (viewModel.autoScrollSpeed in 20..135) {
+                                            viewModel.autoScrollSpeed -= 5
+                                            val proc = 100 - (viewModel.autoScrollSpeed - 15) * 100 / 115
                                             autoScrollTextColor = Primary
                                             autoScrollTextColor2 = PrimaryTextBlack
                                             autoScrollText = "$proc%"
-                                            autoScrollTextVisable = true
-                                            autoScrollTextVisableJob?.cancel()
-                                            autoScrollTextVisableJob =
-                                                CoroutineScope(Dispatchers.Main).launch {
-                                                    delay(3000)
-                                                    autoScrollTextVisable = false
-                                                }
-                                            k.edit {
-                                                putInt("autoscrollSpid", autoScrollSpeed)
-                                            }
+                                            viewModel.autoScrollTextVisable = true
+                                            viewModel.autoScrollSpeed(context)
                                         }
                                     }
                             )

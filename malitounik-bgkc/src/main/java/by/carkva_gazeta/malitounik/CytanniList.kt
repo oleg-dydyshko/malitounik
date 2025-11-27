@@ -5,6 +5,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -117,7 +118,6 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -136,7 +136,6 @@ import by.carkva_gazeta.malitounik.views.HtmlText
 import by.carkva_gazeta.malitounik.views.openAssetsResources
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -144,9 +143,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Calendar
-
-var autoScrollJob: Job? = null
-var autoScrollTextVisableJob: Job? = null
 
 class CytanniListItems : ViewModel() {
     val listState = mutableStateListOf<CytanniListItemData>()
@@ -157,13 +153,18 @@ class CytanniListItems : ViewModel() {
     var perevodName by mutableStateOf("")
     var dialogDownLoad by mutableStateOf(false)
     var setPerevod by mutableStateOf(Settings.PEREVODSINOIDAL)
+    var autoScroll by mutableStateOf(false)
+    var autoScrollSensor by mutableStateOf(false)
+    var autoScrollSpeed by mutableIntStateOf(60)
+    var autoScrollTextVisable by mutableStateOf(false)
+    private var autoScrollJob: Job? = null
+    private var autoScrollTextVisableJob: Job? = null
     private var isFirstDialodVisable = true
     private var newCytanne = ""
     private val gson = Gson()
     private val type = TypeToken.getParameterized(ArrayList::class.java, VybranaeData::class.java).type
 
-    fun initViewModel(biblia: Int, cytanne: String, perevod: String) {
-        val context = Malitounik.applicationContext()
+    fun initViewModel(context: Context, biblia: Int, cytanne: String, perevod: String) {
         val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
         if (isFirstDialodVisable) {
             var isBibleEnable = k.getBoolean("catolik_bible", false)
@@ -187,6 +188,7 @@ class CytanniListItems : ViewModel() {
             isFirstDialodVisable = false
         }
         if (listState.isEmpty()) {
+            autoScrollSpeed = k.getInt("autoscrollSpid", 60)
             if (newCytanne.isEmpty()) newCytanne = cytanne
             perevodName = when (perevod) {
                 Settings.PEREVODSEMUXI -> "biblia"
@@ -279,20 +281,24 @@ class CytanniListItems : ViewModel() {
     fun updatePage(biblia: Int, page: Int, perevod: String) {
         if (listState[page].item.isEmpty()) {
             viewModelScope.launch {
-                val chteniaNewPage = knigaText + " ${page + 1}"
-                val resultPage = if (biblia == Settings.CHYTANNI_BIBLIA) {
-                    getBible(chteniaNewPage, perevod, biblia)
-                } else {
-                    getBible(newCytanne, perevod, biblia, true)
+                withContext(Dispatchers.IO) {
+                    val chteniaNewPage = knigaText + " ${page + 1}"
+                    val resultPage = if (biblia == Settings.CHYTANNI_BIBLIA) {
+                        getBible(chteniaNewPage, perevod, biblia)
+                    } else {
+                        getBible(newCytanne, perevod, biblia, true)
+                    }
+                    if (listState[page].item.isEmpty()) {
+                        listState[page].item.addAll(resultPage)
+                    }
                 }
-                listState[page].item.addAll(resultPage)
             }
         }
     }
 
-    fun setPerevod(biblia: Int, cytanne: String, perevod: String) {
+    fun setPerevod(context: Context, biblia: Int, cytanne: String, perevod: String) {
         listState.clear()
-        initViewModel(biblia, cytanne, perevod)
+        initViewModel(context, biblia, cytanne, perevod)
     }
 
     fun initVybranoe(context: Context) {
@@ -350,6 +356,38 @@ class CytanniListItems : ViewModel() {
             }
         }
     }
+
+    fun autoScroll(title: String, isPlay: Boolean) {
+        if (isPlay) {
+            if (autoScrollJob?.isActive != true) {
+                autoScrollJob = viewModelScope.launch {
+                    withContext(Dispatchers.Main) {
+                        while (true) {
+                            delay(autoScrollSpeed.toLong())
+                            listState[selectedIndex].lazyListState.scrollBy(2f)
+                            AppNavGraphState.setScrollValuePosition(title, listState[selectedIndex].lazyListState.firstVisibleItemIndex)
+                        }
+                    }
+                }
+            }
+        } else {
+            autoScrollJob?.cancel()
+        }
+        autoScroll = autoScrollJob?.isActive == true
+    }
+
+    fun autoScrollSpeed(context: Context) {
+        val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+        autoScrollTextVisable = true
+        autoScrollTextVisableJob?.cancel()
+        autoScrollTextVisableJob = viewModelScope.launch {
+            delay(3000)
+            autoScrollTextVisable = false
+        }
+        k.edit {
+            putInt("autoscrollSpid", autoScrollSpeed)
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -369,7 +407,8 @@ fun CytanniList(
             }
         )
     }
-    viewModel.initViewModel(biblia, cytanne, perevod)
+    val context = LocalContext.current
+    viewModel.initViewModel(context, biblia, cytanne, perevod)
     val listState = viewModel.listState
     var skipUtran by remember { mutableStateOf(position == -2) }
     var positionRemember by rememberSaveable { mutableIntStateOf(position) }
@@ -399,10 +438,6 @@ fun CytanniList(
     else StrogiPost
     var showDropdown by remember { mutableStateOf(false) }
     var fontSize by remember { mutableFloatStateOf(k.getFloat("font_biblia", 22F)) }
-    var autoScroll by rememberSaveable { mutableStateOf(false) }
-    var autoScrollSensor by rememberSaveable { mutableStateOf(false) }
-    var autoScrollSpeed by remember { mutableIntStateOf(k.getInt("autoscrollSpid", 60)) }
-    var autoScrollTextVisable by remember { mutableStateOf(false) }
     var autoScrollText by remember { mutableStateOf("") }
     var autoScrollTextColor by remember { mutableStateOf(Primary) }
     var autoScrollTextColor2 by remember { mutableStateOf(PrimaryTextBlack) }
@@ -454,33 +489,10 @@ fun CytanniList(
             }
         }
     }
-    val context = LocalContext.current
-    LifecycleResumeEffect(Unit) {
-        if (autoScrollSensor) autoScroll = true
-        onPauseOrDispose {
-            autoScroll = false
-        }
-    }
-    LaunchedEffect(autoScroll) {
-        if (autoScroll) {
-            autoScrollJob?.cancel()
-            autoScrollJob = CoroutineScope(Dispatchers.Main).launch {
-                withContext(Dispatchers.Main) {
-                    while (true) {
-                        delay(autoScrollSpeed.toLong())
-                        listState[viewModel.selectedIndex].lazyListState.scrollBy(2f)
-                        AppNavGraphState.setScrollValuePosition(title, listState[viewModel.selectedIndex].lazyListState.firstVisibleItemIndex)
-                    }
-                }
-            }
-        } else {
-            autoScrollJob?.cancel()
-        }
-    }
     var isSelectMode by rememberSaveable { mutableStateOf(false) }
     var backPressHandled by remember { mutableStateOf(false) }
     val actyvity = LocalActivity.current as MainActivity
-    if (autoScrollSensor) {
+    if (viewModel.autoScrollSensor) {
         actyvity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
     BackHandler(!backPressHandled || isSelectMode || isParallelVisable || showDropdown) {
@@ -492,7 +504,7 @@ fun CytanniList(
             isParallelVisable -> isParallelVisable = false
             showDropdown -> {
                 showDropdown = false
-                if (autoScrollSensor) autoScroll = true
+                if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
             }
 
             !backPressHandled -> {
@@ -506,8 +518,6 @@ fun CytanniList(
                     )
                 }
                 prefEditors.apply()
-                autoScrollJob?.cancel()
-                autoScrollTextVisableJob?.cancel()
                 backPressHandled = true
                 if (!k.getBoolean("power", false)) actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 navController.popBackStack()
@@ -540,7 +550,7 @@ fun CytanniList(
     var dialogRazdel by remember { mutableStateOf(false) }
     val interactionSourse = remember { MutableInteractionSource() }
     if (dialogRazdel) {
-        DialogRazdzel(listState.size, autoScrollSensor, setSelectedIndex = { viewModel.selectedIndex = it }, setAutoScroll = { autoScroll = it }) {
+        DialogRazdzel(listState.size, viewModel.autoScrollSensor, setSelectedIndex = { viewModel.selectedIndex = it }, setAutoScroll = { viewModel.autoScroll(title, it) }) {
             dialogRazdel = false
         }
     }
@@ -556,7 +566,7 @@ fun CytanniList(
                 apply()
             }
             viewModel.dialogDownLoad = false
-            viewModel.setPerevod(biblia, cytanne, perevod)
+            viewModel.setPerevod(context, biblia, cytanne, perevod)
         }) {
             viewModel.dialogDownLoad = false
         }
@@ -622,7 +632,7 @@ fun CytanniList(
                                 isParallelVisable -> isParallelVisable = false
                                 showDropdown -> {
                                     showDropdown = false
-                                    if (autoScrollSensor) autoScroll = true
+                                    if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
                                 }
 
                                 else -> {
@@ -638,8 +648,6 @@ fun CytanniList(
                                                 )
                                             }
                                         }
-                                        autoScrollJob?.cancel()
-                                        autoScrollTextVisableJob?.cancel()
                                         if (!k.getBoolean("power", false)) actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                                         navController.popBackStack()
                                     }
@@ -678,12 +686,12 @@ fun CytanniList(
                         if (!isBottomBar) {
                             var expandedUp by remember { mutableStateOf(false) }
                             if (listState[viewModel.selectedIndex].lazyListState.canScrollForward) {
-                                val iconAutoScroll = if (autoScrollSensor) painterResource(R.drawable.stop_circle)
+                                val iconAutoScroll = if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
                                 else painterResource(R.drawable.play_circle)
                                 IconButton(onClick = {
-                                    autoScroll = !autoScroll
-                                    autoScrollSensor = !autoScrollSensor
-                                    if (autoScrollSensor) {
+                                    viewModel.autoScrollSensor = !viewModel.autoScrollSensor
+                                    viewModel.autoScroll(title, viewModel.autoScrollSensor)
+                                    if (viewModel.autoScrollSensor) {
                                         actyvity.window.addFlags(
                                             WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                                         )
@@ -727,7 +735,7 @@ fun CytanniList(
                                     DropdownMenuItem(onClick = {
                                         expandedUp = false
                                         dialogRazdel = true
-                                        autoScroll = false
+                                        viewModel.autoScroll(title, false)
                                     }, text = { Text(stringResource(R.string.pazdel), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                         Icon(
                                             painter = painterResource(R.drawable.apps), contentDescription = ""
@@ -745,7 +753,7 @@ fun CytanniList(
                                 DropdownMenuItem(onClick = {
                                     expandedUp = false
                                     showDropdown = !showDropdown
-                                    autoScroll = false
+                                    viewModel.autoScroll(title, false)
                                     menuPosition = 2
                                 }, text = { Text(stringResource(R.string.perevody), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                     Icon(
@@ -756,7 +764,7 @@ fun CytanniList(
                                 DropdownMenuItem(onClick = {
                                     expandedUp = false
                                     showDropdown = !showDropdown
-                                    autoScroll = false
+                                    viewModel.autoScroll(title, false)
                                     menuPosition = 1
                                 }, text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                     Icon(
@@ -774,7 +782,7 @@ fun CytanniList(
             ModalBottomSheet(
                 scrimColor = Color.Transparent, properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false), containerColor = MaterialTheme.colorScheme.surfaceContainer, onDismissRequest = {
                     showDropdown = false
-                    if (autoScrollSensor) autoScroll = true
+                    if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
                 }) {
                 Column {
                     if (menuPosition == 2) {
@@ -796,7 +804,7 @@ fun CytanniList(
                                                 "perevod", perevod
                                             )
                                             edit.apply()
-                                            viewModel.setPerevod(biblia, cytanne, perevod)
+                                            viewModel.setPerevod(context, biblia, cytanne, perevod)
                                         }, verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     RadioButton(
@@ -809,7 +817,7 @@ fun CytanniList(
                                                 "perevod", perevod
                                             )
                                             edit.apply()
-                                            viewModel.setPerevod(biblia, cytanne, perevod)
+                                            viewModel.setPerevod(context, biblia, cytanne, perevod)
                                         })
                                     Text(
                                         stringResource(R.string.title_biblia2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
@@ -829,7 +837,7 @@ fun CytanniList(
                                                 "perevod", perevod
                                             )
                                             edit.apply()
-                                            viewModel.setPerevod(biblia, cytanne, perevod)
+                                            viewModel.setPerevod(context, biblia, cytanne, perevod)
                                         }, verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     RadioButton(
@@ -842,7 +850,7 @@ fun CytanniList(
                                                 "perevod", perevod
                                             )
                                             edit.apply()
-                                            viewModel.setPerevod(biblia, cytanne, perevod)
+                                            viewModel.setPerevod(context, biblia, cytanne, perevod)
                                         })
                                     Text(
                                         stringResource(R.string.title_biblia_bokun2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
@@ -862,7 +870,7 @@ fun CytanniList(
                                                 "perevod", perevod
                                             )
                                             edit.apply()
-                                            viewModel.setPerevod(biblia, cytanne, perevod)
+                                            viewModel.setPerevod(context, biblia, cytanne, perevod)
                                         }, verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     RadioButton(
@@ -875,7 +883,7 @@ fun CytanniList(
                                                 "perevod", perevod
                                             )
                                             edit.apply()
-                                            viewModel.setPerevod(biblia, cytanne, perevod)
+                                            viewModel.setPerevod(context, biblia, cytanne, perevod)
                                         })
                                     Text(
                                         stringResource(R.string.title_biblia_charniauski2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
@@ -900,7 +908,7 @@ fun CytanniList(
                                                     "perevod", perevod
                                                 )
                                                 edit.apply()
-                                                viewModel.setPerevod(biblia, cytanne, perevod)
+                                                viewModel.setPerevod(context, biblia, cytanne, perevod)
                                             }
                                         }, verticalAlignment = Alignment.CenterVertically
                                 ) {
@@ -919,7 +927,7 @@ fun CytanniList(
                                                     "perevod", perevod
                                                 )
                                                 edit.apply()
-                                                viewModel.setPerevod(biblia, cytanne, perevod)
+                                                viewModel.setPerevod(context, biblia, cytanne, perevod)
                                             }
                                         })
                                     Text(
@@ -933,13 +941,13 @@ fun CytanniList(
                                         .fillMaxWidth()
                                         .clickable {
                                             perevod = Settings.PEREVODNADSAN
-                                            viewModel.setPerevod(biblia, cytanne, perevod)
+                                            viewModel.setPerevod(context, biblia, cytanne, perevod)
                                         }, verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     RadioButton(
                                         selected = perevod == Settings.PEREVODNADSAN, onClick = {
                                             perevod = Settings.PEREVODNADSAN
-                                            viewModel.setPerevod(biblia, cytanne, perevod)
+                                            viewModel.setPerevod(context, biblia, cytanne, perevod)
                                         })
                                     Text(
                                         stringResource(R.string.title_psalter), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
@@ -963,7 +971,7 @@ fun CytanniList(
                                                     )
                                                 }
                                                 edit.apply()
-                                                viewModel.setPerevod(biblia, cytanne, perevod)
+                                                viewModel.setPerevod(context, biblia, cytanne, perevod)
                                             }
                                         }, verticalAlignment = Alignment.CenterVertically
                                 ) {
@@ -981,7 +989,7 @@ fun CytanniList(
                                                     )
                                                 }
                                                 edit.apply()
-                                                viewModel.setPerevod(biblia, cytanne, perevod)
+                                                viewModel.setPerevod(context, biblia, cytanne, perevod)
                                             }
                                         })
                                     Text(
@@ -1005,7 +1013,7 @@ fun CytanniList(
                                                         "perevodMaranata", perevod
                                                     )
                                                     edit.apply()
-                                                    viewModel.setPerevod(biblia, cytanne, perevod)
+                                                    viewModel.setPerevod(context, biblia, cytanne, perevod)
                                                 }
                                             }, verticalAlignment = Alignment.CenterVertically
                                     ) {
@@ -1021,7 +1029,7 @@ fun CytanniList(
                                                         "perevodMaranata", perevod
                                                     )
                                                     edit.apply()
-                                                    viewModel.setPerevod(biblia, cytanne, perevod)
+                                                    viewModel.setPerevod(context, biblia, cytanne, perevod)
                                                 }
                                             })
                                         Text(
@@ -1068,7 +1076,7 @@ fun CytanniList(
                         IconButton(
                             onClick = {
                                 showDropdown = !showDropdown
-                                autoScroll = false
+                                viewModel.autoScroll(title, false)
                                 menuPosition = 1
                             }) {
                             Icon(
@@ -1078,7 +1086,7 @@ fun CytanniList(
                         IconButton(
                             onClick = {
                                 showDropdown = !showDropdown
-                                autoScroll = false
+                                viewModel.autoScroll(title, false)
                                 menuPosition = 2
                             }) {
                             Icon(
@@ -1097,7 +1105,7 @@ fun CytanniList(
                         if (biblia == Settings.CHYTANNI_BIBLIA && listState.size - 1 > 1) {
                             IconButton(
                                 onClick = {
-                                    autoScroll = false
+                                    viewModel.autoScroll(title, false)
                                     dialogRazdel = true
                                 }) {
                                 Icon(
@@ -1119,12 +1127,12 @@ fun CytanniList(
                         }
                         if (!isParallelVisable) {
                             if (listState[viewModel.selectedIndex].lazyListState.canScrollForward) {
-                                val iconAutoScroll = if (autoScrollSensor) painterResource(R.drawable.stop_circle)
+                                val iconAutoScroll = if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
                                 else painterResource(R.drawable.play_circle)
                                 IconButton(onClick = {
-                                    autoScroll = !autoScroll
-                                    autoScrollSensor = !autoScrollSensor
-                                    if (autoScrollSensor) {
+                                    viewModel.autoScrollSensor = !viewModel.autoScrollSensor
+                                    viewModel.autoScroll(title, viewModel.autoScrollSensor)
+                                    if (viewModel.autoScrollSensor) {
                                         actyvity.window.addFlags(
                                             WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                                         )
@@ -1146,7 +1154,7 @@ fun CytanniList(
                                 }
                             }
                         } else {
-                            autoScroll = false
+                            viewModel.autoScroll(title, false)
                         }
                     }
                 }
@@ -1243,12 +1251,17 @@ fun CytanniList(
                             consumed: Velocity, available: Velocity
                         ): Velocity {
                             isScrollRun = false
-                            if (autoScrollSensor) autoScroll = true
+                            if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
                             return super.onPostFling(consumed, available)
                         }
                     }
                 }
                 if (listState[viewModel.selectedIndex].item.isNotEmpty()) {
+                    LaunchedEffect(Unit) {
+                        coroutineScope.launch {
+                            listState[viewModel.selectedIndex].lazyListState.scrollToItem(AppNavGraphState.getScrollValuePosition(title))
+                        }
+                    }
                     if (biblia == Settings.CHYTANNI_BIBLIA && positionRemember != -1) {
                         LaunchedEffect(positionRemember) {
                             coroutineScope.launch {
@@ -1385,10 +1398,10 @@ fun CytanniList(
                                     while (true) {
                                         val event = awaitPointerEvent()
                                         if (event.type == PointerEventType.Press) {
-                                            autoScroll = false
+                                            viewModel.autoScroll(title, false)
                                         }
-                                        if (autoScrollSensor && event.type == PointerEventType.Release && !isScrollRun) {
-                                            autoScroll = true
+                                        if (viewModel.autoScrollSensor && event.type == PointerEventType.Release && !isScrollRun) {
+                                            viewModel.autoScroll(title, true)
                                         }
                                     }
                                 }
@@ -1422,7 +1435,7 @@ fun CytanniList(
                                     })
                                 }
                                 HtmlText(
-                                    modifier = if (!autoScrollSensor && !showDropdown) {
+                                    modifier = if (!viewModel.autoScrollSensor && !showDropdown) {
                                         Modifier
                                             .pointerInput(Unit) {
                                                 detectTapGestures(onTap = {
@@ -1481,7 +1494,7 @@ fun CytanniList(
                             }
                             if (isParallel && resultPage[index].parallel != "+-+") {
                                 Text(
-                                    text = resultPage[index].parallel, modifier = if (!autoScrollSensor && !showDropdown) {
+                                    text = resultPage[index].parallel, modifier = if (!viewModel.autoScrollSensor && !showDropdown) {
                                         Modifier
                                             .pointerInput(Unit) {
                                                 detectTapGestures(onTap = {
@@ -1518,8 +1531,8 @@ fun CytanniList(
                         item {
                             Spacer(Modifier.padding(bottom = if (fullscreen) 10.dp else innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp)))
                             if (listState[page].lazyListState.lastScrolledForward && !listState[page].lazyListState.canScrollForward) {
-                                autoScroll = false
-                                autoScrollSensor = false
+                                viewModel.autoScroll(title, false)
+                                viewModel.autoScrollSensor = false
                                 if (!k.getBoolean("power", false)) {
                                     actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                                 }
@@ -1538,7 +1551,7 @@ fun CytanniList(
                 modifier = Modifier.align(Alignment.BottomEnd)
             ) {
                 AnimatedVisibility(
-                    autoScrollTextVisable, enter = fadeIn(
+                    viewModel.autoScrollTextVisable, enter = fadeIn(
                         tween(
                             durationMillis = 700, easing = LinearOutSlowInEasing
                         )
@@ -1561,7 +1574,7 @@ fun CytanniList(
                     }
                 }
                 AnimatedVisibility(
-                    autoScrollSensor, enter = fadeIn(
+                    viewModel.autoScrollSensor, enter = fadeIn(
                         tween(
                             durationMillis = 700, easing = LinearOutSlowInEasing
                         )
@@ -1584,21 +1597,13 @@ fun CytanniList(
                                     .size(40.dp)
                                     .padding(5.dp)
                                     .clickable {
-                                        if (autoScrollSpeed in 10..125) {
-                                            autoScrollSpeed += 5
-                                            val proc = 100 - (autoScrollSpeed - 15) * 100 / 115
+                                        if (viewModel.autoScrollSpeed in 10..125) {
+                                            viewModel.autoScrollSpeed += 5
+                                            val proc = 100 - (viewModel.autoScrollSpeed - 15) * 100 / 115
                                             autoScrollTextColor = Post
                                             autoScrollTextColor2 = PrimaryText
                                             autoScrollText = "$proc%"
-                                            autoScrollTextVisable = true
-                                            autoScrollTextVisableJob?.cancel()
-                                            autoScrollTextVisableJob = CoroutineScope(Dispatchers.Main).launch {
-                                                delay(3000)
-                                                autoScrollTextVisable = false
-                                            }
-                                            k.edit {
-                                                putInt("autoscrollSpid", autoScrollSpeed)
-                                            }
+                                            viewModel.autoScrollSpeed(context)
                                         }
                                     })
                         }
@@ -1610,21 +1615,13 @@ fun CytanniList(
                                 .size(40.dp)
                                 .padding(5.dp)
                                 .clickable {
-                                    if (autoScrollSpeed in 20..135) {
-                                        autoScrollSpeed -= 5
-                                        val proc = 100 - (autoScrollSpeed - 15) * 100 / 115
+                                    if (viewModel.autoScrollSpeed in 20..135) {
+                                        viewModel.autoScrollSpeed -= 5
+                                        val proc = 100 - (viewModel.autoScrollSpeed - 15) * 100 / 115
                                         autoScrollTextColor = Primary
                                         autoScrollTextColor2 = PrimaryTextBlack
                                         autoScrollText = "$proc%"
-                                        autoScrollTextVisable = true
-                                        autoScrollTextVisableJob?.cancel()
-                                        autoScrollTextVisableJob = CoroutineScope(Dispatchers.Main).launch {
-                                            delay(3000)
-                                            autoScrollTextVisable = false
-                                        }
-                                        k.edit {
-                                            putInt("autoscrollSpid", autoScrollSpeed)
-                                        }
+                                        viewModel.autoScrollSpeed(context)
                                     }
                                 })
                     }

@@ -1353,8 +1353,6 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         super.onPause()
         removelightSensor()
         searchJob?.cancel()
-        autoScrollJob?.cancel()
-        autoScrollTextVisableJob?.cancel()
     }
 
     override fun onResume() {
@@ -1396,8 +1394,6 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
             AppNavGraphState.setAlarm = true
             AppNavGraphState.appUpdate = true
             searchJob?.cancel()
-            autoScrollJob?.cancel()
-            autoScrollTextVisableJob?.cancel()
             finish()
         } else {
             backPressed = System.currentTimeMillis()
