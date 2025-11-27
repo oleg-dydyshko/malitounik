@@ -226,7 +226,7 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                     }
                 } else {
                     var text = file.readText()
-                    text = if (Settings.dzenNoch.value) text.replace("#d00505", "#ff6666", true)
+                    text = if (Settings.dzenNoch) text.replace("#d00505", "#ff6666", true)
                     else text
                     val htmltext = if (Piasochnica.isHTML) SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
                     else SpannableStringBuilder(text)
@@ -429,7 +429,7 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                         val file = File(context.getExternalFilesDir("PiasochnicaBackCopy"), fileName)
                         if (file.exists()) {
                             var text = file.readText()
-                            text = if (Settings.dzenNoch.value) text.replace("#d00505", "#ff6666", true)
+                            text = if (Settings.dzenNoch) text.replace("#d00505", "#ff6666", true)
                             else text
                             val html = if (Piasochnica.isHTML) {
                                 SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))

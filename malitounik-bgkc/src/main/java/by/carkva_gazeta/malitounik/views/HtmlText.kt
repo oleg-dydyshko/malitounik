@@ -53,7 +53,7 @@ fun HtmlText(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
-    var newText = if (Settings.dzenNoch.value) text.replace("#d00505", "#ff6666", true)
+    var newText = if (Settings.dzenNoch) text.replace("#d00505", "#ff6666", true)
     else text
     newText = newText.replace(
         "<!--<VERSION></VERSION>-->",

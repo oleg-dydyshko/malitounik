@@ -118,7 +118,7 @@ fun BibliaList(
             view
         ).apply {
             isAppearanceLightStatusBars = false
-            isAppearanceLightNavigationBars = !Settings.dzenNoch.value
+            isAppearanceLightNavigationBars = !Settings.dzenNoch
         }
     }
     Scaffold(

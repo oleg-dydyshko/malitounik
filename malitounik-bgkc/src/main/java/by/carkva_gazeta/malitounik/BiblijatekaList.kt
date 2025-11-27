@@ -54,7 +54,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.edit
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -77,7 +76,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.DecimalFormat
 
-class FilterBiblijatekaModel : ViewModel() {
+class FilterBiblijatekaModel : SearchBibleViewModel() {
     val listAllBiblijateka = ArrayList<ArrayList<String>>()
     private val items = mutableStateListOf<ArrayList<String>>()
 
@@ -238,7 +237,7 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
     if (searchText) {
         viewModel.clear()
         viewModel.addAllItemList(bibliatekaList)
-        viewModel.filterItem(Settings.textFieldValueState.value)
+        viewModel.filterItem(viewModel.textFieldValueState.text)
     }
     if (isDialogBiblijatekaVisable) {
         fileName = if (searchText) filteredItems[fileListPosition][2]

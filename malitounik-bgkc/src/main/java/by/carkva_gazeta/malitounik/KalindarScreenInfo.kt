@@ -62,7 +62,7 @@ fun KaliandarScreenInfo(navController: NavHostController) {
             view
         ).apply {
             isAppearanceLightStatusBars = false
-            isAppearanceLightNavigationBars = !Settings.dzenNoch.value
+            isAppearanceLightNavigationBars = !Settings.dzenNoch
         }
     }
     var backPressHandled by remember { mutableStateOf(false) }

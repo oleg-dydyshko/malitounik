@@ -113,6 +113,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -144,6 +145,7 @@ import by.carkva_gazeta.malitounik.Pashalia
 import by.carkva_gazeta.malitounik.PiesnyList
 import by.carkva_gazeta.malitounik.R
 import by.carkva_gazeta.malitounik.SearchBible
+import by.carkva_gazeta.malitounik.SearchBibleViewModel
 import by.carkva_gazeta.malitounik.Settings
 import by.carkva_gazeta.malitounik.SettingsView
 import by.carkva_gazeta.malitounik.SviatyList
@@ -154,11 +156,7 @@ import by.carkva_gazeta.malitounik.admin.Icony
 import by.carkva_gazeta.malitounik.admin.PasochnicaList
 import by.carkva_gazeta.malitounik.admin.PiasochnicaNew
 import by.carkva_gazeta.malitounik.formatFigureTwoPlaces
-import by.carkva_gazeta.malitounik.rawAsset
 import by.carkva_gazeta.malitounik.removeZnakiAndSlovy
-import by.carkva_gazeta.malitounik.searchJob
-import by.carkva_gazeta.malitounik.searchList
-import by.carkva_gazeta.malitounik.searchListSvityia
 import by.carkva_gazeta.malitounik.setNotificationNon
 import by.carkva_gazeta.malitounik.ui.theme.BackgroundTolBarDark
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
@@ -176,11 +174,8 @@ import com.google.android.play.core.install.InstallStateUpdatedListener
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileNotFoundException
@@ -271,7 +266,7 @@ object AppNavGraphState {
         cytata = AnnotatedString.Builder(citataList[randomCytata]).apply {
             addStyle(
                 SpanStyle(
-                    fontFamily = FontFamily(Font(R.font.andantinoscript)), fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic, color = if (Settings.dzenNoch.value) PrimaryBlack else Primary, fontSize = (Settings.fontInterface + 4).sp
+                    fontFamily = FontFamily(Font(R.font.andantinoscript)), fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic, color = if (Settings.dzenNoch) PrimaryBlack else Primary, fontSize = (Settings.fontInterface + 4).sp
                 ), 0, 1
             )
             addStyle(SpanStyle(fontFamily = FontFamily(Font(R.font.comici))), 1, this.length)
@@ -326,7 +321,7 @@ fun openAssetsResources(context: Context, fileName: String): String {
 }
 
 @Composable
-fun AppNavGraph(navController: NavHostController = rememberNavController()) {
+fun AppNavGraph(navController: NavHostController = rememberNavController(), viewModel: SearchBibleViewModel = viewModel()) {
     val drawerScrollStete = rememberScrollState()
     val searchBibleState = rememberLazyListState()
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
@@ -373,189 +368,189 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
         composable(AllDestinations.KALIANDAR) {
             Settings.destinations = AllDestinations.KALIANDAR
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.AKAFIST_MENU) {
             Settings.destinations = AllDestinations.AKAFIST_MENU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.LITURGIKON_MENU) {
             Settings.destinations = AllDestinations.LITURGIKON_MENU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.CHASASLOU_MENU) {
             Settings.destinations = AllDestinations.CHASASLOU_MENU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.MAE_NATATKI_MENU) {
             Settings.destinations = AllDestinations.MAE_NATATKI_MENU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.BOGASLUJBOVYIA_MENU) {
             Settings.destinations = AllDestinations.BOGASLUJBOVYIA_MENU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.MALITVY_MENU) {
             Settings.destinations = AllDestinations.MALITVY_MENU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.BIBLIA_SEMUXA) {
             Settings.destinations = AllDestinations.BIBLIA_SEMUXA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.BIBLIA_BOKUNA) {
             Settings.destinations = AllDestinations.BIBLIA_BOKUNA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.BIBLIA_NADSAN) {
             Settings.destinations = AllDestinations.BIBLIA_NADSAN
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.BIBLIA_CHARNIAUSKI) {
             Settings.destinations = AllDestinations.BIBLIA_CHARNIAUSKI
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.BIBLIA_CATOLIK) {
             Settings.destinations = AllDestinations.BIBLIA_CATOLIK
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.BIBLIA_SINODAL) {
             Settings.destinations = AllDestinations.BIBLIA_SINODAL
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.BIBLIA_NEW_KING_JAMES) {
             Settings.destinations = AllDestinations.BIBLIA_NEW_KING_JAMES
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.KALIANDAR_YEAR) {
             Settings.destinations = AllDestinations.KALIANDAR_YEAR
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.VYBRANAE_LIST) {
             Settings.destinations = AllDestinations.VYBRANAE_LIST
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.BIBLIJATEKA_NIADAUNIA) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_NIADAUNIA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.BIBLIJATEKA_SPEUNIKI) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_SPEUNIKI
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.BIBLIJATEKA_GISTORYIA) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_GISTORYIA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.BIBLIJATEKA_MALITOUNIKI) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_MALITOUNIKI
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.PIESNY_PRASLAULENNIA) {
             Settings.destinations = AllDestinations.PIESNY_PRASLAULENNIA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.PIESNY_DA_BAGARODZICY) {
             Settings.destinations = AllDestinations.PIESNY_DA_BAGARODZICY
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.PIESNY_ZA_BELARUS) {
             Settings.destinations = AllDestinations.PIESNY_ZA_BELARUS
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.PIESNY_KALIADNYIA) {
             Settings.destinations = AllDestinations.PIESNY_KALIADNYIA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.PIESNY_TAIZE) {
             Settings.destinations = AllDestinations.PIESNY_TAIZE
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
@@ -596,21 +591,21 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
         composable(AllDestinations.UNDER_SVAITY_MUNU) {
             Settings.destinations = AllDestinations.UNDER_SVAITY_MUNU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.UNDER_PARAFII_BGKC) {
             Settings.destinations = AllDestinations.UNDER_PARAFII_BGKC
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
         composable(AllDestinations.UNDER_PASHALIA) {
             Settings.destinations = AllDestinations.UNDER_PASHALIA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
@@ -718,7 +713,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
                 )
             }, navigateToBogaslujbovyia = { title, resurs ->
                 navigationActions.navigateToBogaslujbovyia(title, resurs)
-            })
+            }, viewModel = viewModel)
         }
 
         composable(AllDestinations.CYTATY_MENU) {
@@ -728,7 +723,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
         composable(AllDestinations.PIASOCHNICA_LIST) {
             Settings.destinations = AllDestinations.PIASOCHNICA_LIST
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
             )
         }
 
@@ -844,7 +839,8 @@ fun CheckUpdateMalitounik(
 @Composable
 fun MainConteiner(
     navController: NavHostController,
-    drawerScrollStete: ScrollState
+    drawerScrollStete: ScrollState,
+    viewModel: SearchBibleViewModel
 ) {
     val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
     val coroutineScope = rememberCoroutineScope()
@@ -894,7 +890,7 @@ fun MainConteiner(
     var isAppearanceLight by remember { mutableStateOf(false) }
     LaunchedEffect(isAppearanceLight, Unit, drawerState.isOpen) {
         isAppearanceLight = if (drawerState.isOpen) {
-            !Settings.dzenNoch.value
+            !Settings.dzenNoch
         } else {
             if (currentRoute == AllDestinations.KALIANDAR) {
                 when {
@@ -958,7 +954,7 @@ fun MainConteiner(
             isAppearanceLightNavigationBars = if (Settings.destinations == AllDestinations.KALIANDAR) {
                 isAppearanceLight
             } else {
-                !Settings.dzenNoch.value
+                !Settings.dzenNoch
             }
         }
     }
@@ -1038,7 +1034,7 @@ fun MainConteiner(
     val color = MaterialTheme.colorScheme.onTertiary
     var colorBlackboard by remember { mutableStateOf(color) }
     var dialogKniga by remember { mutableStateOf(false) }
-    var searshString by remember { mutableStateOf(TextFieldValue(Settings.textFieldValueState.value, TextRange(Settings.textFieldValueState.value.length))) }
+    var searshString by remember { mutableStateOf(TextFieldValue(viewModel.textFieldValueState.text, TextRange(viewModel.textFieldValueState.text.length))) }
     var addBiblijateka by remember { mutableStateOf(false) }
     ModalNavigationDrawer(
         drawerContent = {
@@ -1048,10 +1044,8 @@ fun MainConteiner(
                 navigateToRazdel = { razdzel ->
                     coroutineScope.launch {
                         drawerState.close()
-                        searchList.clear()
-                        searchListSvityia.clear()
-                        Settings.textFieldValueState.value = ""
-                        Settings.textFieldValueLatest.value = ""
+                        viewModel.textFieldValueState = TextFieldValue("")
+                        Settings.textFieldValueLatest = ""
                         when (razdzel) {
                             AllDestinations.KALIANDAR -> {
                                 if (k.getBoolean("caliandarList", false)) navigationActions.navigateToKaliandarYear()
@@ -1119,7 +1113,7 @@ fun MainConteiner(
             )
         }, drawerState = drawerState
     ) {
-        var tollBarColor by remember { mutableStateOf(if (Settings.dzenNoch.value) BackgroundTolBarDark else Primary) }
+        var tollBarColor by remember { mutableStateOf(if (Settings.dzenNoch) BackgroundTolBarDark else Primary) }
         var textTollBarColor by remember { mutableStateOf(PrimaryTextBlack) }
         var title by rememberSaveable { mutableStateOf("") }
         var isBottomBar by remember { mutableStateOf(k.getBoolean("bottomBar", false)) }
@@ -1198,18 +1192,18 @@ fun MainConteiner(
                                 if (!currentRoute.contains("Biblia_")) edit = zamena(edit)
                                 if (oldEdit != edit) selection = TextRange(edit.length)
                                 searshString = TextFieldValue(edit, selection)
-                                Settings.textFieldValueState.value = edit
+                                viewModel.textFieldValueState = searshString
                             }, singleLine = true, leadingIcon = {
                                 Icon(
                                     painter = painterResource(R.drawable.search), tint = textTollBarColor, contentDescription = ""
                                 )
                             }, trailingIcon = {
                                 IconButton(onClick = {
-                                    Settings.textFieldValueState.value = ""
+                                    viewModel.textFieldValueState = TextFieldValue("")
                                     searshString = TextFieldValue("")
                                 }) {
                                     Icon(
-                                        painter = if (Settings.textFieldValueState.value.isNotEmpty()) painterResource(R.drawable.close) else painterResource(R.drawable.empty), contentDescription = "", tint = textTollBarColor
+                                        painter = if (viewModel.textFieldValueState.text.isNotEmpty()) painterResource(R.drawable.close) else painterResource(R.drawable.empty), contentDescription = "", tint = textTollBarColor
                                     )
                                 }
                             }, colors = TextFieldDefaults.colors(
@@ -1475,7 +1469,7 @@ fun MainConteiner(
                         ModalBottomSheet(
                             sheetState = sheetState, properties = ModalBottomSheetProperties(
                                 isAppearanceLightStatusBars = isAppearanceLight, isAppearanceLightNavigationBars = if (Settings.destinations == AllDestinations.KALIANDAR) isAppearanceLight
-                                else !Settings.dzenNoch.value
+                                else !Settings.dzenNoch
                             ), containerColor = MaterialTheme.colorScheme.surfaceContainer, onDismissRequest = { showDropdown = false }) {
                             if (showDropdownMenuPos == 1) {
                                 KaliandarScreenMounth(
@@ -1640,7 +1634,7 @@ fun MainConteiner(
                                     pagerState.scrollToPage(Settings.caliandarPosition)
                                 }
                                 searchText = false
-                            })
+                            }, viewModel)
                         } else {
                             HorizontalPager(
                                 pageSpacing = 10.dp, state = pagerState, flingBehavior = fling, verticalAlignment = Alignment.Top, modifier = Modifier.padding(10.dp)
@@ -1767,7 +1761,7 @@ fun MainConteiner(
                     AllDestinations.UNDER_PASHALIA -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        if (!searchText) Settings.textFieldValueState.value = ""
+                        if (!searchText) viewModel.textFieldValueState = TextFieldValue("")
                         Pashalia(navController, innerPadding, searchText)
                     }
 
@@ -1815,7 +1809,7 @@ fun MainConteiner(
                             )
                         }, navigateToBogaslujbovyia = { title, resurs ->
                             navigationActions.navigateToBogaslujbovyia(title, resurs)
-                        })
+                        }, viewModel)
                     }
 
                     AllDestinations.BIBLIA_BOKUNA -> {
@@ -1829,7 +1823,7 @@ fun MainConteiner(
                             )
                         }, navigateToBogaslujbovyia = { title, resurs ->
                             navigationActions.navigateToBogaslujbovyia(title, resurs)
-                        })
+                        }, viewModel)
                     }
 
                     AllDestinations.BIBLIA_NADSAN -> {
@@ -1843,7 +1837,7 @@ fun MainConteiner(
                             )
                         }, navigateToBogaslujbovyia = { title, resurs ->
                             navigationActions.navigateToBogaslujbovyia(title, resurs)
-                        })
+                        }, viewModel)
                     }
 
                     AllDestinations.BIBLIA_CHARNIAUSKI -> {
@@ -1857,7 +1851,7 @@ fun MainConteiner(
                             )
                         }, navigateToBogaslujbovyia = { title, resurs ->
                             navigationActions.navigateToBogaslujbovyia(title, resurs)
-                        })
+                        }, viewModel)
                     }
 
                     AllDestinations.BIBLIA_CATOLIK -> {
@@ -1871,7 +1865,7 @@ fun MainConteiner(
                             )
                         }, navigateToBogaslujbovyia = { title, resurs ->
                             navigationActions.navigateToBogaslujbovyia(title, resurs)
-                        })
+                        }, viewModel)
                     }
 
                     AllDestinations.BIBLIA_SINODAL -> {
@@ -1885,7 +1879,7 @@ fun MainConteiner(
                             )
                         }, navigateToBogaslujbovyia = { title, resurs ->
                             navigationActions.navigateToBogaslujbovyia(title, resurs)
-                        })
+                        }, viewModel)
                     }
 
                     AllDestinations.BIBLIA_NEW_KING_JAMES -> {
@@ -1899,7 +1893,7 @@ fun MainConteiner(
                             )
                         }, navigateToBogaslujbovyia = { title, resurs ->
                             navigationActions.navigateToBogaslujbovyia(title, resurs)
-                        })
+                        }, viewModel)
                     }
 
                     AllDestinations.KALIANDAR_YEAR -> {
@@ -1918,7 +1912,7 @@ fun MainConteiner(
                                     lazyColumnState.scrollToItem(Settings.caliandarPosition)
                                 }
                                 searchText = false
-                            })
+                            }, viewModel)
                         } else {
                             KaliandarScreenYear(
                                 coroutineScope = coroutineScope, lazyColumnState = lazyColumnState, innerPadding, navigateToSvityiaView = { svity, position ->
@@ -1972,23 +1966,11 @@ fun MainConteiner(
 }
 
 @Composable
-fun SearchSviatyia(lazyColumnStateSearchSvityia: LazyListState, innerPadding: PaddingValues, setCaliandarPage: () -> Unit) {
+fun SearchSviatyia(lazyColumnStateSearchSvityia: LazyListState, innerPadding: PaddingValues, setCaliandarPage: () -> Unit, viewModel: SearchBibleViewModel) {
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
-    LaunchedEffect(Settings.textFieldValueState.value) {
-        if (Settings.textFieldValueState.value.trim().length >= 3 && Settings.textFieldValueState.value.trim() != Settings.textFieldValueLatest.value.trim()) {
-            Settings.textFieldValueLatest.value = Settings.textFieldValueState.value.trim()
-            searchJob?.cancel()
-            searchJob = CoroutineScope(Dispatchers.Main).launch {
-                searchListSvityia.clear()
-                val list = withContext(Dispatchers.IO) {
-                    return@withContext rawAsset(context, Settings.textFieldValueState.value.trim())
-                }
-                searchListSvityia.addAll(list)
-            }
-        } else {
-            searchJob?.cancel()
-        }
+    LaunchedEffect(viewModel.textFieldValueState.text) {
+        viewModel.searchSvityia(context)
     }
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
@@ -2004,7 +1986,7 @@ fun SearchSviatyia(lazyColumnStateSearchSvityia: LazyListState, innerPadding: Pa
     Column {
         Text(
             modifier = Modifier.padding(start = 10.dp),
-            text = stringResource(R.string.searh_sviatyia_result, searchListSvityia.size),
+            text = stringResource(R.string.searh_sviatyia_result, viewModel.searchListSvityia.size),
             fontStyle = FontStyle.Italic,
             fontSize = Settings.fontInterface.sp,
             color = MaterialTheme.colorScheme.secondary
@@ -2013,13 +1995,13 @@ fun SearchSviatyia(lazyColumnStateSearchSvityia: LazyListState, innerPadding: Pa
             Modifier.nestedScroll(nestedScrollConnection),
             state = lazyColumnStateSearchSvityia
         ) {
-            items(searchListSvityia.size) { index ->
+            items(viewModel.searchListSvityia.size) { index ->
                 Row(
                     modifier = Modifier
                         .padding(start = 10.dp)
                         .clickable {
                             val calendar = Calendar.getInstance()
-                            calendar[Calendar.DAY_OF_YEAR] = searchListSvityia[index].dayOfYear
+                            calendar[Calendar.DAY_OF_YEAR] = viewModel.searchListSvityia[index].dayOfYear
                             for (e in Settings.data.indices) {
                                 if (calendar[Calendar.DATE] == Settings.data[e][1].toInt() && calendar[Calendar.MONTH] == Settings.data[e][2].toInt() && calendar[Calendar.YEAR] == Settings.data[e][3].toInt()) {
                                     Settings.caliandarPosition = e
@@ -2038,7 +2020,7 @@ fun SearchSviatyia(lazyColumnStateSearchSvityia: LazyListState, innerPadding: Pa
                     )
                     Column {
                         Text(
-                            text = searchListSvityia[index].opisanieData,
+                            text = viewModel.searchListSvityia[index].opisanieData,
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(10.dp),
@@ -2046,12 +2028,12 @@ fun SearchSviatyia(lazyColumnStateSearchSvityia: LazyListState, innerPadding: Pa
                             color = MaterialTheme.colorScheme.secondary,
                             fontSize = Settings.fontInterface.sp
                         )
-                        when (searchListSvityia[index].typeSviat) {
+                        when (viewModel.searchListSvityia[index].typeSviat) {
                             0 -> {
                                 HtmlText(
                                     modifier = Modifier
                                         .padding(10.dp),
-                                    text = searchListSvityia[index].opisanie,
+                                    text = viewModel.searchListSvityia[index].opisanie,
                                     fontSize = Settings.fontInterface.sp
                                 )
                             }
@@ -2060,7 +2042,7 @@ fun SearchSviatyia(lazyColumnStateSearchSvityia: LazyListState, innerPadding: Pa
                                 Text(
                                     modifier = Modifier
                                         .padding(10.dp),
-                                    text = searchListSvityia[index].opisanie,
+                                    text = viewModel.searchListSvityia[index].opisanie,
                                     color = MaterialTheme.colorScheme.primary,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = Settings.fontInterface.sp
@@ -2071,7 +2053,7 @@ fun SearchSviatyia(lazyColumnStateSearchSvityia: LazyListState, innerPadding: Pa
                                 Text(
                                     modifier = Modifier
                                         .padding(10.dp),
-                                    text = searchListSvityia[index].opisanie,
+                                    text = viewModel.searchListSvityia[index].opisanie,
                                     color = MaterialTheme.colorScheme.primary,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = Settings.fontInterface.sp
@@ -2082,21 +2064,21 @@ fun SearchSviatyia(lazyColumnStateSearchSvityia: LazyListState, innerPadding: Pa
                                 Text(
                                     modifier = Modifier
                                         .padding(10.dp),
-                                    text = searchListSvityia[index].opisanie,
+                                    text = viewModel.searchListSvityia[index].opisanie,
                                     color = MaterialTheme.colorScheme.primary,
                                     fontSize = Settings.fontInterface.sp
                                 )
                             }
 
                             else -> {
-                                val t1 = searchListSvityia[index].opisanie.indexOf(":")
+                                val t1 = viewModel.searchListSvityia[index].opisanie.indexOf(":")
                                 val annotatedString = if (t1 != -1) {
                                     buildAnnotatedString {
-                                        append(searchListSvityia[index].opisanie)
+                                        append(viewModel.searchListSvityia[index].opisanie)
                                         addStyle(SpanStyle(fontWeight = FontWeight.Bold), 0, t1 + 1)
                                     }
                                 } else {
-                                    AnnotatedString(searchListSvityia[index].opisanie)
+                                    AnnotatedString(viewModel.searchListSvityia[index].opisanie)
                                 }
                                 Text(
                                     modifier = Modifier

@@ -162,7 +162,7 @@ object Piasochnica {
                     Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
                 }
                 var text = if (error) "" else localFile.readText()
-                text = if (Settings.dzenNoch.value) text.replace("#d00505", "#ff6666", true)
+                text = if (Settings.dzenNoch) text.replace("#d00505", "#ff6666", true)
                 else text
                 result(text, newFileName)
                 isProgressVisable(false)
@@ -210,7 +210,7 @@ object Piasochnica {
             Malitounik.referens.child("/admin/piasochnica/$resours").getFile(localFile).addOnCompleteListener {
                 if (it.isSuccessful) {
                     var text = localFile.readText()
-                    text = if (Settings.dzenNoch.value) text.replace("#d00505", "#ff6666", true)
+                    text = if (Settings.dzenNoch) text.replace("#d00505", "#ff6666", true)
                     else text
                     val htmlText = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT) as SpannableStringBuilder
                     result(htmlText, text)
@@ -1101,12 +1101,12 @@ fun PiasochnicaNew(
                             val subtext = editable.getSpans(startEditPosition, endEditPosition, ForegroundColorSpan::class.java)
                             var check = false
                             subtext.forEach {
-                                if (it.foregroundColor == ContextCompat.getColor(context, if (Settings.dzenNoch.value) R.color.colorPrimary_black else R.color.colorPrimary)) {
+                                if (it.foregroundColor == ContextCompat.getColor(context, if (Settings.dzenNoch) R.color.colorPrimary_black else R.color.colorPrimary)) {
                                     check = true
                                     editable.removeSpan(it)
                                 }
                             }
-                            if (!check) editable.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, if (Settings.dzenNoch.value) R.color.colorPrimary_black else R.color.colorPrimary)), startEditPosition, endEditPosition, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            if (!check) editable.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, if (Settings.dzenNoch) R.color.colorPrimary_black else R.color.colorPrimary)), startEditPosition, endEditPosition, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                         }
                     } else {
                         val text = editText.text.toString()
@@ -1204,7 +1204,7 @@ fun PiasochnicaNew(
                     factory = {
                         editText.apply {
                             setText(Piasochnica.htmlText)
-                            setTextColor(ContextCompat.getColor(context, if (Settings.dzenNoch.value) R.color.colorWhite else R.color.colorPrimary_text))
+                            setTextColor(ContextCompat.getColor(context, if (Settings.dzenNoch) R.color.colorWhite else R.color.colorPrimary_text))
                             textSize = fontSize
                             addTextChangedListener(textWatcher)
                         }
@@ -1214,7 +1214,7 @@ fun PiasochnicaNew(
                         editText.setText(Piasochnica.htmlText)
                         if (startEditPosition == 0) editText.setSelection(endEditPosition)
                         else editText.setSelection(startEditPosition, endEditPosition)
-                        editText.setTextColor(ContextCompat.getColor(context, if (Settings.dzenNoch.value) R.color.colorWhite else R.color.colorPrimary_text))
+                        editText.setTextColor(ContextCompat.getColor(context, if (Settings.dzenNoch) R.color.colorWhite else R.color.colorPrimary_text))
                         editText.textSize = fontSize
                         editText.addTextChangedListener(textWatcher)
                     },

@@ -231,7 +231,7 @@ fun PadzeiaView(navController: NavHostController) {
             window, view
         ).apply {
             isAppearanceLightStatusBars = false
-            isAppearanceLightNavigationBars = !Settings.dzenNoch.value
+            isAppearanceLightNavigationBars = !Settings.dzenNoch
         }
     }
     var showDropdown by remember { mutableStateOf(false) }
@@ -1099,7 +1099,7 @@ fun MyTimePickerDialog(
         initialMinute = currentTime.get(Calendar.MINUTE),
         is24Hour = true,
     )
-    val colorText = if (Settings.dzenNoch.value) PrimaryText
+    val colorText = if (Settings.dzenNoch) PrimaryText
     else PrimaryTextBlack
     val color = TimePickerDefaults.colors().copy(timeSelectorSelectedContainerColor = MaterialTheme.colorScheme.primary, timeSelectorSelectedContentColor = colorText)
     Dialog(onDismissRequest = { onDismiss() }) {

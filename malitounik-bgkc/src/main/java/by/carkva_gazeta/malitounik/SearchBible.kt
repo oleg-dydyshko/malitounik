@@ -11,17 +11,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
@@ -32,14 +31,13 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -72,7 +70,8 @@ import androidx.core.content.edit
 import androidx.core.text.HtmlCompat
 import androidx.core.text.isDigitsOnly
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik.ui.theme.Primary
@@ -80,6 +79,7 @@ import by.carkva_gazeta.malitounik.ui.theme.PrimaryBlack
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
+import by.carkva_gazeta.malitounik.views.AppNavGraphState.searchSettings
 import by.carkva_gazeta.malitounik.views.openAssetsResources
 import by.carkva_gazeta.malitounik.views.openBibleResources
 import kotlinx.coroutines.CoroutineScope
@@ -92,50 +92,396 @@ import java.util.Calendar
 import java.util.GregorianCalendar
 import java.util.Locale
 
-var searchJob: Job? = null
-val searchList = SnapshotStateList<SearchBibleItem>()
-val searchListSvityia = SnapshotStateList<Prazdniki>()
+open class SearchBibleViewModel : ViewModel() {
+    var searchJob: Job? = null
+    val searchList = mutableStateListOf<SearchBibleItem>()
+    var searchSettings by mutableStateOf(false)
+    val searchListSvityia = mutableStateListOf<Prazdniki>()
+    var isProgressVisable by mutableStateOf(false)
+    var textFieldValueState by mutableStateOf(TextFieldValue(AppNavGraphState.searchBogaslujbovyia, TextRange(AppNavGraphState.searchBogaslujbovyia.length)))
+
+    fun doInBackground(
+        context: Context, searche: String, perevod: String, isBogaslujbovyiaSearch: Boolean
+    ): ArrayList<SearchBibleItem> {
+        val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+        var list = if (isBogaslujbovyiaSearch) {
+            bogashlugbovya(context, searche)
+        } else {
+            biblia(context, searche, perevod)
+        }
+        if (!isBogaslujbovyiaSearch) {
+            if (list.isEmpty() && k.getInt("slovocalkam", 0) == 0) {
+                list = biblia(context, searche, perevod, true)
+            }
+        }
+        return list
+    }
+
+    @Suppress("DEPRECATION")
+    fun bogashlugbovya(context: Context, poshuk: String, secondRun: Boolean = false): ArrayList<SearchBibleItem> {
+        val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+        var poshuk1 = poshuk
+        val seashpost = ArrayList<SearchBibleItem>()
+        val registr = k.getBoolean("pegistrbukv", true)
+        poshuk1 = zamena(poshuk1, registr)
+        if (secondRun) {
+            val m = charArrayOf('у', 'е', 'а', 'о', 'э', 'я', 'і', 'ю', 'ь', 'ы')
+            for (aM in m) {
+                val r = poshuk1.length - 1
+                if (poshuk1[r] == aM && r >= 3) {
+                    poshuk1 = poshuk1.replace(poshuk1, poshuk1.take(r), registr)
+                }
+            }
+        }
+        val bogaslugbovyiaListAll = getAllBogaslujbovyia(context)
+        for (i in 0 until bogaslugbovyiaListAll.size) {
+            if (searchJob?.isActive == false) break
+            var nazva = context.getString(R.string.error_ch)
+            val bibleline = openAssetsResources(context, bogaslugbovyiaListAll[i].resource)
+            val t1 = bibleline.indexOf("<strong>")
+            if (t1 != -1) {
+                val t2 = bibleline.indexOf("</strong>", t1 + 8)
+                nazva = bibleline.substring(t1 + 8, t2)
+                nazva = AnnotatedString.fromHtml(nazva).text
+                nazva = nazva.replace("\n", " ")
+            }
+            val prepinanie = AnnotatedString.fromHtml(bibleline).text
+            val poshuk2 = findChars(context, poshuk1, prepinanie)
+            if (poshuk2.isEmpty()) continue
+            val span = AnnotatedString.Builder()
+            span.append(nazva)
+            seashpost.add(SearchBibleItem(nazva, 0, 0, bogaslugbovyiaListAll[i].resource, span))
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+            seashpost.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+        } else {
+            seashpost.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
+        }
+        return seashpost
+    }
+
+    fun biblia(
+        context: Context, poshuk: String, perevod: String, secondRun: Boolean = false
+    ): ArrayList<SearchBibleItem> {
+        val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+        var poshuk1 = poshuk
+        val seashpost = ArrayList<SearchBibleItem>()
+        val registr = k.getBoolean("pegistrbukv", true)
+        if (secondRun) {
+            val m = if (perevod == Settings.PEREVODSINOIDAL) charArrayOf(
+                'у', 'е', 'а', 'о', 'э', 'я', 'и', 'ю', 'ь', 'ы'
+            )
+            else charArrayOf('у', 'е', 'а', 'о', 'э', 'я', 'і', 'ю', 'ь', 'ы')
+            for (aM in m) {
+                val r = poshuk1.length - 1
+                if (poshuk1.length >= 3) {
+                    if (poshuk1[r] == aM && r >= 3) {
+                        poshuk1 = poshuk1.replace(poshuk1, poshuk1.take(r), registr)
+                    }
+                }
+            }
+        }
+        val rangeBibile = when (perevod) {
+            Settings.PEREVODNADSAN -> 0..0
+            Settings.PEREVODCATOLIK -> 1..1
+            else -> 0..1
+        }
+        for (novyZapaviet in rangeBibile) {
+            val list = if (novyZapaviet == 0) getNameBook(context, perevod, false)
+            else getNameBook(context, perevod, true)
+            val subTitleListName = if (novyZapaviet == 0) setStaryZapavet(list, perevod)
+            else setNovyZapavet(list, perevod)
+            val range = when (k.getInt("biblia_seash", 0)) {
+                1 -> {
+                    if (novyZapaviet == 0) continue
+                    0 until 4
+                }
+
+                2 -> {
+                    if (novyZapaviet == 0) continue
+                    0 until getNameBook(context, perevod, true).size
+                }
+
+                3 -> {
+                    if (novyZapaviet == 1) continue
+                    0 until 4
+                }
+
+                4 -> {
+                    if (novyZapaviet == 1) continue
+                    0 until getNameBook(context, perevod, false).size
+                }
+
+                else -> {
+                    if (novyZapaviet == 0) 0 until getNameBook(context, perevod, false).size
+                    else 0 until getNameBook(context, perevod, true).size
+                }
+            }
+            for (i in range) {
+                if (searchJob?.isActive == false) break
+                val nazva = list[i]
+                val subTitle = subTitleListName[i].subTitle
+                val zavet = if (novyZapaviet == 1) "n"
+                else "s"
+                val prevodName = when (perevod) {
+                    Settings.PEREVODSEMUXI -> "chytanne/Semucha/biblia"
+                    Settings.PEREVODBOKUNA -> "chytanne/Bokun/bokuna"
+                    Settings.PEREVODCARNIAUSKI -> "chytanne/Carniauski/carniauski"
+                    Settings.PEREVODCATOLIK -> "/Catolik/catolik"
+                    Settings.PEREVODNADSAN -> "chytanne/psaltyr_nadsan.txt"
+                    Settings.PEREVODSINOIDAL -> "/Sinodal/sinaidal"
+                    Settings.PEREVODNEWKINGJAMES -> "/NewKingJames/english"
+                    else -> "chytanne/Semucha/biblia"
+                }
+                val fileName = if (perevod == Settings.PEREVODNADSAN) prevodName
+                else "$prevodName$zavet${i + 1}.txt"
+                var glava = 0
+                val split = if (perevod == Settings.PEREVODSINOIDAL || perevod == Settings.PEREVODCATOLIK || perevod == Settings.PEREVODNEWKINGJAMES) {
+                    openBibleResources(context, fileName).split("===")
+                } else {
+                    openAssetsResources(context, fileName).split("===")
+                }
+                for (e in 1 until split.size) {
+                    glava++
+                    val bibleline = split[e].split("\n")
+                    var stix = 0
+                    for (r in 1 until bibleline.size) {
+                        stix++
+                        var aSviatyia = HtmlCompat.fromHtml(bibleline[r], HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
+                        val title = "$nazva Гл. $glava\n"
+                        val t3 = title.length
+                        val span = AnnotatedString.Builder()
+                        val poshuk2 = findChars(context, poshuk1, aSviatyia)
+                        if (poshuk2.isEmpty()) continue
+                        span.append(title)
+                        span.addStyle(SpanStyle(fontWeight = FontWeight.Bold), 0, title.length)
+                        var t5 = aSviatyia.indexOf("<br>")
+                        if (t5 == -1) t5 = 0
+                        else t5 += 4
+                        val t6 = aSviatyia.indexOf(" ", t5)
+                        val isInt = if (t6 != -1) {
+                            val item = aSviatyia.substring(t5, t6)
+                            item.isNotEmpty() && item.isDigitsOnly()
+                        } else false
+                        val padd = if (isInt) {
+                            val color = if (Settings.dzenNoch) PrimaryBlack
+                            else Primary
+                            val sub1 = aSviatyia.substring(t5, t6)
+                            aSviatyia = aSviatyia.replace(sub1, "$sub1.")
+                            span.append(aSviatyia)
+                            span.addStyle(SpanStyle(color = color), t5 + t3, t6 + t3 + 1)
+                            1
+                        } else {
+                            span.append(aSviatyia)
+                            0
+                        }
+                        for (w in 0 until poshuk2.size) {
+                            val t2 = poshuk2[w].str.length
+                            val t1 = poshuk2[w].position + t3 + padd
+                            span.addStyle(
+                                SpanStyle(background = BezPosta, color = PrimaryText), t1 - t2, t1
+                            )
+                        }
+                        seashpost.add(SearchBibleItem(subTitle, glava, stix, "", span))
+                    }
+                }
+            }
+        }
+        return seashpost
+    }
+
+    fun findChars(context: Context, search: String, textSearch: String): ArrayList<FindString> {
+        val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+        val registr = k.getBoolean("pegistrbukv", true)
+        val stringBuilder = StringBuilder()
+        var strSub = 0
+        val list = search.toCharArray()
+        val result = ArrayList<FindString>()
+        while (true) {
+            val strSub1Pos = textSearch.indexOf(list[0], strSub, registr)
+            if (strSub1Pos != -1) {
+                strSub = strSub1Pos + 1
+                val subChar2 = StringBuilder()
+                for (i in 1 until list.size) {
+                    if (textSearch.length >= strSub + 1) {
+                        if (list[i].isLetterOrDigit()) {
+                            var subChar = textSearch.substring(strSub, strSub + 1)
+                            if (subChar == "́") {
+                                stringBuilder.append(list[i])
+                                strSub++
+                                if (textSearch.length >= strSub + 1) {
+                                    subChar = textSearch.substring(strSub, strSub + 1)
+                                }
+                            }
+                            val strSub2Pos = subChar.indexOf(list[i], ignoreCase = registr)
+                            if (strSub2Pos != -1) {
+                                if (stringBuilder.isEmpty()) stringBuilder.append(
+                                    textSearch.substring(
+                                        strSub1Pos, strSub1Pos + 1
+                                    )
+                                )
+                                if (subChar2.isNotEmpty()) stringBuilder.append(subChar2.toString())
+                                stringBuilder.append(list[i])
+                                subChar2.clear()
+                                strSub++
+                            } else {
+                                stringBuilder.clear()
+                                break
+                            }
+                        } else {
+                            while (true) {
+                                if (textSearch.length >= strSub + 1) {
+                                    val subChar = textSearch.substring(strSub, strSub + 1).toCharArray()
+                                    if (!subChar[0].isLetterOrDigit()) {
+                                        subChar2.append(subChar[0])
+                                        strSub++
+                                    } else {
+                                        if (list.size - 1 == i) {
+                                            stringBuilder.append(list[i])
+                                        }
+                                        break
+                                    }
+                                } else {
+                                    break
+                                }
+                            }
+                            if (subChar2.isEmpty()) {
+                                strSub++
+                                stringBuilder.clear()
+                                break
+                            }
+                        }
+                    } else {
+                        stringBuilder.clear()
+                        break
+                    }
+                }
+                if (stringBuilder.toString().isNotEmpty()) {
+                    if (k.getInt("slovocalkam", 0) == 1) {
+                        val startString = if (strSub1Pos > 0) textSearch.substring(strSub1Pos - 1, strSub1Pos)
+                        else " "
+                        val endString = if (strSub1Pos + stringBuilder.length + 1 <= textSearch.length) textSearch.substring(
+                            strSub1Pos + stringBuilder.length, strSub1Pos + stringBuilder.length + 1
+                        )
+                        else " "
+                        if (!startString.toCharArray()[0].isLetterOrDigit() && !endString.toCharArray()[0].isLetterOrDigit()) {
+                            result.add(FindString(stringBuilder.toString(), strSub))
+                            stringBuilder.clear()
+                        }
+                    } else {
+                        result.add(FindString(stringBuilder.toString(), strSub))
+                        stringBuilder.clear()
+                    }
+                }
+            } else {
+                break
+            }
+        }
+        return result
+    }
+
+    fun rawAsset(context: Context, poshukString: String, secondRun: Boolean = false): ArrayList<Prazdniki> {
+        val year = Calendar.getInstance()[Calendar.YEAR]
+        val yearList = ArrayList<ArrayList<String>>()
+        Settings.data.forEach { arrayList ->
+            if (year == arrayList[3].toInt()) {
+                yearList.add(arrayList)
+            }
+        }
+        val arrayLists = ArrayList<ArrayList<String>>()
+        arrayLists.addAll(yearList)
+        val munName = context.resources.getStringArray(R.array.meciac_smoll)
+        var poshuk = poshukString
+        poshuk = zamena(poshuk)
+        if (secondRun) {
+            val m = charArrayOf('у', 'е', 'а', 'о', 'э', 'я', 'і', 'ю', 'ў', 'ь', 'ы')
+            for (aM in m) {
+                val r = poshuk.length - 1
+                if (r >= 3) {
+                    if (poshuk[r] == aM) {
+                        poshuk = poshuk.replace(poshuk, poshuk.take(r), true)
+                    }
+                }
+            }
+        }
+        val result = ArrayList<Prazdniki>()
+        val nedelName = context.resources.getStringArray(R.array.dni_nedeli)
+        for (e in arrayLists.indices) {
+            val sviatyia = arrayLists[e][4].split("<br>")
+            for (aSviatyia in sviatyia) {
+                if (aSviatyia.replace("ё", "е", true).contains(poshuk, true)) {
+                    val g = GregorianCalendar(arrayLists[e][3].toInt(), arrayLists[e][2].toInt(), arrayLists[e][1].toInt())
+                    result.add(Prazdniki(g[Calendar.DAY_OF_YEAR], aSviatyia, g[Calendar.DATE].toString() + " " + munName[g[Calendar.MONTH]] + ", " + nedelName[g[Calendar.DAY_OF_WEEK]], 0))
+                }
+            }
+        }
+        val data = getPrazdnik(context, 1)
+        data.addAll(getPrazdnik(context, 2))
+        data.addAll(getPrazdnik(context, 3))
+        data.addAll(getPrazdnik(context, 4))
+        data.addAll(getPrazdnik(context, 5))
+        data.addAll(getPrazdnik(context, 6))
+        for (e in data.indices) {
+            val sviatya = data[e].opisanie.replace("ё", "е", true)
+            if (sviatya.contains(poshuk, true)) {
+                result.add(data[e])
+            }
+        }
+        return result
+    }
+
+    fun search(context: Context, perevod: String, isBogaslujbovyiaSearch: Boolean) {
+        viewModelScope.launch {
+            if (searchSettings) {
+                searchList.clear()
+                searchSettings = false
+            }
+            if (textFieldValueState.text.trim().length >= 3) {
+                if (textFieldValueState.text != AppNavGraphState.searchBogaslujbovyia) {
+                    searchJob?.cancel()
+                    searchJob = CoroutineScope(Dispatchers.Main).launch {
+                        isProgressVisable = true
+                        searchList.clear()
+                        val list = withContext(Dispatchers.IO) {
+                            return@withContext doInBackground(context, textFieldValueState.text.trim(), perevod, isBogaslujbovyiaSearch)
+                        }
+                        searchList.addAll(list)
+                        isProgressVisable = false
+                    }
+                }
+            } else {
+                searchJob?.cancel()
+                isProgressVisable = false
+            }
+        }
+    }
+
+    fun searchSvityia(context: Context) {
+        if (textFieldValueState.text.trim().length >= 3 && textFieldValueState.text.trim() != Settings.textFieldValueLatest.trim()) {
+            Settings.textFieldValueLatest = textFieldValueState.text.trim()
+            searchJob?.cancel()
+            searchJob = CoroutineScope(Dispatchers.Main).launch {
+                searchListSvityia.clear()
+                val list = withContext(Dispatchers.IO) {
+                    return@withContext rawAsset(context, textFieldValueState.text.trim())
+                }
+                searchListSvityia.addAll(list)
+            }
+        } else {
+            searchJob?.cancel()
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBible(
-    navController: NavHostController, searchBibleState: LazyListState, perevod: String, isBogaslujbovyiaSearch: Boolean, navigateToCytanniList: (String, Int, String) -> Unit, navigateToBogaslujbovyia: (title: String, resurs: String) -> Unit
+    navController: NavHostController, searchBibleState: LazyListState, perevod: String, isBogaslujbovyiaSearch: Boolean, navigateToCytanniList: (String, Int, String) -> Unit, navigateToBogaslujbovyia: (title: String, resurs: String) -> Unit, viewModel: SearchBibleViewModel
 ) {
-    var searchSettings by remember { mutableStateOf(false) }
-    var isProgressVisable by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     var textFieldLoaded by remember { mutableStateOf(false) }
-    var searshString by remember { mutableStateOf(TextFieldValue(AppNavGraphState.searchBogaslujbovyia, TextRange(AppNavGraphState.searchBogaslujbovyia.length))) }
-    LifecycleResumeEffect(Unit) {
-        onPauseOrDispose {
-            if (searchList.isNotEmpty()) AppNavGraphState.searchBogaslujbovyia = searshString.text
-        }
-    }
-    LaunchedEffect(searchSettings, searshString.text) {
-        if (searchSettings) {
-            searchList.clear()
-            searchSettings = false
-        }
-        if (searshString.text.trim().length >= 3) {
-            if (searshString.text != AppNavGraphState.searchBogaslujbovyia) {
-                searchJob?.cancel()
-                searchJob = CoroutineScope(Dispatchers.Main).launch {
-                    isProgressVisable = true
-                    searchList.clear()
-                    val list = withContext(Dispatchers.IO) {
-                        return@withContext doInBackground(context, searshString.text.trim(), perevod, isBogaslujbovyiaSearch)
-                    }
-                    searchList.addAll(list)
-                    isProgressVisable = false
-                }
-            }
-        } else {
-            searchJob?.cancel()
-            isProgressVisable = false
-        }
-    }
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
             override fun onPreScroll(
@@ -163,7 +509,6 @@ fun SearchBible(
     }
     BackHandler {
         AppNavGraphState.searchBogaslujbovyia = ""
-        searchList.clear()
         navController.popBackStack()
     }
     Scaffold(
@@ -179,7 +524,7 @@ fun SearchBible(
                                     focusRequester.requestFocus()
                                     textFieldLoaded = true
                                 }
-                            }, value = searshString, onValueChange = { newText ->
+                            }, value = viewModel.textFieldValueState, onValueChange = { newText ->
                             var selection = newText.selection
                             var edit = newText.text
                             if (perevod == Settings.PEREVODSINOIDAL) {
@@ -193,7 +538,11 @@ fun SearchBible(
                                 edit = zamena(edit, k.getBoolean("pegistrbukv", true))
                                 if (oldEdit != edit) selection = TextRange(edit.length)
                             }
-                            searshString = TextFieldValue(edit, selection)
+                            viewModel.textFieldValueState = TextFieldValue(edit, selection)
+                            if (viewModel.textFieldValueState.text != AppNavGraphState.searchBogaslujbovyia) {
+                                AppNavGraphState.searchBogaslujbovyia = viewModel.textFieldValueState.text
+                                viewModel.search(context, perevod, isBogaslujbovyiaSearch)
+                            }
                         }, singleLine = true, leadingIcon = {
                             Icon(
                                 painter = painterResource(R.drawable.search), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
@@ -201,11 +550,10 @@ fun SearchBible(
                         }, trailingIcon = {
                             IconButton(
                                 onClick = {
-                                    searshString = TextFieldValue("")
-                                    searchList.clear()
+                                    viewModel.textFieldValueState = TextFieldValue("")
                                 }) {
                                 Icon(
-                                    painter = if (searshString.text.isNotEmpty()) painterResource(R.drawable.close) else painterResource(R.drawable.empty), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    painter = if (viewModel.textFieldValueState.text.isNotEmpty()) painterResource(R.drawable.close) else painterResource(R.drawable.empty), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
                         }, colors = TextFieldDefaults.colors(
@@ -218,7 +566,6 @@ fun SearchBible(
                         if (!backPressHandled) {
                             backPressHandled = true
                             AppNavGraphState.searchBogaslujbovyia = ""
-                            searchList.clear()
                             navController.popBackStack()
                         }
                     }, content = {
@@ -295,29 +642,32 @@ fun SearchBible(
                 }
             }
             Column {
+                if (viewModel.isProgressVisable) {
+                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                }
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 10.dp), text = stringResource(R.string.searh_sviatyia_result, searchList.size), fontStyle = FontStyle.Italic, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
+                        .padding(start = 10.dp), text = stringResource(R.string.searh_sviatyia_result, viewModel.searchList.size), fontStyle = FontStyle.Italic, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
                 )
                 LazyColumn(
                     Modifier.nestedScroll(nestedScrollConnection), state = searchBibleState
                 ) {
-                    items(searchList.size) { index ->
+                    items(viewModel.searchList.size) { index ->
                         Text(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(10.dp)
                                 .clickable {
                                     if (isBogaslujbovyiaSearch) {
-                                        AppNavGraphState.searchBogaslujbovyia = searshString.text
-                                        navigateToBogaslujbovyia(searchList[index].title, searchList[index].resource)
+                                        AppNavGraphState.searchBogaslujbovyia = viewModel.textFieldValueState.text
+                                        navigateToBogaslujbovyia(viewModel.searchList[index].title, viewModel.searchList[index].resource)
                                     } else {
                                         navigateToCytanniList(
-                                            searchList[index].title + " " + searchList[index].glava.toString(), searchList[index].styx - 1, perevod
+                                            viewModel.searchList[index].title + " " + viewModel.searchList[index].glava.toString(), viewModel.searchList[index].styx - 1, perevod
                                         )
                                     }
-                                }, text = searchList[index].text.toAnnotatedString(), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                                }, text = viewModel.searchList[index].text.toAnnotatedString(), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                         )
                         HorizontalDivider()
                     }
@@ -327,344 +677,7 @@ fun SearchBible(
                 }
             }
         }
-        if (isProgressVisable) {
-            Box(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            }
-        }
     }
-}
-
-fun doInBackground(
-    context: Context, searche: String, perevod: String, isBogaslujbovyiaSearch: Boolean
-): ArrayList<SearchBibleItem> {
-    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-    var list = if (isBogaslujbovyiaSearch) {
-        bogashlugbovya(context, searche)
-    } else {
-        biblia(context, searche, perevod)
-    }
-    if (!isBogaslujbovyiaSearch) {
-        if (list.isEmpty() && k.getInt("slovocalkam", 0) == 0) {
-            list = biblia(context, searche, perevod, true)
-        }
-    }
-    return list
-}
-
-@Suppress("DEPRECATION")
-fun bogashlugbovya(context: Context, poshuk: String, secondRun: Boolean = false): ArrayList<SearchBibleItem> {
-    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-    var poshuk1 = poshuk
-    val seashpost = ArrayList<SearchBibleItem>()
-    val registr = k.getBoolean("pegistrbukv", true)
-    poshuk1 = zamena(poshuk1, registr)
-    if (secondRun) {
-        val m = charArrayOf('у', 'е', 'а', 'о', 'э', 'я', 'і', 'ю', 'ь', 'ы')
-        for (aM in m) {
-            val r = poshuk1.length - 1
-            if (poshuk1[r] == aM && r >= 3) {
-                poshuk1 = poshuk1.replace(poshuk1, poshuk1.take(r), registr)
-            }
-        }
-    }
-    val bogaslugbovyiaListAll = getAllBogaslujbovyia(context)
-    for (i in 0 until bogaslugbovyiaListAll.size) {
-        if (searchJob?.isActive == false) break
-        var nazva = context.getString(R.string.error_ch)
-        val bibleline = openAssetsResources(context, bogaslugbovyiaListAll[i].resource)
-        val t1 = bibleline.indexOf("<strong>")
-        if (t1 != -1) {
-            val t2 = bibleline.indexOf("</strong>", t1 + 8)
-            nazva = bibleline.substring(t1 + 8, t2)
-            nazva = AnnotatedString.fromHtml(nazva).text
-            nazva = nazva.replace("\n", " ")
-        }
-        val prepinanie = AnnotatedString.fromHtml(bibleline).text
-        val poshuk2 = findChars(context, poshuk1, prepinanie)
-        if (poshuk2.isEmpty()) continue
-        val span = AnnotatedString.Builder()
-        span.append(nazva)
-        seashpost.add(SearchBibleItem(nazva, 0, 0, bogaslugbovyiaListAll[i].resource, span))
-    }
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-        seashpost.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
-    } else {
-        seashpost.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
-    }
-    return seashpost
-}
-
-fun biblia(
-    context: Context, poshuk: String, perevod: String, secondRun: Boolean = false
-): ArrayList<SearchBibleItem> {
-    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-    var poshuk1 = poshuk
-    val seashpost = ArrayList<SearchBibleItem>()
-    val registr = k.getBoolean("pegistrbukv", true)
-    if (secondRun) {
-        val m = if (perevod == Settings.PEREVODSINOIDAL) charArrayOf(
-            'у', 'е', 'а', 'о', 'э', 'я', 'и', 'ю', 'ь', 'ы'
-        )
-        else charArrayOf('у', 'е', 'а', 'о', 'э', 'я', 'і', 'ю', 'ь', 'ы')
-        for (aM in m) {
-            val r = poshuk1.length - 1
-            if (poshuk1.length >= 3) {
-                if (poshuk1[r] == aM && r >= 3) {
-                    poshuk1 = poshuk1.replace(poshuk1, poshuk1.take(r), registr)
-                }
-            }
-        }
-    }
-    val rangeBibile = when (perevod) {
-        Settings.PEREVODNADSAN -> 0..0
-        Settings.PEREVODCATOLIK -> 1..1
-        else -> 0..1
-    }
-    for (novyZapaviet in rangeBibile) {
-        val list = if (novyZapaviet == 0) getNameBook(context, perevod, false)
-        else getNameBook(context, perevod, true)
-        val subTitleListName = if (novyZapaviet == 0) setStaryZapavet(list, perevod)
-        else setNovyZapavet(list, perevod)
-        val range = when (k.getInt("biblia_seash", 0)) {
-            1 -> {
-                if (novyZapaviet == 0) continue
-                0 until 4
-            }
-
-            2 -> {
-                if (novyZapaviet == 0) continue
-                0 until getNameBook(context, perevod, true).size
-            }
-
-            3 -> {
-                if (novyZapaviet == 1) continue
-                0 until 4
-            }
-
-            4 -> {
-                if (novyZapaviet == 1) continue
-                0 until getNameBook(context, perevod, false).size
-            }
-
-            else -> {
-                if (novyZapaviet == 0) 0 until getNameBook(context, perevod, false).size
-                else 0 until getNameBook(context, perevod, true).size
-            }
-        }
-        for (i in range) {
-            if (searchJob?.isActive == false) break
-            val nazva = list[i]
-            val subTitle = subTitleListName[i].subTitle
-            val zavet = if (novyZapaviet == 1) "n"
-            else "s"
-            val prevodName = when (perevod) {
-                Settings.PEREVODSEMUXI -> "chytanne/Semucha/biblia"
-                Settings.PEREVODBOKUNA -> "chytanne/Bokun/bokuna"
-                Settings.PEREVODCARNIAUSKI -> "chytanne/Carniauski/carniauski"
-                Settings.PEREVODCATOLIK -> "/Catolik/catolik"
-                Settings.PEREVODNADSAN -> "chytanne/psaltyr_nadsan.txt"
-                Settings.PEREVODSINOIDAL -> "/Sinodal/sinaidal"
-                Settings.PEREVODNEWKINGJAMES -> "/NewKingJames/english"
-                else -> "chytanne/Semucha/biblia"
-            }
-            val fileName = if (perevod == Settings.PEREVODNADSAN) prevodName
-            else "$prevodName$zavet${i + 1}.txt"
-            var glava = 0
-            val split = if (perevod == Settings.PEREVODSINOIDAL || perevod == Settings.PEREVODCATOLIK || perevod == Settings.PEREVODNEWKINGJAMES) {
-                openBibleResources(context, fileName).split("===")
-            } else {
-                openAssetsResources(context, fileName).split("===")
-            }
-            for (e in 1 until split.size) {
-                glava++
-                val bibleline = split[e].split("\n")
-                var stix = 0
-                for (r in 1 until bibleline.size) {
-                    stix++
-                    var aSviatyia = HtmlCompat.fromHtml(bibleline[r], HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
-                    val title = "$nazva Гл. $glava\n"
-                    val t3 = title.length
-                    val span = AnnotatedString.Builder()
-                    val poshuk2 = findChars(context, poshuk1, aSviatyia)
-                    if (poshuk2.isEmpty()) continue
-                    span.append(title)
-                    span.addStyle(SpanStyle(fontWeight = FontWeight.Bold), 0, title.length)
-                    var t5 = aSviatyia.indexOf("<br>")
-                    if (t5 == -1) t5 = 0
-                    else t5 += 4
-                    val t6 = aSviatyia.indexOf(" ", t5)
-                    val isInt = if (t6 != -1) {
-                        val item = aSviatyia.substring(t5, t6)
-                        item.isNotEmpty() && item.isDigitsOnly()
-                    } else false
-                    val padd = if (isInt) {
-                        val color = if (Settings.dzenNoch.value) PrimaryBlack
-                        else Primary
-                        val sub1 = aSviatyia.substring(t5, t6)
-                        aSviatyia = aSviatyia.replace(sub1, "$sub1.")
-                        span.append(aSviatyia)
-                        span.addStyle(SpanStyle(color = color), t5 + t3, t6 + t3 + 1)
-                        1
-                    } else {
-                        span.append(aSviatyia)
-                        0
-                    }
-                    for (w in 0 until poshuk2.size) {
-                        val t2 = poshuk2[w].str.length
-                        val t1 = poshuk2[w].position + t3 + padd
-                        span.addStyle(
-                            SpanStyle(background = BezPosta, color = PrimaryText), t1 - t2, t1
-                        )
-                    }
-                    seashpost.add(SearchBibleItem(subTitle, glava, stix, "", span))
-                }
-            }
-        }
-    }
-    return seashpost
-}
-
-fun findChars(context: Context, search: String, textSearch: String): ArrayList<FindString> {
-    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-    val registr = k.getBoolean("pegistrbukv", true)
-    val stringBuilder = StringBuilder()
-    var strSub = 0
-    val list = search.toCharArray()
-    val result = ArrayList<FindString>()
-    while (true) {
-        val strSub1Pos = textSearch.indexOf(list[0], strSub, registr)
-        if (strSub1Pos != -1) {
-            strSub = strSub1Pos + 1
-            val subChar2 = StringBuilder()
-            for (i in 1 until list.size) {
-                if (textSearch.length >= strSub + 1) {
-                    if (list[i].isLetterOrDigit()) {
-                        var subChar = textSearch.substring(strSub, strSub + 1)
-                        if (subChar == "́") {
-                            stringBuilder.append(list[i])
-                            strSub++
-                            if (textSearch.length >= strSub + 1) {
-                                subChar = textSearch.substring(strSub, strSub + 1)
-                            }
-                        }
-                        val strSub2Pos = subChar.indexOf(list[i], ignoreCase = registr)
-                        if (strSub2Pos != -1) {
-                            if (stringBuilder.isEmpty()) stringBuilder.append(
-                                textSearch.substring(
-                                    strSub1Pos, strSub1Pos + 1
-                                )
-                            )
-                            if (subChar2.isNotEmpty()) stringBuilder.append(subChar2.toString())
-                            stringBuilder.append(list[i])
-                            subChar2.clear()
-                            strSub++
-                        } else {
-                            stringBuilder.clear()
-                            break
-                        }
-                    } else {
-                        while (true) {
-                            if (textSearch.length >= strSub + 1) {
-                                val subChar = textSearch.substring(strSub, strSub + 1).toCharArray()
-                                if (!subChar[0].isLetterOrDigit()) {
-                                    subChar2.append(subChar[0])
-                                    strSub++
-                                } else {
-                                    if (list.size - 1 == i) {
-                                        stringBuilder.append(list[i])
-                                    }
-                                    break
-                                }
-                            } else {
-                                break
-                            }
-                        }
-                        if (subChar2.isEmpty()) {
-                            strSub++
-                            stringBuilder.clear()
-                            break
-                        }
-                    }
-                } else {
-                    stringBuilder.clear()
-                    break
-                }
-            }
-            if (stringBuilder.toString().isNotEmpty()) {
-                if (k.getInt("slovocalkam", 0) == 1) {
-                    val startString = if (strSub1Pos > 0) textSearch.substring(strSub1Pos - 1, strSub1Pos)
-                    else " "
-                    val endString = if (strSub1Pos + stringBuilder.length + 1 <= textSearch.length) textSearch.substring(
-                        strSub1Pos + stringBuilder.length, strSub1Pos + stringBuilder.length + 1
-                    )
-                    else " "
-                    if (!startString.toCharArray()[0].isLetterOrDigit() && !endString.toCharArray()[0].isLetterOrDigit()) {
-                        result.add(FindString(stringBuilder.toString(), strSub))
-                        stringBuilder.clear()
-                    }
-                } else {
-                    result.add(FindString(stringBuilder.toString(), strSub))
-                    stringBuilder.clear()
-                }
-            }
-        } else {
-            break
-        }
-    }
-    return result
-}
-
-fun rawAsset(context: Context, poshukString: String, secondRun: Boolean = false): ArrayList<Prazdniki> {
-    val year = Calendar.getInstance()[Calendar.YEAR]
-    val yearList = ArrayList<ArrayList<String>>()
-    Settings.data.forEach { arrayList ->
-        if (year == arrayList[3].toInt()) {
-            yearList.add(arrayList)
-        }
-    }
-    val arrayLists = ArrayList<ArrayList<String>>()
-    arrayLists.addAll(yearList)
-    val munName = context.resources.getStringArray(R.array.meciac_smoll)
-    var poshuk = poshukString
-    poshuk = zamena(poshuk)
-    if (secondRun) {
-        val m = charArrayOf('у', 'е', 'а', 'о', 'э', 'я', 'і', 'ю', 'ў', 'ь', 'ы')
-        for (aM in m) {
-            val r = poshuk.length - 1
-            if (r >= 3) {
-                if (poshuk[r] == aM) {
-                    poshuk = poshuk.replace(poshuk, poshuk.take(r), true)
-                }
-            }
-        }
-    }
-    val result = ArrayList<Prazdniki>()
-    val nedelName = context.resources.getStringArray(R.array.dni_nedeli)
-    for (e in arrayLists.indices) {
-        val sviatyia = arrayLists[e][4].split("<br>")
-        for (aSviatyia in sviatyia) {
-            if (aSviatyia.replace("ё", "е", true).contains(poshuk, true)) {
-                val g = GregorianCalendar(arrayLists[e][3].toInt(), arrayLists[e][2].toInt(), arrayLists[e][1].toInt())
-                result.add(Prazdniki(g[Calendar.DAY_OF_YEAR], aSviatyia, g[Calendar.DATE].toString() + " " + munName[g[Calendar.MONTH]] + ", " + nedelName[g[Calendar.DAY_OF_WEEK]], 0))
-            }
-        }
-    }
-    val data = getPrazdnik(context, 1)
-    data.addAll(getPrazdnik(context, 2))
-    data.addAll(getPrazdnik(context, 3))
-    data.addAll(getPrazdnik(context, 4))
-    data.addAll(getPrazdnik(context, 5))
-    data.addAll(getPrazdnik(context, 6))
-    for (e in data.indices) {
-        val sviatya = data[e].opisanie.replace("ё", "е", true)
-        if (sviatya.contains(poshuk, true)) {
-            result.add(data[e])
-        }
-    }
-    return result
 }
 
 fun zamena(replase: String, ignoreCase: Boolean = true): String {

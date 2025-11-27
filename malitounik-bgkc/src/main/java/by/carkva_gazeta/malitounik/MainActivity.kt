@@ -153,9 +153,8 @@ object Settings {
     var fontInterface by mutableFloatStateOf(22F)
     val vibrate = longArrayOf(0, 1000, 700, 1000)
     var isProgressVisableRadyjoMaryia = mutableStateOf(false)
-    val textFieldValueState = mutableStateOf("")
-    val textFieldValueLatest = mutableStateOf("")
-    val dzenNoch = mutableStateOf(false)
+    var textFieldValueLatest by mutableStateOf("")
+    var dzenNoch by mutableStateOf(false)
 
     fun dataCaliandar() {
         if (data.isEmpty()) {
@@ -1216,17 +1215,17 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         if (savedInstanceState == null) {
             val modeNight = k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM)
             val configuration = Resources.getSystem().configuration
-            Settings.dzenNoch.value = configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-            if (modeNight == Settings.MODE_NIGHT_NO) Settings.dzenNoch.value = false
-            if (modeNight == Settings.MODE_NIGHT_YES) Settings.dzenNoch.value = true
-            if (modeNight == Settings.MODE_NIGHT_AUTO) Settings.dzenNoch.value = k.getBoolean("dzenNoch", false)
+            Settings.dzenNoch = configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+            if (modeNight == Settings.MODE_NIGHT_NO) Settings.dzenNoch = false
+            if (modeNight == Settings.MODE_NIGHT_YES) Settings.dzenNoch = true
+            if (modeNight == Settings.MODE_NIGHT_AUTO) Settings.dzenNoch = k.getBoolean("dzenNoch", false)
         }
         Settings.dataCaliandar()
         setContent {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 window.isNavigationBarContrastEnforced = false
             }
-            MalitounikTheme(darkTheme = Settings.dzenNoch.value) {
+            MalitounikTheme(darkTheme = Settings.dzenNoch) {
                 AppNavGraphState.getCytata(this, savedInstanceState == null)
                 AppNavGraph()
                 var dialogSztoHovahaVisable by rememberSaveable { mutableStateOf(checkASztoNovagaMD5Sum()) }
@@ -1318,14 +1317,14 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         when {
             sensorValue <= 4f -> {
                 if (System.currentTimeMillis() - AppNavGraphState.autoDzenNochTime >= 5000) {
-                    Settings.dzenNoch.value = true
+                    Settings.dzenNoch = true
                     AppNavGraphState.autoDzenNochTime = System.currentTimeMillis()
                 }
             }
 
             sensorValue >= 21f -> {
                 if (System.currentTimeMillis() - AppNavGraphState.autoDzenNochTime >= 5000) {
-                    Settings.dzenNoch.value = false
+                    Settings.dzenNoch = false
                     AppNavGraphState.autoDzenNochTime = System.currentTimeMillis()
                 }
             }
@@ -1352,7 +1351,6 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
     override fun onPause() {
         super.onPause()
         removelightSensor()
-        searchJob?.cancel()
     }
 
     override fun onResume() {
@@ -1363,7 +1361,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         }
         if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_SYSTEM) {
             val configuration = Resources.getSystem().configuration
-            Settings.dzenNoch.value = configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+            Settings.dzenNoch = configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
         }
     }
 
@@ -1371,7 +1369,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         super.onConfigurationChanged(newConfig)
         val k = getSharedPreferences("biblia", MODE_PRIVATE)
         if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_SYSTEM) {
-            Settings.dzenNoch.value = newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+            Settings.dzenNoch = newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
         }
     }
 
@@ -1382,7 +1380,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
             k.edit {
                 putBoolean("setAlarm", true)
                 if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) {
-                    putBoolean("dzenNoch", Settings.dzenNoch.value)
+                    putBoolean("dzenNoch", Settings.dzenNoch)
                 }
             }
             AppNavGraphState.bibleItem = false
@@ -1393,7 +1391,6 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
             AppNavGraphState.itemsValue.clear()
             AppNavGraphState.setAlarm = true
             AppNavGraphState.appUpdate = true
-            searchJob?.cancel()
             finish()
         } else {
             backPressed = System.currentTimeMillis()

@@ -14,7 +14,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -31,7 +30,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -86,11 +84,8 @@ import by.carkva_gazeta.malitounik.views.HtmlText
 import by.carkva_gazeta.malitounik.views.openAssetsResources
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.math.BigDecimal
@@ -108,7 +103,8 @@ fun BibliaMenu(
     sorted: Int,
     isIconSortVisibility: (Boolean) -> Unit,
     navigateToCytanniList: (String, Int, String, Int) -> Unit,
-    navigateToBogaslujbovyia: (String, String) -> Unit
+    navigateToBogaslujbovyia: (String, String) -> Unit,
+    viewModel: SearchBibleViewModel
 ) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
@@ -186,7 +182,6 @@ fun BibliaMenu(
     var searchSettings by remember { mutableStateOf(false) }
     var isRegistr by remember { mutableStateOf(k.getBoolean("pegistrbukv", true)) }
     var isDakladnaeSupadzenne by remember { mutableIntStateOf(k.getInt("slovocalkam", 0)) }
-    var isProgressVisable by remember { mutableStateOf(false) }
     var isDeliteVybranaeAll by remember { mutableStateOf(false) }
     if (isDeliteVybranaeAll) {
         val titlePerevod = when (perevod) {
@@ -231,27 +226,8 @@ fun BibliaMenu(
             dialogDownLoad = false
         }
     }
-    LaunchedEffect(searchSettings, Settings.textFieldValueState.value) {
-        if (searchSettings) {
-            searchList.clear()
-            searchSettings = false
-        }
-        if (Settings.textFieldValueState.value.trim().length >= 3) {
-            searchJob?.cancel()
-            searchJob = CoroutineScope(Dispatchers.Main).launch {
-                isProgressVisable = true
-                Settings.textFieldValueLatest.value = Settings.textFieldValueState.value.trim()
-                searchList.clear()
-                val list = withContext(Dispatchers.IO) {
-                    return@withContext doInBackground(context, Settings.textFieldValueState.value.trim(), perevod, false)
-                }
-                searchList.addAll(list)
-                isProgressVisable = false
-            }
-        } else {
-            searchJob?.cancel()
-            isProgressVisable = false
-        }
+    LaunchedEffect(searchSettings, viewModel.textFieldValueState.text) {
+        viewModel.search(context, perevod, false)
     }
     if (searchText) {
         if (AppNavGraphState.searchSettings) {
@@ -331,11 +307,14 @@ fun BibliaMenu(
             }
         }
         Column {
+            if (viewModel.isProgressVisable) {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            }
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 10.dp),
-                text = stringResource(R.string.searh_sviatyia_result, searchList.size),
+                text = stringResource(R.string.searh_sviatyia_result, viewModel.searchList.size),
                 fontStyle = FontStyle.Italic,
                 fontSize = Settings.fontInterface.sp,
                 color = MaterialTheme.colorScheme.secondary
@@ -344,19 +323,19 @@ fun BibliaMenu(
                 Modifier.nestedScroll(nestedScrollConnection),
                 state = searchBibleState
             ) {
-                items(searchList.size) { index ->
+                items(viewModel.searchList.size) { index ->
                     Text(
                         modifier = Modifier
                             .padding(10.dp)
                             .clickable {
                                 navigateToCytanniList(
-                                    searchList[index].title + " " + searchList[index].glava.toString(),
-                                    searchList[index].styx - 1,
+                                    viewModel.searchList[index].title + " " + viewModel.searchList[index].glava.toString(),
+                                    viewModel.searchList[index].styx - 1,
                                     perevod,
                                     Settings.CHYTANNI_BIBLIA
                                 )
                             },
-                        text = searchList[index].text.toAnnotatedString(),
+                        text = viewModel.searchList[index].text.toAnnotatedString(),
                         color = MaterialTheme.colorScheme.secondary,
                         fontSize = Settings.fontInterface.sp
                     )
@@ -365,13 +344,6 @@ fun BibliaMenu(
                 item {
                     Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
                 }
-            }
-        }
-        if (isProgressVisable) {
-            Box(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
     } else {

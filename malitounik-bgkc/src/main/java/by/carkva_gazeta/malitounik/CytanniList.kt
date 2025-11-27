@@ -5,7 +5,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -117,7 +116,6 @@ import androidx.core.text.isDigitsOnly
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -144,7 +142,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Calendar
 
-class CytanniListItems : ViewModel() {
+class CytanniListViewModel : SearchBibleViewModel() {
     val listState = mutableStateListOf<CytanniListItemData>()
     var selectedIndex by mutableIntStateOf(-1)
     var knigaText by mutableStateOf("")
@@ -393,7 +391,7 @@ class CytanniListItems : ViewModel() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CytanniList(
-    navController: NavHostController, title: String, cytanne: String, biblia: Int, perevodRoot: String, position: Int, viewModel: CytanniListItems = viewModel()
+    navController: NavHostController, title: String, cytanne: String, biblia: Int, perevodRoot: String, position: Int, viewModel: CytanniListViewModel = viewModel()
 ) {
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var perevod by remember {

@@ -34,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
@@ -43,7 +44,7 @@ import java.text.Collator
 import java.util.Calendar
 import java.util.Locale
 
-class FilterBogaslujbovyiaListModel {
+class FilterBogaslujbovyiaListModel : SearchBibleViewModel() {
     private val items = ArrayList<BogaslujbovyiaListData>()
 
     private val _filteredItems = MutableStateFlow(items)
@@ -103,7 +104,7 @@ fun getAllBogaslujbovyia(context: Context): ArrayList<BogaslujbovyiaListData> {
             SlugbovyiaTextu.MINEIA_VIALIKI_TYDZEN -> "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЫЁДЗЬ -> СЛУЖБЫ ВЯЛІКАГА ТЫДНЯ"
             SlugbovyiaTextu.MINEIA_SVITLY_TYDZEN -> "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЫЁДЗЬ -> СЛУЖБЫ СЬВЕТЛАГА ТЫДНЯ"
             else -> {
-                val mount= context.resources.getStringArray(R.array.meciac2)
+                val mount = context.resources.getStringArray(R.array.meciac2)
                 "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ МЕСЯЧНАЯ -> " + mount[mineiaMesichnaiaMounth(slugbovyiaTextuData.day, slugbovyiaTextuData.pasxa)]
             }
         }
@@ -114,7 +115,7 @@ fun getAllBogaslujbovyia(context: Context): ArrayList<BogaslujbovyiaListData> {
 
 @Composable
 fun BogaslujbovyiaMenu(
-    navController: NavHostController, innerPadding: PaddingValues, menuItem: Int, searchText: Boolean
+    navController: NavHostController, innerPadding: PaddingValues, menuItem: Int, searchText: Boolean, viewModel: FilterBogaslujbovyiaListModel = viewModel()
 ) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
@@ -133,7 +134,6 @@ fun BogaslujbovyiaMenu(
         }
     }
     val folderList = stringArrayResource(R.array.bogaslugbovyia_folder_list)
-    val viewModel = FilterBogaslujbovyiaListModel()
     if (searchText) {
         val listAll = getAllBogaslujbovyia(context)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
@@ -142,7 +142,7 @@ fun BogaslujbovyiaMenu(
             listAll.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
         }
         viewModel.addAllItemList(listAll)
-        viewModel.filterItem(Settings.textFieldValueState.value)
+        viewModel.filterItem(viewModel.textFieldValueState.text)
     } else {
         val listAll = when (menuItem) {
             Settings.MENU_BOGASLUJBOVYIA -> getBogaslujbovyia()

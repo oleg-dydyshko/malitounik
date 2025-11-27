@@ -117,7 +117,7 @@ fun SettingsView(navController: NavHostController) {
             window, view
         ).apply {
             isAppearanceLightStatusBars = false
-            isAppearanceLightNavigationBars = !Settings.dzenNoch.value
+            isAppearanceLightNavigationBars = !Settings.dzenNoch
         }
     }
     val coroutineScope = rememberCoroutineScope()
@@ -289,7 +289,7 @@ fun SettingsView(navController: NavHostController) {
                                 "mode_night", Settings.MODE_NIGHT_SYSTEM
                             )
                             edit.apply()
-                            Settings.dzenNoch.value = isSystemInDarkTheme
+                            Settings.dzenNoch = isSystemInDarkTheme
                             (context as MainActivity).removelightSensor()
                         }, verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -300,7 +300,7 @@ fun SettingsView(navController: NavHostController) {
                                 "mode_night", Settings.MODE_NIGHT_SYSTEM
                             )
                             edit.apply()
-                            Settings.dzenNoch.value = isSystemInDarkTheme
+                            Settings.dzenNoch = isSystemInDarkTheme
                             (context as MainActivity).removelightSensor()
                         })
                     Text(
@@ -314,7 +314,7 @@ fun SettingsView(navController: NavHostController) {
                             modeNight = Settings.MODE_NIGHT_NO
                             edit.putInt("mode_night", Settings.MODE_NIGHT_NO)
                             edit.apply()
-                            Settings.dzenNoch.value = false
+                            Settings.dzenNoch = false
                             (context as MainActivity).removelightSensor()
                         }, verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -323,7 +323,7 @@ fun SettingsView(navController: NavHostController) {
                             modeNight = Settings.MODE_NIGHT_NO
                             edit.putInt("mode_night", Settings.MODE_NIGHT_NO)
                             edit.apply()
-                            Settings.dzenNoch.value = false
+                            Settings.dzenNoch = false
                             (context as MainActivity).removelightSensor()
                         })
                     Text(
@@ -339,7 +339,7 @@ fun SettingsView(navController: NavHostController) {
                                 "mode_night", Settings.MODE_NIGHT_YES
                             )
                             edit.apply()
-                            Settings.dzenNoch.value = true
+                            Settings.dzenNoch = true
                             (context as MainActivity).removelightSensor()
                         }, verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -350,7 +350,7 @@ fun SettingsView(navController: NavHostController) {
                                 "mode_night", Settings.MODE_NIGHT_YES
                             )
                             edit.apply()
-                            Settings.dzenNoch.value = true
+                            Settings.dzenNoch = true
                             (context as MainActivity).removelightSensor()
                         })
                     Text(

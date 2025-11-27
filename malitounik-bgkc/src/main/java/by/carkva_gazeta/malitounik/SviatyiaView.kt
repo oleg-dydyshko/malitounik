@@ -1099,7 +1099,7 @@ fun loadOpisanieSviatyia(context: Context, year: Int, mun: Int, day: Int): Snaps
                 arrayList.addAll(gson.fromJson(builder, type))
                 res = arrayList[day - 1]
             }
-            if (Settings.dzenNoch.value) res = res.replace("#d00505", "#ff6666", true)
+            if (Settings.dzenNoch) res = res.replace("#d00505", "#ff6666", true)
             val title = ArrayList<String>()
             val listRes = res.split("<strong>")
             var sb = ""
@@ -1225,7 +1225,7 @@ fun loadOpisanieSviat(context: Context, position: Int): SnapshotStateList<Opisan
                 }
                 if (puxomuia || (day == strings[0].toInt() && mun == strings[1].toInt())) {
                     var res = strings[3]
-                    if (Settings.dzenNoch.value) res = res.replace("#d00505", "#ff6666", true)
+                    if (Settings.dzenNoch) res = res.replace("#d00505", "#ff6666", true)
                     val t1 = res.indexOf("</strong>")
                     var textTitle = ""
                     var fulText = ""

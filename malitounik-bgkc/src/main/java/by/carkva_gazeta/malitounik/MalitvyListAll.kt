@@ -123,7 +123,7 @@ fun MalitvyListAll(
             view
         ).apply {
             isAppearanceLightStatusBars = false
-            isAppearanceLightNavigationBars = !Settings.dzenNoch.value
+            isAppearanceLightNavigationBars = !Settings.dzenNoch
         }
     }
     val navigationActions = remember(navController) {

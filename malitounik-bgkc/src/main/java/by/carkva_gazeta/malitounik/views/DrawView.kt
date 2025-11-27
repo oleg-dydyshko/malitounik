@@ -1049,7 +1049,7 @@ fun NavigationItem(
     icon: @Composable () -> Unit
 ) {
     val color = if (selected) {
-        if (Settings.dzenNoch.value) BackgroundDrawelMenu else Divider
+        if (Settings.dzenNoch) BackgroundDrawelMenu else Divider
     } else {
         Color.Unspecified
     }

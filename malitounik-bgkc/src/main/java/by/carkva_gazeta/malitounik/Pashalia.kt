@@ -35,7 +35,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -48,7 +47,7 @@ import kotlinx.coroutines.flow.StateFlow
 import java.util.Calendar
 import java.util.GregorianCalendar
 
-class FilterPasxaModel : ViewModel() {
+class FilterPasxaModel : SearchBibleViewModel() {
     private val items = ArrayList<Pashalii>()
 
     private val _filteredItems = MutableStateFlow(items)
@@ -69,13 +68,12 @@ class FilterPasxaModel : ViewModel() {
 }
 
 @Composable
-fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, searchText: Boolean) {
+fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, searchText: Boolean, viewModel: FilterPasxaModel = viewModel()) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
-    val viewModel: FilterPasxaModel = viewModel()
     val lazyListState = rememberLazyListState()
     var findIndex by remember { mutableIntStateOf(0) }
     val cal = Calendar.getInstance()
@@ -104,7 +102,7 @@ fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, sear
         }
     }
     val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
-    viewModel.filterItem(Settings.textFieldValueState.value)
+    viewModel.filterItem(viewModel.textFieldValueState.text)
     Column(modifier = Modifier.nestedScroll(nestedScrollConnection)) {
         if (!searchText) {
             Row(

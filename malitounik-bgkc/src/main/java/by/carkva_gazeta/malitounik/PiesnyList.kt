@@ -34,7 +34,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -46,7 +45,7 @@ import kotlinx.coroutines.launch
 import java.text.Collator
 import java.util.Locale
 
-class FilterPiesnyListModel : ViewModel() {
+class FilterPiesnyListModel : SearchBibleViewModel() {
     private val items = SnapshotStateList<PiesnyListItem>()
 
     private val _filteredItems = MutableStateFlow(items)
@@ -76,12 +75,11 @@ class FilterPiesnyListModel : ViewModel() {
 }
 
 @Composable
-fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: PaddingValues, searchText: Boolean) {
+fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: PaddingValues, searchText: Boolean, viewModel: FilterPiesnyListModel = viewModel()) {
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
-    val viewModel: FilterPiesnyListModel = viewModel()
     val piesnyBagarList = remember { SnapshotStateList<PiesnyListItem>() }
     val piesnyBelarusList = remember { SnapshotStateList<PiesnyListItem>() }
     val piesnyKaliadyList = remember { SnapshotStateList<PiesnyListItem>() }
@@ -737,7 +735,7 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
         viewModel.sortWith()
     }
     val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
-    viewModel.filterItem(Settings.textFieldValueState.value)
+    viewModel.filterItem(viewModel.textFieldValueState.text)
     if (searchText) {
         PiesnyList(piesny, filteredItems, navigationActions, innerPadding)
     } else {

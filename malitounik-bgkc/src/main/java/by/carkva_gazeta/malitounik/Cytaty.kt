@@ -128,7 +128,7 @@ fun Cytaty(navController: NavHostController) {
                     val cytata = AnnotatedString.Builder(listState[item]).apply {
                         addStyle(
                             SpanStyle(
-                                fontFamily = FontFamily(Font(R.font.andantinoscript)), fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic, color = if (Settings.dzenNoch.value) PrimaryBlack else Primary, fontSize = (Settings.fontInterface + 4).sp
+                                fontFamily = FontFamily(Font(R.font.andantinoscript)), fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic, color = if (Settings.dzenNoch) PrimaryBlack else Primary, fontSize = (Settings.fontInterface + 4).sp
                             ), 0, 1
                         )
                         addStyle(SpanStyle(fontFamily = FontFamily(Font(R.font.comici))), 1, this.length)
