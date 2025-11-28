@@ -92,13 +92,16 @@ import java.util.Calendar
 import java.util.GregorianCalendar
 import java.util.Locale
 
-open class SearchBibleViewModel : ViewModel() {
+open class SearchViewModel : ViewModel() {
+    var textFieldValueState by mutableStateOf(TextFieldValue(AppNavGraphState.searchBogaslujbovyia, TextRange(AppNavGraphState.searchBogaslujbovyia.length)))
+}
+
+open class SearchBibleViewModel : SearchViewModel() {
     var searchJob: Job? = null
     val searchList = mutableStateListOf<SearchBibleItem>()
     var searchSettings by mutableStateOf(false)
     val searchListSvityia = mutableStateListOf<Prazdniki>()
     var isProgressVisable by mutableStateOf(false)
-    var textFieldValueState by mutableStateOf(TextFieldValue(AppNavGraphState.searchBogaslujbovyia, TextRange(AppNavGraphState.searchBogaslujbovyia.length)))
 
     fun doInBackground(
         context: Context, searche: String, perevod: String, isBogaslujbovyiaSearch: Boolean

@@ -75,11 +75,12 @@ class FilterPiesnyListModel : SearchBibleViewModel() {
 }
 
 @Composable
-fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: PaddingValues, searchText: Boolean, viewModel: FilterPiesnyListModel = viewModel()) {
+fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: PaddingValues, searchText: Boolean, viewModel: SearchViewModel) {
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
+    val viewModelFilter: FilterPiesnyListModel = viewModel()
     val piesnyBagarList = remember { SnapshotStateList<PiesnyListItem>() }
     val piesnyBelarusList = remember { SnapshotStateList<PiesnyListItem>() }
     val piesnyKaliadyList = remember { SnapshotStateList<PiesnyListItem>() }
@@ -726,16 +727,16 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
         piesnyTaizeList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
     }
     if (searchText) {
-        viewModel.clear()
-        viewModel.addAllItemList(piesnyPraslList)
-        viewModel.addAllItemList(piesnyBelarusList)
-        viewModel.addAllItemList(piesnyBagarList)
-        viewModel.addAllItemList(piesnyKaliadyList)
-        viewModel.addAllItemList(piesnyTaizeList)
-        viewModel.sortWith()
+        viewModelFilter.clear()
+        viewModelFilter.addAllItemList(piesnyPraslList)
+        viewModelFilter.addAllItemList(piesnyBelarusList)
+        viewModelFilter.addAllItemList(piesnyBagarList)
+        viewModelFilter.addAllItemList(piesnyKaliadyList)
+        viewModelFilter.addAllItemList(piesnyTaizeList)
+        viewModelFilter.sortWith()
     }
-    val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
-    viewModel.filterItem(viewModel.textFieldValueState.text)
+    val filteredItems by viewModelFilter.filteredItems.collectAsStateWithLifecycle()
+    viewModelFilter.filterItem(viewModel.textFieldValueState.text)
     if (searchText) {
         PiesnyList(piesny, filteredItems, navigationActions, innerPadding)
     } else {

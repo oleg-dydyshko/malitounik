@@ -111,7 +111,7 @@ class FilterMalitvyPrynagodnyiaModel : ViewModel() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MalitvyListAll(
-    navController: NavHostController, title: String, menuItem: Int, subTitle: String = ""
+    navController: NavHostController, title: String, menuItem: Int, subTitle: String = "", viewModel: FilterMalitvyPrynagodnyiaModel = viewModel()
 ) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
@@ -320,7 +320,6 @@ fun MalitvyListAll(
             )
         }) { innerPadding ->
         if (searchText) {
-            val viewModel: FilterMalitvyPrynagodnyiaModel = viewModel()
             viewModel.clear()
             viewModel.addItemList(getPrynagodnyia1())
             viewModel.addItemList(getPrynagodnyia2())

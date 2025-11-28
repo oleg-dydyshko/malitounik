@@ -124,9 +124,9 @@ object Piasochnica {
     var htmlText by mutableStateOf(SpannableStringBuilder())
     val fileList = mutableStateListOf<MyNetFile>()
 
-    fun isFilePiasochnicaExitst(resours: String, fileList: SnapshotStateList<String>): Boolean {
+    fun isFilePiasochnicaExitst(resours: String, fileList: SnapshotStateList<PaisochnicaFileList>): Boolean {
         for (i in 0 until fileList.size) {
-            if (fileList[i].contains(resours)) {
+            if (fileList[i].fileName.contains(resours)) {
                 return true
             }
         }

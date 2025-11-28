@@ -33,6 +33,7 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -44,7 +45,7 @@ import java.text.Collator
 import java.util.Calendar
 import java.util.Locale
 
-class FilterBogaslujbovyiaListModel : SearchBibleViewModel() {
+class FilterBogaslujbovyiaListModel : ViewModel() {
     private val items = ArrayList<BogaslujbovyiaListData>()
 
     private val _filteredItems = MutableStateFlow(items)
@@ -115,8 +116,9 @@ fun getAllBogaslujbovyia(context: Context): ArrayList<BogaslujbovyiaListData> {
 
 @Composable
 fun BogaslujbovyiaMenu(
-    navController: NavHostController, innerPadding: PaddingValues, menuItem: Int, searchText: Boolean, viewModel: FilterBogaslujbovyiaListModel = viewModel()
+    navController: NavHostController, innerPadding: PaddingValues, menuItem: Int, searchText: Boolean, viewModel: SearchViewModel
 ) {
+    val viewModelFilter: FilterBogaslujbovyiaListModel = viewModel()
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
@@ -141,8 +143,8 @@ fun BogaslujbovyiaMenu(
         } else {
             listAll.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
         }
-        viewModel.addAllItemList(listAll)
-        viewModel.filterItem(viewModel.textFieldValueState.text)
+        viewModelFilter.addAllItemList(listAll)
+        viewModelFilter.filterItem(viewModel.textFieldValueState.text)
     } else {
         val listAll = when (menuItem) {
             Settings.MENU_BOGASLUJBOVYIA -> getBogaslujbovyia()
@@ -159,14 +161,14 @@ fun BogaslujbovyiaMenu(
                 listAll.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
             }
         }
-        viewModel.addAllItemList(listAll)
+        viewModelFilter.addAllItemList(listAll)
     }
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
         folderList.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it })
     } else {
         folderList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it })
     }
-    val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
+    val filteredItems by viewModelFilter.filteredItems.collectAsStateWithLifecycle()
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()

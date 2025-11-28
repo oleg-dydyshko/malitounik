@@ -109,7 +109,7 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
         }
     }
     var isProgressVisable by remember { mutableStateOf(false) }
-    val fileList = remember { mutableStateListOf<String>() }
+    val fileList = remember { mutableStateListOf<PaisochnicaFileList>() }
     val backCopy = remember { mutableStateListOf<String>() }
     LaunchedEffect(Unit) {
         val dir = context.getExternalFilesDir("PiasochnicaBackCopy")
@@ -136,7 +136,11 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                 isProgressVisable = true
                 fileList.clear()
                 fileList.addAll(getPasochnicaFileList())
-                fileList.sort()
+                fileList.sortWith(
+                    compareByDescending {
+                        it.updatedTimeMillis
+                    }
+                )
                 isProgressVisable = false
             }
         }
@@ -245,7 +249,7 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
     var dialogSetFileName by remember { mutableStateOf(false) }
     var position by remember { mutableIntStateOf(0) }
     if (dialogContextMenu) {
-        DialogContextMenu(title = fileList[position], editTitle = stringResource(R.string.rename_file), onEdit = {
+        DialogContextMenu(title = fileList[position].fileName, editTitle = stringResource(R.string.rename_file), onEdit = {
             dialogSetFileName = true
             dialogContextMenu = false
         }, onDelite = {
@@ -290,8 +294,8 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
         }
     }
     if (dialogDelite) {
-        DialogDelite(title = fileList[position], onConfirmation = {
-            val title = fileList[position]
+        DialogDelite(title = fileList[position].fileName, onConfirmation = {
+            val title = fileList[position].fileName
             val isSite = !title.contains("/admin/piasochnica")
             fileList.removeAt(position)
             Piasochnica.getFileUnlinkPostRequest(title, isSite)
@@ -312,9 +316,9 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
         }
     }
     if (dialogSetFileName) {
-        DialogSetNameFile(fileList[position], setFileName = { fileName ->
-            val oldFileName = fileList[position]
-            fileList[position] = fileList[position].replace(oldFileName, fileName)
+        DialogSetNameFile(fileList[position].fileName, setFileName = { fileName ->
+            val oldFileName = fileList[position].fileName
+            fileList[position].fileName = fileList[position].fileName.replace(oldFileName, fileName)
             Piasochnica.getFileRenamePostRequest(oldFileName, fileName, false)
             dialogSetFileName = false
         }) {
@@ -380,7 +384,7 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                 modifier = Modifier
                     .padding(start = 10.dp)
                     .combinedClickable(onClick = {
-                        val fileName = fileList[index]
+                        val fileName = fileList[index].fileName
                         coroutineScope.launch {
                             isProgressVisable = true
                             Piasochnica.isHTML = fileName.contains(".html")
@@ -410,7 +414,7 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                     contentDescription = ""
                 )
                 Text(
-                    text = fileList[index],
+                    text = fileList[index].fileName,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(10.dp),
@@ -839,15 +843,16 @@ fun getDirListRequest(dir: String) {
     }
 }
 
-suspend fun getPasochnicaFileList(count: Int = 0): ArrayList<String> {
+suspend fun getPasochnicaFileList(count: Int = 0): ArrayList<PaisochnicaFileList> {
     var error = false
-    val fileList = ArrayList<String>()
+    val fileList = ArrayList<PaisochnicaFileList>()
     try {
         val list = Malitounik.referens.child("/admin/piasochnica").list(500).addOnFailureListener {
             error = true
         }.await()
         list.items.forEach {
-            fileList.add(it.name)
+            val metadata = it.metadata.await()
+            fileList.add(PaisochnicaFileList(it.name, metadata.updatedTimeMillis))
         }
     } catch (_: Throwable) {
         error = true
@@ -858,5 +863,7 @@ suspend fun getPasochnicaFileList(count: Int = 0): ArrayList<String> {
     }
     return fileList
 }
+
+data class PaisochnicaFileList(var fileName: String, val updatedTimeMillis: Long)
 
 data class MyNetFile(val resources: Int, val title: String)

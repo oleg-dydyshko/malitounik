@@ -113,21 +113,21 @@ class FilterBiblijatekaModel : SearchBibleViewModel() {
 }
 
 @Composable
-fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerPadding: PaddingValues, searchText: Boolean, addItem: Boolean, editDismiss: () -> Unit) {
+fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerPadding: PaddingValues, searchText: Boolean, addItem: Boolean, viewModel: SearchViewModel, editDismiss: () -> Unit) {
     val context = LocalContext.current
+    val viewModelFilter: FilterBiblijatekaModel = viewModel()
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
     var fileName by remember { mutableStateOf("") }
     var fileListPosition by remember { mutableIntStateOf(0) }
-    val viewModel: FilterBiblijatekaModel = viewModel()
     var isProgressVisable by remember { mutableStateOf(false) }
     var isDialogBiblijatekaVisable by remember { mutableStateOf(false) }
     var isDialogNoWIFIVisable by remember { mutableStateOf(false) }
     var isDialogNoIntent by remember { mutableStateOf(false) }
     val bibliatekaList = remember { mutableStateListOf<ArrayList<String>>() }
-    val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
+    val filteredItems by viewModelFilter.filteredItems.collectAsStateWithLifecycle()
     val editList = remember { ArrayList<String>() }
     var editItem by remember { mutableStateOf(false) }
     var allPosition by remember { mutableIntStateOf(0) }
@@ -144,7 +144,7 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
             editList.add("")
         }
         DialogEditBiblijteka(editList, onSave = { title: String, rubrika: Int, apisanne: String, pdfFile: String ->
-            saveBibliateka(context, viewModel.listAllBiblijateka, allPosition, title, rubrika, apisanne, pdfFile) {
+            saveBibliateka(context, viewModelFilter.listAllBiblijateka, allPosition, title, rubrika, apisanne, pdfFile) {
                 isProgressVisable = it
                 if (!isProgressVisable) {
                     editDismiss()
@@ -176,7 +176,7 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
                     context,
                     biblijateka,
                     bibliatekaList = { list ->
-                        viewModel.addAllBiblijateka(list)
+                        viewModelFilter.addAllBiblijateka(list)
                         when (biblijateka) {
                             AllDestinations.BIBLIJATEKA_NIADAUNIA -> {
                                 val gson = Gson()
@@ -235,9 +235,9 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
         }
     }
     if (searchText) {
-        viewModel.clear()
-        viewModel.addAllItemList(bibliatekaList)
-        viewModel.filterItem(viewModel.textFieldValueState.text)
+        viewModelFilter.clear()
+        viewModelFilter.addAllItemList(bibliatekaList)
+        viewModelFilter.filterItem(viewModel.textFieldValueState.text)
     }
     if (isDialogBiblijatekaVisable) {
         fileName = if (searchText) filteredItems[fileListPosition][2]
@@ -344,7 +344,7 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
             setFileListPosition = { fileListPosition = it },
             setIsDialogBiblijatekaVisable = { isDialogBiblijatekaVisable = it },
             editListItem = {
-                allPosition = viewModel.findIndex(it[3].toLong())
+                allPosition = viewModelFilter.findIndex(it[3].toLong())
                 editList.clear()
                 editList.addAll(it)
                 editItem = true

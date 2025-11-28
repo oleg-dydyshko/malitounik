@@ -68,8 +68,9 @@ class FilterPasxaModel : SearchBibleViewModel() {
 }
 
 @Composable
-fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, searchText: Boolean, viewModel: FilterPasxaModel = viewModel()) {
+fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, searchText: Boolean, viewModel: SearchViewModel) {
     val context = LocalContext.current
+    val viewModelFilter: FilterPasxaModel = viewModel()
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
@@ -78,9 +79,9 @@ fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, sear
     var findIndex by remember { mutableIntStateOf(0) }
     val cal = Calendar.getInstance()
     LaunchedEffect(Unit) {
-        viewModel.clear()
+        viewModelFilter.clear()
         for (year in 1582..2499) {
-            viewModel.addItemList(pasxa(context, year))
+            viewModelFilter.addItemList(pasxa(context, year))
             if (year == cal[Calendar.YEAR] - 3) findIndex = year
         }
     }
@@ -101,8 +102,8 @@ fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, sear
             }
         }
     }
-    val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
-    viewModel.filterItem(viewModel.textFieldValueState.text)
+    val filteredItems by viewModelFilter.filteredItems.collectAsStateWithLifecycle()
+    viewModelFilter.filterItem(viewModel.textFieldValueState.text)
     Column(modifier = Modifier.nestedScroll(nestedScrollConnection)) {
         if (!searchText) {
             Row(

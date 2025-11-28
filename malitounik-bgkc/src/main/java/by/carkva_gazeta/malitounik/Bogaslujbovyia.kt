@@ -132,6 +132,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import by.carkva_gazeta.malitounik.admin.PaisochnicaFileList
 import by.carkva_gazeta.malitounik.admin.Piasochnica
 import by.carkva_gazeta.malitounik.admin.getPasochnicaFileList
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
@@ -970,9 +971,8 @@ fun Bogaslujbovyia(
                                                 viewModel.autoScroll(title, false)
                                                 coroutineScope.launch {
                                                     isProgressVisable = true
-                                                    val fileList = SnapshotStateList<String>()
+                                                    val fileList = SnapshotStateList<PaisochnicaFileList>()
                                                     fileList.addAll(getPasochnicaFileList())
-                                                    fileList.sort()
                                                     val dirToFile = if (iskniga) listResource[adminResourceEditPosition].resource
                                                     else resursEncode
                                                     Settings.bibleTime = false
@@ -1028,9 +1028,8 @@ fun Bogaslujbovyia(
                                         viewModel.autoScroll(title, false)
                                         coroutineScope.launch {
                                             isProgressVisable = true
-                                            val fileList = SnapshotStateList<String>()
+                                            val fileList = SnapshotStateList<PaisochnicaFileList>()
                                             fileList.addAll(getPasochnicaFileList())
-                                            fileList.sort()
                                             val dirToFile = if (iskniga) listResource[adminResourceEditPosition].resource
                                             else resursEncode
                                             Settings.bibleTime = false

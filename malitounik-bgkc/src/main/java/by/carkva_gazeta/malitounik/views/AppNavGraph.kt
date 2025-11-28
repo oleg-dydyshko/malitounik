@@ -146,6 +146,7 @@ import by.carkva_gazeta.malitounik.PiesnyList
 import by.carkva_gazeta.malitounik.R
 import by.carkva_gazeta.malitounik.SearchBible
 import by.carkva_gazeta.malitounik.SearchBibleViewModel
+import by.carkva_gazeta.malitounik.SearchViewModel
 import by.carkva_gazeta.malitounik.Settings
 import by.carkva_gazeta.malitounik.SettingsView
 import by.carkva_gazeta.malitounik.SviatyList
@@ -1658,7 +1659,7 @@ fun MainConteiner(
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
                         BogaslujbovyiaMenu(
-                            navController, innerPadding, Settings.MENU_BOGASLUJBOVYIA, searchText
+                            navController, innerPadding, Settings.MENU_BOGASLUJBOVYIA, searchText, viewModel = viewModel
                         )
                     }
 
@@ -1666,20 +1667,20 @@ fun MainConteiner(
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
                         BogaslujbovyiaMenu(
-                            navController, innerPadding, Settings.MENU_AKAFIST, searchText
+                            navController, innerPadding, Settings.MENU_AKAFIST, searchText, viewModel as SearchViewModel
                         )
                     }
 
                     AllDestinations.BIBLIJATEKA_NIADAUNIA -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_NIADAUNIA, innerPadding, searchText, false) {}
+                        BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_NIADAUNIA, innerPadding, searchText, false, viewModel as SearchViewModel) {}
                     }
 
                     AllDestinations.BIBLIJATEKA_SPEUNIKI -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_SPEUNIKI, innerPadding, searchText, addBiblijateka) {
+                        BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_SPEUNIKI, innerPadding, searchText, addBiblijateka, viewModel as SearchViewModel) {
                             addBiblijateka = false
                         }
                     }
@@ -1687,7 +1688,7 @@ fun MainConteiner(
                     AllDestinations.BIBLIJATEKA_MALITOUNIKI -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_MALITOUNIKI, innerPadding, searchText, addBiblijateka) {
+                        BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_MALITOUNIKI, innerPadding, searchText, addBiblijateka, viewModel as SearchViewModel) {
                             addBiblijateka = false
                         }
                     }
@@ -1695,7 +1696,7 @@ fun MainConteiner(
                     AllDestinations.BIBLIJATEKA_GISTORYIA -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_GISTORYIA, innerPadding, searchText, addBiblijateka) {
+                        BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_GISTORYIA, innerPadding, searchText, addBiblijateka, viewModel as SearchViewModel) {
                             addBiblijateka = false
                         }
                     }
@@ -1703,7 +1704,7 @@ fun MainConteiner(
                     AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA, innerPadding, searchText, addBiblijateka) {
+                        BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA, innerPadding, searchText, addBiblijateka, viewModel as SearchViewModel) {
                             addBiblijateka = false
                         }
                     }
@@ -1711,7 +1712,7 @@ fun MainConteiner(
                     AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU, innerPadding, searchText, addBiblijateka) {
+                        BiblijtekaList(navController, AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU, innerPadding, searchText, addBiblijateka, viewModel as SearchViewModel) {
                             addBiblijateka = false
                         }
                     }
@@ -1719,31 +1720,31 @@ fun MainConteiner(
                     AllDestinations.PIESNY_PRASLAULENNIA -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        PiesnyList(navController, AllDestinations.PIESNY_PRASLAULENNIA, innerPadding, searchText)
+                        PiesnyList(navController, AllDestinations.PIESNY_PRASLAULENNIA, innerPadding, searchText, viewModel as SearchViewModel)
                     }
 
                     AllDestinations.PIESNY_ZA_BELARUS -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        PiesnyList(navController, AllDestinations.PIESNY_ZA_BELARUS, innerPadding, searchText)
+                        PiesnyList(navController, AllDestinations.PIESNY_ZA_BELARUS, innerPadding, searchText, viewModel as SearchViewModel)
                     }
 
                     AllDestinations.PIESNY_DA_BAGARODZICY -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        PiesnyList(navController, AllDestinations.PIESNY_DA_BAGARODZICY, innerPadding, searchText)
+                        PiesnyList(navController, AllDestinations.PIESNY_DA_BAGARODZICY, innerPadding, searchText, viewModel as SearchViewModel)
                     }
 
                     AllDestinations.PIESNY_KALIADNYIA -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        PiesnyList(navController, AllDestinations.PIESNY_KALIADNYIA, innerPadding, searchText)
+                        PiesnyList(navController, AllDestinations.PIESNY_KALIADNYIA, innerPadding, searchText, viewModel as SearchViewModel)
                     }
 
                     AllDestinations.PIESNY_TAIZE -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        PiesnyList(navController, AllDestinations.PIESNY_TAIZE, innerPadding, searchText)
+                        PiesnyList(navController, AllDestinations.PIESNY_TAIZE, innerPadding, searchText, viewModel as SearchViewModel)
                     }
 
                     AllDestinations.UNDER_SVAITY_MUNU -> {
@@ -1762,14 +1763,14 @@ fun MainConteiner(
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
                         if (!searchText) viewModel.textFieldValueState = TextFieldValue("")
-                        Pashalia(navController, innerPadding, searchText)
+                        Pashalia(navController, innerPadding, searchText, viewModel as SearchViewModel)
                     }
 
                     AllDestinations.CHASASLOU_MENU -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
                         BogaslujbovyiaMenu(
-                            navController, innerPadding, Settings.MENU_CHASASLOU, searchText
+                            navController, innerPadding, Settings.MENU_CHASASLOU, searchText, viewModel as SearchViewModel
                         )
                     }
 
@@ -1777,7 +1778,7 @@ fun MainConteiner(
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
                         BogaslujbovyiaMenu(
-                            navController, innerPadding, Settings.MENU_LITURGIKON, searchText
+                            navController, innerPadding, Settings.MENU_LITURGIKON, searchText, viewModel as SearchViewModel
                         )
                     }
 
@@ -1794,7 +1795,7 @@ fun MainConteiner(
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
                         BogaslujbovyiaMenu(
-                            navController, innerPadding, Settings.MENU_MALITVY, searchText
+                            navController, innerPadding, Settings.MENU_MALITVY, searchText, viewModel as SearchViewModel
                         )
                     }
 
