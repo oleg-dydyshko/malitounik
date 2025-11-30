@@ -129,6 +129,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -375,6 +376,21 @@ fun Bogaslujbovyia(
             withContext(Dispatchers.IO) {
                 viewModel.scrollState.animateScrollTo(viewModel.scrollToY.toInt())
                 AppNavGraphState.setScrollValuePosition(title, viewModel.scrollState.value)
+            }
+        }
+    }
+    LifecycleResumeEffect(Unit) {
+        if (resursEncode.contains("akafist")) {
+            AppNavGraphState.setScrollValuePosition(title, k.getInt(resursEncode, 0))
+            coroutineScope.launch {
+                viewModel.scrollState.animateScrollTo(AppNavGraphState.getScrollValuePosition(title))
+            }
+        }
+        onPauseOrDispose {
+            if (resursEncode.contains("akafist")) {
+                k.edit {
+                    putInt(resursEncode, viewModel.scrollState.value)
+                }
             }
         }
     }

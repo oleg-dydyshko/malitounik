@@ -10,7 +10,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -24,7 +23,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -62,6 +60,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.text.HtmlCompat
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.DialogContextMenu
 import by.carkva_gazeta.malitounik.DialogDelite
@@ -130,7 +129,7 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
             viewModel.backCopy.sort()
         }
         if (Settings.isNetworkAvailable(context)) {
-            coroutineScope.launch {
+            viewModel.viewModelScope.launch {
                 isProgressVisable = true
                 fileList.clear()
                 fileList.addAll(viewModel.getPasochnicaFileList())
@@ -353,22 +352,76 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
             }
         }
     }
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        items(fileList.size) { index ->
-            Row(
-                modifier = Modifier
-                    .padding(start = 10.dp)
-                    .combinedClickable(onClick = {
-                        val fileName = fileList[index].fileName
-                        coroutineScope.launch {
-                            isProgressVisable = true
-                            viewModel.isHTML = fileName.contains(".html")
-                            viewModel.history.clear()
-                            viewModel.getPasochnicaFile(fileName, result = { sb, text ->
-                                viewModel.addHistory(sb, 0)
+    Column {
+        if (isProgressVisable) {
+            LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+        }
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            items(fileList.size) { index ->
+                Row(
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .combinedClickable(onClick = {
+                            val fileName = fileList[index].fileName
+                            coroutineScope.launch {
+                                isProgressVisable = true
+                                viewModel.isHTML = fileName.contains(".html")
+                                viewModel.history.clear()
+                                viewModel.getPasochnicaFile(fileName, result = { sb, text ->
+                                    viewModel.addHistory(sb, 0)
+                                    val html = if (viewModel.isHTML) {
+                                        SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
+                                    } else {
+                                        SpannableStringBuilder(text)
+                                    }
+                                    viewModel.htmlText = html
+                                    navigationActions.navigateToPiasochnica(fileName)
+                                })
+                                isProgressVisable = false
+                            }
+                        }, onLongClick = {
+                            position = index
+                            dialogContextMenu = true
+                        }),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        modifier = Modifier.size(5.dp),
+                        painter = painterResource(R.drawable.poiter),
+                        tint = MaterialTheme.colorScheme.primary,
+                        contentDescription = ""
+                    )
+                    Column(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
+                        Text(
+                            text = fileList[index].fileName,
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontSize = Settings.fontInterface.sp
+                        )
+                        if (!fileList[index].isFileExists) {
+                            Text(
+                                text = stringResource(R.string.file_not_find),
+                                color = MaterialTheme.colorScheme.primary,
+                                fontSize = Settings.fontInterface.sp
+                            )
+                        }
+                    }
+                }
+                HorizontalDivider()
+            }
+            items(viewModel.backCopy.size) { index ->
+                Row(
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .combinedClickable(onClick = {
+                            val fileName = viewModel.backCopy[index]
+                            val file = File(context.getExternalFilesDir("PiasochnicaBackCopy"), fileName)
+                            if (file.exists()) {
+                                var text = file.readText()
+                                text = if (Settings.dzenNoch) text.replace("#d00505", "#ff6666", true)
+                                else text
                                 val html = if (viewModel.isHTML) {
                                     SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
                                 } else {
@@ -376,89 +429,33 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                                 }
                                 viewModel.htmlText = html
                                 navigationActions.navigateToPiasochnica(fileName)
-                            })
-                            isProgressVisable = false
-                        }
-                    }, onLongClick = {
-                        position = index
-                        dialogContextMenu = true
-                    }),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    modifier = Modifier.size(5.dp),
-                    painter = painterResource(R.drawable.poiter),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = ""
-                )
-                Column(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
+                            }
+                        }, onLongClick = {
+                            position = index
+                            dialogDeliteBackCopy = true
+                        }),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        modifier = Modifier.size(5.dp),
+                        painter = painterResource(R.drawable.poiter),
+                        tint = MaterialTheme.colorScheme.primary,
+                        contentDescription = ""
+                    )
                     Text(
-                        text = fileList[index].fileName,
-                        color = MaterialTheme.colorScheme.secondary,
+                        text = viewModel.backCopy[index],
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(10.dp),
+                        color = MaterialTheme.colorScheme.primary,
                         fontSize = Settings.fontInterface.sp
                     )
-                    if (!fileList[index].isFileExists) {
-                        Text(
-                            text = stringResource(R.string.file_not_find),
-                            color = MaterialTheme.colorScheme.primary,
-                            fontSize = Settings.fontInterface.sp
-                        )
-                    }
                 }
+                HorizontalDivider()
             }
-            HorizontalDivider()
-        }
-        items(viewModel.backCopy.size) { index ->
-            Row(
-                modifier = Modifier
-                    .padding(start = 10.dp)
-                    .combinedClickable(onClick = {
-                        val fileName = viewModel.backCopy[index]
-                        val file = File(context.getExternalFilesDir("PiasochnicaBackCopy"), fileName)
-                        if (file.exists()) {
-                            var text = file.readText()
-                            text = if (Settings.dzenNoch) text.replace("#d00505", "#ff6666", true)
-                            else text
-                            val html = if (viewModel.isHTML) {
-                                SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
-                            } else {
-                                SpannableStringBuilder(text)
-                            }
-                            viewModel.htmlText = html
-                            navigationActions.navigateToPiasochnica(fileName)
-                        }
-                    }, onLongClick = {
-                        position = index
-                        dialogDeliteBackCopy = true
-                    }),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    modifier = Modifier.size(5.dp),
-                    painter = painterResource(R.drawable.poiter),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = ""
-                )
-                Text(
-                    text = viewModel.backCopy[index],
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(10.dp),
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = Settings.fontInterface.sp
-                )
+            item {
+                Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
             }
-            HorizontalDivider()
-        }
-        item {
-            Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
-        }
-    }
-    if (isProgressVisable) {
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
     }
 }

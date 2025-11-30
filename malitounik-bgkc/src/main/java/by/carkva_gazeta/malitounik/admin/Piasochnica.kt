@@ -14,7 +14,6 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.text.style.URLSpan
 import android.util.Base64
-import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -28,7 +27,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -40,11 +38,11 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
@@ -158,9 +156,7 @@ class Piasochnica : ViewModel() {
                         }
                     }
                     fileList.addAll(temp)
-                } catch (e: Throwable) {
-                    Log.d("Oleg", "error1")
-                    e.printStackTrace()
+                } catch (_: Throwable) {
                     Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
                 }
                 isProgressVisable = false
@@ -180,17 +176,12 @@ class Piasochnica : ViewModel() {
             val list = Malitounik.referens.child("/admin/piasochnica").list(500).addOnFailureListener {
                 error = true
             }.await()
-            for (i in 0 until findDirAsSave.size) {
-                Log.d("Oleg4", findDirAsSave[i])
-            }
             list.items.forEach {
                 val metadata = it.metadata.await()
                 val isFileExists = findDirAsSave(it.name)
                 fileList.add(PaisochnicaFileList(it.name, metadata.updatedTimeMillis, isFileExists))
             }
-        } catch (e: Throwable) {
-            Log.d("Oleg", "error1")
-            e.printStackTrace()
+        } catch (_: Throwable) {
             error = true
         }
         if (count == 3) Toast.makeText(Malitounik.applicationContext(), Malitounik.applicationContext().getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
@@ -1313,13 +1304,15 @@ fun Piasochnica(
                 )
         ) {
             Column(
-                modifier = Modifier
-                    .verticalScroll(scrollState),
                 verticalArrangement = Arrangement.Top
             ) {
+                if (isProgressVisable) {
+                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                }
                 AndroidView(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .verticalScroll(scrollState)
                         .padding(top = 10.dp, start = 10.dp, end = 10.dp, bottom = innerPadding.calculateBottomPadding())
                         .imePadding(),
                     factory = {
@@ -1343,13 +1336,6 @@ fun Piasochnica(
                         keyboardController?.hide()
                     }
                 )
-            }
-        }
-        if (isProgressVisable) {
-            Box(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
     }
