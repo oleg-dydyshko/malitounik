@@ -155,7 +155,7 @@ import by.carkva_gazeta.malitounik.VybranaeList
 import by.carkva_gazeta.malitounik.admin.DialogEditSvityiaAndSviaty
 import by.carkva_gazeta.malitounik.admin.Icony
 import by.carkva_gazeta.malitounik.admin.PasochnicaList
-import by.carkva_gazeta.malitounik.admin.PiasochnicaNew
+import by.carkva_gazeta.malitounik.admin.Piasochnica
 import by.carkva_gazeta.malitounik.formatFigureTwoPlaces
 import by.carkva_gazeta.malitounik.removeZnakiAndSlovy
 import by.carkva_gazeta.malitounik.setNotificationNon
@@ -322,7 +322,7 @@ fun openAssetsResources(context: Context, fileName: String): String {
 }
 
 @Composable
-fun AppNavGraph(navController: NavHostController = rememberNavController(), viewModel: SearchBibleViewModel = viewModel()) {
+fun AppNavGraph(navController: NavHostController = rememberNavController(), viewModel: SearchBibleViewModel = viewModel(), adminViewModel: Piasochnica = viewModel()) {
     val drawerScrollStete = rememberScrollState()
     val searchBibleState = rememberLazyListState()
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
@@ -369,194 +369,194 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
         composable(AllDestinations.KALIANDAR) {
             Settings.destinations = AllDestinations.KALIANDAR
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.AKAFIST_MENU) {
             Settings.destinations = AllDestinations.AKAFIST_MENU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.LITURGIKON_MENU) {
             Settings.destinations = AllDestinations.LITURGIKON_MENU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.CHASASLOU_MENU) {
             Settings.destinations = AllDestinations.CHASASLOU_MENU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.MAE_NATATKI_MENU) {
             Settings.destinations = AllDestinations.MAE_NATATKI_MENU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BOGASLUJBOVYIA_MENU) {
             Settings.destinations = AllDestinations.BOGASLUJBOVYIA_MENU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.MALITVY_MENU) {
             Settings.destinations = AllDestinations.MALITVY_MENU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIA_SEMUXA) {
             Settings.destinations = AllDestinations.BIBLIA_SEMUXA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIA_BOKUNA) {
             Settings.destinations = AllDestinations.BIBLIA_BOKUNA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIA_NADSAN) {
             Settings.destinations = AllDestinations.BIBLIA_NADSAN
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIA_CHARNIAUSKI) {
             Settings.destinations = AllDestinations.BIBLIA_CHARNIAUSKI
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIA_CATOLIK) {
             Settings.destinations = AllDestinations.BIBLIA_CATOLIK
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIA_SINODAL) {
             Settings.destinations = AllDestinations.BIBLIA_SINODAL
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIA_NEW_KING_JAMES) {
             Settings.destinations = AllDestinations.BIBLIA_NEW_KING_JAMES
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.KALIANDAR_YEAR) {
             Settings.destinations = AllDestinations.KALIANDAR_YEAR
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.VYBRANAE_LIST) {
             Settings.destinations = AllDestinations.VYBRANAE_LIST
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIJATEKA_NIADAUNIA) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_NIADAUNIA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIJATEKA_SPEUNIKI) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_SPEUNIKI
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIJATEKA_GISTORYIA) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_GISTORYIA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIJATEKA_MALITOUNIKI) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_MALITOUNIKI
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.PIESNY_PRASLAULENNIA) {
             Settings.destinations = AllDestinations.PIESNY_PRASLAULENNIA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.PIESNY_DA_BAGARODZICY) {
             Settings.destinations = AllDestinations.PIESNY_DA_BAGARODZICY
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.PIESNY_ZA_BELARUS) {
             Settings.destinations = AllDestinations.PIESNY_ZA_BELARUS
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.PIESNY_KALIADNYIA) {
             Settings.destinations = AllDestinations.PIESNY_KALIADNYIA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.PIESNY_TAIZE) {
             Settings.destinations = AllDestinations.PIESNY_TAIZE
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.UNDER_PADRYXTOUKA) {
-            Bogaslujbovyia(navController, stringResource(R.string.spovedz), "padryxtouka_da_spovedzi.html")
+            Bogaslujbovyia(navController, stringResource(R.string.spovedz), "padryxtouka_da_spovedzi.html", adminViewModel = adminViewModel)
         }
 
         composable(AllDestinations.SETTINGS_VIEW) {
@@ -578,35 +578,35 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
         }
 
         composable(AllDestinations.UNDER_PAMIATKA) {
-            Bogaslujbovyia(navController, stringResource(R.string.pamiatka), "pamiatka.html")
+            Bogaslujbovyia(navController, stringResource(R.string.pamiatka), "pamiatka.html", adminViewModel = adminViewModel)
         }
 
         composable(AllDestinations.PRANAS) {
-            Bogaslujbovyia(navController, stringResource(R.string.pra_nas), "onas.html")
+            Bogaslujbovyia(navController, stringResource(R.string.pra_nas), "onas.html", adminViewModel = adminViewModel)
         }
 
         composable(AllDestinations.HELP) {
-            Bogaslujbovyia(navController, stringResource(R.string.help), "help.html")
+            Bogaslujbovyia(navController, stringResource(R.string.help), "help.html", adminViewModel = adminViewModel)
         }
 
         composable(AllDestinations.UNDER_SVAITY_MUNU) {
             Settings.destinations = AllDestinations.UNDER_SVAITY_MUNU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.UNDER_PARAFII_BGKC) {
             Settings.destinations = AllDestinations.UNDER_PARAFII_BGKC
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.UNDER_PASHALIA) {
             Settings.destinations = AllDestinations.UNDER_PASHALIA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
@@ -674,7 +674,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
                             )
                         }
                     }
-                })
+                }, adminViewModel = adminViewModel)
         }
 
         composable(
@@ -724,13 +724,13 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
         composable(AllDestinations.PIASOCHNICA_LIST) {
             Settings.destinations = AllDestinations.PIASOCHNICA_LIST
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.PIASOCHNICA + "/{resurs}") { stackEntry ->
             val resurs = stackEntry.arguments?.getString("resurs") ?: "bogashlugbovya_error.html"
-            PiasochnicaNew(navController, resurs)
+            Piasochnica(navController, resurs, adminViewModel)
         }
 
         composable(AllDestinations.EDIT_ICON) {
@@ -841,7 +841,8 @@ fun CheckUpdateMalitounik(
 fun MainConteiner(
     navController: NavHostController,
     drawerScrollStete: ScrollState,
-    viewModel: SearchBibleViewModel
+    viewModel: SearchBibleViewModel,
+    adminViewModel: Piasochnica
 ) {
     val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
     val coroutineScope = rememberCoroutineScope()
@@ -1159,7 +1160,7 @@ fun MainConteiner(
         val maxLine = remember { mutableIntStateOf(2) }
         var dialogEditSvityiaAndSviaty by rememberSaveable { mutableStateOf(false) }
         if (dialogEditSvityiaAndSviaty) {
-            DialogEditSvityiaAndSviaty {
+            DialogEditSvityiaAndSviaty(adminViewModel) {
                 dialogEditSvityiaAndSviaty = false
             }
         }
@@ -1378,14 +1379,6 @@ fun MainConteiner(
                         })
                         if (currentRoute == AllDestinations.PIASOCHNICA_LIST) {
                             DropdownMenuItem(onClick = {
-                                PasochnicaList.pasochnicaAction = PasochnicaList.DEL_ALL_BACK_COPY
-                                expandedUp = false
-                            }, text = { Text(stringResource(R.string.del_all_copy), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                Icon(
-                                    painter = painterResource(R.drawable.delete), contentDescription = ""
-                                )
-                            })
-                            DropdownMenuItem(onClick = {
                                 PasochnicaList.pasochnicaAction = PasochnicaList.DEL_ALL_PASOCHNICA
                                 expandedUp = false
                             }, text = { Text(stringResource(R.string.del_pasochnica), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
@@ -1450,14 +1443,16 @@ fun MainConteiner(
                                     })
                                 }
                             }
-                            DropdownMenuItem(onClick = {
-                                expandedUp = false
-                                logView = true
-                            }, text = { Text(stringResource(R.string.log_m), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                Icon(
-                                    painter = painterResource(R.drawable.description), contentDescription = ""
-                                )
-                            })
+                            if (!k.getBoolean("adminNotifications", false)) {
+                                DropdownMenuItem(onClick = {
+                                    expandedUp = false
+                                    logView = true
+                                }, text = { Text(stringResource(R.string.log_m), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.description), contentDescription = ""
+                                    )
+                                })
+                            }
                         }
                     }
                 }, colors = TopAppBarDefaults.topAppBarColors(tollBarColor)
@@ -1940,7 +1935,7 @@ fun MainConteiner(
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
                         PasochnicaList(
-                            navController, innerPadding
+                            navController, innerPadding, adminViewModel
                         )
                     }
                 }

@@ -448,7 +448,12 @@ fun SettingsView(navController: NavHostController) {
             }
             var adminDayInYearState by remember { mutableStateOf(k.getBoolean("adminDayInYear", false)) }
             var adminOnlyNotificationsState by remember { mutableStateOf(k.getBoolean("adminOnlyNotifications", false)) }
+            var adminNotificationsState by remember { mutableStateOf(k.getBoolean("adminNotifications", false)) }
             if (admin) {
+                Text(
+                    modifier = Modifier.padding(top = 10.dp), text = stringResource(R.string.admin), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.primary
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.primary)
                 Row(
                     verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                         .padding(vertical = 10.dp)
@@ -492,6 +497,28 @@ fun SettingsView(navController: NavHostController) {
                             k.edit {
                                 putBoolean("adminOnlyNotifications", adminOnlyNotificationsState)
                                 putBoolean("admin", !adminOnlyNotificationsState)
+                            }
+                        })
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                        .padding(vertical = 10.dp)
+                        .clickable {
+                            adminNotificationsState = !adminNotificationsState
+                            k.edit {
+                                putBoolean("adminNotifications", adminNotificationsState)
+                            }
+                        }) {
+                    Text(
+                        stringResource(R.string.apav_no), modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                    )
+                    Switch(
+                        modifier = Modifier.scale(0.8f), checked = adminNotificationsState, onCheckedChange = {
+                            adminNotificationsState = it
+                            k.edit {
+                                putBoolean("adminNotifications", adminNotificationsState)
                             }
                         })
                 }
@@ -1104,6 +1131,8 @@ fun SettingsView(navController: NavHostController) {
                         putInt("slovocalkam", 0)
                         putBoolean("admin", false)
                         putBoolean("adminDayInYear", false)
+                        putBoolean("adminOnlyNotifications", false)
+                        putBoolean("adminNotifications", false)
                         putBoolean("paralel_maranata", true)
                         putBoolean("bottomBar", false)
                         putBoolean("isShareHelp", true)
@@ -1123,6 +1152,8 @@ fun SettingsView(navController: NavHostController) {
                     admin = false
                     Settings.fontInterface = 22f
                     adminDayInYearState = false
+                    adminOnlyNotificationsState = false
+                    adminNotificationsState = false
                     catolikState = false
                     paralelState = false
                     modePkcSvaity = false

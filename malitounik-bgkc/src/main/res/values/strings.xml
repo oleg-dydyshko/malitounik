@@ -350,7 +350,6 @@
     <string name="del_all_back_copy">Вы сапраўды жадаеце выдаліць усё рэзервовыя копіі?</string>
     <string name="del_all_pasochnica">Вы сапраўды жадаеце выдаліць усю пясочніцу?</string>
     <string name="del_pasochnica">Выдаліць усю пясочніцу</string>
-    <string name="del_all_copy">Выдаліць усе рэзервовыя копіі</string>
     <string name="admin_day_in_year">Дзень ад пачатку года (да і пасьля Пасxi)</string>
     <string name="admin_show_day_in_year">Год (Пасха): %1$s (%2$s)</string>
     <string name="admin_set_name_link">СПАСЫЛКА</string>
@@ -866,5 +865,7 @@
     <string name="title_down_load">СПАМПАВАЦЬ БІБЛІЮ</string>
     <string name="content_down_load">Спампаваць %1$s памерам у %2$s?</string>
     <string name="translate">З перакладам</string>
+    <string name="file_not_find">файл у базе не знойдзены</string>
+    <string name="admin">АДМІНІСТРАВАНЬНЕ:</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

@@ -13,6 +13,8 @@ import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.text.style.URLSpan
+import android.util.Base64
+import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -95,7 +97,9 @@ import androidx.core.text.HtmlCompat
 import androidx.core.text.toHtml
 import androidx.core.text.toSpannable
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.DialogNoWiFI
 import by.carkva_gazeta.malitounik.Malitounik
@@ -107,14 +111,14 @@ import by.carkva_gazeta.malitounik.views.AppDropdownMenu
 import by.carkva_gazeta.malitounik.writeFile
 import com.google.firebase.storage.ListResult
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import org.apache.commons.text.StringEscapeUtils
 import java.io.File
+import java.security.MessageDigest
 
-object Piasochnica {
+class Piasochnica : ViewModel() {
     var history = ArrayList<History>()
     var isHTML by mutableStateOf(true)
     var isDialogSaveFileExplorer by mutableStateOf(false)
@@ -123,6 +127,79 @@ object Piasochnica {
     var isBackPressVisable by mutableStateOf(false)
     var htmlText by mutableStateOf(SpannableStringBuilder())
     val fileList = mutableStateListOf<MyNetFile>()
+    var md5sumLocalFile = "0"
+    val backCopy = mutableStateListOf<String>()
+
+    fun getDirListRequest(dir: String) {
+        val context = Malitounik.applicationContext()
+        if (Settings.isNetworkAvailable(context)) {
+            viewModelScope.launch {
+                try {
+                    isProgressVisable = true
+                    fileList.clear()
+                    val temp = ArrayList<MyNetFile>()
+                    val list = Malitounik.referens.child("/$dir").list(1000).await()
+                    if (dir != "") {
+                        val t1 = dir.lastIndexOf("/")
+                        temp.add(MyNetFile(R.drawable.directory_up, dir.substring(t1 + 1)))
+                    }
+                    list.prefixes.forEach {
+                        temp.add(MyNetFile(R.drawable.directory_icon, it.name))
+                    }
+                    list.items.forEach {
+                        if (it.name.contains(".htm")) {
+                            temp.add(MyNetFile(R.drawable.file_html_icon, it.name))
+                        } else if (it.name.contains(".json")) {
+                            temp.add(MyNetFile(R.drawable.file_json_icon, it.name))
+                        } else if (it.name.contains(".php")) {
+                            temp.add(MyNetFile(R.drawable.file_php_icon, it.name))
+                        } else {
+                            temp.add(MyNetFile(R.drawable.file_txt_icon, it.name))
+                        }
+                    }
+                    fileList.addAll(temp)
+                } catch (e: Throwable) {
+                    Log.d("Oleg", "error1")
+                    e.printStackTrace()
+                    Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                }
+                isProgressVisable = false
+            }
+        } else {
+            Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    suspend fun getPasochnicaFileList(count: Int = 0): ArrayList<PaisochnicaFileList> {
+        if (findDirAsSave.isEmpty()) {
+            getFindFileListAsSave()
+        }
+        var error = false
+        val fileList = ArrayList<PaisochnicaFileList>()
+        try {
+            val list = Malitounik.referens.child("/admin/piasochnica").list(500).addOnFailureListener {
+                error = true
+            }.await()
+            for (i in 0 until findDirAsSave.size) {
+                Log.d("Oleg4", findDirAsSave[i])
+            }
+            list.items.forEach {
+                val metadata = it.metadata.await()
+                val isFileExists = findDirAsSave(it.name)
+                fileList.add(PaisochnicaFileList(it.name, metadata.updatedTimeMillis, isFileExists))
+            }
+        } catch (e: Throwable) {
+            Log.d("Oleg", "error1")
+            e.printStackTrace()
+            error = true
+        }
+        if (count == 3) Toast.makeText(Malitounik.applicationContext(), Malitounik.applicationContext().getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+        if (error && count < 3) {
+            getPasochnicaFileList(count + 1)
+            return ArrayList()
+        }
+        return fileList
+    }
 
     fun isFilePiasochnicaExitst(resours: String, fileList: SnapshotStateList<PaisochnicaFileList>): Boolean {
         for (i in 0 until fileList.size) {
@@ -136,7 +213,7 @@ object Piasochnica {
     fun getFileCopyPostRequest(dirToFile: String, isProgressVisable: (Boolean) -> Unit, result: (String, String) -> Unit) {
         val context = Malitounik.applicationContext()
         if (Settings.isNetworkAvailable(context)) {
-            CoroutineScope(Dispatchers.Main).launch {
+            viewModelScope.launch {
                 isProgressVisable(true)
                 val t5 = dirToFile.lastIndexOf("/")
                 val fileName = dirToFile.substring(t5 + 1)
@@ -175,7 +252,7 @@ object Piasochnica {
     fun getFileRenamePostRequest(oldFileName: String, fileName: String, isSite: Boolean, update: () -> Unit = {}) {
         val context = Malitounik.applicationContext()
         if (Settings.isNetworkAvailable(context)) {
-            CoroutineScope(Dispatchers.Main).launch {
+            viewModelScope.launch {
                 try {
                     val localFile = File("${context.filesDir}/cache/cache.txt")
                     if (isSite) {
@@ -239,11 +316,15 @@ object Piasochnica {
         }
     }
 
-    suspend fun getFindFileListAsSave() {
+    suspend fun getFindFileListAsSave(count: Int = 0) {
         try {
             findFile()
         } catch (_: Throwable) {
-            Toast.makeText(Malitounik.applicationContext(), Malitounik.applicationContext().getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+            if (count == 3) Toast.makeText(Malitounik.applicationContext(), Malitounik.applicationContext().getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+            if (count < 3) {
+                findDirAsSave.clear()
+                getFindFileListAsSave(count + 1)
+            }
         }
     }
 
@@ -260,7 +341,7 @@ object Piasochnica {
     fun getFileUnlinkPostRequest(fileName: String, isSite: Boolean) {
         val context = Malitounik.applicationContext()
         if (Settings.isNetworkAvailable(context)) {
-            CoroutineScope(Dispatchers.Main).launch {
+            viewModelScope.launch {
                 try {
                     if (isSite) {
                         Malitounik.referens.child("/admin/piasochnica/$fileName").delete().await()
@@ -307,7 +388,7 @@ object Piasochnica {
     fun crateNewFilePiasochnica(newFile: String) {
         val context = Malitounik.applicationContext()
         if (Settings.isNetworkAvailable(context)) {
-            CoroutineScope(Dispatchers.Main).launch {
+            viewModelScope.launch {
                 val localFile = File("${context.filesDir}/cache/cache.txt")
                 localFile.writer().use {
                     it.write("")
@@ -317,33 +398,55 @@ object Piasochnica {
         }
     }
 
-    fun sendSaveAsPostRequest(dirToFile: String, fileName: String) {
+    fun sendSaveAsPostRequest(dirToFile: String, fileName: String, count: Int = 0) {
         val context = Malitounik.applicationContext()
+        var error = false
         if (Settings.isNetworkAvailable(context)) {
-            CoroutineScope(Dispatchers.Main).launch {
+            viewModelScope.launch {
                 isProgressVisable = true
                 try {
                     val localFile = File("${context.filesDir}/cache/cache.txt")
                     Malitounik.referens.child("/admin/piasochnica/$fileName").getFile(localFile).addOnFailureListener {
-                        Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
+                        error = true
                     }.await()
                     val t3 = dirToFile.lastIndexOf("/")
                     val newFile = dirToFile.substring(t3 + 1)
                     val newDir = dirToFile.take(t3 + 1)
-                    Malitounik.referens.child("/$newDir$newFile").putFile(Uri.fromFile(localFile)).await()
-                    Malitounik.referens.child("/admin/piasochnica/$fileName").delete().await()
-                    Malitounik.referens.child("/admin/piasochnica/$newFile").putFile(Uri.fromFile(localFile)).addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            Toast.makeText(context, context.getString(R.string.save), Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
-                        }
+                    Malitounik.referens.child("/$newDir$newFile").putFile(Uri.fromFile(localFile)).addOnFailureListener {
+                        error = true
                     }.await()
-                    findDirAsSave.add("/$newDir$newFile")
+                    Malitounik.referens.child("/admin/piasochnica/$fileName").delete().addOnFailureListener {
+                        error = true
+                    }.await()
+                    Malitounik.referens.child("/admin/piasochnica/$newFile").putFile(Uri.fromFile(localFile)).addOnFailureListener {
+                        error = true
+                    }.await()
+                    if (!error) {
+                        findDirAsSave.add("/$newDir$newFile")
+                        val metadata = Malitounik.referens.child("/$newDir$newFile").metadata.await()
+                        if (md5sumLocalFile.trim().compareTo(metadata.md5Hash?.trim() ?: "0") == 0) {
+                            File(context.getExternalFilesDir("PiasochnicaBackCopy"), fileName).delete()
+                            var remove = -1
+                            for (i in backCopy.indices) {
+                                if (backCopy[i] == fileName) {
+                                    remove = i
+                                    break
+                                }
+                            }
+                            if (remove != -1) backCopy.removeAt(remove)
+                        }
+                    }
                 } catch (_: Throwable) {
+                    error = true
                     Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
                 }
-                saveLogFile()
+                if (error && count < 3) {
+                    sendSaveAsPostRequest(dirToFile, fileName, count + 1)
+                    Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, context.getString(R.string.save), Toast.LENGTH_SHORT).show()
+                    saveLogFile()
+                }
                 isProgressVisable = false
             }
         }
@@ -359,14 +462,20 @@ object Piasochnica {
         file.writer().use {
             it.write(content)
         }
+        val messageDigest = MessageDigest.getInstance("MD5")
+        messageDigest.reset()
+        messageDigest.update(file.readText().toByteArray())
+        val digest = messageDigest.digest()
+        md5sumLocalFile = Base64.encodeToString(digest, Base64.DEFAULT)
         if (Settings.isNetworkAvailable(context)) {
-            CoroutineScope(Dispatchers.Main).launch {
+            viewModelScope.launch {
                 isProgressVisable = true
                 if (findDirAsSave.isEmpty()) {
                     getFindFileListAsSave()
                 }
                 try {
-                    Malitounik.referens.child("/admin/piasochnica/$resours").putFile(Uri.fromFile(file)).addOnCompleteListener {
+                    val referens = Malitounik.referens.child("/admin/piasochnica/$resours")
+                    referens.putFile(Uri.fromFile(file)).addOnCompleteListener {
                         if (it.isSuccessful) {
                             if (saveAs) {
                                 if (findDirAsSave(resours)) {
@@ -374,12 +483,25 @@ object Piasochnica {
                                 } else {
                                     isDialogSaveFileExplorer = true
                                 }
-                                Toast.makeText(context, context.getString(R.string.save), Toast.LENGTH_SHORT).show()
                             }
                         } else {
                             Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
                         }
                     }.await()
+                    if (!saveAs) {
+                        val metadata = Malitounik.referens.child("/admin/piasochnica/$resours").metadata.await()
+                        if (md5sumLocalFile.trim().compareTo(metadata.md5Hash?.trim() ?: "0") == 0) {
+                            file.delete()
+                            var remove = -1
+                            for (i in backCopy.indices) {
+                                if (backCopy[i] == resours) {
+                                    remove = i
+                                    break
+                                }
+                            }
+                            if (remove != -1) backCopy.removeAt(remove)
+                        }
+                    }
                 } catch (_: Throwable) {
                     Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
                 }
@@ -389,17 +511,16 @@ object Piasochnica {
         }
     }
 
-    private fun findDirAsSave(resours: String): Boolean {
-        var result = false
+    fun findDirAsSave(resours: String): Boolean {
         if (resours != "") {
             for (i in 0 until findDirAsSave.size) {
-                if (findDirAsSave[i].contains(resours)) {
-                    result = true
-                    break
+                val t1 = findDirAsSave[i].lastIndexOf("/")
+                if (t1 != -1 && findDirAsSave[i].substring(t1 + 1) == resours) {
+                    return true
                 }
             }
         }
-        return result
+        return false
     }
 
     private fun getDirAsSave(resours: String): String {
@@ -603,7 +724,7 @@ object Piasochnica {
     fun sendPostRequest(svityia: String, chtenieSvaitomu: String, style: Int, tipicon: String, titleCytanne: String, cytanne: String, dayOfPascha: Int, isLoad: (Boolean) -> Unit) {
         val context = Malitounik.applicationContext()
         if (Settings.isNetworkAvailable(context)) {
-            CoroutineScope(Dispatchers.Main).launch {
+            viewModelScope.launch {
                 isLoad(true)
                 var myTipicon = tipicon
                 if (myTipicon == "0") myTipicon = ""
@@ -743,8 +864,8 @@ object Piasochnica {
 @Suppress("COMPOSE_APPLIER_CALL_MISMATCH")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PiasochnicaNew(
-    navController: NavHostController, resours: String
+fun Piasochnica(
+    navController: NavHostController, resours: String, viewModel: Piasochnica
 ) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
@@ -768,20 +889,20 @@ fun PiasochnicaNew(
             }
 
             override fun afterTextChanged(s: Editable?) {
-                Piasochnica.addHistory(s, endEditPosition)
+                viewModel.addHistory(s, endEditPosition)
                 editText.removeTextChangedListener(this)
                 s?.let {
-                    Piasochnica.htmlText = it as SpannableStringBuilder
+                    viewModel.htmlText = it as SpannableStringBuilder
                 }
                 editText.addTextChangedListener(this)
-                Piasochnica.isBackPressVisable = Piasochnica.history.size > 1
+                viewModel.isBackPressVisable = viewModel.history.size > 1
             }
         }
     }
     LifecycleResumeEffect(Unit) {
         onPauseOrDispose {
-            Piasochnica.htmlText = editText.text as SpannableStringBuilder
-            Piasochnica.saveResult(resours, false)
+            viewModel.htmlText = editText.text as SpannableStringBuilder
+            viewModel.saveResult(resours, false)
         }
     }
     var backPressHandled by remember { mutableStateOf(false) }
@@ -805,12 +926,12 @@ fun PiasochnicaNew(
     val maxLine = remember { mutableIntStateOf(1) }
     var isDialogNoWIFIVisable by remember { mutableStateOf(false) }
     var printFile by remember { mutableStateOf("") }
-    if (Piasochnica.isDialogSaveFileExplorer) {
-        DialogNetFileExplorer(fileName = resours, setFile = {
-            Piasochnica.sendSaveAsPostRequest(it, resours)
-            Piasochnica.isDialogSaveFileExplorer = false
+    if (viewModel.isDialogSaveFileExplorer) {
+        DialogNetFileExplorer(viewModel = viewModel, fileName = resours, setFile = {
+            viewModel.sendSaveAsPostRequest(it, resours)
+            viewModel.isDialogSaveFileExplorer = false
         }) {
-            Piasochnica.isDialogSaveFileExplorer = false
+            viewModel.isDialogSaveFileExplorer = false
         }
     }
     if (isDialogNoWIFIVisable) {
@@ -840,7 +961,7 @@ fun PiasochnicaNew(
         DialogCrateURL(setURL = {
             startEditPosition = editText.selectionStart
             endEditPosition = editText.selectionEnd
-            if (Piasochnica.isHTML) {
+            if (viewModel.isHTML) {
                 val text = editText.text
                 val subtext = text.getSpans(startEditPosition, endEditPosition, URLSpan::class.java)
                 subtext.forEach {
@@ -864,8 +985,8 @@ fun PiasochnicaNew(
                 endEditPosition += 29
                 editText.addTextChangedListener(textWatcher)
             }
-            Piasochnica.htmlText = editText.text as SpannableStringBuilder
-            Piasochnica.addHistory(editText.text, editText.selectionEnd)
+            viewModel.htmlText = editText.text as SpannableStringBuilder
+            viewModel.addHistory(editText.text, editText.selectionEnd)
             dialogCrateUrl = false
         }) {
             dialogCrateUrl = false
@@ -917,8 +1038,8 @@ fun PiasochnicaNew(
                 },
                 actions = {
                     IconButton(onClick = {
-                        Piasochnica.htmlText = editText.text as SpannableStringBuilder
-                        Piasochnica.saveResult(resours, true)
+                        viewModel.htmlText = editText.text as SpannableStringBuilder
+                        viewModel.saveResult(resours, true)
                     }) {
                         Icon(
                             painter = painterResource(R.drawable.save_as), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
@@ -988,18 +1109,18 @@ fun PiasochnicaNew(
                     .navigationBarsPadding(),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-                if (Piasochnica.isBackPressVisable) {
+                if (viewModel.isBackPressVisable) {
                     IconButton(onClick = {
                         editText.removeTextChangedListener(textWatcher)
-                        if (Piasochnica.history.size > 1) {
-                            editText.setText(Piasochnica.history[Piasochnica.history.size - 2].spannable)
-                            val editPosition = if (Piasochnica.history[Piasochnica.history.size - 2].editPosition == 0) endEditPosition
-                            else Piasochnica.history[Piasochnica.history.size - 2].editPosition
+                        if (viewModel.history.size > 1) {
+                            editText.setText(viewModel.history[viewModel.history.size - 2].spannable)
+                            val editPosition = if (viewModel.history[viewModel.history.size - 2].editPosition == 0) endEditPosition
+                            else viewModel.history[viewModel.history.size - 2].editPosition
                             endEditPosition = editPosition
                             editText.setSelection(endEditPosition)
-                            Piasochnica.history.removeAt(Piasochnica.history.size - 1)
+                            viewModel.history.removeAt(viewModel.history.size - 1)
                         }
-                        Piasochnica.isBackPressVisable = Piasochnica.history.size > 1
+                        viewModel.isBackPressVisable = viewModel.history.size > 1
                         editText.addTextChangedListener(textWatcher)
                     }) {
                         Icon(
@@ -1013,7 +1134,7 @@ fun PiasochnicaNew(
                 IconButton(onClick = {
                     startEditPosition = editText.selectionStart
                     endEditPosition = editText.selectionEnd
-                    if (Piasochnica.isHTML) {
+                    if (viewModel.isHTML) {
                         val text = editText.text
                         text?.let { editable ->
                             val subtext = editable.getSpans(startEditPosition, endEditPosition, StyleSpan(Typeface.BOLD)::class.java)
@@ -1041,8 +1162,8 @@ fun PiasochnicaNew(
                         endEditPosition += 17
                         editText.addTextChangedListener(textWatcher)
                     }
-                    Piasochnica.htmlText = editText.text as SpannableStringBuilder
-                    Piasochnica.addHistory(editText.text, editText.selectionEnd)
+                    viewModel.htmlText = editText.text as SpannableStringBuilder
+                    viewModel.addHistory(editText.text, editText.selectionEnd)
                 }) {
                     Icon(
                         modifier = Modifier.size(24.dp),
@@ -1054,7 +1175,7 @@ fun PiasochnicaNew(
                 IconButton(onClick = {
                     startEditPosition = editText.selectionStart
                     endEditPosition = editText.selectionEnd
-                    if (Piasochnica.isHTML) {
+                    if (viewModel.isHTML) {
                         val text = editText.text
                         text?.let { editable ->
                             val subtext = editable.getSpans(startEditPosition, endEditPosition, StyleSpan(Typeface.ITALIC)::class.java)
@@ -1082,8 +1203,8 @@ fun PiasochnicaNew(
                         endEditPosition += 9
                         editText.addTextChangedListener(textWatcher)
                     }
-                    Piasochnica.htmlText = editText.text as SpannableStringBuilder
-                    Piasochnica.addHistory(editText.text, editText.selectionEnd)
+                    viewModel.htmlText = editText.text as SpannableStringBuilder
+                    viewModel.addHistory(editText.text, editText.selectionEnd)
                 }) {
                     Icon(
                         modifier = Modifier.size(24.dp),
@@ -1095,7 +1216,7 @@ fun PiasochnicaNew(
                 IconButton(onClick = {
                     startEditPosition = editText.selectionStart
                     endEditPosition = editText.selectionEnd
-                    if (Piasochnica.isHTML) {
+                    if (viewModel.isHTML) {
                         val text = editText.text
                         text?.let { editable ->
                             val subtext = editable.getSpans(startEditPosition, endEditPosition, ForegroundColorSpan::class.java)
@@ -1123,8 +1244,8 @@ fun PiasochnicaNew(
                         endEditPosition += 29
                         editText.addTextChangedListener(textWatcher)
                     }
-                    Piasochnica.htmlText = editText.text as SpannableStringBuilder
-                    Piasochnica.addHistory(editText.text, editText.selectionEnd)
+                    viewModel.htmlText = editText.text as SpannableStringBuilder
+                    viewModel.addHistory(editText.text, editText.selectionEnd)
                 }) {
                     Image(
                         modifier = Modifier.size(24.dp),
@@ -1132,7 +1253,7 @@ fun PiasochnicaNew(
                         contentDescription = ""
                     )
                 }
-                if (!Piasochnica.isHTML) {
+                if (!viewModel.isHTML) {
                     IconButton(onClick = {
                         endEditPosition = editText.selectionEnd
                         val text = editText.text.toString()
@@ -1144,11 +1265,11 @@ fun PiasochnicaNew(
                         }
                         editText.removeTextChangedListener(textWatcher)
                         editText.setText(build)
-                        Piasochnica.htmlText = editText.text as SpannableStringBuilder
+                        viewModel.htmlText = editText.text as SpannableStringBuilder
                         startEditPosition = 0
                         endEditPosition += 4
                         editText.addTextChangedListener(textWatcher)
-                        Piasochnica.addHistory(editText.text, editText.selectionEnd)
+                        viewModel.addHistory(editText.text, editText.selectionEnd)
                     }) {
                         Icon(
                             modifier = Modifier.size(24.dp),
@@ -1203,7 +1324,7 @@ fun PiasochnicaNew(
                         .imePadding(),
                     factory = {
                         editText.apply {
-                            setText(Piasochnica.htmlText)
+                            setText(viewModel.htmlText)
                             setTextColor(ContextCompat.getColor(context, if (Settings.dzenNoch) R.color.colorWhite else R.color.colorPrimary_text))
                             textSize = fontSize
                             addTextChangedListener(textWatcher)
@@ -1211,7 +1332,7 @@ fun PiasochnicaNew(
                     },
                     update = { editText ->
                         editText.removeTextChangedListener(textWatcher)
-                        editText.setText(Piasochnica.htmlText)
+                        editText.setText(viewModel.htmlText)
                         if (startEditPosition == 0) editText.setSelection(endEditPosition)
                         else editText.setSelection(startEditPosition, endEditPosition)
                         editText.setTextColor(ContextCompat.getColor(context, if (Settings.dzenNoch) R.color.colorWhite else R.color.colorPrimary_text))

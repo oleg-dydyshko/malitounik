@@ -134,7 +134,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.admin.PaisochnicaFileList
 import by.carkva_gazeta.malitounik.admin.Piasochnica
-import by.carkva_gazeta.malitounik.admin.getPasochnicaFileList
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik.ui.theme.Button
 import by.carkva_gazeta.malitounik.ui.theme.Divider
@@ -334,7 +333,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
 @Composable
 fun Bogaslujbovyia(
     navController: NavHostController, title: String, resurs: String,
-    navigateTo: (String, skipUtran: Boolean) -> Unit = { _, _ -> }, viewModel: BogaslujbovyiaViewModel = viewModel()
+    navigateTo: (String, skipUtran: Boolean) -> Unit = { _, _ -> }, viewModel: BogaslujbovyiaViewModel = viewModel(), adminViewModel: Piasochnica
 ) {
     val resursEncode = URLDecoder.decode(resurs, "UTF8")
     val context = LocalContext.current
@@ -969,46 +968,46 @@ fun Bogaslujbovyia(
                                             DropdownMenuItem(onClick = {
                                                 expandedUp = false
                                                 viewModel.autoScroll(title, false)
-                                                coroutineScope.launch {
+                                                viewModel.viewModelScope.launch {
                                                     isProgressVisable = true
                                                     val fileList = SnapshotStateList<PaisochnicaFileList>()
-                                                    fileList.addAll(getPasochnicaFileList())
+                                                    fileList.addAll(adminViewModel.getPasochnicaFileList())
                                                     val dirToFile = if (iskniga) listResource[adminResourceEditPosition].resource
                                                     else resursEncode
                                                     Settings.bibleTime = false
-                                                    Piasochnica.isHTML = dirToFile.contains(".html")
-                                                    Piasochnica.history.clear()
+                                                    adminViewModel.isHTML = dirToFile.contains(".html")
+                                                    adminViewModel.history.clear()
                                                     val t1 = dirToFile.lastIndexOf("/")
                                                     val fileName = if (t1 != -1) dirToFile.substring(t1 + 1)
                                                     else dirToFile
-                                                    if (Piasochnica.isFilePiasochnicaExitst(fileName, fileList)) {
+                                                    if (adminViewModel.isFilePiasochnicaExitst(fileName, fileList)) {
                                                         coroutineScope.launch {
                                                             isProgressVisable = true
-                                                            Piasochnica.getPasochnicaFile(fileName, result = { sb, text ->
-                                                                Piasochnica.addHistory(sb, 0)
-                                                                val html = if (Piasochnica.isHTML) {
+                                                            adminViewModel.getPasochnicaFile(fileName, result = { sb, text ->
+                                                                adminViewModel.addHistory(sb, 0)
+                                                                val html = if (adminViewModel.isHTML) {
                                                                     sb
                                                                 } else {
                                                                     SpannableStringBuilder(text)
                                                                 }
-                                                                Piasochnica.htmlText = html
+                                                                adminViewModel.htmlText = html
                                                                 navigationActions.navigateToPiasochnica(fileName)
                                                             })
                                                         }
                                                     } else {
-                                                        if (Piasochnica.findDirAsSave.isEmpty()) {
-                                                            Piasochnica.getFindFileListAsSave()
+                                                        if (adminViewModel.findDirAsSave.isEmpty()) {
+                                                            adminViewModel.getFindFileListAsSave()
                                                         }
-                                                        Piasochnica.getFileCopyPostRequest(dirToFile = Piasochnica.findResoursDir(fileName), isProgressVisable = {
+                                                        adminViewModel.getFileCopyPostRequest(dirToFile = adminViewModel.findResoursDir(fileName), isProgressVisable = {
                                                             isProgressVisable = it
                                                         }) { text, fileName ->
-                                                            val html = if (Piasochnica.isHTML) {
+                                                            val html = if (adminViewModel.isHTML) {
                                                                 SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
                                                             } else {
                                                                 SpannableStringBuilder(text)
                                                             }
-                                                            Piasochnica.addHistory(html, 0)
-                                                            Piasochnica.htmlText = html
+                                                            adminViewModel.addHistory(html, 0)
+                                                            adminViewModel.htmlText = html
                                                             navigationActions.navigateToPiasochnica(fileName)
                                                             isProgressVisable = false
                                                         }
@@ -1026,46 +1025,46 @@ fun Bogaslujbovyia(
                                 if (k.getBoolean("admin", false) && (isBottomBar || iskniga)) {
                                     IconButton(onClick = {
                                         viewModel.autoScroll(title, false)
-                                        coroutineScope.launch {
+                                        viewModel.viewModelScope.launch {
                                             isProgressVisable = true
                                             val fileList = SnapshotStateList<PaisochnicaFileList>()
-                                            fileList.addAll(getPasochnicaFileList())
+                                            fileList.addAll(adminViewModel.getPasochnicaFileList())
                                             val dirToFile = if (iskniga) listResource[adminResourceEditPosition].resource
                                             else resursEncode
                                             Settings.bibleTime = false
-                                            Piasochnica.isHTML = dirToFile.contains(".html")
-                                            Piasochnica.history.clear()
+                                            adminViewModel.isHTML = dirToFile.contains(".html")
+                                            adminViewModel.history.clear()
                                             val t1 = dirToFile.lastIndexOf("/")
                                             val fileName = if (t1 != -1) dirToFile.substring(t1 + 1)
                                             else dirToFile
-                                            if (Piasochnica.isFilePiasochnicaExitst(fileName, fileList)) {
+                                            if (adminViewModel.isFilePiasochnicaExitst(fileName, fileList)) {
                                                 coroutineScope.launch {
                                                     isProgressVisable = true
-                                                    Piasochnica.getPasochnicaFile(fileName, result = { sb, text ->
-                                                        Piasochnica.addHistory(sb, 0)
-                                                        val html = if (Piasochnica.isHTML) {
+                                                    adminViewModel.getPasochnicaFile(fileName, result = { sb, text ->
+                                                        adminViewModel.addHistory(sb, 0)
+                                                        val html = if (adminViewModel.isHTML) {
                                                             sb
                                                         } else {
                                                             SpannableStringBuilder(text)
                                                         }
-                                                        Piasochnica.htmlText = html
+                                                        adminViewModel.htmlText = html
                                                         navigationActions.navigateToPiasochnica(fileName)
                                                     })
                                                 }
                                             } else {
-                                                if (Piasochnica.findDirAsSave.isEmpty()) {
-                                                    Piasochnica.getFindFileListAsSave()
+                                                if (adminViewModel.findDirAsSave.isEmpty()) {
+                                                    adminViewModel.getFindFileListAsSave()
                                                 }
-                                                Piasochnica.getFileCopyPostRequest(dirToFile = Piasochnica.findResoursDir(fileName), isProgressVisable = {
+                                                adminViewModel.getFileCopyPostRequest(dirToFile = adminViewModel.findResoursDir(fileName), isProgressVisable = {
                                                     isProgressVisable = it
                                                 }) { text, fileName ->
-                                                    val html = if (Piasochnica.isHTML) {
+                                                    val html = if (adminViewModel.isHTML) {
                                                         SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
                                                     } else {
                                                         SpannableStringBuilder(text)
                                                     }
-                                                    Piasochnica.addHistory(html, 0)
-                                                    Piasochnica.htmlText = html
+                                                    adminViewModel.addHistory(html, 0)
+                                                    adminViewModel.htmlText = html
                                                     navigationActions.navigateToPiasochnica(fileName)
                                                     isProgressVisable = false
                                                 }

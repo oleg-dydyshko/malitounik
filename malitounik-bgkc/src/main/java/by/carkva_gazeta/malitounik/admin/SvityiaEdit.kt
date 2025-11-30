@@ -72,7 +72,7 @@ import kotlinx.coroutines.tasks.await
 import java.io.File
 
 @Composable
-fun DialogEditSvityiaAndSviaty(onDismiss: () -> Unit) {
+fun DialogEditSvityiaAndSviaty(adminViewModel: Piasochnica, onDismiss: () -> Unit) {
     Dialog(onDismissRequest = { onDismiss() }, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Card(
             modifier = Modifier
@@ -162,7 +162,7 @@ fun DialogEditSvityiaAndSviaty(onDismiss: () -> Unit) {
                                 .padding(10.dp),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
                             keyboardActions = KeyboardActions(onDone = {
-                                Piasochnica.sendPostRequest(textFieldValueStateTitle, textFieldValueStateCytanne, style, tipicon.toString(), textFieldStateTitleCytanne, textFieldStateCytanne, dayPascha) {
+                                adminViewModel.sendPostRequest(textFieldValueStateTitle, textFieldValueStateCytanne, style, tipicon.toString(), textFieldStateTitleCytanne, textFieldStateCytanne, dayPascha) {
                                     isProgressVisable = it
                                     if (!isProgressVisable) onDismiss()
                                 }
@@ -180,7 +180,7 @@ fun DialogEditSvityiaAndSviaty(onDismiss: () -> Unit) {
                                 .padding(start = 10.dp, end = 10.dp, bottom = 10.dp),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
                             keyboardActions = KeyboardActions(onDone = {
-                                Piasochnica.sendPostRequest(textFieldValueStateTitle, textFieldValueStateCytanne, style, tipicon.toString(), textFieldStateTitleCytanne, textFieldStateCytanne, dayPascha) {
+                                adminViewModel.sendPostRequest(textFieldValueStateTitle, textFieldValueStateCytanne, style, tipicon.toString(), textFieldStateTitleCytanne, textFieldStateCytanne, dayPascha) {
                                     isProgressVisable = it
                                     if (!isProgressVisable) onDismiss()
                                 }
@@ -213,7 +213,7 @@ fun DialogEditSvityiaAndSviaty(onDismiss: () -> Unit) {
                                 .padding(start = 10.dp, end = 10.dp, bottom = 10.dp),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
                             keyboardActions = KeyboardActions(onDone = {
-                                Piasochnica.sendPostRequest(textFieldValueStateTitle, textFieldValueStateCytanne, style, tipicon.toString(), textFieldStateTitleCytanne, textFieldStateCytanne, dayPascha) {
+                                adminViewModel.sendPostRequest(textFieldValueStateTitle, textFieldValueStateCytanne, style, tipicon.toString(), textFieldStateTitleCytanne, textFieldStateCytanne, dayPascha) {
                                     isProgressVisable = it
                                     if (!isProgressVisable) onDismiss()
                                 }
@@ -231,7 +231,7 @@ fun DialogEditSvityiaAndSviaty(onDismiss: () -> Unit) {
                                 .padding(start = 10.dp, end = 10.dp, bottom = 10.dp),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
                             keyboardActions = KeyboardActions(onDone = {
-                                Piasochnica.sendPostRequest(textFieldValueStateTitle, textFieldValueStateCytanne, style, tipicon.toString(), textFieldStateTitleCytanne, textFieldStateCytanne, dayPascha) {
+                                adminViewModel.sendPostRequest(textFieldValueStateTitle, textFieldValueStateCytanne, style, tipicon.toString(), textFieldStateTitleCytanne, textFieldStateCytanne, dayPascha) {
                                     isProgressVisable = it
                                     if (!isProgressVisable) onDismiss()
                                 }
@@ -252,7 +252,7 @@ fun DialogEditSvityiaAndSviaty(onDismiss: () -> Unit) {
                             }
                             TextButton(
                                 onClick = {
-                                    Piasochnica.sendPostRequest(textFieldValueStateTitle, textFieldValueStateCytanne, style, tipicon.toString(), textFieldStateTitleCytanne, textFieldStateCytanne, dayPascha) {
+                                    adminViewModel.sendPostRequest(textFieldValueStateTitle, textFieldValueStateCytanne, style, tipicon.toString(), textFieldStateTitleCytanne, textFieldStateCytanne, dayPascha) {
                                         isProgressVisable = it
                                         if (!isProgressVisable) onDismiss()
                                     }
