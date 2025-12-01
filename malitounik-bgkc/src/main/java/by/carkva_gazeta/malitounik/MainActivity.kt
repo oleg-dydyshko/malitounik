@@ -1387,8 +1387,6 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
             AppNavGraphState.piesnyItem = false
             AppNavGraphState.biblijatekaItem = false
             AppNavGraphState.underItem = false
-            AppNavGraphState.scrollValueList.clear()
-            AppNavGraphState.itemsValue.clear()
             AppNavGraphState.setAlarm = true
             AppNavGraphState.appUpdate = true
             finish()

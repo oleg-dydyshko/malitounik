@@ -63,6 +63,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
@@ -428,7 +429,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                     },
                     actions = {
                         if (SviatyiaView.edit) {
-                            PlainTooltip(stringResource(R.string.edit_admin_piarliny)) {
+                            PlainTooltip(stringResource(R.string.edit_admin_piarliny), TooltipAnchorPosition.Below) {
                                 IconButton({
                                     viewPiarlinyEdit = true
                                 }) {
@@ -440,7 +441,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                     )
                                 }
                             }
-                            PlainTooltip(stringResource(R.string.edit_admin_img_sviat)) {
+                            PlainTooltip(stringResource(R.string.edit_admin_img_sviat), TooltipAnchorPosition.Below) {
                                 IconButton({
                                     navigationActions.navigateToEditIcon()
                                 }) {
@@ -452,7 +453,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                     )
                                 }
                             }
-                            PlainTooltip(stringResource(R.string.save_sabytie)) {
+                            PlainTooltip(stringResource(R.string.save_sabytie), TooltipAnchorPosition.Below) {
                                 IconButton({
                                     saveFilesSvaityxISvait(context, SviatyiaView.svaity, SviatyiaView.sviatyPosotion, SviatyiaView.positionPasha, textFieldValueStateTitle.text, isLoad = {
                                         isProgressVisable = it
@@ -485,7 +486,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                             }
                         } else {
                             if (checkPiarliny) {
-                                PlainTooltip(stringResource(R.string.piarliny)) {
+                                PlainTooltip(stringResource(R.string.piarliny), TooltipAnchorPosition.Below) {
                                     IconButton({
                                         viewPiarliny = true
                                     }) {
@@ -498,7 +499,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                     }
                                 }
                             }
-                            PlainTooltip(stringResource(R.string.fullscreen)) {
+                            PlainTooltip(stringResource(R.string.fullscreen), TooltipAnchorPosition.Below) {
                                 IconButton(onClick = {
                                     fullscreen = true
                                 }) {
@@ -511,7 +512,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                             }
                             if (k.getBoolean("admin", false)) {
                                 VerticalDivider()
-                                PlainTooltip(stringResource(R.string.redagaktirovat)) {
+                                PlainTooltip(stringResource(R.string.redagaktirovat), TooltipAnchorPosition.Below) {
                                     IconButton(onClick = {
                                         if (SviatyiaView.svaity.isNotEmpty()) textFieldValueStateTitle = TextFieldValue(SviatyiaView.svaity[SviatyiaView.sviatyPosotion][3])
                                         imageFull = false

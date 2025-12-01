@@ -63,6 +63,7 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -660,7 +661,7 @@ fun CytanniList(
                     }
                 }, actions = {
                     if (isSelectMode) {
-                        PlainTooltip(stringResource(R.string.select_all)) {
+                        PlainTooltip(stringResource(R.string.select_all), TooltipAnchorPosition.Below) {
                             IconButton(onClick = {
                                 isSelectAll = true
                             }) {
@@ -669,7 +670,7 @@ fun CytanniList(
                                 )
                             }
                         }
-                        PlainTooltip(stringResource(R.string.copy_list)) {
+                        PlainTooltip(stringResource(R.string.copy_list), TooltipAnchorPosition.Below) {
                             IconButton(onClick = {
                                 isCopyMode = true
                             }) {
@@ -678,7 +679,7 @@ fun CytanniList(
                                 )
                             }
                         }
-                        PlainTooltip(stringResource(R.string.share)) {
+                        PlainTooltip(stringResource(R.string.share), TooltipAnchorPosition.Below) {
                             IconButton(onClick = {
                                 isShareMode = true
                             }) {
@@ -693,7 +694,7 @@ fun CytanniList(
                             if (listState[viewModel.selectedIndex].lazyListState.canScrollForward) {
                                 val iconAutoScroll = if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
                                 else painterResource(R.drawable.play_circle)
-                                PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play)) {
+                                PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play), TooltipAnchorPosition.Below) {
                                     IconButton(onClick = {
                                         viewModel.autoScrollSensor = !viewModel.autoScrollSensor
                                         viewModel.autoScroll(title, viewModel.autoScrollSensor)
@@ -711,7 +712,7 @@ fun CytanniList(
                                     }
                                 }
                             } else if (listState[viewModel.selectedIndex].lazyListState.canScrollBackward) {
-                                PlainTooltip(stringResource(R.string.auto_up)) {
+                                PlainTooltip(stringResource(R.string.auto_up), TooltipAnchorPosition.Below) {
                                     IconButton(onClick = {
                                         isUpList = true
                                     }) {
@@ -722,7 +723,7 @@ fun CytanniList(
                                 }
                             }
                             if (biblia == Settings.CHYTANNI_BIBLIA) {
-                                PlainTooltip(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add)) {
+                                PlainTooltip(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), TooltipAnchorPosition.Below) {
                                     IconButton(
                                         onClick = {
                                             viewModel.saveVybranoe(context, perevod)

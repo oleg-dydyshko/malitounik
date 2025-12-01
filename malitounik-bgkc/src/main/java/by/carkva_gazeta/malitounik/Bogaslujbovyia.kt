@@ -67,6 +67,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
@@ -206,7 +207,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
                             if (t1 != -1) {
                                 val line = layout.getLineForOffset(t1)
                                 scrollToY = layout.getLineTop(line)
-                                find = !find
+                                find = true
                             }
                         } else {
                             searchTextResult = AnnotatedString("")
@@ -229,7 +230,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
                 if (t1 != -1) {
                     val line = layout.getLineForOffset(t1)
                     scrollToY = layout.getLineTop(line)
-                    find = !find
+                    find = true
                 }
             }
         }
@@ -245,7 +246,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
                 if (t1 != -1) {
                     val line = layout.getLineForOffset(t1)
                     scrollToY = layout.getLineTop(line)
-                    find = !find
+                    find = true
                 }
             }
         }
@@ -372,21 +373,25 @@ fun Bogaslujbovyia(
         )
     )
     LaunchedEffect(viewModel.find) {
-        coroutineScope.launch {
-            withContext(Dispatchers.IO) {
-                viewModel.scrollState.animateScrollTo(viewModel.scrollToY.toInt())
-                AppNavGraphState.setScrollValuePosition(title, viewModel.scrollState.value)
+        if (viewModel.find) {
+            coroutineScope.launch {
+                withContext(Dispatchers.IO) {
+                    viewModel.scrollState.animateScrollTo(viewModel.scrollToY.toInt())
+                    AppNavGraphState.setScrollValuePosition(title, viewModel.scrollState.value)
+                    viewModel.find = false
+                }
             }
         }
     }
     LifecycleResumeEffect(Unit) {
         if (resursEncode.contains("akafist")) {
             AppNavGraphState.setScrollValuePosition(title, k.getInt(resursEncode, 0))
-            coroutineScope.launch {
-                viewModel.scrollState.animateScrollTo(AppNavGraphState.getScrollValuePosition(title))
-            }
+        }
+        coroutineScope.launch {
+            viewModel.scrollState.animateScrollTo(AppNavGraphState.getScrollValuePosition(title))
         }
         onPauseOrDispose {
+            AppNavGraphState.setScrollValuePosition(title, viewModel.scrollState.value)
             if (resursEncode.contains("akafist")) {
                 k.edit {
                     putInt(resursEncode, viewModel.scrollState.value)
@@ -838,7 +843,7 @@ fun Bogaslujbovyia(
                         },
                         actions = {
                             if (viewModel.searchText) {
-                                PlainTooltip(stringResource(R.string.poshuk_back)) {
+                                PlainTooltip(stringResource(R.string.poshuk_back), TooltipAnchorPosition.Below) {
                                     IconButton(onClick = {
                                         viewModel.findBack(textLayout)
                                     }) {
@@ -849,7 +854,7 @@ fun Bogaslujbovyia(
                                         )
                                     }
                                 }
-                                PlainTooltip(stringResource(R.string.poshuk_forvard)) {
+                                PlainTooltip(stringResource(R.string.poshuk_forvard), TooltipAnchorPosition.Below) {
                                     IconButton(onClick = {
                                         viewModel.findForward(textLayout)
                                     }) {
@@ -862,7 +867,7 @@ fun Bogaslujbovyia(
                                 }
                             } else {
                                 if (!iskniga && listResource.isNotEmpty()) {
-                                    PlainTooltip(stringResource(R.string.zmennyia_chastki)) {
+                                    PlainTooltip(stringResource(R.string.zmennyia_chastki), TooltipAnchorPosition.Below) {
                                         IconButton(onClick = {
                                             showDropdown = false
                                             coroutineScope.launch {
@@ -886,7 +891,7 @@ fun Bogaslujbovyia(
                                     if (viewModel.scrollState.canScrollForward) {
                                         val iconAutoScroll = if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
                                         else painterResource(R.drawable.play_circle)
-                                        PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play)) {
+                                        PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play), TooltipAnchorPosition.Below) {
                                             IconButton(onClick = {
                                                 viewModel.autoScrollSensor = !viewModel.autoScrollSensor
                                                 viewModel.autoScroll(title, viewModel.autoScrollSensor)
@@ -906,7 +911,7 @@ fun Bogaslujbovyia(
                                             }
                                         }
                                     } else if (viewModel.scrollState.canScrollBackward) {
-                                        PlainTooltip(stringResource(R.string.auto_up)) {
+                                        PlainTooltip(stringResource(R.string.auto_up), TooltipAnchorPosition.Below) {
                                             IconButton(onClick = {
                                                 isUpList = true
                                             }) {
@@ -919,7 +924,7 @@ fun Bogaslujbovyia(
                                         }
                                     }
                                     if (listResource.isEmpty()) {
-                                        PlainTooltip(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add)) {
+                                        PlainTooltip(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), TooltipAnchorPosition.Below) {
                                             IconButton(onClick = {
                                                 viewModel.saveVybranoe(context, title, resursEncode)
                                             }) {
@@ -1290,7 +1295,6 @@ fun Bogaslujbovyia(
                             source: NestedScrollSource
                         ): Offset {
                             isScrollRun = true
-                            AppNavGraphState.setScrollValuePosition(title, viewModel.scrollState.value)
                             return super.onPreScroll(available, source)
                         }
 
@@ -1431,11 +1435,6 @@ fun Bogaslujbovyia(
                                     navigateTo(navigate, skipUtran)
                                 },
                                 textLayoutResult = { layout ->
-                                    if (!viewModel.searchText) {
-                                        coroutineScope.launch {
-                                            viewModel.scrollState.animateScrollTo(AppNavGraphState.getScrollValuePosition(title))
-                                        }
-                                    }
                                     textLayout = layout
                                 },
                                 isDialogListinner = { dialog, chastka ->

@@ -59,6 +59,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
@@ -1233,7 +1234,7 @@ fun MainConteiner(
                 }, actions = {
                     if (!searchText) {
                         if (!isBottomBar && (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR)) {
-                            PlainTooltip(stringResource(R.string.set_data)) {
+                            PlainTooltip(stringResource(R.string.set_data), TooltipAnchorPosition.Below) {
                                 Text(
                                     text = Calendar.getInstance()[Calendar.DATE].toString(),
                                     modifier = Modifier
@@ -1252,7 +1253,7 @@ fun MainConteiner(
                                     color = if (isToDay) PrimaryText else PrimaryTextBlack
                                 )
                             }
-                            PlainTooltip(stringResource(if (k.getBoolean("caliandarList", false)) R.string.set_book_caliandar else R.string.set_list_caliandar)) {
+                            PlainTooltip(stringResource(if (k.getBoolean("caliandarList", false)) R.string.set_book_caliandar else R.string.set_list_caliandar), TooltipAnchorPosition.Below) {
                                 IconButton(onClick = {
                                     k.edit {
                                         if (k.getBoolean("caliandarList", false)) {
@@ -1273,7 +1274,7 @@ fun MainConteiner(
                             }
                         }
                         if (currentRoute == AllDestinations.MAE_NATATKI_MENU) {
-                            PlainTooltip(stringResource(R.string.add_natatku)) {
+                            PlainTooltip(stringResource(R.string.add_natatku), TooltipAnchorPosition.Below) {
                                 IconButton({
                                     addFileNatatki = true
                                 }) {
@@ -1302,7 +1303,7 @@ fun MainConteiner(
                                     painterResource(R.drawable.sort_by_time)
                                 }
                             }
-                            PlainTooltip(titleSort) {
+                            PlainTooltip(titleSort, TooltipAnchorPosition.Below) {
                                 IconButton(onClick = {
                                     expandedUp = false
                                     sortedVybranae = if (sortedVybranae == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
@@ -1325,7 +1326,7 @@ fun MainConteiner(
                             }
                         }
                         if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.MAE_NATATKI_MENU) {
-                            PlainTooltip(stringResource(if (currentRoute == AllDestinations.VYBRANAE_LIST) R.string.vybranae_all_remove else R.string.vybranae_remove_all_natatka)) {
+                            PlainTooltip(stringResource(if (currentRoute == AllDestinations.VYBRANAE_LIST) R.string.vybranae_all_remove else R.string.vybranae_remove_all_natatka), TooltipAnchorPosition.Below) {
                                 IconButton({
                                     if (currentRoute == AllDestinations.VYBRANAE_LIST) removeAllVybranaeDialog = !removeAllVybranaeDialog
                                     else removeAllNatatkiDialog = !removeAllNatatkiDialog
@@ -1337,7 +1338,7 @@ fun MainConteiner(
                             }
                         }
                         if (currentRoute == AllDestinations.LITURGIKON_MENU || currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.CHASASLOU_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA || currentRoute.contains("BIBLIA", ignoreCase = true)) {
-                            PlainTooltip(stringResource(R.string.poshuk)) {
+                            PlainTooltip(stringResource(R.string.poshuk), TooltipAnchorPosition.Below) {
                                 IconButton({
                                     searchText = true
                                 }) {
@@ -1348,7 +1349,7 @@ fun MainConteiner(
                             }
                         }
                         if (currentRoute == AllDestinations.PIASOCHNICA_LIST) {
-                            PlainTooltip(stringResource(R.string.pasochnica_add_folder)) {
+                            PlainTooltip(stringResource(R.string.pasochnica_add_folder), TooltipAnchorPosition.Below) {
                                 IconButton(onClick = {
                                     PasochnicaList.pasochnicaAction = PasochnicaList.FILE
                                 }) {
@@ -1358,7 +1359,7 @@ fun MainConteiner(
                                     )
                                 }
                             }
-                            PlainTooltip(stringResource(R.string.pasochnica_add_basa)) {
+                            PlainTooltip(stringResource(R.string.pasochnica_add_basa), TooltipAnchorPosition.Below) {
                                 IconButton(onClick = {
                                     PasochnicaList.pasochnicaAction = PasochnicaList.WWW
                                 }) {
@@ -1368,7 +1369,7 @@ fun MainConteiner(
                                     )
                                 }
                             }
-                            PlainTooltip(stringResource(R.string.add_file)) {
+                            PlainTooltip(stringResource(R.string.add_file), TooltipAnchorPosition.Below) {
                                 IconButton(onClick = {
                                     PasochnicaList.pasochnicaAction = PasochnicaList.ADD
                                 }) {
