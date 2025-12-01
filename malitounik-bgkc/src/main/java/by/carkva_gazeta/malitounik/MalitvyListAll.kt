@@ -33,14 +33,17 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,54 +67,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.text.Collator
 import java.util.Calendar
 import java.util.GregorianCalendar
 import java.util.Locale
 
-class FilterMalitvyPrynagodnyiaModel : ViewModel() {
-    private val items = ArrayList<BogaslujbovyiaListData>()
-
-    private val _filteredItems = MutableStateFlow(items)
-    var filteredItems: StateFlow<ArrayList<BogaslujbovyiaListData>> = _filteredItems
-
-    fun addItemList(item: ArrayList<BogaslujbovyiaListData>) {
-        items.addAll(item)
-    }
-
-    fun clear() {
-        items.clear()
-    }
-
-    fun sortWith() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-            items.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
-        } else {
-            items.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
-        }
-    }
-
-    fun filterItem(search: String) {
-        _filteredItems.value = items.filter { it.title.contains(search, ignoreCase = true) } as ArrayList<BogaslujbovyiaListData>
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MalitvyListAll(
-    navController: NavHostController, title: String, menuItem: Int, subTitle: String = "", viewModel: FilterMalitvyPrynagodnyiaModel = viewModel()
+    navController: NavHostController, title: String, menuItem: Int, subTitle: String = ""
 ) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
@@ -319,17 +290,33 @@ fun MalitvyListAll(
                 }, colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
             )
         }) { innerPadding ->
+        val filteredItems = remember { mutableStateListOf<BogaslujbovyiaListData>() }
+        val listAll = remember { mutableStateListOf<BogaslujbovyiaListData>() }
+        LaunchedEffect(Unit) {
+            listAll.addAll(getPrynagodnyia1())
+            listAll.addAll(getPrynagodnyia2())
+            listAll.addAll(getPrynagodnyia3())
+            listAll.addAll(getPrynagodnyia4())
+            listAll.addAll(getPrynagodnyia5())
+            listAll.addAll(getPrynagodnyia6())
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                listAll.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+            } else {
+                listAll.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
+            }
+        }
+        LaunchedEffect(textFieldValueState, searchText) {
+            filteredItems.clear()
+            if (searchText) {
+                if (textFieldValueState.isNotEmpty()) {
+                    val filterList = listAll.filter { it.title.contains(textFieldValueState, ignoreCase = true) }
+                    filteredItems.addAll(filterList)
+                } else {
+                    filteredItems.addAll(listAll)
+                }
+            }
+        }
         if (searchText) {
-            viewModel.clear()
-            viewModel.addItemList(getPrynagodnyia1())
-            viewModel.addItemList(getPrynagodnyia2())
-            viewModel.addItemList(getPrynagodnyia3())
-            viewModel.addItemList(getPrynagodnyia4())
-            viewModel.addItemList(getPrynagodnyia5())
-            viewModel.addItemList(getPrynagodnyia6())
-            viewModel.sortWith()
-            val filteredItems by viewModel.filteredItems.collectAsStateWithLifecycle()
-            viewModel.filterItem(textFieldValueState)
             PynagodnyiaList(filteredItems, navigationActions, innerPadding)
         } else {
             LazyColumn(
@@ -618,7 +605,7 @@ fun MalitvyListAll(
 }
 
 @Composable
-fun PynagodnyiaList(prynagodnyaList: ArrayList<BogaslujbovyiaListData>, navigationActions: AppNavigationActions, innerPadding: PaddingValues) {
+fun PynagodnyiaList(prynagodnyaList: SnapshotStateList<BogaslujbovyiaListData>, navigationActions: AppNavigationActions, innerPadding: PaddingValues) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
@@ -739,29 +726,6 @@ fun getTtyedz(): ArrayList<BogaslujbovyiaListData> {
     list.add(BogaslujbovyiaListData("Службы Вялікага тыдня", "11"))
     list.add(BogaslujbovyiaListData("Службы Сьветлага тыдня", "12"))
     list.add(BogaslujbovyiaListData("Трыёдзь Кветная", "13"))
-    return list
-}
-
-fun getChasaslou(): ArrayList<BogaslujbovyiaListData> {
-    val list = ArrayList<BogaslujbovyiaListData>()
-    list.add(
-        BogaslujbovyiaListData(
-            "Гадзіна 1", "bogashlugbovya/kan_hadz_hadzina_1.html", "ЧАСАСЛОЎ"
-        )
-    )
-    list.add(
-        BogaslujbovyiaListData(
-            "Гадзіна 6", "bogashlugbovya/kan_hadz_hadzina_6.html", "ЧАСАСЛОЎ"
-        )
-    )
-    list.add(
-        BogaslujbovyiaListData(
-            "Гадзіна 6 у вялікі пост", "bogashlugbovya/kan_hadz_hadzina_6_vialiki_post.html", "ЧАСАСЛОЎ"
-        )
-    )
-    list.add(BogaslujbovyiaListData("Павячэрніца малая", "bogashlugbovya/paviaczernica_malaja.html", "ЧАСАСЛОЎ"))
-    list.add(BogaslujbovyiaListData("Павячэрніца вялікая", "bogashlugbovya/paviaczernica_vialikaja.html", "ЧАСАСЛОЎ"))
-    list.add(BogaslujbovyiaListData("Ютрань нядзельная (у скароце)", "bogashlugbovya/jutran_niadzelnaja.html", "ЧАСАСЛОЎ"))
     return list
 }
 

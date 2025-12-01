@@ -18,8 +18,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -33,32 +35,12 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import java.text.Collator
 import java.util.Calendar
 import java.util.Locale
-
-class FilterBogaslujbovyiaListModel : ViewModel() {
-    private val items = ArrayList<BogaslujbovyiaListData>()
-
-    private val _filteredItems = MutableStateFlow(items)
-    var filteredItems: StateFlow<ArrayList<BogaslujbovyiaListData>> = _filteredItems
-
-    fun addAllItemList(item: ArrayList<BogaslujbovyiaListData>) {
-        items.addAll(item)
-    }
-
-    fun filterItem(search: String) {
-        _filteredItems.value = items.filter { it.title.contains(search, ignoreCase = true) } as ArrayList<BogaslujbovyiaListData>
-    }
-}
 
 fun mineiaMesichnaiaMounth(day: Int, isPasha: Boolean): Int {
     val year = Calendar.getInstance()[Calendar.YEAR]
@@ -76,8 +58,8 @@ fun mineiaMesichnaiaMounth(day: Int, isPasha: Boolean): Int {
     return Calendar.JANUARY
 }
 
-fun getAllBogaslujbovyia(context: Context): ArrayList<BogaslujbovyiaListData> {
-    val listAll = ArrayList<BogaslujbovyiaListData>()
+fun getAllBogaslujbovyia(context: Context): SnapshotStateList<BogaslujbovyiaListData> {
+    val listAll = SnapshotStateList<BogaslujbovyiaListData>()
     listAll.addAll(getBogaslujbovyia())
     listAll.addAll(getMalitvy())
     listAll.addAll(getAkafist())
@@ -118,7 +100,6 @@ fun getAllBogaslujbovyia(context: Context): ArrayList<BogaslujbovyiaListData> {
 fun BogaslujbovyiaMenu(
     navController: NavHostController, innerPadding: PaddingValues, menuItem: Int, searchText: Boolean, viewModel: SearchViewModel
 ) {
-    val viewModelFilter: FilterBogaslujbovyiaListModel = viewModel()
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
@@ -136,39 +117,47 @@ fun BogaslujbovyiaMenu(
         }
     }
     val folderList = stringArrayResource(R.array.bogaslugbovyia_folder_list)
-    if (searchText) {
-        val listAll = getAllBogaslujbovyia(context)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-            listAll.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
-        } else {
-            listAll.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
-        }
-        viewModelFilter.addAllItemList(listAll)
-        viewModelFilter.filterItem(viewModel.textFieldValueState.text)
-    } else {
-        val listAll = when (menuItem) {
-            Settings.MENU_BOGASLUJBOVYIA -> getBogaslujbovyia()
-            Settings.MENU_MALITVY -> getMalitvy()
-            Settings.MENU_AKAFIST -> getAkafist()
-            Settings.MENU_CHASASLOU -> getChasaslou()
-            Settings.MENU_LITURGIKON -> getLiturgikon()
-            else -> ArrayList()
-        }
+    val listAll = remember { mutableStateListOf<BogaslujbovyiaListData>() }
+    val listItems = remember { mutableStateListOf<BogaslujbovyiaListData>() }
+    val filteredItems = remember { mutableStateListOf<BogaslujbovyiaListData>() }
+    LaunchedEffect(Unit) {
+        listAll.addAll(getAllBogaslujbovyia(context))
+        listItems.addAll(
+            when (menuItem) {
+                Settings.MENU_BOGASLUJBOVYIA -> getBogaslujbovyia()
+                Settings.MENU_MALITVY -> getMalitvy()
+                Settings.MENU_AKAFIST -> getAkafist()
+                Settings.MENU_CHASASLOU -> getChasaslou()
+                Settings.MENU_LITURGIKON -> getLiturgikon()
+                else -> SnapshotStateList()
+            }
+        )
         if (menuItem == Settings.MENU_BOGASLUJBOVYIA) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
                 listAll.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+                listItems.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+                folderList.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it })
             } else {
                 listAll.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
+                listItems.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
+                folderList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it })
             }
         }
-        viewModelFilter.addAllItemList(listAll)
+        filteredItems.addAll(listItems)
     }
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-        folderList.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it })
-    } else {
-        folderList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it })
+    LaunchedEffect(viewModel.textFieldValueState.text, searchText) {
+        filteredItems.clear()
+        if (searchText) {
+            if (viewModel.textFieldValueState.text.isNotEmpty()) {
+                val filterList = listAll.filter { it.title.contains(viewModel.textFieldValueState.text, ignoreCase = true) }
+                filteredItems.addAll(filterList)
+            } else {
+                filteredItems.addAll(listAll)
+            }
+        } else {
+            filteredItems.addAll(listItems)
+        }
     }
-    val filteredItems by viewModelFilter.filteredItems.collectAsStateWithLifecycle()
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -353,8 +342,31 @@ fun BogaslujbovyiaMenu(
     }
 }
 
-fun getLiturgikon(): ArrayList<BogaslujbovyiaListData> {
-    val list = ArrayList<BogaslujbovyiaListData>()
+fun getChasaslou(): SnapshotStateList<BogaslujbovyiaListData> {
+    val list = SnapshotStateList<BogaslujbovyiaListData>()
+    list.add(
+        BogaslujbovyiaListData(
+            "Гадзіна 1", "bogashlugbovya/kan_hadz_hadzina_1.html", "ЧАСАСЛОЎ"
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Гадзіна 6", "bogashlugbovya/kan_hadz_hadzina_6.html", "ЧАСАСЛОЎ"
+        )
+    )
+    list.add(
+        BogaslujbovyiaListData(
+            "Гадзіна 6 у вялікі пост", "bogashlugbovya/kan_hadz_hadzina_6_vialiki_post.html", "ЧАСАСЛОЎ"
+        )
+    )
+    list.add(BogaslujbovyiaListData("Павячэрніца малая", "bogashlugbovya/paviaczernica_malaja.html", "ЧАСАСЛОЎ"))
+    list.add(BogaslujbovyiaListData("Павячэрніца вялікая", "bogashlugbovya/paviaczernica_vialikaja.html", "ЧАСАСЛОЎ"))
+    list.add(BogaslujbovyiaListData("Ютрань нядзельная (у скароце)", "bogashlugbovya/jutran_niadzelnaja.html", "ЧАСАСЛОЎ"))
+    return list
+}
+
+fun getLiturgikon(): SnapshotStateList<BogaslujbovyiaListData> {
+    val list = SnapshotStateList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
             "Боская Літургія сьв. Яна Залатавуснага", "bogashlugbovya/lit_jana_zalatavusnaha.html", "ЛІТУРГІКОН"
@@ -384,8 +396,8 @@ fun getLiturgikon(): ArrayList<BogaslujbovyiaListData> {
     return list
 }
 
-fun getAkafist(): ArrayList<BogaslujbovyiaListData> {
-    val list = ArrayList<BogaslujbovyiaListData>()
+fun getAkafist(): SnapshotStateList<BogaslujbovyiaListData> {
+    val list = SnapshotStateList<BogaslujbovyiaListData>()
     list.add(BogaslujbovyiaListData("Пра Акафіст", "bogashlugbovya/akafist0.html", "АКАФІСТЫ"))
     list.add(BogaslujbovyiaListData("Найсьвяцейшай Багародзіцы", "bogashlugbovya/akafist1.html", "АКАФІСТЫ"))
     list.add(BogaslujbovyiaListData("Маці Божай Нястомнай Дапамогі", "bogashlugbovya/akafist2.html", "АКАФІСТЫ"))
@@ -403,8 +415,8 @@ fun getAkafist(): ArrayList<BogaslujbovyiaListData> {
     return list
 }
 
-fun getRujanec(): ArrayList<BogaslujbovyiaListData> {
-    val list = ArrayList<BogaslujbovyiaListData>()
+fun getRujanec(): SnapshotStateList<BogaslujbovyiaListData> {
+    val list = SnapshotStateList<BogaslujbovyiaListData>()
     list.add(BogaslujbovyiaListData("Малітвы на вяровіцы", "bogashlugbovya/ruzanec0.html", "МАЛІТВЫ -> РУЖАНЕЦ"))
     list.add(BogaslujbovyiaListData("Молімся на ружанцы", "bogashlugbovya/ruzanec2.html", "МАЛІТВЫ -> РУЖАНЕЦ"))
     list.add(BogaslujbovyiaListData("Разважаньні на Ружанец", "bogashlugbovya/ruzanec1.html", "МАЛІТВЫ -> РУЖАНЕЦ"))
@@ -415,15 +427,15 @@ fun getRujanec(): ArrayList<BogaslujbovyiaListData> {
     return list
 }
 
-fun getMalitvy(): ArrayList<BogaslujbovyiaListData> {
-    val list = ArrayList<BogaslujbovyiaListData>()
+fun getMalitvy(): SnapshotStateList<BogaslujbovyiaListData> {
+    val list = SnapshotStateList<BogaslujbovyiaListData>()
     list.add(BogaslujbovyiaListData("Ранішняя малітвы", "bogashlugbovya/malitvy_ranisznija.html", "МАЛІТВЫ"))
     list.add(BogaslujbovyiaListData("Вячэрнія малітвы", "bogashlugbovya/malitvy_viaczernija.html", "МАЛІТВЫ"))
     return list
 }
 
-fun getBogaslujbovyia(): ArrayList<BogaslujbovyiaListData> {
-    val list = ArrayList<BogaslujbovyiaListData>()
+fun getBogaslujbovyia(): SnapshotStateList<BogaslujbovyiaListData> {
+    val list = SnapshotStateList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
             "Набажэнства ў гонар Маці Божай Нястомнай Дапамогі", "bogashlugbovya/nabazenstva_maci_bozaj_niast_dap.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ"

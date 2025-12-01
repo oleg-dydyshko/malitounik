@@ -123,6 +123,7 @@ import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
 import by.carkva_gazeta.malitounik.views.DropdownMenuBox
 import by.carkva_gazeta.malitounik.views.HtmlText
+import by.carkva_gazeta.malitounik.views.PlainTooltip
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
@@ -427,89 +428,101 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                     },
                     actions = {
                         if (SviatyiaView.edit) {
-                            IconButton({
-                                viewPiarlinyEdit = true
-                            }) {
-                                Icon(
-                                    modifier = Modifier.size(24.dp),
-                                    painter = painterResource(R.drawable.book_white_edit),
-                                    tint = PrimaryTextBlack,
-                                    contentDescription = ""
-                                )
-                            }
-                            IconButton({
-                                navigationActions.navigateToEditIcon()
-                            }) {
-                                Icon(
-                                    modifier = Modifier.size(24.dp),
-                                    painter = painterResource(R.drawable.image_icon_file),
-                                    tint = PrimaryTextBlack,
-                                    contentDescription = ""
-                                )
-                            }
-                            IconButton({
-                                saveFilesSvaityxISvait(context, SviatyiaView.svaity, SviatyiaView.sviatyPosotion, SviatyiaView.positionPasha, textFieldValueStateTitle.text, isLoad = {
-                                    isProgressVisable = it
-                                }) {
-                                    if (svity) {
-                                        if (fileSvity.exists()) {
-                                            val sviatyiaListLocale = loadOpisanieSviat(context, position)
-                                            sviatyiaList.clear()
-                                            sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, true, position))
-                                        } else {
-                                            dialoNoIntent = true
-                                        }
-                                    } else {
-                                        if (fileOpisanie.exists()) {
-                                            val sviatyiaListLocale = loadOpisanieSviatyia(context, year, mun, day)
-                                            sviatyiaList.clear()
-                                            sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, false, position))
-                                        } else {
-                                            dialoNoIntent = true
-                                        }
-                                    }
-                                }
-                            }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.save),
-                                    tint = PrimaryTextBlack,
-                                    contentDescription = ""
-                                )
-                            }
-                        } else {
-                            if (checkPiarliny) {
+                            PlainTooltip(stringResource(R.string.edit_admin_piarliny)) {
                                 IconButton({
-                                    viewPiarliny = true
+                                    viewPiarlinyEdit = true
                                 }) {
                                     Icon(
                                         modifier = Modifier.size(24.dp),
-                                        painter = painterResource(R.drawable.book_white),
+                                        painter = painterResource(R.drawable.book_white_edit),
                                         tint = PrimaryTextBlack,
                                         contentDescription = ""
                                     )
                                 }
                             }
-                            IconButton(onClick = {
-                                fullscreen = true
-                            }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.fullscreen),
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                            }
-                            if (k.getBoolean("admin", false)) {
-                                VerticalDivider()
-                                IconButton(onClick = {
-                                    if (SviatyiaView.svaity.isNotEmpty()) textFieldValueStateTitle = TextFieldValue(SviatyiaView.svaity[SviatyiaView.sviatyPosotion][3])
-                                    imageFull = false
-                                    SviatyiaView.edit = true
+                            PlainTooltip(stringResource(R.string.edit_admin_img_sviat)) {
+                                IconButton({
+                                    navigationActions.navigateToEditIcon()
                                 }) {
                                     Icon(
-                                        painter = painterResource(R.drawable.edit),
+                                        modifier = Modifier.size(24.dp),
+                                        painter = painterResource(R.drawable.image_icon_file),
+                                        tint = PrimaryTextBlack,
+                                        contentDescription = ""
+                                    )
+                                }
+                            }
+                            PlainTooltip(stringResource(R.string.save_sabytie)) {
+                                IconButton({
+                                    saveFilesSvaityxISvait(context, SviatyiaView.svaity, SviatyiaView.sviatyPosotion, SviatyiaView.positionPasha, textFieldValueStateTitle.text, isLoad = {
+                                        isProgressVisable = it
+                                    }) {
+                                        if (svity) {
+                                            if (fileSvity.exists()) {
+                                                val sviatyiaListLocale = loadOpisanieSviat(context, position)
+                                                sviatyiaList.clear()
+                                                sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, true, position))
+                                            } else {
+                                                dialoNoIntent = true
+                                            }
+                                        } else {
+                                            if (fileOpisanie.exists()) {
+                                                val sviatyiaListLocale = loadOpisanieSviatyia(context, year, mun, day)
+                                                sviatyiaList.clear()
+                                                sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, false, position))
+                                            } else {
+                                                dialoNoIntent = true
+                                            }
+                                        }
+                                    }
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.save),
+                                        tint = PrimaryTextBlack,
+                                        contentDescription = ""
+                                    )
+                                }
+                            }
+                        } else {
+                            if (checkPiarliny) {
+                                PlainTooltip(stringResource(R.string.piarliny)) {
+                                    IconButton({
+                                        viewPiarliny = true
+                                    }) {
+                                        Icon(
+                                            modifier = Modifier.size(24.dp),
+                                            painter = painterResource(R.drawable.book_white),
+                                            tint = PrimaryTextBlack,
+                                            contentDescription = ""
+                                        )
+                                    }
+                                }
+                            }
+                            PlainTooltip(stringResource(R.string.fullscreen)) {
+                                IconButton(onClick = {
+                                    fullscreen = true
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.fullscreen),
                                         contentDescription = "",
                                         tint = MaterialTheme.colorScheme.onSecondary
                                     )
+                                }
+                            }
+                            if (k.getBoolean("admin", false)) {
+                                VerticalDivider()
+                                PlainTooltip(stringResource(R.string.redagaktirovat)) {
+                                    IconButton(onClick = {
+                                        if (SviatyiaView.svaity.isNotEmpty()) textFieldValueStateTitle = TextFieldValue(SviatyiaView.svaity[SviatyiaView.sviatyPosotion][3])
+                                        imageFull = false
+                                        SviatyiaView.edit = true
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.edit),
+                                            contentDescription = "",
+                                            tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
                                 }
                             }
                         }

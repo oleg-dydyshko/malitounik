@@ -43,6 +43,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -309,7 +310,7 @@ fun DialogEditBiblijteka(list: ArrayList<String>, onSave: (title: String, rubrik
     }
 }
 
-fun saveBibliateka(context: Context, arrayList: ArrayList<ArrayList<String>>, position: Int, title: String, rubrika: Int, apisanne: String, pdfFile: String, isLoad: (Boolean) -> Unit) {
+fun saveBibliateka(context: Context, arrayList: SnapshotStateList<ArrayList<String>>, position: Int, title: String, rubrika: Int, apisanne: String, pdfFile: String, isLoad: (Boolean) -> Unit) {
     if (Settings.isNetworkAvailable(context)) {
         CoroutineScope(Dispatchers.Main).launch {
             isLoad(true)
@@ -358,7 +359,7 @@ fun saveBibliateka(context: Context, arrayList: ArrayList<ArrayList<String>>, po
     }
 }
 
-suspend fun saveBibliatekaJson(context: Context, arrayList: ArrayList<ArrayList<String>>) {
+suspend fun saveBibliatekaJson(context: Context, arrayList: SnapshotStateList<ArrayList<String>>) {
     val localFile = File("${context.filesDir}/cache/cache.txt")
     val gson = Gson()
     val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type

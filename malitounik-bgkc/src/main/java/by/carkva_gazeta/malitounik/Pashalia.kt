@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -35,59 +36,35 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import java.util.Calendar
 import java.util.GregorianCalendar
-
-class FilterPasxaModel : SearchBibleViewModel() {
-    private val items = ArrayList<Pashalii>()
-
-    private val _filteredItems = MutableStateFlow(items)
-    var filteredItems: StateFlow<ArrayList<Pashalii>> = _filteredItems
-
-    fun addItemList(item: Pashalii) {
-        items.add(item)
-    }
-
-    fun clear() {
-        items.clear()
-    }
-
-    fun filterItem(search: String) {
-        _filteredItems.value =
-            items.filter { it.katolic.contains(search, ignoreCase = true) } as ArrayList<Pashalii>
-    }
-}
 
 @Composable
 fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, searchText: Boolean, viewModel: SearchViewModel) {
     val context = LocalContext.current
-    val viewModelFilter: FilterPasxaModel = viewModel()
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
+    val listAll = remember { mutableStateListOf<Pashalii>() }
+    val filteredItems = remember { mutableStateListOf<Pashalii>() }
     val lazyListState = rememberLazyListState()
     var findIndex by remember { mutableIntStateOf(0) }
     val cal = Calendar.getInstance()
     LaunchedEffect(Unit) {
-        viewModelFilter.clear()
         for (year in 1582..2499) {
-            viewModelFilter.addItemList(pasxa(context, year))
-            if (year == cal[Calendar.YEAR] - 3) findIndex = year
-        }
-    }
-    LaunchedEffect(findIndex) {
-        coroutineScope {
-            lazyListState.scrollToItem(findIndex - 1582)
+            listAll.add(pasxa(context, year))
+            if (year == cal[Calendar.YEAR] - 3) {
+                findIndex = year
+                coroutineScope {
+                    lazyListState.scrollToItem(findIndex - 1582)
+                }
+            }
         }
     }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -102,8 +79,22 @@ fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, sear
             }
         }
     }
-    val filteredItems by viewModelFilter.filteredItems.collectAsStateWithLifecycle()
-    viewModelFilter.filterItem(viewModel.textFieldValueState.text)
+    LaunchedEffect(viewModel.textFieldValueState.text, searchText) {
+        filteredItems.clear()
+        if (searchText) {
+            if (viewModel.textFieldValueState.text.isNotEmpty()) {
+                val filterList = listAll.filter { it.katolic.contains(viewModel.textFieldValueState.text, ignoreCase = true) }
+                filteredItems.addAll(filterList)
+            } else {
+                filteredItems.addAll(listAll)
+            }
+        } else {
+            filteredItems.addAll(listAll)
+            coroutineScope {
+                lazyListState.scrollToItem(findIndex - 1582)
+            }
+        }
+    }
     Column(modifier = Modifier.nestedScroll(nestedScrollConnection)) {
         if (!searchText) {
             Row(

@@ -274,7 +274,7 @@ fun SettingsView(navController: NavHostController) {
                         if (adminItemCount == 7) {
                             dialodLogin = true
                         }
-                    }, text = stringResource(R.string.vygliad), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.primary
+                    }, text = stringResource(R.string.vygliad), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.primary
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
             Column(Modifier.selectableGroup()) {
@@ -304,7 +304,7 @@ fun SettingsView(navController: NavHostController) {
                             (context as MainActivity).removelightSensor()
                         })
                     Text(
-                        stringResource(R.string.system), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp
+                        stringResource(R.string.system), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp
                     )
                 }
                 Row(
@@ -327,7 +327,7 @@ fun SettingsView(navController: NavHostController) {
                             (context as MainActivity).removelightSensor()
                         })
                     Text(
-                        stringResource(R.string.day), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp
+                        stringResource(R.string.day), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp
                     )
                 }
                 Row(
@@ -354,7 +354,7 @@ fun SettingsView(navController: NavHostController) {
                             (context as MainActivity).removelightSensor()
                         })
                     Text(
-                        stringResource(R.string.widget_day_d_n), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp
+                        stringResource(R.string.widget_day_d_n), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp
                     )
                 }
                 Row(
@@ -379,13 +379,13 @@ fun SettingsView(navController: NavHostController) {
                             (context as MainActivity).setlightSensor()
                         })
                     Text(
-                        stringResource(R.string.auto_widget_day_d_n), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp
+                        stringResource(R.string.auto_widget_day_d_n), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp
                     )
                 }
             }
             var fontSizeInterface by remember { mutableFloatStateOf(k.getFloat("fontSizeInterface", 20f)) }
             Text(
-                modifier = Modifier.padding(top = 10.dp), text = stringResource(R.string.settengs_font_size_app), fontStyle = FontStyle.Italic, fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                modifier = Modifier.padding(top = 10.dp), text = stringResource(R.string.settengs_font_size_app), fontStyle = FontStyle.Italic, fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
             )
             Slider(
                 valueRange = 18f..26f, value = fontSizeInterface, onValueChange = {
@@ -402,7 +402,7 @@ fun SettingsView(navController: NavHostController) {
                 }, colors = SliderDefaults.colors(inactiveTrackColor = Divider)
             )
             Text(
-                modifier = Modifier.padding(top = 10.dp), text = stringResource(R.string.settings_title_panel), fontStyle = FontStyle.Italic, fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                modifier = Modifier.padding(top = 10.dp), text = stringResource(R.string.settings_title_panel), fontStyle = FontStyle.Italic, fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
             )
             Column(Modifier.selectableGroup()) {
                 var buttomBar by remember { mutableStateOf(k.getBoolean("bottomBar", false)) }
@@ -423,7 +423,7 @@ fun SettingsView(navController: NavHostController) {
                             edit.apply()
                         })
                     Text(
-                        stringResource(R.string.settings_top_panel), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp
+                        stringResource(R.string.settings_top_panel), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp
                     )
                 }
                 Row(
@@ -442,7 +442,7 @@ fun SettingsView(navController: NavHostController) {
                             edit.apply()
                         })
                     Text(
-                        stringResource(R.string.settings_battom_panel), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp
+                        stringResource(R.string.settings_battom_panel), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp
                     )
                 }
             }
@@ -451,7 +451,7 @@ fun SettingsView(navController: NavHostController) {
             var adminNotificationsState by remember { mutableStateOf(k.getBoolean("adminNotifications", false)) }
             if (admin) {
                 Text(
-                    modifier = Modifier.padding(top = 10.dp), text = stringResource(R.string.admin), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.primary
+                    modifier = Modifier.padding(top = 10.dp), text = stringResource(R.string.admin), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.primary
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.primary)
                 Row(
@@ -466,7 +466,7 @@ fun SettingsView(navController: NavHostController) {
                     Text(
                         stringResource(R.string.admin_day_in_year), modifier = Modifier
                             .weight(1f)
-                            .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                            .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
                     )
                     Switch(
                         modifier = Modifier.scale(0.8f), checked = adminDayInYearState, onCheckedChange = {
@@ -489,7 +489,7 @@ fun SettingsView(navController: NavHostController) {
                     Text(
                         stringResource(R.string.update_resourse_only), modifier = Modifier
                             .weight(1f)
-                            .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                            .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
                     )
                     Switch(
                         modifier = Modifier.scale(0.8f), checked = adminOnlyNotificationsState, onCheckedChange = {
@@ -512,7 +512,7 @@ fun SettingsView(navController: NavHostController) {
                     Text(
                         stringResource(R.string.apav_no), modifier = Modifier
                             .weight(1f)
-                            .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                            .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
                     )
                     Switch(
                         modifier = Modifier.scale(0.8f), checked = adminNotificationsState, onCheckedChange = {
@@ -524,7 +524,7 @@ fun SettingsView(navController: NavHostController) {
                 }
             }
             Text(
-                modifier = Modifier.padding(top = 10.dp), text = stringResource(R.string.econom_enargi), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.primary
+                modifier = Modifier.padding(top = 10.dp), text = stringResource(R.string.econom_enargi), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.primary
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
             var power by remember { mutableStateOf(k.getBoolean("power", false)) }
@@ -542,7 +542,7 @@ fun SettingsView(navController: NavHostController) {
                 Text(
                     stringResource(R.string.econom_enargi_no), modifier = Modifier
                         .weight(1f)
-                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
                     modifier = Modifier.scale(0.8f), checked = power, onCheckedChange = {
@@ -555,7 +555,7 @@ fun SettingsView(navController: NavHostController) {
                     })
             }
             Text(
-                modifier = Modifier.padding(top = 10.dp), text = stringResource(R.string.biblia), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.primary
+                modifier = Modifier.padding(top = 10.dp), text = stringResource(R.string.biblia), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.primary
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
             var sinoidalState by remember { mutableStateOf(k.getBoolean("sinoidal_bible", false)) }
@@ -581,7 +581,7 @@ fun SettingsView(navController: NavHostController) {
                 Text(
                     stringResource(R.string.bsinaidal), modifier = Modifier
                         .weight(1f)
-                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
                     modifier = Modifier.scale(0.8f), checked = sinoidalState, onCheckedChange = {
@@ -624,7 +624,7 @@ fun SettingsView(navController: NavHostController) {
                 Text(
                     stringResource(R.string.title_biblia_catolik), modifier = Modifier
                         .weight(1f)
-                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
                     modifier = Modifier.scale(0.8f), checked = catolikState, onCheckedChange = {
@@ -682,7 +682,7 @@ fun SettingsView(navController: NavHostController) {
                     Text(
                         stringResource(R.string.perevod_new_king_james), modifier = Modifier
                             .weight(1f)
-                            .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                            .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
                     )
                     Switch(
                         modifier = Modifier.scale(0.8f), checked = newkingjamesState, onCheckedChange = {
@@ -719,7 +719,7 @@ fun SettingsView(navController: NavHostController) {
                         Text(
                             stringResource(R.string.translate), modifier = Modifier
                                 .weight(1f)
-                                .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                                .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
                         )
                         Switch(
                             modifier = Modifier.scale(0.8f), checked = newkingjamesTranslate, onCheckedChange = {
@@ -760,7 +760,7 @@ fun SettingsView(navController: NavHostController) {
                     Text(
                         stringResource(R.string.maranata_opis), modifier = Modifier
                             .weight(1f)
-                            .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                            .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
                     )
                     Switch(
                         modifier = Modifier.scale(0.8f), checked = maranafaState, onCheckedChange = {
@@ -787,7 +787,7 @@ fun SettingsView(navController: NavHostController) {
                         Text(
                             stringResource(R.string.paralel), modifier = Modifier
                                 .weight(1f)
-                                .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                                .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
                         )
                         Switch(
                             modifier = Modifier.scale(0.8f), checked = paralelState, onCheckedChange = {
@@ -800,7 +800,7 @@ fun SettingsView(navController: NavHostController) {
                 }
             }
             Text(
-                modifier = Modifier.padding(top = 20.dp), text = stringResource(R.string.sviaty_notifi), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.primary
+                modifier = Modifier.padding(top = 20.dp), text = stringResource(R.string.sviaty_notifi), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.primary
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
             var modeNotification by remember { mutableIntStateOf(k.getInt("notification", Settings.NOTIFICATION_SVIATY_FULL)) }
@@ -843,7 +843,7 @@ fun SettingsView(navController: NavHostController) {
                             }
                         })
                     Text(
-                        stringResource(R.string.apav_only), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp
+                        stringResource(R.string.apav_only), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp
                     )
                 }
                 Row(
@@ -884,7 +884,7 @@ fun SettingsView(navController: NavHostController) {
                             }
                         })
                     Text(
-                        stringResource(R.string.apav_all), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp
+                        stringResource(R.string.apav_all), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp
                     )
                 }
                 Row(
@@ -907,7 +907,7 @@ fun SettingsView(navController: NavHostController) {
                             setNotificationNon(context)
                         })
                     Text(
-                        stringResource(R.string.apav_no), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp
+                        stringResource(R.string.apav_no), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp
                     )
                 }
             }
@@ -918,7 +918,7 @@ fun SettingsView(navController: NavHostController) {
             val textFieldNotificstionState = rememberTextFieldState(dataTimes[k.getInt("timeNotification", 2)].title)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    stringResource(R.string.pavedamiс_title), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp
+                    stringResource(R.string.pavedamiс_title), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp
                 )
                 var expandedSviaty by remember { mutableStateOf(false) }
                 ExposedDropdownMenuBox(
@@ -941,7 +941,7 @@ fun SettingsView(navController: NavHostController) {
                                 .padding(10.dp)
                                 .weight(1f),
                             text = textFieldNotificstionState.text.toString(),
-                            fontSize = (Settings.fontInterface - 2).sp,
+                            fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp,
                             color = PrimaryText,
                         )
                         Icon(
@@ -960,7 +960,7 @@ fun SettingsView(navController: NavHostController) {
                     ) {
                         dataTimes.forEachIndexed { index, option ->
                             DropdownMenuItem(
-                                text = { Text(text = option.title, fontSize = (Settings.fontInterface - 2).sp) }, onClick = {
+                                text = { Text(text = option.title, fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp) }, onClick = {
                                     textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option.title)
                                     expandedSviaty = false
                                     k.edit {
@@ -994,11 +994,11 @@ fun SettingsView(navController: NavHostController) {
                         Divider, Color.Unspecified, Color.Unspecified, Color.Unspecified
                     ), shape = MaterialTheme.shapes.small
                 ) {
-                    Text(stringResource(R.string.settings_notifi_sviata), fontSize = (Settings.fontInterface - 2).sp, color = PrimaryText)
+                    Text(stringResource(R.string.settings_notifi_sviata), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = PrimaryText)
                 }
             }
             Text(
-                modifier = Modifier.padding(top = 20.dp), text = stringResource(R.string.sviaty_under), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.primary
+                modifier = Modifier.padding(top = 20.dp), text = stringResource(R.string.sviaty_under), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.primary
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
             var modePkcSvaity by remember { mutableStateOf(k.getBoolean("s_pkc", false)) }
@@ -1014,7 +1014,7 @@ fun SettingsView(navController: NavHostController) {
                 Text(
                     stringResource(R.string.pkc), modifier = Modifier
                         .weight(1f)
-                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
                     modifier = Modifier.scale(0.8f), checked = modePkcSvaity, onCheckedChange = {
@@ -1037,7 +1037,7 @@ fun SettingsView(navController: NavHostController) {
                 Text(
                     stringResource(R.string.sviaty_ulian), modifier = Modifier
                         .weight(1f)
-                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
                     modifier = Modifier.scale(0.8f), checked = modePravasSvaity, onCheckedChange = {
@@ -1060,7 +1060,7 @@ fun SettingsView(navController: NavHostController) {
                 Text(
                     stringResource(R.string.sviaty_dziar), modifier = Modifier
                         .weight(1f)
-                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
                     modifier = Modifier.scale(0.8f), checked = modeGosudSvaity, onCheckedChange = {
@@ -1083,7 +1083,7 @@ fun SettingsView(navController: NavHostController) {
                 Text(
                     stringResource(R.string.sviaty_pfes), modifier = Modifier
                         .weight(1f)
-                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, color = MaterialTheme.colorScheme.secondary
+                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
                 )
                 Switch(
                     modifier = Modifier.scale(0.8f), checked = modePafesiiSvaity, onCheckedChange = {
@@ -1168,7 +1168,7 @@ fun SettingsView(navController: NavHostController) {
                     Primary, Color.Unspecified, Color.Unspecified, Color.Unspecified
                 ), shape = MaterialTheme.shapes.small
             ) {
-                Text(stringResource(R.string.settings_default), fontSize = (Settings.fontInterface - 2).sp, color = PrimaryTextBlack)
+                Text(stringResource(R.string.settings_default), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = PrimaryTextBlack)
             }
             TextButton(
                 onClick = {
@@ -1179,7 +1179,7 @@ fun SettingsView(navController: NavHostController) {
                     Divider, Color.Unspecified, Color.Unspecified, Color.Unspecified
                 ), shape = MaterialTheme.shapes.small
             ) {
-                Text(stringResource(R.string.clear_chash), fontSize = (Settings.fontInterface - 2).sp, color = PrimaryText)
+                Text(stringResource(R.string.clear_chash), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = PrimaryText)
             }
             Spacer(modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
         }
@@ -1262,7 +1262,7 @@ fun DialogLogin(
                 ) {
                     TextField(modifier = Modifier.fillMaxWidth(), value = login, onValueChange = { newText ->
                         login = newText
-                    }, singleLine = true, textStyle = TextStyle(fontSize = (Settings.fontInterface - 2).sp), trailingIcon = {
+                    }, singleLine = true, textStyle = TextStyle(fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp), trailingIcon = {
                         IconButton(onClick = {
                             login = ""
                         }) {
@@ -1280,7 +1280,7 @@ fun DialogLogin(
                             password = newText
                         },
                         singleLine = true,
-                        textStyle = TextStyle(fontSize = (Settings.fontInterface - 2).sp),
+                        textStyle = TextStyle(fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp),
                         trailingIcon = {
                             if (showPassword) {
                                 IconButton(onClick = { showPassword = false }) {

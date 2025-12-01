@@ -91,6 +91,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.text.toHtml
 import androidx.core.text.toSpannable
@@ -342,7 +343,7 @@ class Piasochnica : ViewModel() {
                 } catch (_: Throwable) {
                     Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
                 }
-                if (isSite) saveLogFile()
+                if (!isSite) saveLogFile()
             }
         } else {
             Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
@@ -1319,6 +1320,9 @@ fun Piasochnica(
                         editText.apply {
                             setText(viewModel.htmlText)
                             setTextColor(ContextCompat.getColor(context, if (Settings.dzenNoch) R.color.colorWhite else R.color.colorPrimary_text))
+                            setLinkTextColor(ContextCompat.getColor(context, if (Settings.dzenNoch) R.color.colorPrimary_black else R.color.colorPrimary))
+                            setTextCursorDrawable(ContextCompat.getDrawable(context, if (Settings.dzenNoch) R.color.colorPrimary_black else R.color.colorPrimary))
+                            setTypeface(ResourcesCompat.getFont(context, R.font.roboto_condensed_regular))
                             textSize = fontSize
                             addTextChangedListener(textWatcher)
                         }

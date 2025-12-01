@@ -674,7 +674,8 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
                             )
                         }
                     }
-                }, adminViewModel = adminViewModel)
+                }, adminViewModel = adminViewModel
+            )
         }
 
         composable(
@@ -1232,126 +1233,150 @@ fun MainConteiner(
                 }, actions = {
                     if (!searchText) {
                         if (!isBottomBar && (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR)) {
-                            Text(
-                                text = Calendar.getInstance()[Calendar.DATE].toString(),
-                                modifier = Modifier
-                                    .clickable {
-                                        showDropdownMenuPos = 1
-                                        showDropdown = true
-                                    }
-                                    .padding(horizontal = 10.dp, vertical = 7.dp)
-                                    .clip(shape = RoundedCornerShape(3.dp))
-                                    .background(textTollBarColor)
-                                    .padding(1.dp)
-                                    .clip(shape = RoundedCornerShape(3.dp))
-                                    .background(if (isToDay) Divider else StrogiPost)
-                                    .padding(horizontal = 5.dp),
-                                fontSize = 14.sp,
-                                color = if (isToDay) PrimaryText else PrimaryTextBlack
-                            )
-                            IconButton(onClick = {
-                                k.edit {
-                                    if (k.getBoolean("caliandarList", false)) {
-                                        navigationActions.navigateToKaliandar()
-                                        putBoolean("caliandarList", false)
-                                    } else {
-                                        putBoolean("caliandarList", true)
-                                        navigationActions.navigateToKaliandarYear()
-                                    }
-                                }
-                            }) {
-                                val icon = if (k.getBoolean("caliandarList", false)) painterResource(R.drawable.calendar_today)
-                                else painterResource(R.drawable.list)
-                                Icon(
-                                    painter = icon, contentDescription = "", tint = textTollBarColor
+                            PlainTooltip(stringResource(R.string.set_data)) {
+                                Text(
+                                    text = Calendar.getInstance()[Calendar.DATE].toString(),
+                                    modifier = Modifier
+                                        .clickable {
+                                            showDropdownMenuPos = 1
+                                            showDropdown = true
+                                        }
+                                        .padding(horizontal = 10.dp, vertical = 7.dp)
+                                        .clip(shape = RoundedCornerShape(3.dp))
+                                        .background(textTollBarColor)
+                                        .padding(1.dp)
+                                        .clip(shape = RoundedCornerShape(3.dp))
+                                        .background(if (isToDay) Divider else StrogiPost)
+                                        .padding(horizontal = 5.dp),
+                                    fontSize = 14.sp,
+                                    color = if (isToDay) PrimaryText else PrimaryTextBlack
                                 )
+                            }
+                            PlainTooltip(stringResource(if (k.getBoolean("caliandarList", false)) R.string.set_book_caliandar else R.string.set_list_caliandar)) {
+                                IconButton(onClick = {
+                                    k.edit {
+                                        if (k.getBoolean("caliandarList", false)) {
+                                            navigationActions.navigateToKaliandar()
+                                            putBoolean("caliandarList", false)
+                                        } else {
+                                            putBoolean("caliandarList", true)
+                                            navigationActions.navigateToKaliandarYear()
+                                        }
+                                    }
+                                }) {
+                                    val icon = if (k.getBoolean("caliandarList", false)) painterResource(R.drawable.calendar_today)
+                                    else painterResource(R.drawable.list)
+                                    Icon(
+                                        painter = icon, contentDescription = "", tint = textTollBarColor
+                                    )
+                                }
                             }
                         }
                         if (currentRoute == AllDestinations.MAE_NATATKI_MENU) {
-                            IconButton({
-                                addFileNatatki = true
-                            }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.add), tint = textTollBarColor, contentDescription = ""
-                                )
+                            PlainTooltip(stringResource(R.string.add_natatku)) {
+                                IconButton({
+                                    addFileNatatki = true
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.add), tint = textTollBarColor, contentDescription = ""
+                                    )
+                                }
                             }
                         }
                         if (isIconSort) {
-                            IconButton(onClick = {
-                                expandedUp = false
-                                sortedVybranae = if (sortedVybranae == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
-                                else Settings.SORT_BY_ABC
-                                sortedNatatki = if (sortedNatatki == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
-                                else Settings.SORT_BY_ABC
-                                k.edit {
-                                    if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.BIBLIA_SEMUXA || currentRoute == AllDestinations.BIBLIA_BOKUNA || currentRoute == AllDestinations.BIBLIA_NADSAN || currentRoute == AllDestinations.BIBLIA_CHARNIAUSKI || currentRoute == AllDestinations.BIBLIA_SINODAL || currentRoute == AllDestinations.BIBLIA_CATOLIK || currentRoute == AllDestinations.BIBLIA_NEW_KING_JAMES) {
-                                        putInt(
-                                            "sortedVybranae", sortedVybranae
-                                        )
-                                    } else putInt("natatki_sort", sortedNatatki)
+                            var titleSort: String
+                            val painter = if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.BIBLIA_SEMUXA || currentRoute == AllDestinations.BIBLIA_BOKUNA || currentRoute == AllDestinations.BIBLIA_NADSAN || currentRoute == AllDestinations.BIBLIA_CHARNIAUSKI || currentRoute == AllDestinations.BIBLIA_SINODAL || currentRoute == AllDestinations.BIBLIA_CATOLIK || currentRoute == AllDestinations.BIBLIA_NEW_KING_JAMES) {
+                                if (sortedVybranae == Settings.SORT_BY_TIME) {
+                                    titleSort = stringResource(R.string.sort_abc)
+                                    painterResource(R.drawable.sort_by_az)
+                                } else {
+                                    titleSort = stringResource(R.string.sort_time)
+                                    painterResource(R.drawable.sort_by_time)
                                 }
-                            }) {
-                                Icon(
-                                    modifier = Modifier.size(24.dp),
-                                    painter = if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.BIBLIA_SEMUXA || currentRoute == AllDestinations.BIBLIA_BOKUNA || currentRoute == AllDestinations.BIBLIA_NADSAN || currentRoute == AllDestinations.BIBLIA_CHARNIAUSKI || currentRoute == AllDestinations.BIBLIA_SINODAL || currentRoute == AllDestinations.BIBLIA_CATOLIK || currentRoute == AllDestinations.BIBLIA_NEW_KING_JAMES) {
-                                        if (sortedVybranae == Settings.SORT_BY_TIME) {
-                                            painterResource(R.drawable.sort_by_az)
-                                        } else {
-                                            painterResource(R.drawable.sort_by_time)
-                                        }
-                                    } else {
-                                        if (sortedNatatki == Settings.SORT_BY_TIME) {
-                                            painterResource(R.drawable.sort_by_az)
-                                        } else {
-                                            painterResource(R.drawable.sort_by_time)
-                                        }
-                                    }, contentDescription = "", tint = textTollBarColor
-                                )
+                            } else {
+                                if (sortedNatatki == Settings.SORT_BY_TIME) {
+                                    titleSort = stringResource(R.string.sort_abc)
+                                    painterResource(R.drawable.sort_by_az)
+                                } else {
+                                    titleSort = stringResource(R.string.sort_time)
+                                    painterResource(R.drawable.sort_by_time)
+                                }
+                            }
+                            PlainTooltip(titleSort) {
+                                IconButton(onClick = {
+                                    expandedUp = false
+                                    sortedVybranae = if (sortedVybranae == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
+                                    else Settings.SORT_BY_ABC
+                                    sortedNatatki = if (sortedNatatki == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
+                                    else Settings.SORT_BY_ABC
+                                    k.edit {
+                                        if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.BIBLIA_SEMUXA || currentRoute == AllDestinations.BIBLIA_BOKUNA || currentRoute == AllDestinations.BIBLIA_NADSAN || currentRoute == AllDestinations.BIBLIA_CHARNIAUSKI || currentRoute == AllDestinations.BIBLIA_SINODAL || currentRoute == AllDestinations.BIBLIA_CATOLIK || currentRoute == AllDestinations.BIBLIA_NEW_KING_JAMES) {
+                                            putInt(
+                                                "sortedVybranae", sortedVybranae
+                                            )
+                                        } else putInt("natatki_sort", sortedNatatki)
+                                    }
+                                }) {
+                                    Icon(
+                                        modifier = Modifier.size(24.dp),
+                                        painter = painter, contentDescription = "", tint = textTollBarColor
+                                    )
+                                }
                             }
                         }
                         if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.MAE_NATATKI_MENU) {
-                            IconButton({
-                                if (currentRoute == AllDestinations.VYBRANAE_LIST) removeAllVybranaeDialog = !removeAllVybranaeDialog
-                                else removeAllNatatkiDialog = !removeAllNatatkiDialog
-                            }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.delete), tint = textTollBarColor, contentDescription = ""
-                                )
+                            PlainTooltip(stringResource(if (currentRoute == AllDestinations.VYBRANAE_LIST) R.string.vybranae_all_remove else R.string.vybranae_remove_all_natatka)) {
+                                IconButton({
+                                    if (currentRoute == AllDestinations.VYBRANAE_LIST) removeAllVybranaeDialog = !removeAllVybranaeDialog
+                                    else removeAllNatatkiDialog = !removeAllNatatkiDialog
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.delete), tint = textTollBarColor, contentDescription = ""
+                                    )
+                                }
                             }
                         }
                         if (currentRoute == AllDestinations.LITURGIKON_MENU || currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.CHASASLOU_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA || currentRoute.contains("BIBLIA", ignoreCase = true)) {
-                            IconButton({
-                                searchText = true
-                            }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.search), tint = textTollBarColor, contentDescription = ""
-                                )
+                            PlainTooltip(stringResource(R.string.poshuk)) {
+                                IconButton({
+                                    searchText = true
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.search), tint = textTollBarColor, contentDescription = ""
+                                    )
+                                }
                             }
                         }
                         if (currentRoute == AllDestinations.PIASOCHNICA_LIST) {
-                            IconButton(onClick = {
-                                PasochnicaList.pasochnicaAction = PasochnicaList.FILE
-                            }) {
-                                Icon(
-                                    modifier = Modifier.size(24.dp),
-                                    painter = painterResource(R.drawable.directory_icon_menu), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                )
+                            PlainTooltip(stringResource(R.string.pasochnica_add_folder)) {
+                                IconButton(onClick = {
+                                    PasochnicaList.pasochnicaAction = PasochnicaList.FILE
+                                }) {
+                                    Icon(
+                                        modifier = Modifier.size(24.dp),
+                                        painter = painterResource(R.drawable.directory_icon_menu), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
                             }
-                            IconButton(onClick = {
-                                PasochnicaList.pasochnicaAction = PasochnicaList.WWW
-                            }) {
-                                Icon(
-                                    modifier = Modifier.size(24.dp),
-                                    painter = painterResource(R.drawable.www_icon), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                )
+                            PlainTooltip(stringResource(R.string.pasochnica_add_basa)) {
+                                IconButton(onClick = {
+                                    PasochnicaList.pasochnicaAction = PasochnicaList.WWW
+                                }) {
+                                    Icon(
+                                        modifier = Modifier.size(24.dp),
+                                        painter = painterResource(R.drawable.www_icon), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
                             }
-                            IconButton(onClick = {
-                                PasochnicaList.pasochnicaAction = PasochnicaList.ADD
-                            }) {
-                                Icon(
-                                    modifier = Modifier.size(24.dp),
-                                    painter = painterResource(R.drawable.plus), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                )
+                            PlainTooltip(stringResource(R.string.add_file)) {
+                                IconButton(onClick = {
+                                    PasochnicaList.pasochnicaAction = PasochnicaList.ADD
+                                }) {
+                                    Icon(
+                                        modifier = Modifier.size(24.dp),
+                                        painter = painterResource(R.drawable.plus), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
                             }
                         }
                         IconButton(onClick = { expandedUp = true }) {
@@ -1361,10 +1386,12 @@ fun MainConteiner(
                         }
                     }
                     if (searchText && currentRoute.contains("BIBLIA", ignoreCase = true)) {
-                        IconButton(onClick = { AppNavGraphState.searchSettings = true }) {
-                            Icon(
-                                painter = painterResource(R.drawable.settings), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                            )
+                        PlainTooltip(stringResource(R.string.settings_bible)) {
+                            IconButton(onClick = { AppNavGraphState.searchSettings = true }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.settings), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
                         }
                     }
                     AppDropdownMenu(
@@ -1408,7 +1435,7 @@ fun MainConteiner(
                                 DropdownMenuItem(onClick = {
                                     expandedUp = false
                                     searchText = true
-                                }, text = { Text(stringResource(R.string.poshuk), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                }, text = { Text(stringResource(R.string.poshuk_sviatych), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                     Icon(
                                         painter = painterResource(R.drawable.search), contentDescription = ""
                                     )
@@ -1490,54 +1517,62 @@ fun MainConteiner(
                                 .navigationBarsPadding(), horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.CenterVertically
                         ) {
                             if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
-                                IconButton(onClick = {
-                                    searchText = true
-                                }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.search), contentDescription = "", tint = textTollBarColor
-                                    )
-                                }
-                                IconButton(onClick = {
-                                    navigationActions.navigateToPadzeiView()
-                                }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.event), contentDescription = "", tint = textTollBarColor
-                                    )
-                                }
-                                IconButton({
-                                    k.edit {
-                                        if (k.getBoolean("caliandarList", false)) {
-                                            navigationActions.navigateToKaliandar()
-                                            putBoolean("caliandarList", false)
-                                        } else {
-                                            putBoolean("caliandarList", true)
-                                            navigationActions.navigateToKaliandarYear()
-                                        }
+                                PlainTooltip(stringResource(R.string.poshuk_sviatych)) {
+                                    IconButton(onClick = {
+                                        searchText = true
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.search), contentDescription = "", tint = textTollBarColor
+                                        )
                                     }
-                                }) {
-                                    val icon = if (k.getBoolean("caliandarList", false)) painterResource(R.drawable.calendar_today)
-                                    else painterResource(R.drawable.list)
-                                    Icon(
-                                        painter = icon, tint = textTollBarColor, contentDescription = ""
+                                }
+                                PlainTooltip(stringResource(R.string.sabytie)) {
+                                    IconButton(onClick = {
+                                        navigationActions.navigateToPadzeiView()
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.event), contentDescription = "", tint = textTollBarColor
+                                        )
+                                    }
+                                }
+                                PlainTooltip(stringResource(if (k.getBoolean("caliandarList", false)) R.string.set_book_caliandar else R.string.set_list_caliandar)) {
+                                    IconButton({
+                                        k.edit {
+                                            if (k.getBoolean("caliandarList", false)) {
+                                                navigationActions.navigateToKaliandar()
+                                                putBoolean("caliandarList", false)
+                                            } else {
+                                                putBoolean("caliandarList", true)
+                                                navigationActions.navigateToKaliandarYear()
+                                            }
+                                        }
+                                    }) {
+                                        val icon = if (k.getBoolean("caliandarList", false)) painterResource(R.drawable.calendar_today)
+                                        else painterResource(R.drawable.list)
+                                        Icon(
+                                            painter = icon, tint = textTollBarColor, contentDescription = ""
+                                        )
+                                    }
+                                }
+                                PlainTooltip(stringResource(R.string.set_data)) {
+                                    Text(
+                                        text = Calendar.getInstance()[Calendar.DATE].toString(),
+                                        modifier = Modifier
+                                            .clickable {
+                                                showDropdownMenuPos = 1
+                                                showDropdown = true
+                                            }
+                                            .padding(horizontal = 10.dp, vertical = 7.dp)
+                                            .clip(shape = RoundedCornerShape(3.dp))
+                                            .background(textTollBarColor)
+                                            .padding(1.dp)
+                                            .clip(shape = RoundedCornerShape(3.dp))
+                                            .background(if (isToDay) Divider else StrogiPost)
+                                            .padding(horizontal = 5.dp),
+                                        fontSize = 14.sp,
+                                        color = if (isToDay) PrimaryText else PrimaryTextBlack
                                     )
                                 }
-                                Text(
-                                    text = Calendar.getInstance()[Calendar.DATE].toString(),
-                                    modifier = Modifier
-                                        .clickable {
-                                            showDropdownMenuPos = 1
-                                            showDropdown = true
-                                        }
-                                        .padding(horizontal = 10.dp, vertical = 7.dp)
-                                        .clip(shape = RoundedCornerShape(3.dp))
-                                        .background(textTollBarColor)
-                                        .padding(1.dp)
-                                        .clip(shape = RoundedCornerShape(3.dp))
-                                        .background(if (isToDay) Divider else StrogiPost)
-                                        .padding(horizontal = 5.dp),
-                                    fontSize = 14.sp,
-                                    color = if (isToDay) PrimaryText else PrimaryTextBlack
-                                )
                             }
                         }
                     }

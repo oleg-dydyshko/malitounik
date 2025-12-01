@@ -54,8 +54,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.edit
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.admin.DialogEditBiblijteka
 import by.carkva_gazeta.malitounik.admin.saveBibliateka
@@ -66,9 +64,9 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -76,46 +74,9 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.DecimalFormat
 
-class FilterBiblijatekaModel : SearchBibleViewModel() {
-    val listAllBiblijateka = ArrayList<ArrayList<String>>()
-    private val items = mutableStateListOf<ArrayList<String>>()
-
-    private val _filteredItems = MutableStateFlow(items)
-    var filteredItems: MutableStateFlow<SnapshotStateList<ArrayList<String>>> = _filteredItems
-
-    fun addAllBiblijateka(list: ArrayList<ArrayList<String>>) {
-        listAllBiblijateka.addAll(list)
-    }
-
-    fun findIndex(fileSize: Long): Int {
-        for (i in listAllBiblijateka.indices) {
-            if (listAllBiblijateka[i][3].toLong() == fileSize) {
-                return i
-            }
-        }
-        return 0
-    }
-
-    fun clear() {
-        items.clear()
-    }
-
-    fun addAllItemList(item: SnapshotStateList<ArrayList<String>>) {
-        items.addAll(item)
-    }
-
-    fun filterItem(search: String) {
-        if (search.isNotEmpty()) {
-            _filteredItems.value =
-                items.filter { it[1].contains(search, ignoreCase = true) } as SnapshotStateList<ArrayList<String>>
-        }
-    }
-}
-
 @Composable
 fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerPadding: PaddingValues, searchText: Boolean, addItem: Boolean, viewModel: SearchViewModel, editDismiss: () -> Unit) {
     val context = LocalContext.current
-    val viewModelFilter: FilterBiblijatekaModel = viewModel()
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
@@ -126,8 +87,9 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
     var isDialogBiblijatekaVisable by remember { mutableStateOf(false) }
     var isDialogNoWIFIVisable by remember { mutableStateOf(false) }
     var isDialogNoIntent by remember { mutableStateOf(false) }
+    val biblijatekaAllList = remember { mutableStateListOf<ArrayList<String>>() }
     val bibliatekaList = remember { mutableStateListOf<ArrayList<String>>() }
-    val filteredItems by viewModelFilter.filteredItems.collectAsStateWithLifecycle()
+    val filteredItems = remember { mutableStateListOf<ArrayList<String>>() }
     val editList = remember { ArrayList<String>() }
     var editItem by remember { mutableStateOf(false) }
     var allPosition by remember { mutableIntStateOf(0) }
@@ -144,7 +106,7 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
             editList.add("")
         }
         DialogEditBiblijteka(editList, onSave = { title: String, rubrika: Int, apisanne: String, pdfFile: String ->
-            saveBibliateka(context, viewModelFilter.listAllBiblijateka, allPosition, title, rubrika, apisanne, pdfFile) {
+            saveBibliateka(context, biblijatekaAllList, allPosition, title, rubrika, apisanne, pdfFile) {
                 isProgressVisable = it
                 if (!isProgressVisable) {
                     editDismiss()
@@ -176,7 +138,7 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
                     context,
                     biblijateka,
                     bibliatekaList = { list ->
-                        viewModelFilter.addAllBiblijateka(list)
+                        biblijatekaAllList.addAll(list)
                         when (biblijateka) {
                             AllDestinations.BIBLIJATEKA_NIADAUNIA -> {
                                 val gson = Gson()
@@ -194,27 +156,27 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
                             }
 
                             AllDestinations.BIBLIJATEKA_GISTORYIA -> {
-                                val newList = list.filter { it[4].toInt() == 1 } as ArrayList<ArrayList<String>>
+                                val newList = list.filter { it[4].toInt() == 1 }
                                 bibliatekaList.addAll(newList)
                             }
 
                             AllDestinations.BIBLIJATEKA_MALITOUNIKI -> {
-                                val newList = list.filter { it[4].toInt() == 2 } as ArrayList<ArrayList<String>>
+                                val newList = list.filter { it[4].toInt() == 2 }
                                 bibliatekaList.addAll(newList)
                             }
 
                             AllDestinations.BIBLIJATEKA_SPEUNIKI -> {
-                                val newList = list.filter { it[4].toInt() == 3 } as ArrayList<ArrayList<String>>
+                                val newList = list.filter { it[4].toInt() == 3 }
                                 bibliatekaList.addAll(newList)
                             }
 
                             AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA -> {
-                                val newList = list.filter { it[4].toInt() == 4 } as ArrayList<ArrayList<String>>
+                                val newList = list.filter { it[4].toInt() == 4 }
                                 bibliatekaList.addAll(newList)
                             }
 
                             AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU -> {
-                                val newList = list.filter { it[4].toInt() == 5 } as ArrayList<ArrayList<String>>
+                                val newList = list.filter { it[4].toInt() == 5 }
                                 bibliatekaList.addAll(newList)
                                 bibliatekaList.sortByDescending {
                                     val t1 = it[0].indexOf("(")
@@ -234,10 +196,18 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
             }
         }
     }
-    if (searchText) {
-        viewModelFilter.clear()
-        viewModelFilter.addAllItemList(bibliatekaList)
-        viewModelFilter.filterItem(viewModel.textFieldValueState.text)
+    LaunchedEffect(viewModel.textFieldValueState.text, searchText) {
+        filteredItems.clear()
+        if (searchText) {
+            if (viewModel.textFieldValueState.text.isNotEmpty()) {
+                val filterList = biblijatekaAllList.filter { it[1].contains(viewModel.textFieldValueState.text, ignoreCase = true) }
+                filteredItems.addAll(filterList)
+            } else {
+                filteredItems.addAll(biblijatekaAllList)
+            }
+        } else {
+            filteredItems.addAll(bibliatekaList)
+        }
     }
     if (isDialogBiblijatekaVisable) {
         fileName = if (searchText) filteredItems[fileListPosition][2]
@@ -344,7 +314,14 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
             setFileListPosition = { fileListPosition = it },
             setIsDialogBiblijatekaVisable = { isDialogBiblijatekaVisable = it },
             editListItem = {
-                allPosition = viewModelFilter.findIndex(it[3].toLong())
+                var position = 0
+                for (i in biblijatekaAllList.indices) {
+                    if (biblijatekaAllList[i][3].toLong() == it[3].toLong()) {
+                        position = i
+                        break
+                    }
+                }
+                allPosition = position
                 editList.clear()
                 editList.addAll(it)
                 editItem = true
@@ -628,7 +605,13 @@ private suspend fun getBibliateka(
                 AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA -> rub = "4"
                 AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU -> rub = "5"
             }
-            if (rubrika == rub) saveImagePdf(context, imageName)
+            if (rubrika == rub) {
+                saveImagePdf(context, imageName)
+            } else {
+                withContext(Dispatchers.IO) {
+                    saveImagePdf(context, imageName)
+                }
+            }
             mySqlList.add(imageName)
             temp.add(mySqlList)
         }

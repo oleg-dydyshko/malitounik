@@ -131,6 +131,7 @@ import by.carkva_gazeta.malitounik.ui.theme.StrogiPost
 import by.carkva_gazeta.malitounik.views.AppDropdownMenu
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.HtmlText
+import by.carkva_gazeta.malitounik.views.PlainTooltip
 import by.carkva_gazeta.malitounik.views.openAssetsResources
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -659,26 +660,32 @@ fun CytanniList(
                     }
                 }, actions = {
                     if (isSelectMode) {
-                        IconButton(onClick = {
-                            isSelectAll = true
-                        }) {
-                            Icon(
-                                painter = painterResource(R.drawable.select_all), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                            )
+                        PlainTooltip(stringResource(R.string.select_all)) {
+                            IconButton(onClick = {
+                                isSelectAll = true
+                            }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.select_all), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
                         }
-                        IconButton(onClick = {
-                            isCopyMode = true
-                        }) {
-                            Icon(
-                                painter = painterResource(R.drawable.content_copy), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                            )
+                        PlainTooltip(stringResource(R.string.copy_list)) {
+                            IconButton(onClick = {
+                                isCopyMode = true
+                            }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.content_copy), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
                         }
-                        IconButton(onClick = {
-                            isShareMode = true
-                        }) {
-                            Icon(
-                                painter = painterResource(R.drawable.share), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                            )
+                        PlainTooltip(stringResource(R.string.share)) {
+                            IconButton(onClick = {
+                                isShareMode = true
+                            }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.share), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
                         }
                     } else {
                         if (!isBottomBar) {
@@ -686,40 +693,46 @@ fun CytanniList(
                             if (listState[viewModel.selectedIndex].lazyListState.canScrollForward) {
                                 val iconAutoScroll = if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
                                 else painterResource(R.drawable.play_circle)
-                                IconButton(onClick = {
-                                    viewModel.autoScrollSensor = !viewModel.autoScrollSensor
-                                    viewModel.autoScroll(title, viewModel.autoScrollSensor)
-                                    if (viewModel.autoScrollSensor) {
-                                        actyvity.window.addFlags(
-                                            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play)) {
+                                    IconButton(onClick = {
+                                        viewModel.autoScrollSensor = !viewModel.autoScrollSensor
+                                        viewModel.autoScroll(title, viewModel.autoScrollSensor)
+                                        if (viewModel.autoScrollSensor) {
+                                            actyvity.window.addFlags(
+                                                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                            )
+                                        } else if (!k.getBoolean("power", false)) {
+                                            actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                        }
+                                    }) {
+                                        Icon(
+                                            iconAutoScroll, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                         )
-                                    } else if (!k.getBoolean("power", false)) {
-                                        actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                                     }
-                                }) {
-                                    Icon(
-                                        iconAutoScroll, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                    )
                                 }
                             } else if (listState[viewModel.selectedIndex].lazyListState.canScrollBackward) {
-                                IconButton(onClick = {
-                                    isUpList = true
-                                }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.arrow_upward), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                    )
+                                PlainTooltip(stringResource(R.string.auto_up)) {
+                                    IconButton(onClick = {
+                                        isUpList = true
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.arrow_upward), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
                                 }
                             }
                             if (biblia == Settings.CHYTANNI_BIBLIA) {
-                                IconButton(
-                                    onClick = {
-                                        viewModel.saveVybranoe(context, perevod)
-                                    }) {
-                                    val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
-                                    else painterResource(R.drawable.star)
-                                    Icon(
-                                        painter = icon, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                    )
+                                PlainTooltip(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add)) {
+                                    IconButton(
+                                        onClick = {
+                                            viewModel.saveVybranoe(context, perevod)
+                                        }) {
+                                        val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
+                                        else painterResource(R.drawable.star)
+                                        Icon(
+                                            painter = icon, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
                                 }
                             }
                             IconButton(onClick = { expandedUp = true }) {
@@ -1071,84 +1084,98 @@ fun CytanniList(
                             .background(colorTollBar)
                             .navigationBarsPadding(), horizontalArrangement = Arrangement.SpaceAround
                     ) {
-                        IconButton(
-                            onClick = {
-                                showDropdown = !showDropdown
-                                viewModel.autoScroll(title, false)
-                                menuPosition = 1
-                            }) {
-                            Icon(
-                                modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.format_size), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                            )
-                        }
-                        IconButton(
-                            onClick = {
-                                showDropdown = !showDropdown
-                                viewModel.autoScroll(title, false)
-                                menuPosition = 2
-                            }) {
-                            Icon(
-                                modifier = Modifier.size(24.dp),
-                                painter = painterResource(R.drawable.book_red), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                            )
-                        }
-                        IconButton(
-                            onClick = {
-                                fullscreen = true
-                            }) {
-                            Icon(
-                                painter = painterResource(R.drawable.fullscreen), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                            )
-                        }
-                        if (biblia == Settings.CHYTANNI_BIBLIA && listState.size - 1 > 1) {
+                        PlainTooltip(stringResource(R.string.menu_font_size_app)) {
                             IconButton(
                                 onClick = {
+                                    showDropdown = !showDropdown
                                     viewModel.autoScroll(title, false)
-                                    dialogRazdel = true
+                                    menuPosition = 1
                                 }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.apps), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.format_size), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
                         }
-                        if (biblia == Settings.CHYTANNI_BIBLIA) {
+                        PlainTooltip(stringResource(R.string.set_perakvad_biblii)) {
                             IconButton(
                                 onClick = {
-                                    viewModel.saveVybranoe(context, perevod)
+                                    showDropdown = !showDropdown
+                                    viewModel.autoScroll(title, false)
+                                    menuPosition = 2
                                 }) {
-                                val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
-                                else painterResource(R.drawable.star)
                                 Icon(
-                                    painter = icon, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    modifier = Modifier.size(24.dp),
+                                    painter = painterResource(R.drawable.book_red), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                 )
+                            }
+                        }
+                        PlainTooltip(stringResource(R.string.fullscreen)) {
+                            IconButton(
+                                onClick = {
+                                    fullscreen = true
+                                }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.fullscreen), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
+                        }
+                        if (biblia == Settings.CHYTANNI_BIBLIA && listState.size - 1 > 1) {
+                            PlainTooltip(stringResource(R.string.set_glava_biblii)) {
+                                IconButton(
+                                    onClick = {
+                                        viewModel.autoScroll(title, false)
+                                        dialogRazdel = true
+                                    }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.apps), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
+                            }
+                        }
+                        if (biblia == Settings.CHYTANNI_BIBLIA) {
+                            PlainTooltip(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add)) {
+                                IconButton(
+                                    onClick = {
+                                        viewModel.saveVybranoe(context, perevod)
+                                    }) {
+                                    val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
+                                    else painterResource(R.drawable.star)
+                                    Icon(
+                                        painter = icon, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
                             }
                         }
                         if (!isParallelVisable) {
                             if (listState[viewModel.selectedIndex].lazyListState.canScrollForward) {
                                 val iconAutoScroll = if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
                                 else painterResource(R.drawable.play_circle)
-                                IconButton(onClick = {
-                                    viewModel.autoScrollSensor = !viewModel.autoScrollSensor
-                                    viewModel.autoScroll(title, viewModel.autoScrollSensor)
-                                    if (viewModel.autoScrollSensor) {
-                                        actyvity.window.addFlags(
-                                            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play)) {
+                                    IconButton(onClick = {
+                                        viewModel.autoScrollSensor = !viewModel.autoScrollSensor
+                                        viewModel.autoScroll(title, viewModel.autoScrollSensor)
+                                        if (viewModel.autoScrollSensor) {
+                                            actyvity.window.addFlags(
+                                                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                            )
+                                        } else if (!k.getBoolean("power", false)) {
+                                            actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                        }
+                                    }) {
+                                        Icon(
+                                            painter = iconAutoScroll, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                         )
-                                    } else if (!k.getBoolean("power", false)) {
-                                        actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                                     }
-                                }) {
-                                    Icon(
-                                        painter = iconAutoScroll, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                    )
                                 }
                             } else if (listState[viewModel.selectedIndex].lazyListState.canScrollBackward) {
-                                IconButton(onClick = {
-                                    isUpList = true
-                                }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.arrow_upward), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                    )
+                                PlainTooltip(stringResource(R.string.auto_up)) {
+                                    IconButton(onClick = {
+                                        isUpList = true
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.arrow_upward), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
                                 }
                             }
                         } else {
@@ -1557,10 +1584,10 @@ fun CytanniList(
                 ) {
                     Row(
                         modifier = Modifier
-                            .align(Alignment.End)
-                            .padding(bottom = 10.dp, end = 10.dp)
+                            .fillMaxWidth()
+                            .padding(bottom = 10.dp, end = 10.dp),
+                        horizontalArrangement = Arrangement.End
                     ) {
-                        Spacer(modifier = Modifier.padding(start = 50.dp))
                         Text(
                             text = autoScrollText, modifier = Modifier
                                 .align(Alignment.Bottom)
@@ -1580,31 +1607,27 @@ fun CytanniList(
                 ) {
                     Row(
                         modifier = Modifier
-                            .align(Alignment.End)
-                            .padding(bottom = if (!isBottomBar || fullscreen) 10.dp else 0.dp, end = 10.dp)
+                            .fillMaxWidth()
+                            .padding(bottom = if (!isBottomBar || fullscreen) 10.dp else 0.dp, end = 10.dp),
+                        horizontalArrangement = Arrangement.End
                     ) {
-                        Box(
-                            modifier = Modifier
+                        Image(
+                            painter = painterResource(R.drawable.minus_auto_scroll), contentDescription = "", modifier = Modifier
                                 .padding(end = 10.dp)
-                                .align(Alignment.Bottom)
-                        ) {
-                            Image(
-                                painter = painterResource(R.drawable.minus_auto_scroll), contentDescription = "", modifier = Modifier
-                                    .clip(shape = RoundedCornerShape(10.dp))
-                                    .background(Button)
-                                    .size(40.dp)
-                                    .padding(5.dp)
-                                    .clickable {
-                                        if (viewModel.autoScrollSpeed in 10..125) {
-                                            viewModel.autoScrollSpeed += 5
-                                            val proc = 100 - (viewModel.autoScrollSpeed - 15) * 100 / 115
-                                            autoScrollTextColor = Post
-                                            autoScrollTextColor2 = PrimaryText
-                                            autoScrollText = "$proc%"
-                                            viewModel.autoScrollSpeed(context)
-                                        }
-                                    })
-                        }
+                                .clip(shape = RoundedCornerShape(10.dp))
+                                .background(Button)
+                                .size(40.dp)
+                                .padding(5.dp)
+                                .clickable {
+                                    if (viewModel.autoScrollSpeed in 10..125) {
+                                        viewModel.autoScrollSpeed += 5
+                                        val proc = 100 - (viewModel.autoScrollSpeed - 15) * 100 / 115
+                                        autoScrollTextColor = Post
+                                        autoScrollTextColor2 = PrimaryText
+                                        autoScrollText = "$proc%"
+                                        viewModel.autoScrollSpeed(context)
+                                    }
+                                })
                         Image(
                             painter = painterResource(R.drawable.plus_auto_scroll), contentDescription = "", modifier = Modifier
                                 .align(Alignment.Bottom)

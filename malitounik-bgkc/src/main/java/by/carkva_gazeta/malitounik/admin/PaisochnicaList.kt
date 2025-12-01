@@ -398,7 +398,8 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                         Text(
                             text = fileList[index].fileName,
                             color = MaterialTheme.colorScheme.secondary,
-                            fontSize = Settings.fontInterface.sp
+                            fontSize = Settings.fontInterface.sp,
+                            lineHeight = Settings.fontInterface.sp * 1.15f
                         )
                         if (!fileList[index].isFileExists) {
                             Text(

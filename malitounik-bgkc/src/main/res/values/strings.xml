@@ -16,6 +16,7 @@
     <string name="title_biblia_bokun2">Пераклад А. Бокуна</string>
     <string name="title_biblia_charniauski2">Пераклад У. Чарняўскага 2017</string>
     <string name="tools_item">Налады</string>
+    <string name="settings_bible">Налады пошуку па Бібліі</string>
     <string name="search_call">Абраць сёньняшні дзень</string>
     <string name="data_search">ВЫБЯРЫЦЕ РАЗЬДЗЕЛ</string>
     <string name="bogaslugbovyia_teksty">БОГАСЛУЖБОВЫЯ ТЭКСТЫ</string>
@@ -26,6 +27,12 @@
     <string name="czytanne3">Чытаньне, за %1$d %2$s</string>
     <string name="menu_font_size_app">Выбраць памер шрыфту</string>
     <string name="pazdel">Выбраць разьдзел</string>
+    <string name="select_all">Выбраць усе стыхі</string>
+    <string name="set_data">Абраць дату календара</string>
+    <string name="set_glava_biblii">Выбраць разьдзел Бібліі</string>
+    <string name="set_perakvad_biblii">Выбраць пераклад Бібліі</string>
+    <string name="set_list_caliandar">Дні календара спісам</string>
+    <string name="set_book_caliandar">Дні календара кніжкай</string>
     <string name="settings_battom_panel">Ніжняй панэлі</string>
     <string name="settings_top_panel">Верхняй панэлі</string>
     <string name="settings_title_panel">Кнопкі кіраваньня разьмешчаны на:</string>
@@ -92,6 +99,10 @@
     <string name="parafii">Дзе знайсьці грэка-католікаў Беларусі</string>
     <string name="sabytie">Падзеі</string>
     <string name="poshuk">Пошук</string>
+    <string name="poshuk_forvard">Пошук у тэксьце наперад</string>
+    <string name="poshuk_back">Пошук у тэксьце назад</string>
+    <string name="poshuk_sviatych">Пошук сьвятых і сьвятаў</string>
+    <string name="zmennyia_chastki">Зменныя часткі</string>
     <string name="sabytieKali">Калі: %1$s %2$s \n%3$s</string>
     <string name="sabytieDoKuda">Пачатак: %1$s %2$s \nКанец: %3$s %4$s \n%5$s</string>
     <string name="error_ch">Памылка, даруйце\n</string>
@@ -153,9 +164,12 @@
     <string name="vybor_mun">МЕСЯЦ</string>
     <string name="vybor_year">ГОД</string>
     <string name="copy">Скапіявана</string>
+    <string name="copy_list">Скапіяваць вершы</string>
     <string name="delite_all_natatki">Вы сапраўды жадаеце выдаліць усе нататкі?</string>
     <string name="vybranae_add">Дадаць у Выбранае</string>
     <string name="vybranae_remove">Выдаліць з Выбранага</string>
+    <string name="vybranae_all_remove">Выдаліць усё Выбранае</string>
+    <string name="vybranae_remove_all_natatka">Выдаліць усе нататкі</string>
     <string name="title_psalter">ПСАЛТЫР (пераклад А. Надсана)</string>
     <string name="title_psalter_privila">Правілы чытаньня Псалтыра</string>
     <string name="psalter">Псалмы</string>
@@ -254,6 +268,9 @@
     <string name="piarliny">Пярліны</string>
     <string name="piarliny2">Пярліна за %1$d %2$s</string>
     <string name="ustau">Устаў</string>
+    <string name="auto_stop">Выключыць аўтапрагортку</string>
+    <string name="auto_play">Уключыць аўтапрагортку</string>
+    <string name="auto_up">Перамясціць тэкст на самы верх</string>
     <string-array name="dni_nedeli">
         <item />
         <item>нядзеля</item>
@@ -334,7 +351,8 @@
     <string name="pasochnica">Пясочніца</string>
     <string name="pasochnica_up">ПЯСОЧНІЦА</string>
     <string name="set_file_name">ВЫБЯРЫЦЕ ІМЯ ФАЙЛА</string>
-    <string name="add_file">Дадаць файл</string>
+    <string name="add_file">Дадаць новы файл</string>
+    <string name="add_natatku">Дадаць нататку</string>
     <string name="rename_file">Перайменаваць</string>
     <string name="file_exists">ФАЙЛ ІСНУЕ</string>
     <string name="file_exists_opis">Перазапісаць існуючы файл \"%1$s\"?</string>
@@ -363,6 +381,8 @@
     <string name="set_log_file">Адправіць файл</string>
     <string name="admin_date">%1$d %2$s</string>
     <string name="admin_img_sviat">Іконкі сьвятых</string>
+    <string name="edit_admin_img_sviat">Рэдагаваць іконкі сьвятых</string>
+    <string name="edit_admin_piarliny">Рэдагаваць пярліны</string>
     <string name="admin_title">Назва кнігі</string>
     <string name="arx_num_gaz">Архіў нумароў газеты</string>
     <string name="copy_text">Тэкст скапіяваны</string>
@@ -867,5 +887,9 @@
     <string name="translate">З перакладам</string>
     <string name="file_not_find">файл у базе не знойдзены</string>
     <string name="admin">АДМІНІСТРАВАНЬНЕ:</string>
+    <string name="sort_time">Сартаваць па апошнім часе мадыфікацыі</string>
+    <string name="sort_abc">Сартаваць па алфавіце</string>
+    <string name="pasochnica_add_folder">Адчыніць файл з тэлефона</string>
+    <string name="pasochnica_add_basa">Адчыніць файл з Базы</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

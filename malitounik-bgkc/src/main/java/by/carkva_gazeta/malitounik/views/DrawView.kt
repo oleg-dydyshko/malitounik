@@ -422,6 +422,7 @@ fun DrawView(
                     .weight(1f),
                 text = stringResource(id = R.string.padie_maryia),
                 fontSize = Settings.fontInterface.sp,
+                lineHeight = (Settings.fontInterface * 1.15f).sp,
                 color = MaterialTheme.colorScheme.secondary
             )
             if (Settings.isProgressVisableRadyjoMaryia.value) {
@@ -515,7 +516,8 @@ fun DrawView(
                             .fillMaxSize()
                             .padding(10.dp),
                         color = MaterialTheme.colorScheme.secondary,
-                        fontSize = Settings.fontInterface.sp
+                        fontSize = Settings.fontInterface.sp,
+                        lineHeight = (Settings.fontInterface * 1.15f).sp
                     )
                 }
                 var expandedSviaty by remember { mutableStateOf(false) }
@@ -542,6 +544,7 @@ fun DrawView(
                                 .weight(1f),
                             text = radioMaryiaList[radioMaryiaListPosition],
                             fontSize = (Settings.fontInterface - 2).sp,
+                            lineHeight = (Settings.fontInterface * 1.15f).sp,
                             color = PrimaryText,
                         )
                         Icon(
@@ -560,7 +563,7 @@ fun DrawView(
                     ) {
                         radioMaryiaList.forEachIndexed { index, option ->
                             DropdownMenuItem(
-                                text = { Text(text = option, fontSize = (Settings.fontInterface - 2).sp) }, onClick = {
+                                text = { Text(text = option, fontSize = (Settings.fontInterface - 2).sp, lineHeight = (Settings.fontInterface * 1.15f).sp) }, onClick = {
                                     if (radioMaryiaListPosition != index) {
                                         radioMaryiaListPosition = index
                                         expandedSviaty = false
@@ -1076,6 +1079,7 @@ fun NavigationItem(
                     .weight(1f),
                 text = label,
                 fontSize = Settings.fontInterface.sp,
+                lineHeight = (Settings.fontInterface * 1.15f).sp,
                 color = MaterialTheme.colorScheme.secondary,
             )
         }
