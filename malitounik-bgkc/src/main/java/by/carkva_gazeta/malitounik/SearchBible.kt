@@ -28,6 +28,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -80,6 +81,7 @@ import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.AppNavGraphState.searchSettings
+import by.carkva_gazeta.malitounik.views.PlainTooltip
 import by.carkva_gazeta.malitounik.views.openAssetsResources
 import by.carkva_gazeta.malitounik.views.openBibleResources
 import kotlinx.coroutines.CoroutineScope
@@ -565,17 +567,19 @@ fun SearchBible(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = {
-                        if (!backPressHandled) {
-                            backPressHandled = true
-                            AppNavGraphState.searchBogaslujbovyia = ""
-                            navController.popBackStack()
-                        }
-                    }, content = {
-                        Icon(
-                            painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
-                        )
-                    })
+                    PlainTooltip(stringResource(R.string.exit_page), TooltipAnchorPosition.Below) {
+                        IconButton(onClick = {
+                            if (!backPressHandled) {
+                                backPressHandled = true
+                                AppNavGraphState.searchBogaslujbovyia = ""
+                                navController.popBackStack()
+                            }
+                        }, content = {
+                            Icon(
+                                painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                            )
+                        })
+                    }
                 },
                 actions = {
                     IconButton(onClick = { showDropdown = true }) {

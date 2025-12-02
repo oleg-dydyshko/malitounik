@@ -41,6 +41,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -88,6 +89,7 @@ import by.carkva_gazeta.malitounik.R
 import by.carkva_gazeta.malitounik.Settings
 import by.carkva_gazeta.malitounik.SviatyiaView
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
+import by.carkva_gazeta.malitounik.views.PlainTooltip
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
@@ -257,17 +259,19 @@ fun Icony(navController: NavHostController) {
                     )
                 },
                 navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            navController.popBackStack()
-                        },
-                        content = {
-                            Icon(
-                                painter = painterResource(R.drawable.arrow_back),
-                                tint = MaterialTheme.colorScheme.onSecondary,
-                                contentDescription = ""
-                            )
-                        })
+                    PlainTooltip(stringResource(R.string.exit_page), TooltipAnchorPosition.Below) {
+                        IconButton(
+                            onClick = {
+                                navController.popBackStack()
+                            },
+                            content = {
+                                Icon(
+                                    painter = painterResource(R.drawable.arrow_back),
+                                    tint = MaterialTheme.colorScheme.onSecondary,
+                                    contentDescription = ""
+                                )
+                            })
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
             )

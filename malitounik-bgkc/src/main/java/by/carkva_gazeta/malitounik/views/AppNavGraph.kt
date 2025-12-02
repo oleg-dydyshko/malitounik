@@ -1217,19 +1217,23 @@ fun MainConteiner(
                     }
                 }, navigationIcon = {
                     if (searchText) {
-                        IconButton(onClick = {
-                            searchText = false
-                        }, content = {
-                            Icon(
-                                painter = painterResource(R.drawable.close), tint = textTollBarColor, contentDescription = ""
-                            )
-                        })
+                        PlainTooltip(stringResource(R.string.close), TooltipAnchorPosition.Below) {
+                            IconButton(onClick = {
+                                searchText = false
+                            }, content = {
+                                Icon(
+                                    painter = painterResource(R.drawable.close), tint = textTollBarColor, contentDescription = ""
+                                )
+                            })
+                        }
                     } else {
-                        IconButton(onClick = { coroutineScope.launch { drawerState.open() } }, content = {
-                            Icon(
-                                painter = painterResource(R.drawable.menu), tint = textTollBarColor, contentDescription = ""
-                            )
-                        })
+                        PlainTooltip(stringResource(R.string.show_menu), TooltipAnchorPosition.Below) {
+                            IconButton(onClick = { coroutineScope.launch { drawerState.open() } }, content = {
+                                Icon(
+                                    painter = painterResource(R.drawable.menu), tint = textTollBarColor, contentDescription = ""
+                                )
+                            })
+                        }
                     }
                 }, actions = {
                     if (!searchText) {

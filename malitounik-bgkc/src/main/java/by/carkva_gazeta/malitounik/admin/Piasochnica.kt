@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Typeface
 import android.net.Uri
+import android.os.Build
 import android.print.PrintAttributes
 import android.print.PrintManager
 import android.text.Editable
@@ -52,6 +53,7 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -107,6 +109,7 @@ import by.carkva_gazeta.malitounik.R
 import by.carkva_gazeta.malitounik.Settings
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.views.AppDropdownMenu
+import by.carkva_gazeta.malitounik.views.PlainTooltip
 import by.carkva_gazeta.malitounik.writeFile
 import com.google.firebase.storage.ListResult
 import kotlinx.coroutines.CoroutineScope
@@ -1005,28 +1008,30 @@ fun Piasochnica(
                     )
                 },
                 navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            when {
-                                showDropdown -> {
-                                    showDropdown = false
-                                }
+                    PlainTooltip(stringResource(R.string.exit_page), TooltipAnchorPosition.Below) {
+                        IconButton(
+                            onClick = {
+                                when {
+                                    showDropdown -> {
+                                        showDropdown = false
+                                    }
 
-                                else -> {
-                                    if (!backPressHandled) {
-                                        backPressHandled = true
-                                        navController.popBackStack()
+                                    else -> {
+                                        if (!backPressHandled) {
+                                            backPressHandled = true
+                                            navController.popBackStack()
+                                        }
                                     }
                                 }
-                            }
-                        },
-                        content = {
-                            Icon(
-                                painter = painterResource(R.drawable.arrow_back),
-                                tint = MaterialTheme.colorScheme.onSecondary,
-                                contentDescription = ""
-                            )
-                        })
+                            },
+                            content = {
+                                Icon(
+                                    painter = painterResource(R.drawable.arrow_back),
+                                    tint = MaterialTheme.colorScheme.onSecondary,
+                                    contentDescription = ""
+                                )
+                            })
+                    }
                 },
                 actions = {
                     IconButton(onClick = {
@@ -1321,7 +1326,9 @@ fun Piasochnica(
                             setText(viewModel.htmlText)
                             setTextColor(ContextCompat.getColor(context, if (Settings.dzenNoch) R.color.colorWhite else R.color.colorPrimary_text))
                             setLinkTextColor(ContextCompat.getColor(context, if (Settings.dzenNoch) R.color.colorPrimary_black else R.color.colorPrimary))
-                            setTextCursorDrawable(ContextCompat.getDrawable(context, if (Settings.dzenNoch) R.color.colorPrimary_black else R.color.colorPrimary))
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                setTextCursorDrawable(ContextCompat.getDrawable(context, if (Settings.dzenNoch) R.color.colorPrimary_black else R.color.colorPrimary))
+                            }
                             setTypeface(ResourcesCompat.getFont(context, R.font.roboto_condensed_regular))
                             textSize = fontSize
                             addTextChangedListener(textWatcher)

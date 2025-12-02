@@ -54,6 +54,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -99,6 +100,7 @@ import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
+import by.carkva_gazeta.malitounik.views.PlainTooltip
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -220,16 +222,18 @@ fun SettingsView(navController: NavHostController) {
                         }, text = stringResource(R.string.tools_item).uppercase(), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, fontSize = Settings.fontInterface.sp, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis
                     )
                 }, navigationIcon = {
-                    IconButton(onClick = {
-                        if (!backPressHandled) {
-                            backPressHandled = true
-                            navController.popBackStack()
-                        }
-                    }, content = {
-                        Icon(
-                            painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
-                        )
-                    })
+                    PlainTooltip(stringResource(R.string.exit_page), TooltipAnchorPosition.Below) {
+                        IconButton(onClick = {
+                            if (!backPressHandled) {
+                                backPressHandled = true
+                                navController.popBackStack()
+                            }
+                        }, content = {
+                            Icon(
+                                painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                            )
+                        })
+                    }
                 }, actions = {
                     if (admin) {
                         IconButton(onClick = {

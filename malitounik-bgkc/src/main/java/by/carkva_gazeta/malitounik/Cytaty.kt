@@ -19,6 +19,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -54,6 +55,7 @@ import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryBlack
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
+import by.carkva_gazeta.malitounik.views.PlainTooltip
 import by.carkva_gazeta.malitounik.views.openAssetsResources
 import kotlinx.coroutines.launch
 
@@ -90,13 +92,15 @@ fun Cytaty(navController: NavHostController) {
                         )
                     }
                 }, navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }, content = {
-                        Icon(
-                            painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
-                        )
-                    })
+                    PlainTooltip(stringResource(R.string.exit_page), TooltipAnchorPosition.Below) {
+                        IconButton(onClick = {
+                            navController.popBackStack()
+                        }, content = {
+                            Icon(
+                                painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                            )
+                        })
+                    }
                 }, colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
             )
         }

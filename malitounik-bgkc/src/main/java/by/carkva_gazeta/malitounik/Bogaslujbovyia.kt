@@ -783,62 +783,66 @@ fun Bogaslujbovyia(
                         },
                         navigationIcon = {
                             if (iskniga || viewModel.searchText) {
-                                IconButton(
-                                    onClick = {
-                                        if (iskniga) {
-                                            if (bottomSheetScaffoldIsVisible) {
-                                                coroutineScope.launch {
-                                                    bottomSheetScaffoldState.bottomSheetState.show()
-                                                }
-                                            }
-                                            iskniga = false
-                                        } else {
-                                            viewModel.searchText = false
-                                            viewModel.searshString = TextFieldValue("")
-                                            viewModel.searchTextResult = AnnotatedString("")
-                                            AppNavGraphState.searchBogaslujbovyia = ""
-                                        }
-                                        if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
-                                    },
-                                    content = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.close),
-                                            tint = MaterialTheme.colorScheme.onSecondary,
-                                            contentDescription = ""
-                                        )
-                                    })
-                            } else {
-                                IconButton(
-                                    onClick = {
-                                        when {
-                                            iskniga -> {
-                                                coroutineScope.launch {
-                                                    bottomSheetScaffoldState.bottomSheetState.show()
+                                PlainTooltip(stringResource(R.string.close), TooltipAnchorPosition.Below) {
+                                    IconButton(
+                                        onClick = {
+                                            if (iskniga) {
+                                                if (bottomSheetScaffoldIsVisible) {
+                                                    coroutineScope.launch {
+                                                        bottomSheetScaffoldState.bottomSheetState.show()
+                                                    }
                                                 }
                                                 iskniga = false
-                                                if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
+                                            } else {
+                                                viewModel.searchText = false
+                                                viewModel.searshString = TextFieldValue("")
+                                                viewModel.searchTextResult = AnnotatedString("")
+                                                AppNavGraphState.searchBogaslujbovyia = ""
                                             }
+                                            if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
+                                        },
+                                        content = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.close),
+                                                tint = MaterialTheme.colorScheme.onSecondary,
+                                                contentDescription = ""
+                                            )
+                                        })
+                                }
+                            } else {
+                                PlainTooltip(stringResource(R.string.exit_page), TooltipAnchorPosition.Below) {
+                                    IconButton(
+                                        onClick = {
+                                            when {
+                                                iskniga -> {
+                                                    coroutineScope.launch {
+                                                        bottomSheetScaffoldState.bottomSheetState.show()
+                                                    }
+                                                    iskniga = false
+                                                    if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
+                                                }
 
-                                            showDropdown -> {
-                                                showDropdown = false
-                                                if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
-                                            }
+                                                showDropdown -> {
+                                                    showDropdown = false
+                                                    if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
+                                                }
 
-                                            else -> {
-                                                if (!backPressHandled) {
-                                                    backPressHandled = true
-                                                    navController.popBackStack()
+                                                else -> {
+                                                    if (!backPressHandled) {
+                                                        backPressHandled = true
+                                                        navController.popBackStack()
+                                                    }
                                                 }
                                             }
-                                        }
-                                    },
-                                    content = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.arrow_back),
-                                            tint = MaterialTheme.colorScheme.onSecondary,
-                                            contentDescription = ""
-                                        )
-                                    })
+                                        },
+                                        content = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.arrow_back),
+                                                tint = MaterialTheme.colorScheme.onSecondary,
+                                                contentDescription = ""
+                                            )
+                                        })
+                                }
                             }
                         },
                         actions = {

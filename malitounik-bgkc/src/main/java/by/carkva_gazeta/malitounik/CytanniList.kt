@@ -617,47 +617,51 @@ fun CytanniList(
                     }
                 }, navigationIcon = {
                     if (isSelectMode || isParallelVisable) {
-                        IconButton(onClick = {
-                            if (isSelectMode) {
-                                isSelectMode = false
-                            } else isParallelVisable = false
-                        }, content = {
-                            Icon(
-                                painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
-                            )
-                        })
+                        PlainTooltip(stringResource(R.string.close), TooltipAnchorPosition.Below) {
+                            IconButton(onClick = {
+                                if (isSelectMode) {
+                                    isSelectMode = false
+                                } else isParallelVisable = false
+                            }, content = {
+                                Icon(
+                                    painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                                )
+                            })
+                        }
                     } else {
-                        IconButton(onClick = {
-                            when {
-                                isParallelVisable -> isParallelVisable = false
-                                showDropdown -> {
-                                    showDropdown = false
-                                    if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
-                                }
+                        PlainTooltip(stringResource(R.string.exit_page), TooltipAnchorPosition.Below) {
+                            IconButton(onClick = {
+                                when {
+                                    isParallelVisable -> isParallelVisable = false
+                                    showDropdown -> {
+                                        showDropdown = false
+                                        if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
+                                    }
 
-                                else -> {
-                                    if (!backPressHandled) {
-                                        backPressHandled = true
-                                        fullscreen = false
-                                        k.edit {
-                                            if (biblia == Settings.CHYTANNI_BIBLIA) {
-                                                putString("bible_time_${viewModel.perevodName}_kniga", viewModel.knigaText)
-                                                putInt("bible_time_${viewModel.perevodName}_glava", viewModel.selectedIndex)
-                                                putInt(
-                                                    "bible_time_${viewModel.perevodName}_stix", listState[viewModel.selectedIndex].lazyListState.firstVisibleItemIndex
-                                                )
+                                    else -> {
+                                        if (!backPressHandled) {
+                                            backPressHandled = true
+                                            fullscreen = false
+                                            k.edit {
+                                                if (biblia == Settings.CHYTANNI_BIBLIA) {
+                                                    putString("bible_time_${viewModel.perevodName}_kniga", viewModel.knigaText)
+                                                    putInt("bible_time_${viewModel.perevodName}_glava", viewModel.selectedIndex)
+                                                    putInt(
+                                                        "bible_time_${viewModel.perevodName}_stix", listState[viewModel.selectedIndex].lazyListState.firstVisibleItemIndex
+                                                    )
+                                                }
                                             }
+                                            if (!k.getBoolean("power", false)) actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                            navController.popBackStack()
                                         }
-                                        if (!k.getBoolean("power", false)) actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                                        navController.popBackStack()
                                     }
                                 }
-                            }
-                        }, content = {
-                            Icon(
-                                painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
-                            )
-                        })
+                            }, content = {
+                                Icon(
+                                    painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                                )
+                            })
+                        }
                     }
                 }, actions = {
                     if (isSelectMode) {

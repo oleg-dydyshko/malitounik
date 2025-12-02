@@ -381,49 +381,55 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                     },
                     navigationIcon = {
                         if (SviatyiaView.edit) {
-                            IconButton(onClick = {
-                                SviatyiaView.edit = false
-                            }, content = {
-                                Icon(
-                                    painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
-                                )
-                            })
+                            PlainTooltip(stringResource(R.string.close), TooltipAnchorPosition.Below) {
+                                IconButton(onClick = {
+                                    SviatyiaView.edit = false
+                                }, content = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                                    )
+                                })
+                            }
                         } else {
                             if (imageFull) {
-                                IconButton(
-                                    onClick = {
-                                        imageFull = false
-                                    },
-                                    content = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.close),
-                                            tint = MaterialTheme.colorScheme.onSecondary,
-                                            contentDescription = ""
-                                        )
-                                    })
+                                PlainTooltip(stringResource(R.string.close), TooltipAnchorPosition.Below) {
+                                    IconButton(
+                                        onClick = {
+                                            imageFull = false
+                                        },
+                                        content = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.close),
+                                                tint = MaterialTheme.colorScheme.onSecondary,
+                                                contentDescription = ""
+                                            )
+                                        })
+                                }
                             } else {
-                                IconButton(
-                                    onClick = {
-                                        when {
-                                            showDropdown -> {
-                                                showDropdown = false
-                                            }
+                                PlainTooltip(stringResource(R.string.exit_page), TooltipAnchorPosition.Below) {
+                                    IconButton(
+                                        onClick = {
+                                            when {
+                                                showDropdown -> {
+                                                    showDropdown = false
+                                                }
 
-                                            else -> {
-                                                if (!backPressHandled) {
-                                                    backPressHandled = true
-                                                    navController.popBackStack()
+                                                else -> {
+                                                    if (!backPressHandled) {
+                                                        backPressHandled = true
+                                                        navController.popBackStack()
+                                                    }
                                                 }
                                             }
-                                        }
-                                    },
-                                    content = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.arrow_back),
-                                            tint = MaterialTheme.colorScheme.onSecondary,
-                                            contentDescription = ""
-                                        )
-                                    })
+                                        },
+                                        content = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.arrow_back),
+                                                tint = MaterialTheme.colorScheme.onSecondary,
+                                                contentDescription = ""
+                                            )
+                                        })
+                                }
                             }
                         }
                     },

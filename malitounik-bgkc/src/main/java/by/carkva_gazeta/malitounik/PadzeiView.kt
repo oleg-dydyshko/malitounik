@@ -59,6 +59,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.TimePickerState
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -105,6 +106,7 @@ import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik.views.PlainTooltip
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
@@ -430,51 +432,61 @@ fun PadzeiaView(navController: NavHostController) {
                     }
                 }, navigationIcon = {
                     if (editMode) {
-                        IconButton(onClick = {
-                            editMode = false
-                            editPadzeiaInit = true
-                        }, content = {
-                            Icon(
-                                painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
-                            )
-                        })
+                        PlainTooltip(stringResource(R.string.close), TooltipAnchorPosition.Below) {
+                            IconButton(onClick = {
+                                editMode = false
+                                editPadzeiaInit = true
+                            }, content = {
+                                Icon(
+                                    painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                                )
+                            })
+                        }
                     } else {
-                        IconButton(onClick = {
-                            if (!backPressHandled) {
-                                backPressHandled = true
-                                navController.popBackStack()
-                            }
-                        }, content = {
-                            Icon(
-                                painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
-                            )
-                        })
+                        PlainTooltip(stringResource(R.string.exit_page), TooltipAnchorPosition.Below) {
+                            IconButton(onClick = {
+                                if (!backPressHandled) {
+                                    backPressHandled = true
+                                    navController.popBackStack()
+                                }
+                            }, content = {
+                                Icon(
+                                    painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                                )
+                            })
+                        }
                     }
                 }, actions = {
                     if (editMode) {
-                        IconButton({
-                            savePadzia = true
-                        }) {
-                            Icon(
-                                painter = painterResource(R.drawable.save), tint = PrimaryTextBlack, contentDescription = ""
-                            )
+                        PlainTooltip(stringResource(R.string.save_sabytie), TooltipAnchorPosition.Below) {
+                            IconButton({
+                                savePadzia = true
+                            }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.save), tint = PrimaryTextBlack, contentDescription = ""
+                                )
+                            }
                         }
                     } else {
-                        IconButton({
-                            editMode = true
-                            editPadzeia = false
-                            editPadzeiaInit = false
-                        }) {
-                            Icon(
-                                painter = painterResource(R.drawable.add), tint = PrimaryTextBlack, contentDescription = ""
-                            )
+                        PlainTooltip(stringResource(R.string.add_sabytie), TooltipAnchorPosition.Below) {
+                            IconButton({
+                                editMode = true
+                                editPadzeia = false
+                                editPadzeiaInit = false
+                            }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.add), tint = PrimaryTextBlack, contentDescription = ""
+                                )
+                            }
                         }
-                        IconButton({
-                            deliteAll = true
-                        }) {
-                            Icon(
-                                painter = painterResource(R.drawable.delete), tint = PrimaryTextBlack, contentDescription = ""
-                            )
+                        PlainTooltip(stringResource(R.string.del_all_sabytie), TooltipAnchorPosition.Below) {
+                            IconButton({
+                                deliteAll = true
+                            }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.delete), tint = PrimaryTextBlack, contentDescription = ""
+                                )
+                            }
                         }
                     }
                 }, colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
@@ -712,12 +724,14 @@ fun AddPadzeia(
                 }
             }, singleLine = true, textStyle = TextStyle(fontSize = Settings.fontInterface.sp), trailingIcon = {
                 if (padzeia.isNotEmpty()) {
-                    IconButton(onClick = {
-                        padzeia = ""
-                    }) {
-                        Icon(
-                            painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
-                        )
+                    PlainTooltip(stringResource(R.string.close), TooltipAnchorPosition.Below) {
+                        IconButton(onClick = {
+                            padzeia = ""
+                        }) {
+                            Icon(
+                                painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
+                            )
+                        }
                     }
                 }
             })

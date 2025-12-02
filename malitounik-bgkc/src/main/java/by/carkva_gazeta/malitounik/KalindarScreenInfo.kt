@@ -16,6 +16,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -46,6 +47,7 @@ import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.StrogiPost
+import by.carkva_gazeta.malitounik.views.PlainTooltip
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -87,20 +89,22 @@ fun KaliandarScreenInfo(navController: NavHostController) {
                     )
                 },
                 navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            if (!backPressHandled) {
-                                backPressHandled = true
-                                navController.popBackStack()
-                            }
-                        },
-                        content = {
-                            Icon(
-                                painter = painterResource(R.drawable.arrow_back),
-                                tint = MaterialTheme.colorScheme.onSecondary,
-                                contentDescription = ""
-                            )
-                        })
+                    PlainTooltip(stringResource(R.string.exit_page), TooltipAnchorPosition.Below) {
+                        IconButton(
+                            onClick = {
+                                if (!backPressHandled) {
+                                    backPressHandled = true
+                                    navController.popBackStack()
+                                }
+                            },
+                            content = {
+                                Icon(
+                                    painter = painterResource(R.drawable.arrow_back),
+                                    tint = MaterialTheme.colorScheme.onSecondary,
+                                    contentDescription = ""
+                                )
+                            })
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)
             )

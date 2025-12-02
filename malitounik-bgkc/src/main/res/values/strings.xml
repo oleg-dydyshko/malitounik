@@ -3,7 +3,7 @@
     <string name="kaliandar2">КАЛЯНДАР БГКЦ</string>
     <string name="stary_zapaviet">Стары Запавет</string>
     <string name="novy_zapaviet">Новы Запавет</string>
-    <string name="exit">Націсьніце другі раз, каб закрыць</string>
+    <string name="exit">Націсьніце другі раз, каб выйсьці</string>
     <string name="error">Памылка</string>
     <string name="ok">Добра</string>
     <string name="cansel">Скасаваць</string>
@@ -87,6 +87,7 @@
     <string name="pesny4">Калядныя</string>
     <string name="pesny5">Сьпевы Taize</string>
     <string name="prynagodnyia">Прынагодныя малітвы</string>
+    <string name="search_prynagodnyia">Пошук у прынагодных малітвах</string>
     <string name="bsinaidal">БИБЛИЯ (Синодальный перевод)</string>
     <string name="bsinaidal2">Синодальный перевод</string>
     <string name="maranata">Штодзённае чытаньне Бібліі за год:</string>
@@ -211,6 +212,8 @@
     <string name="sabytie_del_all">Усё</string>
     <string name="sabytie_del_old">Старыя</string>
     <string name="del_sabytie">Выдаліць падзеі</string>
+    <string name="del_all_sabytie">Выдаліць усе альбо старыя падзеі</string>
+    <string name="add_sabytie">Дадаць падзею</string>
     <string name="del_icon_apis">Вы сапраўды жадаеце выдаліць ікону і апісаньне?</string>
     <string name="del_apis">Вы сапраўды жадаеце выдаліць апісаньне?</string>
     <string name="save_sabytie">Захаваць</string>
@@ -853,6 +856,7 @@
     <string name="liturgikon">ЛІТУРГІКОН</string>
     <string name="share_help">Каб падзяліцца часткай тэксту, скапіруйце яго ў буфер абмену, інакш будзе дзеліцца ўсім тэкстам.</string>
     <string name="not_show">Больш не паказваць</string>
+    <string name="show_menu">Паказаць меню праграмы</string>
     <string name="econom_enargi">ЭНЭРГАЗЬБЕРАЖЭНЬНЕ:</string>
     <string name="econom_enargi_no">Экран заўсёды ўключаны</string>
     <string name="set_razdel">Увядзіце нумар разьдзелу</string>
@@ -891,5 +895,6 @@
     <string name="sort_abc">Сартаваць па алфавіце</string>
     <string name="pasochnica_add_folder">Адчыніць файл з тэлефона</string>
     <string name="pasochnica_add_basa">Адчыніць файл з Базы</string>
+    <string name="exit_page">Выйсьці</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

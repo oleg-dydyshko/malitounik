@@ -30,6 +30,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -72,6 +73,7 @@ import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
+import by.carkva_gazeta.malitounik.views.PlainTooltip
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.Collator
@@ -258,33 +260,39 @@ fun MalitvyListAll(
                     }
                 }, navigationIcon = {
                     if (searchText) {
-                        IconButton(onClick = {
-                            searchText = false
-                        }, content = {
-                            Icon(
-                                painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
-                            )
-                        })
+                        PlainTooltip(stringResource(R.string.close), TooltipAnchorPosition.Below) {
+                            IconButton(onClick = {
+                                searchText = false
+                            }, content = {
+                                Icon(
+                                    painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                                )
+                            })
+                        }
                     } else {
-                        IconButton(onClick = {
-                            if (!backPressHandled) {
-                                backPressHandled = true
-                                navController.popBackStack()
-                            }
-                        }, content = {
-                            Icon(
-                                painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
-                            )
-                        })
+                        PlainTooltip(stringResource(R.string.exit_page), TooltipAnchorPosition.Below) {
+                            IconButton(onClick = {
+                                if (!backPressHandled) {
+                                    backPressHandled = true
+                                    navController.popBackStack()
+                                }
+                            }, content = {
+                                Icon(
+                                    painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                                )
+                            })
+                        }
                     }
                 }, actions = {
                     if (!searchText && menuItem == Settings.MENU_MALITVY_PRYNAGODNYIA) {
-                        IconButton({
-                            searchText = true
-                        }) {
-                            Icon(
-                                painter = painterResource(R.drawable.search), tint = PrimaryTextBlack, contentDescription = ""
-                            )
+                        PlainTooltip(stringResource(R.string.search_prynagodnyia), TooltipAnchorPosition.Below) {
+                            IconButton({
+                                searchText = true
+                            }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.search), tint = PrimaryTextBlack, contentDescription = ""
+                                )
+                            }
                         }
                     }
                 }, colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onTertiary)

@@ -35,6 +35,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -86,6 +87,7 @@ import androidx.paging.PagingState
 import androidx.paging.compose.collectAsLazyPagingItems
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.views.AppDropdownMenu
+import by.carkva_gazeta.malitounik.views.PlainTooltip
 import coil3.Canvas
 import coil3.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
@@ -359,17 +361,19 @@ fun Biblijateka(
                         )
                     },
                     navigationIcon = {
-                        IconButton(
-                            onClick = {
-                                navController.popBackStack()
-                            },
-                            content = {
-                                Icon(
-                                    painter = painterResource(R.drawable.arrow_back),
-                                    tint = MaterialTheme.colorScheme.onSecondary,
-                                    contentDescription = ""
-                                )
-                            })
+                        PlainTooltip(stringResource(R.string.exit_page), TooltipAnchorPosition.Below) {
+                            IconButton(
+                                onClick = {
+                                    navController.popBackStack()
+                                },
+                                content = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.arrow_back),
+                                        tint = MaterialTheme.colorScheme.onSecondary,
+                                        contentDescription = ""
+                                    )
+                                })
+                        }
                     },
                     actions = {
                         var expanded by remember { mutableStateOf(false) }
