@@ -1042,10 +1042,12 @@ fun Piasochnica(
                             painter = painterResource(R.drawable.save_as), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                         )
                     }
-                    IconButton(onClick = { expandedUp = true }) {
-                        Icon(
-                            painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                        )
+                    PlainTooltip(stringResource(R.string.more_items), TooltipAnchorPosition.Below) {
+                        IconButton(onClick = { expandedUp = true }) {
+                            Icon(
+                                painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                            )
+                        }
                     }
                     AppDropdownMenu(
                         expanded = expandedUp, onDismissRequest = { expandedUp = false }) {

@@ -1384,10 +1384,12 @@ fun MainConteiner(
                                 }
                             }
                         }
-                        IconButton(onClick = { expandedUp = true }) {
-                            Icon(
-                                painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = textTollBarColor
-                            )
+                        PlainTooltip(stringResource(R.string.more_items), TooltipAnchorPosition.Below) {
+                            IconButton(onClick = { expandedUp = true }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = textTollBarColor
+                                )
+                            }
                         }
                     }
                     if (searchText && currentRoute.contains("BIBLIA", ignoreCase = true)) {

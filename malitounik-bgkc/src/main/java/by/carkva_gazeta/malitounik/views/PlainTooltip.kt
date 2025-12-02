@@ -28,7 +28,7 @@ fun PlainTooltip(title: String, positioning: TooltipAnchorPosition = TooltipAnch
     LaunchedEffect(state.isVisible) {
         if (state.isVisible) {
             coroutineScope.launch {
-                delay(5000L)
+                delay(7000L)
                 state.dismiss()
             }
         }

@@ -129,6 +129,19 @@ fun SettingsView(navController: NavHostController) {
     var dialodNotificatin by rememberSaveable { mutableStateOf(false) }
     var admin by remember { mutableStateOf(k.getBoolean("admin", false) || k.getBoolean("adminOnlyNotifications", false)) }
     var backPressHandled by remember { mutableStateOf(false) }
+    var dialodAdmitExit by rememberSaveable { mutableStateOf(false) }
+    if (dialodAdmitExit) {
+        DialogAdminExit(onConfirm = {
+            admin = false
+            k.edit {
+                putBoolean("admin", false)
+                putBoolean("adminOnlyNotifications", false)
+            }
+            dialodAdmitExit = false
+        }) {
+            dialodAdmitExit = false
+        }
+    }
     Settings.fontInterface = remember { getFontInterface(context) }
     if (dialodLogin) {
         DialogLogin { isLogin ->
@@ -163,9 +176,9 @@ fun SettingsView(navController: NavHostController) {
                 }
             }
             dialodNotificatin = false
-        }, onDismiss = {
+        }) {
             dialodNotificatin = false
-        })
+        }
     }
     var dialodClearChache by rememberSaveable { mutableStateOf(false) }
     if (dialodClearChache) {
@@ -237,11 +250,7 @@ fun SettingsView(navController: NavHostController) {
                 }, actions = {
                     if (admin) {
                         IconButton(onClick = {
-                            admin = false
-                            k.edit {
-                                putBoolean("admin", false)
-                                putBoolean("adminOnlyNotifications", false)
-                            }
+                            dialodAdmitExit = true
                         }) {
                             Icon(
                                 painter = painterResource(R.drawable.logout), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
@@ -1328,8 +1337,57 @@ fun DialogLogin(
 }
 
 @Composable
+fun DialogAdminExit(
+    onConfirm: () -> Unit, onDismiss: () -> Unit
+) {
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+                Text(
+                    text = stringResource(R.string.admin_exit), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.onTertiary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
+                )
+                Column(
+                    modifier = Modifier.padding(10.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.admin_exit_opis), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Text(stringResource(R.string.cansel), fontSize = 18.sp)
+                    }
+                    TextButton(
+                        onClick = { onConfirm() }, shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Text(stringResource(R.string.ok), fontSize = 18.sp)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun DialogNotification(
-    onDismiss: () -> Unit, onConfirm: () -> Unit
+    onConfirm: () -> Unit, onDismiss: () -> Unit
 ) {
     Dialog(onDismissRequest = { onDismiss() }) {
         Card(

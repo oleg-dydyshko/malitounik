@@ -505,7 +505,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                     }
                                 }
                             }
-                            PlainTooltip(stringResource(R.string.fullscreen), TooltipAnchorPosition.Below) {
+                            PlainTooltip(stringResource(R.string.fullscreen_apis), TooltipAnchorPosition.Below) {
                                 IconButton(onClick = {
                                     fullscreen = true
                                 }) {

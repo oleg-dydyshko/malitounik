@@ -942,10 +942,12 @@ fun Bogaslujbovyia(
                                             }
                                         }
                                     }
-                                    IconButton(onClick = { expandedUp = true }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                        )
+                                    PlainTooltip(stringResource(R.string.more_items), TooltipAnchorPosition.Below) {
+                                        IconButton(onClick = { expandedUp = true }) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                            )
+                                        }
                                     }
                                     AppDropdownMenu(
                                         expanded = expandedUp, onDismissRequest = { expandedUp = false }) {
@@ -1175,7 +1177,7 @@ fun Bogaslujbovyia(
                                         .navigationBarsPadding(),
                                     horizontalArrangement = Arrangement.SpaceAround
                                 ) {
-                                    PlainTooltip(stringResource(R.string.menu_font_size_app)) {
+                                    PlainTooltip(stringResource(R.string.menu_font_size_app_info)) {
                                         IconButton(onClick = {
                                             showDropdown = !showDropdown
                                             viewModel.autoScroll(title, false)
@@ -1215,7 +1217,7 @@ fun Bogaslujbovyia(
                                             )
                                         }
                                     }
-                                    PlainTooltip(stringResource(R.string.fullscreen)) {
+                                    PlainTooltip(stringResource(R.string.fullscreen_apis)) {
                                         IconButton(onClick = {
                                             fullscreen = true
                                         }) {

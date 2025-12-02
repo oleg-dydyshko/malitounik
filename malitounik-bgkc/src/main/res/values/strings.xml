@@ -26,6 +26,7 @@
     <string name="czytanne">Чытаньне</string>
     <string name="czytanne3">Чытаньне, за %1$d %2$s</string>
     <string name="menu_font_size_app">Выбраць памер шрыфту</string>
+    <string name="menu_font_size_app_info">Выбраць памер шрыфту\nВы таксама можаце зрабіць гэта з дапамогай жэста двума пальцамі, акрамя Бібліі</string>
     <string name="pazdel">Выбраць разьдзел</string>
     <string name="select_all">Выбраць усе стыхі</string>
     <string name="set_data">Абраць дату календара</string>
@@ -56,6 +57,7 @@
     <string name="pascha_kaliandar_bel">ГРЫГАРЫЯНСКІ КАЛЯНДАР У БЕЛАРУСІ. ПАСХАЛІЯ</string>
     <string name="paschalia">Пасхалія</string>
     <string name="fullscreen">Тэксты на ўвесь экран</string>
+    <string name="fullscreen_apis">Уключыць тэксты на ўвесь экран\nВы таксама можаце ўключыць/выключыць двайным тапам па тэксьце</string>
     <string name="song">ПЕСЬНІ</string>
     <string name="ruzanec">РУЖАНЕЦ</string>
     <string name="S1">ПАСХА ХРЫСТОВА (ВЯЛІКДЗЕНЬ)</string>
@@ -103,7 +105,7 @@
     <string name="poshuk_forvard">Пошук у тэксьце наперад</string>
     <string name="poshuk_back">Пошук у тэксьце назад</string>
     <string name="poshuk_sviatych">Пошук сьвятых і сьвятаў</string>
-    <string name="zmennyia_chastki">Зменныя часткі</string>
+    <string name="zmennyia_chastki">Зменныя часткі на сёньня</string>
     <string name="sabytieKali">Калі: %1$s %2$s \n%3$s</string>
     <string name="sabytieDoKuda">Пачатак: %1$s %2$s \nКанец: %3$s %4$s \n%5$s</string>
     <string name="error_ch">Памылка, даруйце\n</string>
@@ -368,7 +370,6 @@
     </string-array>
     <string name="viaczernia_bierascie_1">Выбраныя вершы з псалмаў 1–3</string>
     <string name="viaczernia_bierascie_3">На нядзельнай вячэрні вершапесьні сьпяваюцца з наступнымі вершамі:</string>
-    <string name="del_all_back_copy">Вы сапраўды жадаеце выдаліць усё рэзервовыя копіі?</string>
     <string name="del_all_pasochnica">Вы сапраўды жадаеце выдаліць усю пясочніцу?</string>
     <string name="del_pasochnica">Выдаліць усю пясочніцу</string>
     <string name="admin_day_in_year">Дзень ад пачатку года (да і пасьля Пасxi)</string>
@@ -895,6 +896,9 @@
     <string name="sort_abc">Сартаваць па алфавіце</string>
     <string name="pasochnica_add_folder">Адчыніць файл з тэлефона</string>
     <string name="pasochnica_add_basa">Адчыніць файл з Базы</string>
-    <string name="exit_page">Выйсьці</string>
+    <string name="exit_page">На папярэднію старонку</string>
+    <string name="more_items">Больш дзеяньняў</string>
+    <string name="admin_exit">ВЫХАД</string>
+    <string name="admin_exit_opis">Вы сапраўды жадаеце выйсьці?</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

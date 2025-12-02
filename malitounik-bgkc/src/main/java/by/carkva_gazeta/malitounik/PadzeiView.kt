@@ -708,10 +708,10 @@ fun AddPadzeia(
                 }
             }
             dialodNotificatin = false
-        }, onDismiss = {
+        }) {
             dialodNotificatin = false
             setTimeZa = ""
-        })
+        }
     }
     Column(modifier = Modifier.fillMaxWidth()) {
         TextField(

@@ -382,12 +382,14 @@ fun Biblijateka(
                             fontSize = Settings.fontInterface.sp,
                             color = PrimaryTextBlack
                         )
-                        IconButton(onClick = { expanded = true }) {
-                            Icon(
-                                painter = painterResource(R.drawable.more_vert),
-                                contentDescription = "",
-                                tint = MaterialTheme.colorScheme.onSecondary
-                            )
+                        PlainTooltip(stringResource(R.string.more_items), TooltipAnchorPosition.Below) {
+                            IconButton(onClick = { expanded = true }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.more_vert),
+                                    contentDescription = "",
+                                    tint = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
                         }
                         AppDropdownMenu(
                             expanded = expanded,
