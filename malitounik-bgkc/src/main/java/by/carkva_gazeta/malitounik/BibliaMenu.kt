@@ -216,30 +216,38 @@ class SearchBibleViewModel : CytanniListViewModel() {
             else getNameBook(context, perevod, true)
             val subTitleListName = if (novyZapaviet == 0) setStaryZapavet(list, perevod)
             else setNovyZapavet(list, perevod)
-            val range = when (k.getInt("biblia_seash", 0)) {
-                1 -> {
-                    if (novyZapaviet == 0) continue
-                    0 until 4
-                }
-
-                2 -> {
-                    if (novyZapaviet == 0) continue
+            val range = if (perevod == Settings.PEREVODCATOLIK) {
+                if (k.getInt("biblia_seash_novy_zapavet", 0) == 0) {
                     0 until getNameBook(context, perevod, true).size
-                }
-
-                3 -> {
-                    if (novyZapaviet == 1) continue
+                } else {
                     0 until 4
                 }
+            } else {
+                when (k.getInt("biblia_seash", 0)) {
+                    1 -> {
+                        if (novyZapaviet == 0) continue
+                        0 until 4
+                    }
 
-                4 -> {
-                    if (novyZapaviet == 1) continue
-                    0 until getNameBook(context, perevod, false).size
-                }
+                    2 -> {
+                        if (novyZapaviet == 0) continue
+                        0 until getNameBook(context, perevod, true).size
+                    }
 
-                else -> {
-                    if (novyZapaviet == 0) 0 until getNameBook(context, perevod, false).size
-                    else 0 until getNameBook(context, perevod, true).size
+                    3 -> {
+                        if (novyZapaviet == 1) continue
+                        0 until 4
+                    }
+
+                    4 -> {
+                        if (novyZapaviet == 1) continue
+                        0 until getNameBook(context, perevod, false).size
+                    }
+
+                    else -> {
+                        if (novyZapaviet == 0) 0 until getNameBook(context, perevod, false).size
+                        else 0 until getNameBook(context, perevod, true).size
+                    }
                 }
             }
             for (i in range) {
@@ -653,11 +661,13 @@ fun BibliaMenu(
                 Column(modifier = Modifier.fillMaxWidth()) {
                     if (perevod != Settings.PEREVODNADSAN) {
                         DropdownMenuBox(
-                            initValue = k.getInt("biblia_seash", 0),
-                            menuList = stringArrayResource(R.array.serche_bible)
+                            initValue = if (perevod == Settings.PEREVODCATOLIK) k.getInt("biblia_seash_novy_zapavet", 0)
+                            else k.getInt("biblia_seash", 0),
+                            menuList = stringArrayResource(if (perevod == Settings.PEREVODCATOLIK) R.array.serche_bible_novy_zapavet else R.array.serche_bible)
                         ) { index ->
                             k.edit {
-                                putInt("biblia_seash", index)
+                                if (perevod == Settings.PEREVODCATOLIK) putInt("biblia_seash_novy_zapavet", index)
+                                else putInt("biblia_seash", index)
                             }
                             AppNavGraphState.searchSettings = true
                         }

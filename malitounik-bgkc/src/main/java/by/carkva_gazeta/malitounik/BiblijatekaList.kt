@@ -1,19 +1,20 @@
 package by.carkva_gazeta.malitounik
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -50,9 +51,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.fromHtml
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.admin.DialogEditBiblijteka
@@ -92,6 +97,7 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
     val filteredItems = remember { mutableStateListOf<ArrayList<String>>() }
     val editList = remember { ArrayList<String>() }
     var editItem by remember { mutableStateOf(false) }
+    var share by remember { mutableStateOf(false) }
     var allPosition by remember { mutableIntStateOf(0) }
     val coroutineScope = rememberCoroutineScope()
     if (addItem || editItem) {
@@ -245,6 +251,7 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
         }
         DialogBiblijateka(
             content = opisanie,
+            isShare = share,
             pdfFileSize = izm,
             onDismiss = {
                 isDialogBiblijatekaVisable = false
@@ -253,18 +260,21 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
                 when {
                     !Settings.isNetworkAvailable(context) -> isDialogNoIntent = true
                     Settings.isNetworkAvailable(
-                        context,
-                        Settings.TRANSPORT_CELLULAR
+                        context
                     ) -> isDialogNoWIFIVisable = true
 
                     else -> {
                         writeFile(
                             context, fileName, loadComplete = {
-                                addNiadaunia(context, listItem)
-                                navigationActions.navigateToBiblijateka(
-                                    listItem[0],
-                                    listItem[2]
-                                )
+                                if (share) {
+                                    sharePdfFile(context,listItem[2])
+                                } else {
+                                    addNiadaunia(context, listItem)
+                                    navigationActions.navigateToBiblijateka(
+                                        listItem[0],
+                                        listItem[2]
+                                    )
+                                }
                             },
                             inProcess = {
                                 isProgressVisable = it
@@ -287,11 +297,15 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
             onConfirmation = {
                 writeFile(
                     context, fileName, loadComplete = {
-                        addNiadaunia(context, listItem)
-                        navigationActions.navigateToBiblijateka(
-                            listItem[0],
-                            listItem[2]
-                        )
+                        if (share) {
+                            sharePdfFile(context,listItem[2])
+                        } else {
+                            addNiadaunia(context, listItem)
+                            navigationActions.navigateToBiblijateka(
+                                listItem[0],
+                                listItem[2]
+                            )
+                        }
                     },
                     inProcess = {
                         isProgressVisable = it
@@ -311,8 +325,11 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
         }
         BiblijatekaListItems(
             if (viewModel.searchText) filteredItems else bibliatekaList, biblijateka, navigationActions, innerPadding, viewModel.searchText,
-            setFileListPosition = { fileListPosition = it },
-            setIsDialogBiblijatekaVisable = { isDialogBiblijatekaVisable = it },
+            setIsDialogBiblijatekaVisable = { position, isVisable, isShare ->
+                share = isShare
+                fileListPosition = position
+                isDialogBiblijatekaVisable = isVisable
+            },
             editListItem = {
                 var position = 0
                 for (i in biblijatekaAllList.indices) {
@@ -333,8 +350,7 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
 @Composable
 fun BiblijatekaListItems(
     listItem: SnapshotStateList<ArrayList<String>>, biblijateka: String, navigationActions: AppNavigationActions, innerPadding: PaddingValues, searchText: Boolean,
-    setFileListPosition: (Int) -> Unit,
-    setIsDialogBiblijatekaVisable: (Boolean) -> Unit,
+    setIsDialogBiblijatekaVisable: (Int, Boolean, Boolean) -> Unit,
     editListItem: (ArrayList<String>) -> Unit
 ) {
     val context = LocalContext.current
@@ -349,6 +365,18 @@ fun BiblijatekaListItems(
                 keyboardController?.hide()
                 return super.onPreScroll(available, source)
             }
+        }
+    }
+    var shreIndex by remember { mutableIntStateOf(0) }
+    var isShare by remember { mutableStateOf(false) }
+    LaunchedEffect(isShare) {
+        if (isShare) {
+            if (fileExistsBiblijateka(context, listItem[shreIndex][2])) {
+                sharePdfFile(context,listItem[shreIndex][2])
+            } else {
+                setIsDialogBiblijatekaVisable(shreIndex, true, true)
+            }
+            isShare = false
         }
     }
     LazyColumn(modifier = Modifier.nestedScroll(nestedScrollConnection)) {
@@ -368,8 +396,7 @@ fun BiblijatekaListItems(
                                         listItem[index][2]
                                     )
                                 } else {
-                                    setFileListPosition(index)
-                                    setIsDialogBiblijatekaVisable(true)
+                                    setIsDialogBiblijatekaVisable(index, true, false)
                                 }
                             },
                             onLongClick = {
@@ -390,10 +417,21 @@ fun BiblijatekaListItems(
                         text = if (listItem[index][0] != "") listItem[index][0]
                         else listItem[index][2],
                         modifier = Modifier
-                            .fillMaxSize()
+                            .weight(1f)
                             .padding(10.dp),
                         color = MaterialTheme.colorScheme.secondary,
                         fontSize = Settings.fontInterface.sp
+                    )
+                    Icon(
+                        modifier = Modifier
+                            .clickable {
+                                shreIndex = index
+                                isShare = true
+                            }
+                            .padding(10.dp),
+                        painter = painterResource(R.drawable.share),
+                        tint = MaterialTheme.colorScheme.secondary,
+                        contentDescription = ""
                     )
                 }
                 if (listItem[index][5] != "") {
@@ -428,8 +466,7 @@ fun BiblijatekaListItems(
                                             )
                                             addNiadaunia(context, listItem[index])
                                         } else {
-                                            setFileListPosition(index)
-                                            setIsDialogBiblijatekaVisable(true)
+                                            setIsDialogBiblijatekaVisable(index, true, false)
                                         }
                                     },
                                     onLongClick = {
@@ -442,6 +479,16 @@ fun BiblijatekaListItems(
                             contentDescription = ""
                         )
                     }
+                    val maxLine = remember { mutableIntStateOf(2) }
+                    Text(
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .fillMaxWidth()
+                            .clickable {
+                                maxLine.intValue = if (maxLine.intValue == Int.MAX_VALUE) 2
+                                else Int.MAX_VALUE
+                            }, text = AnnotatedString.fromHtml(listItem[index][1]), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis
+                    )
                 }
             }
             HorizontalDivider()
@@ -450,6 +497,26 @@ fun BiblijatekaListItems(
             Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding() + if (k.getBoolean("isInstallApp", false)) 60.dp else 0.dp))
         }
     }
+}
+
+fun sharePdfFile(context: Context, fileName: String) {
+    val file = File("${context.filesDir}/bibliatekaPdf/$fileName")
+    val uri =
+        FileProvider.getUriForFile(context, "by.carkva_gazeta.malitounik.fileprovider", file)
+    val sendIntent = Intent(Intent.ACTION_SEND)
+    sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    sendIntent.putExtra(Intent.EXTRA_STREAM, uri)
+    sendIntent.putExtra(
+        Intent.EXTRA_SUBJECT,
+        context.getString(R.string.set_log_file)
+    )
+    sendIntent.type = "text/html"
+    context.startActivity(
+        Intent.createChooser(
+            sendIntent,
+            context.getString(R.string.set_log_file)
+        )
+    )
 }
 
 fun addNiadaunia(
@@ -665,6 +732,7 @@ private suspend fun saveImagePdf(context: Context, image: String) {
 fun DialogBiblijateka(
     content: String,
     pdfFileSize: String,
+    isShare: Boolean,
     onDismiss: () -> Unit,
     onConfirmation: () -> Unit
 ) {
@@ -682,6 +750,13 @@ fun DialogBiblijateka(
                         .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
+                if (isShare) {
+                    Text(
+                        text = stringResource(R.string.shere_help), modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.primary
+                    )
+                }
                 Column(
                     modifier = Modifier
                         .verticalScroll(rememberScrollState())

@@ -238,6 +238,10 @@
         <item>Пяцікніжжа</item>
         <item>Стары Запавет</item>
     </string-array>
+    <string-array name="serche_bible_novy_zapavet">
+        <item>Новы Запавет</item>
+        <item>Евангельлі</item>
+    </string-array>
     <string-array name="sabytie_izmerenie">
         <item>хвілінаў</item>
         <item>часоў</item>
@@ -900,5 +904,6 @@
     <string name="more_items">Больш дзеяньняў</string>
     <string name="admin_exit">ВЫХАД</string>
     <string name="admin_exit_opis">Вы сапраўды жадаеце выйсьці?</string>
+    <string name="shere_help">Каб падзяліцца файлам, яго трэба спампаваць.</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>
