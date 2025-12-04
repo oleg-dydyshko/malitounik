@@ -14,6 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import by.carkva_gazeta.malitounik.Settings
@@ -23,12 +26,18 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlainTooltip(title: String, positioning: TooltipAnchorPosition = TooltipAnchorPosition.Above, content: @Composable () -> Unit) {
+    val anotatedString = AnnotatedString.Builder(title).apply {
+        val t1 = title.indexOf("\n")
+        if (t1 != -1) {
+            addStyle(SpanStyle(fontWeight = FontWeight.Bold), 0, t1)
+        }
+    }
     val state = rememberTooltipState(isPersistent = true)
     val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(state.isVisible) {
         if (state.isVisible) {
             coroutineScope.launch {
-                delay(7000L)
+                delay(10000L)
                 state.dismiss()
             }
         }
@@ -42,7 +51,7 @@ fun PlainTooltip(title: String, positioning: TooltipAnchorPosition = TooltipAnch
                 shape = MaterialTheme.shapes.medium,
                 color = MaterialTheme.colorScheme.background
             ) {
-                Text(modifier = Modifier.padding(10.dp), text = title, fontSize = Settings.fontInterface.sp, lineHeight = (Settings.fontInterface * 1.15f).sp, color = MaterialTheme.colorScheme.secondary)
+                Text(modifier = Modifier.padding(10.dp), text = anotatedString.toAnnotatedString(), fontSize = Settings.fontInterface.sp, lineHeight = (Settings.fontInterface * 1.15f).sp, color = MaterialTheme.colorScheme.secondary)
             }
         },
         state = state

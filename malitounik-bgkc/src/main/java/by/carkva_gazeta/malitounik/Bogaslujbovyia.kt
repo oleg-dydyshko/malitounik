@@ -160,6 +160,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.net.URLDecoder
 import java.util.Calendar
+import kotlin.collections.isNotEmpty
 
 class BogaslujbovyiaViewModel : ViewModel() {
     var autoScroll by mutableStateOf(false)
@@ -358,6 +359,7 @@ fun Bogaslujbovyia(
     var isBottomBar by remember { mutableStateOf(k.getBoolean("bottomBar", false)) }
     var backPressHandled by remember { mutableStateOf(false) }
     var iskniga by rememberSaveable { mutableStateOf(false) }
+    var textLayout by remember { mutableStateOf<TextLayoutResult?>(null) }
     var bottomSheetScaffoldIsVisible by rememberSaveable { mutableStateOf(AppNavGraphState.bottomSheetScaffoldIsVisible) }
     val actyvity = LocalActivity.current as MainActivity
     if (viewModel.autoScrollSensor) {
@@ -384,11 +386,22 @@ fun Bogaslujbovyia(
         }
     }
     LifecycleResumeEffect(Unit) {
-        if (resursEncode.contains("akafist")) {
-            AppNavGraphState.setScrollValuePosition(title, k.getInt(resursEncode, 0))
-        }
-        coroutineScope.launch {
-            viewModel.scrollState.animateScrollTo(AppNavGraphState.getScrollValuePosition(title))
+        if (AppNavGraphState.searchBogaslujbovyia.isEmpty()) {
+            if (resursEncode.contains("akafist")) {
+                AppNavGraphState.setScrollValuePosition(title, k.getInt(resursEncode, 0))
+            }
+            coroutineScope.launch {
+                viewModel.scrollState.animateScrollTo(AppNavGraphState.getScrollValuePosition(title))
+            }
+        } else {
+            coroutineScope.launch {
+                viewModel.search(textLayout)
+                withContext(Dispatchers.IO) {
+                    viewModel.scrollState.animateScrollTo(viewModel.scrollToY.toInt())
+                    AppNavGraphState.setScrollValuePosition(title, viewModel.scrollState.value)
+                    viewModel.find = false
+                }
+            }
         }
         onPauseOrDispose {
             AppNavGraphState.setScrollValuePosition(title, viewModel.scrollState.value)
@@ -485,7 +498,6 @@ fun Bogaslujbovyia(
     val maxLine = remember { mutableIntStateOf(1) }
     var subTitle by rememberSaveable { mutableStateOf("") }
     var subText by rememberSaveable { mutableStateOf("") }
-    var textLayout by remember { mutableStateOf<TextLayoutResult?>(null) }
     var isProgressVisable by remember { mutableStateOf(false) }
     var isDialogNoWIFIVisable by remember { mutableStateOf(false) }
     var printFile by remember { mutableStateOf("") }

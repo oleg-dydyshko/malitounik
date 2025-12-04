@@ -10,21 +10,33 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -33,10 +45,13 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.edit
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
+import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
 import java.text.Collator
 import java.util.Calendar
@@ -91,14 +106,17 @@ fun getAllBogaslujbovyia(context: Context): SnapshotStateList<BogaslujbovyiaList
                 "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ МЕСЯЧНАЯ -> " + mount[mineiaMesichnaiaMounth(slugbovyiaTextuData.day, slugbovyiaTextuData.pasxa)]
             }
         }
-        listAll.add(BogaslujbovyiaListData(slugbovyiaTextuData.title + ". " + slugbovyiaTextu.getNazouSluzby(slugbovyiaTextuData.sluzba), slugbovyiaTextuData.resource, path))
+        var nazvaSluzby = ". " + slugbovyiaTextu.getNazouSluzby(slugbovyiaTextuData.sluzba)
+        if (slugbovyiaTextuData.title.contains(nazvaSluzby)) nazvaSluzby = ""
+        listAll.add(BogaslujbovyiaListData(slugbovyiaTextuData.title + nazvaSluzby, slugbovyiaTextuData.resource, path))
     }
     return listAll
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BogaslujbovyiaMenu(
-    navController: NavHostController, innerPadding: PaddingValues, menuItem: Int, searchText: Boolean, viewModel: SearchViewModel
+    navController: NavHostController, innerPadding: PaddingValues, menuItem: Int, searchBibleState: LazyListState, viewModel: SearchBibleViewModel
 ) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
@@ -145,199 +163,319 @@ fun BogaslujbovyiaMenu(
         }
         filteredItems.addAll(listItems)
     }
-    LaunchedEffect(viewModel.textFieldValueState.text, searchText) {
-        filteredItems.clear()
-        if (searchText) {
-            if (viewModel.textFieldValueState.text.isNotEmpty()) {
-                val filterList = listAll.filter { it.title.contains(viewModel.textFieldValueState.text, ignoreCase = true) }
-                filteredItems.addAll(filterList)
-            } else {
-                filteredItems.addAll(listAll)
-            }
-        } else {
-            filteredItems.addAll(listItems)
+    LaunchedEffect(AppNavGraphState.searchSettings) {
+        if (AppNavGraphState.searchSettings) {
+            viewModel.search(context, isBogaslujbovyiaSearch = true)
+            AppNavGraphState.searchSettings = false
         }
     }
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .nestedScroll(nestedScrollConnection)
-    ) {
-        if (!searchText && menuItem == Settings.MENU_BOGASLUJBOVYIA) {
-            items(folderList.size) { index ->
-                Row(
-                    modifier = Modifier
-                        .padding(start = 10.dp)
-                        .clickable {
-                            if (folderList[index] == "АКТОІХ") {
-                                navigationActions.navigateToMalitvyListAll(
-                                    folderList[index], Settings.MENU_AKTOIX
-                                )
-                            }
-                            if (folderList[index] == "ТРАПАРЫ І КАНДАКІ НЯДЗЕЛЬНЫЯ ВАСЬМІ ТОНАЎ") {
-                                navigationActions.navigateToMalitvyListAll(
-                                    folderList[index], Settings.MENU_TRAPARY_KANDAKI_NIADZELNYIA
-                                )
-                            }
-                            if (folderList[index] == "ТРЭБНІК") {
-                                navigationActions.navigateToMalitvyListAll(
-                                    folderList[index], Settings.MENU_TREBNIK
-                                )
-                            }
-                            if (folderList[index] == "МІНЭЯ АГУЛЬНАЯ") {
-                                navigationActions.navigateToMalitvyListAll(
-                                    folderList[index], Settings.MENU_MINEIA_AGULNAIA
-                                )
-                            }
-                            if (folderList[index] == "МІНЭЯ МЕСЯЧНАЯ") {
-                                navigationActions.navigateToMalitvyListAll(
-                                    folderList[index], Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH
-                                )
-                            }
-                            if (folderList[index] == "ТРЫЁДЗЬ") {
-                                navigationActions.navigateToMalitvyListAll(
-                                    folderList[index], Settings.MENU_TRYEDZ
-                                )
-                            }
-                        }, verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
-                    )
-                    Text(
-                        folderList[index].uppercase(), modifier = Modifier
-                            .fillMaxSize()
-                            .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                    )
+    LaunchedEffect(viewModel.textFieldValueState.text, viewModel.searchText, viewModel.searchFullText) {
+        if (viewModel.searchFullText) {
+            viewModel.search(context, isBogaslujbovyiaSearch = true)
+            if (AppNavGraphState.searchSettings) AppNavGraphState.searchSettings = false
+        } else {
+            filteredItems.clear()
+            if (viewModel.searchText) {
+                if (viewModel.textFieldValueState.text.isNotEmpty()) {
+                    val filterList = listAll.filter { it.title.contains(viewModel.textFieldValueState.text, ignoreCase = true) }
+                    filteredItems.addAll(filterList)
+                } else {
+                    filteredItems.addAll(listAll)
                 }
-                HorizontalDivider()
+            } else {
+                filteredItems.addAll(listItems)
             }
         }
-        items(filteredItems.size) { index ->
-            Column(
-                modifier = Modifier
-                    .padding(start = 10.dp)
-                    .clickable {
-                        if (menuItem != Settings.MENU_MAE_NATATKI) {
-                            navigationActions.navigateToBogaslujbovyia(
-                                filteredItems[index].title, filteredItems[index].resource
-                            )
-                        }
-                    }
+
+    }
+    var isRegistr by remember { mutableStateOf(k.getBoolean("pegistrbukv", true)) }
+    var isDakladnaeSupadzenne by remember { mutableIntStateOf(k.getInt("slovocalkam", 0)) }
+    if (viewModel.searchFullText) {
+        if (viewModel.searchSettings) {
+            ModalBottomSheet(
+                scrimColor = Color.Transparent,
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false),
+                onDismissRequest = {
+                    viewModel.searchSettings = false
+                }
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
-                    )
-                    Text(
-                        text = filteredItems[index].title, modifier = Modifier
-                            .fillMaxSize()
-                            .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                    )
-                }
-                if (searchText) {
-                    Text(
-                        text = filteredItems[index].path, modifier = Modifier
-                            .padding(start = 15.dp, end = 10.dp, bottom = 10.dp), color = SecondaryText, fontSize = Settings.fontInterface.sp
-                    )
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable {
+                            isRegistr = !isRegistr
+                            k.edit {
+                                putBoolean("pegistrbukv", isRegistr)
+                            }
+                            AppNavGraphState.searchSettings = true
+                        }) {
+                        Checkbox(
+                            checked = !isRegistr,
+                            onCheckedChange = {
+                                isRegistr = !isRegistr
+                                k.edit {
+                                    putBoolean("pegistrbukv", isRegistr)
+                                }
+                                AppNavGraphState.searchSettings = true
+                            }
+                        )
+                        Text(
+                            stringResource(R.string.registr),
+                            fontSize = Settings.fontInterface.sp,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable {
+                            isDakladnaeSupadzenne = if (isDakladnaeSupadzenne == 0) 1
+                            else 0
+                            k.edit {
+                                putInt("slovocalkam", isDakladnaeSupadzenne)
+                            }
+                            AppNavGraphState.searchSettings = true
+                        }) {
+                        Checkbox(
+                            checked = isDakladnaeSupadzenne == 1,
+                            onCheckedChange = {
+                                isDakladnaeSupadzenne = if (isDakladnaeSupadzenne == 0) 1
+                                else 0
+                                k.edit {
+                                    putInt("slovocalkam", isDakladnaeSupadzenne)
+                                }
+                                AppNavGraphState.searchSettings = true
+                            }
+                        )
+                        Text(
+                            stringResource(R.string.dakladnae_supadzenne),
+                            fontSize = Settings.fontInterface.sp,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
                 }
             }
-            HorizontalDivider()
         }
-        if (!searchText && menuItem == Settings.MENU_LITURGIKON) {
-            item {
-                Row(
+        Column {
+            if (viewModel.isProgressVisable) {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            }
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 10.dp),
+                text = stringResource(R.string.searh_sviatyia_result, viewModel.searchList.size),
+                fontStyle = FontStyle.Italic,
+                fontSize = Settings.fontInterface.sp,
+                color = MaterialTheme.colorScheme.secondary
+            )
+            LazyColumn(
+                Modifier.nestedScroll(nestedScrollConnection),
+                state = searchBibleState
+            ) {
+                items(viewModel.searchList.size) { index ->
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp)
+                            .clickable {
+                                viewModel.oldTextFieldValueState = viewModel.textFieldValueState.text
+                                AppNavGraphState.searchBogaslujbovyia = viewModel.textFieldValueState.text
+                                navigationActions.navigateToBogaslujbovyia(viewModel.searchList[index].title, viewModel.searchList[index].resource)
+                            },
+                        text = viewModel.searchList[index].text.toAnnotatedString(),
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = Settings.fontInterface.sp
+                    )
+                    HorizontalDivider()
+                }
+                item {
+                    Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
+                }
+            }
+        }
+    } else {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .nestedScroll(nestedScrollConnection)
+        ) {
+            if (!viewModel.searchText && menuItem == Settings.MENU_BOGASLUJBOVYIA) {
+                items(folderList.size) { index ->
+                    Row(
+                        modifier = Modifier
+                            .padding(start = 10.dp)
+                            .clickable {
+                                if (folderList[index] == "АКТОІХ") {
+                                    navigationActions.navigateToMalitvyListAll(
+                                        folderList[index], Settings.MENU_AKTOIX
+                                    )
+                                }
+                                if (folderList[index] == "ТРАПАРЫ І КАНДАКІ НЯДЗЕЛЬНЫЯ ВАСЬМІ ТОНАЎ") {
+                                    navigationActions.navigateToMalitvyListAll(
+                                        folderList[index], Settings.MENU_TRAPARY_KANDAKI_NIADZELNYIA
+                                    )
+                                }
+                                if (folderList[index] == "ТРЭБНІК") {
+                                    navigationActions.navigateToMalitvyListAll(
+                                        folderList[index], Settings.MENU_TREBNIK
+                                    )
+                                }
+                                if (folderList[index] == "МІНЭЯ АГУЛЬНАЯ") {
+                                    navigationActions.navigateToMalitvyListAll(
+                                        folderList[index], Settings.MENU_MINEIA_AGULNAIA
+                                    )
+                                }
+                                if (folderList[index] == "МІНЭЯ МЕСЯЧНАЯ") {
+                                    navigationActions.navigateToMalitvyListAll(
+                                        folderList[index], Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH
+                                    )
+                                }
+                                if (folderList[index] == "ТРЫЁДЗЬ") {
+                                    navigationActions.navigateToMalitvyListAll(
+                                        folderList[index], Settings.MENU_TRYEDZ
+                                    )
+                                }
+                            }, verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                        )
+                        Text(
+                            folderList[index].uppercase(), modifier = Modifier
+                                .fillMaxSize()
+                                .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                        )
+                    }
+                    HorizontalDivider()
+                }
+            }
+            items(filteredItems.size) { index ->
+                Column(
                     modifier = Modifier
                         .padding(start = 10.dp)
                         .clickable {
-                            navigationActions.navigateToMalitvyListAll(
-                                "МАЛІТВЫ ПАСЬЛЯ СЬВЯТОГА ПРЫЧАСЬЦЯ", Settings.MENU_MALITVY_PASLIA_PRYCHASCIA
-                            )
-                        }, verticalAlignment = Alignment.CenterVertically
+                            if (menuItem != Settings.MENU_MAE_NATATKI) {
+                                navigationActions.navigateToBogaslujbovyia(
+                                    filteredItems[index].title, filteredItems[index].resource
+                                )
+                            }
+                        }
                 ) {
-                    Icon(
-                        modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
-                    )
-                    Text(
-                        "МАЛІТВЫ ПАСЬЛЯ СЬВЯТОГА ПРЫЧАСЬЦЯ", modifier = Modifier
-                            .fillMaxSize()
-                            .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                        )
+                        Text(
+                            text = filteredItems[index].title, modifier = Modifier
+                                .fillMaxSize()
+                                .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                        )
+                    }
+                    if (viewModel.searchText) {
+                        Text(
+                            text = filteredItems[index].path, modifier = Modifier
+                                .padding(start = 15.dp, end = 10.dp, bottom = 10.dp), color = SecondaryText, fontSize = Settings.fontInterface.sp
+                        )
+                    }
                 }
                 HorizontalDivider()
             }
-        }
-        if (!searchText && menuItem == Settings.MENU_CHASASLOU) {
+            if (!viewModel.searchText && menuItem == Settings.MENU_LITURGIKON) {
+                item {
+                    Row(
+                        modifier = Modifier
+                            .padding(start = 10.dp)
+                            .clickable {
+                                navigationActions.navigateToMalitvyListAll(
+                                    "МАЛІТВЫ ПАСЬЛЯ СЬВЯТОГА ПРЫЧАСЬЦЯ", Settings.MENU_MALITVY_PASLIA_PRYCHASCIA
+                                )
+                            }, verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                        )
+                        Text(
+                            "МАЛІТВЫ ПАСЬЛЯ СЬВЯТОГА ПРЫЧАСЬЦЯ", modifier = Modifier
+                                .fillMaxSize()
+                                .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                        )
+                    }
+                    HorizontalDivider()
+                }
+            }
+            if (!viewModel.searchText && menuItem == Settings.MENU_CHASASLOU) {
+                item {
+                    Row(
+                        modifier = Modifier
+                            .padding(start = 10.dp)
+                            .clickable {
+                                navigationActions.navigateToMalitvyListAll(
+                                    "ВЯЧЭРНЯ", Settings.MENU_VIACHERNIA
+                                )
+                            }, verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                        )
+                        Text(
+                            "ВЯЧЭРНЯ", modifier = Modifier
+                                .fillMaxSize()
+                                .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                        )
+                    }
+                    HorizontalDivider()
+                }
+            }
+            if (!viewModel.searchText && menuItem == Settings.MENU_MALITVY) {
+                item {
+                    val title = stringResource(R.string.prynagodnyia)
+                    Row(
+                        modifier = Modifier
+                            .padding(start = 10.dp)
+                            .clickable {
+                                navigationActions.navigateToMalitvyListAll(
+                                    title, Settings.MENU_MALITVY_PRYNAGODNYIA
+                                )
+                            }, verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                        )
+                        Text(
+                            title.uppercase(), modifier = Modifier
+                                .fillMaxSize()
+                                .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                        )
+                    }
+                    HorizontalDivider()
+                }
+                item {
+                    val title = stringResource(R.string.ruzanec)
+                    Row(
+                        modifier = Modifier
+                            .padding(start = 10.dp)
+                            .clickable {
+                                navigationActions.navigateToMalitvyListAll(
+                                    title, Settings.MENU_MALITVY_RUJANEC
+                                )
+                            }, verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                        )
+                        Text(
+                            title.uppercase(), modifier = Modifier
+                                .fillMaxSize()
+                                .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                        )
+                    }
+                    HorizontalDivider()
+                }
+            }
             item {
-                Row(
-                    modifier = Modifier
-                        .padding(start = 10.dp)
-                        .clickable {
-                            navigationActions.navigateToMalitvyListAll(
-                                "ВЯЧЭРНЯ", Settings.MENU_VIACHERNIA
-                            )
-                        }, verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
-                    )
-                    Text(
-                        "ВЯЧЭРНЯ", modifier = Modifier
-                            .fillMaxSize()
-                            .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                    )
-                }
-                HorizontalDivider()
+                Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
             }
-        }
-        if (!searchText && menuItem == Settings.MENU_MALITVY) {
-            item {
-                val title = stringResource(R.string.prynagodnyia)
-                Row(
-                    modifier = Modifier
-                        .padding(start = 10.dp)
-                        .clickable {
-                            navigationActions.navigateToMalitvyListAll(
-                                title, Settings.MENU_MALITVY_PRYNAGODNYIA
-                            )
-                        }, verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
-                    )
-                    Text(
-                        title.uppercase(), modifier = Modifier
-                            .fillMaxSize()
-                            .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                    )
-                }
-                HorizontalDivider()
-            }
-            item {
-                val title = stringResource(R.string.ruzanec)
-                Row(
-                    modifier = Modifier
-                        .padding(start = 10.dp)
-                        .clickable {
-                            navigationActions.navigateToMalitvyListAll(
-                                title, Settings.MENU_MALITVY_RUJANEC
-                            )
-                        }, verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
-                    )
-                    Text(
-                        title.uppercase(), modifier = Modifier
-                            .fillMaxSize()
-                            .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                    )
-                }
-                HorizontalDivider()
-            }
-        }
-        item {
-            Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
         }
     }
 }

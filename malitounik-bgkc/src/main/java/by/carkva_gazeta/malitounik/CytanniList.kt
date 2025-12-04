@@ -117,8 +117,8 @@ import androidx.core.text.isDigitsOnly
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik.ui.theme.Button
@@ -144,7 +144,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Calendar
 
-class CytanniListViewModel : SearchBibleViewModel() {
+open class CytanniListViewModel : ViewModel() {
     val listState = mutableStateListOf<CytanniListItemData>()
     var selectedIndex by mutableIntStateOf(-1)
     var knigaText by mutableStateOf("")
@@ -189,7 +189,7 @@ class CytanniListViewModel : SearchBibleViewModel() {
         }
         if (listState.isEmpty()) {
             autoScrollSpeed = k.getInt("autoscrollSpid", 60)
-            if (newCytanne.isEmpty()) newCytanne = cytanne
+            if (newCytanne != cytanne) newCytanne = cytanne
             perevodName = when (perevod) {
                 Settings.PEREVODSEMUXI -> "biblia"
                 Settings.PEREVODBOKUNA -> "bokuna"
@@ -207,13 +207,15 @@ class CytanniListViewModel : SearchBibleViewModel() {
             } else 0
             if (selectedIndex == -1) selectedIndex = if (biblia == Settings.CHYTANNI_BIBLIA) initPage else 0
             val t1 = newCytanne.indexOf(";")
-            if (knigaText.isEmpty()) knigaText = if (biblia == Settings.CHYTANNI_BIBLIA || biblia == Settings.CHYTANNI_VYBRANAE) {
-                if (t1 == -1) newCytanne.substringBeforeLast(" ")
-                else {
-                    val sb = newCytanne.take(t1)
-                    sb.substringBeforeLast(" ")
-                }
-            } else newCytanne
+            if (knigaText.isEmpty()) {
+                knigaText = if (biblia == Settings.CHYTANNI_BIBLIA || biblia == Settings.CHYTANNI_VYBRANAE) {
+                    if (t1 == -1) newCytanne.substringBeforeLast(" ")
+                    else {
+                        val sb = newCytanne.take(t1)
+                        sb.substringBeforeLast(" ")
+                    }
+                } else newCytanne
+            }
             if (perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODNEWKINGJAMES) {
                 if (knigaBiblii(knigaText) == 21) {
                     if (selectedIndex > 149) selectedIndex = 149
@@ -297,6 +299,8 @@ class CytanniListViewModel : SearchBibleViewModel() {
     }
 
     fun setPerevod(context: Context, biblia: Int, cytanne: String, perevod: String) {
+        selectedIndex = -1
+        knigaText = ""
         listState.clear()
         initViewModel(context, biblia, cytanne, perevod)
     }
@@ -393,7 +397,7 @@ class CytanniListViewModel : SearchBibleViewModel() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CytanniList(
-    navController: NavHostController, title: String, cytanne: String, biblia: Int, perevodRoot: String, position: Int, viewModel: CytanniListViewModel = viewModel()
+    navController: NavHostController, title: String, cytanne: String, biblia: Int, perevodRoot: String, position: Int, viewModel: SearchBibleViewModel
 ) {
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var perevod by remember {
@@ -409,7 +413,6 @@ fun CytanniList(
     }
     val context = LocalContext.current
     viewModel.initViewModel(context, biblia, cytanne, perevod)
-    val listState = viewModel.listState
     var skipUtran by remember { mutableStateOf(position == -2) }
     var positionRemember by rememberSaveable { mutableIntStateOf(position) }
     var utranEndPosition by remember { mutableIntStateOf(0) }
@@ -474,18 +477,18 @@ fun CytanniList(
         else cytanne.substringAfterLast(" ").toInt() - 1
     } else 0
     val pagerState = rememberPagerState(pageCount = {
-        listState.size
+        viewModel.listState.size
     }, initialPage = initPage)
     val lazyRowState = rememberLazyListState()
     val fling = PagerDefaults.flingBehavior(
         state = pagerState, pagerSnapDistance = PagerSnapDistance.atMost(1)
     )
     var isBottomBar by remember { mutableStateOf(k.getBoolean("bottomBar", false)) }
-    if (listState[viewModel.selectedIndex].item.isNotEmpty() && Settings.bibleTimeList) {
+    if (viewModel.listState[viewModel.selectedIndex].item.isNotEmpty() && Settings.bibleTimeList) {
         Settings.bibleTimeList = false
         LaunchedEffect(Unit) {
             coroutineScope.launch {
-                listState[viewModel.selectedIndex].lazyListState.scrollToItem(k.getInt("bible_time_${viewModel.perevodName}_stix", 0))
+                viewModel.listState[viewModel.selectedIndex].lazyListState.scrollToItem(k.getInt("bible_time_${viewModel.perevodName}_stix", 0))
             }
         }
     }
@@ -514,7 +517,7 @@ fun CytanniList(
                     prefEditors.putString("bible_time_${viewModel.perevodName}_kniga", viewModel.knigaText)
                     prefEditors.putInt("bible_time_${viewModel.perevodName}_glava", viewModel.selectedIndex)
                     prefEditors.putInt(
-                        "bible_time_${viewModel.perevodName}_stix", listState[viewModel.selectedIndex].lazyListState.firstVisibleItemIndex
+                        "bible_time_${viewModel.perevodName}_stix", viewModel.listState[viewModel.selectedIndex].lazyListState.firstVisibleItemIndex
                     )
                 }
                 prefEditors.apply()
@@ -529,7 +532,7 @@ fun CytanniList(
         LaunchedEffect(Unit) {
             isUpList = false
             coroutineScope.launch {
-                listState[viewModel.selectedIndex].lazyListState.animateScrollToItem(0)
+                viewModel.listState[viewModel.selectedIndex].lazyListState.animateScrollToItem(0)
             }
         }
     }
@@ -550,7 +553,7 @@ fun CytanniList(
     var dialogRazdel by remember { mutableStateOf(false) }
     val interactionSourse = remember { MutableInteractionSource() }
     if (dialogRazdel) {
-        DialogRazdzel(listState.size, viewModel.autoScrollSensor, setSelectedIndex = { viewModel.selectedIndex = it }, setAutoScroll = { viewModel.autoScroll(title, it) }) {
+        DialogRazdzel(viewModel.listState.size, viewModel.autoScrollSensor, setSelectedIndex = { viewModel.selectedIndex = it }, setAutoScroll = { viewModel.autoScroll(title, it) }) {
             dialogRazdel = false
         }
     }
@@ -647,7 +650,7 @@ fun CytanniList(
                                                     putString("bible_time_${viewModel.perevodName}_kniga", viewModel.knigaText)
                                                     putInt("bible_time_${viewModel.perevodName}_glava", viewModel.selectedIndex)
                                                     putInt(
-                                                        "bible_time_${viewModel.perevodName}_stix", listState[viewModel.selectedIndex].lazyListState.firstVisibleItemIndex
+                                                        "bible_time_${viewModel.perevodName}_stix", viewModel.listState[viewModel.selectedIndex].lazyListState.firstVisibleItemIndex
                                                     )
                                                 }
                                             }
@@ -695,7 +698,7 @@ fun CytanniList(
                     } else {
                         if (!isBottomBar) {
                             var expandedUp by remember { mutableStateOf(false) }
-                            if (listState[viewModel.selectedIndex].lazyListState.canScrollForward) {
+                            if (viewModel.listState[viewModel.selectedIndex].lazyListState.canScrollForward) {
                                 val iconAutoScroll = if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
                                 else painterResource(R.drawable.play_circle)
                                 PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play), TooltipAnchorPosition.Below) {
@@ -715,7 +718,7 @@ fun CytanniList(
                                         )
                                     }
                                 }
-                            } else if (listState[viewModel.selectedIndex].lazyListState.canScrollBackward) {
+                            } else if (viewModel.listState[viewModel.selectedIndex].lazyListState.canScrollBackward) {
                                 PlainTooltip(stringResource(R.string.auto_up), TooltipAnchorPosition.Below) {
                                     IconButton(onClick = {
                                         isUpList = true
@@ -749,7 +752,7 @@ fun CytanniList(
                             }
                             AppDropdownMenu(
                                 expanded = expandedUp, onDismissRequest = { expandedUp = false }) {
-                                if (biblia == Settings.CHYTANNI_BIBLIA && listState.size - 1 > 1) {
+                                if (biblia == Settings.CHYTANNI_BIBLIA && viewModel.listState.size - 1 > 1) {
                                     DropdownMenuItem(onClick = {
                                         expandedUp = false
                                         dialogRazdel = true
@@ -1126,7 +1129,7 @@ fun CytanniList(
                                 )
                             }
                         }
-                        if (biblia == Settings.CHYTANNI_BIBLIA && listState.size - 1 > 1) {
+                        if (biblia == Settings.CHYTANNI_BIBLIA && viewModel.listState.size - 1 > 1) {
                             PlainTooltip(stringResource(R.string.set_glava_biblii)) {
                                 IconButton(
                                     onClick = {
@@ -1154,7 +1157,7 @@ fun CytanniList(
                             }
                         }
                         if (!isParallelVisable) {
-                            if (listState[viewModel.selectedIndex].lazyListState.canScrollForward) {
+                            if (viewModel.listState[viewModel.selectedIndex].lazyListState.canScrollForward) {
                                 val iconAutoScroll = if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
                                 else painterResource(R.drawable.play_circle)
                                 PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play)) {
@@ -1174,7 +1177,7 @@ fun CytanniList(
                                         )
                                     }
                                 }
-                            } else if (listState[viewModel.selectedIndex].lazyListState.canScrollBackward) {
+                            } else if (viewModel.listState[viewModel.selectedIndex].lazyListState.canScrollBackward) {
                                 PlainTooltip(stringResource(R.string.auto_up)) {
                                     IconButton(onClick = {
                                         isUpList = true
@@ -1244,11 +1247,11 @@ fun CytanniList(
                 }
             }
             Column {
-                if (!fullscreen && biblia == Settings.CHYTANNI_BIBLIA && listState.size - 1 != 0) {
+                if (!fullscreen && biblia == Settings.CHYTANNI_BIBLIA && viewModel.listState.size - 1 != 0) {
                     LazyRow(
                         state = lazyRowState
                     ) {
-                        items(listState.size) { page ->
+                        items(viewModel.listState.size) { page ->
                             val color = if (viewModel.selectedIndex == page) BezPosta
                             else Color.Unspecified
                             val textColor = if (viewModel.selectedIndex == page) PrimaryText
@@ -1275,7 +1278,7 @@ fun CytanniList(
                             available: Offset, source: NestedScrollSource
                         ): Offset {
                             isScrollRun = true
-                            AppNavGraphState.setScrollValuePosition(title, listState[viewModel.selectedIndex].lazyListState.firstVisibleItemIndex)
+                            AppNavGraphState.setScrollValuePosition(title, viewModel.listState[viewModel.selectedIndex].lazyListState.firstVisibleItemIndex)
                             return super.onPreScroll(available, source)
                         }
 
@@ -1288,16 +1291,16 @@ fun CytanniList(
                         }
                     }
                 }
-                if (listState[viewModel.selectedIndex].item.isNotEmpty()) {
+                if (viewModel.listState[viewModel.selectedIndex].item.isNotEmpty()) {
                     LaunchedEffect(Unit) {
                         coroutineScope.launch {
-                            listState[viewModel.selectedIndex].lazyListState.scrollToItem(AppNavGraphState.getScrollValuePosition(title))
+                            viewModel.listState[viewModel.selectedIndex].lazyListState.scrollToItem(AppNavGraphState.getScrollValuePosition(title))
                         }
                     }
                     if (biblia == Settings.CHYTANNI_BIBLIA && positionRemember != -1) {
                         LaunchedEffect(positionRemember) {
                             coroutineScope.launch {
-                                listState[viewModel.selectedIndex].lazyListState.scrollToItem(positionRemember)
+                                viewModel.listState[viewModel.selectedIndex].lazyListState.scrollToItem(positionRemember)
                                 positionRemember = -1
                             }
                         }
@@ -1307,7 +1310,7 @@ fun CytanniList(
                         if (pos == 0) pos = utranEndPosition
                         LaunchedEffect(pos) {
                             coroutineScope.launch {
-                                listState[viewModel.selectedIndex].lazyListState.scrollToItem(pos)
+                                viewModel.listState[viewModel.selectedIndex].lazyListState.scrollToItem(pos)
                                 positionRemember = -1
                                 skipUtran = false
                             }
@@ -1318,7 +1321,7 @@ fun CytanniList(
                     pageSpacing = 10.dp, state = pagerState, flingBehavior = fling, verticalAlignment = Alignment.Top, userScrollEnabled = biblia == Settings.CHYTANNI_BIBLIA
                 ) { page ->
                     viewModel.updatePage(biblia, page, perevod)
-                    val resultPage = listState[page].item
+                    val resultPage = viewModel.listState[page].item
                     if (resultPage.isNotEmpty() && biblia != Settings.CHYTANNI_BIBLIA && positionRemember != -1) {
                         var resultCount = 0
                         if (positionRemember != 0) {
@@ -1337,7 +1340,7 @@ fun CytanniList(
                         }
                         LaunchedEffect(resultCount) {
                             coroutineScope.launch {
-                                listState[viewModel.selectedIndex].lazyListState.scrollToItem(resultCount)
+                                viewModel.listState[viewModel.selectedIndex].lazyListState.scrollToItem(resultCount)
                                 positionRemember = -1
                             }
                         }
@@ -1360,8 +1363,8 @@ fun CytanniList(
                             subTitle = resultPage[0].title.substringBeforeLast(" ")
                         }
                         if (biblia != Settings.CHYTANNI_BIBLIA) {
-                            LaunchedEffect(listState[page]) {
-                                snapshotFlow { listState[page].lazyListState.firstVisibleItemIndex }.collect { index ->
+                            LaunchedEffect(viewModel.listState[page]) {
+                                snapshotFlow { viewModel.listState[page].lazyListState.firstVisibleItemIndex }.collect { index ->
                                     if (subTitle != resultPage[index].title) {
                                         subTitle = resultPage[index].title
                                     }
@@ -1438,7 +1441,7 @@ fun CytanniList(
                                     }
                                 }
                             }
-                            .nestedScroll(nestedScrollConnection), state = listState[page].lazyListState) {
+                            .nestedScroll(nestedScrollConnection), state = viewModel.listState[page].lazyListState) {
                         items(resultPage.size, key = { index -> resultPage[index].id }) { index ->
                             if (index == 0) {
                                 Spacer(Modifier.padding(top = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp))
@@ -1562,7 +1565,7 @@ fun CytanniList(
                         }
                         item {
                             Spacer(Modifier.padding(bottom = if (fullscreen) 10.dp else innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp)))
-                            if (listState[page].lazyListState.lastScrolledForward && !listState[page].lazyListState.canScrollForward) {
+                            if (viewModel.listState[page].lazyListState.lastScrolledForward && !viewModel.listState[page].lazyListState.canScrollForward) {
                                 viewModel.autoScroll(title, false)
                                 viewModel.autoScrollSensor = false
                                 if (!k.getBoolean("power", false)) {

@@ -30,7 +30,6 @@ import by.carkva_gazeta.malitounik.views.AllDestinations.PADZEI_VIEW
 import by.carkva_gazeta.malitounik.views.AllDestinations.PIASOCHNICA
 import by.carkva_gazeta.malitounik.views.AllDestinations.PIASOCHNICA_LIST
 import by.carkva_gazeta.malitounik.views.AllDestinations.PRANAS
-import by.carkva_gazeta.malitounik.views.AllDestinations.SEARCH_BIBLIA
 import by.carkva_gazeta.malitounik.views.AllDestinations.SETTINGS_VIEW
 import by.carkva_gazeta.malitounik.views.AllDestinations.SVITYIA_VIEW
 import by.carkva_gazeta.malitounik.views.AllDestinations.UMOUNIA_ZNACHENNI
@@ -59,7 +58,6 @@ object AllDestinations {
     const val BIBLIA_NEW_KING_JAMES = "Biblia_new_king_james"
     const val BIBLIA_LIST = "Biblia_List"
     const val VYBRANAE_LIST = "Bybranae_List"
-    const val SEARCH_BIBLIA = "Search_Biblia"
     const val AKAFIST_MENU = "Akafist_Menu"
     const val CHASASLOU_MENU = "Chasaslou_Menu"
     const val MAE_NATATKI_MENU = "Mae_Natatki_Menu"
@@ -373,12 +371,6 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
         }
         edit.putString("navigate", VYBRANAE_LIST)
         edit.apply()
-    }
-
-    fun navigateToSearchBiblia(perevod: String, searchBogaslujbovyia: Boolean) {
-        navController.navigate("$SEARCH_BIBLIA/$perevod/$searchBogaslujbovyia") {
-            SEARCH_BIBLIA
-        }
     }
 
     fun navigateToMalitvyListAll(title: String, menuItem: Int, subTitle: String = "") {

@@ -75,7 +75,7 @@ import java.math.RoundingMode
 import java.text.DecimalFormat
 
 @Composable
-fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerPadding: PaddingValues, searchText: Boolean, addItem: Boolean, viewModel: SearchViewModel, editDismiss: () -> Unit) {
+fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerPadding: PaddingValues, addItem: Boolean, viewModel: SearchBibleViewModel, editDismiss: () -> Unit) {
     val context = LocalContext.current
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
@@ -196,9 +196,9 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
             }
         }
     }
-    LaunchedEffect(viewModel.textFieldValueState.text, searchText) {
+    LaunchedEffect(viewModel.textFieldValueState.text, viewModel.searchText) {
         filteredItems.clear()
-        if (searchText) {
+        if (viewModel.searchText) {
             if (viewModel.textFieldValueState.text.isNotEmpty()) {
                 val filterList = biblijatekaAllList.filter { it[1].contains(viewModel.textFieldValueState.text, ignoreCase = true) }
                 filteredItems.addAll(filterList)
@@ -210,17 +210,17 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
         }
     }
     if (isDialogBiblijatekaVisable) {
-        fileName = if (searchText) filteredItems[fileListPosition][2]
+        fileName = if (viewModel.searchText) filteredItems[fileListPosition][2]
         else {
             bibliatekaList[fileListPosition][2]
         }
-        var opisanie = if (searchText) filteredItems[fileListPosition][1]
+        var opisanie = if (viewModel.searchText) filteredItems[fileListPosition][1]
         else {
             bibliatekaList[fileListPosition][1]
         }
         val t1 = opisanie.indexOf("</span><br>")
         if (t1 != -1) opisanie = opisanie.substring(t1 + 11)
-        val dirCount = if (searchText) filteredItems[fileListPosition][3].toInt()
+        val dirCount = if (viewModel.searchText) filteredItems[fileListPosition][3].toInt()
         else {
             bibliatekaList[fileListPosition][3].toInt()
         }
@@ -239,7 +239,7 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
                     .toFloat()
             ) + " Кб"
         }
-        val listItem = if (searchText) filteredItems[fileListPosition]
+        val listItem = if (viewModel.searchText) filteredItems[fileListPosition]
         else {
             bibliatekaList[fileListPosition]
         }
@@ -276,7 +276,7 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
         )
     }
     if (isDialogNoWIFIVisable) {
-        val listItem = if (searchText) filteredItems[fileListPosition]
+        val listItem = if (viewModel.searchText) filteredItems[fileListPosition]
         else {
             bibliatekaList[fileListPosition]
         }
@@ -310,7 +310,7 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
             LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
         }
         BiblijatekaListItems(
-            if (searchText) filteredItems else bibliatekaList, biblijateka, navigationActions, innerPadding, searchText,
+            if (viewModel.searchText) filteredItems else bibliatekaList, biblijateka, navigationActions, innerPadding, viewModel.searchText,
             setFileListPosition = { fileListPosition = it },
             setIsDialogBiblijatekaVisable = { isDialogBiblijatekaVisable = it },
             editListItem = {

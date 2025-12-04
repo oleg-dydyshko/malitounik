@@ -19,7 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -34,53 +34,22 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.views.AllDestinations
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.text.Collator
 import java.util.Locale
 
-class FilterPiesnyListModel : SearchBibleViewModel() {
-    private val items = SnapshotStateList<PiesnyListItem>()
-
-    private val _filteredItems = MutableStateFlow(items)
-    var filteredItems: MutableStateFlow<SnapshotStateList<PiesnyListItem>> = _filteredItems
-
-    fun clear() {
-        items.clear()
-    }
-
-    fun sortWith() {
-        items.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
-    }
-
-    fun addAllItemList(item: SnapshotStateList<PiesnyListItem>) {
-        items.addAll(item)
-    }
-
-    fun filterItem(search: String) {
-        if (search.isNotEmpty()) {
-            val filter = items.filter {
-                it.title.contains(search, ignoreCase = true)
-            }
-            _filteredItems.value.clear()
-            _filteredItems.value.addAll(filter)
-        }
-    }
-}
-
 @Composable
-fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: PaddingValues, searchText: Boolean, viewModel: SearchViewModel) {
+fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: PaddingValues, viewModel: SearchBibleViewModel) {
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
-    val viewModelFilter: FilterPiesnyListModel = viewModel()
+    val filteredItems = remember { mutableStateListOf<PiesnyListItem>() }
+    val piesnyAll = remember { mutableStateListOf<PiesnyListItem>() }
     val piesnyBagarList = remember { SnapshotStateList<PiesnyListItem>() }
     val piesnyBelarusList = remember { SnapshotStateList<PiesnyListItem>() }
     val piesnyKaliadyList = remember { SnapshotStateList<PiesnyListItem>() }
@@ -725,39 +694,37 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
         piesnyBagarList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
         piesnyKaliadyList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
         piesnyTaizeList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
+        piesnyAll.addAll(piesnyPraslList)
+        piesnyAll.addAll(piesnyBelarusList)
+        piesnyAll.addAll(piesnyBagarList)
+        piesnyAll.addAll(piesnyKaliadyList)
+        piesnyAll.addAll(piesnyTaizeList)
     }
-    if (searchText) {
-        viewModelFilter.clear()
-        viewModelFilter.addAllItemList(piesnyPraslList)
-        viewModelFilter.addAllItemList(piesnyBelarusList)
-        viewModelFilter.addAllItemList(piesnyBagarList)
-        viewModelFilter.addAllItemList(piesnyKaliadyList)
-        viewModelFilter.addAllItemList(piesnyTaizeList)
-        viewModelFilter.sortWith()
-    }
-    val filteredItems by viewModelFilter.filteredItems.collectAsStateWithLifecycle()
-    viewModelFilter.filterItem(viewModel.textFieldValueState.text)
-    if (searchText) {
-        PiesnyList(piesny, filteredItems, navigationActions, innerPadding)
-    } else {
-        val piesnyList = when (piesny) {
-            AllDestinations.PIESNY_PRASLAULENNIA -> piesnyPraslList
-            AllDestinations.PIESNY_ZA_BELARUS -> piesnyBelarusList
-            AllDestinations.PIESNY_DA_BAGARODZICY -> piesnyBagarList
-            AllDestinations.PIESNY_KALIADNYIA -> piesnyKaliadyList
-            AllDestinations.PIESNY_TAIZE -> piesnyTaizeList
-            else -> piesnyPraslList
+    LaunchedEffect(viewModel.searchText) {
+        if (viewModel.searchText) {
+            filteredItems.clear()
+            val filter = piesnyAll.filter {
+                it.title.contains(viewModel.textFieldValueState.text, ignoreCase = true)
+            }
+            filteredItems.addAll(filter)
+            filteredItems.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
+        } else {
+            filteredItems.clear()
+            filteredItems.addAll(
+                when (piesny) {
+                    AllDestinations.PIESNY_PRASLAULENNIA -> piesnyPraslList
+                    AllDestinations.PIESNY_ZA_BELARUS -> piesnyBelarusList
+                    AllDestinations.PIESNY_DA_BAGARODZICY -> piesnyBagarList
+                    AllDestinations.PIESNY_KALIADNYIA -> piesnyKaliadyList
+                    AllDestinations.PIESNY_TAIZE -> piesnyTaizeList
+                    else -> piesnyPraslList
+                }
+            )
         }
-        PiesnyList(piesny, piesnyList, navigationActions, innerPadding)
     }
-}
-
-@Composable
-fun PiesnyList(piesny: String, piesnyList: SnapshotStateList<PiesnyListItem>, navigationActions: AppNavigationActions, innerPadding: PaddingValues) {
     val coroutineScope = rememberCoroutineScope()
     val piesnyListState = rememberLazyListState()
     val keyboardController = LocalSoftwareKeyboardController.current
-    val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
             override fun onPreScroll(
@@ -776,14 +743,14 @@ fun PiesnyList(piesny: String, piesnyList: SnapshotStateList<PiesnyListItem>, na
     }
     LazyColumn(Modifier.nestedScroll(nestedScrollConnection), state = piesnyListState) {
         items(
-            piesnyList.size, key = { index -> piesnyList[index].title + index }) { index ->
+            filteredItems.size, key = { index -> filteredItems[index].title + index }) { index ->
             Column {
                 Row(
                     modifier = Modifier
                         .padding(start = 10.dp)
                         .clickable {
                             navigationActions.navigateToBogaslujbovyia(
-                                piesnyList[index].title, piesnyList[index].resurs
+                                filteredItems[index].title, filteredItems[index].resurs
                             )
                         }, verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -791,7 +758,7 @@ fun PiesnyList(piesny: String, piesnyList: SnapshotStateList<PiesnyListItem>, na
                         modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
                     )
                     Text(
-                        text = piesnyList[index].title, modifier = Modifier
+                        text = filteredItems[index].title, modifier = Modifier
                             .fillMaxSize()
                             .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                     )

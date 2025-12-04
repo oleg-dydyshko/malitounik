@@ -45,7 +45,7 @@ import java.util.Calendar
 import java.util.GregorianCalendar
 
 @Composable
-fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, searchText: Boolean, viewModel: SearchViewModel) {
+fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, searchText: Boolean, viewModel: SearchBibleViewModel) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
