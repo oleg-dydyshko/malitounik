@@ -657,6 +657,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
                                 R.string.czytanne3, data[1].toInt(), resources.getStringArray(R.array.meciac_smoll)[2]
                             )
                             val skip = if (skipUtran) -2 else -1
+                            viewModel.setPerevod(context, Settings.CHYTANNI_LITURGICHNYIA,if (navigate == "cytanne") data[9] else data[11], Settings.PEREVODSEMUXI)
                             navigationActions.navigateToCytanniList(
                                 titleCh, removeZnakiAndSlovy(if (navigate == "cytanne") data[9] else data[11]), Settings.CHYTANNI_LITURGICHNYIA, Settings.PEREVODSEMUXI, skip
                             )
@@ -667,6 +668,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
                             val titleCh = context.getString(
                                 R.string.czytanne3, data[1].toInt(), resources.getStringArray(R.array.meciac_smoll)[2]
                             )
+                            viewModel.setPerevod(context, Settings.CHYTANNI_LITURGICHNYIA,data[10], Settings.PEREVODSEMUXI)
                             navigationActions.navigateToCytanniList(
                                 titleCh, removeZnakiAndSlovy(data[10]), Settings.CHYTANNI_LITURGICHNYIA, Settings.PEREVODSEMUXI, -1
                             )
@@ -694,8 +696,10 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
         ) { stackEntry ->
             val isNovyZapavet = stackEntry.arguments?.getBoolean("novyZapavet", false) == true
             val perevod = stackEntry.arguments?.getString("perevod", Settings.PEREVODSEMUXI) ?: Settings.PEREVODSEMUXI
+            val context = LocalContext.current
             BibliaList(
                 navController, isNovyZapavet, perevod, navigateToCytanniList = { chytanne, perevod2 ->
+                    viewModel.setPerevod(context, Settings.CHYTANNI_BIBLIA,chytanne, perevod2)
                     navigationActions.navigateToCytanniList(
                         "", chytanne, Settings.CHYTANNI_BIBLIA, perevod2, -1
                     )
@@ -1665,6 +1669,7 @@ fun MainConteiner(
                                 pageSpacing = 10.dp, state = pagerState, flingBehavior = fling, verticalAlignment = Alignment.Top, modifier = Modifier.padding(10.dp)
                             ) { page ->
                                 KaliandarScreen(page, innerPadding, navigateToCytanneList = { title, chytanne, biblia ->
+                                    viewModel.setPerevod(context, biblia,chytanne, Settings.PEREVODSEMUXI)
                                     navigationActions.navigateToCytanniList(
                                         title, chytanne, biblia, Settings.PEREVODSEMUXI, -1
                                     )
@@ -1829,6 +1834,7 @@ fun MainConteiner(
                         BibliaMenu(navController, Settings.PEREVODSEMUXI, innerPadding, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
                             isIconSort = isIconSortVisibility
                         }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
+                            viewModel.setPerevod(context, biblia,chytanne, perevod2)
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, biblia, perevod2, position
                             )
@@ -1843,6 +1849,7 @@ fun MainConteiner(
                         BibliaMenu(navController, Settings.PEREVODBOKUNA, innerPadding, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
                             isIconSort = isIconSortVisibility
                         }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
+                            viewModel.setPerevod(context, biblia,chytanne, perevod2)
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, biblia, perevod2, position
                             )
@@ -1857,6 +1864,7 @@ fun MainConteiner(
                         BibliaMenu(navController, Settings.PEREVODNADSAN, innerPadding, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
                             isIconSort = isIconSortVisibility
                         }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
+                            viewModel.setPerevod(context, biblia,chytanne, perevod2)
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, biblia, perevod2, position
                             )
@@ -1871,6 +1879,7 @@ fun MainConteiner(
                         BibliaMenu(navController, Settings.PEREVODCARNIAUSKI, innerPadding, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
                             isIconSort = isIconSortVisibility
                         }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
+                            viewModel.setPerevod(context, biblia,chytanne, perevod2)
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, biblia, perevod2, position
                             )
@@ -1885,6 +1894,7 @@ fun MainConteiner(
                         BibliaMenu(navController, Settings.PEREVODCATOLIK, innerPadding, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
                             isIconSort = isIconSortVisibility
                         }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
+                            viewModel.setPerevod(context, biblia,chytanne, perevod2)
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, biblia, perevod2, position
                             )
@@ -1899,6 +1909,7 @@ fun MainConteiner(
                         BibliaMenu(navController, Settings.PEREVODSINOIDAL, innerPadding, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
                             isIconSort = isIconSortVisibility
                         }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
+                            viewModel.setPerevod(context, biblia,chytanne, perevod2)
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, biblia, perevod2, position
                             )
@@ -1913,6 +1924,7 @@ fun MainConteiner(
                         BibliaMenu(navController, Settings.PEREVODNEWKINGJAMES, innerPadding, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
                             isIconSort = isIconSortVisibility
                         }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
+                            viewModel.setPerevod(context, biblia,chytanne, perevod2)
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, biblia, perevod2, position
                             )
@@ -1951,6 +1963,7 @@ fun MainConteiner(
                         textTollBarColor = PrimaryTextBlack
                         VybranaeList(
                             navigateToCytanniList = { chytanne, position, perevod2 ->
+                                viewModel.setPerevod(context, Settings.CHYTANNI_VYBRANAE,chytanne, perevod2)
                                 navigationActions.navigateToCytanniList(
                                     "", chytanne, Settings.CHYTANNI_VYBRANAE, perevod2, position
                                 )
