@@ -850,6 +850,7 @@
     </array>
     <string name="open_in">Адчыніць у&#8230;</string>
     <string name="searh_sviatyia_result">Знойдзена %1$d</string>
+    <string name="searh_text_result">Знойдзена %1$d/%2$d</string>
     <string name="clear_chash">Ачыстка кэшу</string>
     <string name="clear_chash_opis">Пры неабходнасці, файлы будуць спампаваныя зноў.</string>
     <string-array name="admin_svity_data">

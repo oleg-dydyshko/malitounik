@@ -160,7 +160,6 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.net.URLDecoder
 import java.util.Calendar
-import kotlin.collections.isNotEmpty
 
 class BogaslujbovyiaViewModel : ViewModel() {
     var autoScroll by mutableStateOf(false)
@@ -180,7 +179,6 @@ class BogaslujbovyiaViewModel : ViewModel() {
     var searchText by mutableStateOf(AppNavGraphState.searchBogaslujbovyia.isNotEmpty())
     var searshString by mutableStateOf(TextFieldValue(AppNavGraphState.searchBogaslujbovyia, TextRange(AppNavGraphState.searchBogaslujbovyia.length)))
     var searchTextResult by mutableStateOf(AnnotatedString(""))
-    val searchList = mutableStateListOf<SearchBibleItem>()
     var htmlText by mutableStateOf("")
     private val gson = Gson()
     private val type = TypeToken.getParameterized(ArrayList::class.java, VybranaeDataAll::class.java).type
@@ -329,6 +327,101 @@ class BogaslujbovyiaViewModel : ViewModel() {
         k.edit {
             putInt("autoscrollSpid", autoScrollSpeed)
         }
+    }
+
+    suspend fun findAllAsanc(text: String, search: String): ArrayList<ArrayList<Int>> {
+        val result = withContext(Dispatchers.Main) {
+            return@withContext findAll(text, search.trim())
+        }
+        return result
+    }
+
+    fun findChars(text: String, searchChars: String): ArrayList<FindString> {
+        var strSub = 0
+        val list = searchChars.toCharArray()
+        val stringBuilder = StringBuilder()
+        val result = ArrayList<FindString>()
+        while (true) {
+            val strSub1Pos = text.indexOf(list[0].toString(), strSub, true)
+            if (strSub1Pos != -1) {
+                stringBuilder.clear()
+                strSub = strSub1Pos + 1
+                val subChar2 = StringBuilder()
+                for (i in 1 until list.size) {
+                    if (text.length >= strSub + 1) {
+                        if (list[i].isLetterOrDigit()) {
+                            var subChar = text.substring(strSub, strSub + 1)
+                            if (subChar == "́") {
+                                stringBuilder.append(subChar)
+                                strSub++
+                                if (text.length >= strSub + 1) {
+                                    subChar = text.substring(strSub, strSub + 1)
+                                }
+                            }
+                            val strSub2Pos = subChar.indexOf(list[i], ignoreCase = true)
+                            if (strSub2Pos != -1) {
+                                if (stringBuilder.isEmpty()) stringBuilder.append(text.substring(strSub1Pos, strSub1Pos + 1))
+                                if (subChar2.isNotEmpty()) stringBuilder.append(subChar2.toString())
+                                stringBuilder.append(list[i].toString())
+                                subChar2.clear()
+                                strSub++
+                            } else {
+                                stringBuilder.clear()
+                                break
+                            }
+                        } else {
+                            while (true) {
+                                if (text.length >= strSub + 1) {
+                                    val subChar = text.substring(strSub, strSub + 1).toCharArray()
+                                    if (!subChar[0].isLetterOrDigit()) {
+                                        subChar2.append(subChar[0])
+                                        strSub++
+                                    } else {
+                                        break
+                                    }
+                                } else {
+                                    break
+                                }
+                            }
+                            if (subChar2.isEmpty()) {
+                                stringBuilder.clear()
+                                break
+                            }
+                        }
+                    } else {
+                        stringBuilder.clear()
+                        break
+                    }
+                }
+                if (stringBuilder.toString().isNotEmpty()) {
+                    result.add(FindString(stringBuilder.toString(), strSub))
+                }
+            } else {
+                break
+            }
+        }
+        return result
+    }
+
+    fun findAll(search: String, searchChars: String): ArrayList<ArrayList<Int>> {
+        val findList = ArrayList<ArrayList<Int>>()
+        val arraySearsh = ArrayList<FindString>()
+        if (searchChars.length >= 3) {
+            val findString = findChars(search, searchChars)
+            if (findString.isNotEmpty()) arraySearsh.addAll(findString)
+            for (i in 0 until arraySearsh.size) {
+                val searchLig = arraySearsh[i].str.length
+                val strPosition = arraySearsh[i].position - searchLig
+                if (strPosition != -1) {
+                    val list = ArrayList<Int>()
+                    for (e in strPosition..strPosition + searchLig) {
+                        list.add(e)
+                    }
+                    findList.add(list)
+                }
+            }
+        }
+        return findList
     }
 }
 
@@ -771,7 +864,6 @@ fun Bogaslujbovyia(
                                     trailingIcon = {
                                         IconButton(onClick = {
                                             viewModel.searshString = TextFieldValue("")
-                                            viewModel.searchList.clear()
                                         }) {
                                             Icon(
                                                 painter = if (viewModel.searshString.text.isNotEmpty()) painterResource(R.drawable.close) else painterResource(R.drawable.empty),
@@ -859,27 +951,43 @@ fun Bogaslujbovyia(
                         },
                         actions = {
                             if (viewModel.searchText) {
-                                PlainTooltip(stringResource(R.string.poshuk_back), TooltipAnchorPosition.Below) {
-                                    IconButton(onClick = {
-                                        viewModel.findBack(textLayout)
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.arrow_upward),
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.onSecondary
-                                        )
+                                if (viewModel.resultPosition > 0) {
+                                    PlainTooltip(stringResource(R.string.poshuk_back), TooltipAnchorPosition.Below) {
+                                        IconButton(onClick = {
+                                            viewModel.findBack(textLayout)
+                                        }) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.arrow_upward),
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.onSecondary
+                                            )
+                                        }
                                     }
+                                } else {
+                                    Icon(
+                                        modifier = Modifier.padding(10.dp).size(24.dp),
+                                        painter = painterResource(R.drawable.empty),
+                                        contentDescription = ""
+                                    )
                                 }
-                                PlainTooltip(stringResource(R.string.poshuk_forvard), TooltipAnchorPosition.Below) {
-                                    IconButton(onClick = {
-                                        viewModel.findForward(textLayout)
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.arrow_downward),
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.onSecondary
-                                        )
+                                if (viewModel.resultPosition < viewModel.result.size - 1) {
+                                    PlainTooltip(stringResource(R.string.poshuk_forvard), TooltipAnchorPosition.Below) {
+                                        IconButton(onClick = {
+                                            viewModel.findForward(textLayout)
+                                        }) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.arrow_downward),
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.onSecondary
+                                            )
+                                        }
                                     }
+                                } else {
+                                    Icon(
+                                        modifier = Modifier.padding(10.dp).size(24.dp),
+                                        painter = painterResource(R.drawable.empty),
+                                        contentDescription = ""
+                                    )
                                 }
                             } else {
                                 if (!iskniga && listResource.isNotEmpty()) {
@@ -1326,90 +1434,47 @@ fun Bogaslujbovyia(
                         }
                     }
                 }
-                Column(
-                    modifier = Modifier
-                        .pointerInput(PointerEventType.Press) {
-                            awaitPointerEventScope {
-                                while (true) {
-                                    val event = awaitPointerEvent()
-                                    if (event.type == PointerEventType.Press) {
-                                        viewModel.autoScroll(title, false)
-                                    }
-                                    if (viewModel.autoScrollSensor && event.type == PointerEventType.Release && !isScrollRun) {
-                                        viewModel.autoScroll(title, true)
-                                    }
-                                }
-                            }
-                        }
-                        .pointerInput(Unit) {
-                            detectTapGestures(
-                                onDoubleTap = {
-                                    fullscreen = !fullscreen
-                                }
-                            )
-                        }
-                        .nestedScroll(nestedScrollConnection)
-                        .verticalScroll(viewModel.scrollState),
-                    verticalArrangement = Arrangement.Top
-                ) {
+                Column {
                     if (isProgressVisable) {
                         LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                     }
-                    val padding = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp
-                    if (viewModel.autoScrollSensor) {
-                        HtmlText(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp))
-                                .pointerInput(Unit) {
-                                    awaitEachGesture {
-                                        awaitFirstDown()
-                                        do {
-                                            val event = awaitPointerEvent()
-                                            if (event.changes.size == 2) {
-                                                fontSize *= event.calculateZoom()
-                                                fontSize = fontSize.coerceIn(18f, 58f)
-                                                k.edit {
-                                                    putFloat("font_biblia", fontSize)
-                                                }
-                                                event.changes.forEach { pointerInputChange: PointerInputChange ->
-                                                    pointerInputChange.consume()
-                                                }
-                                            }
-                                        } while (event.changes.any { it.pressed })
-                                    }
-                                },
-                            text = viewModel.htmlText,
-                            title = title,
-                            fontSize = fontSize.sp,
-                            isLiturgia = isLiturgia && isLiturgia(data),
-                            searchText = viewModel.searchTextResult,
-                            scrollState = viewModel.scrollState,
-                            navigateTo = { navigate ->
-                                navigateTo(navigate, false)
-                            },
-                            textLayoutResult = { layout ->
-                                textLayout = layout
-                            },
-                            isDialogListinner = { dialog, chastka ->
-                                when (dialog) {
-                                    DialogListinner.DIALOGQRCODE.name -> {
-                                        dialogQrCode = true
-                                    }
-
-                                    DialogListinner.DIALOGSZTOHOVAHA.name -> {
-                                        dialogSztoHovahaVisable = true
-                                    }
-
-                                    DialogListinner.DIALOGLITURGIA.name -> {
-                                        chast = chastka
-                                        dialogLiturgia = true
+                    if (viewModel.searchText && viewModel.result.isNotEmpty()) {
+                        Text(
+                            modifier = Modifier.padding(10.dp),
+                            text = stringResource(R.string.searh_text_result, viewModel.resultPosition + 1, viewModel.result.size),
+                            fontStyle = FontStyle.Italic,
+                            fontSize = Settings.fontInterface.sp,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                    Column(
+                        modifier = Modifier
+                            .pointerInput(PointerEventType.Press) {
+                                awaitPointerEventScope {
+                                    while (true) {
+                                        val event = awaitPointerEvent()
+                                        if (event.type == PointerEventType.Press) {
+                                            viewModel.autoScroll(title, false)
+                                        }
+                                        if (viewModel.autoScrollSensor && event.type == PointerEventType.Release && !isScrollRun) {
+                                            viewModel.autoScroll(title, true)
+                                        }
                                     }
                                 }
                             }
-                        )
-                    } else {
-                        SelectionContainer {
+                            .pointerInput(Unit) {
+                                detectTapGestures(
+                                    onDoubleTap = {
+                                        fullscreen = !fullscreen
+                                    }
+                                )
+                            }
+                            .nestedScroll(nestedScrollConnection)
+                            .verticalScroll(viewModel.scrollState),
+                        verticalArrangement = Arrangement.Top
+                    ) {
+                        val padding = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp
+                        if (viewModel.autoScrollSensor) {
                             HtmlText(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -1439,18 +1504,7 @@ fun Bogaslujbovyia(
                                 searchText = viewModel.searchTextResult,
                                 scrollState = viewModel.scrollState,
                                 navigateTo = { navigate ->
-                                    var skipUtran = false
-                                    if (navigate == "cytanne") {
-                                        if (data[9].isNotEmpty()) {
-                                            var chtenie = data[9]
-                                            if (isLiturgia && chtenie.contains("На ютрані", ignoreCase = true)) {
-                                                val t1 = chtenie.indexOf("\n")
-                                                if (t1 != -1) chtenie = chtenie.substring(t1 + 1)
-                                                skipUtran = true
-                                            }
-                                        }
-                                    }
-                                    navigateTo(navigate, skipUtran)
+                                    navigateTo(navigate, false)
                                 },
                                 textLayoutResult = { layout ->
                                     textLayout = layout
@@ -1472,13 +1526,78 @@ fun Bogaslujbovyia(
                                     }
                                 }
                             )
+                        } else {
+                            SelectionContainer {
+                                HtmlText(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp))
+                                        .pointerInput(Unit) {
+                                            awaitEachGesture {
+                                                awaitFirstDown()
+                                                do {
+                                                    val event = awaitPointerEvent()
+                                                    if (event.changes.size == 2) {
+                                                        fontSize *= event.calculateZoom()
+                                                        fontSize = fontSize.coerceIn(18f, 58f)
+                                                        k.edit {
+                                                            putFloat("font_biblia", fontSize)
+                                                        }
+                                                        event.changes.forEach { pointerInputChange: PointerInputChange ->
+                                                            pointerInputChange.consume()
+                                                        }
+                                                    }
+                                                } while (event.changes.any { it.pressed })
+                                            }
+                                        },
+                                    text = viewModel.htmlText,
+                                    title = title,
+                                    fontSize = fontSize.sp,
+                                    isLiturgia = isLiturgia && isLiturgia(data),
+                                    searchText = viewModel.searchTextResult,
+                                    scrollState = viewModel.scrollState,
+                                    navigateTo = { navigate ->
+                                        var skipUtran = false
+                                        if (navigate == "cytanne") {
+                                            if (data[9].isNotEmpty()) {
+                                                var chtenie = data[9]
+                                                if (isLiturgia && chtenie.contains("На ютрані", ignoreCase = true)) {
+                                                    val t1 = chtenie.indexOf("\n")
+                                                    if (t1 != -1) chtenie = chtenie.substring(t1 + 1)
+                                                    skipUtran = true
+                                                }
+                                            }
+                                        }
+                                        navigateTo(navigate, skipUtran)
+                                    },
+                                    textLayoutResult = { layout ->
+                                        textLayout = layout
+                                    },
+                                    isDialogListinner = { dialog, chastka ->
+                                        when (dialog) {
+                                            DialogListinner.DIALOGQRCODE.name -> {
+                                                dialogQrCode = true
+                                            }
+
+                                            DialogListinner.DIALOGSZTOHOVAHA.name -> {
+                                                dialogSztoHovahaVisable = true
+                                            }
+
+                                            DialogListinner.DIALOGLITURGIA.name -> {
+                                                chast = chastka
+                                                dialogLiturgia = true
+                                            }
+                                        }
+                                    }
+                                )
+                            }
                         }
-                    }
-                    if (viewModel.scrollState.lastScrolledForward && !viewModel.scrollState.canScrollForward) {
-                        viewModel.autoScroll(title, false)
-                        viewModel.autoScrollSensor = false
-                        if (!k.getBoolean("power", false)) {
-                            actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                        if (viewModel.scrollState.lastScrolledForward && !viewModel.scrollState.canScrollForward) {
+                            viewModel.autoScroll(title, false)
+                            viewModel.autoScrollSensor = false
+                            if (!k.getBoolean("power", false)) {
+                                actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                            }
                         }
                     }
                 }
@@ -1748,101 +1867,6 @@ fun DialogHelpShare(onDismiss: (Boolean) -> Unit) {
             }
         }
     }
-}
-
-suspend fun findAllAsanc(text: String, search: String): ArrayList<ArrayList<Int>> {
-    val result = withContext(Dispatchers.Main) {
-        return@withContext findAll(text, search.trim())
-    }
-    return result
-}
-
-fun findChars(text: String, searchChars: String): ArrayList<FindString> {
-    var strSub = 0
-    val list = searchChars.toCharArray()
-    val stringBuilder = StringBuilder()
-    val result = ArrayList<FindString>()
-    while (true) {
-        val strSub1Pos = text.indexOf(list[0].toString(), strSub, true)
-        if (strSub1Pos != -1) {
-            stringBuilder.clear()
-            strSub = strSub1Pos + 1
-            val subChar2 = StringBuilder()
-            for (i in 1 until list.size) {
-                if (text.length >= strSub + 1) {
-                    if (list[i].isLetterOrDigit()) {
-                        var subChar = text.substring(strSub, strSub + 1)
-                        if (subChar == "́") {
-                            stringBuilder.append(subChar)
-                            strSub++
-                            if (text.length >= strSub + 1) {
-                                subChar = text.substring(strSub, strSub + 1)
-                            }
-                        }
-                        val strSub2Pos = subChar.indexOf(list[i], ignoreCase = true)
-                        if (strSub2Pos != -1) {
-                            if (stringBuilder.isEmpty()) stringBuilder.append(text.substring(strSub1Pos, strSub1Pos + 1))
-                            if (subChar2.isNotEmpty()) stringBuilder.append(subChar2.toString())
-                            stringBuilder.append(list[i].toString())
-                            subChar2.clear()
-                            strSub++
-                        } else {
-                            stringBuilder.clear()
-                            break
-                        }
-                    } else {
-                        while (true) {
-                            if (text.length >= strSub + 1) {
-                                val subChar = text.substring(strSub, strSub + 1).toCharArray()
-                                if (!subChar[0].isLetterOrDigit()) {
-                                    subChar2.append(subChar[0])
-                                    strSub++
-                                } else {
-                                    break
-                                }
-                            } else {
-                                break
-                            }
-                        }
-                        if (subChar2.isEmpty()) {
-                            stringBuilder.clear()
-                            break
-                        }
-                    }
-                } else {
-                    stringBuilder.clear()
-                    break
-                }
-            }
-            if (stringBuilder.toString().isNotEmpty()) {
-                result.add(FindString(stringBuilder.toString(), strSub))
-            }
-        } else {
-            break
-        }
-    }
-    return result
-}
-
-fun findAll(search: String, searchChars: String): ArrayList<ArrayList<Int>> {
-    val findList = ArrayList<ArrayList<Int>>()
-    val arraySearsh = ArrayList<FindString>()
-    if (searchChars.length >= 3) {
-        val findString = findChars(search, searchChars)
-        if (findString.isNotEmpty()) arraySearsh.addAll(findString)
-        for (i in 0 until arraySearsh.size) {
-            val searchLig = arraySearsh[i].str.length
-            val strPosition = arraySearsh[i].position - searchLig
-            if (strPosition != -1) {
-                val list = ArrayList<Int>()
-                for (e in strPosition..strPosition + searchLig) {
-                    list.add(e)
-                }
-                findList.add(list)
-            }
-        }
-    }
-    return findList
 }
 
 fun isLiturgia(dataDayList: ArrayList<String>): Boolean {
