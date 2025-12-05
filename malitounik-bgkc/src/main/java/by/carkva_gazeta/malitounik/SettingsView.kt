@@ -986,6 +986,7 @@ fun SettingsView(navController: NavHostController) {
                 }
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val error = stringResource(R.string.error_ch2)
                 TextButton(
                     onClick = {
                         try {
@@ -999,7 +1000,7 @@ fun SettingsView(navController: NavHostController) {
                                 intent.putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, context.packageName)
                                 context.startActivity(intent)
                             } catch (_: ActivityNotFoundException) {
-                                val toast = Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT)
+                                val toast = Toast.makeText(context, error, Toast.LENGTH_SHORT)
                                 toast.show()
                             }
                         }
@@ -1107,6 +1108,7 @@ fun SettingsView(navController: NavHostController) {
                     })
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
+            val save = stringResource(R.string.save)
             TextButton(
                 onClick = {
                     k.edit {
@@ -1124,7 +1126,7 @@ fun SettingsView(navController: NavHostController) {
                             }
                             if (del) remove(key)
                         }
-                        Toast.makeText(context, context.getString(R.string.save), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, save, Toast.LENGTH_SHORT).show()
                         putFloat("font_biblia", 22f)
                         putInt("Settings.fontInterface", 1)
                         putInt("mode_night", Settings.MODE_NIGHT_SYSTEM)

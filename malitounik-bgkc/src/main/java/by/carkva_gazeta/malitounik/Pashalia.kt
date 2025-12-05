@@ -116,6 +116,7 @@ fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, sear
                         fontSize = Settings.fontInterface.sp
                     )
                 }
+                val paschaKaliandarBel = stringResource(R.string.pascha_kaliandar_bel)
                 TextButton(
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
@@ -129,7 +130,7 @@ fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, sear
                     shape = MaterialTheme.shapes.small,
                     onClick = {
                         navigationActions.navigateToBogaslujbovyia(
-                            context.getString(R.string.pascha_kaliandar_bel),
+                            paschaKaliandarBel,
                             "pasxa.html"
                         )
                     }

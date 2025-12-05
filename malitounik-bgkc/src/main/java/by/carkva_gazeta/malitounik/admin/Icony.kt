@@ -199,6 +199,7 @@ fun Icony(navController: NavHostController) {
         }
     }
     if (isDialodApisanne) {
+        val noInternet = stringResource(R.string.no_internet)
         DialogApisanneIcony(iconList[position].iconApisanne, saveApisanne = { iconApisanne ->
             if (Settings.isNetworkAvailable(context)) {
                 CoroutineScope(Dispatchers.Main).launch {
@@ -229,7 +230,7 @@ fun Icony(navController: NavHostController) {
                     isDialodApisanne = false
                 }
             } else {
-                Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, noInternet, Toast.LENGTH_SHORT).show()
                 isDialodApisanne = false
             }
         }) {
@@ -306,6 +307,7 @@ fun Icony(navController: NavHostController) {
                             ),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        val vybracFile = stringResource(R.string.vybrac_file)
                         if (myBitmap != null) {
                             Image(
                                 modifier = Modifier
@@ -317,7 +319,7 @@ fun Icony(navController: NavHostController) {
                                             intent.type = "*/*"
                                             intent.action = Intent.ACTION_GET_CONTENT
                                             intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/jpeg", "image/png"))
-                                            mActivityResultFile.launch(Intent.createChooser(intent, context.getString(R.string.vybrac_file)))
+                                            mActivityResultFile.launch(Intent.createChooser(intent, vybracFile))
                                         },
                                         onLongClick = {
                                             if (iconList[position].size > 0) {
@@ -363,7 +365,7 @@ fun Icony(navController: NavHostController) {
                                         intent.type = "*/*"
                                         intent.action = Intent.ACTION_GET_CONTENT
                                         intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/jpeg", "image/png"))
-                                        mActivityResultFile.launch(Intent.createChooser(intent, context.getString(R.string.vybrac_file)))
+                                        mActivityResultFile.launch(Intent.createChooser(intent, vybracFile))
                                     },
                                 text = stringResource(R.string.niama_icony), fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = SecondaryText, textAlign = TextAlign.Center
                             )

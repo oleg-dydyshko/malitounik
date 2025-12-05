@@ -765,6 +765,9 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                                     .padding(10.dp)
                                                     .weight(1f), text = sviatyiaList[index].title, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary
                                             )
+                                            val copyText = stringResource(R.string.copy_text)
+                                            val copy = stringResource(R.string.copy)
+                                            val zmiest = stringResource(R.string.zmiest)
                                             Icon(
                                                 modifier = Modifier
                                                     .padding(end = 10.dp)
@@ -773,7 +776,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                                         sb.append(sviatyiaList[index].text)
                                                         sb.append(sviatyiaList[index].text.trim())
                                                         val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-                                                        val clip = ClipData.newPlainText(context.getString(R.string.copy_text), sb.toString())
+                                                        val clip = ClipData.newPlainText(copyText, sb.toString())
                                                         clipboard.setPrimaryClip(clip)
                                                         if (file.exists()) {
                                                             val sendIntent = Intent(Intent.ACTION_SEND)
@@ -781,15 +784,15 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                                             sendIntent.putExtra(Intent.EXTRA_TEXT, sviatyiaList[index].text.trim())
                                                             sendIntent.putExtra(Intent.EXTRA_SUBJECT, sviatyiaList[index].text.trim())
                                                             sendIntent.type = "image/*"
-                                                            context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.zmiest)))
+                                                            context.startActivity(Intent.createChooser(sendIntent, zmiest))
                                                         } else {
                                                             val sendIntent = Intent(Intent.ACTION_SEND)
                                                             sendIntent.putExtra(Intent.EXTRA_TEXT, sb.toString())
-                                                            sendIntent.putExtra(Intent.EXTRA_SUBJECT, context.getText(R.string.zmiest))
+                                                            sendIntent.putExtra(Intent.EXTRA_SUBJECT, zmiest)
                                                             sendIntent.type = "text/plain"
-                                                            context.startActivity(Intent.createChooser(sendIntent, context.getText(R.string.zmiest)))
+                                                            context.startActivity(Intent.createChooser(sendIntent, zmiest))
                                                         }
-                                                        Toast.makeText(context, context.getString(R.string.copy), Toast.LENGTH_SHORT).show()
+                                                        Toast.makeText(context, copy, Toast.LENGTH_SHORT).show()
                                                     }, painter = painterResource(R.drawable.share), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
                                             )
                                         }

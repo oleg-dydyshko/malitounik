@@ -256,6 +256,8 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
         }
     }
     if (dialogDeliteAllPiasochnica) {
+        val error = stringResource(R.string.error_ch2)
+        val noInternet = stringResource(R.string.no_internet)
         DialogDelite(title = stringResource(R.string.del_all_pasochnica), onConfirmation = {
             if (Settings.isNetworkAvailable(context)) {
                 CoroutineScope(Dispatchers.Main).launch {
@@ -265,12 +267,12 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                             it.delete().await()
                         }
                     } catch (_: Throwable) {
-                        Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
                     }
                     fileList.clear()
                 }
             } else {
-                Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, noInternet, Toast.LENGTH_SHORT).show()
             }
             dialogDeliteAllPiasochnica = false
         }) {
@@ -309,6 +311,7 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
             dialogSetFileName = false
         }
     }
+    val vybracFile = stringResource(R.string.vybrac_file)
     LaunchedEffect(PasochnicaList.pasochnicaAction) {
         when (PasochnicaList.pasochnicaAction) {
             PasochnicaList.FILE -> {
@@ -316,7 +319,7 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                 intent.type = "*/*"
                 intent.action = Intent.ACTION_GET_CONTENT
                 intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("text/html", "text/plain"))
-                mActivityResultFile.launch(Intent.createChooser(intent, context.getString(R.string.vybrac_file)))
+                mActivityResultFile.launch(Intent.createChooser(intent, vybracFile))
                 PasochnicaList.pasochnicaAction = PasochnicaList.NONE
             }
 
@@ -538,6 +541,7 @@ fun DialogNetFileExplorer(
                 if (viewModel.isProgressVisable) {
                     LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                 }
+                val setfileName = stringResource(R.string.setfile_name)
                 if (fileName.isNotEmpty()) {
                     val focusRequester = remember { FocusRequester() }
                     var textFieldLoaded by remember { mutableStateOf(false) }
@@ -560,7 +564,7 @@ fun DialogNetFileExplorer(
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
                         keyboardActions = KeyboardActions(onDone = {
                             if (textFieldValueState.isEmpty()) {
-                                Toast.makeText(context, context.getString(R.string.setfile_name), Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, setfileName, Toast.LENGTH_SHORT).show()
                             } else {
                                 Malitounik.referens.child("$dir/$textFieldValueState").downloadUrl.addOnCompleteListener {
                                     if (it.isSuccessful) {
@@ -640,7 +644,7 @@ fun DialogNetFileExplorer(
                         TextButton(
                             onClick = {
                                 if (textFieldValueState.isEmpty()) {
-                                    Toast.makeText(context, context.getString(R.string.setfile_name), Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, setfileName, Toast.LENGTH_SHORT).show()
                                 } else {
                                     Malitounik.referens.child("$dir/$textFieldValueState").downloadUrl.addOnCompleteListener {
                                         if (it.isSuccessful) {

@@ -203,6 +203,7 @@ fun DialogEditBiblijteka(list: ArrayList<String>, onSave: (title: String, rubrik
                         ) {
                             rubryka = it
                         }
+                        val vybracFile = stringResource(R.string.vybrac_file)
                         if (bitmap == null) {
                             Text(
                                 modifier = Modifier
@@ -221,7 +222,7 @@ fun DialogEditBiblijteka(list: ArrayList<String>, onSave: (title: String, rubrik
                                         intent.type = "*/*"
                                         intent.action = Intent.ACTION_GET_CONTENT
                                         intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/jpeg", "image/png"))
-                                        mActivityResultImageFile.launch(Intent.createChooser(intent, context.getString(R.string.vybrac_file)))
+                                        mActivityResultImageFile.launch(Intent.createChooser(intent, vybracFile))
                                     },
                                 text = stringResource(R.string.niama_malunka), fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary, textAlign = TextAlign.Center
                             )
@@ -243,7 +244,7 @@ fun DialogEditBiblijteka(list: ArrayList<String>, onSave: (title: String, rubrik
                                             intent.type = "*/*"
                                             intent.action = Intent.ACTION_GET_CONTENT
                                             intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/jpeg", "image/png"))
-                                            mActivityResultImageFile.launch(Intent.createChooser(intent, context.getString(R.string.vybrac_file)))
+                                            mActivityResultImageFile.launch(Intent.createChooser(intent, vybracFile))
                                         }, bitmap = bitmap.asImageBitmap(), contentDescription = ""
                                 )
                             }
@@ -258,7 +259,7 @@ fun DialogEditBiblijteka(list: ArrayList<String>, onSave: (title: String, rubrik
                                     intent.type = "application/pdf"
                                     intent.action = Intent.ACTION_GET_CONTENT
                                     intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("application/pdf"))
-                                    mActivityResultFile.launch(Intent.createChooser(intent, context.getString(R.string.vybrac_file)))
+                                    mActivityResultFile.launch(Intent.createChooser(intent, vybracFile))
                                 },
                             text = pdfFileName, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary, textAlign = TextAlign.Center
                         )

@@ -156,6 +156,7 @@ fun PadzeiaView(navController: NavHostController) {
             lazyListState.scrollToItem(initPosition)
         }
     }
+    val removePadzea = stringResource(R.string.remove_padzea)
     if (deliteAll) {
         DialogDelitePadsei(onDismiss = { deliteAll = false }, onDelOld = {
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -222,7 +223,7 @@ fun PadzeiaView(navController: NavHostController) {
                     if (file.exists()) file.delete()
                 }
                 listPadzeia.clear()
-                Toast.makeText(context, context.getString(R.string.remove_padzea), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, removePadzea, Toast.LENGTH_SHORT).show()
             }
             deliteAll = false
         })
@@ -409,7 +410,7 @@ fun PadzeiaView(navController: NavHostController) {
                     }
                 }
             }
-            Toast.makeText(context, context.getString(R.string.remove_padzea), Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, removePadzea, Toast.LENGTH_SHORT).show()
             delitePadzia = false
         }) {
             delitePadzia = false
@@ -1044,8 +1045,9 @@ fun AddPadzeia(
                 stringResource(R.string.color_padzei), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
             )
             var expanded1 by remember { mutableStateOf(false) }
+            val sabytieName = stringResource(R.string.sabytie_name)
             LaunchedEffect(padzeia) {
-                padzeia.ifEmpty { textFieldColorState.setTextAndPlaceCursorAtEnd(context.getString(R.string.sabytie_name)) }
+                padzeia.ifEmpty { textFieldColorState.setTextAndPlaceCursorAtEnd(sabytieName) }
             }
             ExposedDropdownMenuBox(
                 modifier = Modifier.padding(10.dp),

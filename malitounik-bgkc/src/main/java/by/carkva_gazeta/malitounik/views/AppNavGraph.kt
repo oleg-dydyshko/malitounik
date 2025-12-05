@@ -630,13 +630,15 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
         ) { stackEntry ->
             val title = stackEntry.arguments?.getString("title") ?: ""
             val context = LocalContext.current
-            val resources = LocalResources.current
             val resurs = stackEntry.arguments?.getString("resurs") ?: "bogashlugbovya_error.html"
+            val error = stringResource(R.string.error_ch2)
+            val data = findCaliandarToDay()
+            val titleCh = stringResource(R.string.czytanne3, data[1].toInt(), LocalResources.current.getStringArray(R.array.meciac_smoll)[2])
             Bogaslujbovyia(
                 navController, title, resurs, navigateTo = { navigate, skipUtran ->
                     when (navigate) {
                         "error" -> {
-                            navigationActions.navigateToBogaslujbovyia(context.getString(R.string.error_ch2), "bogashlugbovya_error.html")
+                            navigationActions.navigateToBogaslujbovyia(error, "bogashlugbovya_error.html")
                         }
 
                         "malitvypasliaprychastia" -> {
@@ -652,10 +654,6 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
                         }
 
                         "cytanne", "cytannedop" -> {
-                            val data = findCaliandarToDay()
-                            val titleCh = context.getString(
-                                R.string.czytanne3, data[1].toInt(), resources.getStringArray(R.array.meciac_smoll)[2]
-                            )
                             val skip = if (skipUtran) -2 else -1
                             viewModel.setPerevod(context, Settings.CHYTANNI_LITURGICHNYIA,if (navigate == "cytanne") data[9] else data[11], Settings.PEREVODSEMUXI)
                             navigationActions.navigateToCytanniList(
@@ -664,10 +662,6 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
                         }
 
                         "cytannesvityx" -> {
-                            val data = findCaliandarToDay()
-                            val titleCh = context.getString(
-                                R.string.czytanne3, data[1].toInt(), resources.getStringArray(R.array.meciac_smoll)[2]
-                            )
                             viewModel.setPerevod(context, Settings.CHYTANNI_LITURGICHNYIA,data[10], Settings.PEREVODSEMUXI)
                             navigationActions.navigateToCytanniList(
                                 titleCh, removeZnakiAndSlovy(data[10]), Settings.CHYTANNI_LITURGICHNYIA, Settings.PEREVODSEMUXI, -1

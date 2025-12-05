@@ -1241,7 +1241,7 @@ fun CytanniList(
                             if (page + 1 in 119..133) kafizma = 18
                             if (page + 1 in 134..142) kafizma = 19
                             if (page + 1 in 143..151) kafizma = 20
-                            subTitle = context.getString(R.string.kafizma2, kafizma)
+                            subTitle = "Катызма $kafizma"
                         }
                     }
                 }
@@ -1413,7 +1413,7 @@ fun CytanniList(
                                 "", sb.toString()
                             )
                             clipboard.setPrimaryClip(clip)
-                            Toast.makeText(context, context.getString(R.string.copy), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, stringResource(R.string.copy), Toast.LENGTH_SHORT).show()
                         }
                         if (isShareMode) {
                             val sendIntent = Intent()

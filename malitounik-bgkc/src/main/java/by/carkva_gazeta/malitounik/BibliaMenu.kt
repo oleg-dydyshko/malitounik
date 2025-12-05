@@ -1215,9 +1215,10 @@ fun BibliaMenu(
                         }
                     }
                 }
+                val malitvaPered = stringResource(R.string.malitva_pered)
                 TextButton(
                     onClick = {
-                        navigateToBogaslujbovyia(context.getString(R.string.malitva_pered), "nadsan_pered.html")
+                        navigateToBogaslujbovyia(malitvaPered, "nadsan_pered.html")
                     },
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
@@ -1233,9 +1234,10 @@ fun BibliaMenu(
                 ) {
                     Text(stringResource(R.string.malitva_pered), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
                 }
+                val malitvaPosle = stringResource(R.string.malitva_posle)
                 TextButton(
                     onClick = {
-                        navigateToBogaslujbovyia(context.getString(R.string.malitva_posle), "nadsan_posle.html")
+                        navigateToBogaslujbovyia(malitvaPosle, "nadsan_posle.html")
                     },
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
@@ -1296,12 +1298,13 @@ fun BibliaMenu(
                 ) {
                     Column {
                         for (i in 1..9) {
+                            val pesnia = stringResource(R.string.pesnia, i)
                             Row(
                                 modifier = Modifier
                                     .padding(start = 10.dp)
                                     .clickable {
                                         navigationActions.navigateToBogaslujbovyia(
-                                            context.getString(R.string.pesnia, i),
+                                            pesnia,
                                             when (i) {
                                                 1 -> "nadsan_pesni_1.html"
                                                 2 -> "nadsan_pesni_2.html"

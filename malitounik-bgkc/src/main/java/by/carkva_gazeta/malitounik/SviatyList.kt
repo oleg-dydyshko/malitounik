@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -65,6 +66,11 @@ fun SviatyList(navController: NavHostController, innerPadding: PaddingValues) {
                         Icon(
                             modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
                         )
+                        val dvunadSv= stringResource(R.string.dvunad_sv)
+                        val vialSv= stringResource(R.string.vial_sv)
+                        val dniYspaminPam= stringResource(R.string.dni_yspamin_pam)
+                        val carkvaPamiatData= stringResource(R.string.carkva_pamiat_data)
+                        val parafiaSv= stringResource(R.string.parafia_sv)
                         Column {
                             if (index == 0) {
                                 val title = when (i) {
@@ -73,23 +79,23 @@ fun SviatyList(navController: NavHostController, innerPadding: PaddingValues) {
                                     }
 
                                     2 -> {
-                                        context.getString(R.string.dvunad_sv)
+                                        dvunadSv
                                     }
 
                                     3 -> {
-                                        context.getString(R.string.vial_sv)
+                                        vialSv
                                     }
 
                                     4 -> {
-                                        context.getString(R.string.dni_yspamin_pam)
+                                        dniYspaminPam
                                     }
 
                                     5 -> {
-                                        context.getString(R.string.carkva_pamiat_data)
+                                        carkvaPamiatData
                                     }
 
                                     6 -> {
-                                        context.getString(R.string.parafia_sv)
+                                        parafiaSv
                                     }
 
                                     else -> {

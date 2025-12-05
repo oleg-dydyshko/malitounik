@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -61,6 +62,7 @@ fun HtmlText(
     )
     val uriHandler = LocalUriHandler.current
     val textLayout = remember { mutableStateOf<TextLayoutResult?>(null) }
+    val error = stringResource(R.string.error_ch)
     val annotatedString = AnnotatedString.fromHtml(
         newText,
         TextLinkStyles(
@@ -321,7 +323,7 @@ fun HtmlText(
                     }
                 }
 
-                else -> Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
+                else -> Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
             }
         } else {
             uriHandler.openUri(url)

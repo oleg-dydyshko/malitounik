@@ -381,12 +381,12 @@ class WidgetMun : GlanceAppWidgetReceiver() {
             val pIntent = PendingIntent.getBroadcast(context, 60, intent, PendingIntent.FLAG_IMMUTABLE or 0)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 if (alarmManager.canScheduleExactAlarms()) {
-                    alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
+                    alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(0), pIntent)
                 } else {
-                    alarmManager.set(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, mkTime(0), pIntent)
                 }
             } else {
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(0), pIntent)
             }
         }
     }
@@ -419,9 +419,9 @@ class WidgetMun : GlanceAppWidgetReceiver() {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val pIntent = PendingIntent.getBroadcast(context, 60, intent, PendingIntent.FLAG_IMMUTABLE or 0)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
-            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
+            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(0), pIntent)
         } else {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(), pIntent)
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mkTime(0), pIntent)
         }
     }
 
@@ -438,7 +438,7 @@ class WidgetMun : GlanceAppWidgetReceiver() {
         alarmManager.cancel(pReset)
     }
 
-    private fun mkTime(addDate: Int = 0): Long {
+    private fun mkTime(addDate: Int): Long {
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.DATE, addDate)
         calendar.set(Calendar.HOUR_OF_DAY, 0)

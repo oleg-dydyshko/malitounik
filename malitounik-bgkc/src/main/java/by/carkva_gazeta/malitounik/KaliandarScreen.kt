@@ -590,6 +590,8 @@ fun SetPadzeia(title: String, apisanne: String, color: Int, raznica: Boolean, re
 
 fun removeZnakiAndSlovy(ctenie: String): String {
     var cytanne = ctenie
+    val t1 = cytanne.indexOf(":")
+    if (t1 != -1) cytanne = cytanne.substring(t1 + 1)
     cytanne = cytanne.replace("\n", ";")
     cytanne = cytanne.replace("[", "")
     cytanne = cytanne.replace("?", "")
