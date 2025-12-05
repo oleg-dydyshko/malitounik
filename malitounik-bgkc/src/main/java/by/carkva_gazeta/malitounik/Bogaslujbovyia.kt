@@ -791,9 +791,9 @@ fun Bogaslujbovyia(
             else textLayout?.layoutInput?.text?.text
             sent?.let { shareText ->
                 if (!isTextFound) {
-                    val clip = ClipData.newPlainText(context.getString(R.string.copy_text), shareText)
+                    val clip = ClipData.newPlainText(stringResource(R.string.copy_text), shareText)
                     clipboard.setPrimaryClip(clip)
-                    Toast.makeText(context, context.getString(R.string.copy), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, stringResource(R.string.copy), Toast.LENGTH_SHORT).show()
                 }
                 val sendIntent = Intent(Intent.ACTION_SEND)
                 sendIntent.putExtra(Intent.EXTRA_TEXT, shareText)
@@ -965,7 +965,9 @@ fun Bogaslujbovyia(
                                     }
                                 } else {
                                     Icon(
-                                        modifier = Modifier.padding(10.dp).size(24.dp),
+                                        modifier = Modifier
+                                            .padding(10.dp)
+                                            .size(24.dp),
                                         painter = painterResource(R.drawable.empty),
                                         contentDescription = ""
                                     )
@@ -984,7 +986,9 @@ fun Bogaslujbovyia(
                                     }
                                 } else {
                                     Icon(
-                                        modifier = Modifier.padding(10.dp).size(24.dp),
+                                        modifier = Modifier
+                                            .padding(10.dp)
+                                            .size(24.dp),
                                         painter = painterResource(R.drawable.empty),
                                         contentDescription = ""
                                     )
@@ -1431,6 +1435,21 @@ fun Bogaslujbovyia(
                             isScrollRun = false
                             if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
                             return super.onPostFling(consumed, available)
+                        }
+
+                        override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
+                            if (viewModel.result.isNotEmpty()) {
+                                textLayout?.let {
+                                    val firstTextPosition = it.getLineStart(it.getLineForVerticalPosition(viewModel.scrollState.value.toFloat()))
+                                    for (i in viewModel.result.indices) {
+                                        if (viewModel.result[i][0] == firstTextPosition) {
+                                            viewModel.resultPosition = i
+                                            break
+                                        }
+                                    }
+                                }
+                            }
+                            return super.onPostScroll(consumed, available, source)
                         }
                     }
                 }
