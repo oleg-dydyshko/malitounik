@@ -1441,10 +1441,14 @@ fun Bogaslujbovyia(
                             if (viewModel.result.isNotEmpty()) {
                                 textLayout?.let {
                                     val firstTextPosition = it.getLineStart(it.getLineForVerticalPosition(viewModel.scrollState.value.toFloat()))
-                                    for (i in viewModel.result.indices) {
-                                        if (viewModel.result[i][0] == firstTextPosition) {
-                                            viewModel.resultPosition = i
-                                            break
+                                    if (firstTextPosition < viewModel.result[0][0]) {
+                                        viewModel.resultPosition = -1
+                                    } else {
+                                        for (i in viewModel.result.indices) {
+                                            if (viewModel.result[i][0] == firstTextPosition) {
+                                                viewModel.resultPosition = i
+                                                break
+                                            }
                                         }
                                     }
                                 }
