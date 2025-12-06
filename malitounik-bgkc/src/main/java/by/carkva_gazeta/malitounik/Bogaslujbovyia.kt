@@ -1464,7 +1464,7 @@ fun Bogaslujbovyia(
                     if (viewModel.searchText && viewModel.result.isNotEmpty()) {
                         Text(
                             modifier = Modifier.padding(10.dp),
-                            text = stringResource(R.string.searh_text_result, viewModel.resultPosition + 1, viewModel.result.size),
+                            text = stringResource(R.string.searh_text_result, if (viewModel.resultPosition == -1) 1 else viewModel.resultPosition + 1, viewModel.result.size),
                             fontStyle = FontStyle.Italic,
                             fontSize = Settings.fontInterface.sp,
                             color = MaterialTheme.colorScheme.secondary
