@@ -191,9 +191,9 @@ class BogaslujbovyiaViewModel : ViewModel() {
                     withContext(Dispatchers.IO) {
                         result.clear()
                         resultPosition = 0
-                        result.addAll(findAllAsanc(AnnotatedString.fromHtml(htmlText).text, searshString.text))
+                        val opiginalText = AnnotatedString.fromHtml(htmlText)
+                        result.addAll(findAllAsanc(opiginalText.text, searshString.text))
                         if (result.isNotEmpty()) {
-                            val opiginalText = layout.layoutInput.text
                             val annotatedString = buildAnnotatedString {
                                 append(opiginalText)
                                 for (i in result.indices) {
