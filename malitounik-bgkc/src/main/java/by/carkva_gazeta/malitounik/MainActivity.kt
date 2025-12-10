@@ -103,7 +103,7 @@ object Settings {
     const val PEREVODBOKUNA = "4"
     const val PEREVODCARNIAUSKI = "5"
     const val PEREVODCATOLIK = "6"
-    const val PEREVODNEWKINGJAMES = "7"
+    const val PEREVODNEWAMERICANBIBLE = "7"
     const val MODE_NIGHT_SYSTEM = 1
     const val MODE_NIGHT_NO = 2
     const val MODE_NIGHT_YES = 3
@@ -1076,13 +1076,22 @@ fun getFontInterface(context: Context): Float {
     return k.getFloat("fontSizeInterface", 20f)
 }
 
+/*class DBHelper : SQLiteOpenHelper {
+    constructor(context: Context) : super(context, "NABRE.db", null, 1)
+
+    override fun onCreate(db: SQLiteDatabase?) {
+    }
+
+    override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
+    }
+}*/
+
 class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMaryia.ServiceRadyjoMaryiaListener {
     private var backPressed: Long = 0
     private var isGesture = false
     var savedInstanceState: Bundle? = null
     var isConnectServise = false
     var mRadyjoMaryiaService: ServiceRadyjoMaryia? = null
-    //var bibleJob: Job? = null
     val mConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             val binder = service as ServiceRadyjoMaryia.ServiceRadyjoMaryiaBinder
@@ -1132,9 +1141,87 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) {
             setlightSensor()
         }
-        if (k.getBoolean("power", false)) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        try {
+            if (k.getBoolean("power", false)) {
+                window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            }
+        } catch (_: ClassCastException) {
+            k.edit {
+                remove("power")
+            }
         }
+        /*val dir = File("$filesDir/NewKingJames")
+        if (dir.exists()) dir.deleteRecursively()
+        val dbHelper = DBHelper(this)
+        val db = dbHelper.readableDatabase
+        val cKnigi = db.query("books", arrayOf("book_number", "long_name"), null, null, null, null, "book_number")
+        val listBookNumber = ArrayList<Int>()
+        val listSb = StringBuilder()
+        val listSb2 = StringBuilder()
+        listSb.append("<string-array name=\"englishn\">\n")
+        listSb2.append("<string-array name=\"englishs\">\n")
+        if (cKnigi.moveToFirst()) {
+            val bookNumberIndex = cKnigi.getColumnIndex("book_number")
+            val longNameIndex = cKnigi.getColumnIndex("long_name")
+            do {
+                val bookNumber = cKnigi.getInt(bookNumberIndex)
+                val longName = cKnigi.getString(longNameIndex)
+                if (bookNumber >= 470) listSb.append("<item>$longName</item>\n")
+                else listSb2.append("<item>$longName</item>\n")
+                listBookNumber.add(bookNumber)
+            } while (cKnigi.moveToNext())
+        }
+        listSb.append("</string-array>")
+        listSb2.append("</string-array>")
+        /*val filen = File("$filesDir/englishnTitle.txt")
+        filen.writer().use {
+            it.write(listSb.toString())
+        }
+        val files = File("$filesDir/englishsTitle.txt")
+        files.writer().use {
+            it.write(listSb2.toString().trimEnd())
+        }*/
+        cKnigi.close()
+        var knigaFileN = 1
+        var knigaFileS = 1
+        for (book in listBookNumber.indices) {
+            val result = StringBuilder("")
+            var bookNumber = 10
+            val c = db.query("verses", null, "book_number = ${listBookNumber[book]}", null, null, null, "chapter")
+            if (c.moveToFirst()) {
+                val bookNumberIndex = c.getColumnIndex("book_number")
+                val verseIndex = c.getColumnIndex("verse")
+                val textIndex = c.getColumnIndex("text")
+                do {
+                    bookNumber = c.getInt(bookNumberIndex)
+                    val verse = c.getInt(verseIndex)
+                    var text = c.getString(textIndex)
+                    if (verse == 1) result.append("\n===\n")
+                    while (true) {
+                        val t1 = text.indexOf("<f>")
+                        val t2 = text.indexOf("</f>")
+                        if (t1 != -1 && t2 != -1) {
+                            text = text.take(t1) + text.substring(t2 + 4)
+                        } else break
+                    }
+                    text = text.replace("<br/>", "")
+                    text = text.replace("<pb/>", "")
+                    text = text.replace("<t>", "")
+                    text = text.replace("</t>", "").trim()
+                    result.append("$verse $text\n")
+                } while (c.moveToNext())
+            }
+            c.close()
+            val file = if (bookNumber >= 470) File("$filesDir/englishn${knigaFileN}.txt")
+            else File("$filesDir/englishs${knigaFileS}.txt")
+            if (bookNumber >= 470) knigaFileN++
+            else knigaFileS++
+            file.writer().use {
+                it.write(result.toString().trimEnd())
+            }
+            Log.d("Oleg", "$bookNumber")
+        }
+        dbHelper.close()*/
         /*if (bibleJob?.isActive != true) {
             bibleJob = CoroutineScope(Dispatchers.IO).launch {
                 withContext(Dispatchers.IO) {

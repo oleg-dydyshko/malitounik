@@ -644,15 +644,20 @@
         <item>2 Хронікаў</item>
         <item>Эздры</item>
         <item>Нэгэміі</item>
+        <item>Тобіі</item>
+        <item>Юдыт</item>
         <item>Эстэр</item>
         <item>Ёва</item>
         <item>Псальмаў</item>
         <item>Выслоўяў</item>
         <item>Эклезіяста</item>
         <item>Песня з Песняў</item>
+        <item>Мудрасці</item>
+        <item>Эклезіясціка</item>
         <item>Ісаі</item>
         <item>Ярэміі</item>
         <item>Ламентацыі</item>
+        <item>Баруха</item>
         <item>Эзэкіэля</item>
         <item>Даніэля</item>
         <item>Осіі</item>
@@ -667,11 +672,6 @@
         <item>Агэя</item>
         <item>Захарыі</item>
         <item>Малахіі</item>
-        <item>Тобіі</item>
-        <item>Юдыт</item>
-        <item>Мудрасці</item>
-        <item>Эклезіясціка</item>
-        <item>Баруха</item>
         <item>1 Макабэяў</item>
         <item>2 Макабэяў</item>
     </string-array>
@@ -802,15 +802,20 @@
         <item>2 Chronicles</item>
         <item>Ezra</item>
         <item>Nehemiah</item>
+        <item>Tobit</item>
+        <item>Judith</item>
         <item>Esther</item>
         <item>Job</item>
         <item>Psalms</item>
         <item>Proverbs</item>
         <item>Ecclesiastes</item>
         <item>Song of Solomon</item>
+        <item>Wisdom</item>
+        <item>Sirach</item>
         <item>Isaiah</item>
         <item>Jeremiah</item>
         <item>Lamentations</item>
+        <item>Baruch</item>
         <item>Ezekiel</item>
         <item>Daniel</item>
         <item>Hosea</item>
@@ -825,9 +830,11 @@
         <item>Haggai</item>
         <item>Zechariah</item>
         <item>Malachi</item>
+        <item>1 Maccabees</item>
+        <item>2 Maccabees</item>
     </string-array>
-    <string name="perevod_new_king_james">BIBLE: (New King James Version)</string>
-    <string name="perevod_new_king_james_2">New King James Version</string>
+    <string name="perevod_new_american_bible">BIBLE: (The New American Bible)</string>
+    <string name="perevod_new_american_bible_2">The New American Bible</string>
     <string name="perevody">Пераклады Бібліі</string>
     <string name="biblia_error">Кніга альбо разьдзел не існуе.</string>
     <string name="print">Раздрукаваць</string>

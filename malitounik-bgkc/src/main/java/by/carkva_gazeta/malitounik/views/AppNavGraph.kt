@@ -455,8 +455,8 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
             )
         }
 
-        composable(AllDestinations.BIBLIA_NEW_KING_JAMES) {
-            Settings.destinations = AllDestinations.BIBLIA_NEW_KING_JAMES
+        composable(AllDestinations.BIBLIA_NEW_AMERICAN_BIBLE) {
+            Settings.destinations = AllDestinations.BIBLIA_NEW_AMERICAN_BIBLE
             MainConteiner(
                 navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
             )
@@ -987,7 +987,7 @@ fun MainConteiner(
                             Settings.PEREVODCATOLIK -> "catolik"
                             Settings.PEREVODNADSAN -> "nadsan"
                             Settings.PEREVODSINOIDAL -> "sinaidal"
-                            Settings.PEREVODNEWKINGJAMES -> "english"
+                            Settings.PEREVODNEWAMERICANBIBLE -> "english"
                             else -> "biblia"
                         }
                         val file = File("${context.filesDir}/vybranoe_${prevodName}.json")
@@ -1066,8 +1066,8 @@ fun MainConteiner(
                                 navigationActions.navigateToBibliaSinodal()
                             }
 
-                            AllDestinations.BIBLIA_NEW_KING_JAMES -> {
-                                navigationActions.navigateToBibliaNewKingJames()
+                            AllDestinations.BIBLIA_NEW_AMERICAN_BIBLE -> {
+                                navigationActions.navigateToBibliaNewAmericanBible()
                             }
 
                             AllDestinations.VYBRANAE_LIST -> navigationActions.navigateToVybranaeList()
@@ -1137,7 +1137,7 @@ fun MainConteiner(
             AllDestinations.BIBLIA_CHARNIAUSKI -> stringResource(R.string.title_biblia_charniauski)
             AllDestinations.BIBLIA_CATOLIK -> stringResource(R.string.title_biblia_catolik)
             AllDestinations.BIBLIA_SINODAL -> stringResource(R.string.bsinaidal)
-            AllDestinations.BIBLIA_NEW_KING_JAMES -> stringResource(R.string.perevod_new_king_james)
+            AllDestinations.BIBLIA_NEW_AMERICAN_BIBLE -> stringResource(R.string.perevod_new_american_bible)
             AllDestinations.PIASOCHNICA_LIST -> stringResource(R.string.pasochnica)
             else -> ""
         }
@@ -1275,7 +1275,7 @@ fun MainConteiner(
                         }
                         if (isIconSort) {
                             var titleSort: String
-                            val painter = if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.BIBLIA_SEMUXA || currentRoute == AllDestinations.BIBLIA_BOKUNA || currentRoute == AllDestinations.BIBLIA_NADSAN || currentRoute == AllDestinations.BIBLIA_CHARNIAUSKI || currentRoute == AllDestinations.BIBLIA_SINODAL || currentRoute == AllDestinations.BIBLIA_CATOLIK || currentRoute == AllDestinations.BIBLIA_NEW_KING_JAMES) {
+                            val painter = if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.BIBLIA_SEMUXA || currentRoute == AllDestinations.BIBLIA_BOKUNA || currentRoute == AllDestinations.BIBLIA_NADSAN || currentRoute == AllDestinations.BIBLIA_CHARNIAUSKI || currentRoute == AllDestinations.BIBLIA_SINODAL || currentRoute == AllDestinations.BIBLIA_CATOLIK || currentRoute == AllDestinations.BIBLIA_NEW_AMERICAN_BIBLE) {
                                 if (sortedVybranae == Settings.SORT_BY_TIME) {
                                     titleSort = stringResource(R.string.sort_abc)
                                     painterResource(R.drawable.sort_by_az)
@@ -1300,7 +1300,7 @@ fun MainConteiner(
                                     sortedNatatki = if (sortedNatatki == Settings.SORT_BY_ABC) Settings.SORT_BY_TIME
                                     else Settings.SORT_BY_ABC
                                     k.edit {
-                                        if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.BIBLIA_SEMUXA || currentRoute == AllDestinations.BIBLIA_BOKUNA || currentRoute == AllDestinations.BIBLIA_NADSAN || currentRoute == AllDestinations.BIBLIA_CHARNIAUSKI || currentRoute == AllDestinations.BIBLIA_SINODAL || currentRoute == AllDestinations.BIBLIA_CATOLIK || currentRoute == AllDestinations.BIBLIA_NEW_KING_JAMES) {
+                                        if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.BIBLIA_SEMUXA || currentRoute == AllDestinations.BIBLIA_BOKUNA || currentRoute == AllDestinations.BIBLIA_NADSAN || currentRoute == AllDestinations.BIBLIA_CHARNIAUSKI || currentRoute == AllDestinations.BIBLIA_SINODAL || currentRoute == AllDestinations.BIBLIA_CATOLIK || currentRoute == AllDestinations.BIBLIA_NEW_AMERICAN_BIBLE) {
                                             putInt(
                                                 "sortedVybranae", sortedVybranae
                                             )
@@ -1912,10 +1912,10 @@ fun MainConteiner(
                         }, viewModel)
                     }
 
-                    AllDestinations.BIBLIA_NEW_KING_JAMES -> {
+                    AllDestinations.BIBLIA_NEW_AMERICAN_BIBLE -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        BibliaMenu(navController, Settings.PEREVODNEWKINGJAMES, innerPadding, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
+                        BibliaMenu(navController, Settings.PEREVODNEWAMERICANBIBLE, innerPadding, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
                             isIconSort = isIconSortVisibility
                         }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
                             viewModel.setPerevod(context, biblia,chytanne, perevod2)

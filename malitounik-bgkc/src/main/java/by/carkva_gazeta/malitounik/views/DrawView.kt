@@ -386,10 +386,10 @@ fun DrawView(
                     }
                     if (k.getBoolean("newkingjames_bible", false)) {
                         NavigationItem(
-                            label = stringResource(id = R.string.perevod_new_king_james),
-                            selected = route == AllDestinations.BIBLIA_NEW_KING_JAMES,
+                            label = stringResource(id = R.string.perevod_new_american_bible),
+                            selected = route == AllDestinations.BIBLIA_NEW_AMERICAN_BIBLE,
                             onClick = {
-                                navigateToRazdel(AllDestinations.BIBLIA_NEW_KING_JAMES)
+                                navigateToRazdel(AllDestinations.BIBLIA_NEW_AMERICAN_BIBLE)
                             },
                             icon = {
                                 Icon(

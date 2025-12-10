@@ -49,8 +49,8 @@ fun biblia(
                 "/Sinodal/sinaidal"
             }
 
-            Settings.PEREVODNEWKINGJAMES -> {
-                "/NewKingJames/english"
+            Settings.PEREVODNEWAMERICANBIBLE -> {
+                "/NewAmericanBible/english"
             }
 
             else -> {
@@ -60,7 +60,7 @@ fun biblia(
         fileName = "$prevodName$zavet${knigaNew + 1}.txt"
     }
     val isPsaltyrGreek = perevodNew == Settings.PEREVODSEMUXI || perevodNew == Settings.PEREVODNADSAN || perevodNew == Settings.PEREVODSINOIDAL
-    val listGlav = if (perevod == Settings.PEREVODSINOIDAL || perevod == Settings.PEREVODCATOLIK || perevod == Settings.PEREVODNEWKINGJAMES) {
+    val listGlav = if (perevod == Settings.PEREVODSINOIDAL || perevod == Settings.PEREVODCATOLIK || perevod == Settings.PEREVODNEWAMERICANBIBLE) {
         openBibleResources(context, fileName).split("===")
     } else {
         openAssetsResources(context, fileName).split("===")
@@ -136,28 +136,27 @@ fun biblia(
 fun getTranslate(context: Context, kniga: Int, glava: Int, styx: Int, originalList: List<String>, perevod: String): String {
     var result = ""
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-    if (!k.getBoolean("newkingjames_translate", false) || perevod != Settings.PEREVODNEWKINGJAMES) return result
-    val knigaNew = getRealBook(kniga, Settings.PEREVODBOKUNA)
+    if (!k.getBoolean("newkingjames_translate", false) || perevod != Settings.PEREVODNEWAMERICANBIBLE) return result
+    val knigaNew = getRealBook(kniga, Settings.PEREVODCARNIAUSKI)
     val zavet = if (kniga >= 50) {
         "n"
     } else {
         "s"
     }
-    val fileName = "chytanne/Bokun/bokuna$zavet${knigaNew + 1}.txt"
+    val fileName = "chytanne/Carniauski/carniauski$zavet${knigaNew + 1}.txt"
     val listGlav = openAssetsResources(context, fileName).split("===")
     val spisStyxov = listGlav[glava].trim().split("\n")
-    val charniauskiSize = spisStyxov.size
     for (mystyx in originalList.indices) {
         if (styx == mystyx) {
-            if (originalList.size != charniauskiSize) {
+            if (originalList.size < spisStyxov.size) {
                 if (styx == 0) {
-                    result = spisStyxov[1]
+                    continue
                 }
-                if (styx > 0) {
-                    result = spisStyxov[mystyx + 1]
-                }
-            } else {
                 result = spisStyxov[mystyx]
+            } else {
+                if (mystyx < spisStyxov.size - 1) {
+                    result = spisStyxov[mystyx]
+                }
             }
             break
         }
@@ -206,7 +205,7 @@ fun getRealBook(kniga: Int, perevod: String): Int {
             else -> -1
         }
     }
-    if ((perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODNEWKINGJAMES) && kniga < 50) {
+    if ((perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODBOKUNA) && kniga < 50) {
         knigaNew = when (knigaNew) {
             0 -> 0
             1 -> 1
@@ -250,7 +249,7 @@ fun getRealBook(kniga: Int, perevod: String): Int {
             else -> -1
         }
     }
-    if (perevod == Settings.PEREVODCARNIAUSKI && kniga < 50) {
+    if ((perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODNEWAMERICANBIBLE) && kniga < 50) {
         knigaNew = when (knigaNew) {
             0 -> 0
             1 -> 1
@@ -268,34 +267,34 @@ fun getRealBook(kniga: Int, perevod: String): Int {
             13 -> 13
             14 -> 14
             15 -> 15
-            19 -> 16
-            20 -> 17
-            21 -> 18
-            22 -> 19
-            23 -> 20
-            24 -> 21
-            27 -> 22
-            28 -> 23
-            29 -> 24
-            32 -> 25
-            33 -> 26
-            34 -> 27
-            35 -> 28
-            36 -> 29
-            37 -> 30
-            38 -> 31
-            39 -> 32
-            40 -> 33
-            41 -> 34
-            42 -> 35
-            43 -> 36
-            44 -> 37
-            45 -> 38
-            17 -> 39
-            18 -> 40
-            25 -> 41
-            26 -> 42
-            31 -> 43
+            17 -> 16
+            18 -> 17
+            19 -> 18
+            20 -> 19
+            21 -> 20
+            22 -> 21
+            23 -> 22
+            24 -> 23
+            25 -> 24
+            26 -> 25
+            27 -> 26
+            28 -> 27
+            29 -> 28
+            31 -> 29
+            32 -> 30
+            33 -> 31
+            34 -> 32
+            35 -> 33
+            36 -> 34
+            37 -> 35
+            38 -> 36
+            39 -> 37
+            40 -> 38
+            41 -> 39
+            42 -> 40
+            43 -> 41
+            44 -> 42
+            45 -> 43
             46 -> 44
             47 -> 45
             else -> -1
@@ -342,7 +341,7 @@ fun getNameBook(context: Context, kniga: Int, perevod: String, novyZapavet: Bool
     if (perevod == Settings.PEREVODNADSAN) {
         return context.resources.getStringArray(R.array.psalter_list)[0]
     }
-    if (perevod == Settings.PEREVODNEWKINGJAMES) {
+    if (perevod == Settings.PEREVODNEWAMERICANBIBLE) {
         val bookList = if (novyZapavet) {
             context.resources.getStringArray(R.array.englishn)
         } else {
@@ -390,7 +389,7 @@ fun getNameBook(context: Context, perevod: String, novyZapavet: Boolean): Array<
     if (perevod == Settings.PEREVODNADSAN) {
         return context.resources.getStringArray(R.array.psalter_list)
     }
-    if (perevod == Settings.PEREVODNEWKINGJAMES) {
+    if (perevod == Settings.PEREVODNEWAMERICANBIBLE) {
         val bookList = if (novyZapavet) {
             context.resources.getStringArray(R.array.englishn)
         } else {

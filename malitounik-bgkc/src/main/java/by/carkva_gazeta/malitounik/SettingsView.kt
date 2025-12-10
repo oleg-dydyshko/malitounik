@@ -206,7 +206,7 @@ fun SettingsView(navController: NavHostController) {
             if (file.exists()) file.deleteRecursively()
             file = File("${context.filesDir}/Sinodal")
             if (file.exists()) file.deleteRecursively()
-            file = File("${context.filesDir}/NewKingJames")
+            file = File("${context.filesDir}/NewAmericanBible")
             if (file.exists()) file.deleteRecursively()
         }) {
             dialodClearChache = false
@@ -675,7 +675,7 @@ fun SettingsView(navController: NavHostController) {
                             newkingjamesState = !newkingjamesState
                             k.edit {
                                 putBoolean("newkingjames_bible", newkingjamesState)
-                                if (!newkingjamesState && k.getString("perevodMaranata", Settings.PEREVODSEMUXI) == Settings.PEREVODNEWKINGJAMES) {
+                                if (!newkingjamesState && k.getString("perevodMaranata", Settings.PEREVODSEMUXI) == Settings.PEREVODNEWAMERICANBIBLE) {
                                     putString("perevodMaranata", Settings.PEREVODSEMUXI)
                                 }
                                 if (newkingjamesState) {
@@ -684,16 +684,16 @@ fun SettingsView(navController: NavHostController) {
                                 }
                             }
                             if (newkingjamesState) {
-                                val dir = File("${context.filesDir}/NewKingJames")
+                                val dir = File("${context.filesDir}/NewAmericanBible")
                                 if (!dir.exists()) {
-                                    perevod = Settings.PEREVODNEWKINGJAMES
+                                    perevod = Settings.PEREVODNEWAMERICANBIBLE
                                     dialogDownLoad = true
                                 }
                             }
                         }
                         .padding(vertical = 5.dp)) {
                     Text(
-                        stringResource(R.string.perevod_new_king_james), modifier = Modifier
+                        stringResource(R.string.perevod_new_american_bible), modifier = Modifier
                             .weight(1f)
                             .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
                     )
@@ -702,7 +702,7 @@ fun SettingsView(navController: NavHostController) {
                             newkingjamesState = it
                             k.edit {
                                 putBoolean("newkingjames_bible", newkingjamesState)
-                                if (!newkingjamesState && k.getString("perevodMaranata", Settings.PEREVODSEMUXI) == Settings.PEREVODNEWKINGJAMES) {
+                                if (!newkingjamesState && k.getString("perevodMaranata", Settings.PEREVODSEMUXI) == Settings.PEREVODNEWAMERICANBIBLE) {
                                     putString("perevodMaranata", Settings.PEREVODSEMUXI)
                                 }
                                 if (newkingjamesState) {
@@ -711,9 +711,9 @@ fun SettingsView(navController: NavHostController) {
                                 }
                             }
                             if (newkingjamesState) {
-                                val dir = File("${context.filesDir}/NewKingJames")
+                                val dir = File("${context.filesDir}/NewAmericanBible")
                                 if (!dir.exists()) {
-                                    perevod = Settings.PEREVODNEWKINGJAMES
+                                    perevod = Settings.PEREVODNEWAMERICANBIBLE
                                     dialogDownLoad = true
                                 }
                             }

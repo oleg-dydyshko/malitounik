@@ -76,7 +76,7 @@ fun BibliaList(
         Settings.PEREVODCATOLIK -> stringResource(R.string.title_biblia_catolik)
         Settings.PEREVODNADSAN -> stringResource(R.string.title_psalter)
         Settings.PEREVODSINOIDAL -> stringResource(R.string.bsinaidal)
-        Settings.PEREVODNEWKINGJAMES -> stringResource(R.string.perevod_new_king_james)
+        Settings.PEREVODNEWAMERICANBIBLE -> stringResource(R.string.perevod_new_american_bible)
         else -> stringResource(R.string.title_biblia)
     }
     val context = LocalContext.current
@@ -102,7 +102,7 @@ fun BibliaList(
                     "catolik"
                 }
                 Settings.PEREVODSINOIDAL -> "sinaidal"
-                Settings.PEREVODNEWKINGJAMES -> "english"
+                Settings.PEREVODNEWAMERICANBIBLE -> "english"
                 else -> "biblia"
             }
             val knigaText = k.getString("bible_time_${prevodName}_kniga", defKniga) ?: defKniga
@@ -340,7 +340,7 @@ fun bibleCount(context: Context, perevod: String, isNovyZapavet: Boolean): Array
             }
         }
 
-        Settings.PEREVODNEWKINGJAMES -> {
+        Settings.PEREVODNEWAMERICANBIBLE -> {
             if (isNovyZapavet) {
                 val list = context.resources.getStringArray(R.array.englishn)
                 result.addAll(setNovyZapavet(list, perevod))
@@ -413,13 +413,13 @@ fun bibleCount(kniga: Int, perevod: String): Int {
         29 -> 5
         30 -> 1
         31 -> {
-            if (perevod == Settings.PEREVODCARNIAUSKI) 6
+            if (perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODNEWAMERICANBIBLE) 6
             else 5
         }
 
         32 -> 48
         33 -> {
-            if (perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODSINOIDAL) 14
+            if (perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODSINOIDAL || perevod == Settings.PEREVODNEWAMERICANBIBLE) 14
             else 12
         }
         34 -> 14
@@ -492,74 +492,100 @@ fun setStaryZapavet(list: Array<String>, perevod: String): ArrayList<BibliaList>
     result.add(BibliaList(list[13], "2 Лет", bibleCount(knigaBiblii("2 Лет"), perevod)))
     result.add(BibliaList(list[14], "1 Эзд", 10))
     result.add(BibliaList(list[15], "Нээм", 13))
-    if (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODNEWKINGJAMES) {
-        result.add(BibliaList(list[16], "Эст", 10))
-        result.add(BibliaList(list[17], "Ёва", 42))
-        result.add(BibliaList(list[18], "Пс", bibleCount(knigaBiblii("Пс"), perevod)))
-        result.add(BibliaList(list[19], "Высл", 31))
-        result.add(BibliaList(list[20], "Экл", 12))
-        result.add(BibliaList(list[21], "Псн", 8))
-        result.add(BibliaList(list[22], "Іс", 66))
-        result.add(BibliaList(list[23], "Ер", 52))
-        result.add(BibliaList(list[24], "Плач", 5))
-        result.add(BibliaList(list[25], "Езк", 48))
-        result.add(BibliaList(list[26], "Дан", bibleCount(knigaBiblii("Дан"), perevod)))
-        result.add(BibliaList(list[27], "Ас", 14))
-        result.add(BibliaList(list[28], "Ёіл", 3))
-        result.add(BibliaList(list[29], "Ам", 9))
-        result.add(BibliaList(list[30], "Аўдз", 1))
-        result.add(BibliaList(list[31], "Ёны", 4))
-        result.add(BibliaList(list[32], "Міх", 7))
-        result.add(BibliaList(list[33], "Нвм", 3))
-        result.add(BibliaList(list[34], "Абк", 3))
-        result.add(BibliaList(list[35], "Саф", 3))
-        result.add(BibliaList(list[36], "Аг", 2))
-        result.add(BibliaList(list[37], "Зах", 14))
-        result.add(BibliaList(list[38], "Мал", 4))
-        if (perevod == Settings.PEREVODCARNIAUSKI) {
-            result.add(BibliaList(list[39], "Тав", 14))
-            result.add(BibliaList(list[40], "Юдт", 16))
-            result.add(BibliaList(list[41], "Мдр", 19))
-            result.add(BibliaList(list[42], "Сір", 51))
-            result.add(BibliaList(list[43], "Вар", 6))
+    when (perevod) {
+        Settings.PEREVODSEMUXI, Settings.PEREVODBOKUNA -> {
+            result.add(BibliaList(list[16], "Эст", 10))
+            result.add(BibliaList(list[17], "Ёва", 42))
+            result.add(BibliaList(list[18], "Пс", bibleCount(knigaBiblii("Пс"), perevod)))
+            result.add(BibliaList(list[19], "Высл", 31))
+            result.add(BibliaList(list[20], "Экл", 12))
+            result.add(BibliaList(list[21], "Псн", 8))
+            result.add(BibliaList(list[22], "Іс", 66))
+            result.add(BibliaList(list[23], "Ер", 52))
+            result.add(BibliaList(list[24], "Плач", 5))
+            result.add(BibliaList(list[25], "Езк", 48))
+            result.add(BibliaList(list[26], "Дан", bibleCount(knigaBiblii("Дан"), perevod)))
+            result.add(BibliaList(list[27], "Ас", 14))
+            result.add(BibliaList(list[28], "Ёіл", 3))
+            result.add(BibliaList(list[29], "Ам", 9))
+            result.add(BibliaList(list[30], "Аўдз", 1))
+            result.add(BibliaList(list[31], "Ёны", 4))
+            result.add(BibliaList(list[32], "Міх", 7))
+            result.add(BibliaList(list[33], "Нвм", 3))
+            result.add(BibliaList(list[34], "Абк", 3))
+            result.add(BibliaList(list[35], "Саф", 3))
+            result.add(BibliaList(list[36], "Аг", 2))
+            result.add(BibliaList(list[37], "Зах", 14))
+            result.add(BibliaList(list[38], "Мал", 4))
+        }
+        Settings.PEREVODCARNIAUSKI, Settings.PEREVODNEWAMERICANBIBLE -> {
+            result.add(BibliaList(list[16], "Тав", 14))
+            result.add(BibliaList(list[17], "Юдт", 16))
+            result.add(BibliaList(list[18], "Эст", 10))
+            result.add(BibliaList(list[19], "Ёва", 42))
+            result.add(BibliaList(list[20], "Пс", 150))
+            result.add(BibliaList(list[21], "Высл", 31))
+            result.add(BibliaList(list[22], "Экл", 12))
+            result.add(BibliaList(list[23], "Псн", 8))
+            result.add(BibliaList(list[24], "Мдр", 19))
+            result.add(BibliaList(list[25], "Сір", 51))
+            result.add(BibliaList(list[26], "Іс", 66))
+            result.add(BibliaList(list[27], "Ер", 52))
+            result.add(BibliaList(list[28], "Плач", 5))
+            result.add(BibliaList(list[29], "Вар", 6))
+            result.add(BibliaList(list[30], "Езк", 48))
+            result.add(BibliaList(list[31], "Дан", 14))
+            result.add(BibliaList(list[32], "Ас", 14))
+            result.add(BibliaList(list[33], "Ёіл", 3))
+            result.add(BibliaList(list[34], "Ам", 9))
+            result.add(BibliaList(list[35], "Аўдз", 1))
+            result.add(BibliaList(list[36], "Ёны", 4))
+            result.add(BibliaList(list[37], "Міх", 7))
+            result.add(BibliaList(list[38], "Нвм", 3))
+            result.add(BibliaList(list[39], "Абк", 3))
+            result.add(BibliaList(list[40], "Саф", 3))
+            result.add(BibliaList(list[41], "Аг", 2))
+            result.add(BibliaList(list[42], "Зах", 14))
+            result.add(BibliaList(list[43], "Мал", 4))
             result.add(BibliaList(list[44], "1 Мак", 16))
             result.add(BibliaList(list[45], "2 Мак", 15))
         }
-    } else {
-        result.add(BibliaList(list[16], "2 Эзд", 9))
-        result.add(BibliaList(list[17], "Тав", 14))
-        result.add(BibliaList(list[18], "Юдт", 16))
-        result.add(BibliaList(list[19], "Эст", 10))
-        result.add(BibliaList(list[20], "Ёва", 43))
-        result.add(BibliaList(list[21], "Пс", 151))
-        result.add(BibliaList(list[22], "Высл", 31))
-        result.add(BibliaList(list[23], "Экл", 12))
-        result.add(BibliaList(list[24], "Псн", 8))
-        result.add(BibliaList(list[25], "Мдр", 19))
-        result.add(BibliaList(list[26], "Сір", 51))
-        result.add(BibliaList(list[27], "Іс", 66))
-        result.add(BibliaList(list[28], "Ер", 52))
-        result.add(BibliaList(list[29], "Плач", 5))
-        result.add(BibliaList(list[30], "Пасл Ер", 1))
-        result.add(BibliaList(list[31], "Вар", 5))
-        result.add(BibliaList(list[32], "Езк", 48))
-        result.add(BibliaList(list[33], "Дан", 14))
-        result.add(BibliaList(list[34], "Ас", 14))
-        result.add(BibliaList(list[35], "Ёіл", 3))
-        result.add(BibliaList(list[36], "Ам", 9))
-        result.add(BibliaList(list[37], "Аўдз", 1))
-        result.add(BibliaList(list[38], "Ёны", 4))
-        result.add(BibliaList(list[39], "Міх", 7))
-        result.add(BibliaList(list[40], "Нвм", 3))
-        result.add(BibliaList(list[41], "Абк", 3))
-        result.add(BibliaList(list[42], "Саф", 3))
-        result.add(BibliaList(list[43], "Аг", 2))
-        result.add(BibliaList(list[44], "Зах", 14))
-        result.add(BibliaList(list[45], "Мал", 4))
-        result.add(BibliaList(list[46], "1 Мак", 16))
-        result.add(BibliaList(list[47], "2 Мак", 15))
-        result.add(BibliaList(list[48], "3 Мак", 7))
-        result.add(BibliaList(list[49], "3 Эзд", 16))
+        else -> {
+            result.add(BibliaList(list[16], "2 Эзд", 9))
+            result.add(BibliaList(list[17], "Тав", 14))
+            result.add(BibliaList(list[18], "Юдт", 16))
+            result.add(BibliaList(list[19], "Эст", 10))
+            result.add(BibliaList(list[20], "Ёва", 43))
+            result.add(BibliaList(list[21], "Пс", 151))
+            result.add(BibliaList(list[22], "Высл", 31))
+            result.add(BibliaList(list[23], "Экл", 12))
+            result.add(BibliaList(list[24], "Псн", 8))
+            result.add(BibliaList(list[25], "Мдр", 19))
+            result.add(BibliaList(list[26], "Сір", 51))
+            result.add(BibliaList(list[27], "Іс", 66))
+            result.add(BibliaList(list[28], "Ер", 52))
+            result.add(BibliaList(list[29], "Плач", 5))
+            result.add(BibliaList(list[30], "Пасл Ер", 1))
+            result.add(BibliaList(list[31], "Вар", 5))
+            result.add(BibliaList(list[32], "Езк", 48))
+            result.add(BibliaList(list[33], "Дан", 14))
+            result.add(BibliaList(list[34], "Ас", 14))
+            result.add(BibliaList(list[35], "Ёіл", 3))
+            result.add(BibliaList(list[36], "Ам", 9))
+            result.add(BibliaList(list[37], "Аўдз", 1))
+            result.add(BibliaList(list[38], "Ёны", 4))
+            result.add(BibliaList(list[39], "Міх", 7))
+            result.add(BibliaList(list[40], "Нвм", 3))
+            result.add(BibliaList(list[41], "Абк", 3))
+            result.add(BibliaList(list[42], "Саф", 3))
+            result.add(BibliaList(list[43], "Аг", 2))
+            result.add(BibliaList(list[44], "Зах", 14))
+            result.add(BibliaList(list[45], "Мал", 4))
+            result.add(BibliaList(list[46], "1 Мак", 16))
+            result.add(BibliaList(list[47], "2 Мак", 15))
+            result.add(BibliaList(list[48], "3 Мак", 7))
+            result.add(BibliaList(list[49], "3 Эзд", 16))
+        }
     }
     return result
 }

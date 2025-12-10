@@ -263,13 +263,13 @@ class SearchBibleViewModel : CytanniListViewModel() {
                     Settings.PEREVODCATOLIK -> "/Catolik/catolik"
                     Settings.PEREVODNADSAN -> "chytanne/psaltyr_nadsan.txt"
                     Settings.PEREVODSINOIDAL -> "/Sinodal/sinaidal"
-                    Settings.PEREVODNEWKINGJAMES -> "/NewKingJames/english"
+                    Settings.PEREVODNEWAMERICANBIBLE -> "/NewAmericanBible/english"
                     else -> "chytanne/Semucha/biblia"
                 }
                 val fileName = if (perevod == Settings.PEREVODNADSAN) prevodName
                 else "$prevodName$zavet${i + 1}.txt"
                 var glava = 0
-                val split = if (perevod == Settings.PEREVODSINOIDAL || perevod == Settings.PEREVODCATOLIK || perevod == Settings.PEREVODNEWKINGJAMES) {
+                val split = if (perevod == Settings.PEREVODSINOIDAL || perevod == Settings.PEREVODCATOLIK || perevod == Settings.PEREVODNEWAMERICANBIBLE) {
                     openBibleResources(context, fileName).split("===")
                 } else {
                     openAssetsResources(context, fileName).split("===")
@@ -555,7 +555,7 @@ fun BibliaMenu(
                 "sinaidal"
             }
 
-            Settings.PEREVODNEWKINGJAMES -> {
+            Settings.PEREVODNEWAMERICANBIBLE -> {
                 "english"
             }
 
@@ -604,7 +604,7 @@ fun BibliaMenu(
             Settings.PEREVODBOKUNA -> stringResource(R.string.title_biblia_bokun2)
             Settings.PEREVODCARNIAUSKI -> stringResource(R.string.title_biblia_charniauski2)
             Settings.PEREVODCATOLIK -> stringResource(R.string.title_biblia_catolik2)
-            Settings.PEREVODNEWKINGJAMES -> stringResource(R.string.perevod_new_king_james_2)
+            Settings.PEREVODNEWAMERICANBIBLE -> stringResource(R.string.perevod_new_american_bible_2)
             else -> stringResource(R.string.title_biblia2)
         }
         DialogDelite(
@@ -616,6 +616,7 @@ fun BibliaMenu(
                     Settings.PEREVODCARNIAUSKI -> "carniauski"
                     Settings.PEREVODNADSAN -> "nadsan"
                     Settings.PEREVODCATOLIK -> "catolik"
+                    Settings.PEREVODNEWAMERICANBIBLE -> "english"
                     Settings.PEREVODSINOIDAL -> "sinaidal"
                     else -> "biblia"
                 }
@@ -790,8 +791,8 @@ fun BibliaMenu(
                                 }
                             }
 
-                            Settings.PEREVODNEWKINGJAMES -> {
-                                val dir = File("${context.filesDir}/NewKingJames")
+                            Settings.PEREVODNEWAMERICANBIBLE -> {
+                                val dir = File("${context.filesDir}/NewAmericanBible")
                                 if (!dir.exists()) {
                                     dialogDownLoad = true
                                 } else {
@@ -846,7 +847,7 @@ fun BibliaMenu(
                                 }
                             }
 
-                            Settings.PEREVODNEWKINGJAMES -> {
+                            Settings.PEREVODNEWAMERICANBIBLE -> {
                                 val dir = File("${context.filesDir}/NewKingJames")
                                 if (!dir.exists()) {
                                     dialogDownLoad = true
@@ -903,7 +904,7 @@ fun BibliaMenu(
                 Settings.PEREVODNADSAN -> "nadsan"
                 Settings.PEREVODCATOLIK -> "catolik"
                 Settings.PEREVODSINOIDAL -> "sinaidal"
-                Settings.PEREVODNEWKINGJAMES -> "english"
+                Settings.PEREVODNEWAMERICANBIBLE -> "english"
                 else -> "biblia"
             }
             val titlePerevod = stringResource(R.string.str_short_label1)
@@ -1498,7 +1499,7 @@ fun DialogDownLoadBible(
     val titleBible = when (perevod) {
         Settings.PEREVODCATOLIK -> stringResource(R.string.title_biblia_catolik2)
         Settings.PEREVODSINOIDAL -> stringResource(R.string.bsinaidal2)
-        Settings.PEREVODNEWKINGJAMES -> stringResource(R.string.perevod_new_king_james_2)
+        Settings.PEREVODNEWAMERICANBIBLE -> stringResource(R.string.perevod_new_american_bible_2)
         else -> stringResource(R.string.bsinaidal2)
     }
     val context = LocalActivity.current as MainActivity
@@ -1513,7 +1514,7 @@ fun DialogDownLoadBible(
                 val result = when (perevod) {
                     Settings.PEREVODCATOLIK -> Malitounik.referens.child("/chytanne/Catolik/catolik.zip").metadata.await()
                     Settings.PEREVODSINOIDAL -> Malitounik.referens.child("/chytanne/Sinodal/sinaidal.zip").metadata.await()
-                    Settings.PEREVODNEWKINGJAMES -> Malitounik.referens.child("/chytanne/NewKingJames/newkingjames.zip").metadata.await()
+                    Settings.PEREVODNEWAMERICANBIBLE -> Malitounik.referens.child("/chytanne/NewAmericanBible/NewAmericanBible.zip").metadata.await()
                     else -> Malitounik.referens.child("/chytanne/Sinodal/sinaidal.zip").metadata.await()
                 }
                 dirCount = result.sizeBytes
@@ -1548,7 +1549,7 @@ fun DialogDownLoadBible(
 
                         Settings.PEREVODSINOIDAL -> "${context.filesDir}/Sinodal"
 
-                        Settings.PEREVODNEWKINGJAMES -> "${context.filesDir}/NewKingJames"
+                        Settings.PEREVODNEWAMERICANBIBLE -> "${context.filesDir}/NewAmericanBible"
 
                         else -> "${context.filesDir}/Sinodal"
                     }
@@ -1723,7 +1724,7 @@ suspend fun downLoadBibile(context: Context, perevod: String, count: Int = 0) {
                 error = true
             }.await()
 
-            Settings.PEREVODNEWKINGJAMES -> Malitounik.referens.child("/chytanne/NewKingJames/newkingjames.zip").getFile(file).addOnFailureListener {
+            Settings.PEREVODNEWAMERICANBIBLE -> Malitounik.referens.child("/chytanne/NewAmericanBible/NewAmericanBible.zip").getFile(file).addOnFailureListener {
                 error = true
             }.await()
         }

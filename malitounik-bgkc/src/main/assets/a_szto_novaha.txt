@@ -1,3 +1,8 @@
+6.0.2:
+• Новае:
+– BIBLE: The New American Bible, афіцыйны пераклад Бібліі на ангельскую мову Каталіцкай Царквы
+– Выдален пераклад "New King James Version"
+
 6.0.1:
 • Новае:
 – BIBLE: New King James Version
