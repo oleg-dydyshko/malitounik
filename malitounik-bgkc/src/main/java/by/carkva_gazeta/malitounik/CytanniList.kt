@@ -18,6 +18,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -92,6 +93,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
@@ -1467,75 +1469,24 @@ fun CytanniList(
                                         if (viewModel.autoScrollSensor && event.type == PointerEventType.Release && !isScrollRun) {
                                             viewModel.autoScroll(title, true)
                                         }
+                                        if (event.changes.size == 2) {
+                                            fontSize *= event.calculateZoom()
+                                            fontSize = fontSize.coerceIn(18f, 58f)
+                                            k.edit {
+                                                putFloat("font_biblia", fontSize)
+                                            }
+                                            event.changes.forEach { pointerInputChange: PointerInputChange ->
+                                                pointerInputChange.consume()
+                                            }
+                                        }
                                     }
                                 }
                             }
                             .nestedScroll(nestedScrollConnection), state = viewModel.listState[page].lazyListState) {
                         items(resultPage.size, key = { index -> resultPage[index].id }) { index ->
-                            if (index == 0) {
-                                Spacer(Modifier.padding(top = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp))
-                                if (!(biblia == Settings.CHYTANNI_BIBLIA || biblia == Settings.CHYTANNI_VYBRANAE)) {
-                                    val titlePerevod = when (perevod) {
-                                        Settings.PEREVODSEMUXI -> stringResource(R.string.title_biblia2)
-                                        Settings.PEREVODSINOIDAL -> stringResource(R.string.bsinaidal2)
-                                        Settings.PEREVODNADSAN -> stringResource(R.string.title_psalter)
-                                        Settings.PEREVODBOKUNA -> stringResource(R.string.title_biblia_bokun2)
-                                        Settings.PEREVODCARNIAUSKI -> stringResource(R.string.title_biblia_charniauski2)
-                                        Settings.PEREVODCATOLIK -> stringResource(R.string.title_biblia_catolik2)
-                                        Settings.PEREVODNEWAMERICANBIBLE -> stringResource(R.string.perevod_new_american_bible_2)
-                                        else -> stringResource(R.string.title_biblia2)
-                                    }
-                                    Text(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(start = 10.dp, end = 10.dp, top = 10.dp), text = titlePerevod, fontSize = fontSize.sp, lineHeight = fontSize.sp * 1.15, color = SecondaryText
-                                    )
-                                }
-                            }
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                if (isSelectMode) {
-                                    Checkbox(checked = selectState[index], onCheckedChange = {
-                                        selectState[index] = it
-                                    })
-                                }
-                                HtmlText(
-                                    modifier = if (!viewModel.autoScrollSensor && !showDropdown) {
-                                        Modifier
-                                            .pointerInput(Unit) {
-                                                detectTapGestures(onTap = {
-                                                    if (!isSelectMode && isParallel && resultPage[index].parallel != "+-+") {
-                                                        isParallelVisable = true
-                                                        paralelChtenia = resultPage[index].parallel
-                                                    }
-                                                    if (isSelectMode) {
-                                                        selectState[index] = !selectState[index]
-                                                    }
-                                                }, onLongPress = {
-                                                    if (!fullscreen) {
-                                                        isSelectMode = true
-                                                        selectState[index] = !selectState[index]
-                                                    }
-                                                }, onDoubleTap = {
-                                                    fullscreen = !fullscreen
-                                                })
-                                            }
-                                    } else {
-                                        Modifier
-                                            .pointerInput(Unit) {
-                                                detectTapGestures(
-                                                    onDoubleTap = {
-                                                        fullscreen = !fullscreen
-                                                    })
-                                            }
-                                    }
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 10.dp), text = resultPage[index].text, fontSize = fontSize.sp, color = MaterialTheme.colorScheme.secondary)
-                            }
-                            if (resultPage[index].translate.isNotEmpty()) {
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 10.dp)
+                            Column(
+                                if (!viewModel.autoScrollSensor && !showDropdown) {
+                                    Modifier
                                         .pointerInput(Unit) {
                                             detectTapGestures(onTap = {
                                                 if (!isSelectMode && isParallel && resultPage[index].parallel != "+-+") {
@@ -1553,43 +1504,64 @@ fun CytanniList(
                                             }, onDoubleTap = {
                                                 fullscreen = !fullscreen
                                             })
-                                        }, text = resultPage[index].translate, fontSize = fontSize.sp, color = SecondaryText, fontStyle = FontStyle.Italic
-                                )
-                            }
-                            if (isParallel && resultPage[index].parallel != "+-+") {
-                                Text(
-                                    text = resultPage[index].parallel, modifier = if (!viewModel.autoScrollSensor && !showDropdown) {
-                                        Modifier
-                                            .pointerInput(Unit) {
-                                                detectTapGestures(onTap = {
-                                                    if (!isSelectMode && isParallel && resultPage[index].parallel != "+-+") {
-                                                        isParallelVisable = true
-                                                        paralelChtenia = resultPage[index].parallel
-                                                    }
-                                                    if (isSelectMode) {
-                                                        selectState[index] = !selectState[index]
-                                                    }
-                                                }, onLongPress = {
-                                                    if (!fullscreen) {
-                                                        isSelectMode = true
-                                                        selectState[index] = !selectState[index]
-                                                    }
-                                                }, onDoubleTap = {
+                                        }
+                                } else {
+                                    Modifier
+                                        .pointerInput(Unit) {
+                                            detectTapGestures(
+                                                onDoubleTap = {
                                                     fullscreen = !fullscreen
                                                 })
-                                            }
-                                    } else {
-                                        Modifier
-                                            .pointerInput(Unit) {
-                                                detectTapGestures(
-                                                    onDoubleTap = {
-                                                        fullscreen = !fullscreen
-                                                    })
-                                            }
+                                        }
+                                }
+                            ) {
+                                if (index == 0) {
+                                    Spacer(Modifier.padding(top = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp))
+                                    if (!(biblia == Settings.CHYTANNI_BIBLIA || biblia == Settings.CHYTANNI_VYBRANAE)) {
+                                        val titlePerevod = when (perevod) {
+                                            Settings.PEREVODSEMUXI -> stringResource(R.string.title_biblia2)
+                                            Settings.PEREVODSINOIDAL -> stringResource(R.string.bsinaidal2)
+                                            Settings.PEREVODNADSAN -> stringResource(R.string.title_psalter)
+                                            Settings.PEREVODBOKUNA -> stringResource(R.string.title_biblia_bokun2)
+                                            Settings.PEREVODCARNIAUSKI -> stringResource(R.string.title_biblia_charniauski2)
+                                            Settings.PEREVODCATOLIK -> stringResource(R.string.title_biblia_catolik2)
+                                            Settings.PEREVODNEWAMERICANBIBLE -> stringResource(R.string.perevod_new_american_bible_2)
+                                            else -> stringResource(R.string.title_biblia2)
+                                        }
+                                        Text(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(start = 10.dp, end = 10.dp, top = 10.dp), text = titlePerevod, fontSize = fontSize.sp, lineHeight = fontSize.sp * 1.15, color = SecondaryText
+                                        )
                                     }
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 10.dp), fontSize = (Settings.fontInterface - 4).sp, lineHeight = (Settings.fontInterface - 4).sp * 1.15, color = SecondaryText
-                                )
+                                }
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    if (isSelectMode) {
+                                        Checkbox(checked = selectState[index], onCheckedChange = {
+                                            selectState[index] = it
+                                        })
+                                    }
+                                    HtmlText(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 10.dp), text = resultPage[index].text, fontSize = fontSize.sp, color = MaterialTheme.colorScheme.secondary
+                                    )
+                                }
+                                if (resultPage[index].translate.isNotEmpty()) {
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 10.dp),
+                                        text = resultPage[index].translate, fontSize = fontSize.sp, color = SecondaryText, fontStyle = FontStyle.Italic
+                                    )
+                                }
+                                if (isParallel && resultPage[index].parallel != "+-+") {
+                                    Text(
+                                        text = resultPage[index].parallel, modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 10.dp), fontSize = (Settings.fontInterface - 4).sp, lineHeight = (Settings.fontInterface - 4).sp * 1.15, color = SecondaryText
+                                    )
+                                }
                             }
                         }
                         item {
