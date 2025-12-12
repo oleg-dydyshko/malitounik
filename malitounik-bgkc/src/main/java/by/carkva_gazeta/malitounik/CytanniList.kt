@@ -534,6 +534,8 @@ fun CytanniList(
                 prefEditors.apply()
                 backPressHandled = true
                 if (!k.getBoolean("power", false)) actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                viewModel.autoScroll(title, false)
+                viewModel.autoScrollSensor = false
                 navController.popBackStack()
             }
         }
@@ -666,6 +668,8 @@ fun CytanniList(
                                                 }
                                             }
                                             if (!k.getBoolean("power", false)) actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                            viewModel.autoScroll(title, false)
+                                            viewModel.autoScrollSensor = false
                                             navController.popBackStack()
                                         }
                                     }
