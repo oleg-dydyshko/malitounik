@@ -154,7 +154,7 @@ fun getTranslate(context: Context, kniga: Int, glava: Int, styx: Int, originalLi
                 }
                 result = spisStyxov[mystyx]
             } else {
-                if (mystyx < spisStyxov.size - 1) {
+                if (mystyx < spisStyxov.size) {
                     result = spisStyxov[mystyx]
                 }
             }
