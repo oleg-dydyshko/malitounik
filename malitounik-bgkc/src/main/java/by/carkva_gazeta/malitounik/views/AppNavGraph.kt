@@ -183,7 +183,7 @@ import java.io.InputStreamReader
 import java.util.Calendar
 import kotlin.random.Random
 
-data class AppNavGraphStateScroll(val title: String, var scrollPosition: Int)
+data class AppNavGraphStateScroll(val title: String, var scrollPosition: Int, var offset: Int = 0)
 
 data class AppNavGraphStateItems(val title: String, var isExpandet: Boolean = false)
 
@@ -234,11 +234,23 @@ object AppNavGraphState {
         return result
     }
 
-    fun setScrollValuePosition(title: String, position: Int) {
+    fun getScrollValueOffset(title: String): Int {
+        var result = 0
+        for (i in scrollValueList.indices) {
+            if (title == scrollValueList[i].title) {
+                result = scrollValueList[i].offset
+                break
+            }
+        }
+        return result
+    }
+
+    fun setScrollValuePosition(title: String, position: Int, offset: Int = 0) {
         var result = false
         for (i in scrollValueList.indices) {
             if (title == scrollValueList[i].title) {
                 scrollValueList[i].scrollPosition = position
+                scrollValueList[i].offset = offset
                 result = true
                 break
             }

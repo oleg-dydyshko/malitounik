@@ -79,7 +79,7 @@ fun Cytaty(navController: NavHostController) {
     }
     LaunchedEffect(Unit) {
         coroutineScope.launch {
-            lazyListState.scrollToItem(AppNavGraphState.getScrollValuePosition("Cytaty"))
+            lazyListState.scrollToItem(AppNavGraphState.getScrollValuePosition("Cytaty"),AppNavGraphState.getScrollValueOffset("Cytaty"))
         }
     }
     Scaffold(
@@ -110,7 +110,7 @@ fun Cytaty(navController: NavHostController) {
                 override fun onPreScroll(
                     available: Offset, source: NestedScrollSource
                 ): Offset {
-                    AppNavGraphState.setScrollValuePosition("Cytaty", lazyListState.firstVisibleItemIndex)
+                    AppNavGraphState.setScrollValuePosition("Cytaty", lazyListState.firstVisibleItemIndex, lazyListState.firstVisibleItemScrollOffset)
                     return super.onPreScroll(available, source)
                 }
 

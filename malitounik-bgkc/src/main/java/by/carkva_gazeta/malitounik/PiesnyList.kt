@@ -731,14 +731,14 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
                 available: Offset, source: NestedScrollSource
             ): Offset {
                 keyboardController?.hide()
-                AppNavGraphState.setScrollValuePosition(piesny, piesnyListState.firstVisibleItemIndex)
+                AppNavGraphState.setScrollValuePosition(piesny, piesnyListState.firstVisibleItemIndex, piesnyListState.firstVisibleItemScrollOffset)
                 return super.onPreScroll(available, source)
             }
         }
     }
     LaunchedEffect(Unit) {
         coroutineScope.launch {
-            piesnyListState.scrollToItem(AppNavGraphState.getScrollValuePosition(piesny))
+            piesnyListState.scrollToItem(AppNavGraphState.getScrollValuePosition(piesny), AppNavGraphState.getScrollValueOffset(piesny))
         }
     }
     LazyColumn(Modifier.nestedScroll(nestedScrollConnection), state = piesnyListState) {

@@ -88,6 +88,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -113,6 +114,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.FileProvider
+import androidx.core.content.edit
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -130,7 +132,6 @@ import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.File
@@ -177,6 +178,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
     var dialoNoWIFI by remember { mutableStateOf(false) }
     var isloadIcons by remember { mutableStateOf(false) }
     var isProgressVisable by remember { mutableStateOf(false) }
+    var imageOpisanne by remember { mutableStateOf("") }
     if (dialoNoIntent) {
         DialogNoInternet {
             dialoNoIntent = false
@@ -219,7 +221,10 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
     val interactionSourse = remember { MutableInteractionSource() }
     BackHandler(!backPressHandled || imageFull || showDropdown) {
         when {
-            imageFull -> imageFull = false
+            imageFull -> {
+                imageOpisanne = ""
+                imageFull = false
+            }
             showDropdown -> {
                 showDropdown = false
             }
@@ -364,13 +369,10 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                         Column {
                             Text(
                                 modifier = Modifier.clickable {
-                                    maxLine.intValue = Int.MAX_VALUE
-                                    coroutineScope.launch {
-                                        delay(5000L)
-                                        maxLine.intValue = 1
-                                    }
+                                    if (maxLine.intValue == Int.MAX_VALUE) maxLine.intValue = 1
+                                    else maxLine.intValue = Int.MAX_VALUE
                                 },
-                                text = stringResource(R.string.zmiest).uppercase(),
+                                text = imageOpisanne.ifEmpty { stringResource(R.string.zmiest).uppercase() },
                                 color = MaterialTheme.colorScheme.onSecondary,
                                 fontWeight = FontWeight.Bold,
                                 maxLines = maxLine.intValue,
@@ -395,6 +397,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                 PlainTooltip(stringResource(R.string.close), TooltipAnchorPosition.Below) {
                                     IconButton(
                                         onClick = {
+                                            imageOpisanne = ""
                                             imageFull = false
                                         },
                                         content = {
@@ -701,6 +704,23 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
+                            .pointerInput(PointerEventType.Press) {
+                                awaitPointerEventScope {
+                                    while (true) {
+                                        val event = awaitPointerEvent()
+                                        if (event.changes.size == 2) {
+                                            fontSize *= event.calculateZoom()
+                                            fontSize = fontSize.coerceIn(18f, 58f)
+                                            k.edit {
+                                                putFloat("font_biblia", fontSize)
+                                            }
+                                            event.changes.forEach { pointerInputChange: PointerInputChange ->
+                                                pointerInputChange.consume()
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                             .pointerInput(Unit) {
                                 detectTapGestures(
                                     onDoubleTap = {
@@ -758,7 +778,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                             items(sviatyiaList.size) { index ->
                                 val file = File(sviatyiaList[index].image)
                                 SelectionContainer {
-                                    Column {
+                                    Column(modifier = Modifier) {
                                         Row(verticalAlignment = Alignment.CenterVertically) {
                                             Text(
                                                 modifier = Modifier
@@ -812,18 +832,20 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                                 imW = 150F
                                                 imH = 150F / imageScale
                                             }
+                                            val t3 = file.name.lastIndexOf(".")
+                                            val fileNameT = file.name.substring(0, t3) + ".txt"
+                                            val fileImageOpis = File("${context.filesDir}/iconsApisanne/$fileNameT")
                                             Image(
                                                 modifier = Modifier
                                                     .size(imW.dp, imH.dp)
                                                     .align(Alignment.CenterHorizontally)
                                                     .clickable {
+                                                        imageOpisanne = if (fileImageOpis.exists()) fileImageOpis.readText()
+                                                        else ""
                                                         fullImagePathVisable = file.absolutePath
                                                         imageFull = true
                                                     }, bitmap = image, contentDescription = ""
                                             )
-                                            val t3 = file.name.lastIndexOf(".")
-                                            val fileNameT = file.name.substring(0, t3) + ".txt"
-                                            val fileImageOpis = File("${context.filesDir}/iconsApisanne/$fileNameT")
                                             if (fileImageOpis.exists()) {
                                                 Text(
                                                     modifier = Modifier

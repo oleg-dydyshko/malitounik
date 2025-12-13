@@ -382,7 +382,7 @@ open class CytanniListViewModel : ViewModel() {
                         while (true) {
                             delay(autoScrollSpeed.toLong())
                             listState[selectedIndex].lazyListState.scrollBy(2f)
-                            AppNavGraphState.setScrollValuePosition(title, listState[selectedIndex].lazyListState.firstVisibleItemIndex)
+                            AppNavGraphState.setScrollValuePosition(title, listState[selectedIndex].lazyListState.firstVisibleItemIndex, listState[selectedIndex].lazyListState.firstVisibleItemScrollOffset)
                         }
                     }
                 }
@@ -1309,7 +1309,7 @@ fun CytanniList(
                             available: Offset, source: NestedScrollSource
                         ): Offset {
                             isScrollRun = true
-                            AppNavGraphState.setScrollValuePosition(title, viewModel.listState[viewModel.selectedIndex].lazyListState.firstVisibleItemIndex)
+                            AppNavGraphState.setScrollValuePosition(title, viewModel.listState[viewModel.selectedIndex].lazyListState.firstVisibleItemIndex, viewModel.listState[viewModel.selectedIndex].lazyListState.firstVisibleItemScrollOffset)
                             return super.onPreScroll(available, source)
                         }
 
@@ -1325,7 +1325,7 @@ fun CytanniList(
                 if (viewModel.listState[viewModel.selectedIndex].item.isNotEmpty()) {
                     LaunchedEffect(Unit) {
                         coroutineScope.launch {
-                            viewModel.listState[viewModel.selectedIndex].lazyListState.scrollToItem(AppNavGraphState.getScrollValuePosition(title))
+                            viewModel.listState[viewModel.selectedIndex].lazyListState.scrollToItem(AppNavGraphState.getScrollValuePosition(title), AppNavGraphState.getScrollValueOffset(title))
                         }
                     }
                     if (biblia == Settings.CHYTANNI_BIBLIA && positionRemember != -1) {
@@ -1338,10 +1338,11 @@ fun CytanniList(
                     }
                     if (biblia == Settings.CHYTANNI_LITURGICHNYIA && skipUtran && utranEndPosition > 0) {
                         var pos = AppNavGraphState.getScrollValuePosition(title)
+                        val offset = AppNavGraphState.getScrollValueOffset(title)
                         if (pos == 0) pos = utranEndPosition
                         LaunchedEffect(pos) {
                             coroutineScope.launch {
-                                viewModel.listState[viewModel.selectedIndex].lazyListState.scrollToItem(pos)
+                                viewModel.listState[viewModel.selectedIndex].lazyListState.scrollToItem(pos, offset)
                                 positionRemember = -1
                                 skipUtran = false
                             }
