@@ -2,7 +2,6 @@ package by.carkva_gazeta.malitounik.views
 
 import android.content.SharedPreferences
 import androidx.navigation.NavHostController
-import by.carkva_gazeta.malitounik.SviatyiaView
 import by.carkva_gazeta.malitounik.views.AllDestinations.AKAFIST_MENU
 import by.carkva_gazeta.malitounik.views.AllDestinations.BIBLIA_BOKUNA
 import by.carkva_gazeta.malitounik.views.AllDestinations.BIBLIA_CATOLIK
@@ -315,7 +314,6 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
         }
     }
     fun navigateToSvityiaView(svity: Boolean, position: Int) {
-        SviatyiaView.initState = true
         navController.navigate("$SVITYIA_VIEW/$svity/$position") {
             SVITYIA_VIEW
         }

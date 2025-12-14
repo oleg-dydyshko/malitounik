@@ -150,6 +150,7 @@ import by.carkva_gazeta.malitounik.Settings
 import by.carkva_gazeta.malitounik.SettingsView
 import by.carkva_gazeta.malitounik.SviatyList
 import by.carkva_gazeta.malitounik.SviatyiaView
+import by.carkva_gazeta.malitounik.SviatyiaViewModel
 import by.carkva_gazeta.malitounik.VybranaeList
 import by.carkva_gazeta.malitounik.admin.DialogEditSvityiaAndSviaty
 import by.carkva_gazeta.malitounik.admin.Icony
@@ -333,7 +334,7 @@ fun openAssetsResources(context: Context, fileName: String): String {
 }
 
 @Composable
-fun AppNavGraph(navController: NavHostController = rememberNavController(), viewModel: SearchBibleViewModel = viewModel(), adminViewModel: Piasochnica = viewModel()) {
+fun AppNavGraph(navController: NavHostController = rememberNavController(), viewModel: SearchBibleViewModel = viewModel(), sviatyiaViewModel: SviatyiaViewModel = viewModel(), adminViewModel: Piasochnica = viewModel()) {
     val drawerScrollStete = rememberScrollState()
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var start by remember { mutableStateOf(k.getString("navigate", AllDestinations.KALIANDAR) ?: AllDestinations.KALIANDAR) }
@@ -379,189 +380,189 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
         composable(AllDestinations.KALIANDAR) {
             Settings.destinations = AllDestinations.KALIANDAR
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.AKAFIST_MENU) {
             Settings.destinations = AllDestinations.AKAFIST_MENU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.LITURGIKON_MENU) {
             Settings.destinations = AllDestinations.LITURGIKON_MENU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.CHASASLOU_MENU) {
             Settings.destinations = AllDestinations.CHASASLOU_MENU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.MAE_NATATKI_MENU) {
             Settings.destinations = AllDestinations.MAE_NATATKI_MENU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BOGASLUJBOVYIA_MENU) {
             Settings.destinations = AllDestinations.BOGASLUJBOVYIA_MENU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.MALITVY_MENU) {
             Settings.destinations = AllDestinations.MALITVY_MENU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIA_SEMUXA) {
             Settings.destinations = AllDestinations.BIBLIA_SEMUXA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIA_BOKUNA) {
             Settings.destinations = AllDestinations.BIBLIA_BOKUNA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIA_NADSAN) {
             Settings.destinations = AllDestinations.BIBLIA_NADSAN
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIA_CHARNIAUSKI) {
             Settings.destinations = AllDestinations.BIBLIA_CHARNIAUSKI
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIA_CATOLIK) {
             Settings.destinations = AllDestinations.BIBLIA_CATOLIK
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIA_SINODAL) {
             Settings.destinations = AllDestinations.BIBLIA_SINODAL
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIA_NEW_AMERICAN_BIBLE) {
             Settings.destinations = AllDestinations.BIBLIA_NEW_AMERICAN_BIBLE
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.KALIANDAR_YEAR) {
             Settings.destinations = AllDestinations.KALIANDAR_YEAR
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.VYBRANAE_LIST) {
             Settings.destinations = AllDestinations.VYBRANAE_LIST
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIJATEKA_NIADAUNIA) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_NIADAUNIA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIJATEKA_SPEUNIKI) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_SPEUNIKI
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIJATEKA_GISTORYIA) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_GISTORYIA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIJATEKA_MALITOUNIKI) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_MALITOUNIKI
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU) {
             Settings.destinations = AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.PIESNY_PRASLAULENNIA) {
             Settings.destinations = AllDestinations.PIESNY_PRASLAULENNIA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.PIESNY_DA_BAGARODZICY) {
             Settings.destinations = AllDestinations.PIESNY_DA_BAGARODZICY
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.PIESNY_ZA_BELARUS) {
             Settings.destinations = AllDestinations.PIESNY_ZA_BELARUS
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.PIESNY_KALIADNYIA) {
             Settings.destinations = AllDestinations.PIESNY_KALIADNYIA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.PIESNY_TAIZE) {
             Settings.destinations = AllDestinations.PIESNY_TAIZE
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
@@ -584,7 +585,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
         composable(AllDestinations.SVITYIA_VIEW + "/{svity}/{position}", arguments = listOf(navArgument("svity") { type = NavType.BoolType }, navArgument("position") { type = NavType.IntType })) { stackEntry ->
             val svity = stackEntry.arguments?.getBoolean("svity") == true
             val position = stackEntry.arguments?.getInt("position") ?: Settings.caliandarPosition
-            SviatyiaView(navController, svity, position)
+            SviatyiaView(navController, svity, position, sviatyiaViewModel)
         }
 
         composable(AllDestinations.UNDER_PAMIATKA) {
@@ -602,21 +603,21 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
         composable(AllDestinations.UNDER_SVAITY_MUNU) {
             Settings.destinations = AllDestinations.UNDER_SVAITY_MUNU
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.UNDER_PARAFII_BGKC) {
             Settings.destinations = AllDestinations.UNDER_PARAFII_BGKC
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
         composable(AllDestinations.UNDER_PASHALIA) {
             Settings.destinations = AllDestinations.UNDER_PASHALIA
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
@@ -719,7 +720,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
         composable(AllDestinations.PIASOCHNICA_LIST) {
             Settings.destinations = AllDestinations.PIASOCHNICA_LIST
             MainConteiner(
-                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, adminViewModel = adminViewModel
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
@@ -729,7 +730,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
         }
 
         composable(AllDestinations.EDIT_ICON) {
-            Icony(navController)
+            Icony(navController, sviatyiaViewModel)
         }
     }
 }
@@ -837,6 +838,7 @@ fun MainConteiner(
     navController: NavHostController,
     drawerScrollStete: ScrollState,
     viewModel: SearchBibleViewModel,
+    sviatyiaviewModel: SviatyiaViewModel,
     adminViewModel: Piasochnica
 ) {
     val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
@@ -1680,6 +1682,7 @@ fun MainConteiner(
                                         title, chytanne, biblia, Settings.PEREVODSEMUXI, -1
                                     )
                                 }, navigateToSvityiaView = { svity, position ->
+                                    sviatyiaviewModel.initState = true
                                     navigationActions.navigateToSvityiaView(svity, position)
                                 }, navigateToBogaslujbovyia = { title, resurs ->
                                     navigationActions.navigateToBogaslujbovyia(title, resurs)
@@ -1959,6 +1962,7 @@ fun MainConteiner(
                         } else {
                             KaliandarScreenYear(
                                 coroutineScope = coroutineScope, lazyColumnState = lazyColumnState, innerPadding, navigateToSvityiaView = { svity, position ->
+                                    sviatyiaviewModel.initState = true
                                     navigationActions.navigateToSvityiaView(svity, position)
                                 })
                         }
@@ -2000,6 +2004,7 @@ fun MainConteiner(
                 dialogKniga = false
                 navigationActions.navigateToBogaslujbovyia(title, resourse)
             }, navigateToSvityiaView = { svity, position ->
+                sviatyiaviewModel.initState = true
                 dialogKniga = false
                 navigationActions.navigateToSvityiaView(svity, position)
             }) {

@@ -87,7 +87,7 @@ import by.carkva_gazeta.malitounik.DialogDelite
 import by.carkva_gazeta.malitounik.Malitounik
 import by.carkva_gazeta.malitounik.R
 import by.carkva_gazeta.malitounik.Settings
-import by.carkva_gazeta.malitounik.SviatyiaView
+import by.carkva_gazeta.malitounik.SviatyiaViewModel
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
 import by.carkva_gazeta.malitounik.views.PlainTooltip
 import com.google.gson.Gson
@@ -102,7 +102,7 @@ import java.io.FileOutputStream
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Icony(navController: NavHostController) {
+fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
     val view = LocalView.current
     SideEffect {
         val window = (view.context as Activity).window
@@ -240,7 +240,7 @@ fun Icony(navController: NavHostController) {
     LaunchedEffect(Unit) {
         coroutineScope.launch {
             isProgressVisable = true
-            getIcons(context) {
+            getIcons(context, viewModel) {
                 iconList.addAll(it)
             }
             isProgressVisable = false
@@ -472,7 +472,7 @@ fun resizeImage(bitmap: Bitmap?): Bitmap? {
     return null
 }
 
-suspend fun getIcons(context: Context, resultList: (ArrayList<DataImages>) -> Unit) {
+suspend fun getIcons(context: Context, viewModel: SviatyiaViewModel, resultList: (ArrayList<DataImages>) -> Unit) {
     if (Settings.isNetworkAvailable(context)) {
         val dir = File("${context.filesDir}/icons/")
         if (!dir.exists()) dir.mkdir()
@@ -481,9 +481,9 @@ suspend fun getIcons(context: Context, resultList: (ArrayList<DataImages>) -> Un
         val images = ArrayList<DataImages>()
         val itPos = StringBuilder()
         val list = Malitounik.referens.child("/chytanne/icons").list(1000).await()
-        var day = SviatyiaView.svaity[SviatyiaView.sviatyPosotion][0].toInt()
-        var mun = SviatyiaView.svaity[SviatyiaView.sviatyPosotion][1].toInt()
-        val type = SviatyiaView.svaity[SviatyiaView.sviatyPosotion][2].toInt()
+        var day = viewModel.svaity[viewModel.sviatyPosotion][0].toInt()
+        var mun = viewModel.svaity[viewModel.sviatyPosotion][1].toInt()
+        val type = viewModel.svaity[viewModel.sviatyPosotion][2].toInt()
         var fileName = "v_${day}_${mun}_"
         if (type == -2) fileName = "s_${day}_${mun}_"
         if (type == -1) {
@@ -512,7 +512,7 @@ suspend fun getIcons(context: Context, resultList: (ArrayList<DataImages>) -> Un
                 if (s3.isDigitsOnly()) e = s3.toInt()
                 var title = ""
                 if (type != -1) {
-                    val text = SviatyiaView.svaity[SviatyiaView.sviatyPosotion][3]
+                    val text = viewModel.svaity[viewModel.sviatyPosotion][3]
                     val t1 = text.indexOf("<strong>")
                     val t2 = text.indexOf("</strong>")
                     if (t1 != -1 && t2 != -1) title = text.substring(t1 + 8, t2)

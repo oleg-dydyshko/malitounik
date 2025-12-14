@@ -49,7 +49,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -147,6 +146,7 @@ import java.io.File
 import java.util.Calendar
 
 open class CytanniListViewModel : ViewModel() {
+    val selectState = mutableStateListOf<Boolean>()
     val listState = mutableStateListOf<CytanniListItemData>()
     var selectedIndex by mutableIntStateOf(-1)
     var knigaText by mutableStateOf("")
@@ -638,6 +638,7 @@ fun CytanniList(
                         PlainTooltip(stringResource(R.string.close), TooltipAnchorPosition.Below) {
                             IconButton(onClick = {
                                 if (isSelectMode) {
+                                    viewModel.selectState.clear()
                                     isSelectMode = false
                                 } else isParallelVisable = false
                             }, content = {
@@ -1386,9 +1387,8 @@ fun CytanniList(
                             }
                         }
                     }
-                    val selectState = remember { mutableStateListOf<Boolean>() }
-                    if (resultPage.isNotEmpty() && selectState.isEmpty()) {
-                        selectState.addAll(resultPage.map { false }.toMutableStateList())
+                    if (resultPage.isNotEmpty() && viewModel.selectState.isEmpty()) {
+                        viewModel.selectState.addAll(resultPage.map { false }.toMutableStateList())
                     }
                     if (resultPage.isNotEmpty()) {
                         if (biblia == Settings.CHYTANNI_BIBLIA && perevodRoot != Settings.PEREVODNADSAN) {
@@ -1407,33 +1407,33 @@ fun CytanniList(
                     if (isSelectAll) {
                         isSelectAll = false
                         if (biblia == Settings.CHYTANNI_BIBLIA) {
-                            selectState.forEachIndexed { index, _ ->
-                                selectState[index] = true
+                            viewModel.selectState.forEachIndexed { index, _ ->
+                                viewModel.selectState[index] = true
                             }
                         } else {
                             var findTitle = ""
                             resultPage.forEachIndexed { index, text ->
-                                if (selectState[index]) {
+                                if (viewModel.selectState[index]) {
                                     findTitle = text.title
                                     return@forEachIndexed
                                 }
                             }
                             resultPage.forEachIndexed { index, text ->
                                 if (findTitle == text.title) {
-                                    selectState[index] = true
+                                    viewModel.selectState[index] = true
                                 }
                             }
                         }
                     }
                     if (!isSelectMode) {
-                        selectState.forEachIndexed { index, _ ->
-                            selectState[index] = false
+                        viewModel.selectState.forEachIndexed { index, _ ->
+                            viewModel.selectState[index] = false
                         }
                     }
                     if (isCopyMode || isShareMode) {
                         val sb = StringBuilder()
                         resultPage.forEachIndexed { index, text ->
-                            if (selectState[index]) {
+                            if (viewModel.selectState[index]) {
                                 sb.append(
                                     AnnotatedString.fromHtml(text.text).toString() + "\n"
                                 )
@@ -1495,12 +1495,12 @@ fun CytanniList(
                                                     paralelChtenia = resultPage[index].parallel
                                                 }
                                                 if (isSelectMode) {
-                                                    selectState[index] = !selectState[index]
+                                                    viewModel.selectState[index] = !viewModel.selectState[index]
                                                 }
                                             }, onLongPress = {
                                                 if (!fullscreen) {
                                                     isSelectMode = true
-                                                    selectState[index] = !selectState[index]
+                                                    viewModel.selectState[index] = !viewModel.selectState[index]
                                                 }
                                             }, onDoubleTap = {
                                                 fullscreen = !fullscreen
@@ -1538,9 +1538,12 @@ fun CytanniList(
                                 }
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     if (isSelectMode) {
-                                        Checkbox(checked = selectState[index], onCheckedChange = {
-                                            selectState[index] = it
-                                        })
+                                        Icon(
+                                            painter = painterResource(if (viewModel.selectState[index]) R.drawable.select_check_box else R.drawable.check_box_outline_blank), contentDescription = "", tint = MaterialTheme.colorScheme.secondary, modifier = Modifier
+                                                .padding(start = 5.dp)
+                                                .clickable {
+                                                    viewModel.selectState[index] = !viewModel.selectState[index]
+                                                })
                                     }
                                     HtmlText(
                                         modifier = Modifier
