@@ -191,11 +191,13 @@ class BogaslujbovyiaViewModel : ViewModel() {
                     withContext(Dispatchers.IO) {
                         result.clear()
                         resultPosition = 0
-                        val opiginalText = AnnotatedString.fromHtml(htmlText)
-                        result.addAll(findAllAsanc(opiginalText.text, searshString.text))
+                        var originalHtmlText = htmlText
+                        if (Settings.dzenNoch) originalHtmlText = originalHtmlText.replace("#d00505", "#ff6666", true)
+                        val originalText = AnnotatedString.fromHtml(originalHtmlText)
+                        result.addAll(findAllAsanc(originalText.text, searshString.text))
                         if (result.isNotEmpty()) {
                             val annotatedString = buildAnnotatedString {
-                                append(opiginalText)
+                                append(originalText)
                                 for (i in result.indices) {
                                     val size = result[i].size - 1
                                     addStyle(SpanStyle(background = BezPosta, color = PrimaryText), result[i][0], result[i][size])
