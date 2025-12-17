@@ -1141,14 +1141,8 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) {
             setlightSensor()
         }
-        try {
-            if (k.getBoolean("power", false)) {
-                window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            }
-        } catch (_: ClassCastException) {
-            k.edit {
-                remove("power")
-            }
+        if (k.getBoolean("power", false)) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
         /*val dir = File("$filesDir/NewKingJames")
         if (dir.exists()) dir.deleteRecursively()
