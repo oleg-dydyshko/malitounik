@@ -7,7 +7,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -65,7 +67,7 @@ fun BibliaList(
     navController: NavHostController,
     isNovyZapavet: Boolean,
     perevod: String,
-    navigateToCytanniList: (String, String) -> Unit = { _, _ -> }
+    navigateToCytanniList: (String, String) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
     val maxLine = remember { mutableIntStateOf(1) }
@@ -80,9 +82,6 @@ fun BibliaList(
         else -> stringResource(R.string.title_biblia)
     }
     val context = LocalContext.current
-    val lazyColumnState = rememberLazyListState()
-    val bibleList = bibleCount(context, perevod, isNovyZapavet)
-    val collapsedState = remember(bibleList) { bibleList.map { AppNavGraphState.setItemsValue(it.title, true) }.toMutableStateList() }
     LaunchedEffect(Settings.bibleTime) {
         if (Settings.bibleTime) {
             Settings.bibleTime = false
@@ -96,11 +95,13 @@ fun BibliaList(
                     defKniga = "Пс"
                     "nadsan"
                 }
+
                 Settings.PEREVODCARNIAUSKI -> "carniauski"
                 Settings.PEREVODCATOLIK -> {
                     defKniga = "Мц"
                     "catolik"
                 }
+
                 Settings.PEREVODSINOIDAL -> "sinaidal"
                 Settings.PEREVODNEWAMERICANBIBLE -> "english"
                 else -> "biblia"
@@ -181,108 +182,126 @@ fun BibliaList(
             )
         }
     ) { innerPadding ->
-        BoxWithConstraints(
-            modifier = Modifier.padding(
-                innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                innerPadding.calculateTopPadding(),
-                innerPadding.calculateEndPadding(LayoutDirection.Rtl),
-                0.dp
-            )
-        ) {
-            val parentConstraints = this.constraints
-            LazyColumn(
-                state = lazyColumnState
-            ) {
-                bibleList.forEachIndexed { i, dataItem ->
-                    val collapsed = collapsedState[i]
-                    if (perevod != Settings.PEREVODNADSAN) {
-                        item(key = "header_$i") {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
+        BibleList(perevod, isNovyZapavet, innerPadding, navigateToCytanniList = { title, perevod ->
+            navigateToCytanniList(title, perevod)
+        })
+    }
+}
+
+@Composable
+fun BibleList(perevod: String, isNovyZapavet: Boolean, innerPadding: PaddingValues, navigateToCytanniList: (String, String) -> Unit) {
+    BoxWithConstraints {
+        ScopedContent(perevod, isNovyZapavet, innerPadding, navigateToCytanniList = { title, perevod ->
+            navigateToCytanniList(title, perevod)
+        })
+    }
+}
+
+@Composable
+private fun BoxWithConstraintsScope.ScopedContent(perevod: String, isNovyZapavet: Boolean, innerPadding: PaddingValues, navigateToCytanniList: (String, String) -> Unit) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val lazyColumnState = rememberLazyListState()
+    val bibleList = bibleCount(context, perevod, isNovyZapavet)
+    val collapsedState = remember(bibleList) { bibleList.map { AppNavGraphState.setItemsValue(it.title, true) }.toMutableStateList() }
+    val parentConstraints = this.constraints
+    LazyColumn(
+        modifier = Modifier.padding(
+            innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+            innerPadding.calculateTopPadding(),
+            innerPadding.calculateEndPadding(LayoutDirection.Rtl),
+            0.dp
+        ),
+        state = lazyColumnState
+    ) {
+        bibleList.forEachIndexed { i, dataItem ->
+            val collapsed = collapsedState[i]
+            if (perevod != Settings.PEREVODNADSAN) {
+                item(key = "header_$i") {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .clickable {
+                                AppNavGraphState.setItemsValue(dataItem.title)
+                                collapsedState[i] = !collapsed
+                                coroutineScope.launch {
+                                    lazyColumnState.scrollToItem(i)
+                                }
+                            }
+                    ) {
+                        Icon(
+                            painter = if (collapsed)
+                                painterResource(R.drawable.keyboard_arrow_down)
+                            else
+                                painterResource(R.drawable.keyboard_arrow_up),
+                            contentDescription = "",
+                            tint = Divider,
+                        )
+                        Text(
+                            dataItem.title,
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .weight(1f),
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontSize = Settings.fontInterface.sp
+                        )
+                    }
+                    HorizontalDivider()
+                }
+            } else {
+                collapsedState[i] = false
+            }
+            if (!collapsedState[i]) {
+                item {
+                    LazyVerticalGrid(
+                        modifier = Modifier
+                            .layout { measurable, constraints ->
+                                val placeable = measurable.measure(
+                                    constraints.copy(maxHeight = parentConstraints.maxHeight)
+                                )
+
+                                layout(placeable.width, placeable.height) {
+                                    placeable.placeRelative(0, 0)
+                                }
+                            },
+                        columns = GridCells.Adaptive(70.dp)
+                    ) {
+                        items(dataItem.count) { item ->
+                            Box(
                                 modifier = Modifier
+                                    .padding(10.dp)
+                                    .clip(shape = RoundedCornerShape(10.dp))
+                                    .border(
+                                        width = 1.dp,
+                                        color = MaterialTheme.colorScheme.secondary,
+                                        shape = RoundedCornerShape(10.dp)
+                                    )
+                                    .background(Divider)
                                     .clickable {
-                                        AppNavGraphState.setItemsValue(dataItem.title)
-                                        collapsedState[i] = !collapsed
-                                        coroutineScope.launch {
-                                            lazyColumnState.scrollToItem(i)
-                                        }
+                                        navigateToCytanniList(
+                                            dataItem.subTitle + " " + (item + 1).toString(),
+                                            perevod
+                                        )
                                     }
                             ) {
-                                Icon(
-                                    painter = if (collapsed)
-                                        painterResource(R.drawable.keyboard_arrow_down)
-                                    else
-                                        painterResource(R.drawable.keyboard_arrow_up),
-                                    contentDescription = "",
-                                    tint = Divider,
-                                )
                                 Text(
-                                    dataItem.title,
+                                    (item + 1).toString(),
                                     modifier = Modifier
-                                        .padding(10.dp)
-                                        .weight(1f),
-                                    color = MaterialTheme.colorScheme.secondary,
+                                        .fillMaxSize()
+                                        .padding(5.dp),
+                                    textAlign = TextAlign.Center,
+                                    color = PrimaryText,
                                     fontSize = Settings.fontInterface.sp
                                 )
                             }
-                            HorizontalDivider()
-                        }
-                    } else {
-                        collapsedState[i] = false
-                    }
-                    if (!collapsedState[i]) {
-                        items(1) {
-                            LazyVerticalGrid(
-                                modifier = Modifier
-                                    .layout { measurable, constraints ->
-                                        val placeable = measurable.measure(
-                                            constraints.copy(maxHeight = parentConstraints.maxHeight)
-                                        )
-
-                                        layout(placeable.width, placeable.height) {
-                                            placeable.placeRelative(0, 0)
-                                        }
-                                    },
-                                columns = GridCells.Adaptive(70.dp)
-                            ) {
-                                items(dataItem.count) { item ->
-                                    Box(
-                                        modifier = Modifier
-                                            .padding(10.dp)
-                                            .clip(shape = RoundedCornerShape(10.dp))
-                                            .border(
-                                                width = 1.dp,
-                                                color = MaterialTheme.colorScheme.secondary,
-                                                shape = RoundedCornerShape(10.dp)
-                                            )
-                                            .background(Divider)
-                                            .clickable {
-                                                navigateToCytanniList(
-                                                    dataItem.subTitle + " " + (item + 1).toString(),
-                                                    perevod
-                                                )
-                                            }
-                                    ) {
-                                        Text(
-                                            (item + 1).toString(),
-                                            modifier = Modifier
-                                                .fillMaxSize()
-                                                .padding(5.dp),
-                                            textAlign = TextAlign.Center,
-                                            color = PrimaryText,
-                                            fontSize = Settings.fontInterface.sp
-                                        )
-                                    }
-                                }
-                            }
-                            HorizontalDivider()
                         }
                     }
-                }
-                item {
-                    Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
+                    HorizontalDivider()
                 }
             }
+        }
+        item {
+            Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
         }
     }
 }
@@ -387,6 +406,7 @@ fun bibleCount(kniga: Int, perevod: String): Int {
             if (perevod == Settings.PEREVODSINOIDAL) 37
             else 36
         }
+
         14 -> 10
         15 -> 13
         16 -> 9
@@ -422,6 +442,7 @@ fun bibleCount(kniga: Int, perevod: String): Int {
             if (perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODSINOIDAL || perevod == Settings.PEREVODNEWAMERICANBIBLE) 14
             else 12
         }
+
         34 -> 14
         35 -> 3
         36 -> 9
@@ -518,6 +539,7 @@ fun setStaryZapavet(list: Array<String>, perevod: String): ArrayList<BibliaList>
             result.add(BibliaList(list[37], "Зах", 14))
             result.add(BibliaList(list[38], "Мал", 4))
         }
+
         Settings.PEREVODCARNIAUSKI, Settings.PEREVODNEWAMERICANBIBLE -> {
             result.add(BibliaList(list[16], "Тав", 14))
             result.add(BibliaList(list[17], "Юдт", 16))
@@ -550,6 +572,7 @@ fun setStaryZapavet(list: Array<String>, perevod: String): ArrayList<BibliaList>
             result.add(BibliaList(list[44], "1 Мак", 16))
             result.add(BibliaList(list[45], "2 Мак", 15))
         }
+
         else -> {
             result.add(BibliaList(list[16], "2 Эзд", 9))
             result.add(BibliaList(list[17], "Тав", 14))
