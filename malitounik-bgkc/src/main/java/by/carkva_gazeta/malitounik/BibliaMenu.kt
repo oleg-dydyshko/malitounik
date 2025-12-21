@@ -122,8 +122,8 @@ class SearchBibleViewModel : CytanniListViewModel() {
     val searchListSvityia = mutableStateListOf<Prazdniki>()
     var isProgressVisable by mutableStateOf(false)
     var oldTextFieldValueState by mutableStateOf("")
-    var searchText by  mutableStateOf(false)
-    var searchFullText by  mutableStateOf(false)
+    var searchText by mutableStateOf(false)
+    var searchFullText by mutableStateOf(false)
 
     fun doInBackground(
         context: Context, searche: String, perevod: String, isBogaslujbovyiaSearch: Boolean
@@ -525,47 +525,50 @@ fun BibliaMenu(
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
+    var isBibleTime by remember { mutableStateOf(false) }
     var bibleTime by remember { mutableStateOf(false) }
-    if (bibleTime) {
-        var defKniga = "Быц"
-        val prevodName = when (perevod) {
-            Settings.PEREVODSEMUXI -> {
-                "biblia"
-            }
+    LaunchedEffect(bibleTime) {
+        if (bibleTime) {
+            var defKniga = "Быц"
+            val prevodName = when (perevod) {
+                Settings.PEREVODSEMUXI -> {
+                    "biblia"
+                }
 
-            Settings.PEREVODBOKUNA -> {
-                "bokuna"
-            }
+                Settings.PEREVODBOKUNA -> {
+                    "bokuna"
+                }
 
-            Settings.PEREVODNADSAN -> {
-                defKniga = "Пс"
-                "nadsan"
-            }
+                Settings.PEREVODNADSAN -> {
+                    defKniga = "Пс"
+                    "nadsan"
+                }
 
-            Settings.PEREVODCARNIAUSKI -> {
-                "carniauski"
-            }
+                Settings.PEREVODCARNIAUSKI -> {
+                    "carniauski"
+                }
 
-            Settings.PEREVODCATOLIK -> {
-                defKniga = "Мц"
-                "catolik"
-            }
+                Settings.PEREVODCATOLIK -> {
+                    defKniga = "Мц"
+                    "catolik"
+                }
 
-            Settings.PEREVODSINOIDAL -> {
-                "sinaidal"
-            }
+                Settings.PEREVODSINOIDAL -> {
+                    "sinaidal"
+                }
 
-            Settings.PEREVODNEWAMERICANBIBLE -> {
-                "english"
-            }
+                Settings.PEREVODNEWAMERICANBIBLE -> {
+                    "english"
+                }
 
-            else -> "biblia"
+                else -> "biblia"
+            }
+            val knigaText = k.getString("bible_time_${prevodName}_kniga", defKniga) ?: defKniga
+            val kniga = knigaBiblii(knigaText)
+            Settings.bibleTime = true
+            bibleTime = false
+            navigationActions.navigateToBibliaList(kniga >= 50, perevod)
         }
-        val knigaText = k.getString("bible_time_${prevodName}_kniga", defKniga) ?: defKniga
-        val kniga = knigaBiblii(knigaText)
-        Settings.bibleTime = true
-        bibleTime = false
-        navigationActions.navigateToBibliaList(kniga >= 50, perevod)
     }
     var dialogVisable by remember { mutableStateOf(false) }
     if (dialogVisable) {
@@ -634,7 +637,12 @@ fun BibliaMenu(
     var novyZapavet by remember { mutableStateOf(false) }
     if (dialogDownLoad) {
         DialogDownLoadBible(perevod, onConfirmation = {
-            navigationActions.navigateToBibliaList(novyZapavet, perevod)
+            if (isBibleTime) {
+                bibleTime = true
+                isBibleTime = false
+            } else {
+                navigationActions.navigateToBibliaList(novyZapavet, perevod)
+            }
             dialogDownLoad = false
         }) {
             dialogDownLoad = false
@@ -881,7 +889,39 @@ fun BibliaMenu(
             }
             TextButton(
                 onClick = {
-                    bibleTime = true
+                    when (perevod) {
+                        Settings.PEREVODCATOLIK -> {
+                            val dir = File("${context.filesDir}/Catolik")
+                            if (!dir.exists()) {
+                                dialogDownLoad = true
+                                isBibleTime = true
+                            } else {
+                                bibleTime = true
+                            }
+                        }
+
+                        Settings.PEREVODSINOIDAL -> {
+                            val dir = File("${context.filesDir}/Sinodal")
+                            if (!dir.exists()) {
+                                dialogDownLoad = true
+                                isBibleTime = true
+                            } else {
+                                bibleTime = true
+                            }
+                        }
+
+                        Settings.PEREVODNEWAMERICANBIBLE -> {
+                            val dir = File("${context.filesDir}/NewKingJames")
+                            if (!dir.exists()) {
+                                dialogDownLoad = true
+                                isBibleTime = true
+                            } else {
+                                bibleTime = true
+                            }
+                        }
+
+                        else -> bibleTime = true
+                    }
                 },
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
