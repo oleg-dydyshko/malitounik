@@ -109,7 +109,7 @@ import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsView(navController: NavHostController) {
+fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewModel) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val view = LocalView.current
@@ -215,7 +215,7 @@ fun SettingsView(navController: NavHostController) {
     var dialogDownLoad by remember { mutableStateOf(false) }
     var perevod by remember { mutableStateOf(Settings.PEREVODSINOIDAL) }
     if (dialogDownLoad) {
-        DialogDownLoadBible(perevod, onConfirmation = {
+        DialogDownLoadBible(viewModel, onConfirmation = {
             dialogDownLoad = false
         }) {
             dialogDownLoad = false

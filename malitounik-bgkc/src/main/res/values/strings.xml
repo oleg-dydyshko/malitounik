@@ -900,6 +900,7 @@
     </array>
     <string name="title_down_load">СПАМПАВАЦЬ БІБЛІЮ</string>
     <string name="content_down_load">Спампаваць %1$s памерам у %2$s?</string>
+    <string name="title_down_load_update">АБНАВІЦЬ ТЭКСТ БІБЛІІ</string>
     <string name="translate">З перакладам</string>
     <string name="file_not_find">файл у базе не знойдзены</string>
     <string name="admin">АДМІНІСТРАВАНЬНЕ:</string>

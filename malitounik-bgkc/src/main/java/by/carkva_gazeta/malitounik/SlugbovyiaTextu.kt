@@ -28,6 +28,7 @@ class SlugbovyiaTextu {
         const val ABIEDNICA = 9
         const val PAVIACHERNICA = 10
         const val PAUNOCHNICA = 11
+        const val VIACZERNIA_BEZ_SVAITARA = 12
         const val AICOU_VII_SUSVETNAGA_SABORY = 1000
         const val NIADZELIA_PRA_AICOU = 1001
         const val NIADZELIA_AICOU_VI_SABORY = 1002
@@ -1368,6 +1369,16 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
+                360, "Нараджэньне Госпада, Бога і Збаўцы нашага Ісуса Хрыста", "bogashlugbovya/mm_25_12_rastvo_viaczernia.html", VIACZERNIA
+            )
+        )
+        datMinALL.add(
+            SlugbovyiaTextuData(
+                360, "Нараджэньне Госпада, Бога і Збаўцы нашага Ісуса Хрыста", "bogashlugbovya/mm_25_12_rastvo_viaczernia_biez_sviatara.html", VIACZERNIA_BEZ_SVAITARA
+            )
+        )
+        datMinALL.add(
+            SlugbovyiaTextuData(
                 361, "Сабор Найсьвяцейшай Багародзіцы", "bogashlugbovya/mm_26_12_sabor_baharodzicy_liturhija.html", LITURHIJA
             )
         )
@@ -2287,6 +2298,7 @@ class SlugbovyiaTextu {
             LITURHIJA -> "Літургія"
             VIACZERNIA -> "Вячэрня"
             VIACZERNIA_UVIECZARY -> "Вячэрня"
+            VIACZERNIA_BEZ_SVAITARA -> "Вячэрня без сьвятара"
             VIACZERNIA_Z_LITURHIJA -> "Вячэрня з Літургіяй"
             VELIKODNYIAHADZINY -> "Велікодныя гадзіны"
             VIALHADZINY -> "Вялікія гадзіны"
@@ -2407,7 +2419,7 @@ class SlugbovyiaTextu {
         var day = 0
         val resultSlugba = datMinALL.filter {
             when (slugbaType) {
-                VIACZERNIA, VIACZERNIA_UVIECZARY -> it.sluzba == VIACZERNIA || it.sluzba == VIACZERNIA_UVIECZARY
+                VIACZERNIA, VIACZERNIA_UVIECZARY, VIACZERNIA_BEZ_SVAITARA -> it.sluzba == VIACZERNIA || it.sluzba == VIACZERNIA_UVIECZARY || it.sluzba == VIACZERNIA_BEZ_SVAITARA
                 VIALHADZINY -> it.sluzba == VIALHADZINY || it.sluzba == VELIKODNYIAHADZINY || it.sluzba == HADZINA6
                 LITURHIJA, VIACZERNIA_Z_LITURHIJA -> it.sluzba == LITURHIJA || it.sluzba == VIACZERNIA_Z_LITURHIJA
                 else -> it.sluzba == slugbaType

@@ -571,7 +571,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
         }
 
         composable(AllDestinations.SETTINGS_VIEW) {
-            SettingsView(navController)
+            SettingsView(navController, viewModel)
         }
 
         composable(AllDestinations.PADZEI_VIEW) {

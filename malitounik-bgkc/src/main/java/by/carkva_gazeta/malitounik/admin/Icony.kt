@@ -564,15 +564,14 @@ suspend fun getSviatyia(context: Context, position: Int): String {
     var sb: String
     for (i in listRes.size - 1 downTo 0) {
         val text = listRes[i].replace("<!--image-->", "")
-        if (text.trim() != "") {
-            if (text.contains("Трапар", ignoreCase = true) || text.contains("Кандак", ignoreCase = true)) {
+        val t1 = text.indexOf("</strong>")
+        if (t1 != -1) {
+            val subText = text.take(t1)
+            if (subText.contains("Трапар", ignoreCase = true) || subText.contains("Кандак", ignoreCase = true)) {
                 continue
             } else {
-                val t1 = text.indexOf("</strong>")
-                if (t1 != -1) {
-                    sb = text.take(t1)
-                    titleArray.add(0, sb)
-                }
+                sb = text.take(t1)
+                titleArray.add(0, sb)
             }
         }
     }

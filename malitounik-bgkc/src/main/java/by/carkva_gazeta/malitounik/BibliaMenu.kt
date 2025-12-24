@@ -636,7 +636,7 @@ fun BibliaMenu(
     var dialogDownLoad by remember { mutableStateOf(false) }
     var novyZapavet by remember { mutableStateOf(false) }
     if (dialogDownLoad) {
-        DialogDownLoadBible(perevod, onConfirmation = {
+        DialogDownLoadBible(viewModel, onConfirmation = {
             if (isBibleTime) {
                 bibleTime = true
                 isBibleTime = false
@@ -1532,11 +1532,11 @@ fun DialogSemuxa(
 
 @Composable
 fun DialogDownLoadBible(
-    perevod: String,
+    viewModel: SearchBibleViewModel,
     onConfirmation: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    val titleBible = when (perevod) {
+    val titleBible = when (viewModel.setPerevod) {
         Settings.PEREVODCATOLIK -> stringResource(R.string.title_biblia_catolik2)
         Settings.PEREVODSINOIDAL -> stringResource(R.string.bsinaidal2)
         Settings.PEREVODNEWAMERICANBIBLE -> stringResource(R.string.perevod_new_american_bible_2)
@@ -1551,7 +1551,7 @@ fun DialogDownLoadBible(
     LaunchedEffect(Unit) {
         if (Settings.isNetworkAvailable(context)) {
             coroutineScope.launch {
-                val result = when (perevod) {
+                val result = when (viewModel.setPerevod) {
                     Settings.PEREVODCATOLIK -> Malitounik.referens.child("/chytanne/Catolik/catolik.zip").metadata.await()
                     Settings.PEREVODSINOIDAL -> Malitounik.referens.child("/chytanne/Sinodal/sinaidal.zip").metadata.await()
                     Settings.PEREVODNEWAMERICANBIBLE -> Malitounik.referens.child("/chytanne/NewAmericanBible/NewAmericanBible.zip").metadata.await()
@@ -1583,8 +1583,10 @@ fun DialogDownLoadBible(
             if (Settings.isNetworkAvailable(context)) {
                 coroutineScope.launch {
                     isProgressVisable = true
-                    downLoadBibile(context, perevod)
-                    val destinationDir = when (perevod) {
+                    viewModel.downLoadBibile(context)
+                    viewModel.downLoadVersionBibile(context, viewModel.setPerevod)
+                    viewModel.saveVersionFile(context)
+                    val destinationDir = when (viewModel.setPerevod) {
                         Settings.PEREVODCATOLIK -> "${context.filesDir}/Catolik"
 
                         Settings.PEREVODSINOIDAL -> "${context.filesDir}/Sinodal"
@@ -1624,7 +1626,7 @@ fun DialogDownLoadBible(
         ) {
             Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
                 Text(
-                    text = stringResource(R.string.title_down_load).uppercase(), modifier = Modifier
+                    text = stringResource(if (viewModel.fireBaseVersionUpdate) R.string.title_down_load_update else R.string.title_down_load), modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
@@ -1748,31 +1750,6 @@ fun DialogImage(
                 }
             }
         }
-    }
-}
-
-suspend fun downLoadBibile(context: Context, perevod: String, count: Int = 0) {
-    var error = false
-    try {
-        val file = File("${context.filesDir}/cache/cache.zip")
-        when (perevod) {
-            Settings.PEREVODCATOLIK -> Malitounik.referens.child("/chytanne/Catolik/catolik.zip").getFile(file).addOnFailureListener {
-                error = true
-            }.await()
-
-            Settings.PEREVODSINOIDAL -> Malitounik.referens.child("/chytanne/Sinodal/sinaidal.zip").getFile(file).addOnFailureListener {
-                error = true
-            }.await()
-
-            Settings.PEREVODNEWAMERICANBIBLE -> Malitounik.referens.child("/chytanne/NewAmericanBible/NewAmericanBible.zip").getFile(file).addOnFailureListener {
-                error = true
-            }.await()
-        }
-    } catch (_: Throwable) {
-        error = true
-    }
-    if (error && count < 3) {
-        downLoadBibile(context, perevod, count + 1)
     }
 }
 

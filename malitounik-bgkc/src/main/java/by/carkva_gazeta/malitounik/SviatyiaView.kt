@@ -8,6 +8,7 @@ import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.util.Base64
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
@@ -136,6 +137,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.File
+import java.io.FileInputStream
+import java.security.MessageDigest
 import java.util.Calendar
 import java.util.GregorianCalendar
 import kotlin.math.roundToInt
@@ -226,6 +229,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                 imageOpisanne = ""
                 imageFull = false
             }
+
             showDropdown -> {
                 showDropdown = false
             }
@@ -1333,11 +1337,11 @@ suspend fun getIcons(
     }
     val list = fileIconMataData.readText().split("\n")
     for (i in 0 until sviatyiaList.size) {
-        list.forEach {
-            val t1 = it.indexOf("<-->")
+        list.forEach { iconList ->
+            val t1 = iconList.indexOf("<-->")
             if (t1 != -1) {
-                val t2 = it.indexOf("<-->", t1 + 4)
-                val name = it.substring(0, t1)
+                val t2 = iconList.indexOf("<-->", t1 + 4)
+                val name = iconList.take(t1)
                 val pref = if (svity) "v"
                 else "s"
                 sb.append(name)
@@ -1355,17 +1359,34 @@ suspend fun getIcons(
                     val t3 = name.lastIndexOf(".")
                     val fileNameT = name.take(t3) + ".txt"
                     val file = File("${context.filesDir}/iconsApisanne/$fileNameT")
+                    var fbMD5Hash: String? = null
                     try {
                         Malitounik.referens.child("/chytanne/iconsApisanne/$fileNameT").getFile(file).addOnFailureListener {
                             if (file.exists()) file.delete()
                         }.await()
+                        val pathReference = Malitounik.referens.child("/chytanne/icons/${name}")
+                        val metadata2 = pathReference.metadata.addOnFailureListener {
+                            error = true
+                        }.await()
+                        fbMD5Hash = metadata2.md5Hash
                     } catch (_: Throwable) {
                     }
                     val fileIcon = File("${context.filesDir}/icons/${name}")
                     val time = fileIcon.lastModified()
-                    val update = it.substring(t2 + 4).toLong()
-                    if (!fileIcon.exists() || time < update) {
-                        val updateFile = it.substring(t1 + 4, t2).toLong()
+                    val messageDigest = MessageDigest.getInstance("MD5")
+                    messageDigest.reset()
+                    val fis = FileInputStream(fileIcon)
+                    val byteArray = ByteArray(1024)
+                    var bytesCount: Int
+                    while (fis.read(byteArray).also { bytesCount = it } != -1) {
+                        messageDigest.update(byteArray, 0, bytesCount)
+                    }
+                    fis.close()
+                    val bytes = messageDigest.digest()
+                    val localMD5Hash = Base64.encodeToString(bytes, Base64.DEFAULT).trim()
+                    val update = iconList.substring(t2 + 4).toLong()
+                    if (!fileIcon.exists() || time < update || (fbMD5Hash != null && localMD5Hash != fbMD5Hash)) {
+                        val updateFile = iconList.substring(t1 + 4, t2).toLong()
                         dirList.add(DirList(name, updateFile))
                         size += updateFile
                     }

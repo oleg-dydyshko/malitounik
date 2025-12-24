@@ -141,6 +141,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Calendar
@@ -159,6 +160,8 @@ open class CytanniListViewModel : ViewModel() {
     var autoScrollSensor by mutableStateOf(false)
     var autoScrollSpeed by mutableIntStateOf(60)
     var autoScrollTextVisable by mutableStateOf(false)
+    var fireBaseVersionUpdate by mutableStateOf(false)
+    var fireBaseVersion = 1
     private var autoScrollJob: Job? = null
     private var autoScrollTextVisableJob: Job? = null
     private var isFirstDialodVisable = true
@@ -167,6 +170,9 @@ open class CytanniListViewModel : ViewModel() {
     private val type = TypeToken.getParameterized(ArrayList::class.java, VybranaeData::class.java).type
 
     fun initViewModel(context: Context, biblia: Int, cytanne: String, perevod: String) {
+        if (perevod == Settings.PEREVODCATOLIK || perevod == Settings.PEREVODSINOIDAL || perevod == Settings.PEREVODNEWAMERICANBIBLE) {
+            checkVersionBible(context, perevod)
+        }
         val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
         if (isFirstDialodVisable) {
             var isBibleEnable = k.getBoolean("catolik_bible", false)
@@ -405,6 +411,139 @@ open class CytanniListViewModel : ViewModel() {
             putInt("autoscrollSpid", autoScrollSpeed)
         }
     }
+
+    suspend fun downLoadBibile(context: Context, count: Int = 0) {
+        var error = false
+        try {
+            val file = File("${context.filesDir}/cache/cache.zip")
+            when (setPerevod) {
+                Settings.PEREVODCATOLIK -> Malitounik.referens.child("/chytanne/Catolik/catolik.zip").getFile(file).addOnFailureListener {
+                    error = true
+                }.await()
+
+                Settings.PEREVODSINOIDAL -> Malitounik.referens.child("/chytanne/Sinodal/sinaidal.zip").getFile(file).addOnFailureListener {
+                    error = true
+                }.await()
+
+                Settings.PEREVODNEWAMERICANBIBLE -> Malitounik.referens.child("/chytanne/NewAmericanBible/NewAmericanBible.zip").getFile(file).addOnFailureListener {
+                    error = true
+                }.await()
+            }
+        } catch (_: Throwable) {
+            error = true
+        }
+        if (error && count < 3) {
+            downLoadBibile(context, count + 1)
+        }
+    }
+
+    fun checkVersionBible(context: Context, perevod: String) {
+        try {
+            viewModelScope.launch {
+                fireBaseVersion = downLoadVersionBibile(context, perevod)
+                val localFileVirsion = when (perevod) {
+                    Settings.PEREVODCATOLIK -> File("${context.filesDir}/catolikVersion.txt")
+
+                    Settings.PEREVODSINOIDAL -> File("${context.filesDir}/sinaidalVersion.txt")
+
+                    Settings.PEREVODNEWAMERICANBIBLE -> File("${context.filesDir}/NewAmericanBibleVersion.txt")
+
+                    else -> File("${context.filesDir}/sinaidalVersion.txt")
+                }
+                val localVersion = if (localFileVirsion.exists()) {
+                    localFileVirsion.readText().trim().toInt()
+                } else 1
+                if (fireBaseVersion > localVersion) {
+                    val destinationDir = when (perevod) {
+                        Settings.PEREVODCATOLIK -> File("${context.filesDir}/Catolik")
+
+                        Settings.PEREVODSINOIDAL -> File("${context.filesDir}/Sinodal")
+
+                        Settings.PEREVODNEWAMERICANBIBLE -> File("${context.filesDir}/NewAmericanBible")
+
+                        else -> File("${context.filesDir}/Sinodal")
+                    }
+                    when (perevod) {
+                        Settings.PEREVODCATOLIK -> {
+                            fireBaseVersionUpdate = destinationDir.exists()
+                            setPerevod = Settings.PEREVODCATOLIK
+                            dialogDownLoad = true
+                        }
+
+                        Settings.PEREVODSINOIDAL -> {
+                            fireBaseVersionUpdate = destinationDir.exists()
+                            setPerevod = Settings.PEREVODSINOIDAL
+                            dialogDownLoad = true
+                        }
+
+                        Settings.PEREVODNEWAMERICANBIBLE -> {
+                            fireBaseVersionUpdate = destinationDir.exists()
+                            setPerevod = Settings.PEREVODNEWAMERICANBIBLE
+                            dialogDownLoad = true
+                        }
+                    }
+                }
+            }
+        } catch (_: Throwable) {
+        }
+    }
+
+    suspend fun downLoadVersionBibile(context: Context, perevod: String, count: Int = 0): Int {
+        var error = false
+        var result = 1
+        try {
+            val file = File("${context.filesDir}/cache/cache1.txt")
+            when (perevod) {
+                Settings.PEREVODCATOLIK -> Malitounik.referens.child("/chytanne/Catolik/catolikVersion.txt").getFile(file).addOnCompleteListener {
+                    if (it.isSuccessful) result = file.readText().trim().toInt()
+                    else error = true
+                }.await()
+
+                Settings.PEREVODSINOIDAL -> Malitounik.referens.child("/chytanne/Sinodal/sinaidalVersion.txt").getFile(file).addOnCompleteListener {
+                    if (it.isSuccessful) result = file.readText().trim().toInt()
+                    else error = true
+                }.await()
+
+                Settings.PEREVODNEWAMERICANBIBLE -> Malitounik.referens.child("/chytanne/NewAmericanBible/NewAmericanBibleVersion.txt").getFile(file).addOnCompleteListener {
+                    if (it.isSuccessful) result = file.readText().trim().toInt()
+                    else error = true
+                }.await()
+            }
+        } catch (_: Throwable) {
+            error = true
+        }
+        if (error && count < 3) {
+            downLoadVersionBibile(context, perevod, count + 1)
+        }
+        return result
+    }
+
+    fun saveVersionFile(context: Context) {
+        if (fireBaseVersion > 1) {
+            when (setPerevod) {
+                Settings.PEREVODCATOLIK -> {
+                    val file = File("${context.filesDir}/catolikVersion.txt")
+                    file.writer().use {
+                        it.write(fireBaseVersion.toString())
+                    }
+                }
+
+                Settings.PEREVODSINOIDAL -> {
+                    val file = File("${context.filesDir}/sinaidalVersion.txt")
+                    file.writer().use {
+                        it.write(fireBaseVersion.toString())
+                    }
+                }
+
+                Settings.PEREVODNEWAMERICANBIBLE -> {
+                    val file = File("${context.filesDir}/NewAmericanBibleVersion.txt")
+                    file.writer().use {
+                        it.write(fireBaseVersion.toString())
+                    }
+                }
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -425,7 +564,9 @@ fun CytanniList(
         )
     }
     val context = LocalContext.current
-    viewModel.initViewModel(context, biblia, cytanne, perevod)
+    LaunchedEffect(Unit) {
+        viewModel.initViewModel(context, biblia, cytanne, perevod)
+    }
     var skipUtran by remember { mutableStateOf(position == -2) }
     var positionRemember by rememberSaveable { mutableIntStateOf(position) }
     var utranEndPosition by remember { mutableIntStateOf(0) }
@@ -573,7 +714,7 @@ fun CytanniList(
         }
     }
     if (viewModel.dialogDownLoad) {
-        DialogDownLoadBible(viewModel.setPerevod, onConfirmation = {
+        DialogDownLoadBible(viewModel, onConfirmation = {
             perevod = viewModel.setPerevod
             k.edit {
                 if (biblia == Settings.CHYTANNI_MARANATA) {
@@ -583,10 +724,41 @@ fun CytanniList(
                 }
                 apply()
             }
+            if (viewModel.fireBaseVersionUpdate) {
+                viewModel.saveVersionFile(context)
+                viewModel.fireBaseVersionUpdate = false
+            }
             viewModel.dialogDownLoad = false
             viewModel.setPerevod(context, biblia, cytanne, perevod)
         }) {
             viewModel.dialogDownLoad = false
+        }
+    }
+    LaunchedEffect(Unit) {
+        when (perevod) {
+            Settings.PEREVODCATOLIK -> {
+                val dir = File("${context.filesDir}/Catolik")
+                if (!dir.exists()) {
+                    viewModel.setPerevod = Settings.PEREVODCATOLIK
+                    viewModel.dialogDownLoad = true
+                }
+            }
+
+            Settings.PEREVODSINOIDAL -> {
+                val dir = File("${context.filesDir}/Sinodal")
+                if (!dir.exists()) {
+                    viewModel.setPerevod = Settings.PEREVODSINOIDAL
+                    viewModel.dialogDownLoad = true
+                }
+            }
+
+            Settings.PEREVODNEWAMERICANBIBLE -> {
+                val dir = File("${context.filesDir}/NewAmericanBible")
+                if (!dir.exists()) {
+                    viewModel.setPerevod = Settings.PEREVODNEWAMERICANBIBLE
+                    viewModel.dialogDownLoad = true
+                }
+            }
         }
     }
     Scaffold(topBar = {
