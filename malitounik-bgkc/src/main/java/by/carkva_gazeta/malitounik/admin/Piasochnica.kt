@@ -96,7 +96,6 @@ import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.text.toHtml
-import androidx.core.text.toSpannable
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -130,7 +129,8 @@ class Piasochnica : ViewModel() {
     var htmlText by mutableStateOf(SpannableStringBuilder())
     val fileList = mutableStateListOf<MyNetFile>()
     var md5sumLocalFile = "0"
-    val backCopy = mutableStateListOf<String>()
+    //val backCopy = ArrayList<String>()
+    var isErrorRead = false
 
     fun getDirListRequest(dir: String) {
         val context = Malitounik.applicationContext()
@@ -161,7 +161,7 @@ class Piasochnica : ViewModel() {
                     }
                     fileList.addAll(temp)
                 } catch (_: Throwable) {
-                    Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
                 }
                 isProgressVisable = false
             }
@@ -188,7 +188,7 @@ class Piasochnica : ViewModel() {
         } catch (_: Throwable) {
             error = true
         }
-        if (count == 3) Toast.makeText(Malitounik.applicationContext(), Malitounik.applicationContext().getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+        if (count == 3) Toast.makeText(Malitounik.applicationContext(), Malitounik.applicationContext().getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
         if (error && count < 3) {
             getPasochnicaFileList(count + 1)
             return ArrayList()
@@ -221,7 +221,7 @@ class Piasochnica : ViewModel() {
                     }.await()
                 } catch (_: Throwable) {
                     error = true
-                    Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
                 }
                 val newFileName = fileName.replace("\n", " ")
                 try {
@@ -231,7 +231,7 @@ class Piasochnica : ViewModel() {
                     }.await()
                 } catch (_: Throwable) {
                     error = true
-                    Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
                 }
                 var text = if (error) "" else localFile.readText()
                 text = if (Settings.dzenNoch) text.replace("#d00505", "#ff6666", true)
@@ -265,7 +265,7 @@ class Piasochnica : ViewModel() {
                     }
                     update()
                 } catch (_: Throwable) {
-                    Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
                 }
                 if (isSite) saveLogFile()
             }
@@ -274,7 +274,7 @@ class Piasochnica : ViewModel() {
         }
     }
 
-    suspend fun getPasochnicaFile(resours: String, result: (SpannableStringBuilder, String) -> Unit, count: Int = 0) {
+    suspend fun getPasochnicaFile(resours: String, result: (String) -> Unit, count: Int = 0) {
         val context = Malitounik.applicationContext()
         val localFile = File("${context.filesDir}/cache/cache.txt")
         var error = false
@@ -284,8 +284,7 @@ class Piasochnica : ViewModel() {
                     var text = localFile.readText()
                     text = if (Settings.dzenNoch) text.replace("#d00505", "#ff6666", true)
                     else text
-                    val htmlText = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT) as SpannableStringBuilder
-                    result(htmlText, text)
+                    result(text)
                 } else {
                     error = true
                 }
@@ -294,7 +293,11 @@ class Piasochnica : ViewModel() {
             error = true
         }
         if (error && count < 3) {
-            getPasochnicaFile(resours = resours, result = { _, _ -> }, count = count + 1)
+            getPasochnicaFile(resours = resours, result = { result(context.getString(R.string.error_ch)) }, count = count + 1)
+        }
+        if (count == 3) {
+            isErrorRead = true
+            result(context.getString(R.string.error_ch))
         }
     }
 
@@ -315,7 +318,7 @@ class Piasochnica : ViewModel() {
         try {
             findFile()
         } catch (_: Throwable) {
-            if (count == 3) Toast.makeText(Malitounik.applicationContext(), Malitounik.applicationContext().getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+            if (count == 3) Toast.makeText(Malitounik.applicationContext(), Malitounik.applicationContext().getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
             if (count < 3) {
                 findDirAsSave.clear()
                 getFindFileListAsSave(count + 1)
@@ -323,14 +326,12 @@ class Piasochnica : ViewModel() {
         }
     }
 
-    fun addHistory(s: Editable?, editPosition: Int) {
-        s?.let {
-            if (it.toString() != "") {
-                if (history.size == 51) history.removeAt(0)
-                history.add(History(it.toSpannable(), editPosition))
-            }
-            isBackPressVisable = history.size > 1
+    fun addHistory(editPosition: Int) {
+        if (htmlText.toString() != "") {
+            if (history.size == 20) history.removeAt(history.size - 1)
+            history.add(0, History(htmlText, editPosition))
         }
+        isBackPressVisable = history.isNotEmpty()
     }
 
     fun getFileUnlinkPostRequest(fileName: String, isSite: Boolean) {
@@ -344,7 +345,7 @@ class Piasochnica : ViewModel() {
                         Malitounik.referens.child("/$fileName").delete().await()
                     }
                 } catch (_: Throwable) {
-                    Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
                 }
                 if (!isSite) saveLogFile()
             }
@@ -418,25 +419,22 @@ class Piasochnica : ViewModel() {
                     }.await()
                     if (!error) {
                         findDirAsSave.add("/$newDir$newFile")
-                        val metadata = Malitounik.referens.child("/$newDir$newFile").metadata.await()
-                        if (md5sumLocalFile.trim().compareTo(metadata.md5Hash?.trim() ?: "0") == 0) {
-                            File(context.getExternalFilesDir("PiasochnicaBackCopy"), fileName).delete()
-                            var remove = -1
-                            for (i in backCopy.indices) {
-                                if (backCopy[i] == fileName) {
-                                    remove = i
-                                    break
-                                }
-                            }
-                            if (remove != -1) backCopy.removeAt(remove)
-                        }
                     }
                 } catch (_: Throwable) {
                     error = true
-                    Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
                 }
                 if (error && count < 3) {
                     sendSaveAsPostRequest(dirToFile, fileName, count + 1)
+                    val t3 = dirToFile.lastIndexOf("/")
+                    val newFile = dirToFile.substring(t3 + 1)
+                    val newDir = dirToFile.take(t3 + 1)
+                    val metadata = Malitounik.referens.child("/$newDir$newFile").metadata.await()
+                    if (md5sumLocalFile.trim().compareTo(metadata.md5Hash?.trim() ?: "0") == 0) {
+                        File(context.getExternalFilesDir("PiasochnicaBackCopy"), fileName).delete()
+                    }
+                    Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
+                } else if (count == 3) {
                     Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(context, context.getString(R.string.save), Toast.LENGTH_SHORT).show()
@@ -487,18 +485,10 @@ class Piasochnica : ViewModel() {
                         val metadata = Malitounik.referens.child("/admin/piasochnica/$resours").metadata.await()
                         if (md5sumLocalFile.trim().compareTo(metadata.md5Hash?.trim() ?: "0") == 0) {
                             file.delete()
-                            var remove = -1
-                            for (i in backCopy.indices) {
-                                if (backCopy[i] == resours) {
-                                    remove = i
-                                    break
-                                }
-                            }
-                            if (remove != -1) backCopy.removeAt(remove)
                         }
                     }
                 } catch (_: Throwable) {
-                    Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
                 }
             }
         } else {
@@ -716,142 +706,158 @@ class Piasochnica : ViewModel() {
         }
     }
 
-    fun sendPostRequest(svityia: String, chtenieSvaitomu: String, style: Int, tipicon: String, titleCytanne: String, cytanne: String, dayOfPascha: Int, isLoad: (Boolean) -> Unit) {
+    fun sendPostRequest(svityia: String, chtenieSvaitomu: String, style: Int, tipicon: String, titleCytanne: String, cytanne: String, dayOfPascha: Int, count: Int = 0, isLoad: (Boolean) -> Unit) {
         val context = Malitounik.applicationContext()
+        var error = false
         if (Settings.isNetworkAvailable(context)) {
             viewModelScope.launch {
                 isLoad(true)
-                var myTipicon = tipicon
-                if (myTipicon == "0") myTipicon = ""
-                if (svityia != "") {
-                    var myStyle = 8
-                    when (style) {
-                        0 -> myStyle = 6
-                        1 -> myStyle = 7
-                        2 -> myStyle = 8
-                    }
-                    val localFile2 = File("${context.filesDir}/cache/cache.txt")
-                    val sviatyiaNewList = ArrayList<ArrayList<String>>()
-                    Malitounik.referens.child("/calendarsviatyia.txt").getFile(localFile2).addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            val sviatyiaNew = localFile2.readLines()
-                            for (element in sviatyiaNew) {
-                                val re1 = element.split("<>")
-                                val list = ArrayList<String>()
-                                for (element2 in re1) {
-                                    list.add(element2)
+                try {
+                    var myTipicon = tipicon
+                    if (myTipicon == "0") myTipicon = ""
+                    if (svityia != "") {
+                        var myStyle = 8
+                        when (style) {
+                            0 -> myStyle = 6
+                            1 -> myStyle = 7
+                            2 -> myStyle = 8
+                        }
+                        val localFile2 = File("${context.filesDir}/cache/cache.txt")
+                        val sviatyiaNewList = ArrayList<ArrayList<String>>()
+                        Malitounik.referens.child("/calendarsviatyia.txt").getFile(localFile2).addOnCompleteListener {
+                            if (it.isSuccessful) {
+                                val sviatyiaNew = localFile2.readLines()
+                                for (element in sviatyiaNew) {
+                                    val re1 = element.split("<>")
+                                    val list = ArrayList<String>()
+                                    for (element2 in re1) {
+                                        list.add(element2)
+                                    }
+                                    sviatyiaNewList.add(list)
                                 }
-                                sviatyiaNewList.add(list)
+                                if (sviatyiaNewList[Settings.data[Settings.caliandarPosition][24].toInt() - 1][0] != svityia || sviatyiaNewList[Settings.data[Settings.caliandarPosition][24].toInt() - 1][1] != chtenieSvaitomu || sviatyiaNewList[Settings.data[Settings.caliandarPosition][24].toInt() - 1][2] != myStyle.toString() || sviatyiaNewList[Settings.data[Settings.caliandarPosition][24].toInt() - 1][3] != myTipicon) {
+                                    sviatyiaNewList[Settings.data[Settings.caliandarPosition][24].toInt() - 1][0] = svityia
+                                    sviatyiaNewList[Settings.data[Settings.caliandarPosition][24].toInt() - 1][1] = chtenieSvaitomu
+                                    sviatyiaNewList[Settings.data[Settings.caliandarPosition][24].toInt() - 1][2] = myStyle.toString()
+                                    sviatyiaNewList[Settings.data[Settings.caliandarPosition][24].toInt() - 1][3] = myTipicon
+                                }
+                            } else {
+                                error = true
+                                Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
                             }
-                            if (sviatyiaNewList[Settings.data[Settings.caliandarPosition][24].toInt() - 1][0] != svityia || sviatyiaNewList[Settings.data[Settings.caliandarPosition][24].toInt() - 1][1] != chtenieSvaitomu || sviatyiaNewList[Settings.data[Settings.caliandarPosition][24].toInt() - 1][2] != myStyle.toString() || sviatyiaNewList[Settings.data[Settings.caliandarPosition][24].toInt() - 1][3] != myTipicon) {
-                                sviatyiaNewList[Settings.data[Settings.caliandarPosition][24].toInt() - 1][0] = svityia
-                                sviatyiaNewList[Settings.data[Settings.caliandarPosition][24].toInt() - 1][1] = chtenieSvaitomu
-                                sviatyiaNewList[Settings.data[Settings.caliandarPosition][24].toInt() - 1][2] = myStyle.toString()
-                                sviatyiaNewList[Settings.data[Settings.caliandarPosition][24].toInt() - 1][3] = myTipicon
+                        }.await()
+                        val sb = StringBuilder()
+                        for (i in 0 until 366) {
+                            sb.append(sviatyiaNewList[i][0] + "<>" + sviatyiaNewList[i][1] + "<>" + sviatyiaNewList[i][2] + "<>" + sviatyiaNewList[i][3] + "\n")
+                        }
+                        val localFile3 = File("${context.filesDir}/cache/cache2.txt")
+                        if (sviatyiaNewList.isNotEmpty()) {
+                            localFile3.writer().use {
+                                it.write(sb.toString())
+                            }
+                        }
+                        sb.clear()
+                        if (sviatyiaNewList.isNotEmpty()) {
+                            Malitounik.referens.child("/calendarsviatyia.txt").putFile(Uri.fromFile(localFile3)).await()
+                        }
+                    } else {
+                        error = true
+                        Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
+                    }
+                    val localFile1 = File("${context.filesDir}/cache/cache3.txt")
+                    val localFile3 = File("${context.filesDir}/cache/cache4.txt")
+                    val year = Settings.data[Settings.caliandarPosition][3].toInt()
+                    val sb = StringBuilder()
+                    val preList = "<?php\n" +
+                            "/***********************************************************************\n" +
+                            "*                      Літургічны каляндар                             *\n" +
+                            "* ==================================================================== *\n" +
+                            "*                                                                      *\n" +
+                            "* Copyright (c) 2014 by Oleg Dydyshko                                  *\n" +
+                            "* http://carkva-gazeta.by                                              *\n" +
+                            "*                                                                      *\n" +
+                            "* This program is free software. You can redistribute it and/or modify *\n" +
+                            "* it under the terms of the GNU General Public License as published by *\n" +
+                            "* the Free Software Foundation; either version 2 of the License.       *\n" +
+                            "*                                                                      *\n" +
+                            "***********************************************************************/\n" +
+                            "\n" +
+                            "//Здесь Очередные чтения, Святые и праздники привязаные к Пасхе\n" +
+                            "//\n" +
+                            "/*******************************************************************************\n" +
+                            "* Основной формат: Лк 10.38-11.2, Лк 10.38-42                                  *\n" +
+                            "* Допустимые значения: Лк 10.38, 10.38-11.2, 10.38-42, 10.38, 38               *\n" +
+                            "* Недостающие элементы чтений автоматически добавляются из предыдущего чтения  *\n" +
+                            "* Расположение других элементов - произвольно                                  *\n" +
+                            "* Тэг <br> - перенос строки                                                    *\n" +
+                            "* BAG(ошибка): чтение Дз 6.8-7.5, 47-60 выведет Дз 6.8-7.5, Дз 6.47-60         *\n" +
+                            "* BAG 2: Ян 6.35б-39 выведет Ян 6.35-39                                        *\n" +
+                            "********************************************************************************/\n"
+                    sb.append(preList)
+                    Malitounik.referens.child("/calendar-cytanne_$year.php").getFile(localFile1).addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            var countDay = 0
+                            var countDayNovyGog = 0
+                            var calPos = 0
+                            var calPosNovyGod = -1
+                            Settings.data.forEachIndexed { index, strings ->
+                                if (strings[3].toInt() == year && calPosNovyGod == -1) {
+                                    calPosNovyGod = index
+                                }
+                                if (strings[22].toInt() == 0 && strings[3].toInt() == year) {
+                                    calPos = index
+                                    return@forEachIndexed
+                                }
+                            }
+                            localFile1.forEachLine { fw ->
+                                if (fw.contains($$"$calendar[]")) {
+                                    var c = Settings.data[calPos + countDay]
+                                    var myDayOfPasha = c[22].toInt()
+                                    if (c[3].toInt() != year) {
+                                        c = Settings.data[calPosNovyGod + countDayNovyGog]
+                                        myDayOfPasha = c[22].toInt()
+                                        countDayNovyGog++
+                                    }
+                                    countDay++
+                                    if (dayOfPascha == myDayOfPasha) {
+                                        sb.append($$"$calendar[]=array(\"cviaty\"=>\"$${titleCytanne}\", \"cytanne\"=>\"\".$ahref.\"$${cytanne}</a>\");\n")
+                                    } else {
+                                        sb.append("$fw\n")
+                                    }
+                                }
+                            }
+                            sb.append("?>")
+                            localFile3.writer().use {
+                                it.write(sb.toString())
                             }
                         } else {
+                            error = true
                             Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
                         }
                     }.await()
-                    val sb = StringBuilder()
-                    for (i in 0 until 366) {
-                        sb.append(sviatyiaNewList[i][0] + "<>" + sviatyiaNewList[i][1] + "<>" + sviatyiaNewList[i][2] + "<>" + sviatyiaNewList[i][3] + "\n")
-                    }
-                    val localFile3 = File("${context.filesDir}/cache/cache2.txt")
-                    if (sviatyiaNewList.isNotEmpty()) {
-                        localFile3.writer().use {
-                            it.write(sb.toString())
+                    Malitounik.referens.child("/calendar-cytanne_$year.php").putFile(Uri.fromFile(localFile3)).addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            Toast.makeText(context, context.getString(R.string.save), Toast.LENGTH_SHORT).show()
+                        } else {
+                            error = true
+                            Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
                         }
-                    }
-                    sb.clear()
-                    if (sviatyiaNewList.isNotEmpty()) {
-                        Malitounik.referens.child("/calendarsviatyia.txt").putFile(Uri.fromFile(localFile3)).await()
-                    }
-                } else {
-                    Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
+                    }.await()
+                    saveLogFile()
+                } catch (_: Throwable) {
+                    error = true
+                    Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
                 }
-                val localFile1 = File("${context.filesDir}/cache/cache3.txt")
-                val localFile3 = File("${context.filesDir}/cache/cache4.txt")
-                val year = Settings.data[Settings.caliandarPosition][3].toInt()
-                val sb = StringBuilder()
-                val preList = "<?php\n" +
-                        "/***********************************************************************\n" +
-                        "*                      Літургічны каляндар                             *\n" +
-                        "* ==================================================================== *\n" +
-                        "*                                                                      *\n" +
-                        "* Copyright (c) 2014 by Oleg Dydyshko                                  *\n" +
-                        "* http://carkva-gazeta.by                                              *\n" +
-                        "*                                                                      *\n" +
-                        "* This program is free software. You can redistribute it and/or modify *\n" +
-                        "* it under the terms of the GNU General Public License as published by *\n" +
-                        "* the Free Software Foundation; either version 2 of the License.       *\n" +
-                        "*                                                                      *\n" +
-                        "***********************************************************************/\n" +
-                        "\n" +
-                        "//Здесь Очередные чтения, Святые и праздники привязаные к Пасхе\n" +
-                        "//\n" +
-                        "/*******************************************************************************\n" +
-                        "* Основной формат: Лк 10.38-11.2, Лк 10.38-42                                  *\n" +
-                        "* Допустимые значения: Лк 10.38, 10.38-11.2, 10.38-42, 10.38, 38               *\n" +
-                        "* Недостающие элементы чтений автоматически добавляются из предыдущего чтения  *\n" +
-                        "* Расположение других элементов - произвольно                                  *\n" +
-                        "* Тэг <br> - перенос строки                                                    *\n" +
-                        "* BAG(ошибка): чтение Дз 6.8-7.5, 47-60 выведет Дз 6.8-7.5, Дз 6.47-60         *\n" +
-                        "* BAG 2: Ян 6.35б-39 выведет Ян 6.35-39                                        *\n" +
-                        "********************************************************************************/\n"
-                sb.append(preList)
-                Malitounik.referens.child("/calendar-cytanne_$year.php").getFile(localFile1).addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        var countDay = 0
-                        var countDayNovyGog = 0
-                        var calPos = 0
-                        var calPosNovyGod = -1
-                        Settings.data.forEachIndexed { index, strings ->
-                            if (strings[3].toInt() == year && calPosNovyGod == -1) {
-                                calPosNovyGod = index
-                            }
-                            if (strings[22].toInt() == 0 && strings[3].toInt() == year) {
-                                calPos = index
-                                return@forEachIndexed
-                            }
-                        }
-                        localFile1.forEachLine { fw ->
-                            if (fw.contains($$"$calendar[]")) {
-                                var c = Settings.data[calPos + countDay]
-                                var myDayOfPasha = c[22].toInt()
-                                if (c[3].toInt() != year) {
-                                    c = Settings.data[calPosNovyGod + countDayNovyGog]
-                                    myDayOfPasha = c[22].toInt()
-                                    countDayNovyGog++
-                                }
-                                countDay++
-                                if (dayOfPascha == myDayOfPasha) {
-                                    sb.append($$"$calendar[]=array(\"cviaty\"=>\"$${titleCytanne}\", \"cytanne\"=>\"\".$ahref.\"$${cytanne}</a>\");\n")
-                                } else {
-                                    sb.append("$fw\n")
-                                }
-                            }
-                        }
-                        sb.append("?>")
-                        localFile3.writer().use {
-                            it.write(sb.toString())
-                        }
-                    } else {
-                        Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
-                    }
-                }.await()
-                Malitounik.referens.child("/calendar-cytanne_$year.php").putFile(Uri.fromFile(localFile3)).addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        Toast.makeText(context, context.getString(R.string.save), Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
-                    }
-                }.await()
-                saveLogFile()
                 isLoad(false)
             }
         } else {
             Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+        }
+        if (error && count < 3) {
+            sendPostRequest(svityia, chtenieSvaitomu, style, tipicon, titleCytanne, cytanne, dayOfPascha, count + 1, isLoad = { })
+        } else if (count == 3) {
+            Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
+            isLoad(false)
         }
     }
 }
@@ -884,20 +890,21 @@ fun Piasochnica(
             }
 
             override fun afterTextChanged(s: Editable?) {
-                viewModel.addHistory(s, endEditPosition)
+                viewModel.addHistory(endEditPosition)
                 editText.removeTextChangedListener(this)
                 s?.let {
                     viewModel.htmlText = it as SpannableStringBuilder
                 }
                 editText.addTextChangedListener(this)
-                viewModel.isBackPressVisable = viewModel.history.size > 1
             }
         }
     }
     LifecycleResumeEffect(Unit) {
         onPauseOrDispose {
-            viewModel.htmlText = editText.text as SpannableStringBuilder
-            viewModel.saveResult(resours, false)
+            if (!viewModel.isErrorRead) {
+                viewModel.htmlText = editText.text as SpannableStringBuilder
+                viewModel.saveResult(resours, false)
+            }
         }
     }
     var backPressHandled by remember { mutableStateOf(false) }
@@ -980,8 +987,8 @@ fun Piasochnica(
                 endEditPosition += 29
                 editText.addTextChangedListener(textWatcher)
             }
+            viewModel.addHistory(editText.selectionEnd)
             viewModel.htmlText = editText.text as SpannableStringBuilder
-            viewModel.addHistory(editText.text, editText.selectionEnd)
             dialogCrateUrl = false
         }) {
             dialogCrateUrl = false
@@ -1111,15 +1118,15 @@ fun Piasochnica(
                 if (viewModel.isBackPressVisable) {
                     IconButton(onClick = {
                         editText.removeTextChangedListener(textWatcher)
-                        if (viewModel.history.size > 1) {
-                            editText.setText(viewModel.history[viewModel.history.size - 2].spannable)
-                            val editPosition = if (viewModel.history[viewModel.history.size - 2].editPosition == 0) endEditPosition
-                            else viewModel.history[viewModel.history.size - 2].editPosition
-                            endEditPosition = editPosition
-                            editText.setSelection(endEditPosition)
-                            viewModel.history.removeAt(viewModel.history.size - 1)
+                        if (viewModel.history.isNotEmpty()) {
+                            val editPosition = if (viewModel.history[0].editPosition == 0) endEditPosition
+                            else viewModel.history[0].editPosition
+                            endEditPosition = if (editPosition > viewModel.history[0].spannable.toString().length) viewModel.history[0].spannable.toString().length
+                            else editPosition
+                            viewModel.htmlText = SpannableStringBuilder(viewModel.history[0].spannable)
+                            viewModel.history.removeAt(0)
                         }
-                        viewModel.isBackPressVisable = viewModel.history.size > 1
+                        viewModel.isBackPressVisable = viewModel.history.isNotEmpty()
                         editText.addTextChangedListener(textWatcher)
                     }) {
                         Icon(
@@ -1161,8 +1168,8 @@ fun Piasochnica(
                         endEditPosition += 17
                         editText.addTextChangedListener(textWatcher)
                     }
+                    viewModel.addHistory(editText.selectionEnd)
                     viewModel.htmlText = editText.text as SpannableStringBuilder
-                    viewModel.addHistory(editText.text, editText.selectionEnd)
                 }) {
                     Icon(
                         modifier = Modifier.size(24.dp),
@@ -1202,8 +1209,8 @@ fun Piasochnica(
                         endEditPosition += 9
                         editText.addTextChangedListener(textWatcher)
                     }
+                    viewModel.addHistory(editText.selectionEnd)
                     viewModel.htmlText = editText.text as SpannableStringBuilder
-                    viewModel.addHistory(editText.text, editText.selectionEnd)
                 }) {
                     Icon(
                         modifier = Modifier.size(24.dp),
@@ -1243,8 +1250,8 @@ fun Piasochnica(
                         endEditPosition += 29
                         editText.addTextChangedListener(textWatcher)
                     }
+                    viewModel.addHistory(editText.selectionEnd)
                     viewModel.htmlText = editText.text as SpannableStringBuilder
-                    viewModel.addHistory(editText.text, editText.selectionEnd)
                 }) {
                     Image(
                         modifier = Modifier.size(24.dp),
@@ -1264,11 +1271,11 @@ fun Piasochnica(
                         }
                         editText.removeTextChangedListener(textWatcher)
                         editText.setText(build)
+                        viewModel.addHistory(editText.selectionEnd)
                         viewModel.htmlText = editText.text as SpannableStringBuilder
                         startEditPosition = 0
                         endEditPosition += 4
                         editText.addTextChangedListener(textWatcher)
-                        viewModel.addHistory(editText.text, editText.selectionEnd)
                     }) {
                         Icon(
                             modifier = Modifier.size(24.dp),

@@ -644,7 +644,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
             val title = stackEntry.arguments?.getString("title") ?: ""
             val context = LocalContext.current
             val resurs = stackEntry.arguments?.getString("resurs") ?: "bogashlugbovya_error.html"
-            val error = stringResource(R.string.error_ch2)
+            val error = stringResource(R.string.error_ch)
             val data = findCaliandarToDay()
             val titleCh = stringResource(R.string.czytanne3, data[1].toInt(), LocalResources.current.getStringArray(R.array.meciac_smoll)[2])
             Bogaslujbovyia(

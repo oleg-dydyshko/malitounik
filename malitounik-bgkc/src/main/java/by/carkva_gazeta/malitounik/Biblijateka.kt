@@ -556,7 +556,7 @@ fun Biblijateka(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = innerPadding.calculateTopPadding(), bottom = innerPadding.calculateBottomPadding(), start = 10.dp),
-                        text = stringResource(R.string.error_ch2),
+                        text = stringResource(R.string.error_ch),
                         fontSize = Settings.fontInterface.sp,
                         color = MaterialTheme.colorScheme.secondary
                     )
@@ -581,7 +581,7 @@ fun Biblijateka(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(top = innerPadding.calculateTopPadding(), bottom = innerPadding.calculateBottomPadding(), start = 10.dp),
-                                text = stringResource(R.string.error_ch2),
+                                text = stringResource(R.string.error_ch),
                                 fontSize = Settings.fontInterface.sp,
                                 color = MaterialTheme.colorScheme.secondary
                             )

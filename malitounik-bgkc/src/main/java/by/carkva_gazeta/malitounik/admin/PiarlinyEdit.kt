@@ -211,7 +211,7 @@ fun sendPostRequest(context: Context, resultArray: ArrayList<ArrayList<String>>,
                     }
                 }.await()
             } catch (_: Throwable) {
-                Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
             }
             isLoad(false)
         }

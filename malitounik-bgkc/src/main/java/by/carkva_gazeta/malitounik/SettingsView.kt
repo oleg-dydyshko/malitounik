@@ -986,7 +986,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                 }
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val error = stringResource(R.string.error_ch2)
+                val error = stringResource(R.string.error_ch)
                 TextButton(
                     onClick = {
                         try {

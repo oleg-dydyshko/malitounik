@@ -1140,21 +1140,20 @@ fun Bogaslujbovyia(
                                                     else resursEncode
                                                     Settings.bibleTime = false
                                                     adminViewModel.isHTML = dirToFile.contains(".html")
-                                                    adminViewModel.history.clear()
                                                     val t1 = dirToFile.lastIndexOf("/")
                                                     val fileName = if (t1 != -1) dirToFile.substring(t1 + 1)
                                                     else dirToFile
                                                     if (adminViewModel.isFilePiasochnicaExitst(fileName, fileList)) {
                                                         coroutineScope.launch {
                                                             isProgressVisable = true
-                                                            adminViewModel.getPasochnicaFile(fileName, result = { sb, text ->
-                                                                adminViewModel.addHistory(sb, 0)
+                                                            adminViewModel.getPasochnicaFile(fileName, result = { text ->
                                                                 val html = if (adminViewModel.isHTML) {
-                                                                    sb
+                                                                    SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
                                                                 } else {
                                                                     SpannableStringBuilder(text)
                                                                 }
                                                                 adminViewModel.htmlText = html
+                                                                adminViewModel.addHistory(0)
                                                                 navigationActions.navigateToPiasochnica(fileName)
                                                             })
                                                         }
@@ -1170,8 +1169,8 @@ fun Bogaslujbovyia(
                                                             } else {
                                                                 SpannableStringBuilder(text)
                                                             }
-                                                            adminViewModel.addHistory(html, 0)
                                                             adminViewModel.htmlText = html
+                                                            adminViewModel.addHistory(0)
                                                             navigationActions.navigateToPiasochnica(fileName)
                                                             isProgressVisable = false
                                                         }
@@ -1198,21 +1197,20 @@ fun Bogaslujbovyia(
                                                 else resursEncode
                                                 Settings.bibleTime = false
                                                 adminViewModel.isHTML = dirToFile.contains(".html")
-                                                adminViewModel.history.clear()
                                                 val t1 = dirToFile.lastIndexOf("/")
                                                 val fileName = if (t1 != -1) dirToFile.substring(t1 + 1)
                                                 else dirToFile
                                                 if (adminViewModel.isFilePiasochnicaExitst(fileName, fileList)) {
                                                     coroutineScope.launch {
                                                         isProgressVisable = true
-                                                        adminViewModel.getPasochnicaFile(fileName, result = { sb, text ->
-                                                            adminViewModel.addHistory(sb, 0)
+                                                        adminViewModel.getPasochnicaFile(fileName, result = { text ->
                                                             val html = if (adminViewModel.isHTML) {
-                                                                sb
+                                                                SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
                                                             } else {
                                                                 SpannableStringBuilder(text)
                                                             }
                                                             adminViewModel.htmlText = html
+                                                            adminViewModel.addHistory(0)
                                                             navigationActions.navigateToPiasochnica(fileName)
                                                         })
                                                     }
@@ -1228,7 +1226,7 @@ fun Bogaslujbovyia(
                                                         } else {
                                                             SpannableStringBuilder(text)
                                                         }
-                                                        adminViewModel.addHistory(html, 0)
+                                                        adminViewModel.addHistory(0)
                                                         adminViewModel.htmlText = html
                                                         navigationActions.navigateToPiasochnica(fileName)
                                                         isProgressVisable = false

@@ -74,8 +74,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.File
 import java.io.FileOutputStream
-import java.util.Calendar
-import java.util.GregorianCalendar
 
 object PasochnicaList {
     const val NONE = 0
@@ -109,25 +107,6 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
     var isProgressVisable by remember { mutableStateOf(false) }
     val fileList = remember { mutableStateListOf<PaisochnicaFileList>() }
     LaunchedEffect(Unit) {
-        val dir = context.getExternalFilesDir("PiasochnicaBackCopy")
-        if (dir?.exists() == true) {
-            var list = dir.list()
-            list?.forEach {
-                val file = File("$dir/$it")
-                val systemTime = System.currentTimeMillis()
-                val lastModified = GregorianCalendar()
-                lastModified.timeInMillis = file.lastModified()
-                lastModified.add(Calendar.DATE, 7)
-                if (lastModified.timeInMillis < systemTime) {
-                    file.delete()
-                }
-            }
-            list = dir.list()
-            list?.forEach {
-                viewModel.backCopy.add(it)
-            }
-            viewModel.backCopy.sort()
-        }
         if (Settings.isNetworkAvailable(context)) {
             viewModel.viewModelScope.launch {
                 isProgressVisable = true
@@ -147,17 +126,15 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
         DialogNetFileExplorer(viewModel = viewModel, setFile = { dirToFile ->
             isProgressVisable = true
             viewModel.isHTML = dirToFile.contains(".html")
-            viewModel.history.clear()
             val t1 = dirToFile.lastIndexOf("/")
             val fileName = if (t1 != -1) dirToFile.substring(t1 + 1)
             else dirToFile
             if (viewModel.isFilePiasochnicaExitst(fileName, fileList)) {
                 coroutineScope.launch {
                     isProgressVisable = true
-                    viewModel.getPasochnicaFile(fileName, result = { sb, text ->
-                        viewModel.addHistory(sb, 0)
+                    viewModel.getPasochnicaFile(fileName, result = { text ->
                         val html = if (viewModel.isHTML) {
-                            sb
+                            SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
                         } else {
                             SpannableStringBuilder(text)
                         }
@@ -177,7 +154,6 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                     } else {
                         SpannableStringBuilder(text)
                     }
-                    viewModel.addHistory(html, 0)
                     viewModel.htmlText = html
                     navigationActions.navigateToPiasochnica(fileName)
                     isProgressVisable = false
@@ -209,12 +185,10 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                 val t1 = path.lastIndexOf("/")
                 val resours = if (t1 != -1) path.substring(t1 + 1) else path
                 viewModel.isHTML = resours.contains(".html")
-                viewModel.history.clear()
                 if (viewModel.isFilePiasochnicaExitst(resours, fileList)) {
                     coroutineScope.launch {
                         isProgressVisable = true
-                        viewModel.getPasochnicaFile(resours, result = { sb, text ->
-                            viewModel.addHistory(sb, 0)
+                        viewModel.getPasochnicaFile(resours, result = { text ->
                             val html = if (viewModel.isHTML) {
                                 SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
                             } else {
@@ -231,7 +205,6 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                     else text
                     val htmltext = if (viewModel.isHTML) SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
                     else SpannableStringBuilder(text)
-                    viewModel.addHistory(htmltext, 0)
                     viewModel.htmlText = htmltext
                     navigationActions.navigateToPiasochnica(resours)
                 }
@@ -241,7 +214,6 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
     var dialogContextMenu by remember { mutableStateOf(false) }
     var dialogDelite by remember { mutableStateOf(false) }
     var dialogDeliteAllPiasochnica by remember { mutableStateOf(false) }
-    var dialogDeliteBackCopy by remember { mutableStateOf(false) }
     var dialogSetFileName by remember { mutableStateOf(false) }
     var position by remember { mutableIntStateOf(0) }
     if (dialogContextMenu) {
@@ -256,7 +228,7 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
         }
     }
     if (dialogDeliteAllPiasochnica) {
-        val error = stringResource(R.string.error_ch2)
+        val error = stringResource(R.string.error_ch)
         val noInternet = stringResource(R.string.no_internet)
         DialogDelite(title = stringResource(R.string.del_all_pasochnica), onConfirmation = {
             if (Settings.isNetworkAvailable(context)) {
@@ -288,17 +260,6 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
             dialogDelite = false
         }) {
             dialogDelite = false
-        }
-    }
-    if (dialogDeliteBackCopy) {
-        DialogDelite(title = viewModel.backCopy[position], onConfirmation = {
-            val title = viewModel.backCopy[position]
-            val fileOld = File(context.getExternalFilesDir("PiasochnicaBackCopy"), title)
-            if (fileOld.exists()) fileOld.delete()
-            viewModel.backCopy.removeAt(position)
-            dialogDeliteBackCopy = false
-        }) {
-            dialogDeliteBackCopy = false
         }
     }
     if (dialogSetFileName) {
@@ -338,10 +299,7 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                     } else break
                 }
                 viewModel.isHTML = true
-                viewModel.history.clear()
-                val text = SpannableStringBuilder("")
-                viewModel.addHistory(text, 0)
-                viewModel.htmlText = text
+                viewModel.htmlText = SpannableStringBuilder("")
                 viewModel.crateNewFilePiasochnica(resours)
                 navigationActions.navigateToPiasochnica(resours)
                 PasochnicaList.pasochnicaAction = PasochnicaList.NONE
@@ -372,17 +330,41 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                             coroutineScope.launch {
                                 isProgressVisable = true
                                 viewModel.isHTML = fileName.contains(".html")
-                                viewModel.history.clear()
-                                viewModel.getPasochnicaFile(fileName, result = { sb, text ->
-                                    viewModel.addHistory(sb, 0)
-                                    val html = if (viewModel.isHTML) {
-                                        SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
-                                    } else {
-                                        SpannableStringBuilder(text)
+                                var isBackCopyExists = false
+                                val dir = context.getExternalFilesDir("PiasochnicaBackCopy")
+                                if (dir?.exists() != true) dir?.mkdir()
+                                val list = dir?.list()
+                                list?.forEach {
+                                    if (fileName == it) {
+                                        isBackCopyExists = true
+                                        return@forEach
                                     }
-                                    viewModel.htmlText = html
-                                    navigationActions.navigateToPiasochnica(fileName)
-                                })
+                                }
+                                if (isBackCopyExists) {
+                                    val file = File(context.getExternalFilesDir("PiasochnicaBackCopy"), fileName)
+                                    if (file.exists()) {
+                                        var text = file.readText()
+                                        text = if (Settings.dzenNoch) text.replace("#d00505", "#ff6666", true)
+                                        else text
+                                        val html = if (viewModel.isHTML) {
+                                            SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
+                                        } else {
+                                            SpannableStringBuilder(text)
+                                        }
+                                        viewModel.htmlText = html
+                                        navigationActions.navigateToPiasochnica(fileName)
+                                    }
+                                } else {
+                                    viewModel.getPasochnicaFile(fileName, result = { text ->
+                                        val html = if (viewModel.isHTML) {
+                                            SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
+                                        } else {
+                                            SpannableStringBuilder(text)
+                                        }
+                                        viewModel.htmlText = html
+                                        navigationActions.navigateToPiasochnica(fileName)
+                                    })
+                                }
                                 isProgressVisable = false
                             }
                         }, onLongClick = {
@@ -397,7 +379,9 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                         tint = MaterialTheme.colorScheme.primary,
                         contentDescription = ""
                     )
-                    Column(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
+                    Column(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)) {
                         Text(
                             text = fileList[index].fileName,
                             color = MaterialTheme.colorScheme.secondary,
@@ -412,48 +396,6 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                             )
                         }
                     }
-                }
-                HorizontalDivider()
-            }
-            items(viewModel.backCopy.size) { index ->
-                Row(
-                    modifier = Modifier
-                        .padding(start = 10.dp)
-                        .combinedClickable(onClick = {
-                            val fileName = viewModel.backCopy[index]
-                            val file = File(context.getExternalFilesDir("PiasochnicaBackCopy"), fileName)
-                            if (file.exists()) {
-                                var text = file.readText()
-                                text = if (Settings.dzenNoch) text.replace("#d00505", "#ff6666", true)
-                                else text
-                                val html = if (viewModel.isHTML) {
-                                    SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
-                                } else {
-                                    SpannableStringBuilder(text)
-                                }
-                                viewModel.htmlText = html
-                                navigationActions.navigateToPiasochnica(fileName)
-                            }
-                        }, onLongClick = {
-                            position = index
-                            dialogDeliteBackCopy = true
-                        }),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        modifier = Modifier.size(5.dp),
-                        painter = painterResource(R.drawable.poiter),
-                        tint = MaterialTheme.colorScheme.primary,
-                        contentDescription = ""
-                    )
-                    Text(
-                        text = viewModel.backCopy[index],
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(10.dp),
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = Settings.fontInterface.sp
-                    )
                 }
                 HorizontalDivider()
             }
@@ -515,7 +457,7 @@ fun DialogNetFileExplorer(
     var textFieldValueState by remember { mutableStateOf(fileName) }
     var dialogFileExists by remember { mutableStateOf(false) }
     if (dialogFileExists) {
-        DialogFileExists(fileName = fileName, setFileName = {
+        DialogFileExists(fileName = textFieldValueState, setFileName = {
             setFile("$dir/$textFieldValueState")
             onDismiss()
             dialogFileExists = false

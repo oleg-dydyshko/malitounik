@@ -108,8 +108,7 @@
     <string name="zmennyia_chastki">Зменныя часткі на сёньня</string>
     <string name="sabytieKali">Калі: %1$s %2$s \n%3$s</string>
     <string name="sabytieDoKuda">Пачатак: %1$s %2$s \nКанец: %3$s %4$s \n%5$s</string>
-    <string name="error_ch">Памылка, даруйце\n</string>
-    <string name="error_ch2">Памылка, даруйце</string>
+    <string name="error_ch">Памылка, даруйце</string>
     <string name="sabytie_name">Назва падзеі</string>
     <string name="sabytie_pachatak">Пачатак:</string>
     <string name="Sabytie_end">Канец:</string>

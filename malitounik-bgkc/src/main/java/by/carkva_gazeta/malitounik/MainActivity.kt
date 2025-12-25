@@ -1107,7 +1107,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
     }
 
     override fun errorRadioMaria() {
-        val view = Toast.makeText(this, getString(R.string.error_ch2), Toast.LENGTH_LONG)
+        val view = Toast.makeText(this, getString(R.string.error_ch), Toast.LENGTH_LONG)
         view.show()
     }
 

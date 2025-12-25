@@ -356,7 +356,7 @@ fun setDate(context: Context, count: Int = 0, isLoad: (Boolean) -> Unit, dataLis
                 }.await()
             } catch (_: Throwable) {
                 error = true
-                Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
             }
             if (error && count < 3) {
                 setDate(context = context, count = count + 1, isLoad = {}, dataList = { _, _, _, _ -> })

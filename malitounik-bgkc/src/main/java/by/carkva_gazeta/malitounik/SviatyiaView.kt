@@ -916,7 +916,7 @@ fun saveFilesSvaityxISvait(context: Context, svityList: SnapshotStateList<ArrayL
                                 finishSave()
                             }
                         } catch (_: Throwable) {
-                            Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
                         }
                     }
 
@@ -947,7 +947,7 @@ fun saveFilesSvaityxISvait(context: Context, svityList: SnapshotStateList<ArrayL
                             }.await()
                             finishSave()
                         } catch (_: Throwable) {
-                            Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
                         }
                     }
 
@@ -979,12 +979,12 @@ fun saveFilesSvaityxISvait(context: Context, svityList: SnapshotStateList<ArrayL
                             }.await()
                             finishSave()
                         } catch (_: Throwable) {
-                            Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
             } catch (_: Throwable) {
-                Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
             }
             isLoad(false)
         }
@@ -1004,7 +1004,7 @@ suspend fun getSviatyiaFile(context: Context, isLoad: (Boolean) -> Unit, setSvia
                 val type = TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
                 arrayList.addAll(gson.fromJson(builder, type))
             } catch (_: Throwable) {
-                Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
             }
         } else {
             Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
@@ -1021,7 +1021,7 @@ suspend fun getSviatyiaFile(context: Context, isLoad: (Boolean) -> Unit, setSvia
                     list.add(2, "-2")
                 }
             } catch (_: Throwable) {
-                Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
             }
         } else {
             Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
@@ -1039,7 +1039,7 @@ suspend fun getSviatyiaFile(context: Context, isLoad: (Boolean) -> Unit, setSvia
                 newArrayList.addAll(pyxomyiaList)
                 setSviatyia(newArrayList, arrayList[Settings.data[Settings.caliandarPosition][1].toInt() - 1])
             } catch (_: Throwable) {
-                Toast.makeText(context, context.getString(R.string.error_ch2), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
             }
         } else {
             Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
