@@ -129,7 +129,6 @@ class Piasochnica : ViewModel() {
     var htmlText by mutableStateOf(SpannableStringBuilder())
     val fileList = mutableStateListOf<MyNetFile>()
     var md5sumLocalFile = "0"
-    //val backCopy = ArrayList<String>()
     var isErrorRead = false
 
     fun getDirListRequest(dir: String) {
@@ -910,6 +909,8 @@ fun Piasochnica(
     var backPressHandled by remember { mutableStateOf(false) }
     BackHandler(!backPressHandled) {
         if (!backPressHandled) {
+            viewModel.history.clear()
+            viewModel.isBackPressVisable = false
             navController.popBackStack()
             backPressHandled = true
         }
@@ -1025,6 +1026,8 @@ fun Piasochnica(
 
                                     else -> {
                                         if (!backPressHandled) {
+                                            viewModel.history.clear()
+                                            viewModel.isBackPressVisable = false
                                             backPressHandled = true
                                             navController.popBackStack()
                                         }
