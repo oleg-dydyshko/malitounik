@@ -247,6 +247,7 @@ class Piasochnica : ViewModel() {
         val context = Malitounik.applicationContext()
         if (Settings.isNetworkAvailable(context)) {
             viewModelScope.launch {
+                isProgressVisable = true
                 try {
                     val localFile = File("${context.filesDir}/cache/cache.txt")
                     if (isSite) {
@@ -267,6 +268,7 @@ class Piasochnica : ViewModel() {
                     Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
                 }
                 if (isSite) saveLogFile()
+                isProgressVisable = false
             }
         } else {
             Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
@@ -274,6 +276,7 @@ class Piasochnica : ViewModel() {
     }
 
     suspend fun getPasochnicaFile(resours: String, result: (String) -> Unit, count: Int = 0) {
+        isProgressVisable = true
         val context = Malitounik.applicationContext()
         val localFile = File("${context.filesDir}/cache/cache.txt")
         var error = false
@@ -291,6 +294,7 @@ class Piasochnica : ViewModel() {
         } catch (_: Throwable) {
             error = true
         }
+        isProgressVisable = false
         if (error && count < 3) {
             getPasochnicaFile(resours = resours, result = { result(context.getString(R.string.error_ch)) }, count = count + 1)
         }
@@ -334,6 +338,7 @@ class Piasochnica : ViewModel() {
     }
 
     fun getFileUnlinkPostRequest(fileName: String, isSite: Boolean) {
+        isProgressVisable = true
         val context = Malitounik.applicationContext()
         if (Settings.isNetworkAvailable(context)) {
             viewModelScope.launch {
@@ -351,6 +356,7 @@ class Piasochnica : ViewModel() {
         } else {
             Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
         }
+        isProgressVisable = false
     }
 
     fun findResoursDir(fileName: String): String {
@@ -381,6 +387,7 @@ class Piasochnica : ViewModel() {
     }
 
     fun crateNewFilePiasochnica(newFile: String) {
+        isProgressVisable = true
         val context = Malitounik.applicationContext()
         if (Settings.isNetworkAvailable(context)) {
             viewModelScope.launch {
@@ -391,6 +398,7 @@ class Piasochnica : ViewModel() {
                 Malitounik.referens.child("/admin/piasochnica/$newFile").putFile(Uri.fromFile(localFile)).await()
             }
         }
+        isProgressVisable = false
     }
 
     fun sendSaveAsPostRequest(dirToFile: String, fileName: String, count: Int = 0) {
@@ -436,7 +444,7 @@ class Piasochnica : ViewModel() {
                 } else if (count == 3) {
                     Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(context, context.getString(R.string.save), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.save_as_b), Toast.LENGTH_SHORT).show()
                     saveLogFile()
                 }
                 isProgressVisable = false
@@ -445,6 +453,7 @@ class Piasochnica : ViewModel() {
     }
 
     private fun getOrSendFilePostRequest(resours: String, content: String, saveAs: Boolean) {
+        isProgressVisable = true
         val context = Malitounik.applicationContext()
         val dir = context.getExternalFilesDir("PiasochnicaBackCopy")
         dir?.let { dir ->
@@ -475,6 +484,8 @@ class Piasochnica : ViewModel() {
                                 } else {
                                     isDialogSaveFileExplorer = true
                                 }
+                            } else {
+                                Toast.makeText(context, context.getString(R.string.save_as_p), Toast.LENGTH_SHORT).show()
                             }
                         } else {
                             Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
@@ -493,6 +504,7 @@ class Piasochnica : ViewModel() {
         } else {
             Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
         }
+        isProgressVisable = false
     }
 
     fun findDirAsSave(resours: String): Boolean {
@@ -665,7 +677,7 @@ class Piasochnica : ViewModel() {
         var result = text
         val t1 = result.indexOf("<p")
         if (t1 != -1) {
-            val t2 = result.indexOf(">")
+            val t2 = result.indexOf(">", t1)
             val subString = result.substring(t1, t2 + 1)
             var stringres = result.replace(subString, "")
             stringres = stringres.replace("</p>", "<br>")

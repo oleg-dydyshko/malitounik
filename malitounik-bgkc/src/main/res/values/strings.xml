@@ -207,6 +207,8 @@
     <string name="pavedamiс_title">Паведамляць:</string>
     <string name="pavedamic">а %1$d-й гадзіне</string>
     <string name="save">Захавана</string>
+    <string name="save_as_p">Захавана ў пясочніцу</string>
+    <string name="save_as_b">Захавана ў базу</string>
     <string name="remove_padzea">Выдалена</string>
     <string name="remove_sabytie_iak">Якія падзеі Вы жадаеце выдаліць?</string>
     <string name="sabytie_del_all">Усё</string>

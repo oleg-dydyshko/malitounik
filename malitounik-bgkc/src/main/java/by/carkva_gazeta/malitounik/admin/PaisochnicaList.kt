@@ -104,12 +104,11 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
             isAppearanceLightNavigationBars = false
         }
     }
-    var isProgressVisable by remember { mutableStateOf(false) }
     val fileList = remember { mutableStateListOf<PaisochnicaFileList>() }
     LaunchedEffect(Unit) {
         if (Settings.isNetworkAvailable(context)) {
             viewModel.viewModelScope.launch {
-                isProgressVisable = true
+                viewModel.isProgressVisable = true
                 fileList.clear()
                 fileList.addAll(viewModel.getPasochnicaFileList())
                 fileList.sortWith(
@@ -117,21 +116,21 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                         it.updatedTimeMillis
                     }
                 )
-                isProgressVisable = false
+                viewModel.isProgressVisable = false
             }
         }
     }
     var isDialogNet by remember { mutableStateOf(false) }
     if (isDialogNet) {
         DialogNetFileExplorer(viewModel = viewModel, setFile = { dirToFile ->
-            isProgressVisable = true
+            viewModel.isProgressVisable = true
             viewModel.isHTML = dirToFile.contains(".html")
             val t1 = dirToFile.lastIndexOf("/")
             val fileName = if (t1 != -1) dirToFile.substring(t1 + 1)
             else dirToFile
             if (viewModel.isFilePiasochnicaExitst(fileName, fileList)) {
                 coroutineScope.launch {
-                    isProgressVisable = true
+                    viewModel.isProgressVisable = true
                     viewModel.getPasochnicaFile(fileName, result = { text ->
                         val html = if (viewModel.isHTML) {
                             SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
@@ -141,13 +140,13 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                         viewModel.htmlText = html
                         navigationActions.navigateToPiasochnica(fileName)
                     })
-                    isProgressVisable = false
-                    isProgressVisable = false
+                    viewModel.isProgressVisable = false
+                    viewModel.isProgressVisable = false
                     isDialogNet = false
                 }
             } else {
                 viewModel.getFileCopyPostRequest(dirToFile = dirToFile, isProgressVisable = {
-                    isProgressVisable = it
+                    viewModel.isProgressVisable = it
                 }) { text, fileName ->
                     val html = if (viewModel.isHTML) {
                         SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
@@ -156,7 +155,7 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                     }
                     viewModel.htmlText = html
                     navigationActions.navigateToPiasochnica(fileName)
-                    isProgressVisable = false
+                    viewModel.isProgressVisable = false
                     isDialogNet = false
                 }
             }
@@ -187,7 +186,7 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                 viewModel.isHTML = resours.contains(".html")
                 if (viewModel.isFilePiasochnicaExitst(resours, fileList)) {
                     coroutineScope.launch {
-                        isProgressVisable = true
+                        viewModel.isProgressVisable = true
                         viewModel.getPasochnicaFile(resours, result = { text ->
                             val html = if (viewModel.isHTML) {
                                 SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
@@ -197,7 +196,7 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                             viewModel.htmlText = html
                             navigationActions.navigateToPiasochnica(resours)
                         })
-                        isProgressVisable = false
+                        viewModel.isProgressVisable = false
                     }
                 } else {
                     var text = file.readText()
@@ -314,7 +313,7 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
         }
     }
     Column {
-        if (isProgressVisable) {
+        if (viewModel.isProgressVisable) {
             LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
         }
         LazyColumn(
@@ -328,7 +327,7 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                         .combinedClickable(onClick = {
                             val fileName = fileList[index].fileName
                             coroutineScope.launch {
-                                isProgressVisable = true
+                                viewModel.isProgressVisable = true
                                 viewModel.isHTML = fileName.contains(".html")
                                 var isBackCopyExists = false
                                 val dir = context.getExternalFilesDir("PiasochnicaBackCopy")
@@ -365,7 +364,7 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                                         navigationActions.navigateToPiasochnica(fileName)
                                     })
                                 }
-                                isProgressVisable = false
+                                viewModel.isProgressVisable = false
                             }
                         }, onLongClick = {
                             position = index
