@@ -676,24 +676,20 @@ class Piasochnica : ViewModel() {
     private fun clearHtml(text: String): String {
         var result = text
         val t1 = result.indexOf("<p")
-        if (t1 != -1) {
-            val t2 = result.indexOf(">", t1)
-            val subString = result.substring(t1, t2 + 1)
-            var stringres = result.replace(subString, "")
-            stringres = stringres.replace("</p>", "<br>")
-            stringres = stringres.replace("<span", "<font")
-            stringres = stringres.replace("</span>", "</font>")
-            stringres = stringres.replace("style=\"color:#D00505;\"", "color=\"#d00505\"")
-            stringres = stringres.replace("style=\"color:#FF6666;\"", "color=\"#d00505\"")
-            stringres = stringres.replace("<i>", "<em>")
-            stringres = stringres.replace("</i>", "</em>")
-            stringres = stringres.replace("<b>", "<strong>")
-            stringres = stringres.replace("</b>", "</strong>")
-            stringres = stringres.replace("<u>", "")
-            stringres = stringres.replace("</u>", "")
-            val t3 = stringres.lastIndexOf("<br>")
-            result = stringres.take(t3)
-        }
+        val t2 = result.indexOf(">", t1)
+        val subString = if (t1 != -1) result.substring(t1, t2 + 1) else ""
+        if (t1 != -1) result = result.replace(subString, "")
+        result = result.replace("</p>", "<br>")
+        result = result.replace("<span", "<font")
+        result = result.replace("</span>", "</font>")
+        result = result.replace("style=\"color:#D00505;\"", "color=\"#d00505\"")
+        result = result.replace("style=\"color:#FF6666;\"", "color=\"#d00505\"")
+        result = result.replace("<i>", "<em>")
+        result = result.replace("</i>", "</em>")
+        result = result.replace("<b>", "<strong>")
+        result = result.replace("</b>", "</strong>")
+        result = result.replace("<u>", "")
+        result = result.replace("</u>", "")
         return result
     }
 
@@ -709,7 +705,7 @@ class Piasochnica : ViewModel() {
             result = clearColor(result)
             result = clearBold(result)
             result = clearEm(result)
-            result = result.replace(" ", "")
+            result = result.replace(" ", " ")
             if (!result.contains("<!DOCTYPE HTML>")) result = "<!DOCTYPE HTML>$result"
             getOrSendFilePostRequest(resours, result, saveAs)
         } else {
@@ -904,7 +900,11 @@ fun Piasochnica(
                 viewModel.addHistory(endEditPosition)
                 editText.removeTextChangedListener(this)
                 s?.let {
-                    viewModel.htmlText = it as SpannableStringBuilder
+                    if (viewModel.htmlText.isEmpty()) {
+                        it.clearSpans()
+                        viewModel.htmlText = SpannableStringBuilder(it.toString())
+                        if (endEditPosition > viewModel.htmlText.length) endEditPosition = viewModel.htmlText.length
+                    } else viewModel.htmlText = it as SpannableStringBuilder
                 }
                 editText.addTextChangedListener(this)
             }
@@ -973,7 +973,7 @@ fun Piasochnica(
     var dialogCrateUrl by remember { mutableStateOf(false) }
     var dialogUrl by remember { mutableStateOf("") }
     if (dialogCrateUrl) {
-        DialogCrateURL(setURL = {
+        DialogCrateURL(setURL = { url ->
             startEditPosition = editText.selectionStart
             endEditPosition = editText.selectionEnd
             if (viewModel.isHTML) {
@@ -981,15 +981,15 @@ fun Piasochnica(
                 val subtext = text.getSpans(startEditPosition, endEditPosition, URLSpan::class.java)
                 subtext.forEach {
                     if (it.url.contains(dialogUrl)) {
-                        text.removeSpan(it)
+                        text.removeSpan(url)
                     }
                 }
-                text.setSpan(URLSpan(dialogUrl), startEditPosition, endEditPosition, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                text.setSpan(URLSpan(url), startEditPosition, endEditPosition, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             } else {
                 val text = editText.text.toString()
                 val build = with(StringBuilder()) {
                     append(text.take(startEditPosition))
-                    append("<a href=\"$dialogUrl\">")
+                    append("<a href=\"$url\">")
                     append(text.substring(startEditPosition, endEditPosition))
                     append("</a>")
                     append(text.substring(endEditPosition))

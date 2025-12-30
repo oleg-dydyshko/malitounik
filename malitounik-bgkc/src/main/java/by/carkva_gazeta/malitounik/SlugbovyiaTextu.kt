@@ -36,6 +36,7 @@ class SlugbovyiaTextu {
         const val SUBOTA_PERAD_RASTVOM = 1004
         const val NIADZELIA_PERAD_BOHAZJAULENNEM = 1005
         const val NIADZELIA_PASLIA_BOHAZJAULENIA = 1006
+        const val NIADZELIA_PASLA_RASTVA_PRAV_JAZEPA_CARA_DAVIDA_JAKUBA = 1007
         const val MINEIA_KVETNAIA = 100
         const val MINEIA_VIALIKI_POST_1 = 101
         const val MINEIA_VIALIKI_POST_2 = 102
@@ -2293,6 +2294,7 @@ class SlugbovyiaTextu {
         datMinALL.add(SlugbovyiaTextuData(365, "30 сьнежня – Пасьвяцьце Нараджэньня Госпада нашага Ісуса Хрыста і сьвятой мучаніцы Анісьсі", "bogashlugbovya/mm_30_12_pasviaccie_rastva_muczanicy_anissi_malanni_viaczernia.html", VIACZERNIA))
         datMinALL.add(SlugbovyiaTextuData(366, "31 сьнежня – Адданьне сьвята Нараджэньня Госпада, Бога і Збаўцы нашага Ісуса Хрыста", "bogashlugbovya/mm_31_12_addannie_sviata_rastva_liturhija.html", LITURHIJA))
         datMinALL.add(SlugbovyiaTextuData(366, "31 сьнежня – Адданьне сьвята Нараджэньня Госпада, Бога і Збаўцы нашага Ісуса Хрыста", "bogashlugbovya/mm_31_12_addannie_sviata_rastva_viaczernia.html", VIACZERNIA))
+        datMinALL.add(SlugbovyiaTextuData(NIADZELIA_PASLA_RASTVA_PRAV_JAZEPA_CARA_DAVIDA_JAKUBA, "Нядзеля пасьля Нараджэньня Госпада і Збаўцы нашага Ісуса Хрыста. Памяць сьвятых і праведных Язэпа, цара Давіда і Якуба, сваяка Гасподняга", "bogashlugbovya/mm_26_31_ndz_pasla_rastva_prav_jazepa_cara_davida_jakuba_liturhija.html", LITURHIJA))
     }
 
     fun getNazouSluzby(sluzba: Int): String {
@@ -2590,6 +2592,18 @@ class SlugbovyiaTextu {
                         //Нядзеля пасля Богаз'яўлення
                         for (i in 7..13) {
                             calendar.set(calendar.get(Calendar.YEAR), Calendar.JANUARY, i)
+                            val wik = calendar.get(Calendar.DAY_OF_WEEK)
+                            if (wik == Calendar.SUNDAY) {
+                                realDay = calendar.get(Calendar.DAY_OF_YEAR)
+                                break
+                            }
+                        }
+                    }
+
+                    NIADZELIA_PASLA_RASTVA_PRAV_JAZEPA_CARA_DAVIDA_JAKUBA -> {
+                        //Нядзеля пасьля Нараджэньня Госпада і Збаўцы нашага Ісуса Хрыста. Памяць сьвятых і праведных Язэпа, цара Давіда і Якуба, сваяка Гасподняга
+                        for (i in 26..31) {
+                            calendar.set(calendar.get(Calendar.YEAR), Calendar.DECEMBER, i)
                             val wik = calendar.get(Calendar.DAY_OF_WEEK)
                             if (wik == Calendar.SUNDAY) {
                                 realDay = calendar.get(Calendar.DAY_OF_YEAR)
