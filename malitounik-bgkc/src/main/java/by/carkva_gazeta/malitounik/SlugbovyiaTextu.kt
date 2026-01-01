@@ -1300,6 +1300,11 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
+                6, "Богазьяўленьне Збаўцы нашага Ісуса Хрыста", "bogashlugbovya/mm_06_01_bohazjaulennie_jutran.html", JUTRAN
+            )
+        )
+        datMinALL.add(
+            SlugbovyiaTextuData(
                 6, "Богазьяўленьне Збаўцы нашага Ісуса Хрыста", "bogashlugbovya/mm_06_01_bohazjaulennie_liturhija.html", LITURHIJA
             )
         )
@@ -2005,7 +2010,7 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                6, "Богазьяўленьне Збаўцы нашага Ісуса Хрыста", "bogashlugbovya/mm_06_01_bohazjauliennie_viaczernia_liturhija_asviaczennie_vady.html", VIACZERNIA_Z_LITURHIJA
+                5, "Богазьяўленьне Збаўцы нашага Ісуса Хрыста", "bogashlugbovya/mm_06_01_bohazjauliennie_viaczernia_liturhija_asviaczennie_vady.html", VIACZERNIA_Z_LITURHIJA
             )
         )
         datMinALL.add(

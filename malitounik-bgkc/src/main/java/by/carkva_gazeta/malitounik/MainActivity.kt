@@ -60,6 +60,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.edit
 import by.carkva_gazeta.malitounik.Malitounik.Companion.referens
 import by.carkva_gazeta.malitounik.Settings.isNetworkAvailable
@@ -1028,7 +1029,7 @@ enum class SystemNavigation {
 fun DialogSztoHovaha(
     onDismiss: () -> Unit
 ) {
-    Dialog(onDismissRequest = { onDismiss() }) {
+    Dialog(onDismissRequest = { onDismiss() }, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()

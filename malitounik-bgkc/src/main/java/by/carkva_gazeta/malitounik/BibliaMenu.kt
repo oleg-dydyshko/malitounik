@@ -124,6 +124,13 @@ class SearchBibleViewModel : CytanniListViewModel() {
     var oldTextFieldValueState by mutableStateOf("")
     var searchText by mutableStateOf(false)
     var searchFullText by mutableStateOf(false)
+    var textFieldValueNatatkaContent by mutableStateOf(TextFieldValue(""))
+    var addFileNatatki by mutableStateOf(false)
+    var saveFileNatatki by mutableStateOf(false)
+    var natatkaPosition by mutableIntStateOf(0)
+    val fileList = mutableStateListOf<MaeNatatkiItem>()
+    var natatkaVisable by mutableStateOf(false)
+    var isEditMode by mutableStateOf(false)
 
     fun doInBackground(
         context: Context, searche: String, perevod: String, isBogaslujbovyiaSearch: Boolean

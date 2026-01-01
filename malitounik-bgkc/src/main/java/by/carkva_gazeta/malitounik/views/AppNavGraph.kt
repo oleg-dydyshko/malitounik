@@ -668,16 +668,18 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
 
                         "cytanne", "cytannedop" -> {
                             val skip = if (skipUtran) -2 else -1
-                            viewModel.setPerevod(context, Settings.CHYTANNI_LITURGICHNYIA,if (navigate == "cytanne") data[9] else data[11], Settings.PEREVODSEMUXI)
+                            val cytanne = removeZnakiAndSlovy(if (navigate == "cytanne") data[9] else data[11])
+                            viewModel.setPerevod(context, Settings.CHYTANNI_LITURGICHNYIA, cytanne, Settings.PEREVODSEMUXI)
                             navigationActions.navigateToCytanniList(
-                                titleCh, removeZnakiAndSlovy(if (navigate == "cytanne") data[9] else data[11]), Settings.CHYTANNI_LITURGICHNYIA, Settings.PEREVODSEMUXI, skip
+                                titleCh, cytanne, Settings.CHYTANNI_LITURGICHNYIA, Settings.PEREVODSEMUXI, skip
                             )
                         }
 
                         "cytannesvityx" -> {
-                            viewModel.setPerevod(context, Settings.CHYTANNI_LITURGICHNYIA,data[10], Settings.PEREVODSEMUXI)
+                            val cytanne = removeZnakiAndSlovy(data[10])
+                            viewModel.setPerevod(context, Settings.CHYTANNI_LITURGICHNYIA, cytanne, Settings.PEREVODSEMUXI)
                             navigationActions.navigateToCytanniList(
-                                titleCh, removeZnakiAndSlovy(data[10]), Settings.CHYTANNI_LITURGICHNYIA, Settings.PEREVODSEMUXI, -1
+                                titleCh, cytanne, Settings.CHYTANNI_LITURGICHNYIA, Settings.PEREVODSEMUXI, -1
                             )
                         }
                     }
@@ -706,7 +708,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
             val context = LocalContext.current
             BibliaList(
                 navController, isNovyZapavet, perevod, navigateToCytanniList = { chytanne, perevod2 ->
-                    viewModel.setPerevod(context, Settings.CHYTANNI_BIBLIA,chytanne, perevod2)
+                    viewModel.setPerevod(context, Settings.CHYTANNI_BIBLIA, chytanne, perevod2)
                     navigationActions.navigateToCytanniList(
                         "", chytanne, Settings.CHYTANNI_BIBLIA, perevod2, -1
                     )
@@ -877,11 +879,14 @@ fun MainConteiner(
     }, initialPage = Settings.caliandarPosition)
     var showDropdown by remember { mutableStateOf(false) }
     var showDropdownMenuPos by rememberSaveable { mutableIntStateOf(1) }
-    BackHandler(drawerState.isClosed || showDropdown || viewModel.searchText) {
+    BackHandler(drawerState.isClosed || showDropdown || viewModel.searchText || viewModel.isEditMode || viewModel.natatkaVisable) {
         when {
-            viewModel.searchText || viewModel.searchFullText -> {
+            viewModel.searchText || viewModel.searchFullText || viewModel.isEditMode || viewModel.natatkaVisable  -> {
                 viewModel.searchText = false
                 viewModel.searchFullText = false
+                viewModel.isEditMode = false
+                viewModel.natatkaVisable = false
+                viewModel.addFileNatatki = false
             }
 
             drawerState.isClosed -> coroutineScope.launch { drawerState.open() }
@@ -972,11 +977,9 @@ fun MainConteiner(
             k.getInt("natatki_sort", Settings.SORT_BY_ABC)
         )
     }
-    var addFileNatatki by rememberSaveable { mutableStateOf(false) }
     var removeAllVybranaeDialog by remember { mutableStateOf(false) }
     var removeAllNatatkiDialog by remember { mutableStateOf(false) }
     var removeAllVybranae by remember { mutableStateOf(false) }
-    var removeAllNatatki by remember { mutableStateOf(false) }
     var logView by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
@@ -1014,7 +1017,7 @@ fun MainConteiner(
                     val dir = File("${context.filesDir}/Malitva")
                     if (dir.exists()) dir.deleteRecursively()
                     removeAllNatatkiDialog = false
-                    removeAllNatatki = true
+                    viewModel.fileList.clear()
                 }
             }) {
             removeAllVybranaeDialog = false
@@ -1036,7 +1039,6 @@ fun MainConteiner(
     val color = MaterialTheme.colorScheme.onTertiary
     var colorBlackboard by remember { mutableStateOf(color) }
     var dialogKniga by remember { mutableStateOf(false) }
-    var searshString by remember { mutableStateOf(TextFieldValue(viewModel.textFieldValueState.text, TextRange(viewModel.textFieldValueState.text.length))) }
     var addBiblijateka by remember { mutableStateOf(false) }
     ModalNavigationDrawer(
         drawerContent = {
@@ -1167,7 +1169,7 @@ fun MainConteiner(
         Scaffold(topBar = {
             TopAppBar(
                 title = {
-                    if (!(viewModel.searchText || viewModel.searchFullText)) {
+                    if (!(viewModel.searchText || viewModel.searchFullText || viewModel.isEditMode)) {
                         Text(
                             modifier = Modifier.clickable {
                                 maxLine.intValue = Int.MAX_VALUE
@@ -1175,7 +1177,7 @@ fun MainConteiner(
                                     delay(5000L)
                                     maxLine.intValue = 2
                                 }
-                            }, text = title.uppercase(), color = textTollBarColor, fontWeight = FontWeight.Bold, fontSize = Settings.fontInterface.sp, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis
+                            }, text = if (viewModel.natatkaVisable) viewModel.fileList[viewModel.natatkaPosition].title else title.uppercase(), color = textTollBarColor, fontWeight = FontWeight.Bold, fontSize = Settings.fontInterface.sp, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis
                         )
                     } else {
                         TextField(
@@ -1187,22 +1189,19 @@ fun MainConteiner(
                                         focusRequester.requestFocus()
                                         textFieldLoaded = true
                                     }
-                                }, value = searshString, onValueChange = { newText ->
+                                }, value = viewModel.textFieldValueState,
+                            placeholder = { Text(stringResource(if (viewModel.isEditMode) R.string.natatka_name else R.string.poshuk), fontSize = Settings.fontInterface.sp, color = PrimaryTextBlack) },
+                            onValueChange = { newText ->
                                 var edit = newText.text
                                 var selection = newText.selection
                                 val oldEdit = edit
                                 if (!currentRoute.contains("Biblia_")) edit = zamena(edit)
                                 if (oldEdit != edit) selection = TextRange(edit.length)
-                                searshString = TextFieldValue(edit, selection)
-                                viewModel.textFieldValueState = searshString
-                            }, singleLine = true, leadingIcon = {
-                                Icon(
-                                    painter = painterResource(R.drawable.search), tint = textTollBarColor, contentDescription = ""
-                                )
-                            }, trailingIcon = {
+                                viewModel.textFieldValueState = TextFieldValue(edit, selection)
+                            }, singleLine = true, trailingIcon = {
                                 IconButton(onClick = {
                                     viewModel.textFieldValueState = TextFieldValue("")
-                                    searshString = TextFieldValue("")
+                                    viewModel.textFieldValueState = TextFieldValue("")
                                 }) {
                                     Icon(
                                         painter = if (viewModel.textFieldValueState.text.isNotEmpty()) painterResource(R.drawable.close) else painterResource(R.drawable.empty), contentDescription = "", tint = textTollBarColor
@@ -1214,11 +1213,14 @@ fun MainConteiner(
                         )
                     }
                 }, navigationIcon = {
-                    if (viewModel.searchText || viewModel.searchFullText) {
+                    if (viewModel.searchText || viewModel.searchFullText || viewModel.isEditMode || viewModel.natatkaVisable) {
                         PlainTooltip(stringResource(R.string.close), TooltipAnchorPosition.Below) {
                             IconButton(onClick = {
                                 viewModel.searchText = false
                                 viewModel.searchFullText = false
+                                viewModel.isEditMode = false
+                                viewModel.natatkaVisable = false
+                                viewModel.addFileNatatki = false
                             }, content = {
                                 Icon(
                                     painter = painterResource(R.drawable.close), tint = textTollBarColor, contentDescription = ""
@@ -1235,7 +1237,7 @@ fun MainConteiner(
                         }
                     }
                 }, actions = {
-                    if (!(viewModel.searchText || viewModel.searchFullText)) {
+                    if (!(viewModel.searchText || viewModel.searchFullText || viewModel.isEditMode || viewModel.natatkaVisable)) {
                         if (!isBottomBar && (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR)) {
                             PlainTooltip(stringResource(R.string.set_data), TooltipAnchorPosition.Below) {
                                 Text(
@@ -1279,7 +1281,11 @@ fun MainConteiner(
                         if (currentRoute == AllDestinations.MAE_NATATKI_MENU) {
                             PlainTooltip(stringResource(R.string.add_natatku), TooltipAnchorPosition.Below) {
                                 IconButton({
-                                    addFileNatatki = true
+                                    viewModel.addFileNatatki = true
+                                    viewModel.isEditMode = true
+                                    viewModel.natatkaVisable = true
+                                    viewModel.textFieldValueState = TextFieldValue("")
+                                    viewModel.textFieldValueNatatkaContent = TextFieldValue("")
                                 }) {
                                     Icon(
                                         painter = painterResource(R.drawable.add), tint = textTollBarColor, contentDescription = ""
@@ -1387,6 +1393,24 @@ fun MainConteiner(
                             IconButton(onClick = { expandedUp = true }) {
                                 Icon(
                                     painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = textTollBarColor
+                                )
+                            }
+                        }
+                    }
+                    if (currentRoute == AllDestinations.MAE_NATATKI_MENU && viewModel.natatkaVisable && !viewModel.isEditMode) {
+                        PlainTooltip(stringResource(R.string.redagaktirovat)) {
+                            IconButton(onClick = { viewModel.isEditMode = true }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.edit), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
+                        }
+                    }
+                    if (currentRoute == AllDestinations.MAE_NATATKI_MENU && viewModel.isEditMode) {
+                        PlainTooltip(stringResource(R.string.save_sabytie)) {
+                            IconButton(onClick = { viewModel.saveFileNatatki = true }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.save), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
                         }
@@ -1677,7 +1701,7 @@ fun MainConteiner(
                                 pageSpacing = 10.dp, state = pagerState, flingBehavior = fling, verticalAlignment = Alignment.Top, modifier = Modifier.padding(10.dp)
                             ) { page ->
                                 KaliandarScreen(page, innerPadding, navigateToCytanneList = { title, chytanne, biblia ->
-                                    viewModel.setPerevod(context, biblia,chytanne, Settings.PEREVODSEMUXI)
+                                    viewModel.setPerevod(context, biblia, chytanne, Settings.PEREVODSEMUXI)
                                     navigationActions.navigateToCytanniList(
                                         title, chytanne, biblia, Settings.PEREVODSEMUXI, -1
                                     )
@@ -1824,9 +1848,8 @@ fun MainConteiner(
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
                         MaeNatatki(
-                            innerPadding, sortedNatatki, addFileNatatki, removeAllNatatki, onDismissAddFile = {
-                                addFileNatatki = false
-                            })
+                            innerPadding, sortedNatatki, viewModel
+                        )
                     }
 
                     AllDestinations.MALITVY_MENU -> {
@@ -1843,7 +1866,7 @@ fun MainConteiner(
                         BibliaMenu(navController, Settings.PEREVODSEMUXI, innerPadding, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
                             isIconSort = isIconSortVisibility
                         }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
-                            viewModel.setPerevod(context, biblia,chytanne, perevod2)
+                            viewModel.setPerevod(context, biblia, chytanne, perevod2)
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, biblia, perevod2, position
                             )
@@ -1858,7 +1881,7 @@ fun MainConteiner(
                         BibliaMenu(navController, Settings.PEREVODBOKUNA, innerPadding, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
                             isIconSort = isIconSortVisibility
                         }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
-                            viewModel.setPerevod(context, biblia,chytanne, perevod2)
+                            viewModel.setPerevod(context, biblia, chytanne, perevod2)
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, biblia, perevod2, position
                             )
@@ -1873,7 +1896,7 @@ fun MainConteiner(
                         BibliaMenu(navController, Settings.PEREVODNADSAN, innerPadding, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
                             isIconSort = isIconSortVisibility
                         }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
-                            viewModel.setPerevod(context, biblia,chytanne, perevod2)
+                            viewModel.setPerevod(context, biblia, chytanne, perevod2)
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, biblia, perevod2, position
                             )
@@ -1888,7 +1911,7 @@ fun MainConteiner(
                         BibliaMenu(navController, Settings.PEREVODCARNIAUSKI, innerPadding, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
                             isIconSort = isIconSortVisibility
                         }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
-                            viewModel.setPerevod(context, biblia,chytanne, perevod2)
+                            viewModel.setPerevod(context, biblia, chytanne, perevod2)
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, biblia, perevod2, position
                             )
@@ -1903,7 +1926,7 @@ fun MainConteiner(
                         BibliaMenu(navController, Settings.PEREVODCATOLIK, innerPadding, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
                             isIconSort = isIconSortVisibility
                         }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
-                            viewModel.setPerevod(context, biblia,chytanne, perevod2)
+                            viewModel.setPerevod(context, biblia, chytanne, perevod2)
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, biblia, perevod2, position
                             )
@@ -1918,7 +1941,7 @@ fun MainConteiner(
                         BibliaMenu(navController, Settings.PEREVODSINOIDAL, innerPadding, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
                             isIconSort = isIconSortVisibility
                         }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
-                            viewModel.setPerevod(context, biblia,chytanne, perevod2)
+                            viewModel.setPerevod(context, biblia, chytanne, perevod2)
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, biblia, perevod2, position
                             )
@@ -1933,7 +1956,7 @@ fun MainConteiner(
                         BibliaMenu(navController, Settings.PEREVODNEWAMERICANBIBLE, innerPadding, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
                             isIconSort = isIconSortVisibility
                         }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
-                            viewModel.setPerevod(context, biblia,chytanne, perevod2)
+                            viewModel.setPerevod(context, biblia, chytanne, perevod2)
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, biblia, perevod2, position
                             )
@@ -1973,7 +1996,7 @@ fun MainConteiner(
                         textTollBarColor = PrimaryTextBlack
                         VybranaeList(
                             navigateToCytanniList = { chytanne, position, perevod2 ->
-                                viewModel.setPerevod(context, Settings.CHYTANNI_VYBRANAE,chytanne, perevod2)
+                                viewModel.setPerevod(context, Settings.CHYTANNI_VYBRANAE, chytanne, perevod2)
                                 navigationActions.navigateToCytanniList(
                                     "", chytanne, Settings.CHYTANNI_VYBRANAE, perevod2, position
                                 )

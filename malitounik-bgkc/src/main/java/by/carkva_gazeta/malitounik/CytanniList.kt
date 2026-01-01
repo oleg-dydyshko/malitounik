@@ -564,9 +564,7 @@ fun CytanniList(
         )
     }
     val context = LocalContext.current
-    LaunchedEffect(Unit) {
-        viewModel.initViewModel(context, biblia, cytanne, perevod)
-    }
+    viewModel.initViewModel(context, biblia, cytanne, perevod)
     var skipUtran by remember { mutableStateOf(position == -2) }
     var positionRemember by rememberSaveable { mutableIntStateOf(position) }
     var utranEndPosition by remember { mutableIntStateOf(0) }
@@ -1107,7 +1105,7 @@ fun CytanniList(
                                     )
                                 }
                             }
-                            if (k.getBoolean("catolik_bible", false) && ((biblia == Settings.CHYTANNI_BIBLIA && knigaBiblii(viewModel.knigaText) >= 50) || biblia == Settings.CHYTANNI_LITURGICHNYIA || biblia == Settings.CHYTANNI_VYBRANAE)) {
+                            if (k.getBoolean("catolik_bible", false) && ((biblia == Settings.CHYTANNI_BIBLIA && knigaBiblii(viewModel.knigaText) >= 50) || biblia == Settings.CHYTANNI_VYBRANAE)) {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -2165,7 +2163,8 @@ fun getBible(cytanne: String, perevod: String, biblia: Int, isTitle: Boolean = f
                 }
             }
         }
-    } catch (_: Throwable) {
+    } catch (e: Throwable) {
+        e.printStackTrace()
         result.add(CytanniListData(id = id, title = "", text = openAssetsResources(context, "biblia_error.txt")))
         id++
     }
