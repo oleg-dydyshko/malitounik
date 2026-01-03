@@ -2,9 +2,7 @@ package by.carkva_gazeta.malitounik
 
 import android.app.Activity
 import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
-import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
 import android.print.PrintAttributes
 import android.print.PrintManager
@@ -20,6 +18,7 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -48,7 +47,6 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Card
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -63,6 +61,7 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -100,6 +99,8 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -458,6 +459,7 @@ fun Bogaslujbovyia(
     var textLayout by remember { mutableStateOf<TextLayoutResult?>(null) }
     var bottomSheetScaffoldIsVisible by rememberSaveable { mutableStateOf(AppNavGraphState.bottomSheetScaffoldIsVisible) }
     val actyvity = LocalActivity.current as MainActivity
+    var isShare by rememberSaveable { mutableStateOf(false) }
     if (viewModel.autoScrollSensor) {
         actyvity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
@@ -508,11 +510,17 @@ fun Bogaslujbovyia(
             }
         }
     }
-    BackHandler(!backPressHandled || showDropdown || iskniga || viewModel.searchText) {
+    BackHandler(!backPressHandled || showDropdown || iskniga || viewModel.searchText || isShare) {
         when {
+            isShare -> {
+                isShare = false
+                if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
+            }
+
             viewModel.searchText -> {
                 viewModel.searchText = false
                 viewModel.searchTextResult = AnnotatedString("")
+                if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
             }
 
             iskniga -> {
@@ -534,6 +542,8 @@ fun Bogaslujbovyia(
                 fullscreen = false
                 backPressHandled = true
                 if (!k.getBoolean("power", false)) actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                viewModel.autoScroll(title, false)
+                viewModel.autoScrollSensor = false
                 navController.popBackStack()
             }
         }
@@ -773,36 +783,34 @@ fun Bogaslujbovyia(
             if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
             shareIsLaunch = false
         }
-        var dialogHelpShare by remember { mutableStateOf(false) }
-        if (dialogHelpShare) {
-            DialogHelpShare {
-                if (it) {
-                    k.edit {
-                        putBoolean("isShareHelp", false)
+        var expandedUp by remember { mutableStateOf(false) }
+        LaunchedEffect(expandedUp) {
+            if (viewModel.autoScrollSensor && !isShare && !viewModel.searchText) viewModel.autoScroll(title, !expandedUp)
+        }
+        val interactionSourse = remember { MutableInteractionSource() }
+        val clipboard = LocalClipboard.current
+        val copyText = stringResource(R.string.copy_text)
+        val copy = stringResource(R.string.copy)
+        LaunchedEffect(shareIsLaunch) {
+            if (shareIsLaunch) {
+                coroutineScope.launch {
+                    val clipEntry = clipboard.getClipEntry()
+                    val text = clipEntry?.clipData?.getItemAt(0)?.text ?: "@#$"
+                    val isTextFound = textLayout?.layoutInput?.text?.text?.contains(text) == true
+                    val sent = if (isTextFound) text
+                    else textLayout?.layoutInput?.text?.text
+                    sent?.let { shareText ->
+                        if (!isTextFound) {
+                            clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(copyText, shareText)))
+                            Toast.makeText(context, copy, Toast.LENGTH_SHORT).show()
+                        }
+                        val sendIntent = Intent(Intent.ACTION_SEND)
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, shareText)
+                        sendIntent.putExtra(Intent.EXTRA_SUBJECT, title)
+                        sendIntent.type = "text/plain"
+                        launcherShare.launch(Intent.createChooser(sendIntent, title))
                     }
                 }
-                dialogHelpShare = false
-                shareIsLaunch = true
-            }
-        }
-        var expandedUp by remember { mutableStateOf(false) }
-        val interactionSourse = remember { MutableInteractionSource() }
-        if (shareIsLaunch) {
-            val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-            val isTextFound = textLayout?.layoutInput?.text?.text?.contains(clipboard.primaryClip?.getItemAt(0)?.text ?: "@#$") == true
-            val sent = if (isTextFound) clipboard.primaryClip?.getItemAt(0)?.text
-            else textLayout?.layoutInput?.text?.text
-            sent?.let { shareText ->
-                if (!isTextFound) {
-                    val clip = ClipData.newPlainText(stringResource(R.string.copy_text), shareText)
-                    clipboard.setPrimaryClip(clip)
-                    Toast.makeText(context, stringResource(R.string.copy), Toast.LENGTH_SHORT).show()
-                }
-                val sendIntent = Intent(Intent.ACTION_SEND)
-                sendIntent.putExtra(Intent.EXTRA_TEXT, shareText)
-                sendIntent.putExtra(Intent.EXTRA_SUBJECT, title)
-                sendIntent.type = "text/plain"
-                launcherShare.launch(Intent.createChooser(sendIntent, title))
             }
         }
         Scaffold(
@@ -937,6 +945,8 @@ fun Bogaslujbovyia(
                                                 else -> {
                                                     if (!backPressHandled) {
                                                         backPressHandled = true
+                                                        viewModel.autoScroll(title, false)
+                                                        viewModel.autoScrollSensor = false
                                                         navController.popBackStack()
                                                     }
                                                 }
@@ -1093,11 +1103,7 @@ fun Bogaslujbovyia(
                                         DropdownMenuItem(onClick = {
                                             expandedUp = false
                                             viewModel.autoScroll(title, false)
-                                            if (k.getBoolean("isShareHelp", true)) {
-                                                dialogHelpShare = true
-                                            } else {
-                                                shareIsLaunch = true
-                                            }
+                                            isShare = true
                                         }, text = { Text(stringResource(R.string.share), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                             Icon(
                                                 painter = painterResource(R.drawable.share), contentDescription = ""
@@ -1114,6 +1120,7 @@ fun Bogaslujbovyia(
                                         DropdownMenuItem(onClick = {
                                             expandedUp = false
                                             viewModel.searchText = true
+                                            viewModel.autoScroll(title, false)
                                         }, text = { Text(stringResource(R.string.searche_text), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                             Icon(
                                                 painter = painterResource(R.drawable.search), contentDescription = ""
@@ -1248,8 +1255,36 @@ fun Bogaslujbovyia(
                     )
                 }
             },
+            snackbarHost = {
+                if (isShare) {
+                    Surface(
+                        modifier = Modifier.padding(5.dp),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.secondary),
+                        shape = MaterialTheme.shapes.medium,
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        Row(horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                            Text(modifier = Modifier
+                                .padding(10.dp)
+                                .weight(1f), text = stringResource(R.string.share_help), fontSize = Settings.fontInterface.sp, lineHeight = (Settings.fontInterface * 1.15f).sp, color = MaterialTheme.colorScheme.secondary)
+                            IconButton(onClick = {
+                                showDropdown = false
+                                viewModel.autoScroll(title, false)
+                                shareIsLaunch = true
+                                isShare = false
+                            }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.share),
+                                    contentDescription = "",
+                                    tint = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
+                        }
+                    }
+                }
+            },
             bottomBar = {
-                if (!viewModel.searchText) {
+                if (!viewModel.searchText && !isShare) {
                     AnimatedVisibility(
                         !fullscreen, enter = fadeIn(
                             tween(
@@ -1318,11 +1353,7 @@ fun Bogaslujbovyia(
                                         IconButton(onClick = {
                                             showDropdown = false
                                             viewModel.autoScroll(title, false)
-                                            if (k.getBoolean("isShareHelp", true)) {
-                                                dialogHelpShare = true
-                                            } else {
-                                                shareIsLaunch = true
-                                            }
+                                            isShare = true
                                         }) {
                                             Icon(
                                                 painter = painterResource(R.drawable.share),
@@ -1334,6 +1365,7 @@ fun Bogaslujbovyia(
                                     PlainTooltip(stringResource(R.string.searche_text)) {
                                         IconButton(onClick = {
                                             viewModel.searchText = true
+                                            viewModel.autoScroll(title, false)
                                         }) {
                                             Icon(
                                                 painter = painterResource(R.drawable.search),
@@ -1434,7 +1466,7 @@ fun Bogaslujbovyia(
                             available: Velocity
                         ): Velocity {
                             isScrollRun = false
-                            if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
+                            if (viewModel.autoScrollSensor && !isShare && !viewModel.searchText) viewModel.autoScroll(title, true)
                             return super.onPostFling(consumed, available)
                         }
 
@@ -1480,7 +1512,7 @@ fun Bogaslujbovyia(
                                         if (event.type == PointerEventType.Press) {
                                             viewModel.autoScroll(title, false)
                                         }
-                                        if (viewModel.autoScrollSensor && event.type == PointerEventType.Release && !isScrollRun) {
+                                        if (viewModel.autoScrollSensor && !isShare && !viewModel.searchText && event.type == PointerEventType.Release && !isScrollRun) {
                                             viewModel.autoScroll(title, true)
                                         }
                                     }
@@ -1498,7 +1530,7 @@ fun Bogaslujbovyia(
                         verticalArrangement = Arrangement.Top
                     ) {
                         val padding = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp
-                        if (viewModel.autoScrollSensor) {
+                        if (viewModel.autoScrollSensor || !isShare) {
                             HtmlText(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -1555,25 +1587,7 @@ fun Bogaslujbovyia(
                                 HtmlText(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp))
-                                        .pointerInput(Unit) {
-                                            awaitEachGesture {
-                                                awaitFirstDown()
-                                                do {
-                                                    val event = awaitPointerEvent()
-                                                    if (event.changes.size == 2) {
-                                                        fontSize *= event.calculateZoom()
-                                                        fontSize = fontSize.coerceIn(18f, 58f)
-                                                        k.edit {
-                                                            putFloat("font_biblia", fontSize)
-                                                        }
-                                                        event.changes.forEach { pointerInputChange: PointerInputChange ->
-                                                            pointerInputChange.consume()
-                                                        }
-                                                    }
-                                                } while (event.changes.any { it.pressed })
-                                            }
-                                        },
+                                        .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp)),
                                     text = viewModel.htmlText,
                                     title = title,
                                     fontSize = fontSize.sp,
@@ -1844,48 +1858,6 @@ fun DialogLiturgia(
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.close), fontSize = 18.sp)
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun DialogHelpShare(onDismiss: (Boolean) -> Unit) {
-    var isCheck by remember { mutableStateOf(false) }
-    Dialog(onDismissRequest = { onDismiss(isCheck) }) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp),
-            shape = RoundedCornerShape(10.dp),
-        ) {
-            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
-                Text(
-                    text = stringResource(R.string.share).uppercase(), modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.onTertiary)
-                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
-                )
-                Text(text = stringResource(R.string.share_help), modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(checked = isCheck, onCheckedChange = {
-                        isCheck = !isCheck
-                    })
-                    Text(text = stringResource(R.string.not_show), modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
-                }
-                Row(
-                    modifier = Modifier
-                        .align(Alignment.End)
-                        .padding(horizontal = 8.dp, vertical = 2.dp),
-                    horizontalArrangement = Arrangement.End,
-                ) {
-                    TextButton(
-                        onClick = { onDismiss(isCheck) }, shape = MaterialTheme.shapes.small
-                    ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
-                        Text(stringResource(R.string.ok), fontSize = 18.sp)
                     }
                 }
             }

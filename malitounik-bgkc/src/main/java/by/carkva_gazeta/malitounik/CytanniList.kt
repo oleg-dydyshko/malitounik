@@ -886,6 +886,9 @@ fun CytanniList(
                     } else {
                         if (!isBottomBar) {
                             var expandedUp by remember { mutableStateOf(false) }
+                            LaunchedEffect(expandedUp) {
+                                if (viewModel.autoScrollSensor && !dialogRazdel && !showDropdown) viewModel.autoScroll(title, !expandedUp)
+                            }
                             if (viewModel.listState[viewModel.selectedIndex].lazyListState.canScrollForward) {
                                 val iconAutoScroll = if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
                                 else painterResource(R.drawable.play_circle)

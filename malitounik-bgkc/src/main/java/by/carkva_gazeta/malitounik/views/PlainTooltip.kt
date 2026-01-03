@@ -26,10 +26,12 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlainTooltip(title: String, positioning: TooltipAnchorPosition = TooltipAnchorPosition.Above, content: @Composable () -> Unit) {
+    var delay = 4000L
     val anotatedString = AnnotatedString.Builder(title).apply {
         val t1 = title.indexOf("\n")
         if (t1 != -1) {
             addStyle(SpanStyle(fontWeight = FontWeight.Bold), 0, t1)
+            delay = 9000L
         }
     }
     val state = rememberTooltipState(isPersistent = true)
@@ -37,7 +39,7 @@ fun PlainTooltip(title: String, positioning: TooltipAnchorPosition = TooltipAnch
     LaunchedEffect(state.isVisible) {
         if (state.isVisible) {
             coroutineScope.launch {
-                delay(10000L)
+                delay(delay)
                 state.dismiss()
             }
         }

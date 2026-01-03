@@ -1143,7 +1143,6 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                         putBoolean("adminNotifications", false)
                         putBoolean("paralel_maranata", true)
                         putBoolean("bottomBar", false)
-                        putBoolean("isShareHelp", true)
                         putBoolean("power", false)
                     }
                     modeNotification = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

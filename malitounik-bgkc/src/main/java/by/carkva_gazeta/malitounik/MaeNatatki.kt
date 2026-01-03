@@ -5,7 +5,6 @@ package by.carkva_gazeta.malitounik
 import android.content.Context
 import android.os.Build
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,6 +16,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
@@ -28,6 +28,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,6 +44,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import by.carkva_gazeta.malitounik.views.HtmlText
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
@@ -153,45 +155,46 @@ fun MaeNatatki(
             dialogContextMenu = false
         }
     }
+    val lazyListState = rememberLazyListState()
+    var fontSize by remember { mutableFloatStateOf(k.getFloat("font_biblia", 22F)) }
     if (viewModel.natatkaVisable) {
-        Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
-            Column(
-                modifier = Modifier
-                    .imePadding()
-                    .verticalScroll(rememberScrollState())
-            ) {
-                if (viewModel.isEditMode) {
-                    TextField(
+        Column(
+            modifier = Modifier
+                .imePadding()
+                .verticalScroll(rememberScrollState())
+        ) {
+            if (viewModel.isEditMode) {
+                TextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp)
+                        .focusRequester(focusRequester)
+                        .onGloballyPositioned {
+                            if (!textFieldLoaded) {
+                                focusRequester.requestFocus()
+                                textFieldLoaded = true
+                            }
+                        },
+                    placeholder = { Text(stringResource(R.string.natatka), fontSize = Settings.fontInterface.sp) },
+                    value = viewModel.textFieldValueNatatkaContent,
+                    onValueChange = {
+                        viewModel.textFieldValueNatatkaContent = it
+                    },
+                    textStyle = TextStyle(fontSize = Settings.fontInterface.sp)
+                )
+            } else {
+                SelectionContainer {
+                    HtmlText(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 10.dp)
-                            .focusRequester(focusRequester)
-                            .onGloballyPositioned {
-                                if (!textFieldLoaded) {
-                                    focusRequester.requestFocus()
-                                    textFieldLoaded = true
-                                }
-                            },
-                        placeholder = { Text(stringResource(R.string.natatka), fontSize = Settings.fontInterface.sp) },
-                        value = viewModel.textFieldValueNatatkaContent,
-                        onValueChange = {
-                            viewModel.textFieldValueNatatkaContent = it
-                        },
-                        textStyle = TextStyle(fontSize = Settings.fontInterface.sp)
+                            .padding(10.dp),
+                        text = viewModel.textFieldValueNatatkaContent.text, fontSize = fontSize.sp, color = MaterialTheme.colorScheme.secondary
                     )
-                } else {
-                    SelectionContainer {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(10.dp), text = viewModel.textFieldValueNatatkaContent.text, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
-                        )
-                    }
                 }
             }
         }
     } else {
-        LazyColumn {
+        LazyColumn(state = lazyListState) {
             items(viewModel.fileList.size) { index ->
                 Row(
                     modifier = Modifier
