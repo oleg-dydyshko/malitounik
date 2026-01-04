@@ -48,7 +48,6 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -643,6 +642,7 @@ fun BibliaMenu(
     var dialogDownLoad by remember { mutableStateOf(false) }
     var novyZapavet by remember { mutableStateOf(false) }
     if (dialogDownLoad) {
+        viewModel.setPerevod = perevod
         DialogDownLoadBible(viewModel, onConfirmation = {
             if (isBibleTime) {
                 bibleTime = true
@@ -1554,10 +1554,9 @@ fun DialogDownLoadBible(
     var isProgressVisable by remember { mutableStateOf(false) }
     var dirCount by remember { mutableLongStateOf(0) }
     var izm by remember { mutableStateOf("O Кб") }
-    val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(Unit) {
         if (Settings.isNetworkAvailable(context)) {
-            coroutineScope.launch {
+            viewModel.viewModelScope.launch {
                 val result = when (viewModel.setPerevod) {
                     Settings.PEREVODCATOLIK -> Malitounik.referens.child("/chytanne/Catolik/catolik.zip").metadata.await()
                     Settings.PEREVODSINOIDAL -> Malitounik.referens.child("/chytanne/Sinodal/sinaidal.zip").metadata.await()
@@ -1588,7 +1587,7 @@ fun DialogDownLoadBible(
     LaunchedEffect(download) {
         if (download) {
             if (Settings.isNetworkAvailable(context)) {
-                coroutineScope.launch {
+                viewModel.viewModelScope.launch {
                     isProgressVisable = true
                     viewModel.downLoadBibile(context)
                     viewModel.downLoadVersionBibile(context, viewModel.setPerevod)
@@ -1652,19 +1651,30 @@ fun DialogDownLoadBible(
                         .padding(horizontal = 8.dp, vertical = 2.dp),
                     horizontalArrangement = Arrangement.End,
                 ) {
-                    TextButton(
-                        onClick = { onDismiss() },
-                        shape = MaterialTheme.shapes.small
-                    ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
-                        Text(stringResource(R.string.cansel), fontSize = 18.sp)
-                    }
-                    TextButton(
-                        onClick = { download = true },
-                        shape = MaterialTheme.shapes.small
-                    ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
-                        Text(stringResource(R.string.ok), fontSize = 18.sp)
+                    if (!download) {
+                        TextButton(
+                            onClick = { onDismiss() },
+                            shape = MaterialTheme.shapes.small
+                        ) {
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                            Text(stringResource(R.string.cansel), fontSize = 18.sp)
+                        }
+
+                        TextButton(
+                            onClick = { download = true },
+                            shape = MaterialTheme.shapes.small
+                        ) {
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                            Text(stringResource(R.string.ok), fontSize = 18.sp)
+                        }
+                    } else {
+                        TextButton(
+                            onClick = { onDismiss() },
+                            shape = MaterialTheme.shapes.small
+                        ) {
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                            Text(stringResource(R.string.close), fontSize = 18.sp)
+                        }
                     }
                 }
             }

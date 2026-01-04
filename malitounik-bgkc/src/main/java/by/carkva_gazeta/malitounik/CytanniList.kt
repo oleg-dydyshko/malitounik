@@ -956,6 +956,15 @@ fun CytanniList(
                                 }
                                 DropdownMenuItem(onClick = {
                                     expandedUp = false
+                                    viewModel.autoScroll(title, false)
+                                    isSelectMode = true
+                                }, text = { Text(stringResource(R.string.share), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.share), contentDescription = ""
+                                    )
+                                })
+                                DropdownMenuItem(onClick = {
+                                    expandedUp = false
                                     fullscreen = true
                                 }, text = { Text(stringResource(R.string.fullscreen), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                     Icon(
@@ -1311,6 +1320,19 @@ fun CytanniList(
                                 )
                             }
                         }
+                        PlainTooltip(stringResource(R.string.share)) {
+                            IconButton(onClick = {
+                                showDropdown = false
+                                viewModel.autoScroll(title, false)
+                                isSelectMode = true
+                            }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.share),
+                                    contentDescription = "",
+                                    tint = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
+                        }
                         PlainTooltip(stringResource(R.string.set_perakvad_biblii)) {
                             IconButton(
                                 onClick = {
@@ -1612,24 +1634,28 @@ fun CytanniList(
                                 )
                             }
                         }
-                        if (isCopyMode) {
-                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            val clip = ClipData.newPlainText(
-                                "", sb.toString()
-                            )
-                            clipboard.setPrimaryClip(clip)
-                            Toast.makeText(context, stringResource(R.string.copy), Toast.LENGTH_SHORT).show()
-                        }
-                        if (isShareMode) {
-                            val sendIntent = Intent()
-                            sendIntent.action = Intent.ACTION_SEND
-                            sendIntent.putExtra(Intent.EXTRA_TEXT, sb.toString())
-                            sendIntent.type = "text/plain"
-                            context.startActivity(Intent.createChooser(sendIntent, null))
+                        if (sb.isNotEmpty()) {
+                            if (isCopyMode) {
+                                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                val clip = ClipData.newPlainText(
+                                    "", sb.toString()
+                                )
+                                clipboard.setPrimaryClip(clip)
+                                Toast.makeText(context, stringResource(R.string.copy), Toast.LENGTH_SHORT).show()
+                            }
+                            if (isShareMode) {
+                                val sendIntent = Intent()
+                                sendIntent.action = Intent.ACTION_SEND
+                                sendIntent.putExtra(Intent.EXTRA_TEXT, sb.toString())
+                                sendIntent.type = "text/plain"
+                                context.startActivity(Intent.createChooser(sendIntent, null))
+                            }
+                            isSelectMode = false
+                        } else {
+                            Toast.makeText(context, stringResource(R.string.styx_is_emty), Toast.LENGTH_SHORT).show()
                         }
                         isCopyMode = false
                         isShareMode = false
-                        isSelectMode = false
                     }
                     LazyColumn(
                         Modifier
@@ -1668,11 +1694,6 @@ fun CytanniList(
                                                     paralelChtenia = resultPage[index].parallel
                                                 }
                                                 if (isSelectMode) {
-                                                    viewModel.selectState[index] = !viewModel.selectState[index]
-                                                }
-                                            }, onLongPress = {
-                                                if (!fullscreen) {
-                                                    isSelectMode = true
                                                     viewModel.selectState[index] = !viewModel.selectState[index]
                                                 }
                                             }, onDoubleTap = {

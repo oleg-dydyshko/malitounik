@@ -867,7 +867,7 @@
     </string-array>
     <string name="chasaslou">ЧАСАСЛОЎ</string>
     <string name="liturgikon">ЛІТУРГІКОН</string>
-    <string name="share_help">Каб падзяліцца часткай тэксту, скапіруйце яго ў буфер абмену, інакш будзе дзеліцца ўсім тэкстам.</string>
+    <string name="share_help">Каб падзяліцца часткай тэксту, яго трэба выдзяліць, інакш будзе дзеліцца ўсім тэкстам.</string>
     <string name="show_menu">Паказаць меню праграмы</string>
     <string name="econom_enargi">ЭНЭРГАЗЬБЕРАЖЭНЬНЕ:</string>
     <string name="econom_enargi_no">Экран заўсёды ўключаны</string>
@@ -913,5 +913,6 @@
     <string name="admin_exit">ВЫХАД</string>
     <string name="admin_exit_opis">Вы сапраўды жадаеце выйсьці?</string>
     <string name="shere_help">Каб падзяліцца файлам, яго трэба спампаваць.</string>
+    <string name="styx_is_emty">Абярыце верш!</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

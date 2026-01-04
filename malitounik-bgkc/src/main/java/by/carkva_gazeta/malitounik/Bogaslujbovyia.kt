@@ -1,7 +1,6 @@
 package by.carkva_gazeta.malitounik
 
 import android.app.Activity
-import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.print.PrintAttributes
@@ -43,7 +42,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Card
@@ -99,8 +98,6 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.ClipEntry
-import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -115,6 +112,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.getSelectedText
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
@@ -144,6 +142,7 @@ import by.carkva_gazeta.malitounik.ui.theme.Post
 import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik.ui.theme.displayFontFamily
 import by.carkva_gazeta.malitounik.views.AppDropdownMenu
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
@@ -460,6 +459,7 @@ fun Bogaslujbovyia(
     var bottomSheetScaffoldIsVisible by rememberSaveable { mutableStateOf(AppNavGraphState.bottomSheetScaffoldIsVisible) }
     val actyvity = LocalActivity.current as MainActivity
     var isShare by rememberSaveable { mutableStateOf(false) }
+    var selectedText by remember { mutableStateOf("") }
     if (viewModel.autoScrollSensor) {
         actyvity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
@@ -782,34 +782,22 @@ fun Bogaslujbovyia(
         val launcherShare = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
             shareIsLaunch = false
+            selectedText = ""
         }
         var expandedUp by remember { mutableStateOf(false) }
         LaunchedEffect(expandedUp) {
             if (viewModel.autoScrollSensor && !isShare && !viewModel.searchText) viewModel.autoScroll(title, !expandedUp)
         }
         val interactionSourse = remember { MutableInteractionSource() }
-        val clipboard = LocalClipboard.current
-        val copyText = stringResource(R.string.copy_text)
-        val copy = stringResource(R.string.copy)
         LaunchedEffect(shareIsLaunch) {
             if (shareIsLaunch) {
-                coroutineScope.launch {
-                    val clipEntry = clipboard.getClipEntry()
-                    val text = clipEntry?.clipData?.getItemAt(0)?.text ?: "@#$"
-                    val isTextFound = textLayout?.layoutInput?.text?.text?.contains(text) == true
-                    val sent = if (isTextFound) text
-                    else textLayout?.layoutInput?.text?.text
-                    sent?.let { shareText ->
-                        if (!isTextFound) {
-                            clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(copyText, shareText)))
-                            Toast.makeText(context, copy, Toast.LENGTH_SHORT).show()
-                        }
-                        val sendIntent = Intent(Intent.ACTION_SEND)
-                        sendIntent.putExtra(Intent.EXTRA_TEXT, shareText)
-                        sendIntent.putExtra(Intent.EXTRA_SUBJECT, title)
-                        sendIntent.type = "text/plain"
-                        launcherShare.launch(Intent.createChooser(sendIntent, title))
-                    }
+                val sent = selectedText.ifEmpty { textLayout?.layoutInput?.text?.text }
+                sent?.let { shareText ->
+                    val sendIntent = Intent(Intent.ACTION_SEND)
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, shareText)
+                    sendIntent.putExtra(Intent.EXTRA_SUBJECT, title)
+                    sendIntent.type = "text/plain"
+                    launcherShare.launch(Intent.createChooser(sendIntent, title))
                 }
             }
         }
@@ -1007,138 +995,196 @@ fun Bogaslujbovyia(
                                     )
                                 }
                             } else {
-                                if (!iskniga && listResource.isNotEmpty()) {
-                                    PlainTooltip(stringResource(R.string.zmennyia_chastki), TooltipAnchorPosition.Below) {
-                                        IconButton(onClick = {
-                                            showDropdown = false
-                                            coroutineScope.launch {
-                                                bottomSheetScaffoldIsVisible = !bottomSheetScaffoldIsVisible
-                                                AppNavGraphState.bottomSheetScaffoldIsVisible = bottomSheetScaffoldIsVisible
-                                            }
-                                        }) {
-                                            Icon(
-                                                modifier = Modifier.size(24.dp),
-                                                painter = painterResource(R.drawable.book_red),
-                                                contentDescription = "",
-                                                tint = MaterialTheme.colorScheme.onSecondary
-                                            )
-                                        }
-                                    }
-                                    if (k.getBoolean("admin", false) && isBottomBar) {
-                                        VerticalDivider()
-                                    }
-                                }
-                                if (!iskniga && !isBottomBar) {
-                                    if (viewModel.scrollState.canScrollForward) {
-                                        val iconAutoScroll = if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
-                                        else painterResource(R.drawable.play_circle)
-                                        PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play), TooltipAnchorPosition.Below) {
+                                if (!isShare) {
+                                    if (!iskniga && listResource.isNotEmpty()) {
+                                        PlainTooltip(stringResource(R.string.zmennyia_chastki), TooltipAnchorPosition.Below) {
                                             IconButton(onClick = {
-                                                viewModel.autoScrollSensor = !viewModel.autoScrollSensor
-                                                viewModel.autoScroll(title, viewModel.autoScrollSensor)
-                                                if (viewModel.autoScrollSensor) {
-                                                    actyvity.window.addFlags(
-                                                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                                                    )
-                                                } else if (!k.getBoolean("power", false)) {
-                                                    actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                                showDropdown = false
+                                                coroutineScope.launch {
+                                                    bottomSheetScaffoldIsVisible = !bottomSheetScaffoldIsVisible
+                                                    AppNavGraphState.bottomSheetScaffoldIsVisible = bottomSheetScaffoldIsVisible
                                                 }
                                             }) {
                                                 Icon(
-                                                    iconAutoScroll,
+                                                    modifier = Modifier.size(24.dp),
+                                                    painter = painterResource(R.drawable.book_red),
                                                     contentDescription = "",
                                                     tint = MaterialTheme.colorScheme.onSecondary
                                                 )
                                             }
                                         }
-                                    } else if (viewModel.scrollState.canScrollBackward) {
-                                        PlainTooltip(stringResource(R.string.auto_up), TooltipAnchorPosition.Below) {
-                                            IconButton(onClick = {
-                                                isUpList = true
-                                            }) {
+                                        if (k.getBoolean("admin", false) && isBottomBar) {
+                                            VerticalDivider()
+                                        }
+                                    }
+                                    if (!iskniga && !isBottomBar) {
+                                        if (viewModel.scrollState.canScrollForward) {
+                                            val iconAutoScroll = if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
+                                            else painterResource(R.drawable.play_circle)
+                                            PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play), TooltipAnchorPosition.Below) {
+                                                IconButton(onClick = {
+                                                    viewModel.autoScrollSensor = !viewModel.autoScrollSensor
+                                                    viewModel.autoScroll(title, viewModel.autoScrollSensor)
+                                                    if (viewModel.autoScrollSensor) {
+                                                        actyvity.window.addFlags(
+                                                            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                                        )
+                                                    } else if (!k.getBoolean("power", false)) {
+                                                        actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                                    }
+                                                }) {
+                                                    Icon(
+                                                        iconAutoScroll,
+                                                        contentDescription = "",
+                                                        tint = MaterialTheme.colorScheme.onSecondary
+                                                    )
+                                                }
+                                            }
+                                        } else if (viewModel.scrollState.canScrollBackward) {
+                                            PlainTooltip(stringResource(R.string.auto_up), TooltipAnchorPosition.Below) {
+                                                IconButton(onClick = {
+                                                    isUpList = true
+                                                }) {
+                                                    Icon(
+                                                        painter = painterResource(R.drawable.arrow_upward),
+                                                        contentDescription = "",
+                                                        tint = MaterialTheme.colorScheme.onSecondary
+                                                    )
+                                                }
+                                            }
+                                        }
+                                        if (listResource.isEmpty()) {
+                                            PlainTooltip(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), TooltipAnchorPosition.Below) {
+                                                IconButton(onClick = {
+                                                    viewModel.saveVybranoe(context, title, resursEncode)
+                                                }) {
+                                                    val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
+                                                    else painterResource(R.drawable.star)
+                                                    Icon(
+                                                        painter = icon,
+                                                        contentDescription = "",
+                                                        tint = MaterialTheme.colorScheme.onSecondary
+                                                    )
+                                                }
+                                            }
+                                        }
+                                        PlainTooltip(stringResource(R.string.more_items), TooltipAnchorPosition.Below) {
+                                            IconButton(onClick = { expandedUp = true }) {
                                                 Icon(
-                                                    painter = painterResource(R.drawable.arrow_upward),
-                                                    contentDescription = "",
-                                                    tint = MaterialTheme.colorScheme.onSecondary
+                                                    painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                                 )
                                             }
                                         }
-                                    }
-                                    if (listResource.isEmpty()) {
-                                        PlainTooltip(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), TooltipAnchorPosition.Below) {
-                                            IconButton(onClick = {
-                                                viewModel.saveVybranoe(context, title, resursEncode)
-                                            }) {
-                                                val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
-                                                else painterResource(R.drawable.star)
-                                                Icon(
-                                                    painter = icon,
-                                                    contentDescription = "",
-                                                    tint = MaterialTheme.colorScheme.onSecondary
-                                                )
+                                        AppDropdownMenu(
+                                            expanded = expandedUp, onDismissRequest = { expandedUp = false }) {
+                                            if (listResource.isNotEmpty()) {
+                                                DropdownMenuItem(onClick = {
+                                                    expandedUp = false
+                                                    viewModel.saveVybranoe(context, title, resursEncode)
+                                                }, text = { Text(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                                    val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
+                                                    else painterResource(R.drawable.star)
+                                                    Icon(
+                                                        painter = icon, contentDescription = ""
+                                                    )
+                                                })
                                             }
-                                        }
-                                    }
-                                    PlainTooltip(stringResource(R.string.more_items), TooltipAnchorPosition.Below) {
-                                        IconButton(onClick = { expandedUp = true }) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                            )
-                                        }
-                                    }
-                                    AppDropdownMenu(
-                                        expanded = expandedUp, onDismissRequest = { expandedUp = false }) {
-                                        if (listResource.isNotEmpty()) {
                                             DropdownMenuItem(onClick = {
                                                 expandedUp = false
-                                                viewModel.saveVybranoe(context, title, resursEncode)
-                                            }, text = { Text(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                                val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
-                                                else painterResource(R.drawable.star)
+                                                viewModel.autoScroll(title, false)
+                                                isShare = true
+                                            }, text = { Text(stringResource(R.string.share), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                                 Icon(
-                                                    painter = icon, contentDescription = ""
+                                                    painter = painterResource(R.drawable.share), contentDescription = ""
                                                 )
                                             })
-                                        }
-                                        DropdownMenuItem(onClick = {
-                                            expandedUp = false
-                                            viewModel.autoScroll(title, false)
-                                            isShare = true
-                                        }, text = { Text(stringResource(R.string.share), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                            Icon(
-                                                painter = painterResource(R.drawable.share), contentDescription = ""
-                                            )
-                                        })
-                                        DropdownMenuItem(onClick = {
-                                            expandedUp = false
-                                            fullscreen = true
-                                        }, text = { Text(stringResource(R.string.fullscreen), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                            Icon(
-                                                painter = painterResource(R.drawable.fullscreen), contentDescription = ""
-                                            )
-                                        })
-                                        DropdownMenuItem(onClick = {
-                                            expandedUp = false
-                                            viewModel.searchText = true
-                                            viewModel.autoScroll(title, false)
-                                        }, text = { Text(stringResource(R.string.searche_text), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                            Icon(
-                                                painter = painterResource(R.drawable.search), contentDescription = ""
-                                            )
-                                        })
-                                        DropdownMenuItem(onClick = {
-                                            expandedUp = false
-                                            showDropdown = !showDropdown
-                                            viewModel.autoScroll(title, false)
-                                        }, text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                            Icon(
-                                                painter = painterResource(R.drawable.format_size), contentDescription = ""
-                                            )
-                                        })
-                                        if (k.getBoolean("admin", false)) {
-                                            HorizontalDivider()
                                             DropdownMenuItem(onClick = {
                                                 expandedUp = false
+                                                fullscreen = true
+                                            }, text = { Text(stringResource(R.string.fullscreen), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                                Icon(
+                                                    painter = painterResource(R.drawable.fullscreen), contentDescription = ""
+                                                )
+                                            })
+                                            DropdownMenuItem(onClick = {
+                                                expandedUp = false
+                                                viewModel.searchText = true
+                                                viewModel.autoScroll(title, false)
+                                            }, text = { Text(stringResource(R.string.searche_text), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                                Icon(
+                                                    painter = painterResource(R.drawable.search), contentDescription = ""
+                                                )
+                                            })
+                                            DropdownMenuItem(onClick = {
+                                                expandedUp = false
+                                                showDropdown = !showDropdown
+                                                viewModel.autoScroll(title, false)
+                                            }, text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                                Icon(
+                                                    painter = painterResource(R.drawable.format_size), contentDescription = ""
+                                                )
+                                            })
+                                            if (k.getBoolean("admin", false)) {
+                                                HorizontalDivider()
+                                                DropdownMenuItem(onClick = {
+                                                    expandedUp = false
+                                                    viewModel.autoScroll(title, false)
+                                                    viewModel.viewModelScope.launch {
+                                                        isProgressVisable = true
+                                                        val fileList = SnapshotStateList<PaisochnicaFileList>()
+                                                        fileList.addAll(adminViewModel.getPasochnicaFileList())
+                                                        val dirToFile = if (iskniga) listResource[adminResourceEditPosition].resource
+                                                        else resursEncode
+                                                        Settings.bibleTime = false
+                                                        adminViewModel.isHTML = dirToFile.contains(".html")
+                                                        val t1 = dirToFile.lastIndexOf("/")
+                                                        val fileName = if (t1 != -1) dirToFile.substring(t1 + 1)
+                                                        else dirToFile
+                                                        if (adminViewModel.isFilePiasochnicaExitst(fileName, fileList)) {
+                                                            coroutineScope.launch {
+                                                                isProgressVisable = true
+                                                                adminViewModel.getPasochnicaFile(fileName, result = { text ->
+                                                                    val html = if (adminViewModel.isHTML) {
+                                                                        SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
+                                                                    } else {
+                                                                        SpannableStringBuilder(text)
+                                                                    }
+                                                                    adminViewModel.htmlText = html
+                                                                    adminViewModel.addHistory(0)
+                                                                    navigationActions.navigateToPiasochnica(fileName)
+                                                                })
+                                                            }
+                                                        } else {
+                                                            if (adminViewModel.findDirAsSave.isEmpty()) {
+                                                                adminViewModel.getFindFileListAsSave()
+                                                            }
+                                                            adminViewModel.getFileCopyPostRequest(dirToFile = adminViewModel.findResoursDir(fileName), isProgressVisable = {
+                                                                isProgressVisable = it
+                                                            }) { text, fileName ->
+                                                                val html = if (adminViewModel.isHTML) {
+                                                                    SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
+                                                                } else {
+                                                                    SpannableStringBuilder(text)
+                                                                }
+                                                                adminViewModel.htmlText = html
+                                                                adminViewModel.addHistory(0)
+                                                                navigationActions.navigateToPiasochnica(fileName)
+                                                                isProgressVisable = false
+                                                            }
+                                                        }
+                                                        isProgressVisable = false
+                                                    }
+                                                }, text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                                    Icon(
+                                                        painter = painterResource(R.drawable.edit), contentDescription = ""
+                                                    )
+                                                })
+                                            }
+                                        }
+                                    }
+                                    if (k.getBoolean("admin", false) && (isBottomBar || iskniga)) {
+                                        PlainTooltip(stringResource(R.string.redagaktirovat)) {
+                                            IconButton(onClick = {
                                                 viewModel.autoScroll(title, false)
                                                 viewModel.viewModelScope.launch {
                                                     isProgressVisable = true
@@ -1177,75 +1223,19 @@ fun Bogaslujbovyia(
                                                             } else {
                                                                 SpannableStringBuilder(text)
                                                             }
-                                                            adminViewModel.htmlText = html
                                                             adminViewModel.addHistory(0)
+                                                            adminViewModel.htmlText = html
                                                             navigationActions.navigateToPiasochnica(fileName)
                                                             isProgressVisable = false
                                                         }
                                                     }
                                                     isProgressVisable = false
                                                 }
-                                            }, text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                            }) {
                                                 Icon(
-                                                    painter = painterResource(R.drawable.edit), contentDescription = ""
+                                                    painter = painterResource(R.drawable.edit), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                                 )
-                                            })
-                                        }
-                                    }
-                                }
-                                if (k.getBoolean("admin", false) && (isBottomBar || iskniga)) {
-                                    PlainTooltip(stringResource(R.string.redagaktirovat)) {
-                                        IconButton(onClick = {
-                                            viewModel.autoScroll(title, false)
-                                            viewModel.viewModelScope.launch {
-                                                isProgressVisable = true
-                                                val fileList = SnapshotStateList<PaisochnicaFileList>()
-                                                fileList.addAll(adminViewModel.getPasochnicaFileList())
-                                                val dirToFile = if (iskniga) listResource[adminResourceEditPosition].resource
-                                                else resursEncode
-                                                Settings.bibleTime = false
-                                                adminViewModel.isHTML = dirToFile.contains(".html")
-                                                val t1 = dirToFile.lastIndexOf("/")
-                                                val fileName = if (t1 != -1) dirToFile.substring(t1 + 1)
-                                                else dirToFile
-                                                if (adminViewModel.isFilePiasochnicaExitst(fileName, fileList)) {
-                                                    coroutineScope.launch {
-                                                        isProgressVisable = true
-                                                        adminViewModel.getPasochnicaFile(fileName, result = { text ->
-                                                            val html = if (adminViewModel.isHTML) {
-                                                                SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
-                                                            } else {
-                                                                SpannableStringBuilder(text)
-                                                            }
-                                                            adminViewModel.htmlText = html
-                                                            adminViewModel.addHistory(0)
-                                                            navigationActions.navigateToPiasochnica(fileName)
-                                                        })
-                                                    }
-                                                } else {
-                                                    if (adminViewModel.findDirAsSave.isEmpty()) {
-                                                        adminViewModel.getFindFileListAsSave()
-                                                    }
-                                                    adminViewModel.getFileCopyPostRequest(dirToFile = adminViewModel.findResoursDir(fileName), isProgressVisable = {
-                                                        isProgressVisable = it
-                                                    }) { text, fileName ->
-                                                        val html = if (adminViewModel.isHTML) {
-                                                            SpannableStringBuilder(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT))
-                                                        } else {
-                                                            SpannableStringBuilder(text)
-                                                        }
-                                                        adminViewModel.addHistory(0)
-                                                        adminViewModel.htmlText = html
-                                                        navigationActions.navigateToPiasochnica(fileName)
-                                                        isProgressVisable = false
-                                                    }
-                                                }
-                                                isProgressVisable = false
                                             }
-                                        }) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.edit), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                            )
                                         }
                                     }
                                 }
@@ -1264,9 +1254,11 @@ fun Bogaslujbovyia(
                         color = MaterialTheme.colorScheme.background
                     ) {
                         Row(horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                            Text(modifier = Modifier
-                                .padding(10.dp)
-                                .weight(1f), text = stringResource(R.string.share_help), fontSize = Settings.fontInterface.sp, lineHeight = (Settings.fontInterface * 1.15f).sp, color = MaterialTheme.colorScheme.secondary)
+                            Text(
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .weight(1f), text = stringResource(R.string.share_help), fontSize = Settings.fontInterface.sp, lineHeight = (Settings.fontInterface * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
+                            )
                             IconButton(onClick = {
                                 showDropdown = false
                                 viewModel.autoScroll(title, false)
@@ -1276,7 +1268,7 @@ fun Bogaslujbovyia(
                                 Icon(
                                     painter = painterResource(R.drawable.share),
                                     contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.onSecondary
+                                    tint = MaterialTheme.colorScheme.secondary
                                 )
                             }
                         }
@@ -1583,50 +1575,37 @@ fun Bogaslujbovyia(
                                 }
                             )
                         } else {
-                            SelectionContainer {
-                                HtmlText(
+                            if (Settings.dzenNoch) {
+                                var text by remember { mutableStateOf(TextFieldValue(AnnotatedString.fromHtml(viewModel.htmlText.replace("#d00505", "#ff6666", true)))) }
+                                BasicTextField(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp)),
-                                    text = viewModel.htmlText,
-                                    title = title,
-                                    fontSize = fontSize.sp,
-                                    isLiturgia = isLiturgia && isLiturgia(data),
-                                    searchText = viewModel.searchTextResult,
-                                    scrollState = viewModel.scrollState,
-                                    navigateTo = { navigate ->
-                                        var skipUtran = false
-                                        if (navigate == "cytanne") {
-                                            if (data[9].isNotEmpty()) {
-                                                var chtenie = data[9]
-                                                if (isLiturgia && chtenie.contains("На ютрані", ignoreCase = true)) {
-                                                    val t1 = chtenie.indexOf("\n")
-                                                    if (t1 != -1) chtenie = chtenie.substring(t1 + 1)
-                                                    skipUtran = true
-                                                }
-                                            }
+                                    value = text,
+                                    onValueChange = { newText ->
+                                        text = newText
+                                        if (text.getSelectedText().text.isNotEmpty()) {
+                                            selectedText = text.getSelectedText().text
                                         }
-                                        navigateTo(navigate, skipUtran)
                                     },
-                                    textLayoutResult = { layout ->
-                                        textLayout = layout
-                                    },
-                                    isDialogListinner = { dialog, chastka ->
-                                        when (dialog) {
-                                            DialogListinner.DIALOGQRCODE.name -> {
-                                                dialogQrCode = true
-                                            }
-
-                                            DialogListinner.DIALOGSZTOHOVAHA.name -> {
-                                                dialogSztoHovahaVisable = true
-                                            }
-
-                                            DialogListinner.DIALOGLITURGIA.name -> {
-                                                chast = chastka
-                                                dialogLiturgia = true
-                                            }
+                                    readOnly = true,
+                                    textStyle = TextStyle(color = MaterialTheme.colorScheme.secondary, fontSize = fontSize.sp, fontFamily = displayFontFamily, letterSpacing = TextUnit(0.5f, TextUnitType.Sp)),
+                                )
+                            } else {
+                                var text by remember { mutableStateOf(TextFieldValue(AnnotatedString.fromHtml(viewModel.htmlText))) }
+                                BasicTextField(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp)),
+                                    value = text,
+                                    onValueChange = { newText ->
+                                        text = newText
+                                        if (text.getSelectedText().text.isNotEmpty()) {
+                                            selectedText = text.getSelectedText().text
                                         }
-                                    }
+                                    },
+                                    readOnly = true,
+                                    textStyle = TextStyle(color = MaterialTheme.colorScheme.secondary, fontSize = fontSize.sp, fontFamily = displayFontFamily, letterSpacing = TextUnit(0.5f, TextUnitType.Sp)),
                                 )
                             }
                         }
