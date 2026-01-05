@@ -145,13 +145,15 @@ private fun Caliandar(context: Context) {
                                 Text(modifier = GlanceModifier.padding(start = 5.dp), text = data[6], style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp, textAlign = TextAlign.Center, fontWeight = if (data[5].toInt() == 2) FontWeight.Normal else FontWeight.Bold))
                             }
                         } else {
+                            var fontWeight = if (data[5].toInt() == 2) FontWeight.Normal else FontWeight.Bold
                             var color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary)
                             if (data[6].contains("Пачатак") || data[6].contains("Вялікі") || data[6].contains("Вялікая") || data[6].contains("ВЕЧАР") || data[6].contains("Палова")
                             ) {
                                 color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText)
+                                fontWeight = FontWeight.Normal
                             }
                             Row(modifier = GlanceModifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(text = data[6], style = TextStyle(color = color, fontSize = 18.sp, textAlign = TextAlign.Center, fontWeight = if (data[5].toInt() == 2) FontWeight.Normal else FontWeight.Bold))
+                                Text(text = data[6], style = TextStyle(color = color, fontSize = 18.sp, textAlign = TextAlign.Center, fontWeight = fontWeight))
                             }
                         }
                     }
