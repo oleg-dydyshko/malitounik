@@ -140,10 +140,10 @@ private fun Caliandar(context: Context) {
                 Column(modifier = GlanceModifier.padding(5.dp)) {
                     if (data[6].isNotEmpty()) {
                         if (data[5].toInt() == 1 || data[5].toInt() == 2) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                            Row(modifier = GlanceModifier.fillMaxWidth().padding(bottom = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                                 Image(provider = ImageProvider(R.drawable.znaki_krest_v_kruge), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = ColorFilter.tint(if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary)))
-                                Text(modifier = GlanceModifier.padding(start = 5.dp), text = data[6], style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp, textAlign = TextAlign.Center, fontWeight = if (data[5].toInt() == 2) FontWeight.Normal else FontWeight.Bold))
                             }
+                            Text(modifier = GlanceModifier.fillMaxWidth(), text = data[6], style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp, textAlign = TextAlign.Center, fontWeight = if (data[5].toInt() == 2) FontWeight.Normal else FontWeight.Bold))
                         } else {
                             var fontWeight = if (data[5].toInt() == 2) FontWeight.Normal else FontWeight.Bold
                             var color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary)
@@ -177,73 +177,47 @@ private fun Caliandar(context: Context) {
                                     val text = AnnotatedString.fromHtml(data[4]).toString()
                                     val t1 = text.indexOf("\n")
                                     if (icon != 0) {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Row(modifier = GlanceModifier.fillMaxWidth().padding(bottom = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                                             Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
-                                            Text(modifier = GlanceModifier.padding(start = 5.dp), text = text.take(t1), style = TextStyle(color = ColorProvider(Primary, PrimaryBlack), fontSize = 18.sp, fontWeight = FontWeight.Bold))
                                         }
-                                        Text(text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
-                                    } else {
-                                        Text(text = text.take(t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp, fontWeight = FontWeight.Bold))
-                                        Text(text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
                                     }
+                                    Text(text = text.take(t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp, fontWeight = FontWeight.Bold))
+                                    Text(text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
                                 } else {
                                     if (icon != 0) {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Row(modifier = GlanceModifier.fillMaxWidth().padding(bottom = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                                             Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
-                                            Text(modifier = GlanceModifier.padding(start = 5.dp), text = AnnotatedString.fromHtml(data[4]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp, fontWeight = FontWeight.Bold))
                                         }
-                                    } else {
-                                        Text(text = AnnotatedString.fromHtml(data[4]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp, fontWeight = FontWeight.Bold))
                                     }
+                                    Text(text = AnnotatedString.fromHtml(data[4]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp, fontWeight = FontWeight.Bold))
                                 }
                             } else {
                                 if (svityia.contains("<br>")) {
                                     val text = AnnotatedString.fromHtml(data[4]).toString()
                                     val t1 = text.indexOf("\n")
                                     if (icon != 0) {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Row(modifier = GlanceModifier.fillMaxWidth().padding(bottom = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                                             Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
-                                            Text(modifier = GlanceModifier.padding(start = 5.dp), text = text.take(t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp))
                                         }
-                                        Text(text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
-                                    } else {
-                                        Text(text = text.take(t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp))
-                                        Text(text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
                                     }
+                                    Text(text = text.take(t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp))
+                                    Text(text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
                                 } else {
                                     if (icon != 0) {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Row(modifier = GlanceModifier.fillMaxWidth().padding(bottom = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                                             Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
-                                            Text(modifier = GlanceModifier.padding(start = 5.dp), text = AnnotatedString.fromHtml(data[4]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp))
                                         }
-                                    } else {
-                                        Text(text = AnnotatedString.fromHtml(data[4]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp))
                                     }
+                                    Text(text = AnnotatedString.fromHtml(data[4]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp))
                                 }
                             }
                         } else {
-                            if (svityia.contains("<br>")) {
-                                val text = AnnotatedString.fromHtml(data[4]).toString()
-                                val t1 = text.indexOf("\n")
-                                if (icon != 0) {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
-                                        Text(modifier = GlanceModifier.padding(start = 5.dp), text = text.take(t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
-                                    }
-                                    Text(text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
-                                } else {
-                                    Text(text = text, style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
-                                }
-                            } else {
-                                if (icon != 0) {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
-                                        Text(modifier = GlanceModifier.padding(start = 5.dp), text = AnnotatedString.fromHtml(data[4]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
-                                    }
-                                } else {
-                                    Text(text = AnnotatedString.fromHtml(data[4]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
+                            if (icon != 0) {
+                                Row(modifier = GlanceModifier.fillMaxWidth().padding(bottom = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
                                 }
                             }
+                            Text(text = AnnotatedString.fromHtml(data[4]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
                         }
                     }
                 }
