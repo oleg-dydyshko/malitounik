@@ -47,7 +47,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenuItem
@@ -783,86 +782,84 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                         } else {
                             items(sviatyiaList.size) { index ->
                                 val file = File(sviatyiaList[index].image)
-                                SelectionContainer {
-                                    Column(modifier = Modifier) {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                Column(modifier = Modifier) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Text(
+                                            modifier = Modifier
+                                                .padding(10.dp)
+                                                .weight(1f), text = sviatyiaList[index].title, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary
+                                        )
+                                        val copyText = stringResource(R.string.copy_text)
+                                        val copy = stringResource(R.string.copy)
+                                        val zmiest = stringResource(R.string.zmiest)
+                                        Icon(
+                                            modifier = Modifier
+                                                .padding(end = 10.dp)
+                                                .clickable {
+                                                    val sb = StringBuilder()
+                                                    sb.append(sviatyiaList[index].text)
+                                                    sb.append(sviatyiaList[index].text.trim())
+                                                    val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                                                    val clip = ClipData.newPlainText(copyText, sb.toString())
+                                                    clipboard.setPrimaryClip(clip)
+                                                    if (file.exists()) {
+                                                        val sendIntent = Intent(Intent.ACTION_SEND)
+                                                        sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "by.carkva_gazeta.malitounik.fileprovider", file))
+                                                        sendIntent.putExtra(Intent.EXTRA_TEXT, sviatyiaList[index].text.trim())
+                                                        sendIntent.putExtra(Intent.EXTRA_SUBJECT, sviatyiaList[index].text.trim())
+                                                        sendIntent.type = "image/*"
+                                                        context.startActivity(Intent.createChooser(sendIntent, zmiest))
+                                                    } else {
+                                                        val sendIntent = Intent(Intent.ACTION_SEND)
+                                                        sendIntent.putExtra(Intent.EXTRA_TEXT, sb.toString())
+                                                        sendIntent.putExtra(Intent.EXTRA_SUBJECT, zmiest)
+                                                        sendIntent.type = "text/plain"
+                                                        context.startActivity(Intent.createChooser(sendIntent, zmiest))
+                                                    }
+                                                    Toast.makeText(context, copy, Toast.LENGTH_SHORT).show()
+                                                }, painter = painterResource(R.drawable.share), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
+                                        )
+                                    }
+                                    if (file.exists()) {
+                                        try {
+                                            BitmapFactory.decodeFile(sviatyiaList[index].image).asImageBitmap()
+                                        } catch (_: Throwable) {
+                                            file.delete()
+                                        }
+                                    }
+                                    if (file.exists()) {
+                                        val image = BitmapFactory.decodeFile(sviatyiaList[index].image).asImageBitmap()
+                                        var imW = image.width.toFloat()
+                                        var imH = image.height.toFloat()
+                                        val imageScale: Float = imW / imH
+                                        if (imW > 150F) {
+                                            imW = 150F
+                                            imH = 150F / imageScale
+                                        }
+                                        val t3 = file.name.lastIndexOf(".")
+                                        val fileNameT = file.name.substring(0, t3) + ".txt"
+                                        val fileImageOpis = File("${context.filesDir}/iconsApisanne/$fileNameT")
+                                        Image(
+                                            modifier = Modifier
+                                                .size(imW.dp, imH.dp)
+                                                .align(Alignment.CenterHorizontally)
+                                                .clickable {
+                                                    imageOpisanne = if (fileImageOpis.exists()) fileImageOpis.readText()
+                                                    else ""
+                                                    fullImagePathVisable = file.absolutePath
+                                                    imageFull = true
+                                                }, bitmap = image, contentDescription = ""
+                                        )
+                                        if (fileImageOpis.exists()) {
                                             Text(
                                                 modifier = Modifier
                                                     .padding(10.dp)
-                                                    .weight(1f), text = sviatyiaList[index].title, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary
-                                            )
-                                            val copyText = stringResource(R.string.copy_text)
-                                            val copy = stringResource(R.string.copy)
-                                            val zmiest = stringResource(R.string.zmiest)
-                                            Icon(
-                                                modifier = Modifier
-                                                    .padding(end = 10.dp)
-                                                    .clickable {
-                                                        val sb = StringBuilder()
-                                                        sb.append(sviatyiaList[index].text)
-                                                        sb.append(sviatyiaList[index].text.trim())
-                                                        val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-                                                        val clip = ClipData.newPlainText(copyText, sb.toString())
-                                                        clipboard.setPrimaryClip(clip)
-                                                        if (file.exists()) {
-                                                            val sendIntent = Intent(Intent.ACTION_SEND)
-                                                            sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "by.carkva_gazeta.malitounik.fileprovider", file))
-                                                            sendIntent.putExtra(Intent.EXTRA_TEXT, sviatyiaList[index].text.trim())
-                                                            sendIntent.putExtra(Intent.EXTRA_SUBJECT, sviatyiaList[index].text.trim())
-                                                            sendIntent.type = "image/*"
-                                                            context.startActivity(Intent.createChooser(sendIntent, zmiest))
-                                                        } else {
-                                                            val sendIntent = Intent(Intent.ACTION_SEND)
-                                                            sendIntent.putExtra(Intent.EXTRA_TEXT, sb.toString())
-                                                            sendIntent.putExtra(Intent.EXTRA_SUBJECT, zmiest)
-                                                            sendIntent.type = "text/plain"
-                                                            context.startActivity(Intent.createChooser(sendIntent, zmiest))
-                                                        }
-                                                        Toast.makeText(context, copy, Toast.LENGTH_SHORT).show()
-                                                    }, painter = painterResource(R.drawable.share), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
+                                                    .fillMaxWidth(), text = fileImageOpis.readText(), fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary, textAlign = TextAlign.Center, fontStyle = FontStyle.Italic
                                             )
                                         }
-                                        if (file.exists()) {
-                                            try {
-                                                BitmapFactory.decodeFile(sviatyiaList[index].image).asImageBitmap()
-                                            } catch (_: Throwable) {
-                                                file.delete()
-                                            }
-                                        }
-                                        if (file.exists()) {
-                                            val image = BitmapFactory.decodeFile(sviatyiaList[index].image).asImageBitmap()
-                                            var imW = image.width.toFloat()
-                                            var imH = image.height.toFloat()
-                                            val imageScale: Float = imW / imH
-                                            if (imW > 150F) {
-                                                imW = 150F
-                                                imH = 150F / imageScale
-                                            }
-                                            val t3 = file.name.lastIndexOf(".")
-                                            val fileNameT = file.name.substring(0, t3) + ".txt"
-                                            val fileImageOpis = File("${context.filesDir}/iconsApisanne/$fileNameT")
-                                            Image(
-                                                modifier = Modifier
-                                                    .size(imW.dp, imH.dp)
-                                                    .align(Alignment.CenterHorizontally)
-                                                    .clickable {
-                                                        imageOpisanne = if (fileImageOpis.exists()) fileImageOpis.readText()
-                                                        else ""
-                                                        fullImagePathVisable = file.absolutePath
-                                                        imageFull = true
-                                                    }, bitmap = image, contentDescription = ""
-                                            )
-                                            if (fileImageOpis.exists()) {
-                                                Text(
-                                                    modifier = Modifier
-                                                        .padding(10.dp)
-                                                        .fillMaxWidth(), text = fileImageOpis.readText(), fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary, textAlign = TextAlign.Center, fontStyle = FontStyle.Italic
-                                                )
-                                            }
-                                        }
-                                        if (sviatyiaList[index].text.isNotEmpty()) {
-                                            Text(modifier = Modifier.padding(10.dp), text = sviatyiaList[index].text, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary)
-                                        }
+                                    }
+                                    if (sviatyiaList[index].text.isNotEmpty()) {
+                                        Text(modifier = Modifier.padding(10.dp), text = sviatyiaList[index].text, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary)
                                     }
                                 }
                             }
