@@ -222,8 +222,12 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
     var textFieldLoaded by remember { mutableStateOf(false) }
     var textFieldValueStateTitle by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
     val interactionSourse = remember { MutableInteractionSource() }
-    BackHandler(!backPressHandled || imageFull || showDropdown) {
+    BackHandler(!backPressHandled || imageFull || showDropdown || viewModel.edit) {
         when {
+            viewModel.edit -> {
+                viewModel.edit = false
+            }
+
             imageFull -> {
                 imageOpisanne = ""
                 imageFull = false

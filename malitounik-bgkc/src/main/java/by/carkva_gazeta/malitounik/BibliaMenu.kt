@@ -127,7 +127,7 @@ class SearchBibleViewModel : CytanniListViewModel() {
     var addFileNatatki by mutableStateOf(false)
     var saveFileNatatki by mutableStateOf(false)
     var natatkaPosition by mutableIntStateOf(0)
-    val fileList = mutableStateListOf<MaeNatatkiItem>()
+    var fileList = mutableStateListOf<MaeNatatkiItem>()
     var natatkaVisable by mutableStateOf(false)
     var isEditMode by mutableStateOf(false)
 
@@ -863,7 +863,7 @@ fun BibliaMenu(
                             }
 
                             Settings.PEREVODNEWAMERICANBIBLE -> {
-                                val dir = File("${context.filesDir}/NewKingJames")
+                                val dir = File("${context.filesDir}/NewAmericanBible")
                                 if (!dir.exists()) {
                                     dialogDownLoad = true
                                 } else {
@@ -918,7 +918,7 @@ fun BibliaMenu(
                         }
 
                         Settings.PEREVODNEWAMERICANBIBLE -> {
-                            val dir = File("${context.filesDir}/NewKingJames")
+                            val dir = File("${context.filesDir}/NewAmericanBible")
                             if (!dir.exists()) {
                                 dialogDownLoad = true
                                 isBibleTime = true
