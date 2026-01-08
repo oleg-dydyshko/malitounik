@@ -124,6 +124,7 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
     var isDialodApisanne by rememberSaveable { mutableStateOf(false) }
     var isDialodDeliteIcon by rememberSaveable { mutableStateOf(false) }
     var isDialodDeliteApisanne by rememberSaveable { mutableStateOf(false) }
+    var fileName by rememberSaveable { mutableStateOf("") }
     val mActivityResultFile = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == RESULT_OK) {
             val imageUri = it.data?.data
@@ -134,7 +135,7 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
                 } else {
                     @Suppress("DEPRECATION") MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
                 }
-                fileUpload(context, position, bitmap, isLoad = { isload ->
+                fileUpload(context, position, bitmap, iconList.size > 1, isLoad = { isload ->
                     isProgressVisable = isload
                 }) { file ->
                     iconList[position] = DataImages(iconList[position].title, file.length(), file, iconList[position].position, iconList[position].iconApisanne)
@@ -149,9 +150,6 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
                 CoroutineScope(Dispatchers.Main).launch {
                     isProgressVisable = true
                     try {
-                        val day = Settings.data[Settings.caliandarPosition][1].toInt()
-                        val mun = Settings.data[Settings.caliandarPosition][2].toInt() + 1
-                        val fileName = "s_${day}_${mun}_${position + 1}.jpg"
                         val t1 = fileName.lastIndexOf(".")
                         val fileNameT = fileName.take(t1) + ".txt"
                         val file = iconList[position].file
@@ -179,9 +177,6 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
                 CoroutineScope(Dispatchers.Main).launch {
                     isProgressVisable = true
                     try {
-                        val day = Settings.data[Settings.caliandarPosition][1].toInt()
-                        val mun = Settings.data[Settings.caliandarPosition][2].toInt() + 1
-                        val fileName = "s_${day}_${mun}_${position + 1}.jpg"
                         val t1 = fileName.lastIndexOf(".")
                         val fileNameT = fileName.take(t1) + ".txt"
                         Malitounik.referens.child("/chytanne/iconsApisanne/$fileNameT").delete().await()
@@ -207,9 +202,6 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
                     try {
                         val dir = File("${context.filesDir}/iconsApisanne")
                         if (!dir.exists()) dir.mkdir()
-                        val day = Settings.data[Settings.caliandarPosition][1].toInt()
-                        val mun = Settings.data[Settings.caliandarPosition][2].toInt() + 1
-                        val fileName = "s_${day}_${mun}_${position + 1}.jpg"
                         val t1 = fileName.lastIndexOf(".")
                         val fileNameT = fileName.take(t1) + ".txt"
                         val localFile = File("${context.filesDir}/iconsApisanne/$fileNameT")
@@ -343,11 +335,13 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
                                     .combinedClickable(
                                         onClick = {
                                             position = newPosition
+                                            fileName = iconList[newPosition].file.name
                                             isDialodApisanne = true
                                         },
                                         onLongClick = {
                                             if (iconList[newPosition].iconApisanne.isNotEmpty()) {
                                                 position = newPosition
+                                                fileName = iconList[newPosition].file.name
                                                 isDialodDeliteApisanne = true
                                             }
                                         }
@@ -507,7 +501,7 @@ suspend fun getIcons(context: Context, viewModel: SviatyiaViewModel, resultList:
                 } catch (_: Throwable) {
                 }
                 var e = 1
-                val s1 = "s_${day}_${mun}".length
+                val s1 = fileName.length
                 val s3 = it.name.substring(s1 + 1, s1 + 2)
                 if (s3.isDigitsOnly()) e = s3.toInt()
                 var title = ""
@@ -584,13 +578,14 @@ suspend fun getSviatyia(context: Context, position: Int): String {
     return title
 }
 
-fun fileUpload(context: Context, position: Int, bitmap: Bitmap?, isLoad: (Boolean) -> Unit, result: (File) -> Unit) {
+fun fileUpload(context: Context, position: Int, bitmap: Bitmap?, isSviatyia: Boolean, isLoad: (Boolean) -> Unit, result: (File) -> Unit) {
     if (Settings.isNetworkAvailable(context)) {
         CoroutineScope(Dispatchers.Main).launch {
             isLoad(true)
             val day = Settings.data[Settings.caliandarPosition][1].toInt()
             val mun = Settings.data[Settings.caliandarPosition][2].toInt() + 1
-            val localFile = File("${context.filesDir}/icons/s_${day}_${mun}_${position + 1}.jpg")
+            val pref = if (isSviatyia) "s" else "v"
+            val localFile = File("${context.filesDir}/icons/${pref}_${day}_${mun}_${position + 1}.jpg")
             withContext(Dispatchers.IO) {
                 bitmap?.let {
                     val out = FileOutputStream(localFile)
@@ -600,7 +595,7 @@ fun fileUpload(context: Context, position: Int, bitmap: Bitmap?, isLoad: (Boolea
                 }
             }
             bitmap?.let {
-                Malitounik.referens.child("/chytanne/icons/s_${day}_${mun}_${position + 1}.jpg").putFile(Uri.fromFile(localFile)).addOnSuccessListener {
+                Malitounik.referens.child("/chytanne/icons/${pref}_${day}_${mun}_${position + 1}.jpg").putFile(Uri.fromFile(localFile)).addOnSuccessListener {
                     result(localFile)
                 }.await()
             }
