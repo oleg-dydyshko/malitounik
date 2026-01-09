@@ -906,6 +906,8 @@
     <string name="admin">АДМІНІСТРАВАНЬНЕ:</string>
     <string name="sort_time">Сартаваць па апошнім часе мадыфікацыі</string>
     <string name="sort_abc">Сартаваць па алфавіце</string>
+    <string name="sort_custom">Сартаваць уручную</string>
+    <string name="sort">Сартаваць</string>
     <string name="pasochnica_add_folder">Адчыніць файл з тэлефона</string>
     <string name="pasochnica_add_basa">Адчыніць файл з Базы</string>
     <string name="exit_page">На папярэднію старонку</string>

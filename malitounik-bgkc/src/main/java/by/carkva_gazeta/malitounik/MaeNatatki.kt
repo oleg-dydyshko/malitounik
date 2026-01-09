@@ -4,18 +4,27 @@ package by.carkva_gazeta.malitounik
 
 import android.content.Context
 import android.os.Build
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.LazyListItemInfo
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -29,13 +38,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -44,7 +58,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import by.carkva_gazeta.malitounik.views.HtmlText
+import androidx.compose.ui.zIndex
+import androidx.core.content.edit
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
@@ -52,12 +72,100 @@ import java.text.Collator
 import java.util.Calendar
 import java.util.Locale
 
+class DragDropState
+internal constructor(
+    private val state: LazyListState,
+    private val scope: CoroutineScope,
+    private val onMove: (Int, Int) -> Unit,
+) {
+    var draggingItemIndex by mutableStateOf<Int?>(null)
+        private set
+
+    internal val scrollChannel = Channel<Float>()
+
+    private var draggingItemDraggedDelta by mutableFloatStateOf(0f)
+    private var draggingItemInitialOffset by mutableIntStateOf(0)
+    internal val draggingItemOffset: Float
+        get() = draggingItemLayoutInfo?.let { item ->
+            draggingItemInitialOffset + draggingItemDraggedDelta - item.offset
+        } ?: 0f
+
+    private val draggingItemLayoutInfo: LazyListItemInfo?
+        get() = state.layoutInfo.visibleItemsInfo.firstOrNull { it.index == draggingItemIndex }
+
+    internal var previousIndexOfDraggedItem by mutableStateOf<Int?>(null)
+        private set
+
+    internal var previousItemOffset = Animatable(0f)
+        private set
+
+    internal fun onDragStart(offset: Offset) {
+        state.layoutInfo.visibleItemsInfo.firstOrNull { item -> offset.y.toInt() in item.offset..(item.offset + item.size) }?.also {
+                draggingItemIndex = it.index
+                draggingItemInitialOffset = it.offset
+            }
+    }
+
+    internal fun onDragInterrupted() {
+        if (draggingItemIndex != null) {
+            previousIndexOfDraggedItem = draggingItemIndex
+            val startOffset = draggingItemOffset
+            scope.launch {
+                previousItemOffset.snapTo(startOffset)
+                previousItemOffset.animateTo(
+                    0f,
+                    spring(stiffness = Spring.StiffnessMediumLow, visibilityThreshold = 1f),
+                )
+                previousIndexOfDraggedItem = null
+            }
+        }
+        draggingItemDraggedDelta = 0f
+        draggingItemIndex = null
+        draggingItemInitialOffset = 0
+    }
+
+    internal fun onDrag(offset: Offset) {
+        draggingItemDraggedDelta += offset.y
+
+        val draggingItem = draggingItemLayoutInfo ?: return
+        val startOffset = draggingItem.offset + draggingItemOffset
+        val endOffset = startOffset + draggingItem.size
+        val middleOffset = startOffset + (endOffset - startOffset) / 2f
+
+        val targetItem = state.layoutInfo.visibleItemsInfo.find { item ->
+            middleOffset.toInt() in item.offset..item.offsetEnd && draggingItem.index != item.index
+        }
+        if (targetItem != null) {
+            if (draggingItem.index == state.firstVisibleItemIndex || targetItem.index == state.firstVisibleItemIndex) {
+                state.requestScrollToItem(
+                    state.firstVisibleItemIndex,
+                    state.firstVisibleItemScrollOffset,
+                )
+            }
+            onMove.invoke(draggingItem.index, targetItem.index)
+            draggingItemIndex = targetItem.index
+        } else {
+            val overscroll = when {
+                draggingItemDraggedDelta > 0 -> (endOffset - state.layoutInfo.viewportEndOffset).coerceAtLeast(0f)
+
+                draggingItemDraggedDelta < 0 -> (startOffset - state.layoutInfo.viewportStartOffset).coerceAtMost(0f)
+
+                else -> 0f
+            }
+            if (overscroll != 0f) {
+                scrollChannel.trySend(overscroll)
+            }
+        }
+    }
+
+    private val LazyListItemInfo.offsetEnd: Int
+        get() = this.offset + this.size
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MaeNatatki(
-    innerPadding: PaddingValues,
-    sort: Int,
-    viewModel: SearchBibleViewModel
+    innerPadding: PaddingValues, sort: Int, viewModel: SearchBibleViewModel
 ) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
@@ -81,42 +189,82 @@ fun MaeNatatki(
                     if (lRTE <= 1) {
                         lRTE = it.lastModified()
                     }
-                    viewModel.fileList.add(MaeNatatkiItem(lRTE, res[0], content, name))
+                    val t1 = name.lastIndexOf("_")
+                    val id = name.substring(t1 + 1).toInt()
+                    viewModel.fileList.add(MaeNatatkiItem(id, lRTE, res[0], content, name))
                 }
             }
         }
     }
-    if (sort == Settings.SORT_BY_ABC) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-            viewModel.fileList.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
-        } else {
-            viewModel.fileList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
+    LaunchedEffect(sort) {
+        when (sort) {
+            Settings.SORT_BY_ABC -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                    viewModel.fileList.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+                } else {
+                    viewModel.fileList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
+                }
+            }
+
+            Settings.SORT_BY_TIME -> {
+                viewModel.fileList.sortByDescending { it.lastModified }
+            }
+
+            Settings.SORT_BY_CUSTOM -> {
+                val file = File("${context.filesDir}/MaeNatatkiList.json")
+                val gson = Gson()
+                val type = TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
+                val list = ArrayList<String>()
+                list.addAll(gson.fromJson(file.readText(), type))
+                viewModel.fileList.clear()
+                for (i in list.indices) {
+                    val file = File(context.filesDir.toString().plus("/Malitva/" + list[i]))
+                    if (file.exists()) {
+                        val name = file.name
+                        val inputStream = FileReader(file)
+                        val reader = BufferedReader(inputStream)
+                        val res = reader.readText().split("<MEMA></MEMA>")
+                        inputStream.close()
+                        var lRTE: Long = 1
+                        var content = res[1]
+                        if (res[1].contains("<RTE></RTE>")) {
+                            val start = res[1].indexOf("<RTE></RTE>")
+                            content = res[1].substring(0, start)
+                            val end = res[1].length
+                            lRTE = res[1].substring(start + 11, end).toLong()
+                        }
+                        if (lRTE <= 1) {
+                            lRTE = file.lastModified()
+                        }
+                        val t1 = name.lastIndexOf("_")
+                        val id = name.substring(t1 + 1).toInt()
+                        viewModel.fileList.add(MaeNatatkiItem(id, lRTE, res[0], content, name))
+                    }
+                }
+            }
         }
-    } else {
-        viewModel.fileList.sortByDescending { it.lastModified }
     }
-    var removeNatatka by remember { mutableStateOf(false) }
-    var dialogContextMenu by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
-    if (removeNatatka) {
+    if (viewModel.isDeliteNatatka) {
         DialogDelite(
-            stringResource(R.string.vybranoe_biblia_delite, viewModel.fileList[viewModel.natatkaPosition].title),
-            onConfirmation = {
+            stringResource(R.string.vybranoe_biblia_delite, viewModel.fileList[viewModel.natatkaPosition].title), onConfirmation = {
                 val filedel = File(
-                    context.filesDir.toString().plus("/Malitva/")
-                        .plus(viewModel.fileList[viewModel.natatkaPosition].fileName)
+                    context.filesDir.toString().plus("/Malitva/").plus(viewModel.fileList[viewModel.natatkaPosition].fileName)
                 )
                 if (filedel.exists()) filedel.delete()
                 viewModel.fileList.removeAt(viewModel.natatkaPosition)
-                removeNatatka = false
-            }
-        ) { removeNatatka = false }
+                viewModel.isEditMode = false
+                viewModel.natatkaVisable = false
+                viewModel.isDeliteNatatka = false
+            }) { viewModel.isDeliteNatatka = false }
     }
     if (viewModel.saveFileNatatki) {
         write(context, viewModel.textFieldValueState.text, viewModel.textFieldValueNatatkaContent.text, if (viewModel.addFileNatatki) "" else viewModel.fileList[viewModel.natatkaPosition].fileName, viewModel.addFileNatatki, onFileEdit = { title, fileName, time ->
             if (viewModel.addFileNatatki) {
-                viewModel.fileList.add(MaeNatatkiItem(time, title, viewModel.textFieldValueNatatkaContent.text, fileName))
+                val t1 = fileName.lastIndexOf("_")
+                val id = fileName.substring(t1 + 1).toInt()
+                viewModel.fileList.add(MaeNatatkiItem(id, time, title, viewModel.textFieldValueNatatkaContent.text, fileName))
             } else {
                 viewModel.fileList[viewModel.natatkaPosition].title = title
                 viewModel.fileList[viewModel.natatkaPosition].content = viewModel.textFieldValueNatatkaContent.text
@@ -137,25 +285,23 @@ fun MaeNatatki(
             viewModel.natatkaVisable = false
         })
     }
-    if (dialogContextMenu) {
-        DialogContextMenu(
-            viewModel.fileList[viewModel.natatkaPosition].title,
-            onEdit = {
-                dialogContextMenu = false
-                viewModel.isEditMode = true
-                viewModel.natatkaVisable = true
-                viewModel.textFieldValueState = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].title)
-                viewModel.textFieldValueNatatkaContent = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].content)
-            },
-            onDelite = {
-                dialogContextMenu = false
-                removeNatatka = true
-            }
-        ) {
-            dialogContextMenu = false
+    val lazyListState = rememberLazyListState()
+    val dragDropState = rememberDragDropState(lazyListState) { fromIndex, toIndex ->
+        viewModel.fileList.apply { add(toIndex, removeAt(fromIndex)) }
+        val gson = Gson()
+        val type = TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
+        val saveList = ArrayList<String>()
+        for (i in viewModel.fileList.indices) {
+            saveList.add(viewModel.fileList[i].fileName)
+        }
+        val localFile = File("${context.filesDir}/MaeNatatkiList.json")
+        localFile.writer().use {
+            it.write(gson.toJson(saveList, type))
+        }
+        k.edit {
+            putInt("natatki_sort", Settings.SORT_BY_CUSTOM)
         }
     }
-    val lazyListState = rememberLazyListState()
     var fontSize by remember { mutableFloatStateOf(k.getFloat("font_biblia", 22F)) }
     if (viewModel.natatkaVisable) {
         Column(
@@ -174,64 +320,106 @@ fun MaeNatatki(
                                 focusRequester.requestFocus()
                                 textFieldLoaded = true
                             }
-                        },
-                    placeholder = { Text(stringResource(R.string.natatka), fontSize = Settings.fontInterface.sp) },
-                    value = viewModel.textFieldValueNatatkaContent,
-                    onValueChange = {
-                        viewModel.textFieldValueNatatkaContent = it
-                    },
-                    textStyle = TextStyle(fontSize = Settings.fontInterface.sp)
+                        }, placeholder = { Text(stringResource(R.string.natatka), fontSize = Settings.fontInterface.sp) }, value = viewModel.textFieldValueNatatkaContent, onValueChange = {
+                    viewModel.textFieldValueNatatkaContent = it
+                }, textStyle = TextStyle(fontSize = Settings.fontInterface.sp)
                 )
             } else {
                 SelectionContainer {
-                    HtmlText(
+                    Text(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(10.dp),
-                        text = viewModel.textFieldValueNatatkaContent.text, fontSize = fontSize.sp, color = MaterialTheme.colorScheme.secondary
+                            .padding(10.dp), text = viewModel.textFieldValueNatatkaContent.text, fontSize = fontSize.sp, color = MaterialTheme.colorScheme.secondary
                     )
                 }
             }
         }
     } else {
-        LazyColumn(state = lazyListState) {
-            items(viewModel.fileList.size) { index ->
-                Row(
-                    modifier = Modifier
-                        .padding(start = 10.dp)
-                        .combinedClickable(onClick = {
-                            viewModel.natatkaPosition = index
-                            viewModel.natatkaVisable = true
-                            viewModel.textFieldValueState = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].title)
-                            viewModel.textFieldValueNatatkaContent = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].content)
-                        }, onLongClick = {
-                            viewModel.natatkaPosition = index
-                            dialogContextMenu = true
-                        }),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        modifier = Modifier.size(5.dp),
-                        painter = painterResource(R.drawable.poiter),
-                        tint = MaterialTheme.colorScheme.primary,
-                        contentDescription = ""
-                    )
-                    Text(
-                        viewModel.fileList[index].title,
+        LazyColumn(modifier = Modifier.dragContainer(dragDropState), state = lazyListState) {
+            itemsIndexed(viewModel.fileList, key = { _, item -> item.id }) { index, item ->
+                DraggableItem(dragDropState, index) {
+                    Row(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(10.dp),
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontSize = Settings.fontInterface.sp
-                    )
+                            .padding(start = 10.dp)
+                            .clickable {
+                                viewModel.natatkaPosition = index
+                                viewModel.natatkaVisable = true
+                                viewModel.textFieldValueState = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].title)
+                                viewModel.textFieldValueNatatkaContent = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].content)
+                            }, verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                        )
+                        Text(
+                            item.title, modifier = Modifier
+                                .weight(1f)
+                                .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                        )
+                    }
+                    HorizontalDivider()
                 }
-                HorizontalDivider()
             }
             item {
                 Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding() + if (k.getBoolean("isInstallApp", false)) 60.dp else 0.dp))
             }
         }
     }
+}
+
+@Composable
+fun rememberDragDropState(
+    lazyListState: LazyListState, onMove: (Int, Int) -> Unit
+): DragDropState {
+    val scope = rememberCoroutineScope()
+    val state = remember(lazyListState) {
+        DragDropState(state = lazyListState, onMove = onMove, scope = scope)
+    }
+    LaunchedEffect(state) {
+        while (true) {
+            val diff = state.scrollChannel.receive()
+            lazyListState.scrollBy(diff)
+        }
+    }
+    return state
+}
+
+fun Modifier.dragContainer(dragDropState: DragDropState): Modifier {
+    return pointerInput(dragDropState) {
+        detectDragGesturesAfterLongPress(
+            onDrag = { change, offset ->
+                change.consume()
+                dragDropState.onDrag(offset = offset)
+            },
+            onDragStart = { offset -> dragDropState.onDragStart(offset) },
+            onDragEnd = { dragDropState.onDragInterrupted() },
+            onDragCancel = { dragDropState.onDragInterrupted() },
+        )
+    }
+}
+
+@Composable
+fun LazyItemScope.DraggableItem(
+    dragDropState: DragDropState,
+    index: Int,
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.(isDragging: Boolean) -> Unit,
+) {
+    val dragging = index == dragDropState.draggingItemIndex
+    val draggingModifier = if (dragging) {
+        Modifier
+            .zIndex(1f)
+            .graphicsLayer { translationY = dragDropState.draggingItemOffset }
+    } else if (index == dragDropState.previousIndexOfDraggedItem) {
+        Modifier
+            .zIndex(1f)
+            .graphicsLayer {
+                translationY = dragDropState.previousItemOffset.value
+            }
+    } else {
+        Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)
+    }
+    Column(modifier = modifier.then(draggingModifier)) { content(dragging) }
 }
 
 private fun write(
@@ -261,8 +449,7 @@ private fun write(
     }
     if (newNazva == "") {
         val mun = context.resources.getStringArray(R.array.meciac_smoll)
-        newNazva =
-            gc[Calendar.DATE].toString() + " " + mun[gc[Calendar.MONTH]] + " " + gc[Calendar.YEAR] + " " + gc[Calendar.HOUR_OF_DAY] + ":" + gc[Calendar.MINUTE]
+        newNazva = gc[Calendar.DATE].toString() + " " + mun[gc[Calendar.MONTH]] + " " + gc[Calendar.YEAR] + " " + gc[Calendar.HOUR_OF_DAY] + ":" + gc[Calendar.MINUTE]
     }
     val file = File("${context.filesDir}/Malitva/$imiafile")
     val time = gc.timeInMillis
@@ -273,8 +460,5 @@ private fun write(
 }
 
 data class MaeNatatkiItem(
-    val lastModified: Long,
-    var title: String,
-    var content: String,
-    val fileName: String
+    val id: Int, val lastModified: Long, var title: String, var content: String, val fileName: String
 )

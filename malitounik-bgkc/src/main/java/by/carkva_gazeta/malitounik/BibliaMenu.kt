@@ -130,6 +130,7 @@ class SearchBibleViewModel : CytanniListViewModel() {
     var fileList = mutableStateListOf<MaeNatatkiItem>()
     var natatkaVisable by mutableStateOf(false)
     var isEditMode by mutableStateOf(false)
+    var isDeliteNatatka by mutableStateOf(false)
 
     fun doInBackground(
         context: Context, searche: String, perevod: String, isBogaslujbovyiaSearch: Boolean
