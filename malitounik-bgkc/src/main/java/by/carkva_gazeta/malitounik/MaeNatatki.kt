@@ -8,9 +8,11 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -27,12 +29,16 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,6 +64,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import androidx.core.content.edit
 import com.google.gson.Gson
@@ -287,19 +294,21 @@ fun MaeNatatki(
     }
     val lazyListState = rememberLazyListState()
     val dragDropState = rememberDragDropState(lazyListState) { fromIndex, toIndex ->
-        viewModel.fileList.apply { add(toIndex, removeAt(fromIndex)) }
-        val gson = Gson()
-        val type = TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
-        val saveList = ArrayList<String>()
-        for (i in viewModel.fileList.indices) {
-            saveList.add(viewModel.fileList[i].fileName)
-        }
-        val localFile = File("${context.filesDir}/MaeNatatkiList.json")
-        localFile.writer().use {
-            it.write(gson.toJson(saveList, type))
-        }
-        k.edit {
-            putInt("natatki_sort", Settings.SORT_BY_CUSTOM)
+        if (fromIndex < viewModel.fileList.size && toIndex < viewModel.fileList.size) {
+            viewModel.fileList.apply { add(toIndex, removeAt(fromIndex)) }
+            val gson = Gson()
+            val type = TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
+            val saveList = ArrayList<String>()
+            for (i in viewModel.fileList.indices) {
+                saveList.add(viewModel.fileList[i].fileName)
+            }
+            val localFile = File("${context.filesDir}/MaeNatatkiList.json")
+            localFile.writer().use {
+                it.write(gson.toJson(saveList, type))
+            }
+            k.edit {
+                putInt("natatki_sort", Settings.SORT_BY_CUSTOM)
+            }
         }
     }
     var fontSize by remember { mutableFloatStateOf(k.getFloat("font_biblia", 22F)) }
@@ -420,6 +429,48 @@ fun LazyItemScope.DraggableItem(
         Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)
     }
     Column(modifier = modifier.then(draggingModifier)) { content(dragging) }
+}
+
+@Composable
+fun DialogHelpCustomSort(onDismiss: (Boolean) -> Unit) {
+    var isCheck by remember { mutableStateOf(false) }
+    Dialog(onDismissRequest = { onDismiss(isCheck) }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+                Text(
+                    text = stringResource(R.string.sort_custom).uppercase(), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.onTertiary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
+                )
+                Text(text = stringResource(R.string.sort_custom_help), modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(checked = isCheck, onCheckedChange = {
+                        isCheck = !isCheck
+                    })
+                    Text(text = stringResource(R.string.not_show), modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
+                }
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = { onDismiss(isCheck) }, shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Text(stringResource(R.string.ok), fontSize = 18.sp)
+                    }
+                }
+            }
+        }
+    }
 }
 
 private fun write(

@@ -177,7 +177,7 @@ private fun Caliandar(context: Context) {
                                     val text = AnnotatedString.fromHtml(data[4]).toString()
                                     val t1 = text.indexOf("\n")
                                     if (icon != 0) {
-                                        Row(modifier = GlanceModifier.fillMaxWidth().padding(bottom = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Row(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                                             Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
                                         }
                                     }
@@ -185,7 +185,7 @@ private fun Caliandar(context: Context) {
                                     Text(text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
                                 } else {
                                     if (icon != 0) {
-                                        Row(modifier = GlanceModifier.fillMaxWidth().padding(bottom = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Row(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                                             Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
                                         }
                                     }
@@ -196,7 +196,7 @@ private fun Caliandar(context: Context) {
                                     val text = AnnotatedString.fromHtml(data[4]).toString()
                                     val t1 = text.indexOf("\n")
                                     if (icon != 0) {
-                                        Row(modifier = GlanceModifier.fillMaxWidth().padding(bottom = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Row(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                                             Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
                                         }
                                     }
@@ -204,7 +204,7 @@ private fun Caliandar(context: Context) {
                                     Text(text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
                                 } else {
                                     if (icon != 0) {
-                                        Row(modifier = GlanceModifier.fillMaxWidth().padding(bottom = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Row(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                                             Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
                                         }
                                     }
@@ -213,7 +213,7 @@ private fun Caliandar(context: Context) {
                             }
                         } else {
                             if (icon != 0) {
-                                Row(modifier = GlanceModifier.fillMaxWidth().padding(bottom = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                                Row(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                                     Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
                                 }
                             }

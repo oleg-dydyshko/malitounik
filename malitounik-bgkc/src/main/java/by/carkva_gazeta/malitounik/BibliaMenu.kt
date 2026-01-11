@@ -521,7 +521,7 @@ fun BibliaMenu(
     perevod: String,
     innerPadding: PaddingValues,
     searchBibleState: LazyListState,
-    sorted: Int,
+    sort: Int,
     isIconSortVisibility: (Boolean) -> Unit,
     navigateToCytanniList: (String, Int, String, Int) -> Unit,
     navigateToBogaslujbovyia: (String, String) -> Unit,
@@ -964,7 +964,8 @@ fun BibliaMenu(
                         ArrayList::class.java,
                         VybranaeData::class.java
                     ).type
-                val list: ArrayList<VybranaeData> = gson.fromJson(file.readText(), type)
+                val list = remember { mutableStateListOf<VybranaeData>() }
+                if (list.isEmpty()) list.addAll(gson.fromJson(file.readText(), type))
                 var removeItem by remember { mutableIntStateOf(-1) }
                 if (removeItem != -1) {
                     val titleVybrenae = stringResource(
@@ -1030,16 +1031,27 @@ fun BibliaMenu(
                         )
                     }
                 }
-                if (sorted == Settings.SORT_BY_ABC) {
-                    list.sortWith(
-                        compareBy({
-                            it.knigaText
-                        }, {
-                            it.glava
-                        })
-                    )
-                } else {
-                    list.sortByDescending { it.id }
+                LaunchedEffect(sort) {
+                    when (sort) {
+                        Settings.SORT_BY_ABC -> {
+                            list.sortWith(
+                                compareBy({
+                                    it.knigaText
+                                }, {
+                                    it.glava
+                                })
+                            )
+                        }
+
+                        Settings.SORT_BY_TIME -> {
+                            list.sortByDescending { it.id }
+                        }
+
+                        Settings.SORT_BY_CUSTOM -> {
+                            list.clear()
+                            list.addAll(gson.fromJson(file.readText(), type))
+                        }
+                    }
                 }
                 isIconSortVisibility(!collapsedState)
                 AnimatedVisibility(
@@ -1084,10 +1096,18 @@ fun BibliaMenu(
                                 Text(
                                     list[index].title + " " + (list[index].glava + 1),
                                     modifier = Modifier
+                                        .weight(1f)
                                         .fillMaxSize()
                                         .padding(10.dp),
                                     color = MaterialTheme.colorScheme.secondary,
                                     fontSize = Settings.fontInterface.sp
+                                )
+                                Icon(
+                                    modifier = Modifier
+                                        .padding(end = 5.dp)
+                                        .clickable {
+                                            removeItem = index
+                                        }, painter = painterResource(R.drawable.delete), tint = MaterialTheme.colorScheme.secondary, contentDescription = ""
                                 )
                             }
                             HorizontalDivider()

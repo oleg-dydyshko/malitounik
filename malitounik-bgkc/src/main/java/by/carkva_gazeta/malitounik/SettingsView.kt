@@ -119,7 +119,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
             window, view
         ).apply {
             isAppearanceLightStatusBars = false
-            isAppearanceLightNavigationBars = !Settings.dzenNoch
+            isAppearanceLightNavigationBars = false
         }
     }
     val coroutineScope = rememberCoroutineScope()
@@ -267,7 +267,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                 .padding(
                     innerPadding.calculateStartPadding(LayoutDirection.Ltr), innerPadding.calculateTopPadding(), innerPadding.calculateEndPadding(LayoutDirection.Rtl), 0.dp
                 )
-                .padding(10.dp)
+                .padding(horizontal = 10.dp)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
@@ -1150,6 +1150,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                         putBoolean("paralel_maranata", true)
                         putBoolean("bottomBar", false)
                         putBoolean("power", false)
+                        putBoolean("isCustomSortHelp", true)
                     }
                     modeNotification = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)

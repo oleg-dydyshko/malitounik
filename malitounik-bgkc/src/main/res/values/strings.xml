@@ -916,5 +916,7 @@
     <string name="admin_exit_opis">Вы сапраўды жадаеце выйсьці?</string>
     <string name="shere_help">Каб падзяліцца файлам, яго трэба спампаваць.</string>
     <string name="styx_is_emty">Абярыце верш!</string>
+    <string name="not_show">Больш не паказваць</string>
+    <string name="sort_custom_help">Каб адсартаваць спіс у адвольным парадку, перацягніце раздзел Бібліі або тэкст у новую пазіцыю, пасля доўгага націску.</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>
