@@ -15,6 +15,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -25,6 +27,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -60,6 +64,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -82,6 +87,7 @@ import androidx.core.text.HtmlCompat
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import by.carkva_gazeta.malitounik.Settings.bibleTime
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.Primary
@@ -131,6 +137,7 @@ class SearchBibleViewModel : CytanniListViewModel() {
     var natatkaVisable by mutableStateOf(false)
     var isEditMode by mutableStateOf(false)
     var isDeliteNatatka by mutableStateOf(false)
+    var isIconSort by mutableStateOf(false)
 
     fun doInBackground(
         context: Context, searche: String, perevod: String, isBogaslujbovyiaSearch: Boolean
@@ -263,7 +270,7 @@ class SearchBibleViewModel : CytanniListViewModel() {
                 val subTitle = subTitleListName[i].subTitle
                 val zavet = if (novyZapaviet == 1) "n"
                 else "s"
-                val prevodName = when (perevod) {
+                val perevodFilePach = when (perevod) {
                     Settings.PEREVODSEMUXI -> "chytanne/Semucha/biblia"
                     Settings.PEREVODBOKUNA -> "chytanne/Bokun/bokuna"
                     Settings.PEREVODCARNIAUSKI -> "chytanne/Carniauski/carniauski"
@@ -273,8 +280,8 @@ class SearchBibleViewModel : CytanniListViewModel() {
                     Settings.PEREVODNEWAMERICANBIBLE -> "/NewAmericanBible/english"
                     else -> "chytanne/Semucha/biblia"
                 }
-                val fileName = if (perevod == Settings.PEREVODNADSAN) prevodName
-                else "$prevodName$zavet${i + 1}.txt"
+                val fileName = if (perevod == Settings.PEREVODNADSAN) perevodFilePach
+                else "$perevodFilePach$zavet${i + 1}.txt"
                 var glava = 0
                 val split = if (perevod == Settings.PEREVODSINOIDAL || perevod == Settings.PEREVODCATOLIK || perevod == Settings.PEREVODNEWAMERICANBIBLE) {
                     openBibleResources(context, fileName).split("===")
@@ -522,7 +529,6 @@ fun BibliaMenu(
     innerPadding: PaddingValues,
     searchBibleState: LazyListState,
     sort: Int,
-    isIconSortVisibility: (Boolean) -> Unit,
     navigateToCytanniList: (String, Int, String, Int) -> Unit,
     navigateToBogaslujbovyia: (String, String) -> Unit,
     viewModel: SearchBibleViewModel
@@ -532,7 +538,6 @@ fun BibliaMenu(
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
-    var isBibleTime by remember { mutableStateOf(false) }
     var bibleTime by remember { mutableStateOf(false) }
     LaunchedEffect(bibleTime) {
         if (bibleTime) {
@@ -577,19 +582,6 @@ fun BibliaMenu(
             navigationActions.navigateToBibliaList(kniga >= 50, perevod)
         }
     }
-    var dialogVisable by remember { mutableStateOf(false) }
-    if (dialogVisable) {
-        DialogSemuxa(perevod) {
-            dialogVisable = false
-        }
-    }
-    var pesnyView by rememberSaveable { mutableStateOf(false) }
-    var dialogPeryiadyView by rememberSaveable { mutableStateOf(false) }
-    if (dialogPeryiadyView) {
-        DialogPeryaidy {
-            dialogPeryiadyView = false
-        }
-    }
     val keyboardController = LocalSoftwareKeyboardController.current
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
@@ -602,60 +594,8 @@ fun BibliaMenu(
             }
         }
     }
-    var dialogImageView by rememberSaveable { mutableStateOf(false) }
     var isRegistr by remember { mutableStateOf(k.getBoolean("pegistrbukv", true)) }
     var isDakladnaeSupadzenne by remember { mutableIntStateOf(k.getInt("slovocalkam", 0)) }
-    var isDeliteVybranaeAll by remember { mutableStateOf(false) }
-    if (isDeliteVybranaeAll) {
-        val titlePerevod = when (perevod) {
-            Settings.PEREVODSEMUXI -> stringResource(R.string.title_biblia2)
-            Settings.PEREVODSINOIDAL -> stringResource(R.string.bsinaidal2)
-            Settings.PEREVODNADSAN -> stringResource(R.string.title_psalter)
-            Settings.PEREVODBOKUNA -> stringResource(R.string.title_biblia_bokun2)
-            Settings.PEREVODCARNIAUSKI -> stringResource(R.string.title_biblia_charniauski2)
-            Settings.PEREVODCATOLIK -> stringResource(R.string.title_biblia_catolik2)
-            Settings.PEREVODNEWAMERICANBIBLE -> stringResource(R.string.perevod_new_american_bible_2)
-            else -> stringResource(R.string.title_biblia2)
-        }
-        DialogDelite(
-            title = stringResource(R.string.vybranoe_biblia_delite, titlePerevod),
-            onConfirmation = {
-                val prevodName = when (perevod) {
-                    Settings.PEREVODSEMUXI -> "biblia"
-                    Settings.PEREVODBOKUNA -> "bokuna"
-                    Settings.PEREVODCARNIAUSKI -> "carniauski"
-                    Settings.PEREVODNADSAN -> "nadsan"
-                    Settings.PEREVODCATOLIK -> "catolik"
-                    Settings.PEREVODNEWAMERICANBIBLE -> "english"
-                    Settings.PEREVODSINOIDAL -> "sinaidal"
-                    else -> "biblia"
-                }
-                val file = File("${context.filesDir}/vybranoe_${prevodName}.json")
-                if (file.exists()) {
-                    file.delete()
-                }
-                isDeliteVybranaeAll = false
-            }
-        ) {
-            isDeliteVybranaeAll = false
-        }
-    }
-    var dialogDownLoad by remember { mutableStateOf(false) }
-    var novyZapavet by remember { mutableStateOf(false) }
-    if (dialogDownLoad) {
-        viewModel.setPerevod = perevod
-        DialogDownLoadBible(viewModel, onConfirmation = {
-            if (isBibleTime) {
-                bibleTime = true
-                isBibleTime = false
-            } else {
-                navigationActions.navigateToBibliaList(novyZapavet, perevod)
-            }
-            dialogDownLoad = false
-        }) {
-            dialogDownLoad = false
-        }
-    }
     LaunchedEffect(viewModel.textFieldValueState.text) {
         viewModel.search(context, perevod)
     }
@@ -787,134 +727,119 @@ fun BibliaMenu(
             }
         }
     } else {
-        val scrollState = rememberScrollState()
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(scrollState)
+        BibliaMenuList(perevod, sort, innerPadding, viewModel, navigationActions, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
+            navigateToCytanniList(chytanne, position, perevod2, biblia)
+        }, navigateToBogaslujbovyia = { title, resurs ->
+            navigateToBogaslujbovyia(title, resurs)
+        })
+    }
+}
+
+@Composable
+fun BibliaMenuList(
+    perevod: String, sort: Int, innerPadding: PaddingValues, viewModel: SearchBibleViewModel, navigationActions: AppNavigationActions, navigateToCytanniList: (String, Int, String, Int) -> Unit,
+    navigateToBogaslujbovyia: (String, String) -> Unit
+) {
+    BoxWithConstraints {
+        BibliaMenuList(perevod, sort, innerPadding, viewModel, navigationActions, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
+            navigateToCytanniList(chytanne, position, perevod2, biblia)
+        }, navigateToBogaslujbovyia = { title, resurs ->
+            navigateToBogaslujbovyia(title, resurs)
+        })
+    }
+}
+
+@Composable
+fun BoxWithConstraintsScope.BibliaMenuList(
+    perevod: String, sort: Int, innerPadding: PaddingValues, viewModel: SearchBibleViewModel, navigationActions: AppNavigationActions, navigateToCytanniList: (String, Int, String, Int) -> Unit,
+    navigateToBogaslujbovyia: (String, String) -> Unit
+) {
+    val parentConstraints = this.constraints
+    val context = LocalContext.current
+    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+    var dialogImageView by rememberSaveable { mutableStateOf(false) }
+    var dialogVisable by remember { mutableStateOf(false) }
+    if (dialogVisable) {
+        DialogSemuxa(perevod) {
+            dialogVisable = false
+        }
+    }
+    var pesnyView by rememberSaveable { mutableStateOf(false) }
+    var dialogPeryiadyView by rememberSaveable { mutableStateOf(false) }
+    if (dialogPeryiadyView) {
+        DialogPeryaidy {
+            dialogPeryiadyView = false
+        }
+    }
+    val perevodName = when (perevod) {
+        Settings.PEREVODSEMUXI -> "biblia"
+        Settings.PEREVODBOKUNA -> "bokuna"
+        Settings.PEREVODCARNIAUSKI -> "carniauski"
+        Settings.PEREVODNADSAN -> "nadsan"
+        Settings.PEREVODCATOLIK -> "catolik"
+        Settings.PEREVODSINOIDAL -> "sinaidal"
+        Settings.PEREVODNEWAMERICANBIBLE -> "english"
+        else -> "biblia"
+    }
+    var isDeliteVybranaeAll by remember { mutableStateOf(false) }
+    if (isDeliteVybranaeAll) {
+        val titlePerevod = when (perevod) {
+            Settings.PEREVODSEMUXI -> stringResource(R.string.title_biblia2)
+            Settings.PEREVODSINOIDAL -> stringResource(R.string.bsinaidal2)
+            Settings.PEREVODNADSAN -> stringResource(R.string.title_psalter)
+            Settings.PEREVODBOKUNA -> stringResource(R.string.title_biblia_bokun2)
+            Settings.PEREVODCARNIAUSKI -> stringResource(R.string.title_biblia_charniauski2)
+            Settings.PEREVODCATOLIK -> stringResource(R.string.title_biblia_catolik2)
+            Settings.PEREVODNEWAMERICANBIBLE -> stringResource(R.string.perevod_new_american_bible_2)
+            else -> stringResource(R.string.title_biblia2)
+        }
+        DialogDelite(
+            title = stringResource(R.string.vybranoe_biblia_delite, titlePerevod),
+            onConfirmation = {
+                val file = File("${context.filesDir}/vybranoe_${perevodName}.json")
+                if (file.exists()) {
+                    file.delete()
+                }
+                isDeliteVybranaeAll = false
+            }
         ) {
-            if (perevod != Settings.PEREVODCATOLIK) {
-                TextButton(
-                    onClick = {
-                        novyZapavet = false
-                        when (perevod) {
-                            Settings.PEREVODSINOIDAL -> {
-                                val dir = File("${context.filesDir}/Sinodal")
-                                if (!dir.exists()) {
-                                    dialogDownLoad = true
-                                } else {
-                                    navigationActions.navigateToBibliaList(false, perevod)
-                                }
-                            }
-
-                            Settings.PEREVODNEWAMERICANBIBLE -> {
-                                val dir = File("${context.filesDir}/NewAmericanBible")
-                                if (!dir.exists()) {
-                                    dialogDownLoad = true
-                                } else {
-                                    navigationActions.navigateToBibliaList(false, perevod)
-                                }
-                            }
-
-                            else -> navigationActions.navigateToBibliaList(false, perevod)
-                        }
-                    },
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(5.dp)
-                        .size(width = 200.dp, height = Dp.Unspecified),
-                    colors = ButtonColors(
-                        Primary,
-                        Color.Unspecified,
-                        Color.Unspecified,
-                        Color.Unspecified
-                    ),
-                    shape = MaterialTheme.shapes.small
-                ) {
-                    Text(
-                        if (perevod == Settings.PEREVODNADSAN) stringResource(R.string.psalter)
-                        else stringResource(R.string.stary_zapaviet),
-                        fontSize = Settings.fontInterface.sp,
-                        color = PrimaryTextBlack,
-                        textAlign = TextAlign.Center
-                    )
-                }
+            isDeliteVybranaeAll = false
+        }
+    }
+    var dialogDownLoad by remember { mutableStateOf(false) }
+    var novyZapavet by remember { mutableStateOf(false) }
+    var isBibleTime by remember { mutableStateOf(false) }
+    if (dialogDownLoad) {
+        viewModel.setPerevod = perevod
+        DialogDownLoadBible(viewModel, onConfirmation = {
+            if (isBibleTime) {
+                bibleTime = true
+                isBibleTime = false
+            } else {
+                navigationActions.navigateToBibliaList(novyZapavet, perevod)
             }
-            if (perevod != Settings.PEREVODNADSAN) {
-                TextButton(
-                    onClick = {
-                        novyZapavet = true
-                        when (perevod) {
-                            Settings.PEREVODCATOLIK -> {
-                                val dir = File("${context.filesDir}/Catolik")
-                                if (!dir.exists()) {
-                                    dialogDownLoad = true
-                                } else {
-                                    navigationActions.navigateToBibliaList(true, perevod)
-                                }
-                            }
-
-                            Settings.PEREVODSINOIDAL -> {
-                                val dir = File("${context.filesDir}/Sinodal")
-                                if (!dir.exists()) {
-                                    dialogDownLoad = true
-                                } else {
-                                    navigationActions.navigateToBibliaList(true, perevod)
-                                }
-                            }
-
-                            Settings.PEREVODNEWAMERICANBIBLE -> {
-                                val dir = File("${context.filesDir}/NewAmericanBible")
-                                if (!dir.exists()) {
-                                    dialogDownLoad = true
-                                } else {
-                                    navigationActions.navigateToBibliaList(true, perevod)
-                                }
-                            }
-
-                            else -> navigationActions.navigateToBibliaList(true, perevod)
-                        }
-                    },
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(5.dp)
-                        .size(width = 200.dp, height = Dp.Unspecified),
-                    colors = ButtonColors(
-                        Primary,
-                        Color.Unspecified,
-                        Color.Unspecified,
-                        Color.Unspecified
-                    ),
-                    shape = MaterialTheme.shapes.small
-                ) {
-                    Text(
-                        stringResource(R.string.novy_zapaviet),
-                        fontSize = Settings.fontInterface.sp,
-                        color = PrimaryTextBlack,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
+            dialogDownLoad = false
+        }) {
+            dialogDownLoad = false
+        }
+    }
+    val scrollState = rememberScrollState()
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(scrollState)
+    ) {
+        if (perevod != Settings.PEREVODCATOLIK) {
             TextButton(
                 onClick = {
+                    novyZapavet = false
                     when (perevod) {
-                        Settings.PEREVODCATOLIK -> {
-                            val dir = File("${context.filesDir}/Catolik")
-                            if (!dir.exists()) {
-                                dialogDownLoad = true
-                                isBibleTime = true
-                            } else {
-                                bibleTime = true
-                            }
-                        }
-
                         Settings.PEREVODSINOIDAL -> {
                             val dir = File("${context.filesDir}/Sinodal")
                             if (!dir.exists()) {
                                 dialogDownLoad = true
-                                isBibleTime = true
                             } else {
-                                bibleTime = true
+                                navigationActions.navigateToBibliaList(false, perevod)
                             }
                         }
 
@@ -922,13 +847,12 @@ fun BibliaMenu(
                             val dir = File("${context.filesDir}/NewAmericanBible")
                             if (!dir.exists()) {
                                 dialogDownLoad = true
-                                isBibleTime = true
                             } else {
-                                bibleTime = true
+                                navigationActions.navigateToBibliaList(false, perevod)
                             }
                         }
 
-                        else -> bibleTime = true
+                        else -> navigationActions.navigateToBibliaList(false, perevod)
                     }
                 },
                 modifier = Modifier
@@ -936,154 +860,281 @@ fun BibliaMenu(
                     .padding(5.dp)
                     .size(width = 200.dp, height = Dp.Unspecified),
                 colors = ButtonColors(
-                    Divider,
+                    Primary,
                     Color.Unspecified,
                     Color.Unspecified,
                     Color.Unspecified
                 ),
                 shape = MaterialTheme.shapes.small
             ) {
-                Text(stringResource(R.string.bible_time), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
+                Text(
+                    if (perevod == Settings.PEREVODNADSAN) stringResource(R.string.psalter)
+                    else stringResource(R.string.stary_zapaviet),
+                    fontSize = Settings.fontInterface.sp,
+                    color = PrimaryTextBlack,
+                    textAlign = TextAlign.Center
+                )
             }
-            val prevodName = when (perevod) {
-                Settings.PEREVODSEMUXI -> "biblia"
-                Settings.PEREVODBOKUNA -> "bokuna"
-                Settings.PEREVODCARNIAUSKI -> "carniauski"
-                Settings.PEREVODNADSAN -> "nadsan"
-                Settings.PEREVODCATOLIK -> "catolik"
-                Settings.PEREVODSINOIDAL -> "sinaidal"
-                Settings.PEREVODNEWAMERICANBIBLE -> "english"
-                else -> "biblia"
-            }
-            val titlePerevod = stringResource(R.string.str_short_label1)
-            val file = File("${LocalContext.current.filesDir}/vybranoe_${prevodName}.json")
-            if (file.exists()) {
-                val gson = Gson()
-                val type =
-                    TypeToken.getParameterized(
-                        ArrayList::class.java,
-                        VybranaeData::class.java
-                    ).type
-                val list = remember { mutableStateListOf<VybranaeData>() }
-                if (list.isEmpty()) list.addAll(gson.fromJson(file.readText(), type))
-                var removeItem by remember { mutableIntStateOf(-1) }
-                if (removeItem != -1) {
-                    val titleVybrenae = stringResource(
-                        R.string.vybranoe_biblia_delite, list[removeItem].title + " " + (list[removeItem].glava + 1)
-                    )
-                    DialogDelite(
-                        title = titleVybrenae,
-                        onConfirmation = {
-                            list.removeAt(removeItem)
-                            if (list.isEmpty() && file.exists()) {
-                                file.delete()
+        }
+        if (perevod != Settings.PEREVODNADSAN) {
+            TextButton(
+                onClick = {
+                    novyZapavet = true
+                    when (perevod) {
+                        Settings.PEREVODCATOLIK -> {
+                            val dir = File("${context.filesDir}/Catolik")
+                            if (!dir.exists()) {
+                                dialogDownLoad = true
                             } else {
-                                file.writer().use {
-                                    it.write(gson.toJson(list, type))
-                                }
+                                navigationActions.navigateToBibliaList(true, perevod)
                             }
-                            removeItem = -1
                         }
-                    ) {
+
+                        Settings.PEREVODSINOIDAL -> {
+                            val dir = File("${context.filesDir}/Sinodal")
+                            if (!dir.exists()) {
+                                dialogDownLoad = true
+                            } else {
+                                navigationActions.navigateToBibliaList(true, perevod)
+                            }
+                        }
+
+                        Settings.PEREVODNEWAMERICANBIBLE -> {
+                            val dir = File("${context.filesDir}/NewAmericanBible")
+                            if (!dir.exists()) {
+                                dialogDownLoad = true
+                            } else {
+                                navigationActions.navigateToBibliaList(true, perevod)
+                            }
+                        }
+
+                        else -> navigationActions.navigateToBibliaList(true, perevod)
+                    }
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(5.dp)
+                    .size(width = 200.dp, height = Dp.Unspecified),
+                colors = ButtonColors(
+                    Primary,
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified
+                ),
+                shape = MaterialTheme.shapes.small
+            ) {
+                Text(
+                    stringResource(R.string.novy_zapaviet),
+                    fontSize = Settings.fontInterface.sp,
+                    color = PrimaryTextBlack,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+        TextButton(
+            onClick = {
+                when (perevod) {
+                    Settings.PEREVODCATOLIK -> {
+                        val dir = File("${context.filesDir}/Catolik")
+                        if (!dir.exists()) {
+                            dialogDownLoad = true
+                            isBibleTime = true
+                        } else {
+                            bibleTime = true
+                        }
+                    }
+
+                    Settings.PEREVODSINOIDAL -> {
+                        val dir = File("${context.filesDir}/Sinodal")
+                        if (!dir.exists()) {
+                            dialogDownLoad = true
+                            isBibleTime = true
+                        } else {
+                            bibleTime = true
+                        }
+                    }
+
+                    Settings.PEREVODNEWAMERICANBIBLE -> {
+                        val dir = File("${context.filesDir}/NewAmericanBible")
+                        if (!dir.exists()) {
+                            dialogDownLoad = true
+                            isBibleTime = true
+                        } else {
+                            bibleTime = true
+                        }
+                    }
+
+                    else -> bibleTime = true
+                }
+            },
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(5.dp)
+                .size(width = 200.dp, height = Dp.Unspecified),
+            colors = ButtonColors(
+                Divider,
+                Color.Unspecified,
+                Color.Unspecified,
+                Color.Unspecified
+            ),
+            shape = MaterialTheme.shapes.small
+        ) {
+            Text(stringResource(R.string.bible_time), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
+        }
+        val titlePerevod = stringResource(R.string.str_short_label1)
+        val file = File("${LocalContext.current.filesDir}/vybranoe_${perevodName}.json")
+        if (file.exists()) {
+            val gson = Gson()
+            val type =
+                TypeToken.getParameterized(
+                    ArrayList::class.java,
+                    VybranaeData::class.java
+                ).type
+            val list = remember { mutableStateListOf<VybranaeData>() }
+            if (list.isEmpty()) list.addAll(gson.fromJson(file.readText(), type))
+            var removeItem by remember { mutableIntStateOf(-1) }
+            if (removeItem != -1) {
+                val titleVybrenae = stringResource(
+                    R.string.vybranoe_biblia_delite, list[removeItem].title + " " + (list[removeItem].glava + 1)
+                )
+                DialogDelite(
+                    title = titleVybrenae,
+                    onConfirmation = {
+                        list.removeAt(removeItem)
+                        if (list.isEmpty() && file.exists()) {
+                            file.delete()
+                        } else {
+                            file.writer().use {
+                                it.write(gson.toJson(list, type))
+                            }
+                        }
                         removeItem = -1
                     }
+                ) {
+                    removeItem = -1
                 }
-                var collapsedState by remember { mutableStateOf(AppNavGraphState.setItemsValue(titlePerevod, true)) }
-                Column(
+            }
+            var collapsedState by remember { mutableStateOf(AppNavGraphState.setItemsValue(titlePerevod, true)) }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp)
+                        .combinedClickable(
+                            onClick = {
+                                AppNavGraphState.setItemsValue(titlePerevod)
+                                collapsedState = !collapsedState
+                            },
+                            onLongClick = {
+                                isDeliteVybranaeAll = true
+                            }
+                        )
+                        .clip(MaterialTheme.shapes.small)
+                        .background(Divider)
+                        .align(Alignment.CenterHorizontally)
+                        .size(width = 200.dp, height = Dp.Unspecified)
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
+                    Text(
+                        text = titlePerevod,
                         modifier = Modifier
-                            .combinedClickable(
-                                onClick = {
-                                    AppNavGraphState.setItemsValue(titlePerevod)
-                                    collapsedState = !collapsedState
-                                },
-                                onLongClick = {
-                                    isDeliteVybranaeAll = true
-                                }
-                            )
-                            .clip(MaterialTheme.shapes.small)
-                            .background(Divider)
-                            .align(Alignment.CenterHorizontally)
-                            .size(width = 200.dp, height = Dp.Unspecified)
-                    ) {
-                        Text(
-                            text = titlePerevod,
-                            modifier = Modifier
-                                .padding(vertical = 8.dp)
-                                .weight(1f),
-                            color = PrimaryText,
-                            fontSize = Settings.fontInterface.sp,
-                            textAlign = TextAlign.Center
-                        )
-                        Icon(
-                            painter = if (!collapsedState)
-                                painterResource(R.drawable.keyboard_arrow_down)
-                            else
-                                painterResource(R.drawable.keyboard_arrow_up),
-                            contentDescription = "",
-                            tint = PrimaryText,
+                            .padding(vertical = 8.dp)
+                            .weight(1f),
+                        color = PrimaryText,
+                        fontSize = Settings.fontInterface.sp,
+                        textAlign = TextAlign.Center
+                    )
+                    Icon(
+                        painter = if (!collapsedState)
+                            painterResource(R.drawable.keyboard_arrow_down)
+                        else
+                            painterResource(R.drawable.keyboard_arrow_up),
+                        contentDescription = "",
+                        tint = PrimaryText,
+                    )
+                }
+            }
+            LaunchedEffect(sort) {
+                when (sort) {
+                    Settings.SORT_BY_ABC -> {
+                        list.sortWith(
+                            compareBy({
+                                it.knigaText
+                            }, {
+                                it.glava
+                            })
                         )
                     }
-                }
-                LaunchedEffect(sort) {
-                    when (sort) {
-                        Settings.SORT_BY_ABC -> {
-                            list.sortWith(
-                                compareBy({
-                                    it.knigaText
-                                }, {
-                                    it.glava
-                                })
-                            )
-                        }
 
-                        Settings.SORT_BY_TIME -> {
-                            list.sortByDescending { it.id }
-                        }
+                    Settings.SORT_BY_TIME -> {
+                        list.sortByDescending { it.id }
+                    }
 
-                        Settings.SORT_BY_CUSTOM -> {
-                            list.clear()
-                            list.addAll(gson.fromJson(file.readText(), type))
-                        }
+                    Settings.SORT_BY_CUSTOM -> {
+                        list.clear()
+                        list.addAll(gson.fromJson(file.readText(), type))
                     }
                 }
-                isIconSortVisibility(!collapsedState)
-                AnimatedVisibility(
-                    !collapsedState, enter = fadeIn(
-                        tween(
-                            durationMillis = 700, easing = LinearOutSlowInEasing
-                        )
-                    ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
+            }
+            viewModel.isIconSort = !collapsedState
+            val typeBibleList = TypeToken.getParameterized(
+                ArrayList::class.java, VybranaeData::class.java
+            ).type
+            val lazyColumnState = rememberLazyListState()
+            val dragDropState = rememberDragDropState(lazyColumnState) { fromIndex, toIndex ->
+                if (fromIndex < list.size && toIndex < list.size) {
+                    list.apply { add(toIndex, removeAt(fromIndex)) }
+                    val file = File("${context.filesDir}/vybranoe_${perevodName}.json")
+                    file.writer().use {
+                        it.write(gson.toJson(list, typeBibleList))
+                    }
+                    k.edit {
+                        putInt("sortedVybranae", Settings.SORT_BY_CUSTOM)
+                    }
+                }
+            }
+            AnimatedVisibility(
+                !collapsedState, enter = fadeIn(
+                    tween(
+                        durationMillis = 700, easing = LinearOutSlowInEasing
+                    )
+                ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
+            ) {
+                LazyColumn(
+                    modifier = Modifier
+                        .dragContainer(dragDropState)
+                        .layout { measurable, constraints ->
+                            val placeable = measurable.measure(
+                                constraints.copy(maxHeight = parentConstraints.maxHeight)
+                            )
+
+                            layout(placeable.width, placeable.height) {
+                                placeable.placeRelative(0, 0)
+                            }
+                        },
+                    state = lazyColumnState
                 ) {
-                    Column {
-                        for (index in list.indices) {
+                    itemsIndexed(list, key = { _, item -> item.id }) { index, item ->
+                        DraggableItem(dragDropState, index) {
                             Row(
                                 modifier = Modifier
-                                    .combinedClickable(
-                                        onClick = {
-                                            val newList = StringBuilder()
-                                            for (r in 0 until list.size) {
-                                                val char = if (r == list.size - 1) ""
-                                                else ";"
-                                                newList.append(list[r].knigaText + " " + (list[r].glava + 1) + char)
-                                            }
-                                            navigateToCytanniList(
-                                                newList.toString(),
-                                                index,
-                                                list[index].perevod,
-                                                Settings.CHYTANNI_VYBRANAE
-                                            )
-                                        },
-                                        onLongClick = {
-                                            removeItem = index
+                                    .clickable {
+                                        val newList = StringBuilder()
+                                        for (r in 0 until list.size) {
+                                            val char = if (r == list.size - 1) ""
+                                            else ";"
+                                            newList.append(list[r].knigaText + " " + (list[r].glava + 1) + char)
                                         }
-                                    )
+                                        navigateToCytanniList(
+                                            newList.toString(),
+                                            index,
+                                            item.perevod,
+                                            Settings.CHYTANNI_VYBRANAE
+                                        )
+                                    }
                                     .padding(start = 10.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
@@ -1094,7 +1145,7 @@ fun BibliaMenu(
                                     contentDescription = ""
                                 )
                                 Text(
-                                    list[index].title + " " + (list[index].glava + 1),
+                                    item.title + " " + (item.glava + 1),
                                     modifier = Modifier
                                         .weight(1f)
                                         .fillMaxSize()
@@ -1115,395 +1166,395 @@ fun BibliaMenu(
                     }
                 }
             }
-            if (perevod == Settings.PEREVODNADSAN) {
-                Column(
-                    modifier = Modifier
-                        .padding(5.dp)
-                        .clip(shape = RoundedCornerShape(10.dp))
-                        .border(
-                            1.dp,
-                            color = MaterialTheme.colorScheme.secondary,
-                            shape = RoundedCornerShape(10.dp)
-                        )
-                        .align(Alignment.CenterHorizontally)
-                        .size(width = 400.dp, height = Dp.Unspecified)
+        }
+        if (perevod == Settings.PEREVODNADSAN) {
+            Column(
+                modifier = Modifier
+                    .padding(5.dp)
+                    .clip(shape = RoundedCornerShape(10.dp))
+                    .border(
+                        1.dp,
+                        color = MaterialTheme.colorScheme.secondary,
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                    .align(Alignment.CenterHorizontally)
+                    .size(width = 400.dp, height = Dp.Unspecified)
+            ) {
+                Row {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(5.dp)
+                            .weight(1f)
+                            .clip(shape = RoundedCornerShape(10.dp))
+                            .background(TitleCalendarMounth)
+                            .padding(10.dp),
+                        text = stringResource(R.string.kafizma),
+                        fontSize = Settings.fontInterface.sp,
+                        textAlign = TextAlign.Center,
+                        color = PrimaryTextBlack
+                    )
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Row {
+                    for (i in 1..5) {
                         Text(
                             modifier = Modifier
-                                .fillMaxWidth()
                                 .padding(5.dp)
                                 .weight(1f)
                                 .clip(shape = RoundedCornerShape(10.dp))
-                                .background(TitleCalendarMounth)
-                                .padding(10.dp),
-                            text = stringResource(R.string.kafizma),
+                                .background(Divider)
+                                .padding(vertical = 5.dp)
+                                .clickable {
+                                    val index = when (i) {
+                                        1 -> "1"
+                                        2 -> "9"
+                                        3 -> "17"
+                                        4 -> "24"
+                                        5 -> "32"
+                                        else -> "1"
+                                    }
+                                    navigateToCytanniList(
+                                        "Пс $index",
+                                        -1,
+                                        perevod,
+                                        Settings.CHYTANNI_BIBLIA
+                                    )
+                                },
+                            text = i.toString(),
                             fontSize = Settings.fontInterface.sp,
                             textAlign = TextAlign.Center,
-                            color = PrimaryTextBlack
+                            color = PrimaryText
                         )
                     }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        for (i in 1..5) {
-                            Text(
-                                modifier = Modifier
-                                    .padding(5.dp)
-                                    .weight(1f)
-                                    .clip(shape = RoundedCornerShape(10.dp))
-                                    .background(Divider)
-                                    .padding(vertical = 5.dp)
-                                    .clickable {
-                                        val index = when (i) {
-                                            1 -> "1"
-                                            2 -> "9"
-                                            3 -> "17"
-                                            4 -> "24"
-                                            5 -> "32"
-                                            else -> "1"
-                                        }
-                                        navigateToCytanniList(
-                                            "Пс $index",
-                                            -1,
-                                            perevod,
-                                            Settings.CHYTANNI_BIBLIA
-                                        )
-                                    },
-                                text = i.toString(),
-                                fontSize = Settings.fontInterface.sp,
-                                textAlign = TextAlign.Center,
-                                color = PrimaryText
-                            )
-                        }
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        for (i in 6..10) {
-                            Text(
-                                modifier = Modifier
-                                    .padding(5.dp)
-                                    .weight(1f)
-                                    .clip(shape = RoundedCornerShape(10.dp))
-                                    .background(Divider)
-                                    .padding(vertical = 5.dp)
-                                    .clickable {
-                                        val index = when (i) {
-                                            6 -> "37"
-                                            7 -> "46"
-                                            8 -> "55"
-                                            9 -> "64"
-                                            10 -> "70"
-                                            else -> "37"
-                                        }
-                                        navigateToCytanniList(
-                                            "Пс $index",
-                                            -1,
-                                            perevod,
-                                            Settings.CHYTANNI_BIBLIA
-                                        )
-                                    },
-                                text = i.toString(),
-                                fontSize = Settings.fontInterface.sp,
-                                textAlign = TextAlign.Center,
-                                color = PrimaryText
-                            )
-                        }
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        for (i in 11..15) {
-                            Text(
-                                modifier = Modifier
-                                    .padding(5.dp)
-                                    .weight(1f)
-                                    .clip(shape = RoundedCornerShape(10.dp))
-                                    .background(Divider)
-                                    .padding(vertical = 5.dp)
-                                    .clickable {
-                                        val index = when (i) {
-                                            11 -> "77"
-                                            12 -> "85"
-                                            13 -> "91"
-                                            14 -> "101"
-                                            15 -> "105"
-                                            else -> "77"
-                                        }
-                                        navigateToCytanniList(
-                                            "Пс $index",
-                                            -1,
-                                            perevod,
-                                            Settings.CHYTANNI_BIBLIA
-                                        )
-                                    },
-                                text = i.toString(),
-                                fontSize = Settings.fontInterface.sp,
-                                textAlign = TextAlign.Center,
-                                color = PrimaryText
-                            )
-                        }
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        for (i in 16..20) {
-                            Text(
-                                modifier = Modifier
-                                    .padding(5.dp)
-                                    .weight(1f)
-                                    .clip(shape = RoundedCornerShape(10.dp))
-                                    .background(Divider)
-                                    .padding(vertical = 5.dp)
-                                    .clickable {
-                                        val index = when (i) {
-                                            16 -> "109"
-                                            17 -> "118"
-                                            18 -> "119"
-                                            19 -> "134"
-                                            20 -> "143"
-                                            else -> "109"
-                                        }
-                                        navigateToCytanniList(
-                                            "Пс $index",
-                                            -1,
-                                            perevod,
-                                            Settings.CHYTANNI_BIBLIA
-                                        )
-                                    },
-                                text = i.toString(),
-                                fontSize = Settings.fontInterface.sp,
-                                textAlign = TextAlign.Center,
-                                color = PrimaryText
-                            )
-                        }
-                    }
                 }
-                val malitvaPered = stringResource(R.string.malitva_pered)
-                TextButton(
-                    onClick = {
-                        navigateToBogaslujbovyia(malitvaPered, "nadsan_pered.html")
-                    },
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(5.dp)
-                        .size(width = 200.dp, height = Dp.Unspecified),
-                    colors = ButtonColors(
-                        Divider,
-                        Color.Unspecified,
-                        Color.Unspecified,
-                        Color.Unspecified
-                    ),
-                    shape = MaterialTheme.shapes.small
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(stringResource(R.string.malitva_pered), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
-                }
-                val malitvaPosle = stringResource(R.string.malitva_posle)
-                TextButton(
-                    onClick = {
-                        navigateToBogaslujbovyia(malitvaPosle, "nadsan_posle.html")
-                    },
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(5.dp)
-                        .size(width = 200.dp, height = Dp.Unspecified),
-                    colors = ButtonColors(
-                        Divider,
-                        Color.Unspecified,
-                        Color.Unspecified,
-                        Color.Unspecified
-                    ),
-                    shape = MaterialTheme.shapes.small
-                ) {
-                    Text(stringResource(R.string.malitva_posle), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
-                }
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier
-                            .clickable {
-                                pesnyView = !pesnyView
-                            }
-                            .clip(MaterialTheme.shapes.small)
-                            .background(Divider)
-                            .align(Alignment.CenterHorizontally)
-                            .size(width = 200.dp, height = Dp.Unspecified)
-                    ) {
+                    for (i in 6..10) {
                         Text(
-                            text = stringResource(R.string.pesni),
                             modifier = Modifier
-                                .padding(vertical = 8.dp)
-                                .weight(1f),
-                            color = PrimaryText,
+                                .padding(5.dp)
+                                .weight(1f)
+                                .clip(shape = RoundedCornerShape(10.dp))
+                                .background(Divider)
+                                .padding(vertical = 5.dp)
+                                .clickable {
+                                    val index = when (i) {
+                                        6 -> "37"
+                                        7 -> "46"
+                                        8 -> "55"
+                                        9 -> "64"
+                                        10 -> "70"
+                                        else -> "37"
+                                    }
+                                    navigateToCytanniList(
+                                        "Пс $index",
+                                        -1,
+                                        perevod,
+                                        Settings.CHYTANNI_BIBLIA
+                                    )
+                                },
+                            text = i.toString(),
                             fontSize = Settings.fontInterface.sp,
-                            textAlign = TextAlign.Center
-                        )
-                        Icon(
-                            painter = if (pesnyView)
-                                painterResource(R.drawable.keyboard_arrow_down)
-                            else
-                                painterResource(R.drawable.keyboard_arrow_up),
-                            contentDescription = "",
-                            tint = PrimaryText,
+                            textAlign = TextAlign.Center,
+                            color = PrimaryText
                         )
                     }
                 }
-                AnimatedVisibility(
-                    pesnyView, enter = fadeIn(
-                        tween(
-                            durationMillis = 700, easing = LinearOutSlowInEasing
-                        )
-                    ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Column {
-                        for (i in 1..9) {
-                            val pesnia = stringResource(R.string.pesnia, i)
-                            Row(
-                                modifier = Modifier
-                                    .padding(start = 10.dp)
-                                    .clickable {
-                                        navigationActions.navigateToBogaslujbovyia(
-                                            pesnia,
-                                            when (i) {
-                                                1 -> "nadsan_pesni_1.html"
-                                                2 -> "nadsan_pesni_2.html"
-                                                3 -> "nadsan_pesni_3.html"
-                                                4 -> "nadsan_pesni_4.html"
-                                                5 -> "nadsan_pesni_5.html"
-                                                6 -> "nadsan_pesni_6.html"
-                                                7 -> "nadsan_pesni_7.html"
-                                                8 -> "nadsan_pesni_8.html"
-                                                9 -> "nadsan_pesni_9.html"
-                                                else -> "nadsan_pesni_1.html"
-                                            }
-                                        )
-                                    },
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    modifier = Modifier.size(5.dp),
-                                    painter = painterResource(R.drawable.poiter),
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    contentDescription = ""
-                                )
-                                Text(
-                                    stringResource(R.string.pesnia, i),
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(10.dp),
-                                    color = MaterialTheme.colorScheme.secondary,
-                                    fontSize = Settings.fontInterface.sp
-                                )
-                            }
-                            HorizontalDivider()
-                        }
-                    }
-                }
-                TextButton(
-                    onClick = {
-                        dialogPeryiadyView = true
-                    },
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(5.dp)
-                        .size(width = 200.dp, height = Dp.Unspecified),
-                    colors = ButtonColors(
-                        Divider,
-                        Color.Unspecified,
-                        Color.Unspecified,
-                        Color.Unspecified
-                    ),
-                    shape = MaterialTheme.shapes.small
-                ) {
-                    Text(stringResource(R.string.peryiady), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
-                }
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier
-                            .clickable {
-                                dialogImageView = !dialogImageView
-                            }
-                            .clip(MaterialTheme.shapes.small)
-                            .background(Divider)
-                            .align(Alignment.CenterHorizontally)
-                            .size(width = 200.dp, height = Dp.Unspecified)
-                    ) {
+                    for (i in 11..15) {
                         Text(
-                            text = stringResource(R.string.title_psalter_privila),
                             modifier = Modifier
-                                .padding(vertical = 8.dp)
-                                .weight(1f),
-                            color = PrimaryText,
+                                .padding(5.dp)
+                                .weight(1f)
+                                .clip(shape = RoundedCornerShape(10.dp))
+                                .background(Divider)
+                                .padding(vertical = 5.dp)
+                                .clickable {
+                                    val index = when (i) {
+                                        11 -> "77"
+                                        12 -> "85"
+                                        13 -> "91"
+                                        14 -> "101"
+                                        15 -> "105"
+                                        else -> "77"
+                                    }
+                                    navigateToCytanniList(
+                                        "Пс $index",
+                                        -1,
+                                        perevod,
+                                        Settings.CHYTANNI_BIBLIA
+                                    )
+                                },
+                            text = i.toString(),
                             fontSize = Settings.fontInterface.sp,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            color = PrimaryText
                         )
-                        Icon(
-                            painter = if (dialogImageView)
-                                painterResource(R.drawable.keyboard_arrow_down)
-                            else
-                                painterResource(R.drawable.keyboard_arrow_up),
-                            contentDescription = "",
-                            tint = PrimaryText,
+                    }
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    for (i in 16..20) {
+                        Text(
+                            modifier = Modifier
+                                .padding(5.dp)
+                                .weight(1f)
+                                .clip(shape = RoundedCornerShape(10.dp))
+                                .background(Divider)
+                                .padding(vertical = 5.dp)
+                                .clickable {
+                                    val index = when (i) {
+                                        16 -> "109"
+                                        17 -> "118"
+                                        18 -> "119"
+                                        19 -> "134"
+                                        20 -> "143"
+                                        else -> "109"
+                                    }
+                                    navigateToCytanniList(
+                                        "Пс $index",
+                                        -1,
+                                        perevod,
+                                        Settings.CHYTANNI_BIBLIA
+                                    )
+                                },
+                            text = i.toString(),
+                            fontSize = Settings.fontInterface.sp,
+                            textAlign = TextAlign.Center,
+                            color = PrimaryText
                         )
                     }
                 }
             }
+            val malitvaPered = stringResource(R.string.malitva_pered)
+            TextButton(
+                onClick = {
+                    navigateToBogaslujbovyia(malitvaPered, "nadsan_pered.html")
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(5.dp)
+                    .size(width = 200.dp, height = Dp.Unspecified),
+                colors = ButtonColors(
+                    Divider,
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified
+                ),
+                shape = MaterialTheme.shapes.small
+            ) {
+                Text(stringResource(R.string.malitva_pered), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
+            }
+            val malitvaPosle = stringResource(R.string.malitva_posle)
+            TextButton(
+                onClick = {
+                    navigateToBogaslujbovyia(malitvaPosle, "nadsan_posle.html")
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(5.dp)
+                    .size(width = 200.dp, height = Dp.Unspecified),
+                colors = ButtonColors(
+                    Divider,
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified
+                ),
+                shape = MaterialTheme.shapes.small
+            ) {
+                Text(stringResource(R.string.malitva_posle), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .clickable {
+                            pesnyView = !pesnyView
+                        }
+                        .clip(MaterialTheme.shapes.small)
+                        .background(Divider)
+                        .align(Alignment.CenterHorizontally)
+                        .size(width = 200.dp, height = Dp.Unspecified)
+                ) {
+                    Text(
+                        text = stringResource(R.string.pesni),
+                        modifier = Modifier
+                            .padding(vertical = 8.dp)
+                            .weight(1f),
+                        color = PrimaryText,
+                        fontSize = Settings.fontInterface.sp,
+                        textAlign = TextAlign.Center
+                    )
+                    Icon(
+                        painter = if (pesnyView)
+                            painterResource(R.drawable.keyboard_arrow_down)
+                        else
+                            painterResource(R.drawable.keyboard_arrow_up),
+                        contentDescription = "",
+                        tint = PrimaryText,
+                    )
+                }
+            }
             AnimatedVisibility(
-                dialogImageView, enter = fadeIn(
+                pesnyView, enter = fadeIn(
                     tween(
                         durationMillis = 700, easing = LinearOutSlowInEasing
                     )
                 ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
             ) {
-                Image(
-                    painter = painterResource(R.drawable.pravily_chytannia_psaltyria), contentDescription = "", modifier = Modifier
-                        .padding(10.dp)
-                        .fillMaxWidth(), contentScale = ContentScale.FillWidth
-                )
+                Column {
+                    for (i in 1..9) {
+                        val pesnia = stringResource(R.string.pesnia, i)
+                        Row(
+                            modifier = Modifier
+                                .padding(start = 10.dp)
+                                .clickable {
+                                    navigateToBogaslujbovyia(
+                                        pesnia,
+                                        when (i) {
+                                            1 -> "nadsan_pesni_1.html"
+                                            2 -> "nadsan_pesni_2.html"
+                                            3 -> "nadsan_pesni_3.html"
+                                            4 -> "nadsan_pesni_4.html"
+                                            5 -> "nadsan_pesni_5.html"
+                                            6 -> "nadsan_pesni_6.html"
+                                            7 -> "nadsan_pesni_7.html"
+                                            8 -> "nadsan_pesni_8.html"
+                                            9 -> "nadsan_pesni_9.html"
+                                            else -> "nadsan_pesni_1.html"
+                                        }
+                                    )
+                                },
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(5.dp),
+                                painter = painterResource(R.drawable.poiter),
+                                tint = MaterialTheme.colorScheme.primary,
+                                contentDescription = ""
+                            )
+                            Text(
+                                stringResource(R.string.pesnia, i),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(10.dp),
+                                color = MaterialTheme.colorScheme.secondary,
+                                fontSize = Settings.fontInterface.sp
+                            )
+                        }
+                        HorizontalDivider()
+                    }
+                }
             }
-            if (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODCATOLIK) {
-                TextButton(
-                    onClick = {
-                        dialogVisable = true
-                    },
+            TextButton(
+                onClick = {
+                    dialogPeryiadyView = true
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(5.dp)
+                    .size(width = 200.dp, height = Dp.Unspecified),
+                colors = ButtonColors(
+                    Divider,
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified
+                ),
+                shape = MaterialTheme.shapes.small
+            ) {
+                Text(stringResource(R.string.peryiady), fontSize = Settings.fontInterface.sp, color = PrimaryText, textAlign = TextAlign.Center)
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
                     modifier = Modifier
+                        .clickable {
+                            dialogImageView = !dialogImageView
+                        }
+                        .clip(MaterialTheme.shapes.small)
+                        .background(Divider)
                         .align(Alignment.CenterHorizontally)
-                        .padding(5.dp)
-                        .size(width = 200.dp, height = Dp.Unspecified),
-                    colors = ButtonColors(
-                        Divider,
-                        Color.Unspecified,
-                        Color.Unspecified,
-                        Color.Unspecified
-                    ),
-                    shape = MaterialTheme.shapes.small
+                        .size(width = 200.dp, height = Dp.Unspecified)
                 ) {
                     Text(
-                        stringResource(R.string.alesyaSemukha2),
-                        fontSize = Settings.fontInterface.sp,
+                        text = stringResource(R.string.title_psalter_privila),
+                        modifier = Modifier
+                            .padding(vertical = 8.dp)
+                            .weight(1f),
                         color = PrimaryText,
+                        fontSize = Settings.fontInterface.sp,
                         textAlign = TextAlign.Center
+                    )
+                    Icon(
+                        painter = if (dialogImageView)
+                            painterResource(R.drawable.keyboard_arrow_down)
+                        else
+                            painterResource(R.drawable.keyboard_arrow_up),
+                        contentDescription = "",
+                        tint = PrimaryText,
                     )
                 }
             }
-            Spacer(modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding() + if (k.getBoolean("isInstallApp", false)) 60.dp else 0.dp))
         }
+        AnimatedVisibility(
+            dialogImageView, enter = fadeIn(
+                tween(
+                    durationMillis = 700, easing = LinearOutSlowInEasing
+                )
+            ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
+        ) {
+            Image(
+                painter = painterResource(R.drawable.pravily_chytannia_psaltyria), contentDescription = "", modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth(), contentScale = ContentScale.FillWidth
+            )
+        }
+        if (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODCATOLIK) {
+            TextButton(
+                onClick = {
+                    dialogVisable = true
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(5.dp)
+                    .size(width = 200.dp, height = Dp.Unspecified),
+                colors = ButtonColors(
+                    Divider,
+                    Color.Unspecified,
+                    Color.Unspecified,
+                    Color.Unspecified
+                ),
+                shape = MaterialTheme.shapes.small
+            ) {
+                Text(
+                    stringResource(R.string.alesyaSemukha2),
+                    fontSize = Settings.fontInterface.sp,
+                    color = PrimaryText,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+        Spacer(modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding() + if (k.getBoolean("isInstallApp", false)) 60.dp else 0.dp))
     }
 }
 

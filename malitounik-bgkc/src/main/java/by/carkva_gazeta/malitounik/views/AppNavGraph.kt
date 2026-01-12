@@ -1114,8 +1114,7 @@ fun MainConteiner(
         var textTollBarColor by remember { mutableStateOf(PrimaryTextBlack) }
         var title by rememberSaveable { mutableStateOf("") }
         var isBottomBar by remember { mutableStateOf(k.getBoolean("bottomBar", false)) }
-        var isIconSort by remember { mutableStateOf(false) }
-        isIconSort = currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.MAE_NATATKI_MENU || currentRoute == AllDestinations.BIBLIA_SEMUXA || currentRoute == AllDestinations.BIBLIA_BOKUNA || currentRoute == AllDestinations.BIBLIA_NADSAN || currentRoute == AllDestinations.BIBLIA_CHARNIAUSKI || currentRoute == AllDestinations.BIBLIA_SINODAL || currentRoute == AllDestinations.BIBLIA_CATOLIK || currentRoute == AllDestinations.BIBLIA_NEW_AMERICAN_BIBLE
+        viewModel.isIconSort = currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.MAE_NATATKI_MENU || currentRoute == AllDestinations.BIBLIA_SEMUXA || currentRoute == AllDestinations.BIBLIA_BOKUNA || currentRoute == AllDestinations.BIBLIA_NADSAN || currentRoute == AllDestinations.BIBLIA_CHARNIAUSKI || currentRoute == AllDestinations.BIBLIA_SINODAL || currentRoute == AllDestinations.BIBLIA_CATOLIK || currentRoute == AllDestinations.BIBLIA_NEW_AMERICAN_BIBLE
         title = when (currentRoute) {
             AllDestinations.KALIANDAR -> stringResource(R.string.kaliandar2)
             AllDestinations.KALIANDAR_YEAR -> stringResource(R.string.kaliandar2)
@@ -1280,7 +1279,7 @@ fun MainConteiner(
                                 }
                             }
                         }
-                        if (isIconSort) {
+                        if (viewModel.isIconSort) {
                             var expandedSort by remember { mutableStateOf(false) }
                             val isSortedVybranae = currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.BIBLIA_SEMUXA || currentRoute == AllDestinations.BIBLIA_BOKUNA || currentRoute == AllDestinations.BIBLIA_NADSAN || currentRoute == AllDestinations.BIBLIA_CHARNIAUSKI || currentRoute == AllDestinations.BIBLIA_SINODAL || currentRoute == AllDestinations.BIBLIA_CATOLIK || currentRoute == AllDestinations.BIBLIA_NEW_AMERICAN_BIBLE
                             AppDropdownMenu(expanded = expandedSort, onDismissRequest = { expandedSort = false }) {
@@ -1898,9 +1897,7 @@ fun MainConteiner(
                     AllDestinations.BIBLIA_SEMUXA -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        BibliaMenu(navController, Settings.PEREVODSEMUXI, innerPadding, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
-                            isIconSort = isIconSortVisibility
-                        }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
+                        BibliaMenu(navController, Settings.PEREVODSEMUXI, innerPadding, searchBibleState, sortedVybranae, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
                             viewModel.setPerevod(context, biblia, chytanne, perevod2)
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, biblia, perevod2, position
@@ -1913,9 +1910,7 @@ fun MainConteiner(
                     AllDestinations.BIBLIA_BOKUNA -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        BibliaMenu(navController, Settings.PEREVODBOKUNA, innerPadding, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
-                            isIconSort = isIconSortVisibility
-                        }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
+                        BibliaMenu(navController, Settings.PEREVODBOKUNA, innerPadding, searchBibleState, sortedVybranae, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
                             viewModel.setPerevod(context, biblia, chytanne, perevod2)
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, biblia, perevod2, position
@@ -1928,9 +1923,7 @@ fun MainConteiner(
                     AllDestinations.BIBLIA_NADSAN -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        BibliaMenu(navController, Settings.PEREVODNADSAN, innerPadding, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
-                            isIconSort = isIconSortVisibility
-                        }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
+                        BibliaMenu(navController, Settings.PEREVODNADSAN, innerPadding, searchBibleState, sortedVybranae, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
                             viewModel.setPerevod(context, biblia, chytanne, perevod2)
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, biblia, perevod2, position
@@ -1943,9 +1936,7 @@ fun MainConteiner(
                     AllDestinations.BIBLIA_CHARNIAUSKI -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        BibliaMenu(navController, Settings.PEREVODCARNIAUSKI, innerPadding, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
-                            isIconSort = isIconSortVisibility
-                        }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
+                        BibliaMenu(navController, Settings.PEREVODCARNIAUSKI, innerPadding, searchBibleState, sortedVybranae, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
                             viewModel.setPerevod(context, biblia, chytanne, perevod2)
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, biblia, perevod2, position
@@ -1958,9 +1949,7 @@ fun MainConteiner(
                     AllDestinations.BIBLIA_CATOLIK -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        BibliaMenu(navController, Settings.PEREVODCATOLIK, innerPadding, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
-                            isIconSort = isIconSortVisibility
-                        }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
+                        BibliaMenu(navController, Settings.PEREVODCATOLIK, innerPadding, searchBibleState, sortedVybranae, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
                             viewModel.setPerevod(context, biblia, chytanne, perevod2)
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, biblia, perevod2, position
@@ -1973,9 +1962,7 @@ fun MainConteiner(
                     AllDestinations.BIBLIA_SINODAL -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        BibliaMenu(navController, Settings.PEREVODSINOIDAL, innerPadding, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
-                            isIconSort = isIconSortVisibility
-                        }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
+                        BibliaMenu(navController, Settings.PEREVODSINOIDAL, innerPadding, searchBibleState, sortedVybranae, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
                             viewModel.setPerevod(context, biblia, chytanne, perevod2)
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, biblia, perevod2, position
@@ -1988,9 +1975,7 @@ fun MainConteiner(
                     AllDestinations.BIBLIA_NEW_AMERICAN_BIBLE -> {
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
-                        BibliaMenu(navController, Settings.PEREVODNEWAMERICANBIBLE, innerPadding, searchBibleState, sortedVybranae, isIconSortVisibility = { isIconSortVisibility ->
-                            isIconSort = isIconSortVisibility
-                        }, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
+                        BibliaMenu(navController, Settings.PEREVODNEWAMERICANBIBLE, innerPadding, searchBibleState, sortedVybranae, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
                             viewModel.setPerevod(context, biblia, chytanne, perevod2)
                             navigationActions.navigateToCytanniList(
                                 "", chytanne, biblia, perevod2, position
