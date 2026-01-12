@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -65,9 +66,7 @@ import by.carkva_gazeta.malitounik.ui.theme.StrogiPost2
 import by.carkva_gazeta.malitounik.views.HtmlText
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import java.io.BufferedReader
 import java.io.File
-import java.io.FileReader
 import java.util.Calendar
 import java.util.GregorianCalendar
 
@@ -489,52 +488,13 @@ fun KaliandarScreen(
     }
 }
 
-fun setListPadzeia(context: Context): ArrayList<Padzeia> {
-    val padzeia = ArrayList<Padzeia>()
+fun setListPadzeia(context: Context): SnapshotStateList<Padzeia> {
+    val padzeia = SnapshotStateList<Padzeia>()
     val gson = Gson()
     val type = TypeToken.getParameterized(ArrayList::class.java, Padzeia::class.java).type
-    val dir = File(context.filesDir.toString() + "/Sabytie")
-    if (dir.exists()) {
-        dir.walk().forEach { file ->
-            if (file.isFile && file.exists()) {
-                val inputStream = FileReader(file)
-                val reader = BufferedReader(inputStream)
-                reader.forEachLine {
-                    val line = it.trim()
-                    if (line != "") {
-                        val t1 = line.split(" ")
-                        try {
-                            if (t1.size == 11) padzeia.add(
-                                Padzeia(
-                                    t1[0].replace("_", " "), t1[1], t1[2], t1[3].toLong(), t1[4].toInt(), t1[5], t1[6], t1[7], t1[8].toInt(), t1[9], 0, false
-                                )
-                            ) else padzeia.add(
-                                Padzeia(
-                                    t1[0].replace("_", " "), t1[1], t1[2], t1[3].toLong(), t1[4].toInt(), t1[5], t1[6], t1[7], t1[8].toInt(), t1[9], t1[11].toInt(), false
-                                )
-                            )
-                        } catch (_: Throwable) {
-                            file.delete()
-                        }
-                    }
-                }
-                inputStream.close()
-            }
-        }
-        val file = File(context.filesDir.toString() + "/Sabytie.json")
-        file.writer().use {
-            it.write(gson.toJson(padzeia, type))
-        }
-        dir.deleteRecursively()
-    } else {
-        val file = File(context.filesDir.toString() + "/Sabytie.json")
-        if (file.exists()) {
-            try {
-                padzeia.addAll(gson.fromJson(file.readText(), type))
-            } catch (_: Throwable) {
-                file.delete()
-            }
-        }
+    val file = File(context.filesDir.toString() + "/Sabytie.json")
+    if (file.exists()) {
+        padzeia.addAll(gson.fromJson(file.readText(), type))
     }
     padzeia.sort()
     return padzeia

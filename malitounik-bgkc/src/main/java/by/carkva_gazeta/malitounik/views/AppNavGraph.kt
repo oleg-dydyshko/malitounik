@@ -1181,7 +1181,7 @@ fun MainConteiner(
                                         focusRequester.requestFocus()
                                         textFieldLoaded = true
                                     }
-                                }, value = viewModel.textFieldValueState, placeholder = { Text(stringResource(if (viewModel.isEditMode) R.string.natatka_name else R.string.poshuk), fontSize = Settings.fontInterface.sp, color = PrimaryTextBlack) }, onValueChange = { newText ->
+                                }, value = viewModel.textFieldValueState, placeholder = { Text(stringResource(if (viewModel.isEditMode) R.string.natatka_name else R.string.poshuk), fontSize = Settings.fontInterface.sp, color = textTollBarColor) }, onValueChange = { newText ->
                                 var edit = newText.text
                                 var selection = newText.selection
                                 val oldEdit = edit

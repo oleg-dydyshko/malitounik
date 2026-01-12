@@ -234,7 +234,7 @@ fun PadzeiaView(navController: NavHostController) {
             window, view
         ).apply {
             isAppearanceLightStatusBars = false
-            isAppearanceLightNavigationBars = !Settings.dzenNoch
+            isAppearanceLightNavigationBars = false
         }
     }
     var showDropdown by remember { mutableStateOf(false) }
@@ -1039,7 +1039,6 @@ fun AddPadzeia(
                 }
             }
         }
-
         Row(modifier = Modifier.padding(start = 10.dp, top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(
                 stringResource(R.string.color_padzei), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
