@@ -161,6 +161,7 @@ open class CytanniListViewModel : ViewModel() {
     var autoScrollSpeed by mutableIntStateOf(60)
     var autoScrollTextVisable by mutableStateOf(false)
     var fireBaseVersionUpdate by mutableStateOf(false)
+    var bibleTime by mutableStateOf(false)
     var fireBaseVersion = 1
     private var autoScrollJob: Job? = null
     private var autoScrollTextVisableJob: Job? = null
@@ -210,7 +211,7 @@ open class CytanniListViewModel : ViewModel() {
             }
             initVybranoe(context)
             val initPage = if (biblia == Settings.CHYTANNI_BIBLIA) {
-                if (Settings.bibleTimeList) k.getInt("bible_time_${perevodName}_glava", 0)
+                if (bibleTime) k.getInt("bible_time_${perevodName}_glava", 0)
                 else newCytanne.substringAfterLast(" ").toInt() - 1
             } else 0
             if (selectedIndex == -1) selectedIndex = if (biblia == Settings.CHYTANNI_BIBLIA) initPage else 0
@@ -625,7 +626,7 @@ fun CytanniList(
         }
     }
     val initPage = if (biblia == Settings.CHYTANNI_BIBLIA) {
-        if (Settings.bibleTimeList) k.getInt("bible_time_${viewModel.perevodName}_glava", 0)
+        if (viewModel.bibleTime) k.getInt("bible_time_${viewModel.perevodName}_glava", 0)
         else cytanne.substringAfterLast(" ").toInt() - 1
     } else 0
     val pagerState = rememberPagerState(pageCount = {
@@ -636,8 +637,8 @@ fun CytanniList(
         state = pagerState, pagerSnapDistance = PagerSnapDistance.atMost(1)
     )
     var isBottomBar by remember { mutableStateOf(k.getBoolean("bottomBar", false)) }
-    if (viewModel.listState[viewModel.selectedIndex].item.isNotEmpty() && Settings.bibleTimeList) {
-        Settings.bibleTimeList = false
+    if (viewModel.listState[viewModel.selectedIndex].item.isNotEmpty() && viewModel.bibleTime) {
+        viewModel.bibleTime = false
         LaunchedEffect(Unit) {
             coroutineScope.launch {
                 viewModel.listState[viewModel.selectedIndex].lazyListState.scrollToItem(k.getInt("bible_time_${viewModel.perevodName}_stix", 0))
@@ -664,15 +665,15 @@ fun CytanniList(
 
             !backPressHandled -> {
                 fullscreen = false
-                val prefEditors = k.edit()
                 if (biblia == Settings.CHYTANNI_BIBLIA) {
-                    prefEditors.putString("bible_time_${viewModel.perevodName}_kniga", viewModel.knigaText)
-                    prefEditors.putInt("bible_time_${viewModel.perevodName}_glava", viewModel.selectedIndex)
-                    prefEditors.putInt(
-                        "bible_time_${viewModel.perevodName}_stix", viewModel.listState[viewModel.selectedIndex].lazyListState.firstVisibleItemIndex
-                    )
+                    k.edit {
+                        putString("bible_time_${viewModel.perevodName}_kniga", viewModel.knigaText)
+                        putInt("bible_time_${viewModel.perevodName}_glava", viewModel.selectedIndex)
+                        putInt(
+                            "bible_time_${viewModel.perevodName}_stix", viewModel.listState[viewModel.selectedIndex].lazyListState.firstVisibleItemIndex
+                        )
+                    }
                 }
-                prefEditors.apply()
                 backPressHandled = true
                 if (!k.getBoolean("power", false)) actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 viewModel.autoScroll(title, false)
@@ -1292,7 +1293,7 @@ fun CytanniList(
             }
         }
         if (!isSelectMode) {
-            if (isBottomBar && !isParallelVisable) {
+            if (isBottomBar) {
                 AnimatedVisibility(
                     !fullscreen, enter = fadeIn(
                         tween(
@@ -1308,82 +1309,82 @@ fun CytanniList(
                             .background(colorTollBar)
                             .navigationBarsPadding(), horizontalArrangement = Arrangement.SpaceAround
                     ) {
-                        PlainTooltip(stringResource(R.string.menu_font_size_app_info)) {
-                            IconButton(
-                                onClick = {
-                                    showDropdown = !showDropdown
-                                    viewModel.autoScroll(title, false)
-                                    menuPosition = 1
-                                }) {
-                                Icon(
-                                    modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.format_size), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                            }
-                        }
-                        PlainTooltip(stringResource(R.string.share)) {
-                            IconButton(onClick = {
-                                showDropdown = false
-                                viewModel.autoScroll(title, false)
-                                isSelectMode = true
-                            }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.share),
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                            }
-                        }
-                        PlainTooltip(stringResource(R.string.set_perakvad_biblii)) {
-                            IconButton(
-                                onClick = {
-                                    showDropdown = !showDropdown
-                                    viewModel.autoScroll(title, false)
-                                    menuPosition = 2
-                                }) {
-                                Icon(
-                                    modifier = Modifier.size(24.dp),
-                                    painter = painterResource(R.drawable.book_red), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                            }
-                        }
-                        PlainTooltip(stringResource(R.string.fullscreen_apis)) {
-                            IconButton(
-                                onClick = {
-                                    fullscreen = true
-                                }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.fullscreen), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                            }
-                        }
-                        if (biblia == Settings.CHYTANNI_BIBLIA && viewModel.listState.size - 1 > 1) {
-                            PlainTooltip(stringResource(R.string.set_glava_biblii)) {
-                                IconButton(
-                                    onClick = {
-                                        viewModel.autoScroll(title, false)
-                                        dialogRazdel = true
-                                    }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.apps), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                    )
-                                }
-                            }
-                        }
-                        if (biblia == Settings.CHYTANNI_BIBLIA) {
-                            PlainTooltip(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add)) {
-                                IconButton(
-                                    onClick = {
-                                        viewModel.saveVybranoe(context, perevod)
-                                    }) {
-                                    val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
-                                    else painterResource(R.drawable.star)
-                                    Icon(
-                                        painter = icon, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                    )
-                                }
-                            }
-                        }
                         if (!isParallelVisable) {
+                            PlainTooltip(stringResource(R.string.menu_font_size_app_info)) {
+                                IconButton(
+                                    onClick = {
+                                        showDropdown = !showDropdown
+                                        viewModel.autoScroll(title, false)
+                                        menuPosition = 1
+                                    }) {
+                                    Icon(
+                                        modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.format_size), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
+                            }
+                            PlainTooltip(stringResource(R.string.share)) {
+                                IconButton(onClick = {
+                                    showDropdown = false
+                                    viewModel.autoScroll(title, false)
+                                    isSelectMode = true
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.share),
+                                        contentDescription = "",
+                                        tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
+                            }
+                            PlainTooltip(stringResource(R.string.set_perakvad_biblii)) {
+                                IconButton(
+                                    onClick = {
+                                        showDropdown = !showDropdown
+                                        viewModel.autoScroll(title, false)
+                                        menuPosition = 2
+                                    }) {
+                                    Icon(
+                                        modifier = Modifier.size(24.dp),
+                                        painter = painterResource(R.drawable.book_red), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
+                            }
+                            PlainTooltip(stringResource(R.string.fullscreen_apis)) {
+                                IconButton(
+                                    onClick = {
+                                        fullscreen = true
+                                    }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.fullscreen), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
+                            }
+                            if (biblia == Settings.CHYTANNI_BIBLIA && viewModel.listState.size - 1 > 1) {
+                                PlainTooltip(stringResource(R.string.set_glava_biblii)) {
+                                    IconButton(
+                                        onClick = {
+                                            viewModel.autoScroll(title, false)
+                                            dialogRazdel = true
+                                        }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.apps), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
+                                }
+                            }
+                            if (biblia == Settings.CHYTANNI_BIBLIA) {
+                                PlainTooltip(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add)) {
+                                    IconButton(
+                                        onClick = {
+                                            viewModel.saveVybranoe(context, perevod)
+                                        }) {
+                                        val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
+                                        else painterResource(R.drawable.star)
+                                        Icon(
+                                            painter = icon, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
+                                }
+                            }
                             if (viewModel.listState[viewModel.selectedIndex].lazyListState.canScrollForward) {
                                 val iconAutoScroll = if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
                                 else painterResource(R.drawable.play_circle)
@@ -1416,7 +1417,14 @@ fun CytanniList(
                                 }
                             }
                         } else {
-                            viewModel.autoScroll(title, false)
+                            IconButton(
+                                enabled = false,
+                                onClick = {
+                                }) {
+                                Image(
+                                    modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.empty), contentDescription = ""
+                                )
+                            }
                         }
                     }
                 }

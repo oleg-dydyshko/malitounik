@@ -708,7 +708,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
             val perevod = stackEntry.arguments?.getString("perevod", Settings.PEREVODSEMUXI) ?: Settings.PEREVODSEMUXI
             val context = LocalContext.current
             BibliaList(
-                navController, isNovyZapavet, perevod, navigateToCytanniList = { chytanne, perevod2 ->
+                navController, isNovyZapavet, perevod, viewModel, navigateToCytanniList = { chytanne, perevod2 ->
                     viewModel.setPerevod(context, Settings.CHYTANNI_BIBLIA, chytanne, perevod2)
                     navigationActions.navigateToCytanniList(
                         "", chytanne, Settings.CHYTANNI_BIBLIA, perevod2, -1

@@ -1111,46 +1111,13 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
             TextButton(
                 onClick = {
                     k.edit {
-                        val noDelite = ArrayList<String>()
-                        noDelite.add("WIDGET")
-                        noDelite.add("bible_time")
-                        noDelite.add("admin")
                         for ((key) in k.all) {
-                            var del = true
-                            for (i in 0 until noDelite.size) {
-                                if (key.contains(noDelite[i], true)) {
-                                    del = false
-                                    break
-                                }
+                            if (key.contains("WIDGET", true) || key.contains("bible_time", true) || key.contains("akafist", true)) {
+                                continue
                             }
-                            if (del) remove(key)
+                            remove(key)
                         }
                         Toast.makeText(context, save, Toast.LENGTH_SHORT).show()
-                        putFloat("font_biblia", 22f)
-                        putInt("Settings.fontInterface", 1)
-                        putInt("mode_night", Settings.MODE_NIGHT_SYSTEM)
-                        putBoolean("s_pravas", false)
-                        putBoolean("s_pkc", false)
-                        putBoolean("s_gosud", false)
-                        putBoolean("s_pafesii", false)
-                        putInt("notification", Settings.NOTIFICATION_SVIATY_FULL)
-                        putString("perevod", Settings.PEREVODSEMUXI)
-                        putString("perevodMaranata", Settings.PEREVODSEMUXI)
-                        putBoolean("sinoidal_bible", false)
-                        putBoolean("catolik_bible", false)
-                        putBoolean("newkingjames_bible", false)
-                        putBoolean("newkingjames_translate", false)
-                        putBoolean("maranafa", false)
-                        putBoolean("pegistrbukv", true)
-                        putInt("slovocalkam", 0)
-                        putBoolean("admin", false)
-                        putBoolean("adminDayInYear", false)
-                        putBoolean("adminOnlyNotifications", false)
-                        putBoolean("adminNotifications", false)
-                        putBoolean("paralel_maranata", true)
-                        putBoolean("bottomBar", false)
-                        putBoolean("power", false)
-                        putBoolean("isCustomSortHelp", true)
                     }
                     modeNotification = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         val permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)

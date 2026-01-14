@@ -87,7 +87,6 @@ import androidx.core.text.HtmlCompat
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import by.carkva_gazeta.malitounik.Settings.bibleTime
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.Primary
@@ -538,9 +537,9 @@ fun BibliaMenu(
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
-    var bibleTime by remember { mutableStateOf(false) }
-    LaunchedEffect(bibleTime) {
-        if (bibleTime) {
+    //var bibleTime by remember { mutableStateOf(false) }
+    LaunchedEffect(viewModel.bibleTime) {
+        if (viewModel.bibleTime) {
             var defKniga = "Быц"
             val prevodName = when (perevod) {
                 Settings.PEREVODSEMUXI -> {
@@ -577,8 +576,6 @@ fun BibliaMenu(
             }
             val knigaText = k.getString("bible_time_${prevodName}_kniga", defKniga) ?: defKniga
             val kniga = knigaBiblii(knigaText)
-            Settings.bibleTime = true
-            bibleTime = false
             navigationActions.navigateToBibliaList(kniga >= 50, perevod)
         }
     }
@@ -813,7 +810,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
         viewModel.setPerevod = perevod
         DialogDownLoadBible(viewModel, onConfirmation = {
             if (isBibleTime) {
-                bibleTime = true
+                viewModel.bibleTime = true
                 isBibleTime = false
             } else {
                 navigationActions.navigateToBibliaList(novyZapavet, perevod)
@@ -940,7 +937,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                             dialogDownLoad = true
                             isBibleTime = true
                         } else {
-                            bibleTime = true
+                            viewModel.bibleTime = true
                         }
                     }
 
@@ -950,7 +947,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                             dialogDownLoad = true
                             isBibleTime = true
                         } else {
-                            bibleTime = true
+                            viewModel.bibleTime = true
                         }
                     }
 
@@ -960,11 +957,11 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                             dialogDownLoad = true
                             isBibleTime = true
                         } else {
-                            bibleTime = true
+                            viewModel.bibleTime = true
                         }
                     }
 
-                    else -> bibleTime = true
+                    else -> viewModel.bibleTime = true
                 }
             },
             modifier = Modifier

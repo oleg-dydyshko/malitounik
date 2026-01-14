@@ -1135,7 +1135,6 @@ fun Bogaslujbovyia(
                                                         fileList.addAll(adminViewModel.getPasochnicaFileList())
                                                         val dirToFile = if (iskniga) listResource[adminResourceEditPosition].resource
                                                         else resursEncode
-                                                        Settings.bibleTime = false
                                                         adminViewModel.isHTML = dirToFile.contains(".html")
                                                         val t1 = dirToFile.lastIndexOf("/")
                                                         val fileName = if (t1 != -1) dirToFile.substring(t1 + 1)
@@ -1192,7 +1191,6 @@ fun Bogaslujbovyia(
                                                     fileList.addAll(adminViewModel.getPasochnicaFileList())
                                                     val dirToFile = if (iskniga) listResource[adminResourceEditPosition].resource
                                                     else resursEncode
-                                                    Settings.bibleTime = false
                                                     adminViewModel.isHTML = dirToFile.contains(".html")
                                                     val t1 = dirToFile.lastIndexOf("/")
                                                     val fileName = if (t1 != -1) dirToFile.substring(t1 + 1)

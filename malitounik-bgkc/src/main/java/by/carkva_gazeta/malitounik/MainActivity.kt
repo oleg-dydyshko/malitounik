@@ -147,8 +147,6 @@ object Settings {
     const val CALAINDAR = 0
     const val PASHA = 1
     const val UNDER = 2
-    var bibleTime = false
-    var bibleTimeList = false
     var destinations = AllDestinations.KALIANDAR
     var caliandarPosition = -1
     var data = ArrayList<ArrayList<String>>()

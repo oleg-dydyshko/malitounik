@@ -67,6 +67,7 @@ fun BibliaList(
     navController: NavHostController,
     isNovyZapavet: Boolean,
     perevod: String,
+    viewModel: SearchBibleViewModel,
     navigateToCytanniList: (String, String) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -82,10 +83,8 @@ fun BibliaList(
         else -> stringResource(R.string.title_biblia)
     }
     val context = LocalContext.current
-    LaunchedEffect(Settings.bibleTime) {
-        if (Settings.bibleTime) {
-            Settings.bibleTime = false
-            Settings.bibleTimeList = true
+    LaunchedEffect(viewModel.bibleTime) {
+        if (viewModel.bibleTime) {
             val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
             var defKniga = "Быц"
             val prevodName = when (perevod) {
