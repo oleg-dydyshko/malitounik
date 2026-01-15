@@ -918,5 +918,8 @@
     <string name="styx_is_emty">Абярыце верш!</string>
     <string name="not_show">Больш не паказваць</string>
     <string name="sort_custom_help">Каб адсартаваць спіс у адвольным парадку, перацягніце раздзел Бібліі або тэкст у новую пазіцыю, пасля доўгага націску.</string>
+    <string name="tts">Прачытаць тэкст</string>
+    <string name="tts_pause">Паўза</string>
+    <string name="tts_stop">Стоп</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

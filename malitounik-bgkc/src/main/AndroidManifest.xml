@@ -10,6 +10,12 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+    </queries>
+
     <application
         android:name=".Malitounik"
         android:allowBackup="true"
@@ -23,10 +29,10 @@
         tools:targetApi="33">
         <activity
             android:name=".MainActivity"
-            android:exported="true"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
             android:configChanges="uiMode"
-            android:theme="@style/Theme.Malitounik">
+            android:exported="true"
+            android:theme="@style/Theme.Malitounik"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -60,9 +66,11 @@
             android:exported="false"
             android:taskAffinity=""
             android:theme="@style/Theme.Transparent" />
-        <service android:name=".ServiceRadyjoMaryia"
-            android:foregroundServiceType="mediaPlayback"
-            android:exported="false" />
+
+        <service
+            android:name=".ServiceRadyjoMaryia"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="by.carkva_gazeta.malitounik.fileprovider"
@@ -72,6 +80,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_path" />
         </provider>
+
         <receiver
             android:name=".ReceiverBroad"
             android:exported="false">
@@ -94,7 +103,7 @@
             android:label="@string/widget_title">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
 
             <meta-data
@@ -107,7 +116,7 @@
             android:label="@string/widget_mun_title">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
 
             <meta-data
@@ -120,7 +129,7 @@
             android:label="@string/padie_maryia_s">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
 
             <meta-data

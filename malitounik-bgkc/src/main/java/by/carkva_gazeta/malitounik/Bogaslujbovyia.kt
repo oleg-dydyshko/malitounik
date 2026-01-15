@@ -3,8 +3,11 @@ package by.carkva_gazeta.malitounik
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.print.PrintAttributes
 import android.print.PrintManager
+import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
 import android.text.SpannableStringBuilder
 import android.view.WindowManager
 import android.widget.Toast
@@ -157,12 +160,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.net.URLDecoder
 import java.util.Calendar
+import java.util.Locale
 
 class BogaslujbovyiaViewModel : ViewModel() {
+    private var ttsManager: TTSManager? = null
+    var isSpeaking by mutableStateOf(false)
+    var isPaused by mutableStateOf(false)
     var autoScroll by mutableStateOf(false)
     var autoScrollSensor by mutableStateOf(false)
     var autoScrollSpeed by mutableIntStateOf(60)
@@ -426,6 +434,47 @@ class BogaslujbovyiaViewModel : ViewModel() {
         }
         return findList
     }
+
+    fun clearTextForTTS(): String {
+        val srcText = StringBuilder()
+        val list = htmlText.split("<font color=\"#d00505\">")
+        for (i in list.indices) {
+            val t1 = list[i].indexOf("</font>")
+            if (t1 != -1) {
+                srcText.append(list[i].substring(t1 + 7))
+            } else {
+                srcText.append(list[i])
+            }
+        }
+        return AnnotatedString.fromHtml(srcText.toString()).text
+    }
+
+    fun initTTS(context: Context) {
+        ttsManager = TTSManager(context)
+        viewModelScope.launch {
+            ttsManager?.initialize()
+        }
+    }
+
+    fun speak(text: String) {
+        ttsManager?.speakLongText(text)
+    }
+
+    fun pause() {
+        ttsManager?.pause()
+    }
+
+    fun resume() {
+        ttsManager?.resume()
+    }
+
+    fun stop() {
+        ttsManager?.stop()
+    }
+
+    fun shutdown() {
+        ttsManager?.shutdown()
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -483,6 +532,9 @@ fun Bogaslujbovyia(
             }
         }
     }
+    LaunchedEffect(Unit) {
+        viewModel.initTTS(context)
+    }
     LifecycleResumeEffect(Unit) {
         if (AppNavGraphState.searchBogaslujbovyia.isEmpty()) {
             if (resursEncode.contains("akafist")) {
@@ -502,6 +554,7 @@ fun Bogaslujbovyia(
             }
         }
         onPauseOrDispose {
+            viewModel.shutdown()
             AppNavGraphState.setScrollValuePosition(title, viewModel.scrollState.value)
             if (resursEncode.contains("akafist")) {
                 k.edit {
@@ -1327,6 +1380,50 @@ fun Bogaslujbovyia(
                                         .navigationBarsPadding(),
                                     horizontalArrangement = Arrangement.SpaceAround
                                 ) {
+                                    if (viewModel.isSpeaking || viewModel.isPaused) {
+                                        PlainTooltip(stringResource(R.string.tts_pause)) {
+                                            IconButton(onClick = {
+                                                if (viewModel.isPaused) {
+                                                    viewModel.resume()
+                                                } else {
+                                                    viewModel.pause()
+                                                }
+                                                viewModel.isPaused = !viewModel.isPaused
+                                            }) {
+                                                Icon(
+                                                    painter = painterResource(if (viewModel.isPaused) R.drawable.play_arrow else R.drawable.pause),
+                                                    contentDescription = "",
+                                                    tint = MaterialTheme.colorScheme.onSecondary
+                                                )
+                                            }
+                                        }
+                                        PlainTooltip(stringResource(R.string.tts_stop)) {
+                                            IconButton(onClick = {
+                                                viewModel.isSpeaking = false
+                                                viewModel.isPaused = false
+                                                viewModel.stop()
+                                            }) {
+                                                Icon(
+                                                    painter = painterResource(R.drawable.stop),
+                                                    contentDescription = "",
+                                                    tint = MaterialTheme.colorScheme.onSecondary
+                                                )
+                                            }
+                                        }
+                                    } else {
+                                        PlainTooltip(stringResource(R.string.tts)) {
+                                            IconButton(onClick = {
+                                                viewModel.isSpeaking = true
+                                                viewModel.speak(viewModel.clearTextForTTS())
+                                            }) {
+                                                Icon(
+                                                    painter = painterResource(R.drawable.text_to_speech),
+                                                    contentDescription = "",
+                                                    tint = MaterialTheme.colorScheme.onSecondary
+                                                )
+                                            }
+                                        }
+                                    }
                                     PlainTooltip(stringResource(R.string.menu_font_size_app_info)) {
                                         IconButton(onClick = {
                                             showDropdown = !showDropdown
@@ -1853,6 +1950,101 @@ fun isLiturgia(dataDayList: ArrayList<String>): Boolean {
         dayInPasha == -2 -> false
         dayInPasha in -48..-4 -> dayOfNedel == Calendar.SATURDAY || dayOfNedel == Calendar.SUNDAY
         else -> true
+    }
+}
+
+class TTSManager(val context: Context) {
+    private var tts: TextToSpeech? = null
+    private var textList: List<String> = listOf()
+    private var currentSentenceIndex: Int = 0
+    private var isPaused: Boolean = false
+    private var isInitialized: Boolean = false
+
+    @Suppress("DEPRECATION")
+    suspend fun initialize(): Boolean = suspendCancellableCoroutine { continuation ->
+        tts = TextToSpeech(context) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                val result = tts?.setLanguage(
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                        Locale.of("be", "BE")
+                    } else Locale("be", "BE")
+                )
+                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                    continuation.resume(false) { _, _, _ ->
+                    }
+                } else {
+                    tts?.setOnUtteranceProgressListener(utteranceProgressListener)
+                    isInitialized = true
+                    continuation.resume(true) { _, _, _ ->
+                    }
+                }
+            } else {
+                continuation.resume(false) { _, _, _ ->
+                }
+            }
+        }
+    }
+
+    private val utteranceProgressListener = object : UtteranceProgressListener() {
+        override fun onStart(utteranceId: String?) {
+        }
+
+        override fun onDone(utteranceId: String?) {
+            if (currentSentenceIndex < textList.size - 1 && !isPaused) {
+                currentSentenceIndex++
+                speakSentence(textList[currentSentenceIndex])
+            } else {
+                currentSentenceIndex = 0
+                isPaused = false
+            }
+        }
+
+        @Suppress("DEPRECATION")
+        override fun onError(utteranceId: String?) {
+        }
+    }
+
+    fun speakLongText(longText: String) {
+        if (!isInitialized) {
+            Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
+            return
+        }
+        textList = longText.split("[.!?]".toRegex()).map { it.trim() }.filter { it.isNotEmpty() }
+        currentSentenceIndex = 0
+        isPaused = false
+        if (textList.isNotEmpty()) {
+            speakSentence(textList[currentSentenceIndex])
+        }
+    }
+
+    private fun speakSentence(sentence: String) {
+        tts?.speak(sentence, TextToSpeech.QUEUE_ADD, null, currentSentenceIndex.toString())
+    }
+
+    fun pause() {
+        if (isInitialized) {
+            isPaused = true
+            tts?.stop()
+        }
+    }
+
+    fun resume() {
+        if (isInitialized && isPaused && currentSentenceIndex < textList.size) {
+            isPaused = false
+            speakSentence(textList[currentSentenceIndex])
+        }
+    }
+
+    fun stop() {
+        if (isInitialized) {
+            tts?.stop()
+            currentSentenceIndex = 0
+            isPaused = false
+        }
+    }
+
+    fun shutdown() {
+        tts?.shutdown()
     }
 }
 
