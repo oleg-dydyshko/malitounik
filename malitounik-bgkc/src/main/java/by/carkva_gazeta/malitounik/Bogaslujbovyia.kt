@@ -168,7 +168,7 @@ import java.util.Calendar
 import java.util.Locale
 
 class BogaslujbovyiaViewModel : ViewModel() {
-    private var ttsManager: TTSManager? = null
+    private lateinit var ttsManager: TTSManager
     var isSpeaking by mutableStateOf(false)
     var isPaused by mutableStateOf(false)
     var autoScroll by mutableStateOf(false)
@@ -189,6 +189,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
     var searshString by mutableStateOf(TextFieldValue(AppNavGraphState.searchBogaslujbovyia, TextRange(AppNavGraphState.searchBogaslujbovyia.length)))
     var searchTextResult by mutableStateOf(AnnotatedString(""))
     var htmlText by mutableStateOf("")
+    private var findTTSPosition = 0
     private val gson = Gson()
     private val type = TypeToken.getParameterized(ArrayList::class.java, VybranaeDataAll::class.java).type
 
@@ -435,8 +436,21 @@ class BogaslujbovyiaViewModel : ViewModel() {
         return findList
     }
 
-    fun clearTextForTTS(): String {
+    fun clearTextForTTS(textLayout: TextLayoutResult?): List<String> {
         val srcText = StringBuilder()
+        val verticalPosition = scrollState.value.toFloat()
+        var position = textLayout?.getLineForVerticalPosition(verticalPosition) ?: 0
+        var firstLineStartIndex = textLayout?.getLineStart(position) ?: 0
+        var firstLineEndIndex = textLayout?.getLineEnd(position, true) ?: 0
+        if (firstLineStartIndex == firstLineEndIndex) {
+            for (i in 0..3) {
+                position++
+                firstLineStartIndex = textLayout?.getLineStart(position) ?: 0
+                firstLineEndIndex = textLayout?.getLineEnd(position, true) ?: 0
+                if (firstLineStartIndex != firstLineEndIndex) break
+            }
+        }
+        val firstVisableString =  AnnotatedString.fromHtml(htmlText).text.replace("*", "").substring(firstLineStartIndex, firstLineEndIndex)
         val list = htmlText.split("<font color=\"#d00505\">")
         for (i in list.indices) {
             val t1 = list[i].indexOf("</font>")
@@ -446,34 +460,42 @@ class BogaslujbovyiaViewModel : ViewModel() {
                 srcText.append(list[i])
             }
         }
-        return AnnotatedString.fromHtml(srcText.toString()).text
+        val preList = AnnotatedString.fromHtml(srcText.toString()).text.replace("*", "").split("[.!?]".toRegex()).map { it.trim() }.filter { it.isNotEmpty() }
+        findTTSPosition = 0
+        for (i in preList.indices) {
+            if (preList[i].contains(firstVisableString)) {
+                findTTSPosition = i
+                break
+            }
+        }
+        return preList
     }
 
     fun initTTS(context: Context) {
         ttsManager = TTSManager(context)
         viewModelScope.launch {
-            ttsManager?.initialize()
+            ttsManager.initialize()
         }
     }
 
-    fun speak(text: String) {
-        ttsManager?.speakLongText(text)
+    fun speak(list: List<String>) {
+        ttsManager.speakLongText(list, findTTSPosition)
     }
 
     fun pause() {
-        ttsManager?.pause()
+        ttsManager.pause()
     }
 
     fun resume() {
-        ttsManager?.resume()
+        ttsManager.resume()
     }
 
     fun stop() {
-        ttsManager?.stop()
+        ttsManager.stop()
     }
 
     fun shutdown() {
-        ttsManager?.shutdown()
+        ttsManager.shutdown()
     }
 }
 
@@ -1414,7 +1436,7 @@ fun Bogaslujbovyia(
                                         PlainTooltip(stringResource(R.string.tts)) {
                                             IconButton(onClick = {
                                                 viewModel.isSpeaking = true
-                                                viewModel.speak(viewModel.clearTextForTTS())
+                                                viewModel.speak(viewModel.clearTextForTTS(textLayout))
                                             }) {
                                                 Icon(
                                                     painter = painterResource(R.drawable.text_to_speech),
@@ -1955,10 +1977,10 @@ fun isLiturgia(dataDayList: ArrayList<String>): Boolean {
 
 class TTSManager(val context: Context) {
     private var tts: TextToSpeech? = null
-    private var textList: List<String> = listOf()
-    private var currentSentenceIndex: Int = 0
-    private var isPaused: Boolean = false
-    private var isInitialized: Boolean = false
+    private var textList = listOf<String>()
+    private var currentSentenceIndex = 0
+    private var isPaused = false
+    private var isInitialized = false
 
     @Suppress("DEPRECATION")
     suspend fun initialize(): Boolean = suspendCancellableCoroutine { continuation ->
@@ -1999,18 +2021,17 @@ class TTSManager(val context: Context) {
             }
         }
 
-        @Suppress("DEPRECATION")
         override fun onError(utteranceId: String?) {
         }
     }
 
-    fun speakLongText(longText: String) {
+    fun speakLongText(list: List<String>, positionTTS: Int) {
         if (!isInitialized) {
             Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
             return
         }
-        textList = longText.split("[.!?]".toRegex()).map { it.trim() }.filter { it.isNotEmpty() }
-        currentSentenceIndex = 0
+        textList = list
+        currentSentenceIndex = positionTTS
         isPaused = false
         if (textList.isNotEmpty()) {
             speakSentence(textList[currentSentenceIndex])

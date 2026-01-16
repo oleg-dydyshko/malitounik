@@ -1,7 +1,7 @@
 [versions]
 media3Exoplayer = "1.9.0"
 media = "1.7.1"
-agp = "8.13.2"
+agp = "9.0.0"
 kotlin = "2.3.0"
 services = "4.4.4"
 coreKtx = "1.17.0"
