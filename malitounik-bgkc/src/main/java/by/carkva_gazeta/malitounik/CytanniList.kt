@@ -327,6 +327,7 @@ open class CytanniListViewModel : ViewModel() {
             }
         }
         initViewModel(context, biblia, cytanne, perevod)
+        initTTS(context, perevod)
     }
 
     fun initVybranoe(context: Context) {
@@ -821,6 +822,19 @@ fun CytanniList(
         }
         viewModel.initTTS(context, perevod)
     }
+    var dialodTTSHelp by remember { mutableStateOf(false) }
+    if (dialodTTSHelp) {
+        DialogHelpTTS {
+            if (it) {
+                k.edit {
+                    putBoolean("isTTSHelp", false)
+                }
+            }
+            viewModel.isSpeaking = true
+            viewModel.speak(viewModel.clearTextForTTS(viewModel.listState[viewModel.selectedIndex].item))
+            dialodTTSHelp = false
+        }
+    }
     Scaffold(topBar = {
         AnimatedVisibility(
             !fullscreen, enter = fadeIn(
@@ -1044,16 +1058,6 @@ fun CytanniList(
                                         painter = painterResource(R.drawable.book_red), contentDescription = ""
                                     )
                                 })
-                                DropdownMenuItem(onClick = {
-                                    expandedUp = false
-                                    showDropdown = !showDropdown
-                                    viewModel.autoScroll(title, false)
-                                    menuPosition = 1
-                                }, text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.format_size), contentDescription = ""
-                                    )
-                                })
                                 if (viewModel.isSpeaking || viewModel.isPaused) {
                                     DropdownMenuItem(onClick = {
                                         expandedUp = false
@@ -1081,8 +1085,22 @@ fun CytanniList(
                                 } else {
                                     DropdownMenuItem(onClick = {
                                         expandedUp = false
-                                        viewModel.isSpeaking = true
-                                        viewModel.speak(viewModel.clearTextForTTS(viewModel.listState[viewModel.selectedIndex].item))
+                                        showDropdown = !showDropdown
+                                        viewModel.autoScroll(title, false)
+                                        menuPosition = 1
+                                    }, text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.format_size), contentDescription = ""
+                                        )
+                                    })
+                                    DropdownMenuItem(onClick = {
+                                        expandedUp = false
+                                        if (k.getBoolean("isTTSHelp", true)) {
+                                            dialodTTSHelp = true
+                                        } else {
+                                            viewModel.isSpeaking = true
+                                            viewModel.speak(viewModel.clearTextForTTS(viewModel.listState[viewModel.selectedIndex].item))
+                                        }
                                     }, text = { Text(stringResource(R.string.tts), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                         Icon(
                                             painter = painterResource(R.drawable.text_to_speech), contentDescription = ""
@@ -1439,8 +1457,12 @@ fun CytanniList(
                             } else {
                                 PlainTooltip(stringResource(R.string.tts)) {
                                     IconButton(onClick = {
-                                        viewModel.isSpeaking = true
-                                        viewModel.speak(viewModel.clearTextForTTS(viewModel.listState[viewModel.selectedIndex].item))
+                                        if (k.getBoolean("isTTSHelp", true)) {
+                                            dialodTTSHelp = true
+                                        } else {
+                                            viewModel.isSpeaking = true
+                                            viewModel.speak(viewModel.clearTextForTTS(viewModel.listState[viewModel.selectedIndex].item))
+                                        }
                                     }) {
                                         Icon(
                                             painter = painterResource(R.drawable.text_to_speech),
@@ -1449,17 +1471,17 @@ fun CytanniList(
                                         )
                                     }
                                 }
-                            }
-                            PlainTooltip(stringResource(R.string.menu_font_size_app_info)) {
-                                IconButton(
-                                    onClick = {
-                                        showDropdown = !showDropdown
-                                        viewModel.autoScroll(title, false)
-                                        menuPosition = 1
-                                    }) {
-                                    Icon(
-                                        modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.format_size), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                    )
+                                PlainTooltip(stringResource(R.string.menu_font_size_app_info)) {
+                                    IconButton(
+                                        onClick = {
+                                            showDropdown = !showDropdown
+                                            viewModel.autoScroll(title, false)
+                                            menuPosition = 1
+                                        }) {
+                                        Icon(
+                                            modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.format_size), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
                                 }
                             }
                             PlainTooltip(stringResource(R.string.share)) {

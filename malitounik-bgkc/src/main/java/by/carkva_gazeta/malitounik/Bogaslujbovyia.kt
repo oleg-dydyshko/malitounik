@@ -49,6 +49,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -688,6 +689,19 @@ fun Bogaslujbovyia(
             dialogSztoHovahaVisable = false
         }
     }
+    var dialodTTSHelp by remember { mutableStateOf(false) }
+    if (dialodTTSHelp) {
+        DialogHelpTTS {
+            if (it) {
+                k.edit {
+                    putBoolean("isTTSHelp", false)
+                }
+            }
+            viewModel.isSpeaking = true
+            viewModel.speak(viewModel.clearTextForTTS(textLayout))
+            dialodTTSHelp = false
+        }
+    }
     SideEffect {
         val window = (view.context as Activity).window
         WindowCompat.getInsetsController(
@@ -1248,8 +1262,12 @@ fun Bogaslujbovyia(
                                             } else {
                                                 DropdownMenuItem(onClick = {
                                                     expandedUp = false
-                                                    viewModel.isSpeaking = true
-                                                    viewModel.speak(viewModel.clearTextForTTS(textLayout))
+                                                    if (k.getBoolean("isTTSHelp", true)) {
+                                                        dialodTTSHelp = true
+                                                    } else {
+                                                        viewModel.isSpeaking = true
+                                                        viewModel.speak(viewModel.clearTextForTTS(textLayout))
+                                                    }
                                                 }, text = { Text(stringResource(R.string.tts), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                                     Icon(
                                                         painter = painterResource(R.drawable.text_to_speech), contentDescription = ""
@@ -1492,8 +1510,12 @@ fun Bogaslujbovyia(
                                     } else {
                                         PlainTooltip(stringResource(R.string.tts)) {
                                             IconButton(onClick = {
-                                                viewModel.isSpeaking = true
-                                                viewModel.speak(viewModel.clearTextForTTS(textLayout))
+                                                if (k.getBoolean("isTTSHelp", true)) {
+                                                    dialodTTSHelp = true
+                                                } else {
+                                                    viewModel.isSpeaking = true
+                                                    viewModel.speak(viewModel.clearTextForTTS(textLayout))
+                                                }
                                             }) {
                                                 Icon(
                                                     painter = painterResource(R.drawable.text_to_speech),
@@ -2011,6 +2033,51 @@ fun DialogLiturgia(
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.close), fontSize = 18.sp)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DialogHelpTTS(onDismiss: (Boolean) -> Unit) {
+    val context = LocalContext.current
+    var isCheck by remember { mutableStateOf(false) }
+    Dialog(onDismissRequest = { onDismiss(isCheck) }, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+                Text(
+                    text = stringResource(R.string.tts_help_title), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.onTertiary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
+                )
+                Column(modifier = Modifier.verticalScroll(rememberScrollState()).weight(1f, false)) {
+                    HtmlText(text = openAssetsResources(context, "tts_help.html"), modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp)
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(checked = isCheck, onCheckedChange = {
+                        isCheck = !isCheck
+                    })
+                    Text(text = stringResource(R.string.not_show), modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
+                }
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = { onDismiss(isCheck) }, shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Text(stringResource(R.string.ok), fontSize = 18.sp)
                     }
                 }
             }

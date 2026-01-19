@@ -922,5 +922,6 @@
     <string name="tts_pause">Паўза</string>
     <string name="tts_stop">Стоп</string>
     <string name="tts_play">Працягнуць чытаньне</string>
+    <string name="tts_help_title">БЕЛАРУСКАЯ МОВА</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>
