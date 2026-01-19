@@ -119,6 +119,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.BezPosta
@@ -147,6 +148,9 @@ import java.io.File
 import java.util.Calendar
 
 open class CytanniListViewModel : ViewModel() {
+    private lateinit var ttsManager: TTSManager
+    var isSpeaking by mutableStateOf(false)
+    var isPaused by mutableStateOf(false)
     val selectState = mutableStateListOf<Boolean>()
     val listState = mutableStateListOf<CytanniListItemData>()
     var selectedIndex by mutableIntStateOf(-1)
@@ -545,6 +549,55 @@ open class CytanniListViewModel : ViewModel() {
             }
         }
     }
+
+    fun clearTextForTTS(list: SnapshotStateList<CytanniListData>): List<String> {
+        val result = ArrayList<String>()
+        for (i in list.indices) {
+            val t1 = list[i].text.indexOf("</font>")
+            if (t1 != -1) {
+                val preList = list[i].text.split("<font color=#d00505>", ignoreCase = true)
+                val sb = StringBuilder()
+                for (e in preList.indices) {
+                    val t2 = preList[e].indexOf("</font>")
+                    if (!preList[e].contains("</em>")) {
+                        if (t2 != -1) sb.append(preList[e].substring(t2 + 7))
+                        else sb.append(preList[e])
+                    }
+                }
+                result.add(AnnotatedString.fromHtml(sb.toString()).text.trim())
+            } else {
+                result.add(AnnotatedString.fromHtml(list[i].text).text.trim())
+            }
+        }
+        return result.toList()
+    }
+
+    fun initTTS(context: Context, perevod: String) {
+        ttsManager = TTSManager(context)
+        viewModelScope.launch {
+            ttsManager.initialize(perevod)
+        }
+    }
+
+    fun speak(list: List<String>) {
+        ttsManager.speakLongText(list, listState[selectedIndex].lazyListState.firstVisibleItemIndex)
+    }
+
+    fun pause() {
+        ttsManager.pause()
+    }
+
+    fun resume() {
+        ttsManager.resume()
+    }
+
+    fun stop() {
+        ttsManager.stop()
+    }
+
+    fun shutdown() {
+        ttsManager.shutdown()
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -733,6 +786,13 @@ fun CytanniList(
             viewModel.dialogDownLoad = false
         }
     }
+    LifecycleResumeEffect(Unit) {
+        onPauseOrDispose {
+            viewModel.shutdown()
+            viewModel.isPaused = false
+            viewModel.isSpeaking = false
+        }
+    }
     LaunchedEffect(Unit) {
         when (perevod) {
             Settings.PEREVODCATOLIK -> {
@@ -759,6 +819,7 @@ fun CytanniList(
                 }
             }
         }
+        viewModel.initTTS(context, perevod)
     }
     Scaffold(topBar = {
         AnimatedVisibility(
@@ -993,6 +1054,41 @@ fun CytanniList(
                                         painter = painterResource(R.drawable.format_size), contentDescription = ""
                                     )
                                 })
+                                if (viewModel.isSpeaking || viewModel.isPaused) {
+                                    DropdownMenuItem(onClick = {
+                                        expandedUp = false
+                                        if (viewModel.isPaused) {
+                                            viewModel.resume()
+                                        } else {
+                                            viewModel.pause()
+                                        }
+                                        viewModel.isPaused = !viewModel.isPaused
+                                    }, text = { Text(stringResource(if (viewModel.isPaused) R.string.tts_play else R.string.tts_pause), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(if (viewModel.isPaused) R.drawable.play_arrow else R.drawable.pause), contentDescription = ""
+                                        )
+                                    })
+                                    DropdownMenuItem(onClick = {
+                                        expandedUp = false
+                                        viewModel.isSpeaking = false
+                                        viewModel.isPaused = false
+                                        viewModel.stop()
+                                    }, text = { Text(stringResource(R.string.tts_stop), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.stop), contentDescription = ""
+                                        )
+                                    })
+                                } else {
+                                    DropdownMenuItem(onClick = {
+                                        expandedUp = false
+                                        viewModel.isSpeaking = true
+                                        viewModel.speak(viewModel.clearTextForTTS(viewModel.listState[viewModel.selectedIndex].item))
+                                    }, text = { Text(stringResource(R.string.tts), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.text_to_speech), contentDescription = ""
+                                        )
+                                    })
+                                }
                             }
                         }
                     }
@@ -1310,6 +1406,50 @@ fun CytanniList(
                             .navigationBarsPadding(), horizontalArrangement = Arrangement.SpaceAround
                     ) {
                         if (!isParallelVisable) {
+                            if (viewModel.isSpeaking || viewModel.isPaused) {
+                                PlainTooltip(stringResource(if (viewModel.isPaused) R.string.tts_play else R.string.tts_pause)) {
+                                    IconButton(onClick = {
+                                        if (viewModel.isPaused) {
+                                            viewModel.resume()
+                                        } else {
+                                            viewModel.pause()
+                                        }
+                                        viewModel.isPaused = !viewModel.isPaused
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(if (viewModel.isPaused) R.drawable.play_arrow else R.drawable.pause),
+                                            contentDescription = "",
+                                            tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
+                                }
+                                PlainTooltip(stringResource(R.string.tts_stop)) {
+                                    IconButton(onClick = {
+                                        viewModel.isSpeaking = false
+                                        viewModel.isPaused = false
+                                        viewModel.stop()
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.stop),
+                                            contentDescription = "",
+                                            tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
+                                }
+                            } else {
+                                PlainTooltip(stringResource(R.string.tts)) {
+                                    IconButton(onClick = {
+                                        viewModel.isSpeaking = true
+                                        viewModel.speak(viewModel.clearTextForTTS(viewModel.listState[viewModel.selectedIndex].item))
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.text_to_speech),
+                                            contentDescription = "",
+                                            tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
+                                }
+                            }
                             PlainTooltip(stringResource(R.string.menu_font_size_app_info)) {
                                 IconButton(
                                     onClick = {

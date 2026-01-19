@@ -23,7 +23,7 @@ material3 = "1.4.0"
 navigation = "2.9.6"
 compose-bom = "2026.01.00"
 activity-compose = "1.12.2"
-firebase-bom = "34.7.0"
+firebase-bom = "34.8.0"
 glanceAppwidget = "1.1.1"
 
 [libraries]
@@ -64,6 +64,5 @@ androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidge
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "services" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

@@ -1158,6 +1158,13 @@ fun MainConteiner(
                 dialogEditSvityiaAndSviaty = false
             }
         }
+        LaunchedEffect(viewModel.textFieldValueState) {
+            if (!currentRoute.contains("Biblia_")) {
+                val edit = zamena(viewModel.textFieldValueState.text)
+                val selection = TextRange(edit.length)
+                viewModel.textFieldValueState = TextFieldValue(edit, selection)
+            }
+        }
         Scaffold(topBar = {
             TopAppBar(
                 title = {
@@ -1182,12 +1189,7 @@ fun MainConteiner(
                                         textFieldLoaded = true
                                     }
                                 }, value = viewModel.textFieldValueState, placeholder = { Text(stringResource(if (viewModel.isEditMode) R.string.natatka_name else R.string.poshuk), fontSize = Settings.fontInterface.sp, color = textTollBarColor) }, onValueChange = { newText ->
-                                var edit = newText.text
-                                var selection = newText.selection
-                                val oldEdit = edit
-                                if (!currentRoute.contains("Biblia_")) edit = zamena(edit)
-                                if (oldEdit != edit) selection = TextRange(edit.length)
-                                viewModel.textFieldValueState = TextFieldValue(edit, selection)
+                                viewModel.textFieldValueState = newText
                             }, singleLine = true, trailingIcon = {
                                 IconButton(onClick = {
                                     viewModel.textFieldValueState = TextFieldValue("")

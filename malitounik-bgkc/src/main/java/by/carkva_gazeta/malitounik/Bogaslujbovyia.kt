@@ -437,7 +437,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
     }
 
     fun clearTextForTTS(textLayout: TextLayoutResult?): List<String> {
-        val srcText = StringBuilder()
+        val srcTextList = ArrayList<String>()
         val verticalPosition = scrollState.value.toFloat()
         var position = textLayout?.getLineForVerticalPosition(verticalPosition) ?: 0
         var firstLineStartIndex = textLayout?.getLineStart(position) ?: 0
@@ -450,25 +450,45 @@ class BogaslujbovyiaViewModel : ViewModel() {
                 if (firstLineStartIndex != firstLineEndIndex) break
             }
         }
-        val firstVisableString =  AnnotatedString.fromHtml(htmlText).text.replace("*", "").substring(firstLineStartIndex, firstLineEndIndex)
-        val list = htmlText.split("<font color=\"#d00505\">")
+        val textH = AnnotatedString.fromHtml(htmlText).text
+        var t1 = textH.indexOf(".", firstLineStartIndex)
+        var t2 = textH.indexOf("!", firstLineStartIndex)
+        var t3 = textH.indexOf("?", firstLineStartIndex)
+        if (t1 == -1) t1 = firstLineEndIndex
+        if (t2 == -1) t2 = firstLineEndIndex
+        if (t3 == -1) t3 = firstLineEndIndex
+        val min = minOf(t1, t2, t3)
+        var firstVisableString = textH.substring(firstLineStartIndex, min).replace("*", "")
+        val t4 = firstVisableString.indexOf(":")
+        if (t4 != -1) firstVisableString = firstVisableString.substring(t4 + 1).trim()
+        val list = htmlText.split("<font color=\"#d00505\">", ignoreCase = true)
         for (i in list.indices) {
             val t1 = list[i].indexOf("</font>")
             if (t1 != -1) {
-                srcText.append(list[i].substring(t1 + 7))
+                srcTextList.add("color=red" + list[i].take(t1))
+                val textString = list[i].substring(t1 + 7)
+                val preList = textString.split("[.!?]".toRegex()).map { it.trim() }.filter { it.isNotEmpty() }
+                for (e in preList.indices) {
+                    val anots = AnnotatedString.fromHtml(preList[e].replace("*", "")).text
+                    if (anots.isNotEmpty()) srcTextList.add(anots)
+                }
             } else {
-                srcText.append(list[i])
+                val anots = AnnotatedString.fromHtml(list[i].replace("*", "")).text
+                if (anots.isNotEmpty()) srcTextList.add(anots)
             }
         }
-        val preList = AnnotatedString.fromHtml(srcText.toString()).text.replace("*", "").split("[.!?]".toRegex()).map { it.trim() }.filter { it.isNotEmpty() }
         findTTSPosition = 0
-        for (i in preList.indices) {
-            if (preList[i].contains(firstVisableString)) {
+        var textLin = 0
+        for (i in srcTextList.indices) {
+            textLin += srcTextList[i].length
+            if (srcTextList[i].contains("color=red")) textLin -= 9
+            val t1 = srcTextList[i].indexOf(firstVisableString)
+            if (t1 != -1 && textLin >= firstLineStartIndex) {
                 findTTSPosition = i
                 break
             }
         }
-        return preList
+        return srcTextList
     }
 
     fun initTTS(context: Context) {
@@ -577,6 +597,8 @@ fun Bogaslujbovyia(
         }
         onPauseOrDispose {
             viewModel.shutdown()
+            viewModel.isPaused = false
+            viewModel.isSpeaking = false
             AppNavGraphState.setScrollValuePosition(title, viewModel.scrollState.value)
             if (resursEncode.contains("akafist")) {
                 k.edit {
@@ -1199,6 +1221,41 @@ fun Bogaslujbovyia(
                                                     painter = painterResource(R.drawable.format_size), contentDescription = ""
                                                 )
                                             })
+                                            if (viewModel.isSpeaking || viewModel.isPaused) {
+                                                DropdownMenuItem(onClick = {
+                                                    expandedUp = false
+                                                    if (viewModel.isPaused) {
+                                                        viewModel.resume()
+                                                    } else {
+                                                        viewModel.pause()
+                                                    }
+                                                    viewModel.isPaused = !viewModel.isPaused
+                                                }, text = { Text(stringResource(if (viewModel.isPaused) R.string.tts_play else R.string.tts_pause), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                                    Icon(
+                                                        painter = painterResource(if (viewModel.isPaused) R.drawable.play_arrow else R.drawable.pause), contentDescription = ""
+                                                    )
+                                                })
+                                                DropdownMenuItem(onClick = {
+                                                    expandedUp = false
+                                                    viewModel.isSpeaking = false
+                                                    viewModel.isPaused = false
+                                                    viewModel.stop()
+                                                }, text = { Text(stringResource(R.string.tts_stop), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                                    Icon(
+                                                        painter = painterResource(R.drawable.stop), contentDescription = ""
+                                                    )
+                                                })
+                                            } else {
+                                                DropdownMenuItem(onClick = {
+                                                    expandedUp = false
+                                                    viewModel.isSpeaking = true
+                                                    viewModel.speak(viewModel.clearTextForTTS(textLayout))
+                                                }, text = { Text(stringResource(R.string.tts), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                                    Icon(
+                                                        painter = painterResource(R.drawable.text_to_speech), contentDescription = ""
+                                                    )
+                                                })
+                                            }
                                             if (k.getBoolean("admin", false)) {
                                                 HorizontalDivider()
                                                 DropdownMenuItem(onClick = {
@@ -1403,7 +1460,7 @@ fun Bogaslujbovyia(
                                     horizontalArrangement = Arrangement.SpaceAround
                                 ) {
                                     if (viewModel.isSpeaking || viewModel.isPaused) {
-                                        PlainTooltip(stringResource(R.string.tts_pause)) {
+                                        PlainTooltip(stringResource(if (viewModel.isPaused) R.string.tts_play else R.string.tts_pause)) {
                                             IconButton(onClick = {
                                                 if (viewModel.isPaused) {
                                                     viewModel.resume()
@@ -1983,13 +2040,25 @@ class TTSManager(val context: Context) {
     private var isInitialized = false
 
     @Suppress("DEPRECATION")
-    suspend fun initialize(): Boolean = suspendCancellableCoroutine { continuation ->
+    suspend fun initialize(perevod: String = Settings.PEREVODSEMUXI): Boolean = suspendCancellableCoroutine { continuation ->
         tts = TextToSpeech(context) { status ->
             if (status == TextToSpeech.SUCCESS) {
                 val result = tts?.setLanguage(
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-                        Locale.of("be", "BE")
-                    } else Locale("be", "BE")
+                    when (perevod) {
+                        Settings.PEREVODSINOIDAL -> {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                                Locale.of("rus", "RUS")
+                            } else Locale("rus", "RUS")
+                        }
+
+                        Settings.PEREVODNEWAMERICANBIBLE -> Locale.US
+
+                        else -> {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                                Locale.of("be", "BE")
+                            } else Locale("be", "BE")
+                        }
+                    }
                 )
                 if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                     continuation.resume(false) { _, _, _ ->
@@ -2014,6 +2083,10 @@ class TTSManager(val context: Context) {
         override fun onDone(utteranceId: String?) {
             if (currentSentenceIndex < textList.size - 1 && !isPaused) {
                 currentSentenceIndex++
+                while (true) {
+                    if (textList[currentSentenceIndex].contains("color=red")) currentSentenceIndex++
+                    else break
+                }
                 speakSentence(textList[currentSentenceIndex])
             } else {
                 currentSentenceIndex = 0
@@ -2033,6 +2106,10 @@ class TTSManager(val context: Context) {
         textList = list
         currentSentenceIndex = positionTTS
         isPaused = false
+        while (true) {
+            if (textList[currentSentenceIndex].contains("color=red")) currentSentenceIndex++
+            else break
+        }
         if (textList.isNotEmpty()) {
             speakSentence(textList[currentSentenceIndex])
         }
@@ -2050,6 +2127,10 @@ class TTSManager(val context: Context) {
     }
 
     fun resume() {
+        while (true) {
+            if (textList[currentSentenceIndex].contains("color=red")) currentSentenceIndex++
+            else break
+        }
         if (isInitialized && isPaused && currentSentenceIndex < textList.size) {
             isPaused = false
             speakSentence(textList[currentSentenceIndex])

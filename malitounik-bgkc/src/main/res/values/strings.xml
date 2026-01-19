@@ -921,5 +921,6 @@
     <string name="tts">Прачытаць тэкст</string>
     <string name="tts_pause">Паўза</string>
     <string name="tts_stop">Стоп</string>
+    <string name="tts_play">Працягнуць чытаньне</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

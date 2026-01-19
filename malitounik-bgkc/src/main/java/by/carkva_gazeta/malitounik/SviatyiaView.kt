@@ -113,6 +113,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.core.view.WindowCompat
@@ -1298,6 +1299,16 @@ fun loadOpisanieSviat(context: Context, position: Int): SnapshotStateList<Opisan
     return sviatyiaList
 }
 
+suspend fun isApisanneIconsFileExists(fileName: String): Boolean {
+    val list = Malitounik.referens.child("/chytanne/iconsApisanne").list(1000).await()
+    list.items.forEach {
+        if (fileName == it.name) {
+            return true
+        }
+    }
+    return false
+}
+
 suspend fun getIcons(
     context: Context,
     dirList: SnapshotStateList<DirList>,
@@ -1346,45 +1357,49 @@ suspend fun getIcons(
                 val pref = if (svity) "v"
                 else "s"
                 sb.append(name)
-                var imageSrc = "${pref}_${sviatyiaList[i].date}_${sviatyiaList[i].mun}"
+                var imageSrc = "${pref}_${sviatyiaList[i].date}_${sviatyiaList[i].mun}_${sviatyiaList[i].index}"
                 if (svity) {
                     imageSrc = when (Settings.data[position][22]) {
                         "-7" -> "v_-7_1_1"
                         "0" -> "v_0_1_1"
                         "39" -> "v_39_1_1"
                         "49" -> "v_49_1_1"
-                        else -> "v_${sviatyiaList[i].date}_${sviatyiaList[i].mun}"
+                        else -> "v_${sviatyiaList[i].date}_${sviatyiaList[i].mun}_1"
                     }
                 }
                 if (name.contains(imageSrc)) {
                     val t3 = name.lastIndexOf(".")
                     val fileNameT = name.take(t3) + ".txt"
                     val file = File("${context.filesDir}/iconsApisanne/$fileNameT")
-                    var fbMD5Hash: String? = null
-                    try {
+                    if (isApisanneIconsFileExists(fileNameT)) {
                         Malitounik.referens.child("/chytanne/iconsApisanne/$fileNameT").getFile(file).addOnFailureListener {
                             if (file.exists()) file.delete()
                         }.await()
-                        val pathReference = Malitounik.referens.child("/chytanne/icons/${name}")
-                        val metadata2 = pathReference.metadata.addOnFailureListener {
-                            error = true
-                        }.await()
-                        fbMD5Hash = metadata2.md5Hash
-                    } catch (_: Throwable) {
+                    } else {
+                        if (file.exists()) file.delete()
                     }
+                    val pathReference = Malitounik.referens.child("/chytanne/icons/${name}")
+                    val metadata2 = pathReference.metadata.addOnFailureListener {
+                        error = true
+                    }.await()
+                    val fbMD5Hash = metadata2.md5Hash
                     val fileIcon = File("${context.filesDir}/icons/${name}")
-                    val time = fileIcon.lastModified()
-                    val messageDigest = MessageDigest.getInstance("MD5")
-                    messageDigest.reset()
-                    val fis = FileInputStream(fileIcon)
-                    val byteArray = ByteArray(1024)
-                    var bytesCount: Int
-                    while (fis.read(byteArray).also { bytesCount = it } != -1) {
-                        messageDigest.update(byteArray, 0, bytesCount)
+                    var time = 0L
+                    var localMD5Hash = "no_hash"
+                    if (fileIcon.exists()) {
+                        time = fileIcon.lastModified()
+                        val messageDigest = MessageDigest.getInstance("MD5")
+                        messageDigest.reset()
+                        val fis = FileInputStream(fileIcon)
+                        val byteArray = ByteArray(1024)
+                        var bytesCount: Int
+                        while (fis.read(byteArray).also { bytesCount = it } != -1) {
+                            messageDigest.update(byteArray, 0, bytesCount)
+                        }
+                        fis.close()
+                        val bytes = messageDigest.digest()
+                        localMD5Hash = Base64.encodeToString(bytes, Base64.DEFAULT).trim()
                     }
-                    fis.close()
-                    val bytes = messageDigest.digest()
-                    val localMD5Hash = Base64.encodeToString(bytes, Base64.DEFAULT).trim()
                     val update = iconList.substring(t2 + 4).toLong()
                     if (!fileIcon.exists() || time < update || (fbMD5Hash != null && localMD5Hash != fbMD5Hash)) {
                         val updateFile = iconList.substring(t1 + 4, t2).toLong()
@@ -1560,7 +1575,7 @@ fun DialogPairlinyView(
             }
         }
     }
-    Dialog(onDismissRequest = { onDismiss() }) {
+    Dialog(onDismissRequest = { onDismiss() }, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
