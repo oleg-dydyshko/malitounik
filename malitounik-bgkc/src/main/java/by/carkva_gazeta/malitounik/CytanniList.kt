@@ -574,7 +574,10 @@ open class CytanniListViewModel : ViewModel() {
     }
 
     fun initTTS(context: Context, perevod: String) {
-        ttsManager = TTSManager(context)
+        ttsManager = TTSManager(context) {
+            isPaused = false
+            isSpeaking = false
+        }
         viewModelScope.launch {
             ttsManager.initialize(perevod)
         }
@@ -1058,55 +1061,35 @@ fun CytanniList(
                                         painter = painterResource(R.drawable.book_red), contentDescription = ""
                                     )
                                 })
-                                if (viewModel.isSpeaking || viewModel.isPaused) {
-                                    DropdownMenuItem(onClick = {
-                                        expandedUp = false
-                                        if (viewModel.isPaused) {
-                                            viewModel.resume()
-                                        } else {
-                                            viewModel.pause()
-                                        }
-                                        viewModel.isPaused = !viewModel.isPaused
-                                    }, text = { Text(stringResource(if (viewModel.isPaused) R.string.tts_play else R.string.tts_pause), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                        Icon(
-                                            painter = painterResource(if (viewModel.isPaused) R.drawable.play_arrow else R.drawable.pause), contentDescription = ""
-                                        )
-                                    })
-                                    DropdownMenuItem(onClick = {
-                                        expandedUp = false
+                                DropdownMenuItem(onClick = {
+                                    expandedUp = false
+                                    showDropdown = !showDropdown
+                                    viewModel.autoScroll(title, false)
+                                    menuPosition = 1
+                                }, text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.format_size), contentDescription = ""
+                                    )
+                                })
+                                DropdownMenuItem(onClick = {
+                                    expandedUp = false
+                                    if (viewModel.isSpeaking || viewModel.isPaused) {
                                         viewModel.isSpeaking = false
                                         viewModel.isPaused = false
                                         viewModel.stop()
-                                    }, text = { Text(stringResource(R.string.tts_stop), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.stop), contentDescription = ""
-                                        )
-                                    })
-                                } else {
-                                    DropdownMenuItem(onClick = {
-                                        expandedUp = false
-                                        showDropdown = !showDropdown
-                                        viewModel.autoScroll(title, false)
-                                        menuPosition = 1
-                                    }, text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.format_size), contentDescription = ""
-                                        )
-                                    })
-                                    DropdownMenuItem(onClick = {
-                                        expandedUp = false
+                                    } else {
                                         if (k.getBoolean("isTTSHelp", true)) {
                                             dialodTTSHelp = true
                                         } else {
                                             viewModel.isSpeaking = true
                                             viewModel.speak(viewModel.clearTextForTTS(viewModel.listState[viewModel.selectedIndex].item))
                                         }
-                                    }, text = { Text(stringResource(R.string.tts), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.text_to_speech), contentDescription = ""
-                                        )
-                                    })
-                                }
+                                    }
+                                }, text = { Text(stringResource(R.string.tts), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.text_to_speech), contentDescription = ""
+                                    )
+                                })
                             }
                         }
                     }
@@ -1424,64 +1407,38 @@ fun CytanniList(
                             .navigationBarsPadding(), horizontalArrangement = Arrangement.SpaceAround
                     ) {
                         if (!isParallelVisable) {
-                            if (viewModel.isSpeaking || viewModel.isPaused) {
-                                PlainTooltip(stringResource(if (viewModel.isPaused) R.string.tts_play else R.string.tts_pause)) {
-                                    IconButton(onClick = {
-                                        if (viewModel.isPaused) {
-                                            viewModel.resume()
-                                        } else {
-                                            viewModel.pause()
-                                        }
-                                        viewModel.isPaused = !viewModel.isPaused
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(if (viewModel.isPaused) R.drawable.play_arrow else R.drawable.pause),
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.onSecondary
-                                        )
-                                    }
-                                }
-                                PlainTooltip(stringResource(R.string.tts_stop)) {
-                                    IconButton(onClick = {
+                            PlainTooltip(stringResource(R.string.tts)) {
+                                IconButton(onClick = {
+                                    if (viewModel.isSpeaking || viewModel.isPaused) {
                                         viewModel.isSpeaking = false
                                         viewModel.isPaused = false
                                         viewModel.stop()
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.stop),
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.onSecondary
-                                        )
-                                    }
-                                }
-                            } else {
-                                PlainTooltip(stringResource(R.string.tts)) {
-                                    IconButton(onClick = {
+                                    } else {
                                         if (k.getBoolean("isTTSHelp", true)) {
                                             dialodTTSHelp = true
                                         } else {
                                             viewModel.isSpeaking = true
                                             viewModel.speak(viewModel.clearTextForTTS(viewModel.listState[viewModel.selectedIndex].item))
                                         }
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.text_to_speech),
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.onSecondary
-                                        )
                                     }
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.text_to_speech),
+                                        contentDescription = "",
+                                        tint = MaterialTheme.colorScheme.onSecondary
+                                    )
                                 }
-                                PlainTooltip(stringResource(R.string.menu_font_size_app_info)) {
-                                    IconButton(
-                                        onClick = {
-                                            showDropdown = !showDropdown
-                                            viewModel.autoScroll(title, false)
-                                            menuPosition = 1
-                                        }) {
-                                        Icon(
-                                            modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.format_size), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                        )
-                                    }
+                            }
+                            PlainTooltip(stringResource(R.string.menu_font_size_app_info)) {
+                                IconButton(
+                                    onClick = {
+                                        showDropdown = !showDropdown
+                                        viewModel.autoScroll(title, false)
+                                        menuPosition = 1
+                                    }) {
+                                    Icon(
+                                        modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.format_size), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    )
                                 }
                             }
                             PlainTooltip(stringResource(R.string.share)) {
@@ -1977,22 +1934,71 @@ fun CytanniList(
                         )
                     }
                 }
-                AnimatedVisibility(
-                    viewModel.autoScrollSensor, enter = fadeIn(
-                        tween(
-                            durationMillis = 700, easing = LinearOutSlowInEasing
-                        )
-                    ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = if (!isBottomBar || fullscreen) 10.dp else 0.dp, end = 10.dp),
+                    horizontalArrangement = Arrangement.End
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = if (!isBottomBar || fullscreen) 10.dp else 0.dp, end = 10.dp),
-                        horizontalArrangement = Arrangement.End
+                    AnimatedVisibility(
+                        viewModel.isSpeaking || viewModel.isPaused, enter = fadeIn(
+                            tween(
+                                durationMillis = 700, easing = LinearOutSlowInEasing
+                            )
+                        ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.tts_stop),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .padding(end = 10.dp)
+                                .clip(shape = RoundedCornerShape(10.dp))
+                                .background(Button)
+                                .size(40.dp)
+                                .padding(5.dp)
+                                .clickable {
+                                    viewModel.isSpeaking = false
+                                    viewModel.isPaused = false
+                                    viewModel.stop()
+                                }
+                        )
+                    }
+                    AnimatedVisibility(
+                        viewModel.isSpeaking || viewModel.isPaused, enter = fadeIn(
+                            tween(
+                                durationMillis = 700, easing = LinearOutSlowInEasing
+                            )
+                        ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
+                    ) {
+                        Image(
+                            painter = painterResource(if (viewModel.isPaused) R.drawable.tts_play else R.drawable.tts_pause),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .align(Alignment.Bottom)
+                                .clip(shape = RoundedCornerShape(10.dp))
+                                .background(Button)
+                                .size(40.dp)
+                                .padding(5.dp)
+                                .clickable {
+                                    if (viewModel.isPaused) {
+                                        viewModel.resume()
+                                    } else {
+                                        viewModel.pause()
+                                    }
+                                    viewModel.isPaused = !viewModel.isPaused
+                                }
+                        )
+                    }
+                    AnimatedVisibility(
+                        viewModel.autoScrollSensor, enter = fadeIn(
+                            tween(
+                                durationMillis = 700, easing = LinearOutSlowInEasing
+                            )
+                        ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
                     ) {
                         Image(
                             painter = painterResource(R.drawable.minus_auto_scroll), contentDescription = "", modifier = Modifier
-                                .padding(end = 10.dp)
+                                .padding(horizontal = 10.dp)
                                 .clip(shape = RoundedCornerShape(10.dp))
                                 .background(Button)
                                 .size(40.dp)
@@ -2007,6 +2013,14 @@ fun CytanniList(
                                         viewModel.autoScrollSpeed(context)
                                     }
                                 })
+                    }
+                    AnimatedVisibility(
+                        viewModel.autoScrollSensor, enter = fadeIn(
+                            tween(
+                                durationMillis = 700, easing = LinearOutSlowInEasing
+                            )
+                        ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
+                    ) {
                         Image(
                             painter = painterResource(R.drawable.plus_auto_scroll), contentDescription = "", modifier = Modifier
                                 .align(Alignment.Bottom)

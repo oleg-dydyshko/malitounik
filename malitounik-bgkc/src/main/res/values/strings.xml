@@ -837,7 +837,6 @@
     <string name="perevod_new_american_bible">BIBLE: (The New American Bible)</string>
     <string name="perevod_new_american_bible_2">The New American Bible</string>
     <string name="perevody">Пераклады Бібліі</string>
-    <string name="biblia_error">Кніга альбо разьдзел не існуе.</string>
     <string name="print">Раздрукаваць</string>
     <string name="system">Сістэмны</string>
     <string name="dzen_noch">Дзень-ноч</string>
@@ -919,9 +918,6 @@
     <string name="not_show">Больш не паказваць</string>
     <string name="sort_custom_help">Каб адсартаваць спіс у адвольным парадку, перацягніце раздзел Бібліі або тэкст у новую пазіцыю, пасля доўгага націску.</string>
     <string name="tts">Прачытаць тэкст</string>
-    <string name="tts_pause">Паўза</string>
-    <string name="tts_stop">Стоп</string>
-    <string name="tts_play">Працягнуць чытаньне</string>
     <string name="tts_help_title">БЕЛАРУСКАЯ МОВА</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

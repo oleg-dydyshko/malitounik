@@ -444,7 +444,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
         var firstLineStartIndex = textLayout?.getLineStart(position) ?: 0
         var firstLineEndIndex = textLayout?.getLineEnd(position, true) ?: 0
         if (firstLineStartIndex == firstLineEndIndex) {
-            for (i in 0..3) {
+            while (true) {
                 position++
                 firstLineStartIndex = textLayout?.getLineStart(position) ?: 0
                 firstLineEndIndex = textLayout?.getLineEnd(position, true) ?: 0
@@ -482,7 +482,6 @@ class BogaslujbovyiaViewModel : ViewModel() {
         var textLin = 0
         for (i in srcTextList.indices) {
             textLin += srcTextList[i].length
-            if (srcTextList[i].contains("color=red")) textLin -= 9
             val t1 = srcTextList[i].indexOf(firstVisableString)
             if (t1 != -1 && textLin >= firstLineStartIndex) {
                 findTTSPosition = i
@@ -493,7 +492,10 @@ class BogaslujbovyiaViewModel : ViewModel() {
     }
 
     fun initTTS(context: Context) {
-        ttsManager = TTSManager(context)
+        ttsManager = TTSManager(context) {
+            isPaused = false
+            isSpeaking = false
+        }
         viewModelScope.launch {
             ttsManager.initialize()
         }
@@ -1235,45 +1237,25 @@ fun Bogaslujbovyia(
                                                     painter = painterResource(R.drawable.format_size), contentDescription = ""
                                                 )
                                             })
-                                            if (viewModel.isSpeaking || viewModel.isPaused) {
-                                                DropdownMenuItem(onClick = {
-                                                    expandedUp = false
-                                                    if (viewModel.isPaused) {
-                                                        viewModel.resume()
-                                                    } else {
-                                                        viewModel.pause()
-                                                    }
-                                                    viewModel.isPaused = !viewModel.isPaused
-                                                }, text = { Text(stringResource(if (viewModel.isPaused) R.string.tts_play else R.string.tts_pause), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                                    Icon(
-                                                        painter = painterResource(if (viewModel.isPaused) R.drawable.play_arrow else R.drawable.pause), contentDescription = ""
-                                                    )
-                                                })
-                                                DropdownMenuItem(onClick = {
-                                                    expandedUp = false
+                                            DropdownMenuItem(onClick = {
+                                                expandedUp = false
+                                                if (viewModel.isSpeaking || viewModel.isPaused) {
                                                     viewModel.isSpeaking = false
                                                     viewModel.isPaused = false
                                                     viewModel.stop()
-                                                }, text = { Text(stringResource(R.string.tts_stop), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                                    Icon(
-                                                        painter = painterResource(R.drawable.stop), contentDescription = ""
-                                                    )
-                                                })
-                                            } else {
-                                                DropdownMenuItem(onClick = {
-                                                    expandedUp = false
+                                                } else {
                                                     if (k.getBoolean("isTTSHelp", true)) {
                                                         dialodTTSHelp = true
                                                     } else {
                                                         viewModel.isSpeaking = true
                                                         viewModel.speak(viewModel.clearTextForTTS(textLayout))
                                                     }
-                                                }, text = { Text(stringResource(R.string.tts), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                                    Icon(
-                                                        painter = painterResource(R.drawable.text_to_speech), contentDescription = ""
-                                                    )
-                                                })
-                                            }
+                                                }
+                                            }, text = { Text(stringResource(R.string.tts), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                                Icon(
+                                                    painter = painterResource(R.drawable.text_to_speech), contentDescription = ""
+                                                )
+                                            })
                                             if (k.getBoolean("admin", false)) {
                                                 HorizontalDivider()
                                                 DropdownMenuItem(onClick = {
@@ -1477,52 +1459,26 @@ fun Bogaslujbovyia(
                                         .navigationBarsPadding(),
                                     horizontalArrangement = Arrangement.SpaceAround
                                 ) {
-                                    if (viewModel.isSpeaking || viewModel.isPaused) {
-                                        PlainTooltip(stringResource(if (viewModel.isPaused) R.string.tts_play else R.string.tts_pause)) {
-                                            IconButton(onClick = {
-                                                if (viewModel.isPaused) {
-                                                    viewModel.resume()
-                                                } else {
-                                                    viewModel.pause()
-                                                }
-                                                viewModel.isPaused = !viewModel.isPaused
-                                            }) {
-                                                Icon(
-                                                    painter = painterResource(if (viewModel.isPaused) R.drawable.play_arrow else R.drawable.pause),
-                                                    contentDescription = "",
-                                                    tint = MaterialTheme.colorScheme.onSecondary
-                                                )
-                                            }
-                                        }
-                                        PlainTooltip(stringResource(R.string.tts_stop)) {
-                                            IconButton(onClick = {
+                                    PlainTooltip(stringResource(R.string.tts)) {
+                                        IconButton(onClick = {
+                                            if (viewModel.isSpeaking || viewModel.isPaused) {
                                                 viewModel.isSpeaking = false
                                                 viewModel.isPaused = false
                                                 viewModel.stop()
-                                            }) {
-                                                Icon(
-                                                    painter = painterResource(R.drawable.stop),
-                                                    contentDescription = "",
-                                                    tint = MaterialTheme.colorScheme.onSecondary
-                                                )
-                                            }
-                                        }
-                                    } else {
-                                        PlainTooltip(stringResource(R.string.tts)) {
-                                            IconButton(onClick = {
+                                            } else {
                                                 if (k.getBoolean("isTTSHelp", true)) {
                                                     dialodTTSHelp = true
                                                 } else {
                                                     viewModel.isSpeaking = true
                                                     viewModel.speak(viewModel.clearTextForTTS(textLayout))
                                                 }
-                                            }) {
-                                                Icon(
-                                                    painter = painterResource(R.drawable.text_to_speech),
-                                                    contentDescription = "",
-                                                    tint = MaterialTheme.colorScheme.onSecondary
-                                                )
                                             }
+                                        }) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.text_to_speech),
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.onSecondary
+                                            )
                                         }
                                     }
                                     PlainTooltip(stringResource(R.string.menu_font_size_app_info)) {
@@ -1850,24 +1806,73 @@ fun Bogaslujbovyia(
                             )
                         }
                     }
-                    AnimatedVisibility(
-                        viewModel.autoScrollSensor, enter = fadeIn(
-                            tween(
-                                durationMillis = 700, easing = LinearOutSlowInEasing
-                            )
-                        ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = if (!isBottomBar || fullscreen) 10.dp else 0.dp, end = 10.dp),
+                        horizontalArrangement = Arrangement.End
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = if (!isBottomBar || fullscreen) 10.dp else 0.dp, end = 10.dp),
-                            horizontalArrangement = Arrangement.End
+                        AnimatedVisibility(
+                            viewModel.isSpeaking || viewModel.isPaused, enter = fadeIn(
+                                tween(
+                                    durationMillis = 700, easing = LinearOutSlowInEasing
+                                )
+                            ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.tts_stop),
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .padding(end = 10.dp)
+                                    .clip(shape = RoundedCornerShape(10.dp))
+                                    .background(Button)
+                                    .size(40.dp)
+                                    .padding(5.dp)
+                                    .clickable {
+                                        viewModel.isSpeaking = false
+                                        viewModel.isPaused = false
+                                        viewModel.stop()
+                                    }
+                            )
+                        }
+                        AnimatedVisibility(
+                            viewModel.isSpeaking || viewModel.isPaused, enter = fadeIn(
+                                tween(
+                                    durationMillis = 700, easing = LinearOutSlowInEasing
+                                )
+                            ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
+                        ) {
+                            Image(
+                                painter = painterResource(if (viewModel.isPaused) R.drawable.tts_play else R.drawable.tts_pause),
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .align(Alignment.Bottom)
+                                    .clip(shape = RoundedCornerShape(10.dp))
+                                    .background(Button)
+                                    .size(40.dp)
+                                    .padding(5.dp)
+                                    .clickable {
+                                        if (viewModel.isPaused) {
+                                            viewModel.resume()
+                                        } else {
+                                            viewModel.pause()
+                                        }
+                                        viewModel.isPaused = !viewModel.isPaused
+                                    }
+                            )
+                        }
+                        AnimatedVisibility(
+                            viewModel.autoScrollSensor, enter = fadeIn(
+                                tween(
+                                    durationMillis = 700, easing = LinearOutSlowInEasing
+                                )
+                            ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
                         ) {
                             Image(
                                 painter = painterResource(R.drawable.minus_auto_scroll),
                                 contentDescription = "",
                                 modifier = Modifier
-                                    .padding(end = 10.dp)
+                                    .padding(horizontal = 10.dp)
                                     .clip(shape = RoundedCornerShape(10.dp))
                                     .background(Button)
                                     .size(40.dp)
@@ -1884,6 +1889,14 @@ fun Bogaslujbovyia(
                                         }
                                     }
                             )
+                        }
+                        AnimatedVisibility(
+                            viewModel.autoScrollSensor, enter = fadeIn(
+                                tween(
+                                    durationMillis = 700, easing = LinearOutSlowInEasing
+                                )
+                            ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
+                        ) {
                             Image(
                                 painter = painterResource(R.drawable.plus_auto_scroll),
                                 contentDescription = "",
@@ -2058,7 +2071,11 @@ fun DialogHelpTTS(onDismiss: (Boolean) -> Unit) {
                         .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
-                Column(modifier = Modifier.verticalScroll(rememberScrollState()).weight(1f, false)) {
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                        .weight(1f, false)
+                ) {
                     HtmlText(text = openAssetsResources(context, "tts_help.html"), modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp)
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -2099,7 +2116,7 @@ fun isLiturgia(dataDayList: ArrayList<String>): Boolean {
     }
 }
 
-class TTSManager(val context: Context) {
+class TTSManager(val context: Context, isDone: () -> Unit) {
     private var tts: TextToSpeech? = null
     private var textList = listOf<String>()
     private var currentSentenceIndex = 0
@@ -2148,6 +2165,9 @@ class TTSManager(val context: Context) {
         }
 
         override fun onDone(utteranceId: String?) {
+            if (currentSentenceIndex == textList.size - 1) {
+                isDone()
+            }
             if (currentSentenceIndex < textList.size - 1 && !isPaused) {
                 currentSentenceIndex++
                 while (true) {
