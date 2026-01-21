@@ -537,17 +537,17 @@ fun getLiturgikon(): SnapshotStateList<BogaslujbovyiaListData> {
 fun getAkafist(): SnapshotStateList<BogaslujbovyiaListData> {
     val list = SnapshotStateList<BogaslujbovyiaListData>()
     list.add(BogaslujbovyiaListData("Пра Акафіст", "bogashlugbovya/akafist0.html", "АКАФІСТЫ"))
-    list.add(BogaslujbovyiaListData("Найсьвяцейшай Багародзіцы", "bogashlugbovya/akafist1.html", "АКАФІСТЫ"))
-    list.add(BogaslujbovyiaListData("Маці Божай Нястомнай Дапамогі", "bogashlugbovya/akafist2.html", "АКАФІСТЫ"))
-    list.add(BogaslujbovyiaListData("перад Жыровіцкай іконай", "bogashlugbovya/akafist3.html", "АКАФІСТЫ"))
-    list.add(BogaslujbovyiaListData("у гонар Падляшскіх мучанікаў", "bogashlugbovya/akafist4.html", "АКАФІСТЫ"))
-    list.add(BogaslujbovyiaListData("Імю Ісусаваму", "bogashlugbovya/akafist5.html", "АКАФІСТЫ"))
-    list.add(BogaslujbovyiaListData("да Духа Сьвятога", "bogashlugbovya/akafist6.html", "АКАФІСТЫ"))
-    list.add(BogaslujbovyiaListData("сьв. Апосталам Пятру і Паўлу", "bogashlugbovya/akafist7.html", "АКАФІСТЫ"))
-    list.add(BogaslujbovyiaListData("Акафіст сьв. Язэпу", "bogashlugbovya/akafist_praviednamu_jazepu.html", "АКАФІСТЫ"))
+    list.add(BogaslujbovyiaListData("Акафіст Найсьвяцейшай Багародзіцы", "bogashlugbovya/akafist1.html", "АКАФІСТЫ"))
+    list.add(BogaslujbovyiaListData("Акафіст Маці Божай Нястомнай Дапамогі", "bogashlugbovya/akafist2.html", "АКАФІСТЫ"))
+    list.add(BogaslujbovyiaListData("Акафіст перад Жыровіцкай іконай Маці Божай", "bogashlugbovya/akafist3.html", "АКАФІСТЫ"))
+    list.add(BogaslujbovyiaListData("Акафіст у гонар мучанікаў Падляшскіх", "bogashlugbovya/akafist4.html", "АКАФІСТЫ"))
+    list.add(BogaslujbovyiaListData("Акафіст Імю Ісусаваму", "bogashlugbovya/akafist5.html", "АКАФІСТЫ"))
+    list.add(BogaslujbovyiaListData("Акафіст да Духа Сьвятога", "bogashlugbovya/akafist6.html", "АКАФІСТЫ"))
+    list.add(BogaslujbovyiaListData("Акафіст сьвятым Апосталам Пятру і Паўлу", "bogashlugbovya/akafist7.html", "АКАФІСТЫ"))
+    list.add(BogaslujbovyiaListData("Акафіст сьвятому Язэпу, Абручніку Найсьвяцейшай Дзевы Марыі", "bogashlugbovya/akafist_praviednamu_jazepu.html", "АКАФІСТЫ"))
     list.add(
         BogaslujbovyiaListData(
-            "Акафіст Росіцкім мучанікам", "bogashlugbovya/akafist_rosickim_muczanikam.html", "АКАФІСТЫ"
+            "Акафіст Росіцкім мучанікам блаславёным Антону і Юрыю", "bogashlugbovya/akafist_rosickim_muczanikam.html", "АКАФІСТЫ"
         )
     )
     return list

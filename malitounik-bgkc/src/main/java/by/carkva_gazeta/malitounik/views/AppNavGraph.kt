@@ -1161,8 +1161,10 @@ fun MainConteiner(
         LaunchedEffect(viewModel.textFieldValueState) {
             if (!currentRoute.contains("Biblia_")) {
                 val edit = zamena(viewModel.textFieldValueState.text)
-                val selection = TextRange(edit.length)
-                viewModel.textFieldValueState = TextFieldValue(edit, selection)
+                if (edit != viewModel.textFieldValueState.text) {
+                    val selection = TextRange(edit.length)
+                    viewModel.textFieldValueState = TextFieldValue(edit, selection)
+                }
             }
         }
         Scaffold(topBar = {
@@ -1192,7 +1194,6 @@ fun MainConteiner(
                                 viewModel.textFieldValueState = newText
                             }, singleLine = true, trailingIcon = {
                                 IconButton(onClick = {
-                                    viewModel.textFieldValueState = TextFieldValue("")
                                     viewModel.textFieldValueState = TextFieldValue("")
                                 }) {
                                     Icon(
