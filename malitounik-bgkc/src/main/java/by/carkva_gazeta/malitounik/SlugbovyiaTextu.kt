@@ -2300,6 +2300,7 @@ class SlugbovyiaTextu {
         datMinALL.add(SlugbovyiaTextuData(366, "31 сьнежня – Адданьне сьвята Нараджэньня Госпада, Бога і Збаўцы нашага Ісуса Хрыста", "bogashlugbovya/mm_31_12_addannie_sviata_rastva_liturhija.html", LITURHIJA))
         datMinALL.add(SlugbovyiaTextuData(366, "31 сьнежня – Адданьне сьвята Нараджэньня Госпада, Бога і Збаўцы нашага Ісуса Хрыста", "bogashlugbovya/mm_31_12_addannie_sviata_rastva_viaczernia.html", VIACZERNIA))
         datMinALL.add(SlugbovyiaTextuData(NIADZELIA_PASLA_RASTVA_PRAV_JAZEPA_CARA_DAVIDA_JAKUBA, "Нядзеля пасьля Нараджэньня Госпада і Збаўцы нашага Ісуса Хрыста. Памяць сьвятых і праведных Язэпа, цара Давіда і Якуба, сваяка Гасподняга", "bogashlugbovya/mm_26_31_ndz_pasla_rastva_prav_jazepa_cara_davida_jakuba_liturhija.html", LITURHIJA))
+        datMinALL.add(SlugbovyiaTextuData(22, "22 студзеня – Апостала Цімафея", "bogashlugbovya/mm_22_01_apostala_cimafieja_viaczernia.html", VIACZERNIA))
     }
 
     fun getNazouSluzby(sluzba: Int): String {
