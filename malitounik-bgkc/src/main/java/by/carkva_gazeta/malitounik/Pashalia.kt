@@ -226,9 +226,7 @@ fun pasxa(context: Context, year: Int): Pashalii {
     }
     val pravas = GregorianCalendar(year, monthPrav - 1, dataPrav)
     val katolic = GregorianCalendar(year, monthP - 1, dataP)
-    val vek = if (year > 1582) year.toString().substring(0, 2)
-    else ""
-    when (vek) {
+    when (year.toString().substring(0, 2)) {
         "15", "16" -> pravas.add(Calendar.DATE, 10)
         "17" -> pravas.add(Calendar.DATE, 11)
         "18" -> pravas.add(Calendar.DATE, 12)

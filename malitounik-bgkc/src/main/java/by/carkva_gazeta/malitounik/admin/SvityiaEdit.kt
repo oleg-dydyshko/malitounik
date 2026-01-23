@@ -312,7 +312,7 @@ fun setDate(context: Context, count: Int = 0, isLoad: (Boolean) -> Unit, dataLis
                     sviatyia.add(list)
                 }
                 val localFile1 = File("${context.filesDir}/cache/cache1.txt")
-                Malitounik.referens.child("/calendar-cytanne_$year.php").getFile(localFile1).addOnCompleteListener {
+                Malitounik.referens.child("/calendar-cytanne_$year.txt").getFile(localFile1).addOnCompleteListener {
                     if (it.isSuccessful) {
                         var countDay = 0
                         var countDayNovyGog = 0
@@ -328,7 +328,7 @@ fun setDate(context: Context, count: Int = 0, isLoad: (Boolean) -> Unit, dataLis
                             }
                         }
                         localFile1.forEachLine { fw ->
-                            if (fw.contains($$"$calendar[]")) {
+                            if (fw.isNotEmpty()) {
                                 var c = Settings.data[calPos + countDay]
                                 var myDayOfPasha = c[22].toInt()
                                 if (c[3].toInt() != year) {
@@ -338,12 +338,9 @@ fun setDate(context: Context, count: Int = 0, isLoad: (Boolean) -> Unit, dataLis
                                 }
                                 countDay++
                                 if (dayOfPascha == myDayOfPasha) {
-                                    val t1 = fw.indexOf("\"cviaty\"=>\"")
-                                    val t2 = fw.indexOf("\", \"")
-                                    val t3 = fw.indexOf($$"\".$ahref.\"")
-                                    val t4 = fw.indexOf("</a>\"")
-                                    val title = fw.substring(t1 + 11, t2)
-                                    val cytanne = fw.substring(t3 + 10, t4)
+                                    val preList = fw.split("<>")
+                                    val title = preList[2]
+                                    val cytanne = preList[3]
                                     dataList(if (sviatyia.isNotEmpty()) sviatyia[c[24].toInt() - 1] else ArrayList(), title, cytanne, dayOfPascha)
                                     return@forEachLine
                                 }

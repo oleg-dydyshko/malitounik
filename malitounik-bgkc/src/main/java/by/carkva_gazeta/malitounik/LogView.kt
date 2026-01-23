@@ -84,7 +84,7 @@ class LogView {
         addItems(pathReference.path, pathReference.name, oldCheckSB)
         for (year in Settings.GET_CALIANDAR_YEAR_MIN..Settings.GET_CALIANDAR_YEAR_MAX) {
             try {
-                pathReference = Malitounik.referens.child("/calendar-cytanne_$year.php")
+                pathReference = Malitounik.referens.child("/calendar-cytanne_$year.txt")
                 addItems(pathReference.path, pathReference.name, oldCheckSB)
             } catch (_: Throwable) {
             }

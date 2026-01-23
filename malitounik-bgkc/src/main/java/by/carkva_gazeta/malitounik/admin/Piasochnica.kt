@@ -775,33 +775,7 @@ class Piasochnica : ViewModel() {
                     val localFile3 = File("${context.filesDir}/cache/cache4.txt")
                     val year = Settings.data[Settings.caliandarPosition][3].toInt()
                     val sb = StringBuilder()
-                    val preList = "<?php\n" +
-                            "/***********************************************************************\n" +
-                            "*                      Літургічны каляндар                             *\n" +
-                            "* ==================================================================== *\n" +
-                            "*                                                                      *\n" +
-                            "* Copyright (c) 2014 by Oleg Dydyshko                                  *\n" +
-                            "* http://carkva-gazeta.by                                              *\n" +
-                            "*                                                                      *\n" +
-                            "* This program is free software. You can redistribute it and/or modify *\n" +
-                            "* it under the terms of the GNU General Public License as published by *\n" +
-                            "* the Free Software Foundation; either version 2 of the License.       *\n" +
-                            "*                                                                      *\n" +
-                            "***********************************************************************/\n" +
-                            "\n" +
-                            "//Здесь Очередные чтения, Святые и праздники привязаные к Пасхе\n" +
-                            "//\n" +
-                            "/*******************************************************************************\n" +
-                            "* Основной формат: Лк 10.38-11.2, Лк 10.38-42                                  *\n" +
-                            "* Допустимые значения: Лк 10.38, 10.38-11.2, 10.38-42, 10.38, 38               *\n" +
-                            "* Недостающие элементы чтений автоматически добавляются из предыдущего чтения  *\n" +
-                            "* Расположение других элементов - произвольно                                  *\n" +
-                            "* Тэг <br> - перенос строки                                                    *\n" +
-                            "* BAG(ошибка): чтение Дз 6.8-7.5, 47-60 выведет Дз 6.8-7.5, Дз 6.47-60         *\n" +
-                            "* BAG 2: Ян 6.35б-39 выведет Ян 6.35-39                                        *\n" +
-                            "********************************************************************************/\n"
-                    sb.append(preList)
-                    Malitounik.referens.child("/calendar-cytanne_$year.php").getFile(localFile1).addOnCompleteListener { task ->
+                    Malitounik.referens.child("/calendar-cytanne_$year.txt").getFile(localFile1).addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             var countDay = 0
                             var countDayNovyGog = 0
@@ -817,7 +791,7 @@ class Piasochnica : ViewModel() {
                                 }
                             }
                             localFile1.forEachLine { fw ->
-                                if (fw.contains($$"$calendar[]")) {
+                                if (fw.isNotEmpty()) {
                                     var c = Settings.data[calPos + countDay]
                                     var myDayOfPasha = c[22].toInt()
                                     if (c[3].toInt() != year) {
@@ -827,13 +801,13 @@ class Piasochnica : ViewModel() {
                                     }
                                     countDay++
                                     if (dayOfPascha == myDayOfPasha) {
-                                        sb.append($$"$calendar[]=array(\"cviaty\"=>\"$${titleCytanne}\", \"cytanne\"=>\"\".$ahref.\"$${cytanne}</a>\");\n")
+                                        val preList = fw.split("<>")
+                                        sb.append(preList[0]).append("<>").append(preList[1]).append("<>").append(titleCytanne).append("<>").append(cytanne).append("\n")
                                     } else {
                                         sb.append("$fw\n")
                                     }
                                 }
                             }
-                            sb.append("?>")
                             localFile3.writer().use {
                                 it.write(sb.toString())
                             }
@@ -842,7 +816,7 @@ class Piasochnica : ViewModel() {
                             Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
                         }
                     }.await()
-                    Malitounik.referens.child("/calendar-cytanne_$year.php").putFile(Uri.fromFile(localFile3)).addOnCompleteListener {
+                    Malitounik.referens.child("/calendar-cytanne_$year.txt").putFile(Uri.fromFile(localFile3)).addOnCompleteListener {
                         if (it.isSuccessful) {
                             Toast.makeText(context, context.getString(R.string.save), Toast.LENGTH_SHORT).show()
                         } else {
