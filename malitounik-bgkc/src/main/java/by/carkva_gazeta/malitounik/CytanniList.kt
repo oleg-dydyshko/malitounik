@@ -2215,7 +2215,7 @@ fun getBible(cytanne: String, perevod: String, biblia: Int, isTitle: Boolean = f
     val result = ArrayList<CytanniListData>()
     var id = 0
     try {
-        var chytNew = cytanne
+        var chytNew = cytanne.replace("A", "").replace("Б", "")
         if (cytanne.contains("Пасл Ер 1") && (perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODNEWAMERICANBIBLE)) {
             chytNew = chytNew.replace("Пасл Ер 1", "Вар 6")
         }
@@ -2424,8 +2424,7 @@ fun getBible(cytanne: String, perevod: String, biblia: Int, isTitle: Boolean = f
                                     id++
                                 }
                             }
-                        } catch (e: Throwable) {
-                            e.printStackTrace()
+                        } catch (_: Throwable) {
                             result.add(CytanniListData(id = id, title = "", text = openAssetsResources(context, "biblia_error.txt")))
                             id++
                         }
