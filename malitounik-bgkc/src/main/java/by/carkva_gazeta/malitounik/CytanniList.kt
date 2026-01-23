@@ -167,6 +167,7 @@ open class CytanniListViewModel : ViewModel() {
     var fireBaseVersionUpdate by mutableStateOf(false)
     var bibleTime by mutableStateOf(false)
     var fireBaseVersion = 1
+    var lazyListPosition by mutableIntStateOf(0)
     private var autoScrollJob: Job? = null
     private var autoScrollTextVisableJob: Job? = null
     private var isFirstDialodVisable = true
@@ -574,9 +575,15 @@ open class CytanniListViewModel : ViewModel() {
     }
 
     fun initTTS(context: Context, perevod: String) {
-        ttsManager = TTSManager(context) {
+        ttsManager = TTSManager(context, speakText = {
+            viewModelScope.launch {
+                lazyListPosition = it
+                listState[selectedIndex].lazyListState.scrollToItem(lazyListPosition)
+            }
+        }) {
             isPaused = false
             isSpeaking = false
+            ttsManager.stop()
         }
         viewModelScope.launch {
             ttsManager.initialize(perevod)
@@ -835,6 +842,8 @@ fun CytanniList(
             }
             viewModel.isSpeaking = true
             viewModel.speak(viewModel.clearTextForTTS(viewModel.listState[viewModel.selectedIndex].item))
+            viewModel.autoScroll(title, false)
+            viewModel.autoScrollSensor = false
             dialodTTSHelp = false
         }
     }
@@ -1083,6 +1092,8 @@ fun CytanniList(
                                         } else {
                                             viewModel.isSpeaking = true
                                             viewModel.speak(viewModel.clearTextForTTS(viewModel.listState[viewModel.selectedIndex].item))
+                                            viewModel.autoScroll(title, false)
+                                            viewModel.autoScrollSensor = false
                                         }
                                     }
                                 }, text = { Text(stringResource(R.string.tts), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
@@ -1115,6 +1126,9 @@ fun CytanniList(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
+                                            viewModel.isPaused = false
+                                            viewModel.isSpeaking = false
+                                            viewModel.stop()
                                             val oldPerevod = perevod
                                             perevod = Settings.PEREVODSEMUXI
                                             if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
@@ -1129,6 +1143,9 @@ fun CytanniList(
                                 ) {
                                     RadioButton(
                                         selected = perevod == Settings.PEREVODSEMUXI, onClick = {
+                                            viewModel.isPaused = false
+                                            viewModel.isSpeaking = false
+                                            viewModel.stop()
                                             val oldPerevod = perevod
                                             perevod = Settings.PEREVODSEMUXI
                                             if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
@@ -1150,6 +1167,9 @@ fun CytanniList(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
+                                            viewModel.isPaused = false
+                                            viewModel.isSpeaking = false
+                                            viewModel.stop()
                                             val oldPerevod = perevod
                                             perevod = Settings.PEREVODBOKUNA
                                             if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
@@ -1164,6 +1184,9 @@ fun CytanniList(
                                 ) {
                                     RadioButton(
                                         selected = perevod == Settings.PEREVODBOKUNA, onClick = {
+                                            viewModel.isPaused = false
+                                            viewModel.isSpeaking = false
+                                            viewModel.stop()
                                             val oldPerevod = perevod
                                             perevod = Settings.PEREVODBOKUNA
                                             if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
@@ -1185,6 +1208,9 @@ fun CytanniList(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
+                                            viewModel.isPaused = false
+                                            viewModel.isSpeaking = false
+                                            viewModel.stop()
                                             val oldPerevod = perevod
                                             perevod = Settings.PEREVODCARNIAUSKI
                                             if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
@@ -1199,6 +1225,9 @@ fun CytanniList(
                                 ) {
                                     RadioButton(
                                         selected = perevod == Settings.PEREVODCARNIAUSKI, onClick = {
+                                            viewModel.isPaused = false
+                                            viewModel.isSpeaking = false
+                                            viewModel.stop()
                                             val oldPerevod = perevod
                                             perevod = Settings.PEREVODCARNIAUSKI
                                             if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
@@ -1220,6 +1249,9 @@ fun CytanniList(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
+                                            viewModel.isPaused = false
+                                            viewModel.isSpeaking = false
+                                            viewModel.stop()
                                             val dir = File("${context.filesDir}/Catolik")
                                             if (!dir.exists()) {
                                                 viewModel.setPerevod = Settings.PEREVODCATOLIK
@@ -1240,6 +1272,9 @@ fun CytanniList(
                                 ) {
                                     RadioButton(
                                         selected = perevod == Settings.PEREVODCATOLIK, onClick = {
+                                            viewModel.isPaused = false
+                                            viewModel.isSpeaking = false
+                                            viewModel.stop()
                                             val dir = File("${context.filesDir}/Catolik")
                                             if (!dir.exists()) {
                                                 viewModel.setPerevod = Settings.PEREVODCATOLIK
@@ -1267,6 +1302,9 @@ fun CytanniList(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
+                                            viewModel.isPaused = false
+                                            viewModel.isSpeaking = false
+                                            viewModel.stop()
                                             val oldPerevod = perevod
                                             perevod = Settings.PEREVODNADSAN
                                             viewModel.setPerevodBible(context, biblia, cytanne, perevod, oldPerevod)
@@ -1274,6 +1312,9 @@ fun CytanniList(
                                 ) {
                                     RadioButton(
                                         selected = perevod == Settings.PEREVODNADSAN, onClick = {
+                                            viewModel.isPaused = false
+                                            viewModel.isSpeaking = false
+                                            viewModel.stop()
                                             val oldPerevod = perevod
                                             perevod = Settings.PEREVODNADSAN
                                             viewModel.setPerevodBible(context, biblia, cytanne, perevod, oldPerevod)
@@ -1288,6 +1329,9 @@ fun CytanniList(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
+                                            viewModel.isPaused = false
+                                            viewModel.isSpeaking = false
+                                            viewModel.stop()
                                             val dir = File("${context.filesDir}/Sinodal")
                                             if (!dir.exists()) {
                                                 viewModel.setPerevod = Settings.PEREVODSINOIDAL
@@ -1307,6 +1351,9 @@ fun CytanniList(
                                 ) {
                                     RadioButton(
                                         selected = perevod == Settings.PEREVODSINOIDAL, onClick = {
+                                            viewModel.isPaused = false
+                                            viewModel.isSpeaking = false
+                                            viewModel.stop()
                                             val dir = File("${context.filesDir}/Sinodal")
                                             if (!dir.exists()) {
                                                 viewModel.setPerevod = Settings.PEREVODSINOIDAL
@@ -1334,6 +1381,9 @@ fun CytanniList(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .clickable {
+                                                viewModel.isPaused = false
+                                                viewModel.isSpeaking = false
+                                                viewModel.stop()
                                                 val dir = File("${context.filesDir}/NewAmericanBible")
                                                 if (!dir.exists()) {
                                                     viewModel.setPerevod = Settings.PEREVODNEWAMERICANBIBLE
@@ -1351,6 +1401,9 @@ fun CytanniList(
                                     ) {
                                         RadioButton(
                                             selected = perevod == Settings.PEREVODNEWAMERICANBIBLE, onClick = {
+                                                viewModel.isPaused = false
+                                                viewModel.isSpeaking = false
+                                                viewModel.stop()
                                                 val dir = File("${context.filesDir}/NewAmericanBible")
                                                 if (!dir.exists()) {
                                                     viewModel.setPerevod = Settings.PEREVODNEWAMERICANBIBLE
@@ -1419,6 +1472,8 @@ fun CytanniList(
                                         } else {
                                             viewModel.isSpeaking = true
                                             viewModel.speak(viewModel.clearTextForTTS(viewModel.listState[viewModel.selectedIndex].item))
+                                            viewModel.autoScroll(title, false)
+                                            viewModel.autoScrollSensor = false
                                         }
                                     }
                                 }) {
@@ -1837,6 +1892,13 @@ fun CytanniList(
                                         }
                                 }
                             ) {
+                                val modifierSpik = if ((viewModel.isPaused || viewModel.isSpeaking) && viewModel.lazyListPosition == index) Modifier
+                                    .clip(shape = RoundedCornerShape(10.dp))
+                                    .border(
+                                        width = 1.dp,
+                                        color = SecondaryText,
+                                        shape = RoundedCornerShape(10.dp)
+                                    ) else Modifier
                                 if (index == 0) {
                                     Spacer(Modifier.padding(top = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp))
                                     if (!(biblia == Settings.CHYTANNI_BIBLIA || biblia == Settings.CHYTANNI_VYBRANAE)) {
@@ -1851,7 +1913,7 @@ fun CytanniList(
                                             else -> stringResource(R.string.title_biblia2)
                                         }
                                         Text(
-                                            modifier = Modifier
+                                            modifier = modifierSpik
                                                 .fillMaxWidth()
                                                 .padding(start = 10.dp, end = 10.dp, top = 10.dp), text = titlePerevod, fontSize = fontSize.sp, lineHeight = fontSize.sp * 1.15, color = SecondaryText
                                         )
@@ -1860,14 +1922,14 @@ fun CytanniList(
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     if (isSelectMode) {
                                         Icon(
-                                            painter = painterResource(if (viewModel.selectState[index]) R.drawable.select_check_box else R.drawable.check_box_outline_blank), contentDescription = "", tint = MaterialTheme.colorScheme.secondary, modifier = Modifier
+                                            painter = painterResource(if ((viewModel.isPaused || viewModel.isSpeaking) && viewModel.selectState[index]) R.drawable.select_check_box else R.drawable.check_box_outline_blank), contentDescription = "", tint = MaterialTheme.colorScheme.secondary, modifier = Modifier
                                                 .padding(start = 5.dp)
                                                 .clickable {
                                                     viewModel.selectState[index] = !viewModel.selectState[index]
                                                 })
                                     }
                                     HtmlText(
-                                        modifier = Modifier
+                                        modifier = modifierSpik
                                             .fillMaxWidth()
                                             .padding(horizontal = 10.dp), text = resultPage[index].text, fontSize = fontSize.sp, color = MaterialTheme.colorScheme.secondary
                                     )

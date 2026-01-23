@@ -24,6 +24,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -43,6 +44,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -146,6 +149,7 @@ import by.carkva_gazeta.malitounik.ui.theme.Post
 import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
+import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
 import by.carkva_gazeta.malitounik.ui.theme.displayFontFamily
 import by.carkva_gazeta.malitounik.views.AppDropdownMenu
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
@@ -190,6 +194,9 @@ class BogaslujbovyiaViewModel : ViewModel() {
     var searshString by mutableStateOf(TextFieldValue(AppNavGraphState.searchBogaslujbovyia, TextRange(AppNavGraphState.searchBogaslujbovyia.length)))
     var searchTextResult by mutableStateOf(AnnotatedString(""))
     var htmlText by mutableStateOf("")
+    val srcTextList = ArrayList<String>()
+    val lazyListState = LazyListState()
+    var lazyListPosition by mutableIntStateOf(0)
     private var findTTSPosition = 0
     private val gson = Gson()
     private val type = TypeToken.getParameterized(ArrayList::class.java, VybranaeDataAll::class.java).type
@@ -437,8 +444,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
         return findList
     }
 
-    fun clearTextForTTS(textLayout: TextLayoutResult?): List<String> {
-        val srcTextList = ArrayList<String>()
+    fun clearTextForTTS(textLayout: TextLayoutResult?) {
         val verticalPosition = scrollState.value.toFloat()
         var position = textLayout?.getLineForVerticalPosition(verticalPosition) ?: 0
         var firstLineStartIndex = textLayout?.getLineStart(position) ?: 0
@@ -463,6 +469,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
         val t4 = firstVisableString.indexOf(":")
         if (t4 != -1) firstVisableString = firstVisableString.substring(t4 + 1).trim()
         val list = htmlText.split("<font color=\"#d00505\">", ignoreCase = true)
+        srcTextList.clear()
         for (i in list.indices) {
             val t1 = list[i].indexOf("</font>")
             if (t1 != -1) {
@@ -488,13 +495,18 @@ class BogaslujbovyiaViewModel : ViewModel() {
                 break
             }
         }
-        return srcTextList
     }
 
     fun initTTS(context: Context) {
-        ttsManager = TTSManager(context) {
+        ttsManager = TTSManager(context, speakText = {
+            viewModelScope.launch {
+                lazyListPosition = it
+                lazyListState.scrollToItem(lazyListPosition)
+            }
+        }) {
             isPaused = false
             isSpeaking = false
+            ttsManager.stop()
         }
         viewModelScope.launch {
             ttsManager.initialize()
@@ -700,7 +712,10 @@ fun Bogaslujbovyia(
                 }
             }
             viewModel.isSpeaking = true
-            viewModel.speak(viewModel.clearTextForTTS(textLayout))
+            viewModel.clearTextForTTS(textLayout)
+            viewModel.speak(viewModel.srcTextList)
+            viewModel.autoScroll(title, false)
+            viewModel.autoScrollSensor = false
             dialodTTSHelp = false
         }
     }
@@ -1248,7 +1263,10 @@ fun Bogaslujbovyia(
                                                         dialodTTSHelp = true
                                                     } else {
                                                         viewModel.isSpeaking = true
-                                                        viewModel.speak(viewModel.clearTextForTTS(textLayout))
+                                                        viewModel.clearTextForTTS(textLayout)
+                                                        viewModel.speak(viewModel.srcTextList)
+                                                        viewModel.autoScroll(title, false)
+                                                        viewModel.autoScrollSensor = false
                                                     }
                                                 }
                                             }, text = { Text(stringResource(R.string.tts), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
@@ -1470,7 +1488,10 @@ fun Bogaslujbovyia(
                                                     dialodTTSHelp = true
                                                 } else {
                                                     viewModel.isSpeaking = true
-                                                    viewModel.speak(viewModel.clearTextForTTS(textLayout))
+                                                    viewModel.clearTextForTTS(textLayout)
+                                                    viewModel.speak(viewModel.srcTextList)
+                                                    viewModel.autoScroll(title, false)
+                                                    viewModel.autoScrollSensor = false
                                                 }
                                             }
                                         }) {
@@ -1647,125 +1668,153 @@ fun Bogaslujbovyia(
                             color = MaterialTheme.colorScheme.secondary
                         )
                     }
-                    Column(
-                        modifier = Modifier
-                            .pointerInput(PointerEventType.Press) {
-                                awaitPointerEventScope {
-                                    while (true) {
-                                        val event = awaitPointerEvent()
-                                        if (event.type == PointerEventType.Press) {
-                                            viewModel.autoScroll(title, false)
-                                        }
-                                        if (viewModel.autoScrollSensor && !isShare && !viewModel.searchText && event.type == PointerEventType.Release && !isScrollRun) {
-                                            viewModel.autoScroll(title, true)
-                                        }
-                                    }
-                                }
-                            }
-                            .pointerInput(Unit) {
-                                detectTapGestures(
-                                    onDoubleTap = {
-                                        fullscreen = !fullscreen
-                                    }
-                                )
-                            }
-                            .nestedScroll(nestedScrollConnection)
-                            .verticalScroll(viewModel.scrollState),
-                        verticalArrangement = Arrangement.Top
-                    ) {
-                        val padding = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp
-                        if (viewModel.autoScrollSensor || !isShare) {
-                            HtmlText(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp))
-                                    .pointerInput(Unit) {
-                                        awaitEachGesture {
-                                            awaitFirstDown()
-                                            do {
-                                                val event = awaitPointerEvent()
-                                                if (event.changes.size == 2) {
-                                                    fontSize *= event.calculateZoom()
-                                                    fontSize = fontSize.coerceIn(18f, 58f)
-                                                    k.edit {
-                                                        putFloat("font_biblia", fontSize)
-                                                    }
-                                                    event.changes.forEach { pointerInputChange: PointerInputChange ->
-                                                        pointerInputChange.consume()
-                                                    }
-                                                }
-                                            } while (event.changes.any { it.pressed })
-                                        }
-                                    },
-                                text = viewModel.htmlText,
-                                title = title,
-                                fontSize = fontSize.sp,
-                                isLiturgia = isLiturgia && isLiturgia(data),
-                                searchText = viewModel.searchTextResult,
-                                scrollState = viewModel.scrollState,
-                                navigateTo = { navigate ->
-                                    navigateTo(navigate, false)
-                                },
-                                textLayoutResult = { layout ->
-                                    textLayout = layout
-                                },
-                                isDialogListinner = { dialog, chastka ->
-                                    when (dialog) {
-                                        DialogListinner.DIALOGQRCODE.name -> {
-                                            dialogQrCode = true
-                                        }
-
-                                        DialogListinner.DIALOGSZTOHOVAHA.name -> {
-                                            dialogSztoHovahaVisable = true
-                                        }
-
-                                        DialogListinner.DIALOGLITURGIA.name -> {
-                                            chast = chastka
-                                            dialogLiturgia = true
-                                        }
-                                    }
-                                }
-                            )
-                        } else {
-                            if (Settings.dzenNoch) {
-                                var text by remember { mutableStateOf(TextFieldValue(AnnotatedString.fromHtml(viewModel.htmlText.replace("#d00505", "#ff6666", true)))) }
-                                BasicTextField(
-                                    modifier = Modifier
+                    val padding = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp
+                    if (viewModel.isPaused || viewModel.isSpeaking) {
+                        LazyColumn(
+                            state = viewModel.lazyListState,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp))
+                        ) {
+                            items(viewModel.srcTextList.size) {
+                                val modifierSpik = if (viewModel.lazyListPosition == it) Modifier
+                                    .clip(shape = RoundedCornerShape(10.dp))
+                                    .border(
+                                        width = 1.dp,
+                                        color = SecondaryText,
+                                        shape = RoundedCornerShape(10.dp)
+                                    ) else Modifier
+                                val spikText = if (viewModel.srcTextList[it].contains("color=red")) "<font color=\"#d00505\">" + viewModel.srcTextList[it].replace("color=red", "") + "</font>"
+                                else viewModel.srcTextList[it]
+                                HtmlText(
+                                    modifier = modifierSpik
                                         .fillMaxWidth()
-                                        .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp)),
-                                    value = text,
-                                    onValueChange = { newText ->
-                                        text = newText
-                                        if (text.getSelectedText().text.isNotEmpty()) {
-                                            selectedText = text.getSelectedText().text
-                                        }
-                                    },
-                                    readOnly = true,
-                                    textStyle = TextStyle(color = MaterialTheme.colorScheme.secondary, fontSize = fontSize.sp, fontFamily = displayFontFamily, letterSpacing = TextUnit(0.5f, TextUnitType.Sp)),
-                                )
-                            } else {
-                                var text by remember { mutableStateOf(TextFieldValue(AnnotatedString.fromHtml(viewModel.htmlText))) }
-                                BasicTextField(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp)),
-                                    value = text,
-                                    onValueChange = { newText ->
-                                        text = newText
-                                        if (text.getSelectedText().text.isNotEmpty()) {
-                                            selectedText = text.getSelectedText().text
-                                        }
-                                    },
-                                    readOnly = true,
-                                    textStyle = TextStyle(color = MaterialTheme.colorScheme.secondary, fontSize = fontSize.sp, fontFamily = displayFontFamily, letterSpacing = TextUnit(0.5f, TextUnitType.Sp)),
+                                        .padding(vertical = 5.dp),
+                                    text = spikText,
+                                    fontSize = fontSize.sp
                                 )
                             }
                         }
-                        if (viewModel.scrollState.lastScrolledForward && !viewModel.scrollState.canScrollForward) {
-                            viewModel.autoScroll(title, false)
-                            viewModel.autoScrollSensor = false
-                            if (!k.getBoolean("power", false)) {
-                                actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    } else {
+                        Column(
+                            modifier = Modifier
+                                .pointerInput(PointerEventType.Press) {
+                                    awaitPointerEventScope {
+                                        while (true) {
+                                            val event = awaitPointerEvent()
+                                            if (event.type == PointerEventType.Press) {
+                                                viewModel.autoScroll(title, false)
+                                            }
+                                            if (viewModel.autoScrollSensor && !isShare && !viewModel.searchText && event.type == PointerEventType.Release && !isScrollRun) {
+                                                viewModel.autoScroll(title, true)
+                                            }
+                                        }
+                                    }
+                                }
+                                .pointerInput(Unit) {
+                                    detectTapGestures(
+                                        onDoubleTap = {
+                                            fullscreen = !fullscreen
+                                        }
+                                    )
+                                }
+                                .nestedScroll(nestedScrollConnection)
+                                .verticalScroll(viewModel.scrollState),
+                            verticalArrangement = Arrangement.Top
+                        ) {
+                            if (viewModel.autoScrollSensor || !isShare) {
+                                HtmlText(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp))
+                                        .pointerInput(Unit) {
+                                            awaitEachGesture {
+                                                awaitFirstDown()
+                                                do {
+                                                    val event = awaitPointerEvent()
+                                                    if (event.changes.size == 2) {
+                                                        fontSize *= event.calculateZoom()
+                                                        fontSize = fontSize.coerceIn(18f, 58f)
+                                                        k.edit {
+                                                            putFloat("font_biblia", fontSize)
+                                                        }
+                                                        event.changes.forEach { pointerInputChange: PointerInputChange ->
+                                                            pointerInputChange.consume()
+                                                        }
+                                                    }
+                                                } while (event.changes.any { it.pressed })
+                                            }
+                                        },
+                                    text = viewModel.htmlText,
+                                    title = title,
+                                    fontSize = fontSize.sp,
+                                    isLiturgia = isLiturgia && isLiturgia(data),
+                                    searchText = viewModel.searchTextResult,
+                                    scrollState = viewModel.scrollState,
+                                    navigateTo = { navigate ->
+                                        navigateTo(navigate, false)
+                                    },
+                                    textLayoutResult = { layout ->
+                                        textLayout = layout
+                                    },
+                                    isDialogListinner = { dialog, chastka ->
+                                        when (dialog) {
+                                            DialogListinner.DIALOGQRCODE.name -> {
+                                                dialogQrCode = true
+                                            }
+
+                                            DialogListinner.DIALOGSZTOHOVAHA.name -> {
+                                                dialogSztoHovahaVisable = true
+                                            }
+
+                                            DialogListinner.DIALOGLITURGIA.name -> {
+                                                chast = chastka
+                                                dialogLiturgia = true
+                                            }
+                                        }
+                                    }
+                                )
+                            } else {
+                                if (Settings.dzenNoch) {
+                                    var text by remember { mutableStateOf(TextFieldValue(AnnotatedString.fromHtml(viewModel.htmlText.replace("#d00505", "#ff6666", true)))) }
+                                    BasicTextField(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp)),
+                                        value = text,
+                                        onValueChange = { newText ->
+                                            text = newText
+                                            if (text.getSelectedText().text.isNotEmpty()) {
+                                                selectedText = text.getSelectedText().text
+                                            }
+                                        },
+                                        readOnly = true,
+                                        textStyle = TextStyle(color = MaterialTheme.colorScheme.secondary, fontSize = fontSize.sp, fontFamily = displayFontFamily, letterSpacing = TextUnit(0.5f, TextUnitType.Sp)),
+                                    )
+                                } else {
+                                    var text by remember { mutableStateOf(TextFieldValue(AnnotatedString.fromHtml(viewModel.htmlText))) }
+                                    BasicTextField(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp)),
+                                        value = text,
+                                        onValueChange = { newText ->
+                                            text = newText
+                                            if (text.getSelectedText().text.isNotEmpty()) {
+                                                selectedText = text.getSelectedText().text
+                                            }
+                                        },
+                                        readOnly = true,
+                                        textStyle = TextStyle(color = MaterialTheme.colorScheme.secondary, fontSize = fontSize.sp, fontFamily = displayFontFamily, letterSpacing = TextUnit(0.5f, TextUnitType.Sp)),
+                                    )
+                                }
+                            }
+                            if (viewModel.scrollState.lastScrolledForward && !viewModel.scrollState.canScrollForward) {
+                                viewModel.autoScroll(title, false)
+                                viewModel.autoScrollSensor = false
+                                if (!k.getBoolean("power", false)) {
+                                    actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                }
                             }
                         }
                     }
@@ -2116,7 +2165,7 @@ fun isLiturgia(dataDayList: ArrayList<String>): Boolean {
     }
 }
 
-class TTSManager(val context: Context, isDone: () -> Unit) {
+class TTSManager(val context: Context, speakText: (Int) -> Unit, isDone: () -> Unit) {
     private var tts: TextToSpeech? = null
     private var textList = listOf<String>()
     private var currentSentenceIndex = 0
@@ -2162,6 +2211,7 @@ class TTSManager(val context: Context, isDone: () -> Unit) {
 
     private val utteranceProgressListener = object : UtteranceProgressListener() {
         override fun onStart(utteranceId: String?) {
+            speakText(currentSentenceIndex)
         }
 
         override fun onDone(utteranceId: String?) {
