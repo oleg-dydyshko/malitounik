@@ -8,10 +8,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.FileProvider
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.storage.ListResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -23,23 +24,21 @@ import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-class LogView {
-
-    companion object {
-        private val checkSB = StringBuilder()
-        private var oldCheckSB = ""
-        private var log = ArrayList<String>()
-        private var logJob: Job? = null
-        private val sb = StringBuilder()
-        var logViewText by mutableStateOf("")
-        var isLogJob by mutableStateOf(false)
-    }
+class LogView : ViewModel() {
+    private val checkSB = StringBuilder()
+    private var oldCheckSB = ""
+    private var log = ArrayList<String>()
+    private val sb = StringBuilder()
+    private var isDistroy = false
+    var logViewText by mutableStateOf("")
+    var isLogJob by mutableStateOf(false)
 
     fun upDateLog(context: Context) {
-        if (logJob?.isActive == true) return
+        if (isLogJob) return
+        isDistroy = false
         log.clear()
         sb.clear()
-        logJob = CoroutineScope(Dispatchers.Main).launch {
+        viewModelScope.launch {
             isLogJob = true
             val localFile = File("${context.filesDir}/cache/cache.txt")
             Malitounik.referens.child("/admin/log.txt").getFile(localFile).await()
@@ -55,12 +54,13 @@ class LogView {
     }
 
     fun onDismiss() {
-        logJob?.cancel()
+        isDistroy = true
+        isLogJob = false
     }
 
     fun checkFiles(context: Context) {
-        logJob?.cancel()
-        logJob = CoroutineScope(Dispatchers.Main).launch {
+        if (isLogJob) return
+        viewModelScope.launch {
             isLogJob = true
             getLogFile(context)
             isLogJob = false
@@ -141,7 +141,7 @@ class LogView {
 
     private suspend fun runPrefixes(list: ListResult, checkList: String) {
         list.prefixes.forEach {
-            if (logJob?.isActive != true) return@forEach
+            if (isDistroy) return@forEach
             if (it.name != "piasochnica") {
                 val list2 = it.list(1000).await()
                 runPrefixes(list2, checkList)
@@ -152,7 +152,7 @@ class LogView {
 
     private suspend fun runItems(list: ListResult, checkList: String) {
         list.items.forEach { storageReference ->
-            if (logJob?.isActive != true) return@forEach
+            if (isDistroy) return@forEach
             addItems(storageReference.path, storageReference.name, checkList)
         }
     }
@@ -191,7 +191,7 @@ class LogView {
     fun createAndSentFile(context: Context) {
         val zip = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "MalitounikResource.zip")
         if (log.isNotEmpty() && Settings.isNetworkAvailable(context)) {
-            logJob = CoroutineScope(Dispatchers.Main).launch {
+            viewModelScope.launch {
                 withContext(Dispatchers.IO) {
                     val out = ZipOutputStream(BufferedOutputStream(FileOutputStream(zip)))
                     val localFile = File("${context.filesDir}/cache/cache.txt")

@@ -168,6 +168,8 @@ open class CytanniListViewModel : ViewModel() {
     var bibleTime by mutableStateOf(false)
     var fireBaseVersion = 1
     var lazyListPosition by mutableIntStateOf(0)
+    var dialodTTSHelp by mutableStateOf(false)
+    var dialodTTSHelpIsError = false
     private var autoScrollJob: Job? = null
     private var autoScrollTextVisableJob: Job? = null
     private var isFirstDialodVisable = true
@@ -575,7 +577,10 @@ open class CytanniListViewModel : ViewModel() {
     }
 
     fun initTTS(context: Context, perevod: String) {
-        ttsManager = TTSManager(context, speakText = {
+        ttsManager = TTSManager(context, langNotSupported = {
+            dialodTTSHelpIsError = true
+            dialodTTSHelp = true
+        }, speakText = {
             viewModelScope.launch {
                 lazyListPosition = it
                 listState[selectedIndex].lazyListState.scrollToItem(lazyListPosition)
@@ -583,7 +588,6 @@ open class CytanniListViewModel : ViewModel() {
         }) {
             isPaused = false
             isSpeaking = false
-            ttsManager.stop()
         }
         viewModelScope.launch {
             ttsManager.initialize(perevod)
@@ -832,19 +836,22 @@ fun CytanniList(
         }
         viewModel.initTTS(context, perevod)
     }
-    var dialodTTSHelp by remember { mutableStateOf(false) }
-    if (dialodTTSHelp) {
-        DialogHelpTTS {
-            if (it) {
+    if (viewModel.dialodTTSHelp) {
+        DialogHelpTTS(perevod = perevod, isError = viewModel.dialodTTSHelpIsError) {
+            if (!viewModel.dialodTTSHelpIsError) {
                 k.edit {
-                    putBoolean("isTTSHelp", false)
+                    putBoolean("isTTSHelp", it)
                 }
+                viewModel.isSpeaking = true
+                viewModel.speak(viewModel.clearTextForTTS(viewModel.listState[viewModel.selectedIndex].item))
+                viewModel.autoScroll(title, false)
+                viewModel.autoScrollSensor = false
+            } else {
+                viewModel.isSpeaking = false
+                viewModel.isPaused = false
             }
-            viewModel.isSpeaking = true
-            viewModel.speak(viewModel.clearTextForTTS(viewModel.listState[viewModel.selectedIndex].item))
-            viewModel.autoScroll(title, false)
-            viewModel.autoScrollSensor = false
-            dialodTTSHelp = false
+            viewModel.dialodTTSHelp = false
+            viewModel.dialodTTSHelpIsError = false
         }
     }
     Scaffold(topBar = {
@@ -1088,7 +1095,7 @@ fun CytanniList(
                                         viewModel.stop()
                                     } else {
                                         if (k.getBoolean("isTTSHelp", true)) {
-                                            dialodTTSHelp = true
+                                            viewModel.dialodTTSHelp = true
                                         } else {
                                             viewModel.isSpeaking = true
                                             viewModel.speak(viewModel.clearTextForTTS(viewModel.listState[viewModel.selectedIndex].item))
@@ -1468,7 +1475,7 @@ fun CytanniList(
                                         viewModel.stop()
                                     } else {
                                         if (k.getBoolean("isTTSHelp", true)) {
-                                            dialodTTSHelp = true
+                                            viewModel.dialodTTSHelp = true
                                         } else {
                                             viewModel.isSpeaking = true
                                             viewModel.speak(viewModel.clearTextForTTS(viewModel.listState[viewModel.selectedIndex].item))
@@ -2215,7 +2222,7 @@ fun getBible(cytanne: String, perevod: String, biblia: Int, isTitle: Boolean = f
     val result = ArrayList<CytanniListData>()
     var id = 0
     try {
-        var chytNew = cytanne.replace("A", "").replace("Б", "")
+        var chytNew = cytanne//.replace("A", "").replace("Б", "")
         if (cytanne.contains("Пасл Ер 1") && (perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODNEWAMERICANBIBLE)) {
             chytNew = chytNew.replace("Пасл Ер 1", "Вар 6")
         }
@@ -2257,11 +2264,11 @@ fun getBible(cytanne: String, perevod: String, biblia: Int, isTitle: Boolean = f
                         val t4 = itemList2.indexOf(".", t1 + 1)
                         if (t4 != -1) {
                             glavaStart = itemList2.substring(t1 + 1, t4).toInt()
-                            styxStart = itemList2.substring(t4 + 1).toInt()
+                            styxStart = itemList2.substring(t4 + 1).replace("Б", "").toInt()
                             styxEnd = styxStart
                         } else {
                             if (list2.size > 1) {
-                                styxStart = itemList2.substring(t1 + 1).toInt()
+                                styxStart = itemList2.substring(t1 + 1).replace("Б", "").toInt()
                                 styxEnd = styxStart
                             } else {
                                 glavaStart = itemList2.substring(t1 + 1).toInt()
@@ -2273,10 +2280,10 @@ fun getBible(cytanne: String, perevod: String, biblia: Int, isTitle: Boolean = f
                         t3 = subItemList.indexOf(".")
                         if (t3 != -1) {
                             glavaStart = subItemList.take(t3).toInt()
-                            styxStart = subItemList.substring(t3 + 1).toInt()
+                            styxStart = subItemList.replace("Б", "").substring(t3 + 1).toInt()
                         } else {
                             if (list2.size > 1) {
-                                styxStart = subItemList.toInt()
+                                styxStart = subItemList.replace("Б", "").toInt()
                             } else {
                                 glavaStart = subItemList.toInt()
                             }
@@ -2285,14 +2292,14 @@ fun getBible(cytanne: String, perevod: String, biblia: Int, isTitle: Boolean = f
                         val t4 = subItemList2.indexOf(".")
                         if (t4 != -1) {
                             glavaEnd = subItemList2.take(t4).toInt()
-                            styxEnd = subItemList2.substring(t4 + 1).toInt()
+                            styxEnd = subItemList2.substring(t4 + 1).replace("A", "").toInt()
                         } else {
                             if (t3 != -1) {
-                                styxEnd = subItemList2.toInt()
+                                styxEnd = subItemList2.replace("A", "").toInt()
                                 glavaEnd = glavaStart
                             } else {
                                 if (list2.size > 1) {
-                                    styxEnd = subItemList2.toInt()
+                                    styxEnd = subItemList2.replace("A", "").toInt()
                                 } else {
                                     glavaEnd = subItemList2.toInt()
                                 }
@@ -2347,6 +2354,14 @@ fun getBible(cytanne: String, perevod: String, biblia: Int, isTitle: Boolean = f
                                 if (!(styxStart == 0 && styxEnd == 0)) run = false
                                 for (w in textBible.indices) {
                                     var textBibleItem = textBible[w].styx
+                                    if (knigaStyxi.contains("Б") && w == 0) {
+                                        val t1 = textBibleItem.indexOf(":")
+                                        if (t1 != -1) textBibleItem = styxStart.toString() + " &#8230; " + textBibleItem.substring(t1 + 1)
+                                    }
+                                    if (knigaStyxi.contains("А") && w == textBible.size - 1) {
+                                        val t1 = textBibleItem.indexOf(":")
+                                        if (t1 != -1) textBibleItem = textBibleItem.take(t1) + " &#8230;"
+                                    }
                                     val listBr = textBibleItem.split("<br>")
                                     if (listBr.size > 1) {
                                         val sb = StringBuilder()

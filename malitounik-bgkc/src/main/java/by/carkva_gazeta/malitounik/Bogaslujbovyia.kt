@@ -197,6 +197,8 @@ class BogaslujbovyiaViewModel : ViewModel() {
     val srcTextList = ArrayList<String>()
     val lazyListState = LazyListState()
     var lazyListPosition by mutableIntStateOf(0)
+    var dialodTTSHelp by mutableStateOf(false)
+    var dialodTTSHelpIsError = false
     private var findTTSPosition = 0
     private val gson = Gson()
     private val type = TypeToken.getParameterized(ArrayList::class.java, VybranaeDataAll::class.java).type
@@ -498,7 +500,10 @@ class BogaslujbovyiaViewModel : ViewModel() {
     }
 
     fun initTTS(context: Context) {
-        ttsManager = TTSManager(context, speakText = {
+        ttsManager = TTSManager(context, langNotSupported = {
+            dialodTTSHelpIsError = true
+            dialodTTSHelp = true
+        }, speakText = {
             viewModelScope.launch {
                 lazyListPosition = it
                 lazyListState.scrollToItem(lazyListPosition)
@@ -506,7 +511,6 @@ class BogaslujbovyiaViewModel : ViewModel() {
         }) {
             isPaused = false
             isSpeaking = false
-            ttsManager.stop()
         }
         viewModelScope.launch {
             ttsManager.initialize()
@@ -703,20 +707,23 @@ fun Bogaslujbovyia(
             dialogSztoHovahaVisable = false
         }
     }
-    var dialodTTSHelp by remember { mutableStateOf(false) }
-    if (dialodTTSHelp) {
-        DialogHelpTTS {
-            if (it) {
+    if (viewModel.dialodTTSHelp) {
+        DialogHelpTTS(isError = viewModel.dialodTTSHelpIsError) {
+            if (!viewModel.dialodTTSHelpIsError) {
                 k.edit {
-                    putBoolean("isTTSHelp", false)
+                    putBoolean("isTTSHelp", it)
                 }
+                viewModel.isSpeaking = true
+                viewModel.clearTextForTTS(textLayout)
+                viewModel.speak(viewModel.srcTextList)
+                viewModel.autoScroll(title, false)
+                viewModel.autoScrollSensor = false
+            } else {
+                viewModel.isSpeaking = false
+                viewModel.isPaused = false
             }
-            viewModel.isSpeaking = true
-            viewModel.clearTextForTTS(textLayout)
-            viewModel.speak(viewModel.srcTextList)
-            viewModel.autoScroll(title, false)
-            viewModel.autoScrollSensor = false
-            dialodTTSHelp = false
+            viewModel.dialodTTSHelp = false
+            viewModel.dialodTTSHelpIsError = false
         }
     }
     SideEffect {
@@ -1260,7 +1267,7 @@ fun Bogaslujbovyia(
                                                     viewModel.stop()
                                                 } else {
                                                     if (k.getBoolean("isTTSHelp", true)) {
-                                                        dialodTTSHelp = true
+                                                        viewModel.dialodTTSHelp = true
                                                     } else {
                                                         viewModel.isSpeaking = true
                                                         viewModel.clearTextForTTS(textLayout)
@@ -1485,7 +1492,7 @@ fun Bogaslujbovyia(
                                                 viewModel.stop()
                                             } else {
                                                 if (k.getBoolean("isTTSHelp", true)) {
-                                                    dialodTTSHelp = true
+                                                    viewModel.dialodTTSHelp = true
                                                 } else {
                                                     viewModel.isSpeaking = true
                                                     viewModel.clearTextForTTS(textLayout)
@@ -2103,7 +2110,7 @@ fun DialogLiturgia(
 }
 
 @Composable
-fun DialogHelpTTS(onDismiss: (Boolean) -> Unit) {
+fun DialogHelpTTS(perevod: String = Settings.PEREVODSEMUXI, isError: Boolean, onDismiss: (Boolean) -> Unit) {
     val context = LocalContext.current
     var isCheck by remember { mutableStateOf(false) }
     Dialog(onDismissRequest = { onDismiss(isCheck) }, properties = DialogProperties(usePlatformDefaultWidth = false)) {
@@ -2114,8 +2121,18 @@ fun DialogHelpTTS(onDismiss: (Boolean) -> Unit) {
             shape = RoundedCornerShape(10.dp),
         ) {
             Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+                val movaTitle = when (perevod) {
+                    Settings.PEREVODSINOIDAL -> stringResource(R.string.tts_help_title_ru)
+                    Settings.PEREVODNEWAMERICANBIBLE -> stringResource(R.string.tts_help_title_en)
+                    else -> stringResource(R.string.tts_help_title_be)
+                }
+                val movaText = when (perevod) {
+                    Settings.PEREVODSINOIDAL -> "расейскай мовы"
+                    Settings.PEREVODNEWAMERICANBIBLE -> "ангельскай мовы"
+                    else -> "беларускай мовы"
+                }
                 Text(
-                    text = stringResource(R.string.tts_help_title), modifier = Modifier
+                    text = movaTitle, modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
@@ -2125,13 +2142,17 @@ fun DialogHelpTTS(onDismiss: (Boolean) -> Unit) {
                         .verticalScroll(rememberScrollState())
                         .weight(1f, false)
                 ) {
-                    HtmlText(text = openAssetsResources(context, "tts_help.html"), modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp)
+                    HtmlText(text = openAssetsResources(context, "tts_help.html").replace("<MOVA/>", movaText), modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp)
                 }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(checked = isCheck, onCheckedChange = {
-                        isCheck = !isCheck
-                    })
-                    Text(text = stringResource(R.string.not_show), modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
+                if (!isError) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Checkbox(checked = isCheck, onCheckedChange = {
+                            isCheck = !isCheck
+                        })
+                        Text(text = stringResource(R.string.not_show), modifier = Modifier.padding(10.dp).clickable {
+                            isCheck = !isCheck
+                        }, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
+                    }
                 }
                 Row(
                     modifier = Modifier
@@ -2165,18 +2186,19 @@ fun isLiturgia(dataDayList: ArrayList<String>): Boolean {
     }
 }
 
-class TTSManager(val context: Context, speakText: (Int) -> Unit, isDone: () -> Unit) {
+class TTSManager(val context: Context, val langNotSupported: () -> Unit, speakText: (Int) -> Unit, isDone: () -> Unit) {
     private var tts: TextToSpeech? = null
     private var textList = listOf<String>()
     private var currentSentenceIndex = 0
     private var isPaused = false
     private var isInitialized = false
+    private var result: Int? = null
 
     @Suppress("DEPRECATION")
     suspend fun initialize(perevod: String = Settings.PEREVODSEMUXI): Boolean = suspendCancellableCoroutine { continuation ->
         tts = TextToSpeech(context) { status ->
             if (status == TextToSpeech.SUCCESS) {
-                val result = tts?.setLanguage(
+                result = tts?.setLanguage(
                     when (perevod) {
                         Settings.PEREVODSINOIDAL -> {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
@@ -2237,6 +2259,7 @@ class TTSManager(val context: Context, speakText: (Int) -> Unit, isDone: () -> U
 
     fun speakLongText(list: List<String>, positionTTS: Int) {
         if (!isInitialized) {
+            if (result == TextToSpeech.LANG_NOT_SUPPORTED) langNotSupported()
             Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
             return
         }

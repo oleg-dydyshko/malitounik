@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -977,7 +978,7 @@ fun MainConteiner(
     var removeAllVybranaeDialog by remember { mutableStateOf(false) }
     var removeAllNatatkiDialog by remember { mutableStateOf(false) }
     var removeAllVybranae by remember { mutableStateOf(false) }
-    var logView by remember { mutableStateOf(false) }
+    var logView by rememberSaveable { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
     if (logView) {
@@ -1544,7 +1545,11 @@ fun MainConteiner(
                             if (!k.getBoolean("adminNotifications", false)) {
                                 DropdownMenuItem(onClick = {
                                     expandedUp = false
-                                    logView = true
+                                    if (Settings.isNetworkAvailable(context)) {
+                                        logView = true
+                                    } else {
+                                        Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+                                    }
                                 }, text = { Text(stringResource(R.string.log_m), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                     Icon(
                                         painter = painterResource(R.drawable.description), contentDescription = ""
@@ -2162,13 +2167,12 @@ fun SearchSviatyia(lazyColumnStateSearchSvityia: LazyListState, innerPadding: Pa
 
 @Composable
 fun DialogLogProgramy(
-    onDismiss: () -> Unit
+    viewModel: LogView = viewModel(), onDismiss: () -> Unit
 ) {
     val context = LocalActivity.current as MainActivity
     context.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-    val logView = LogView()
     LaunchedEffect(Unit) {
-        logView.upDateLog(context)
+        viewModel.upDateLog(context)
     }
     Dialog(onDismissRequest = { onDismiss() }, DialogProperties(dismissOnClickOutside = false, dismissOnBackPress = false)) {
         Card(
@@ -2192,11 +2196,11 @@ fun DialogLogProgramy(
                 ) {
                     HtmlText(
                         modifier = Modifier.clickable {
-                            logView.checkFiles(context)
-                        }, text = LogView.logViewText, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
+                            viewModel.checkFiles(context)
+                        }, text = viewModel.logViewText, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
                     )
                 }
-                if (LogView.isLogJob) {
+                if (viewModel.isLogJob) {
                     Row(
                         modifier = Modifier
                             .align(Alignment.End)
@@ -2205,7 +2209,7 @@ fun DialogLogProgramy(
                     ) {
                         TextButton(
                             onClick = {
-                                logView.onDismiss()
+                                viewModel.onDismiss()
                                 onDismiss()
                             }, shape = MaterialTheme.shapes.small
                         ) {
@@ -2222,7 +2226,7 @@ fun DialogLogProgramy(
                     ) {
                         TextButton(
                             onClick = {
-                                logView.onDismiss()
+                                viewModel.onDismiss()
                                 onDismiss()
                             }, shape = MaterialTheme.shapes.small
                         ) {
@@ -2231,7 +2235,7 @@ fun DialogLogProgramy(
                         }
                         TextButton(
                             onClick = {
-                                logView.createAndSentFile(context)
+                                viewModel.createAndSentFile(context)
                                 onDismiss()
                             }, shape = MaterialTheme.shapes.small
                         ) {
