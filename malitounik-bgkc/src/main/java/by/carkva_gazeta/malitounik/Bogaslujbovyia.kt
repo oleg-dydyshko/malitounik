@@ -1676,7 +1676,7 @@ fun Bogaslujbovyia(
                         )
                     }
                     val padding = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp
-                    if (viewModel.isPaused || viewModel.isSpeaking) {
+                    if ((viewModel.isPaused || viewModel.isSpeaking) && !isShare) {
                         LazyColumn(
                             state = viewModel.lazyListState,
                             modifier = Modifier
