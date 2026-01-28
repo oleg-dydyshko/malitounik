@@ -455,9 +455,17 @@ class BogaslujbovyiaViewModel : ViewModel() {
             val list2 = list[i].split("<font color=\"#d00505\">")
             when {
                 list2.size == 1 -> {
-                    if (isRed) srcListTTS.add(TTS("", list[i], list[i] + "<br>"))
-                    else srcListTTS.add(TTS(list[i], "", list[i] + "<br>"))
+                    var srcText = ""
+                    var srcNoSpikText = ""
                     val t1 = list2[0].indexOf("</font>")
+                    if (t1 != -1) {
+                        srcNoSpikText = list2[0].take(t1 + 7)
+                        srcText = list2[0].substring(t1 + 7)
+                    } else {
+                        if (isRed) srcNoSpikText = list[i]
+                        else srcText = list[i]
+                    }
+                    srcListTTS.add(TTS(srcText, srcNoSpikText, list[i] + "<br>"))
                     if (t1 != -1) {
                         isRed = false
                     }
