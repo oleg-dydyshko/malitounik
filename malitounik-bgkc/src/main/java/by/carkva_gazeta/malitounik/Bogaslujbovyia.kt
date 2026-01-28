@@ -37,6 +37,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
@@ -194,7 +195,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
     var searshString by mutableStateOf(TextFieldValue(AppNavGraphState.searchBogaslujbovyia, TextRange(AppNavGraphState.searchBogaslujbovyia.length)))
     var searchTextResult by mutableStateOf(AnnotatedString(""))
     var htmlText by mutableStateOf("")
-    val srcTextList = ArrayList<String>()
+    val srcListTTS = ArrayList<TTS>()
     val lazyListState = LazyListState()
     var lazyListPosition by mutableIntStateOf(0)
     var dialodTTSHelp by mutableStateOf(false)
@@ -446,7 +447,52 @@ class BogaslujbovyiaViewModel : ViewModel() {
         return findList
     }
 
-    fun clearTextForTTS(textLayout: TextLayoutResult?) {
+    fun creteTTSList(textLayout: TextLayoutResult?, ttsPosition: Int = 0) {
+        srcListTTS.clear()
+        val list = htmlText.replace("\n", "").split("<br><br>")
+        var isRed = false
+        for (i in list.indices) {
+            val list2 = list[i].split("<font color=\"#d00505\">")
+            when {
+                list2.size == 1 -> {
+                    if (isRed) srcListTTS.add(TTS("", list[i], list[i] + "<br>"))
+                    else srcListTTS.add(TTS(list[i], "", list[i] + "<br>"))
+                    val t1 = list2[0].indexOf("</font>")
+                    if (t1 != -1) {
+                        isRed = false
+                    }
+                }
+
+                list2.size > 1 -> {
+                    var srcText = ""
+                    var srcTexPost = list2[0]
+                    var srcNoSpikText = ""
+                    val t2 = list2[0].indexOf("</font>")
+                    if (t2 != -1) {
+                        srcNoSpikText += list2[0].take(t2 + 7)
+                        srcText += list2[0].substring(t2 + 7)
+                    } else {
+                        srcText = list2[0]
+                        srcTexPost = list2[0]
+                    }
+                    for (e in 1 until list2.size) {
+                        val t1 = list2[e].indexOf("</font>")
+                        if (t1 != -1) {
+                            srcNoSpikText += "<font color=\"#d00505\">" + list2[e].take(t1 + 7)
+                            srcText += list2[e].substring(t1 + 7)
+                            isRed = false
+                        } else {
+                            srcNoSpikText += "<font color=\"#d00505\">" + list2[e]
+                            isRed = true
+                        }
+                        srcTexPost += "<font color=\"#d00505\">" + list2[e]
+                    }
+                    srcListTTS.add(TTS(srcText, srcNoSpikText, "$srcTexPost<br>"))
+                }
+
+                else -> srcListTTS.add(TTS("", "", ""))
+            }
+        }
         val verticalPosition = scrollState.value.toFloat()
         var position = textLayout?.getLineForVerticalPosition(verticalPosition) ?: 0
         var firstLineStartIndex = textLayout?.getLineStart(position) ?: 0
@@ -460,42 +506,17 @@ class BogaslujbovyiaViewModel : ViewModel() {
             }
         }
         val textH = AnnotatedString.fromHtml(htmlText).text
-        var t1 = textH.indexOf(".", firstLineStartIndex)
-        var t2 = textH.indexOf("!", firstLineStartIndex)
-        var t3 = textH.indexOf("?", firstLineStartIndex)
-        if (t1 == -1) t1 = firstLineEndIndex
-        if (t2 == -1) t2 = firstLineEndIndex
-        if (t3 == -1) t3 = firstLineEndIndex
-        val min = minOf(t1, t2, t3)
-        var firstVisableString = textH.substring(firstLineStartIndex, min).replace("*", "")
-        val t4 = firstVisableString.indexOf(":")
-        if (t4 != -1) firstVisableString = firstVisableString.substring(t4 + 1).trim()
-        val list = htmlText.split("<font color=\"#d00505\">", ignoreCase = true)
-        srcTextList.clear()
-        for (i in list.indices) {
-            val t1 = list[i].indexOf("</font>")
-            if (t1 != -1) {
-                srcTextList.add("color=red" + list[i].take(t1))
-                val textString = list[i].substring(t1 + 7)
-                val preList = textString.split("[.!?]".toRegex()).map { it.trim() }.filter { it.isNotEmpty() }
-                for (e in preList.indices) {
-                    val anots = AnnotatedString.fromHtml(preList[e].replace("*", "")).text
-                    if (anots.isNotEmpty()) srcTextList.add(anots)
+        val firstVisableString = textH.substring(firstLineStartIndex, firstLineEndIndex)
+        if (ttsPosition == 0) {
+            findTTSPosition = 0
+            for (i in srcListTTS.indices) {
+                val t1 = AnnotatedString.fromHtml(srcListTTS[i].srcTextPost).text.indexOf(firstVisableString)
+                if (t1 != -1) {
+                    findTTSPosition = i
                 }
-            } else {
-                val anots = AnnotatedString.fromHtml(list[i].replace("*", "")).text
-                if (anots.isNotEmpty()) srcTextList.add(anots)
             }
-        }
-        findTTSPosition = 0
-        var textLin = 0
-        for (i in srcTextList.indices) {
-            textLin += srcTextList[i].length
-            val t1 = srcTextList[i].indexOf(firstVisableString)
-            if (t1 != -1 && textLin >= firstLineStartIndex) {
-                findTTSPosition = i
-                break
-            }
+        } else {
+            findTTSPosition = ttsPosition
         }
     }
 
@@ -517,7 +538,12 @@ class BogaslujbovyiaViewModel : ViewModel() {
         }
     }
 
-    fun speak(list: List<String>) {
+    fun speak() {
+        val list = ArrayList<String>()
+        for (i in srcListTTS.indices) {
+            val text = (AnnotatedString.fromHtml(srcListTTS[i].srcText).text).replace("*", "")
+            list.add(text)
+        }
         ttsManager.speakLongText(list, findTTSPosition)
     }
 
@@ -714,8 +740,8 @@ fun Bogaslujbovyia(
                     putBoolean("isTTSHelp", it)
                 }
                 viewModel.isSpeaking = true
-                viewModel.clearTextForTTS(textLayout)
-                viewModel.speak(viewModel.srcTextList)
+                viewModel.creteTTSList(textLayout)
+                viewModel.speak()
                 viewModel.autoScroll(title, false)
                 viewModel.autoScrollSensor = false
             } else {
@@ -794,6 +820,21 @@ fun Bogaslujbovyia(
         } else {
             AppNavGraphState.bottomSheetScaffoldIsVisible = false
         }
+    }
+    LaunchedEffect(viewModel.searshString) {
+        var edit = viewModel.searshString.text
+        edit = edit.replace("и", "і")
+        edit = edit.replace("щ", "ў")
+        edit = edit.replace("И", "І")
+        edit = edit.replace("Щ", "Ў")
+        edit = edit.replace("ъ", "'")
+        viewModel.searchTextResult = AnnotatedString("")
+        if (edit != viewModel.searshString.text) {
+            val selection = TextRange(edit.length)
+            viewModel.searshString = TextFieldValue(edit, selection)
+        }
+        AppNavGraphState.searchBogaslujbovyia = viewModel.searshString.text
+        viewModel.search(textLayout)
     }
     var paddingValues by remember { mutableStateOf(PaddingValues()) }
     BottomSheetScaffold(
@@ -976,16 +1017,7 @@ fun Bogaslujbovyia(
                                         },
                                     value = viewModel.searshString,
                                     onValueChange = { newText ->
-                                        var edit = newText.text
-                                        edit = edit.replace("и", "і")
-                                        edit = edit.replace("щ", "ў")
-                                        edit = edit.replace("И", "І")
-                                        edit = edit.replace("Щ", "Ў")
-                                        edit = edit.replace("ъ", "'")
-                                        viewModel.searchTextResult = AnnotatedString("")
-                                        viewModel.searshString = TextFieldValue(edit, newText.selection)
-                                        AppNavGraphState.searchBogaslujbovyia = viewModel.searshString.text
-                                        viewModel.search(textLayout)
+                                        viewModel.searshString = newText
                                     },
                                     singleLine = true,
                                     leadingIcon = {
@@ -1153,38 +1185,40 @@ fun Bogaslujbovyia(
                                         }
                                     }
                                     if (!iskniga && !isBottomBar) {
-                                        if (viewModel.scrollState.canScrollForward) {
-                                            val iconAutoScroll = if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
-                                            else painterResource(R.drawable.play_circle)
-                                            PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play), TooltipAnchorPosition.Below) {
-                                                IconButton(onClick = {
-                                                    viewModel.autoScrollSensor = !viewModel.autoScrollSensor
-                                                    viewModel.autoScroll(title, viewModel.autoScrollSensor)
-                                                    if (viewModel.autoScrollSensor) {
-                                                        actyvity.window.addFlags(
-                                                            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                        if (!(viewModel.isSpeaking || viewModel.isPaused)) {
+                                            if (viewModel.scrollState.canScrollForward) {
+                                                val iconAutoScroll = if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
+                                                else painterResource(R.drawable.play_circle)
+                                                PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play), TooltipAnchorPosition.Below) {
+                                                    IconButton(onClick = {
+                                                        viewModel.autoScrollSensor = !viewModel.autoScrollSensor
+                                                        viewModel.autoScroll(title, viewModel.autoScrollSensor)
+                                                        if (viewModel.autoScrollSensor) {
+                                                            actyvity.window.addFlags(
+                                                                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                                            )
+                                                        } else if (!k.getBoolean("power", false)) {
+                                                            actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                                        }
+                                                    }) {
+                                                        Icon(
+                                                            iconAutoScroll,
+                                                            contentDescription = "",
+                                                            tint = MaterialTheme.colorScheme.onSecondary
                                                         )
-                                                    } else if (!k.getBoolean("power", false)) {
-                                                        actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                                                     }
-                                                }) {
-                                                    Icon(
-                                                        iconAutoScroll,
-                                                        contentDescription = "",
-                                                        tint = MaterialTheme.colorScheme.onSecondary
-                                                    )
                                                 }
-                                            }
-                                        } else if (viewModel.scrollState.canScrollBackward) {
-                                            PlainTooltip(stringResource(R.string.auto_up), TooltipAnchorPosition.Below) {
-                                                IconButton(onClick = {
-                                                    isUpList = true
-                                                }) {
-                                                    Icon(
-                                                        painter = painterResource(R.drawable.arrow_upward),
-                                                        contentDescription = "",
-                                                        tint = MaterialTheme.colorScheme.onSecondary
-                                                    )
+                                            } else if (viewModel.scrollState.canScrollBackward) {
+                                                PlainTooltip(stringResource(R.string.auto_up), TooltipAnchorPosition.Below) {
+                                                    IconButton(onClick = {
+                                                        isUpList = true
+                                                    }) {
+                                                        Icon(
+                                                            painter = painterResource(R.drawable.arrow_upward),
+                                                            contentDescription = "",
+                                                            tint = MaterialTheme.colorScheme.onSecondary
+                                                        )
+                                                    }
                                                 }
                                             }
                                         }
@@ -1270,8 +1304,8 @@ fun Bogaslujbovyia(
                                                         viewModel.dialodTTSHelp = true
                                                     } else {
                                                         viewModel.isSpeaking = true
-                                                        viewModel.clearTextForTTS(textLayout)
-                                                        viewModel.speak(viewModel.srcTextList)
+                                                        viewModel.creteTTSList(textLayout)
+                                                        viewModel.speak()
                                                         viewModel.autoScroll(title, false)
                                                         viewModel.autoScrollSensor = false
                                                     }
@@ -1495,8 +1529,8 @@ fun Bogaslujbovyia(
                                                     viewModel.dialodTTSHelp = true
                                                 } else {
                                                     viewModel.isSpeaking = true
-                                                    viewModel.clearTextForTTS(textLayout)
-                                                    viewModel.speak(viewModel.srcTextList)
+                                                    viewModel.creteTTSList(textLayout)
+                                                    viewModel.speak()
                                                     viewModel.autoScroll(title, false)
                                                     viewModel.autoScrollSensor = false
                                                 }
@@ -1570,39 +1604,41 @@ fun Bogaslujbovyia(
                                             )
                                         }
                                     }
-                                    if (viewModel.scrollState.canScrollForward) {
-                                        val iconAutoScroll =
-                                            if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
-                                            else painterResource(R.drawable.play_circle)
-                                        PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play)) {
-                                            IconButton(onClick = {
-                                                viewModel.autoScrollSensor = !viewModel.autoScrollSensor
-                                                viewModel.autoScroll(title, viewModel.autoScrollSensor)
-                                                if (viewModel.autoScrollSensor) {
-                                                    actyvity.window.addFlags(
-                                                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                    if (!(viewModel.isSpeaking || viewModel.isPaused)) {
+                                        if (viewModel.scrollState.canScrollForward) {
+                                            val iconAutoScroll =
+                                                if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
+                                                else painterResource(R.drawable.play_circle)
+                                            PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play)) {
+                                                IconButton(onClick = {
+                                                    viewModel.autoScrollSensor = !viewModel.autoScrollSensor
+                                                    viewModel.autoScroll(title, viewModel.autoScrollSensor)
+                                                    if (viewModel.autoScrollSensor) {
+                                                        actyvity.window.addFlags(
+                                                            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                                        )
+                                                    } else if (!k.getBoolean("power", false)) {
+                                                        actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                                    }
+                                                }) {
+                                                    Icon(
+                                                        iconAutoScroll,
+                                                        contentDescription = "",
+                                                        tint = MaterialTheme.colorScheme.onSecondary
                                                     )
-                                                } else if (!k.getBoolean("power", false)) {
-                                                    actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                                                 }
-                                            }) {
-                                                Icon(
-                                                    iconAutoScroll,
-                                                    contentDescription = "",
-                                                    tint = MaterialTheme.colorScheme.onSecondary
-                                                )
                                             }
-                                        }
-                                    } else if (viewModel.scrollState.canScrollBackward) {
-                                        PlainTooltip(stringResource(R.string.auto_up)) {
-                                            IconButton(onClick = {
-                                                isUpList = true
-                                            }) {
-                                                Icon(
-                                                    painter = painterResource(R.drawable.arrow_upward),
-                                                    contentDescription = "",
-                                                    tint = MaterialTheme.colorScheme.onSecondary
-                                                )
+                                        } else if (viewModel.scrollState.canScrollBackward) {
+                                            PlainTooltip(stringResource(R.string.auto_up)) {
+                                                IconButton(onClick = {
+                                                    isUpList = true
+                                                }) {
+                                                    Icon(
+                                                        painter = painterResource(R.drawable.arrow_upward),
+                                                        contentDescription = "",
+                                                        tint = MaterialTheme.colorScheme.onSecondary
+                                                    )
+                                                }
                                             }
                                         }
                                     }
@@ -1681,25 +1717,53 @@ fun Bogaslujbovyia(
                             state = viewModel.lazyListState,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp))
+                                .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp))
+                                .pointerInput(PointerEventType.Press) {
+                                    awaitPointerEventScope {
+                                        while (true) {
+                                            val event = awaitPointerEvent()
+                                            if (event.changes.size == 2) {
+                                                fontSize *= event.calculateZoom()
+                                                fontSize = fontSize.coerceIn(18f, 58f)
+                                                k.edit {
+                                                    putFloat("font_biblia", fontSize)
+                                                }
+                                                event.changes.forEach { pointerInputChange: PointerInputChange ->
+                                                    pointerInputChange.consume()
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                         ) {
-                            items(viewModel.srcTextList.size) {
-                                val modifierSpik = if (viewModel.lazyListPosition == it) Modifier
+                            items(viewModel.srcListTTS.size) {position ->
+                                val modifierSpik = if (viewModel.lazyListPosition == position) Modifier
                                     .clip(shape = RoundedCornerShape(10.dp))
                                     .border(
                                         width = 1.dp,
                                         color = SecondaryText,
                                         shape = RoundedCornerShape(10.dp)
                                     ) else Modifier
-                                val spikText = if (viewModel.srcTextList[it].contains("color=red")) "<font color=\"#d00505\">" + viewModel.srcTextList[it].replace("color=red", "") + "</font>"
-                                else viewModel.srcTextList[it]
                                 HtmlText(
                                     modifier = modifierSpik
                                         .fillMaxWidth()
-                                        .padding(vertical = 5.dp),
-                                    text = spikText,
+                                        .pointerInput(Unit) {
+                                            detectTapGestures(
+                                                onTap = {
+                                                    viewModel.stop()
+                                                    viewModel.creteTTSList(textLayout, position)
+                                                    viewModel.speak()
+                                                },
+                                                onDoubleTap = {
+                                                    fullscreen = !fullscreen
+                                                })
+                                        },
+                                    text = viewModel.srcListTTS[position].srcTextPost,
                                     fontSize = fontSize.sp
                                 )
+                            }
+                            item {
+                                Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp)))
                             }
                         }
                     } else {
@@ -2149,9 +2213,11 @@ fun DialogHelpTTS(perevod: String = Settings.PEREVODSEMUXI, isError: Boolean, on
                         Checkbox(checked = isCheck, onCheckedChange = {
                             isCheck = !isCheck
                         })
-                        Text(text = stringResource(R.string.not_show), modifier = Modifier.padding(10.dp).clickable {
-                            isCheck = !isCheck
-                        }, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
+                        Text(text = stringResource(R.string.not_show), modifier = Modifier
+                            .padding(10.dp)
+                            .clickable {
+                                isCheck = !isCheck
+                            }, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
                     }
                 }
                 Row(
@@ -2253,6 +2319,7 @@ class TTSManager(val context: Context, val langNotSupported: () -> Unit, speakTe
             }
         }
 
+        @Deprecated("Deprecated in Java")
         override fun onError(utteranceId: String?) {
         }
     }
@@ -2315,3 +2382,5 @@ data class VybranaeDataAll(
     val title: String,
     val resource: String,
 )
+
+data class TTS(val srcText: String, val noSpikText: String, val srcTextPost: String)

@@ -198,6 +198,17 @@ fun MalitvyListAll(
     var textFieldValueState by remember { mutableStateOf("") }
     var backPressHandled by remember { mutableStateOf(false) }
     val collapsedState = remember(listPrynagodnyia) { listPrynagodnyia.map { AppNavGraphState.setItemsValue(it.title, true) }.toMutableStateList() }
+    LaunchedEffect(textFieldValueState) {
+        var edit = textFieldValueState
+        edit = edit.replace("и", "і")
+        edit = edit.replace("щ", "ў")
+        edit = edit.replace("И", "І")
+        edit = edit.replace("Щ", "Ў")
+        edit = edit.replace("ъ", "'")
+        if (edit != textFieldValueState) {
+            textFieldValueState = edit
+        }
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -236,13 +247,7 @@ fun MalitvyListAll(
                                         textFieldLoaded = true
                                     }
                                 }, value = textFieldValueState, onValueChange = { newText ->
-                                var edit = newText
-                                edit = edit.replace("и", "і")
-                                edit = edit.replace("щ", "ў")
-                                edit = edit.replace("И", "І")
-                                edit = edit.replace("Щ", "Ў")
-                                edit = edit.replace("ъ", "'")
-                                textFieldValueState = edit
+                                textFieldValueState = newText
                             }, singleLine = true, leadingIcon = {
                                 Icon(
                                     painter = painterResource(R.drawable.search), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""

@@ -594,8 +594,8 @@ open class CytanniListViewModel : ViewModel() {
         }
     }
 
-    fun speak(list: List<String>) {
-        ttsManager.speakLongText(list, listState[selectedIndex].lazyListState.firstVisibleItemIndex)
+    fun speak(list: List<String>, position: Int = listState[selectedIndex].lazyListState.firstVisibleItemIndex) {
+        ttsManager.speakLongText(list, position)
     }
 
     fun pause() {
@@ -984,34 +984,36 @@ fun CytanniList(
                             LaunchedEffect(expandedUp) {
                                 if (viewModel.autoScrollSensor && !dialogRazdel && !showDropdown) viewModel.autoScroll(title, !expandedUp)
                             }
-                            if (viewModel.listState[viewModel.selectedIndex].lazyListState.canScrollForward) {
-                                val iconAutoScroll = if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
-                                else painterResource(R.drawable.play_circle)
-                                PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play), TooltipAnchorPosition.Below) {
-                                    IconButton(onClick = {
-                                        viewModel.autoScrollSensor = !viewModel.autoScrollSensor
-                                        viewModel.autoScroll(title, viewModel.autoScrollSensor)
-                                        if (viewModel.autoScrollSensor) {
-                                            actyvity.window.addFlags(
-                                                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                            if (!(viewModel.isSpeaking || viewModel.isPaused)) {
+                                if (viewModel.listState[viewModel.selectedIndex].lazyListState.canScrollForward) {
+                                    val iconAutoScroll = if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
+                                    else painterResource(R.drawable.play_circle)
+                                    PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play), TooltipAnchorPosition.Below) {
+                                        IconButton(onClick = {
+                                            viewModel.autoScrollSensor = !viewModel.autoScrollSensor
+                                            viewModel.autoScroll(title, viewModel.autoScrollSensor)
+                                            if (viewModel.autoScrollSensor) {
+                                                actyvity.window.addFlags(
+                                                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                                )
+                                            } else if (!k.getBoolean("power", false)) {
+                                                actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                            }
+                                        }) {
+                                            Icon(
+                                                iconAutoScroll, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                             )
-                                        } else if (!k.getBoolean("power", false)) {
-                                            actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                                         }
-                                    }) {
-                                        Icon(
-                                            iconAutoScroll, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                        )
                                     }
-                                }
-                            } else if (viewModel.listState[viewModel.selectedIndex].lazyListState.canScrollBackward) {
-                                PlainTooltip(stringResource(R.string.auto_up), TooltipAnchorPosition.Below) {
-                                    IconButton(onClick = {
-                                        isUpList = true
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.arrow_upward), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                        )
+                                } else if (viewModel.listState[viewModel.selectedIndex].lazyListState.canScrollBackward) {
+                                    PlainTooltip(stringResource(R.string.auto_up), TooltipAnchorPosition.Below) {
+                                        IconButton(onClick = {
+                                            isUpList = true
+                                        }) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.arrow_upward), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -1566,34 +1568,36 @@ fun CytanniList(
                                     }
                                 }
                             }
-                            if (viewModel.listState[viewModel.selectedIndex].lazyListState.canScrollForward) {
-                                val iconAutoScroll = if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
-                                else painterResource(R.drawable.play_circle)
-                                PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play)) {
-                                    IconButton(onClick = {
-                                        viewModel.autoScrollSensor = !viewModel.autoScrollSensor
-                                        viewModel.autoScroll(title, viewModel.autoScrollSensor)
-                                        if (viewModel.autoScrollSensor) {
-                                            actyvity.window.addFlags(
-                                                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                            if (!(viewModel.isSpeaking || viewModel.isPaused)) {
+                                if (viewModel.listState[viewModel.selectedIndex].lazyListState.canScrollForward) {
+                                    val iconAutoScroll = if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
+                                    else painterResource(R.drawable.play_circle)
+                                    PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play)) {
+                                        IconButton(onClick = {
+                                            viewModel.autoScrollSensor = !viewModel.autoScrollSensor
+                                            viewModel.autoScroll(title, viewModel.autoScrollSensor)
+                                            if (viewModel.autoScrollSensor) {
+                                                actyvity.window.addFlags(
+                                                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                                )
+                                            } else if (!k.getBoolean("power", false)) {
+                                                actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                            }
+                                        }) {
+                                            Icon(
+                                                painter = iconAutoScroll, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                             )
-                                        } else if (!k.getBoolean("power", false)) {
-                                            actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                                         }
-                                    }) {
-                                        Icon(
-                                            painter = iconAutoScroll, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                        )
                                     }
-                                }
-                            } else if (viewModel.listState[viewModel.selectedIndex].lazyListState.canScrollBackward) {
-                                PlainTooltip(stringResource(R.string.auto_up)) {
-                                    IconButton(onClick = {
-                                        isUpList = true
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.arrow_upward), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                                        )
+                                } else if (viewModel.listState[viewModel.selectedIndex].lazyListState.canScrollBackward) {
+                                    PlainTooltip(stringResource(R.string.auto_up)) {
+                                        IconButton(onClick = {
+                                            isUpList = true
+                                        }) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.arrow_upward), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -1878,9 +1882,14 @@ fun CytanniList(
                                     Modifier
                                         .pointerInput(Unit) {
                                             detectTapGestures(onTap = {
-                                                if (!isSelectMode && isParallel && resultPage[index].parallel != "+-+") {
-                                                    isParallelVisable = true
-                                                    paralelChtenia = resultPage[index].parallel
+                                                if (viewModel.isPaused || viewModel.isSpeaking) {
+                                                    viewModel.stop()
+                                                    viewModel.speak(viewModel.clearTextForTTS(viewModel.listState[viewModel.selectedIndex].item), index)
+                                                } else {
+                                                    if (!isSelectMode && isParallel && resultPage[index].parallel != "+-+") {
+                                                        isParallelVisable = true
+                                                        paralelChtenia = resultPage[index].parallel
+                                                    }
                                                 }
                                                 if (isSelectMode) {
                                                     viewModel.selectState[index] = !viewModel.selectState[index]
