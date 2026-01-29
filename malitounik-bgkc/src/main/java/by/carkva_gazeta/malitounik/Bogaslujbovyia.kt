@@ -452,20 +452,35 @@ class BogaslujbovyiaViewModel : ViewModel() {
         val list = htmlText.replace("\n", "").split("<br><br>")
         var isRed = false
         for (i in list.indices) {
+            var bold = ""
             val list2 = list[i].split("<font color=\"#d00505\">")
+            val t3 = list[i].indexOf("</strong>")
+            if (t3 != -1) {
+                val t4 = list[i].indexOf("<strong>")
+                if (t4 == -1 || t3 < t4) {
+                    bold = "<strong>"
+                }
+            }
             when {
                 list2.size == 1 -> {
                     var srcText = ""
                     var srcNoSpikText = ""
                     val t1 = list2[0].indexOf("</font>")
+                    var tegN = ""
+                    var tegK = ""
                     if (t1 != -1) {
                         srcNoSpikText = list2[0].take(t1 + 7)
                         srcText = list2[0].substring(t1 + 7)
                     } else {
-                        if (isRed) srcNoSpikText = list[i]
-                        else srcText = list[i]
+                        if (isRed) {
+                            srcNoSpikText = list[i]
+                            tegN = "<font color=\"#d00505\">"
+                            tegK = "</font>"
+                        } else {
+                            srcText = list[i]
+                        }
                     }
-                    srcListTTS.add(TTS(srcText, srcNoSpikText, list[i] + "<br>"))
+                    srcListTTS.add(TTS(srcText, srcNoSpikText, bold + tegN + list[i] + "$tegK<br>"))
                     if (t1 != -1) {
                         isRed = false
                     }
@@ -495,7 +510,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
                         }
                         srcTexPost += "<font color=\"#d00505\">" + list2[e]
                     }
-                    srcListTTS.add(TTS(srcText, srcNoSpikText, "$srcTexPost<br>"))
+                    srcListTTS.add(TTS(srcText, srcNoSpikText, "$bold$srcTexPost<br>"))
                 }
 
                 else -> srcListTTS.add(TTS("", "", ""))
@@ -534,7 +549,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
         }, speakText = {
             viewModelScope.launch {
                 lazyListPosition = it
-                lazyListState.scrollToItem(lazyListPosition)
+                //lazyListState.scrollToItem(lazyListPosition)
             }
         }) {
             isPaused = false
@@ -1726,7 +1741,7 @@ fun Bogaslujbovyia(
                             state = viewModel.lazyListState,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp))
+                                .padding(top = padding.plus(10.dp))
                                 .pointerInput(PointerEventType.Press) {
                                     awaitPointerEventScope {
                                         while (true) {
@@ -1755,6 +1770,7 @@ fun Bogaslujbovyia(
                                     ) else Modifier
                                 HtmlText(
                                     modifier = modifierSpik
+                                        .padding(start = 10.dp, end = 10.dp)
                                         .fillMaxWidth()
                                         .pointerInput(Unit) {
                                             detectTapGestures(
@@ -1938,6 +1954,7 @@ fun Bogaslujbovyia(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .clickable(interactionSource = interactionSourse, indication = null) {}
                             .padding(bottom = if (!isBottomBar || fullscreen) 10.dp else 0.dp, end = 10.dp),
                         horizontalArrangement = Arrangement.End
                     ) {
