@@ -169,7 +169,7 @@ open class CytanniListViewModel : ViewModel() {
     var fireBaseVersion = 1
     var lazyListPosition by mutableIntStateOf(0)
     var dialodTTSHelp by mutableStateOf(false)
-    var dialodTTSHelpIsError = false
+    var dialodTTSHelpError by mutableStateOf(false)
     private var autoScrollJob: Job? = null
     private var autoScrollTextVisableJob: Job? = null
     private var isFirstDialodVisable = true
@@ -578,8 +578,7 @@ open class CytanniListViewModel : ViewModel() {
 
     fun initTTS(context: Context, perevod: String) {
         ttsManager = TTSManager(context, langNotSupported = {
-            dialodTTSHelpIsError = true
-            dialodTTSHelp = true
+            dialodTTSHelpError = true
         }, speakText = {
             viewModelScope.launch {
                 lazyListPosition = it
@@ -836,22 +835,24 @@ fun CytanniList(
         }
         viewModel.initTTS(context, perevod)
     }
+    if (viewModel.dialodTTSHelpError) {
+        viewModel.dialodTTSHelp = false
+        DialogHelpTTS(perevod = perevod, isError = true) {
+            viewModel.isSpeaking = false
+            viewModel.isPaused = false
+            viewModel.dialodTTSHelpError = false
+        }
+    }
     if (viewModel.dialodTTSHelp) {
-        DialogHelpTTS(perevod = perevod, isError = viewModel.dialodTTSHelpIsError) {
-            if (!viewModel.dialodTTSHelpIsError) {
-                k.edit {
-                    putBoolean("isTTSHelp", it)
-                }
-                viewModel.isSpeaking = true
-                viewModel.speak(viewModel.clearTextForTTS(viewModel.listState[viewModel.selectedIndex].item))
-                viewModel.autoScroll(title, false)
-                viewModel.autoScrollSensor = false
-            } else {
-                viewModel.isSpeaking = false
-                viewModel.isPaused = false
+        DialogHelpTTS(perevod = perevod, isError = false) {
+            k.edit {
+                putBoolean("isTTSHelp", it)
             }
+            viewModel.isSpeaking = true
+            viewModel.speak(viewModel.clearTextForTTS(viewModel.listState[viewModel.selectedIndex].item))
+            viewModel.autoScroll(title, false)
+            viewModel.autoScrollSensor = false
             viewModel.dialodTTSHelp = false
-            viewModel.dialodTTSHelpIsError = false
         }
     }
     Scaffold(topBar = {
@@ -1096,7 +1097,7 @@ fun CytanniList(
                                         viewModel.isPaused = false
                                         viewModel.stop()
                                     } else {
-                                        if (k.getBoolean("isTTSHelp", true)) {
+                                        if (k.getBoolean("isTTSHelp", true) && !(perevod == Settings.PEREVODSINOIDAL || perevod == Settings.PEREVODNEWAMERICANBIBLE)) {
                                             viewModel.dialodTTSHelp = true
                                         } else {
                                             viewModel.isSpeaking = true
@@ -1476,7 +1477,7 @@ fun CytanniList(
                                         viewModel.isPaused = false
                                         viewModel.stop()
                                     } else {
-                                        if (k.getBoolean("isTTSHelp", true)) {
+                                        if (k.getBoolean("isTTSHelp", true) && !(perevod == Settings.PEREVODSINOIDAL || perevod == Settings.PEREVODNEWAMERICANBIBLE)) {
                                             viewModel.dialodTTSHelp = true
                                         } else {
                                             viewModel.isSpeaking = true

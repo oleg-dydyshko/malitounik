@@ -199,7 +199,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
     val lazyListState = LazyListState()
     var lazyListPosition by mutableIntStateOf(0)
     var dialodTTSHelp by mutableStateOf(false)
-    var dialodTTSHelpIsError = false
+    var dialodTTSHelpError by mutableStateOf(false)
     private var findTTSPosition = 0
     private val gson = Gson()
     private val type = TypeToken.getParameterized(ArrayList::class.java, VybranaeDataAll::class.java).type
@@ -530,8 +530,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
 
     fun initTTS(context: Context) {
         ttsManager = TTSManager(context, langNotSupported = {
-            dialodTTSHelpIsError = true
-            dialodTTSHelp = true
+            dialodTTSHelpError = true
         }, speakText = {
             viewModelScope.launch {
                 lazyListPosition = it
@@ -741,23 +740,25 @@ fun Bogaslujbovyia(
             dialogSztoHovahaVisable = false
         }
     }
+    if (viewModel.dialodTTSHelpError) {
+        viewModel.dialodTTSHelp = false
+        DialogHelpTTS(perevod = Settings.PEREVODSEMUXI, isError = true) {
+            viewModel.isSpeaking = false
+            viewModel.isPaused = false
+            viewModel.dialodTTSHelpError = false
+        }
+    }
     if (viewModel.dialodTTSHelp) {
-        DialogHelpTTS(isError = viewModel.dialodTTSHelpIsError) {
-            if (!viewModel.dialodTTSHelpIsError) {
-                k.edit {
-                    putBoolean("isTTSHelp", it)
-                }
-                viewModel.isSpeaking = true
-                viewModel.creteTTSList(textLayout)
-                viewModel.speak()
-                viewModel.autoScroll(title, false)
-                viewModel.autoScrollSensor = false
-            } else {
-                viewModel.isSpeaking = false
-                viewModel.isPaused = false
+        DialogHelpTTS(isError = false) {
+            k.edit {
+                putBoolean("isTTSHelp", it)
             }
+            viewModel.isSpeaking = true
+            viewModel.creteTTSList(textLayout)
+            viewModel.speak()
+            viewModel.autoScroll(title, false)
+            viewModel.autoScrollSensor = false
             viewModel.dialodTTSHelp = false
-            viewModel.dialodTTSHelpIsError = false
         }
     }
     SideEffect {
@@ -1744,7 +1745,7 @@ fun Bogaslujbovyia(
                                     }
                                 }
                         ) {
-                            items(viewModel.srcListTTS.size) {position ->
+                            items(viewModel.srcListTTS.size) { position ->
                                 val modifierSpik = if (viewModel.lazyListPosition == position) Modifier
                                     .clip(shape = RoundedCornerShape(10.dp))
                                     .border(
@@ -2221,11 +2222,13 @@ fun DialogHelpTTS(perevod: String = Settings.PEREVODSEMUXI, isError: Boolean, on
                         Checkbox(checked = isCheck, onCheckedChange = {
                             isCheck = !isCheck
                         })
-                        Text(text = stringResource(R.string.not_show), modifier = Modifier
-                            .padding(10.dp)
-                            .clickable {
-                                isCheck = !isCheck
-                            }, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
+                        Text(
+                            text = stringResource(R.string.not_show), modifier = Modifier
+                                .padding(10.dp)
+                                .clickable {
+                                    isCheck = !isCheck
+                                }, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
+                        )
                     }
                 }
                 Row(
