@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -327,6 +328,7 @@ fun openAssetsResources(context: Context, fileName: String): String {
             result = reader.readText()
         }
     } catch (_: FileNotFoundException) {
+        Log.d("Oleg2", "$fileName error")
         val inputStream = context.assets.open("bogashlugbovya_error.html")
         val isr = InputStreamReader(inputStream)
         val reader = BufferedReader(isr)

@@ -272,7 +272,7 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
-                49, "Зыход Сьвятога Духа (Сёмуха)", "bogashlugbovya/paniadzielak_sv_ducha_niadziela_uvieczary_viaczernia.html", VIACZERNIA_UVIECZARY, pasxa = true, mineia = MINEIA_KVETNAIA
+                49, "Зыход Сьвятога Духа (Сёмуха)", "bogashlugbovya/paniadzielak_sv_ducha_ndz_viaczaram.html", VIACZERNIA_UVIECZARY, pasxa = true, mineia = MINEIA_KVETNAIA
             )
         )
         datMinALL.add(

@@ -451,70 +451,87 @@ class BogaslujbovyiaViewModel : ViewModel() {
         srcListTTS.clear()
         val list = htmlText.replace("\n", "").split("<br><br>")
         var isRed = false
+        var isBold = false
+        var isEm = false
         for (i in list.indices) {
+            var red = ""
             var bold = ""
-            val list2 = list[i].split("<font color=\"#d00505\">")
+            var em = ""
+            var positionN = 0
+            var positionK = 0
+            var positionKold = -1
+            val spikText = StringBuilder()
+            while (true) {
+                val t1 = list[i].indexOf("<font color=\"#d00505\">", positionN)
+                if (t1 != -1 && t1 < positionKold) {
+                    positionN += 22
+                    continue
+                }
+                val t2 = list[i].indexOf("</font>", positionK)
+                if (isRed) {
+                    red = "<font color=\"#d00505\">"
+                    if (t2 != -1) {
+                        isRed = false
+                        positionN = t2 + 7
+                        positionK = t2 + 7
+                        positionKold = t2
+                        continue
+                    } else {
+                        break
+                    }
+                } else {
+                    if (t1 != -1) {
+                        if (t2 != -1) {
+                            spikText.append(
+                                if (positionN == 0) list[i].take(t1)
+                                else list[i].substring(positionKold + 7, t1)
+                            )
+                            positionN = t1 + 22
+                            positionK = t2 + 7
+                            positionKold = t2
+                            continue
+                        } else {
+                            isRed = true
+                            if (positionKold != -1) spikText.append(list[i].substring(positionKold + 7, t1))
+                            else spikText.append(list[i].take(t1))
+                            break
+                        }
+                    } else if (t2 != -1) {
+                        red = "<font color=\"#d00505\">"
+                        spikText.append(list[i].substring(t2 + 7))
+                        break
+                    } else {
+                        if (positionN == 0) spikText.append(list[i])
+                        if (positionK < list[i].length) spikText.append(list[i].substring(positionK))
+                        break
+                    }
+                }
+            }
+            val t5 = list[i].indexOf("<strong>")
             val t3 = list[i].indexOf("</strong>")
+            if (isBold) bold = "<strong>"
             if (t3 != -1) {
-                val t4 = list[i].indexOf("<strong>")
-                if (t4 == -1 || t3 < t4) {
+                isBold = false
+                if (t5 == -1 || t3 < t5) {
                     bold = "<strong>"
                 }
             }
-            when {
-                list2.size == 1 -> {
-                    var srcText = ""
-                    var srcNoSpikText = ""
-                    val t1 = list2[0].indexOf("</font>")
-                    var tegN = ""
-                    var tegK = ""
-                    if (t1 != -1) {
-                        srcNoSpikText = list2[0].take(t1 + 7)
-                        srcText = list2[0].substring(t1 + 7)
-                    } else {
-                        if (isRed) {
-                            srcNoSpikText = list[i]
-                            tegN = "<font color=\"#d00505\">"
-                            tegK = "</font>"
-                        } else {
-                            srcText = list[i]
-                        }
-                    }
-                    srcListTTS.add(TTS(srcText, srcNoSpikText, bold + tegN + list[i] + "$tegK<br>"))
-                    if (t1 != -1) {
-                        isRed = false
-                    }
-                }
-
-                list2.size > 1 -> {
-                    var srcText = ""
-                    var srcTexPost = list2[0]
-                    var srcNoSpikText = ""
-                    val t2 = list2[0].indexOf("</font>")
-                    if (t2 != -1) {
-                        srcNoSpikText += list2[0].take(t2 + 7)
-                        srcText += list2[0].substring(t2 + 7)
-                    } else {
-                        srcText = list2[0]
-                        srcTexPost = list2[0]
-                    }
-                    for (e in 1 until list2.size) {
-                        val t1 = list2[e].indexOf("</font>")
-                        if (t1 != -1) {
-                            srcNoSpikText += "<font color=\"#d00505\">" + list2[e].take(t1 + 7)
-                            srcText += list2[e].substring(t1 + 7)
-                            isRed = false
-                        } else {
-                            srcNoSpikText += "<font color=\"#d00505\">" + list2[e]
-                            isRed = true
-                        }
-                        srcTexPost += "<font color=\"#d00505\">" + list2[e]
-                    }
-                    srcListTTS.add(TTS(srcText, srcNoSpikText, "$bold$srcTexPost<br>"))
-                }
-
-                else -> srcListTTS.add(TTS("", "", ""))
+            if (t5 != -1 && t3 == -1) {
+                isBold = true
             }
+            val t6 = list[i].indexOf("<em>")
+            val t4 = list[i].indexOf("</em>")
+            if (isEm) em = "<em>"
+            if (t4 != -1) {
+                isEm = false
+                if (t6 == -1 || t4 < t6) {
+                    em = "<em>"
+                }
+            }
+            if (t6 != -1 && t4 == -1) {
+                isEm = true
+            }
+            srcListTTS.add(TTS(spikText.toString(), red + em + bold + list[i] + "<br>"))
         }
         val verticalPosition = scrollState.value.toFloat()
         var position = textLayout?.getLineForVerticalPosition(verticalPosition) ?: 0
@@ -533,7 +550,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
         if (ttsPosition == 0) {
             findTTSPosition = 0
             for (i in srcListTTS.indices) {
-                val t1 = AnnotatedString.fromHtml(srcListTTS[i].srcTextPost).text.indexOf(firstVisableString)
+                val t1 = AnnotatedString.fromHtml(srcListTTS[i].textFull).text.indexOf(firstVisableString)
                 if (t1 != -1) {
                     findTTSPosition = i
                 }
@@ -563,7 +580,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
     fun speak() {
         val list = ArrayList<String>()
         for (i in srcListTTS.indices) {
-            val text = (AnnotatedString.fromHtml(srcListTTS[i].srcText).text).replace("*", "")
+            val text = (AnnotatedString.fromHtml(srcListTTS[i].textSpik).text).replace("*", "")
             list.add(text)
         }
         ttsManager.speakLongText(list, findTTSPosition)
@@ -1783,7 +1800,7 @@ fun Bogaslujbovyia(
                                                     fullscreen = !fullscreen
                                                 })
                                         },
-                                    text = viewModel.srcListTTS[position].srcTextPost,
+                                    text = viewModel.srcListTTS[position].textFull,
                                     fontSize = fontSize.sp
                                 )
                             }
@@ -2143,12 +2160,12 @@ fun DialogLiturgia(
         }
 
         11 -> {
-            filename = "bogashlugbovya/viaczernia_bierascie_1.html"
+            filename = "viaczernia_bierascie_1.html"
             title = stringResource(R.string.viaczernia_bierascie_1)
         }
 
         13 -> {
-            filename = "bogashlugbovya/viaczernia_bierascie_3.html"
+            filename = "viaczernia_bierascie_3.html"
             title = stringResource(R.string.viaczernia_bierascie_3)
         }
 
@@ -2411,4 +2428,4 @@ data class VybranaeDataAll(
     val resource: String,
 )
 
-data class TTS(val srcText: String, val noSpikText: String, val srcTextPost: String)
+data class TTS(val textSpik: String, val textFull: String)

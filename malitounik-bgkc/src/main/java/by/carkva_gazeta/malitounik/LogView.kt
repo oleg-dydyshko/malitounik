@@ -4,12 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Environment
+import android.util.Base64
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import by.carkva_gazeta.malitounik.views.openAssetsResources
 import com.google.firebase.storage.ListResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +24,7 @@ import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.security.MessageDigest
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
@@ -167,7 +171,26 @@ class LogView : ViewModel() {
             addItems(path, name, checkList, count + 1)
             return
         }
-        val md5Sum = meta.md5Hash ?: 0
+        val t1 = path.lastIndexOf("/")
+        val localPach = when {
+            path.contains("bogashlugbovya/") -> "bogashlugbovya/" + path.substring(t1 + 1)
+            path.contains("prynagodnyia/") -> "prynagodnyia/" + path.substring(t1 + 1)
+            path.contains("parafii_bgkc/") -> "parafii_bgkc/" + path.substring(t1 + 1)
+            path.contains("pesny/") -> "pesny/" + path.substring(t1 + 1)
+            path.contains("other_files/") -> path.substring(t1 + 1)
+            path.contains("calendar") -> path.substring(t1 + 1)
+            else -> "bogashlugbovya/" + path.substring(t1 + 1)
+        }
+        val md5Sum = meta.md5Hash ?: "0"
+        val messageDigest = MessageDigest.getInstance("MD5")
+        messageDigest.reset()
+        messageDigest.update(openAssetsResources(Malitounik.applicationContext(), localPach).toByteArray())
+        val digest = messageDigest.digest()
+        val md5sumLocalFile = Base64.encodeToString(digest, Base64.DEFAULT).trim()
+        if (md5Sum != md5sumLocalFile) {
+            Log.d("Oleg", localPach)
+            log.add(path)
+        }
         sb.append("<name>")
         sb.append(name)
         sb.append("</name>")
@@ -180,10 +203,10 @@ class LogView : ViewModel() {
             val t3 = checkList.indexOf("</md5>", t2)
             val filemd5Sum = checkList.substring(t2 + 5, t3)
             if (filemd5Sum != md5Sum) {
-                log.add(path)
+                //log.add(path)
             }
         } else {
-            log.add(path)
+            //log.add(path)
         }
         logViewText = path
     }
