@@ -454,84 +454,88 @@ class BogaslujbovyiaViewModel : ViewModel() {
         var isBold = false
         var isEm = false
         for (i in list.indices) {
-            var red = ""
-            var bold = ""
-            var em = ""
-            var positionN = 0
-            var positionK = 0
-            var positionKold = -1
-            val spikText = StringBuilder()
-            while (true) {
-                val t1 = list[i].indexOf("<font color=\"#d00505\">", positionN)
-                if (t1 != -1 && t1 < positionKold) {
-                    positionN += 22
-                    continue
-                }
-                val t2 = list[i].indexOf("</font>", positionK)
-                if (isRed) {
-                    red = "<font color=\"#d00505\">"
-                    if (t2 != -1) {
-                        isRed = false
-                        positionN = t2 + 7
-                        positionK = t2 + 7
-                        positionKold = t2
+            try {
+                var red = ""
+                var bold = ""
+                var em = ""
+                var positionN = 0
+                var positionK = 0
+                var positionKold = -1
+                val spikText = StringBuilder()
+                while (true) {
+                    val t1 = list[i].indexOf("<font color=\"#d00505\">", positionN)
+                    if (t1 != -1 && t1 < positionKold) {
+                        positionN += 22
                         continue
-                    } else {
-                        break
                     }
-                } else {
-                    if (t1 != -1) {
+                    val t2 = list[i].indexOf("</font>", positionK)
+                    if (isRed) {
+                        red = "<font color=\"#d00505\">"
                         if (t2 != -1) {
-                            spikText.append(
-                                if (positionN == 0) list[i].take(t1)
-                                else list[i].substring(positionKold + 7, t1)
-                            )
-                            positionN = t1 + 22
+                            isRed = false
+                            positionN = t2 + 7
                             positionK = t2 + 7
                             positionKold = t2
                             continue
                         } else {
-                            isRed = true
-                            if (positionKold != -1) spikText.append(list[i].substring(positionKold + 7, t1))
-                            else spikText.append(list[i].take(t1))
                             break
                         }
-                    } else if (t2 != -1) {
-                        red = "<font color=\"#d00505\">"
-                        spikText.append(list[i].substring(t2 + 7))
-                        break
                     } else {
-                        if (positionN == 0) spikText.append(list[i])
-                        if (positionK < list[i].length) spikText.append(list[i].substring(positionK))
-                        break
+                        if (t1 != -1) {
+                            if (t2 != -1) {
+                                spikText.append(
+                                    if (positionN == 0) list[i].take(t1)
+                                    else list[i].substring(positionKold + 7, t1)
+                                )
+                                positionN = t1 + 22
+                                positionK = t2 + 7
+                                positionKold = t2
+                                continue
+                            } else {
+                                isRed = true
+                                if (positionKold != -1) spikText.append(list[i].substring(positionKold + 7, t1))
+                                else spikText.append(list[i].take(t1))
+                                break
+                            }
+                        } else if (t2 != -1) {
+                            red = "<font color=\"#d00505\">"
+                            spikText.append(list[i].substring(t2 + 7))
+                            break
+                        } else {
+                            if (positionN == 0) spikText.append(list[i])
+                            if (positionK < list[i].length) spikText.append(list[i].substring(positionK))
+                            break
+                        }
                     }
                 }
-            }
-            val t5 = list[i].indexOf("<strong>")
-            val t3 = list[i].indexOf("</strong>")
-            if (isBold) bold = "<strong>"
-            if (t3 != -1) {
-                isBold = false
-                if (t5 == -1 || t3 < t5) {
-                    bold = "<strong>"
+                val t5 = list[i].indexOf("<strong>")
+                val t3 = list[i].indexOf("</strong>")
+                if (isBold) bold = "<strong>"
+                if (t3 != -1) {
+                    isBold = false
+                    if (t5 == -1 || t3 < t5) {
+                        bold = "<strong>"
+                    }
                 }
-            }
-            if (t5 != -1 && t3 == -1) {
-                isBold = true
-            }
-            val t6 = list[i].indexOf("<em>")
-            val t4 = list[i].indexOf("</em>")
-            if (isEm) em = "<em>"
-            if (t4 != -1) {
-                isEm = false
-                if (t6 == -1 || t4 < t6) {
-                    em = "<em>"
+                if (t5 != -1 && t3 == -1) {
+                    isBold = true
                 }
+                val t6 = list[i].indexOf("<em>")
+                val t4 = list[i].indexOf("</em>")
+                if (isEm) em = "<em>"
+                if (t4 != -1) {
+                    isEm = false
+                    if (t6 == -1 || t4 < t6) {
+                        em = "<em>"
+                    }
+                }
+                if (t6 != -1 && t4 == -1) {
+                    isEm = true
+                }
+                srcListTTS.add(TTS(spikText.toString(), red + em + bold + list[i] + "<br>"))
+            } catch (_: Throwable) {
+                srcListTTS.add(TTS(list[i], list[i] + "<br>"))
             }
-            if (t6 != -1 && t4 == -1) {
-                isEm = true
-            }
-            srcListTTS.add(TTS(spikText.toString(), red + em + bold + list[i] + "<br>"))
         }
         val verticalPosition = scrollState.value.toFloat()
         var position = textLayout?.getLineForVerticalPosition(verticalPosition) ?: 0
@@ -566,7 +570,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
         }, speakText = {
             viewModelScope.launch {
                 lazyListPosition = it
-                //lazyListState.scrollToItem(lazyListPosition)
+                lazyListState.scrollToItem(lazyListPosition)
             }
         }) {
             isPaused = false

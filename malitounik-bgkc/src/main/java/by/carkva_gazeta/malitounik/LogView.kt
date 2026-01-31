@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Environment
 import android.util.Base64
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -29,10 +28,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 class LogView : ViewModel() {
-    private val checkSB = StringBuilder()
-    private var oldCheckSB = ""
     private var log = ArrayList<String>()
-    private val sb = StringBuilder()
     private var isDistroy = false
     var logViewText by mutableStateOf("")
     var isLogJob by mutableStateOf(false)
@@ -41,7 +37,6 @@ class LogView : ViewModel() {
         if (isLogJob) return
         isDistroy = false
         log.clear()
-        sb.clear()
         viewModelScope.launch {
             isLogJob = true
             val localFile = File("${context.filesDir}/cache/cache.txt")
@@ -71,29 +66,18 @@ class LogView : ViewModel() {
         }
     }
 
-    private suspend fun getLogFile(context: Context, count: Int = 0): ArrayList<String> {
-        val localFile = File("${context.filesDir}/cache/log.txt")
-        var error = false
-        Malitounik.referens.child("/admin/adminListFile.txt").getFile(localFile).addOnFailureListener {
-            error = true
-        }.await()
-        if (error && count < 3) {
-            getLogFile(context, count + 1)
-            return log
-        }
-        oldCheckSB = localFile.readText()
+    private suspend fun getLogFile(context: Context): ArrayList<String> {
         val list = Malitounik.referens.child("/admin").list(1000).await()
-        runPrefixes(list, oldCheckSB)
+        runPrefixes(list)
         var pathReference = Malitounik.referens.child("/calendarsviatyia.txt")
-        addItems(pathReference.path, pathReference.name, oldCheckSB)
+        addItems(pathReference.path, pathReference.name)
         for (year in Settings.GET_CALIANDAR_YEAR_MIN..Settings.GET_CALIANDAR_YEAR_MAX) {
             try {
                 pathReference = Malitounik.referens.child("/calendar-cytanne_$year.txt")
-                addItems(pathReference.path, pathReference.name, oldCheckSB)
+                addItems(pathReference.path, pathReference.name)
             } catch (_: Throwable) {
             }
         }
-        checkResources()
         if (log.isEmpty()) {
             logViewText = context.getString(R.string.admin_upload_contine)
             val zip = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "MainActivityResource.zip")
@@ -109,66 +93,32 @@ class LogView : ViewModel() {
         return log
     }
 
-    private fun checkResources() {
-        val list = sb.toString().split("\n")
-        val oldList = oldCheckSB.split("\n")
-        for (element in oldList.indices) {
-            val t11 = oldList[element].indexOf("<name>")
-            val t22 = oldList[element].indexOf("</name>")
-            if (t11 != -1 && t22 != -1) {
-                val name2 = oldList[element].substring(t11 + 6, t22)
-                val t33 = name2.indexOf(".")
-                val nameRR = if (t33 != -1) name2.take(t33)
-                else name2
-                var testR = false
-                for (i in list.indices) {
-                    val t1 = list[i].indexOf("<name>")
-                    val t2 = list[i].indexOf("</name>")
-                    if (t1 != -1 && t2 != -1) {
-                        val name1 = list[i].substring(t1 + 6, t2)
-                        val t3 = name1.indexOf(".")
-                        val nameR = if (t3 != -1) name1.take(t3)
-                        else name1
-                        if (nameR == nameRR) {
-                            testR = true
-                            break
-                        }
-                    }
-                }
-                if (!testR) {
-                    checkSB.append("firebase: перайменавана альбо выдалена $nameRR\n")
-                }
-            }
-        }
-        logViewText = checkSB.toString()
-    }
-
-    private suspend fun runPrefixes(list: ListResult, checkList: String) {
+    private suspend fun runPrefixes(list: ListResult) {
         list.prefixes.forEach {
             if (isDistroy) return@forEach
             if (it.name != "piasochnica") {
                 val list2 = it.list(1000).await()
-                runPrefixes(list2, checkList)
-                runItems(list2, checkList)
+                runPrefixes(list2)
+                runItems(list2)
             }
         }
     }
 
-    private suspend fun runItems(list: ListResult, checkList: String) {
+    private suspend fun runItems(list: ListResult) {
         list.items.forEach { storageReference ->
             if (isDistroy) return@forEach
-            addItems(storageReference.path, storageReference.name, checkList)
+            addItems(storageReference.path, storageReference.name)
         }
     }
 
-    private suspend fun addItems(path: String, name: String, checkList: String, count: Int = 0) {
+    private suspend fun addItems(path: String, name: String, count: Int = 0) {
         val pathReference = Malitounik.referens.child(path)
         var error = false
         val meta = pathReference.metadata.addOnFailureListener {
             error = true
         }.await()
         if (error && count < 3) {
-            addItems(path, name, checkList, count + 1)
+            addItems(path, name, count + 1)
             return
         }
         val t1 = path.lastIndexOf("/")
@@ -188,25 +138,7 @@ class LogView : ViewModel() {
         val digest = messageDigest.digest()
         val md5sumLocalFile = Base64.encodeToString(digest, Base64.DEFAULT).trim()
         if (md5Sum != md5sumLocalFile) {
-            Log.d("Oleg", localPach)
             log.add(path)
-        }
-        sb.append("<name>")
-        sb.append(name)
-        sb.append("</name>")
-        sb.append("<md5>")
-        sb.append(md5Sum)
-        sb.append("</md5>\n")
-        if (checkList.contains("<name>$name</name>")) {
-            val t1 = checkList.indexOf("<name>$name</name>")
-            val t2 = checkList.indexOf("<md5>", t1)
-            val t3 = checkList.indexOf("</md5>", t2)
-            val filemd5Sum = checkList.substring(t2 + 5, t3)
-            if (filemd5Sum != md5Sum) {
-                //log.add(path)
-            }
-        } else {
-            //log.add(path)
         }
         logViewText = path
     }
@@ -253,7 +185,6 @@ class LogView : ViewModel() {
                         strB.append("\n")
                     }
                     strB.append("\n")
-                    strB.append(checkSB.toString())
                     logFile.writer().use {
                         it.write(strB.toString())
                     }
@@ -289,18 +220,13 @@ class LogView : ViewModel() {
             sendIntent.type = "application/zip"
             context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.set_log_file)))
         }
-        if (isClearLogFile && Settings.isNetworkAvailable(context) && sb.toString().isNotEmpty()) {
+        if (isClearLogFile && Settings.isNetworkAvailable(context)) {
             CoroutineScope(Dispatchers.IO).launch {
                 val logFile = File("${context.filesDir}/cache/log.txt")
                 logFile.writer().use {
                     it.write("")
                 }
-                val localFile = File("${context.filesDir}/cache/cache.txt")
-                localFile.writer().use {
-                    it.write(sb.toString())
-                }
                 Malitounik.referens.child("/admin/log.txt").putFile(Uri.fromFile(logFile)).await()
-                Malitounik.referens.child("/admin/adminListFile.txt").putFile(Uri.fromFile(localFile)).await()
             }
         }
     }
