@@ -24,7 +24,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -37,7 +36,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
@@ -45,8 +43,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -150,7 +146,6 @@ import by.carkva_gazeta.malitounik.ui.theme.Post
 import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
-import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
 import by.carkva_gazeta.malitounik.ui.theme.displayFontFamily
 import by.carkva_gazeta.malitounik.views.AppDropdownMenu
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
@@ -196,10 +191,9 @@ class BogaslujbovyiaViewModel : ViewModel() {
     var searchTextResult by mutableStateOf(AnnotatedString(""))
     var htmlText by mutableStateOf("")
     val srcListTTS = ArrayList<TTS>()
-    val lazyListState = LazyListState()
-    var lazyListPosition by mutableIntStateOf(0)
     var dialodTTSHelp by mutableStateOf(false)
     var dialodTTSHelpError by mutableStateOf(false)
+    var curentPosition = 0
     private var findTTSPosition = 0
     private val gson = Gson()
     private val type = TypeToken.getParameterized(ArrayList::class.java, VybranaeDataAll::class.java).type
@@ -209,31 +203,29 @@ class BogaslujbovyiaViewModel : ViewModel() {
             searchJob?.cancel()
             textLayout?.let { layout ->
                 searchJob = viewModelScope.launch {
-                    withContext(Dispatchers.IO) {
-                        result.clear()
-                        resultPosition = 0
-                        var originalHtmlText = htmlText
-                        if (Settings.dzenNoch) originalHtmlText = originalHtmlText.replace("#d00505", "#ff6666", true)
-                        val originalText = AnnotatedString.fromHtml(originalHtmlText)
-                        result.addAll(findAllAsanc(originalText.text, searshString.text))
-                        if (result.isNotEmpty()) {
-                            val annotatedString = buildAnnotatedString {
-                                append(originalText)
-                                for (i in result.indices) {
-                                    val size = result[i].size - 1
-                                    addStyle(SpanStyle(background = BezPosta, color = PrimaryText), result[i][0], result[i][size])
-                                }
+                    result.clear()
+                    resultPosition = 0
+                    var originalHtmlText = htmlText
+                    if (Settings.dzenNoch) originalHtmlText = originalHtmlText.replace("#d00505", "#ff6666", true)
+                    val originalText = AnnotatedString.fromHtml(originalHtmlText)
+                    result.addAll(findAllAsanc(originalText.text, searshString.text))
+                    if (result.isNotEmpty()) {
+                        val annotatedString = buildAnnotatedString {
+                            append(originalText)
+                            for (i in result.indices) {
+                                val size = result[i].size - 1
+                                addStyle(SpanStyle(background = BezPosta, color = PrimaryText), result[i][0], result[i][size])
                             }
-                            searchTextResult = annotatedString
-                            val t1 = result[0][0]
-                            if (t1 != -1) {
-                                val line = layout.getLineForOffset(t1)
-                                scrollToY = layout.getLineTop(line)
-                                find = true
-                            }
-                        } else {
-                            searchTextResult = AnnotatedString("")
                         }
+                        searchTextResult = annotatedString
+                        val t1 = result[0][0]
+                        if (t1 != -1) {
+                            val line = layout.getLineForOffset(t1)
+                            scrollToY = layout.getLineTop(line)
+                            find = true
+                        }
+                    } else {
+                        searchTextResult = AnnotatedString("")
                     }
                 }
             }
@@ -451,13 +443,9 @@ class BogaslujbovyiaViewModel : ViewModel() {
         srcListTTS.clear()
         val list = htmlText.replace("\n", "").split("<br><br>")
         var isRed = false
-        var isBold = false
-        var isEm = false
+        var positionTTS = 0
         for (i in list.indices) {
             try {
-                var red = ""
-                var bold = ""
-                var em = ""
                 var positionN = 0
                 var positionK = 0
                 var positionKold = -1
@@ -470,7 +458,6 @@ class BogaslujbovyiaViewModel : ViewModel() {
                     }
                     val t2 = list[i].indexOf("</font>", positionK)
                     if (isRed) {
-                        red = "<font color=\"#d00505\">"
                         if (t2 != -1) {
                             isRed = false
                             positionN = t2 + 7
@@ -498,43 +485,22 @@ class BogaslujbovyiaViewModel : ViewModel() {
                                 break
                             }
                         } else if (t2 != -1) {
-                            red = "<font color=\"#d00505\">"
                             spikText.append(list[i].substring(t2 + 7))
                             break
                         } else {
                             if (positionN == 0) spikText.append(list[i])
-                            if (positionK < list[i].length) spikText.append(list[i].substring(positionK))
+                            else if (positionK < list[i].length) spikText.append(list[i].substring(positionK))
                             break
                         }
                     }
                 }
-                val t5 = list[i].indexOf("<strong>")
-                val t3 = list[i].indexOf("</strong>")
-                if (isBold) bold = "<strong>"
-                if (t3 != -1) {
-                    isBold = false
-                    if (t5 == -1 || t3 < t5) {
-                        bold = "<strong>"
-                    }
-                }
-                if (t5 != -1 && t3 == -1) {
-                    isBold = true
-                }
-                val t6 = list[i].indexOf("<em>")
-                val t4 = list[i].indexOf("</em>")
-                if (isEm) em = "<em>"
-                if (t4 != -1) {
-                    isEm = false
-                    if (t6 == -1 || t4 < t6) {
-                        em = "<em>"
-                    }
-                }
-                if (t6 != -1 && t4 == -1) {
-                    isEm = true
-                }
-                srcListTTS.add(TTS(spikText.toString(), red + em + bold + list[i] + "<br>"))
+                val length = AnnotatedString.fromHtml(list[i]).length + 2
+                srcListTTS.add(TTS(spikText.toString(), positionTTS, positionTTS + length, list[i] + "<br><br>"))
+                positionTTS += length
             } catch (_: Throwable) {
-                srcListTTS.add(TTS(list[i], list[i] + "<br>"))
+                val length = AnnotatedString.fromHtml(list[i]).length + 2
+                srcListTTS.add(TTS(list[i], positionTTS, positionTTS + length, list[i] + "<br><br>"))
+                positionTTS += length
             }
         }
         val verticalPosition = scrollState.value.toFloat()
@@ -564,13 +530,22 @@ class BogaslujbovyiaViewModel : ViewModel() {
         }
     }
 
-    fun initTTS(context: Context) {
+    fun initTTS(context: Context, layout: TextLayoutResult?) {
         ttsManager = TTSManager(context, langNotSupported = {
             dialodTTSHelpError = true
         }, speakText = {
-            viewModelScope.launch {
-                lazyListPosition = it
-                lazyListState.scrollToItem(lazyListPosition)
+            curentPosition = it
+            var text = htmlText.replace("\n", "")
+            if (Settings.dzenNoch) text = text.replace("#d00505", "#ff6666", true)
+            val annotatedString = buildAnnotatedString {
+                append(AnnotatedString.fromHtml(text))
+                addStyle(SpanStyle(background = BezPosta, color = PrimaryText), srcListTTS[it].start, srcListTTS[it].end)
+            }
+            searchTextResult = annotatedString
+            layout?.let { textLayoutResult ->
+                val line = textLayoutResult.getLineForOffset(srcListTTS[it].start)
+                scrollToY = textLayoutResult.getLineTop(line)
+                find = true
             }
         }) {
             isPaused = false
@@ -654,16 +629,30 @@ fun Bogaslujbovyia(
     LaunchedEffect(viewModel.find) {
         if (viewModel.find) {
             coroutineScope.launch {
-                withContext(Dispatchers.IO) {
-                    viewModel.scrollState.animateScrollTo(viewModel.scrollToY.toInt())
-                    AppNavGraphState.setScrollValuePosition(title, viewModel.scrollState.value)
-                    viewModel.find = false
-                }
+                viewModel.scrollState.animateScrollTo(viewModel.scrollToY.toInt())
+                AppNavGraphState.setScrollValuePosition(title, viewModel.scrollState.value)
+                viewModel.find = false
             }
         }
     }
     LaunchedEffect(Unit) {
-        viewModel.initTTS(context)
+        viewModel.initTTS(context, textLayout)
+    }
+    LaunchedEffect(Settings.dzenNoch) {
+        if (viewModel.isPaused || viewModel.isSpeaking) {
+            var text = viewModel.htmlText.replace("\n", "")
+            if (Settings.dzenNoch) text = text.replace("#d00505", "#ff6666", true)
+            val annotatedString = buildAnnotatedString {
+                append(AnnotatedString.fromHtml(text))
+                addStyle(SpanStyle(background = BezPosta, color = PrimaryText), viewModel.srcListTTS[viewModel.curentPosition].start, viewModel.srcListTTS[viewModel.curentPosition].end)
+            }
+            viewModel.searchTextResult = annotatedString
+            textLayout?.let { textLayoutResult ->
+                val line = textLayoutResult.getLineForOffset(viewModel.srcListTTS[viewModel.curentPosition].start)
+                viewModel.scrollToY = textLayoutResult.getLineTop(line)
+                viewModel.find = true
+            }
+        }
     }
     LifecycleResumeEffect(Unit) {
         if (AppNavGraphState.searchBogaslujbovyia.isEmpty()) {
@@ -1757,181 +1746,124 @@ fun Bogaslujbovyia(
                         )
                     }
                     val padding = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp
-                    if ((viewModel.isPaused || viewModel.isSpeaking) && !isShare) {
-                        LazyColumn(
-                            state = viewModel.lazyListState,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = padding.plus(10.dp))
-                                .pointerInput(PointerEventType.Press) {
-                                    awaitPointerEventScope {
-                                        while (true) {
-                                            val event = awaitPointerEvent()
-                                            if (event.changes.size == 2) {
-                                                fontSize *= event.calculateZoom()
-                                                fontSize = fontSize.coerceIn(18f, 58f)
-                                                k.edit {
-                                                    putFloat("font_biblia", fontSize)
-                                                }
-                                                event.changes.forEach { pointerInputChange: PointerInputChange ->
-                                                    pointerInputChange.consume()
-                                                }
-                                            }
+                    Column(
+                        modifier = Modifier
+                            .pointerInput(PointerEventType.Press) {
+                                awaitPointerEventScope {
+                                    while (true) {
+                                        val event = awaitPointerEvent()
+                                        if (event.type == PointerEventType.Press) {
+                                            viewModel.autoScroll(title, false)
+                                        }
+                                        if (viewModel.autoScrollSensor && !isShare && !viewModel.searchText && event.type == PointerEventType.Release && !isScrollRun) {
+                                            viewModel.autoScroll(title, true)
                                         }
                                     }
                                 }
-                        ) {
-                            items(viewModel.srcListTTS.size) { position ->
-                                val modifierSpik = if (viewModel.lazyListPosition == position) Modifier
-                                    .clip(shape = RoundedCornerShape(10.dp))
-                                    .border(
-                                        width = 1.dp,
-                                        color = SecondaryText,
-                                        shape = RoundedCornerShape(10.dp)
-                                    ) else Modifier
-                                HtmlText(
-                                    modifier = modifierSpik
-                                        .padding(start = 10.dp, end = 10.dp)
-                                        .fillMaxWidth()
-                                        .pointerInput(Unit) {
-                                            detectTapGestures(
-                                                onTap = {
-                                                    viewModel.stop()
-                                                    viewModel.creteTTSList(textLayout, position)
-                                                    viewModel.speak()
-                                                },
-                                                onDoubleTap = {
-                                                    fullscreen = !fullscreen
-                                                })
-                                        },
-                                    text = viewModel.srcListTTS[position].textFull,
-                                    fontSize = fontSize.sp
+                            }
+                            .pointerInput(Unit) {
+                                detectTapGestures(
+                                    onDoubleTap = {
+                                        fullscreen = !fullscreen
+                                    }
                                 )
                             }
-                            item {
-                                Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp)))
-                            }
-                        }
-                    } else {
-                        Column(
-                            modifier = Modifier
-                                .pointerInput(PointerEventType.Press) {
-                                    awaitPointerEventScope {
-                                        while (true) {
-                                            val event = awaitPointerEvent()
-                                            if (event.type == PointerEventType.Press) {
-                                                viewModel.autoScroll(title, false)
-                                            }
-                                            if (viewModel.autoScrollSensor && !isShare && !viewModel.searchText && event.type == PointerEventType.Release && !isScrollRun) {
-                                                viewModel.autoScroll(title, true)
-                                            }
+                            .nestedScroll(nestedScrollConnection)
+                            .verticalScroll(viewModel.scrollState),
+                        verticalArrangement = Arrangement.Top
+                    ) {
+                        if (viewModel.autoScrollSensor || !isShare) {
+                            HtmlText(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp))
+                                    .pointerInput(Unit) {
+                                        awaitEachGesture {
+                                            awaitFirstDown()
+                                            do {
+                                                val event = awaitPointerEvent()
+                                                if (event.changes.size == 2) {
+                                                    fontSize *= event.calculateZoom()
+                                                    fontSize = fontSize.coerceIn(18f, 58f)
+                                                    k.edit {
+                                                        putFloat("font_biblia", fontSize)
+                                                    }
+                                                    event.changes.forEach { pointerInputChange: PointerInputChange ->
+                                                        pointerInputChange.consume()
+                                                    }
+                                                }
+                                            } while (event.changes.any { it.pressed })
+                                        }
+                                    },
+                                text = viewModel.htmlText,
+                                title = title,
+                                fontSize = fontSize.sp,
+                                isLiturgia = isLiturgia && isLiturgia(data),
+                                searchText = if (viewModel.searchText || viewModel.isPaused || viewModel.isSpeaking) viewModel.searchTextResult else AnnotatedString(""),
+                                scrollState = viewModel.scrollState,
+                                navigateTo = { navigate ->
+                                    navigateTo(navigate, false)
+                                },
+                                textLayoutResult = { layout ->
+                                    textLayout = layout
+                                },
+                                isDialogListinner = { dialog, chastka ->
+                                    when (dialog) {
+                                        DialogListinner.DIALOGQRCODE.name -> {
+                                            dialogQrCode = true
+                                        }
+
+                                        DialogListinner.DIALOGSZTOHOVAHA.name -> {
+                                            dialogSztoHovahaVisable = true
+                                        }
+
+                                        DialogListinner.DIALOGLITURGIA.name -> {
+                                            chast = chastka
+                                            dialogLiturgia = true
                                         }
                                     }
                                 }
-                                .pointerInput(Unit) {
-                                    detectTapGestures(
-                                        onDoubleTap = {
-                                            fullscreen = !fullscreen
-                                        }
-                                    )
-                                }
-                                .nestedScroll(nestedScrollConnection)
-                                .verticalScroll(viewModel.scrollState),
-                            verticalArrangement = Arrangement.Top
-                        ) {
-                            if (viewModel.autoScrollSensor || !isShare) {
-                                HtmlText(
+                            )
+                        } else {
+                            if (Settings.dzenNoch) {
+                                var text by remember { mutableStateOf(TextFieldValue(AnnotatedString.fromHtml(viewModel.htmlText.replace("#d00505", "#ff6666", true)))) }
+                                BasicTextField(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp))
-                                        .pointerInput(Unit) {
-                                            awaitEachGesture {
-                                                awaitFirstDown()
-                                                do {
-                                                    val event = awaitPointerEvent()
-                                                    if (event.changes.size == 2) {
-                                                        fontSize *= event.calculateZoom()
-                                                        fontSize = fontSize.coerceIn(18f, 58f)
-                                                        k.edit {
-                                                            putFloat("font_biblia", fontSize)
-                                                        }
-                                                        event.changes.forEach { pointerInputChange: PointerInputChange ->
-                                                            pointerInputChange.consume()
-                                                        }
-                                                    }
-                                                } while (event.changes.any { it.pressed })
-                                            }
-                                        },
-                                    text = viewModel.htmlText,
-                                    title = title,
-                                    fontSize = fontSize.sp,
-                                    isLiturgia = isLiturgia && isLiturgia(data),
-                                    searchText = viewModel.searchTextResult,
-                                    scrollState = viewModel.scrollState,
-                                    navigateTo = { navigate ->
-                                        navigateTo(navigate, false)
-                                    },
-                                    textLayoutResult = { layout ->
-                                        textLayout = layout
-                                    },
-                                    isDialogListinner = { dialog, chastka ->
-                                        when (dialog) {
-                                            DialogListinner.DIALOGQRCODE.name -> {
-                                                dialogQrCode = true
-                                            }
-
-                                            DialogListinner.DIALOGSZTOHOVAHA.name -> {
-                                                dialogSztoHovahaVisable = true
-                                            }
-
-                                            DialogListinner.DIALOGLITURGIA.name -> {
-                                                chast = chastka
-                                                dialogLiturgia = true
-                                            }
+                                        .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp)),
+                                    value = text,
+                                    onValueChange = { newText ->
+                                        text = newText
+                                        if (text.getSelectedText().text.isNotEmpty()) {
+                                            selectedText = text.getSelectedText().text
                                         }
-                                    }
+                                    },
+                                    readOnly = true,
+                                    textStyle = TextStyle(color = MaterialTheme.colorScheme.secondary, fontSize = fontSize.sp, fontFamily = displayFontFamily, letterSpacing = TextUnit(0.5f, TextUnitType.Sp)),
                                 )
                             } else {
-                                if (Settings.dzenNoch) {
-                                    var text by remember { mutableStateOf(TextFieldValue(AnnotatedString.fromHtml(viewModel.htmlText.replace("#d00505", "#ff6666", true)))) }
-                                    BasicTextField(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp)),
-                                        value = text,
-                                        onValueChange = { newText ->
-                                            text = newText
-                                            if (text.getSelectedText().text.isNotEmpty()) {
-                                                selectedText = text.getSelectedText().text
-                                            }
-                                        },
-                                        readOnly = true,
-                                        textStyle = TextStyle(color = MaterialTheme.colorScheme.secondary, fontSize = fontSize.sp, fontFamily = displayFontFamily, letterSpacing = TextUnit(0.5f, TextUnitType.Sp)),
-                                    )
-                                } else {
-                                    var text by remember { mutableStateOf(TextFieldValue(AnnotatedString.fromHtml(viewModel.htmlText))) }
-                                    BasicTextField(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp)),
-                                        value = text,
-                                        onValueChange = { newText ->
-                                            text = newText
-                                            if (text.getSelectedText().text.isNotEmpty()) {
-                                                selectedText = text.getSelectedText().text
-                                            }
-                                        },
-                                        readOnly = true,
-                                        textStyle = TextStyle(color = MaterialTheme.colorScheme.secondary, fontSize = fontSize.sp, fontFamily = displayFontFamily, letterSpacing = TextUnit(0.5f, TextUnitType.Sp)),
-                                    )
-                                }
+                                var text by remember { mutableStateOf(TextFieldValue(AnnotatedString.fromHtml(viewModel.htmlText))) }
+                                BasicTextField(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp)),
+                                    value = text,
+                                    onValueChange = { newText ->
+                                        text = newText
+                                        if (text.getSelectedText().text.isNotEmpty()) {
+                                            selectedText = text.getSelectedText().text
+                                        }
+                                    },
+                                    readOnly = true,
+                                    textStyle = TextStyle(color = MaterialTheme.colorScheme.secondary, fontSize = fontSize.sp, fontFamily = displayFontFamily, letterSpacing = TextUnit(0.5f, TextUnitType.Sp)),
+                                )
                             }
-                            if (viewModel.scrollState.lastScrolledForward && !viewModel.scrollState.canScrollForward) {
-                                viewModel.autoScroll(title, false)
-                                viewModel.autoScrollSensor = false
-                                if (!k.getBoolean("power", false)) {
-                                    actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                                }
+                        }
+                        if (viewModel.scrollState.lastScrolledForward && !viewModel.scrollState.canScrollForward) {
+                            viewModel.autoScroll(title, false)
+                            viewModel.autoScrollSensor = false
+                            if (!k.getBoolean("power", false)) {
+                                actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                             }
                         }
                     }
@@ -2432,4 +2364,4 @@ data class VybranaeDataAll(
     val resource: String,
 )
 
-data class TTS(val textSpik: String, val textFull: String)
+data class TTS(val textSpik: String, val start: Int, val end: Int, val textFull: String)

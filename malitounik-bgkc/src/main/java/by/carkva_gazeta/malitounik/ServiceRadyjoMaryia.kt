@@ -16,10 +16,11 @@ import android.support.v4.media.session.MediaSessionCompat
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.fromHtml
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.net.toUri
-import androidx.core.text.HtmlCompat
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
@@ -226,7 +227,7 @@ class ServiceRadyjoMaryia : Service() {
                                         inputLine = it.readLine()
                                     }
                                 }
-                                var text = HtmlCompat.fromHtml(sb.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY).toString().trim()
+                                var text = AnnotatedString.fromHtml(sb.toString()).text.trim()
                                 val t1 = text.indexOf(":", ignoreCase = true)
                                 if (t1 != -1) {
                                     text = text.substring(t1 + 1)

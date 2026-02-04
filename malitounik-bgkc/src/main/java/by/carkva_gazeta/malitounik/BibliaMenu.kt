@@ -83,7 +83,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.edit
-import androidx.core.text.HtmlCompat
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
@@ -293,7 +292,7 @@ class SearchBibleViewModel : CytanniListViewModel() {
                     var stix = 0
                     for (r in 1 until bibleline.size) {
                         stix++
-                        var aSviatyia = HtmlCompat.fromHtml(bibleline[r], HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
+                        var aSviatyia = AnnotatedString.fromHtml(bibleline[r]).text
                         val title = "$nazva Гл. $glava\n"
                         val t3 = title.length
                         val span = AnnotatedString.Builder()
