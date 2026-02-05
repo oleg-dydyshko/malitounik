@@ -118,6 +118,7 @@ import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.getSelectedText
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
@@ -494,8 +495,14 @@ class BogaslujbovyiaViewModel : ViewModel() {
                         }
                     }
                 }
-                val length = AnnotatedString.fromHtml(list[i]).length + 2
-                srcListTTS.add(TTS(spikText.toString(), positionTTS, positionTTS + length, list[i] + "<br><br>"))
+                var length = AnnotatedString.fromHtml(list[i]).length
+                val br = if (i < list.size - 1) {
+                    length += 2
+                    "<br><br>"
+                } else {
+                    ""
+                }
+                srcListTTS.add(TTS(spikText.toString(), positionTTS, positionTTS + length, list[i] + br))
                 positionTTS += length
             } catch (_: Throwable) {
                 val length = AnnotatedString.fromHtml(list[i]).length + 2
@@ -520,9 +527,12 @@ class BogaslujbovyiaViewModel : ViewModel() {
         if (ttsPosition == 0) {
             findTTSPosition = 0
             for (i in srcListTTS.indices) {
-                val t1 = AnnotatedString.fromHtml(srcListTTS[i].textFull).text.indexOf(firstVisableString)
-                if (t1 != -1) {
-                    findTTSPosition = i
+                if (srcListTTS[i].end > firstLineEndIndex) {
+                    val t1 = AnnotatedString.fromHtml(srcListTTS[i].textFull).text.indexOf(firstVisableString)
+                    if (t1 != -1) {
+                        findTTSPosition = i
+                        break
+                    }
                 }
             }
         } else {
@@ -539,7 +549,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
             if (Settings.dzenNoch) text = text.replace("#d00505", "#ff6666", true)
             val annotatedString = buildAnnotatedString {
                 append(AnnotatedString.fromHtml(text))
-                addStyle(SpanStyle(background = BezPosta, color = PrimaryText), srcListTTS[it].start, srcListTTS[it].end)
+                addStyle(SpanStyle(textDecoration = TextDecoration.Underline), srcListTTS[it].start, srcListTTS[it].end)
             }
             searchTextResult = annotatedString
             layout?.let { textLayoutResult ->
@@ -644,7 +654,7 @@ fun Bogaslujbovyia(
             if (Settings.dzenNoch) text = text.replace("#d00505", "#ff6666", true)
             val annotatedString = buildAnnotatedString {
                 append(AnnotatedString.fromHtml(text))
-                addStyle(SpanStyle(background = BezPosta, color = PrimaryText), viewModel.srcListTTS[viewModel.curentPosition].start, viewModel.srcListTTS[viewModel.curentPosition].end)
+                addStyle(SpanStyle(textDecoration = TextDecoration.Underline), viewModel.srcListTTS[viewModel.curentPosition].start, viewModel.srcListTTS[viewModel.curentPosition].end)
             }
             viewModel.searchTextResult = annotatedString
             textLayout?.let { textLayoutResult ->
