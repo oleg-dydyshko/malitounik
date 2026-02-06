@@ -107,8 +107,10 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -129,6 +131,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.edit
+import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -145,6 +148,7 @@ import by.carkva_gazeta.malitounik.ui.theme.Button
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.Post
 import by.carkva_gazeta.malitounik.ui.theme.Primary
+import by.carkva_gazeta.malitounik.ui.theme.PrimaryBlack
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.displayFontFamily
@@ -540,15 +544,276 @@ class BogaslujbovyiaViewModel : ViewModel() {
         }
     }
 
-    fun initTTS(context: Context, layout: TextLayoutResult?) {
+    fun initTTS(context: Context, layout: TextLayoutResult?, isLiturgia: Boolean, navigateTo: (String) -> Unit, isDialogListinner: (String, Int) -> Unit) {
         ttsManager = TTSManager(context, langNotSupported = {
             dialodTTSHelpError = true
         }, speakText = {
             curentPosition = it
-            var text = htmlText.replace("\n", "")
+            var text = htmlText.replace("\n", "").replace(
+                "<!--<VERSION></VERSION>-->",
+                "<em>Версія праграмы: ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})</em><br><br>"
+            )
             if (Settings.dzenNoch) text = text.replace("#d00505", "#ff6666", true)
             val annotatedString = buildAnnotatedString {
-                append(AnnotatedString.fromHtml(text))
+                append(
+                    AnnotatedString.fromHtml(
+                        text,
+                        TextLinkStyles(
+                            SpanStyle(
+                                color = if (Settings.dzenNoch) PrimaryBlack else Primary,
+                                textDecoration = TextDecoration.Underline
+                            )
+                        )
+                    ) { link ->
+                        val url = (link as LinkAnnotation.Url).url
+                        if (url.contains("https://localhost/")) {
+                            when (url) {
+                                "https://localhost/pasliachytaeca/" -> {
+                                    viewModelScope.launch {
+                                        scrollState.animateScrollTo(0)
+                                    }
+                                }
+
+                                "https://localhost/qr.code/" -> {
+                                    isDialogListinner(DialogListinner.DIALOGQRCODE.name, 0)
+                                }
+
+                                "https://localhost/shto.novaga/" -> {
+                                    isDialogListinner(DialogListinner.DIALOGSZTOHOVAHA.name, 0)
+                                }
+
+                                "https://localhost/malitvypasliaprychastia/" -> {
+                                    navigateTo("malitvypasliaprychastia")
+                                }
+
+                                "https://localhost/pershaiagadzina/" -> {
+                                    layout?.let { layout ->
+                                        val t1 = layout.layoutInput.text.indexOf("ПЕРШАЯ ГАДЗІНА")
+                                        if (t1 != -1) {
+                                            val line = layout.getLineForOffset(t1)
+                                            val y = layout.getLineTop(line)
+                                            viewModelScope.launch {
+                                                scrollState.animateScrollTo(y.toInt())
+                                            }
+                                        }
+                                    }
+                                }
+
+                                "https://localhost/trecaiagadzina/" -> {
+                                    layout?.let { layout ->
+                                        val t1 = layout.layoutInput.text.indexOf("ТРЭЦЯЯ ГАДЗІНА")
+                                        if (t1 != -1) {
+                                            val line = layout.getLineForOffset(t1)
+                                            val y = layout.getLineTop(line)
+                                            viewModelScope.launch {
+                                                scrollState.animateScrollTo(y.toInt())
+                                            }
+                                        }
+                                    }
+                                }
+
+                                "https://localhost/shostaiagadzina/" -> {
+                                    layout?.let { layout ->
+                                        val t1 = layout.layoutInput.text.indexOf("ШОСТАЯ ГАДЗІНА")
+                                        if (t1 != -1) {
+                                            val line = layout.getLineForOffset(t1)
+                                            val y = layout.getLineTop(line)
+                                            viewModelScope.launch {
+                                                scrollState.animateScrollTo(y.toInt())
+                                            }
+                                        }
+                                    }
+                                }
+
+                                "https://localhost/dzeviataiagadzina/" -> {
+                                    layout?.let { layout ->
+                                        val t1 = layout.layoutInput.text.indexOf("ДЗЯВЯТАЯ ГАДЗІНА")
+                                        if (t1 != -1) {
+                                            val line = layout.getLineForOffset(t1)
+                                            val y = layout.getLineTop(line)
+                                            viewModelScope.launch {
+                                                scrollState.animateScrollTo(y.toInt())
+                                            }
+                                        }
+                                    }
+                                }
+
+                                "https://localhost/zakanchennevialposty/" -> {
+                                    layout?.let { layout ->
+                                        val t1 = layout.layoutInput.text.indexOf("ЗАКАНЧЭНЬНЕ АБЕДНІЦЫ")
+                                        if (t1 != -1) {
+                                            val line = layout.getLineForOffset(t1)
+                                            val y = layout.getLineTop(line)
+                                            viewModelScope.launch {
+                                                scrollState.animateScrollTo(y.toInt())
+                                            }
+                                        }
+                                    }
+                                }
+
+                                "https://localhost/litciaiblaslavennechl/" -> {
+                                    navigateTo("litciaiblaslavennechl")
+                                }
+
+                                "https://localhost/zysimprapuskauca/" -> {
+                                    layout?.let { layout ->
+                                        val t1 = layout.layoutInput.text.indexOf("10 песьняў")
+                                        if (t1 != -1) {
+                                            val line = layout.getLineForOffset(t1)
+                                            val y = layout.getLineTop(line)
+                                            viewModelScope.launch {
+                                                scrollState.animateScrollTo(y.toInt())
+                                            }
+                                        }
+                                    }
+                                }
+
+                                "https://localhost/vybranyiavershyzpsalm/" -> {
+                                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 11)
+                                }
+
+                                "https://localhost/gltut/" -> {
+                                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 13)
+                                }
+
+                                "https://localhost/gospadzetabeklichu/" -> {
+                                    layout?.let { layout ->
+                                        val t1 = layout.layoutInput.text.indexOf("Псалом 140")
+                                        if (t1 != -1) {
+                                            val line = layout.getLineForOffset(t1)
+                                            val y = layout.getLineTop(line)
+                                            viewModelScope.launch {
+                                                scrollState.animateScrollTo(y.toInt())
+                                            }
+                                        }
+                                    }
+                                }
+
+                                "https://localhost/gladzinijai/" -> {
+                                    layout?.let { layout ->
+                                        val t1 = layout.layoutInput.text.indexOf("ЗАКАНЧЭНЬНЕ ВЯЧЭРНІ Ў ВЯЛІКІ ПОСТ")
+                                        if (t1 != -1) {
+                                            val line = layout.getLineForOffset(t1)
+                                            val y = layout.getLineTop(line)
+                                            viewModelScope.launch {
+                                                scrollState.animateScrollTo(y.toInt())
+                                            }
+                                        }
+                                    }
+                                }
+
+                                "https://localhost/gladztut102/" -> {
+                                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 1)
+                                }
+
+                                "https://localhost/gladztut91/" -> {
+                                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 2)
+                                }
+
+                                "https://localhost/gladztut145/" -> {
+                                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 3)
+                                }
+
+                                "https://localhost/gladztut92/" -> {
+                                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 4)
+                                }
+
+                                "https://localhost/gladztut94/" -> {
+                                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 10)
+                                }
+
+                                "https://localhost/inshyantyfon/" -> {
+                                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 5)
+                                }
+
+                                "https://localhost/malitvazapamerlyx/" -> {
+                                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 6)
+                                }
+
+                                "https://localhost/malitvazapaclikanyx/" -> {
+                                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 7)
+                                }
+
+                                "https://localhost/uspaminpamerlyxijyvix/" -> {
+                                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 14)
+                                }
+
+                                "https://localhost/adzinarodnesyne/" -> {
+                                    layout?.let { layout ->
+                                        val t1 = layout.layoutInput.text.indexOf("Адзінародны Сыне")
+                                        val t2 = layout.layoutInput.text.indexOf("Адзінародны Сыне", t1 + 17)
+                                        if (t2 != -1) {
+                                            val line = layout.getLineForOffset(t2)
+                                            val y = layout.getLineTop(line)
+                                            viewModelScope.launch {
+                                                scrollState.animateScrollTo(y.toInt())
+                                            }
+                                        }
+                                    }
+                                }
+
+                                "https://localhost/gliadzitutdabraveshchane/" -> {
+                                    navigateTo("gliadzitutdabraveshchane")
+                                }
+
+                                "https://localhost/autorakkanon/" -> {
+                                    layout?.let { layout ->
+                                        val t1 = layout.layoutInput.text.indexOf("АЎТОРАК")
+                                        if (t1 != -1) {
+                                            val line = layout.getLineForOffset(t1)
+                                            val y = layout.getLineTop(line)
+                                            viewModelScope.launch {
+                                                scrollState.animateScrollTo(y.toInt())
+                                            }
+                                        }
+                                    }
+                                }
+
+                                "https://localhost/seradakanon/" -> {
+                                    layout?.let { layout ->
+                                        val t1 = layout.layoutInput.text.indexOf("СЕРАДА")
+                                        if (t1 != -1) {
+                                            val line = layout.getLineForOffset(t1)
+                                            val y = layout.getLineTop(line)
+                                            viewModelScope.launch {
+                                                scrollState.animateScrollTo(y.toInt())
+                                            }
+                                        }
+                                    }
+                                }
+
+                                "https://localhost/chacverkanon/" -> {
+                                    layout?.let { layout ->
+                                        val t1 = layout.layoutInput.text.indexOf("ЧАЦЬВЕР")
+                                        if (t1 != -1) {
+                                            val line = layout.getLineForOffset(t1)
+                                            val y = layout.getLineTop(line)
+                                            viewModelScope.launch {
+                                                scrollState.animateScrollTo(y.toInt())
+                                            }
+                                        }
+                                    }
+                                }
+
+                                "https://localhost/cytanne/" -> {
+                                    if (isLiturgia) {
+                                        navigateTo("cytanne")
+                                    } else {
+                                        navigateTo("error")
+                                    }
+                                }
+
+                                else -> {
+                                    val error = context.getString(R.string.error_ch)
+                                    Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        } else {
+                            val browserIntent = Intent(Intent.ACTION_VIEW, url.toUri())
+                            context.startActivity(browserIntent)
+                        }
+                    }
+                )
                 addStyle(SpanStyle(textDecoration = TextDecoration.Underline), srcListTTS[it].start, srcListTTS[it].end)
             }
             searchTextResult = annotatedString
@@ -624,6 +889,14 @@ fun Bogaslujbovyia(
     val actyvity = LocalActivity.current as MainActivity
     var isShare by rememberSaveable { mutableStateOf(false) }
     var selectedText by remember { mutableStateOf("") }
+    var dialogLiturgia by rememberSaveable { mutableStateOf(false) }
+    var chast by rememberSaveable { mutableIntStateOf(0) }
+    var dialogQrCode by rememberSaveable { mutableStateOf(false) }
+    var dialogSztoHovahaVisable by remember { mutableStateOf(false) }
+    val isViachernia = resursEncode == "bogashlugbovya/viaczernia_niadzelnaja.html" || resursEncode == "bogashlugbovya/viaczernia_na_kozny_dzen.html" || resursEncode == "bogashlugbovya/viaczernia_u_vialikim_poscie.html" || resursEncode == "bogashlugbovya/viaczerniaja_sluzba_sztodzionnaja_biez_sviatara.html" || resursEncode == "bogashlugbovya/viaczernia_svietly_tydzien.html"
+    val isUtran = resursEncode == "bogashlugbovya/jutran_niadzelnaja.html"
+    val isLiturgia = resursEncode == "bogashlugbovya/lit_jana_zalatavusnaha.html" || resursEncode == "bogashlugbovya/lit_jan_zalat_vielikodn.html" || resursEncode == "bogashlugbovya/lit_vasila_vialikaha.html" || resursEncode == "bogashlugbovya/abiednica.html" || resursEncode == "bogashlugbovya/vialikdzien_liturhija.html"
+    val data = findCaliandarToDay()
     if (viewModel.autoScrollSensor) {
         actyvity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
@@ -646,7 +919,26 @@ fun Bogaslujbovyia(
         }
     }
     LaunchedEffect(Unit) {
-        viewModel.initTTS(context, textLayout)
+        viewModel.initTTS(
+            context, textLayout, isLiturgia && isLiturgia(data), navigateTo = { navigate ->
+                navigateTo(navigate, false)
+            },
+            isDialogListinner = { dialog, chastka ->
+                when (dialog) {
+                    DialogListinner.DIALOGQRCODE.name -> {
+                        dialogQrCode = true
+                    }
+
+                    DialogListinner.DIALOGSZTOHOVAHA.name -> {
+                        dialogSztoHovahaVisable = true
+                    }
+
+                    DialogListinner.DIALOGLITURGIA.name -> {
+                        chast = chastka
+                        dialogLiturgia = true
+                    }
+                }
+            })
     }
     LaunchedEffect(Settings.dzenNoch) {
         if (viewModel.isPaused || viewModel.isSpeaking) {
@@ -756,20 +1048,16 @@ fun Bogaslujbovyia(
             controller.show(WindowInsetsCompat.Type.navigationBars())
         }
     }
-    var dialogLiturgia by rememberSaveable { mutableStateOf(false) }
-    var chast by rememberSaveable { mutableIntStateOf(0) }
     if (dialogLiturgia) {
         DialogLiturgia(chast) {
             dialogLiturgia = false
         }
     }
-    var dialogQrCode by rememberSaveable { mutableStateOf(false) }
     if (dialogQrCode) {
         DialogImage(painter = painterResource(R.drawable.qr_code_google_play)) {
             dialogQrCode = false
         }
     }
-    var dialogSztoHovahaVisable by remember { mutableStateOf(false) }
     if (dialogSztoHovahaVisable) {
         DialogSztoHovaha {
             dialogSztoHovahaVisable = false
@@ -831,10 +1119,6 @@ fun Bogaslujbovyia(
             }
         )
     }
-    val isViachernia = resursEncode == "bogashlugbovya/viaczernia_niadzelnaja.html" || resursEncode == "bogashlugbovya/viaczernia_na_kozny_dzen.html" || resursEncode == "bogashlugbovya/viaczernia_u_vialikim_poscie.html" || resursEncode == "bogashlugbovya/viaczerniaja_sluzba_sztodzionnaja_biez_sviatara.html" || resursEncode == "bogashlugbovya/viaczernia_svietly_tydzien.html"
-    val isUtran = resursEncode == "bogashlugbovya/jutran_niadzelnaja.html"
-    val isLiturgia = resursEncode == "bogashlugbovya/lit_jana_zalatavusnaha.html" || resursEncode == "bogashlugbovya/lit_jan_zalat_vielikodn.html" || resursEncode == "bogashlugbovya/lit_vasila_vialikaha.html" || resursEncode == "bogashlugbovya/abiednica.html" || resursEncode == "bogashlugbovya/vialikdzien_liturhija.html"
-    val data = findCaliandarToDay()
     val cytanneVisable = (isLiturgia && isLiturgia(data)) || isViachernia || isUtran
     val listResource = ArrayList<SlugbovyiaTextuData>()
     when {
