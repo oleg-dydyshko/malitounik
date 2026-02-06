@@ -1883,14 +1883,9 @@ fun CytanniList(
                                     Modifier
                                         .pointerInput(Unit) {
                                             detectTapGestures(onTap = {
-                                                if (viewModel.isPaused || viewModel.isSpeaking) {
-                                                    viewModel.stop()
-                                                    viewModel.speak(viewModel.clearTextForTTS(viewModel.listState[viewModel.selectedIndex].item), index)
-                                                } else {
-                                                    if (!isSelectMode && isParallel && resultPage[index].parallel != "+-+") {
-                                                        isParallelVisable = true
-                                                        paralelChtenia = resultPage[index].parallel
-                                                    }
+                                                if (!isSelectMode && isParallel && resultPage[index].parallel != "+-+") {
+                                                    isParallelVisable = true
+                                                    paralelChtenia = resultPage[index].parallel
                                                 }
                                                 if (isSelectMode) {
                                                     viewModel.selectState[index] = !viewModel.selectState[index]

@@ -2201,7 +2201,6 @@ fun Bogaslujbovyia(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable(interactionSource = interactionSourse, indication = null) {}
                             .padding(bottom = if (!isBottomBar || fullscreen) 10.dp else 0.dp, end = 10.dp),
                         horizontalArrangement = Arrangement.End
                     ) {
