@@ -806,8 +806,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
     var novyZapavet by remember { mutableStateOf(false) }
     var isBibleTime by remember { mutableStateOf(false) }
     if (dialogDownLoad) {
-        viewModel.setPerevod = perevod
-        DialogDownLoadBible(viewModel, onConfirmation = {
+        DialogDownLoadBible(viewModel, perevod, onConfirmation = {
             if (isBibleTime) {
                 viewModel.bibleTime = true
                 isBibleTime = false
@@ -1608,10 +1607,11 @@ fun DialogSemuxa(
 @Composable
 fun DialogDownLoadBible(
     viewModel: SearchBibleViewModel,
+    perevod: String,
     onConfirmation: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    val titleBible = when (viewModel.setPerevod) {
+    val titleBible = when (perevod) {
         Settings.PEREVODCATOLIK -> stringResource(R.string.title_biblia_catolik2)
         Settings.PEREVODSINOIDAL -> stringResource(R.string.bsinaidal2)
         Settings.PEREVODNEWAMERICANBIBLE -> stringResource(R.string.perevod_new_american_bible_2)
@@ -1624,29 +1624,27 @@ fun DialogDownLoadBible(
     var izm by remember { mutableStateOf("O Кб") }
     LaunchedEffect(Unit) {
         if (Settings.isNetworkAvailable(context)) {
-            viewModel.viewModelScope.launch {
-                val result = when (viewModel.setPerevod) {
-                    Settings.PEREVODCATOLIK -> Malitounik.referens.child("/chytanne/Catolik/catolik.zip").metadata.await()
-                    Settings.PEREVODSINOIDAL -> Malitounik.referens.child("/chytanne/Sinodal/sinaidal.zip").metadata.await()
-                    Settings.PEREVODNEWAMERICANBIBLE -> Malitounik.referens.child("/chytanne/NewAmericanBible/NewAmericanBible.zip").metadata.await()
-                    else -> Malitounik.referens.child("/chytanne/Sinodal/sinaidal.zip").metadata.await()
-                }
-                dirCount = result.sizeBytes
-                izm = if (dirCount / 1024 > 1000) {
-                    formatFigureTwoPlaces(
-                        BigDecimal
-                            .valueOf(dirCount.toFloat() / 1024 / 1024.toDouble())
-                            .setScale(2, RoundingMode.HALF_UP)
-                            .toFloat()
-                    ) + " Мб"
-                } else {
-                    formatFigureTwoPlaces(
-                        BigDecimal
-                            .valueOf(dirCount.toFloat() / 1024.toDouble())
-                            .setScale(2, RoundingMode.HALF_UP)
-                            .toFloat()
-                    ) + " Кб"
-                }
+            val result = when (perevod) {
+                Settings.PEREVODCATOLIK -> Malitounik.referens.child("/chytanne/Catolik/catolik.zip").metadata.await()
+                Settings.PEREVODSINOIDAL -> Malitounik.referens.child("/chytanne/Sinodal/sinaidal.zip").metadata.await()
+                Settings.PEREVODNEWAMERICANBIBLE -> Malitounik.referens.child("/chytanne/NewAmericanBible/NewAmericanBible.zip").metadata.await()
+                else -> Malitounik.referens.child("/chytanne/Sinodal/sinaidal.zip").metadata.await()
+            }
+            dirCount = result.sizeBytes
+            izm = if (dirCount / 1024 > 1000) {
+                formatFigureTwoPlaces(
+                    BigDecimal
+                        .valueOf(dirCount.toFloat() / 1024 / 1024.toDouble())
+                        .setScale(2, RoundingMode.HALF_UP)
+                        .toFloat()
+                ) + " Мб"
+            } else {
+                formatFigureTwoPlaces(
+                    BigDecimal
+                        .valueOf(dirCount.toFloat() / 1024.toDouble())
+                        .setScale(2, RoundingMode.HALF_UP)
+                        .toFloat()
+                ) + " Кб"
             }
         } else {
             Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
@@ -1655,12 +1653,11 @@ fun DialogDownLoadBible(
     LaunchedEffect(download) {
         if (download) {
             if (Settings.isNetworkAvailable(context)) {
-                viewModel.viewModelScope.launch {
                     isProgressVisable = true
-                    viewModel.downLoadBibile(context)
-                    viewModel.downLoadVersionBibile(context, viewModel.setPerevod)
-                    viewModel.saveVersionFile(context)
-                    val destinationDir = when (viewModel.setPerevod) {
+                    viewModel.downLoadBibile(context, perevod)
+                    viewModel.downLoadVersionBibile(context, perevod)
+                    viewModel.saveVersionFile(context, perevod)
+                    val destinationDir = when (perevod) {
                         Settings.PEREVODCATOLIK -> "${context.filesDir}/Catolik"
 
                         Settings.PEREVODSINOIDAL -> "${context.filesDir}/Sinodal"
@@ -1685,7 +1682,6 @@ fun DialogDownLoadBible(
                     isProgressVisable = false
                     zipFile.delete()
                     onConfirmation()
-                }
             } else {
                 Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
             }

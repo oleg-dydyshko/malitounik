@@ -213,8 +213,9 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
         }
     }
     var dialogDownLoad by remember { mutableStateOf(false) }
+    var perevod by remember { mutableStateOf(Settings.PEREVODSEMUXI) }
     if (dialogDownLoad) {
-        DialogDownLoadBible(viewModel, onConfirmation = {
+        DialogDownLoadBible(viewModel, perevod, onConfirmation = {
             dialogDownLoad = false
         }) {
             dialogDownLoad = false
@@ -584,7 +585,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                         if (sinoidalState) {
                             val dir = File("${context.filesDir}/Sinodal")
                             if (!dir.exists()) {
-                                viewModel.setPerevod = Settings.PEREVODSINOIDAL
+                                perevod = Settings.PEREVODSINOIDAL
                                 dialogDownLoad = true
                             }
                         }
@@ -607,7 +608,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                         if (sinoidalState) {
                             val dir = File("${context.filesDir}/Sinodal")
                             if (!dir.exists()) {
-                                viewModel.setPerevod = Settings.PEREVODSINOIDAL
+                                perevod = Settings.PEREVODSINOIDAL
                                 dialogDownLoad = true
                             }
                         }
@@ -627,7 +628,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                         if (catolikState) {
                             val dir = File("${context.filesDir}/Catolik")
                             if (!dir.exists()) {
-                                viewModel.setPerevod = Settings.PEREVODCATOLIK
+                                perevod = Settings.PEREVODCATOLIK
                                 dialogDownLoad = true
                             }
                         }
@@ -650,7 +651,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                         if (catolikState) {
                             val dir = File("${context.filesDir}/Catolik")
                             if (!dir.exists()) {
-                                viewModel.setPerevod = Settings.PEREVODCATOLIK
+                                perevod = Settings.PEREVODCATOLIK
                                 dialogDownLoad = true
                             }
                         }
@@ -685,7 +686,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                             if (newkingjamesState) {
                                 val dir = File("${context.filesDir}/NewAmericanBible")
                                 if (!dir.exists()) {
-                                    viewModel.setPerevod = Settings.PEREVODNEWAMERICANBIBLE
+                                    perevod = Settings.PEREVODNEWAMERICANBIBLE
                                     dialogDownLoad = true
                                 }
                             }
@@ -712,7 +713,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                             if (newkingjamesState) {
                                 val dir = File("${context.filesDir}/NewAmericanBible")
                                 if (!dir.exists()) {
-                                    viewModel.setPerevod = Settings.PEREVODNEWAMERICANBIBLE
+                                    perevod = Settings.PEREVODNEWAMERICANBIBLE
                                     dialogDownLoad = true
                                 }
                             }

@@ -159,7 +159,6 @@ open class CytanniListViewModel : ViewModel() {
     var isVybranoe by mutableStateOf(false)
     var perevodName by mutableStateOf("")
     var dialogDownLoad by mutableStateOf(false)
-    var setPerevod by mutableStateOf(Settings.PEREVODSINOIDAL)
     var autoScroll by mutableStateOf(false)
     var autoScrollSensor by mutableStateOf(false)
     var autoScrollSpeed by mutableIntStateOf(60)
@@ -170,6 +169,7 @@ open class CytanniListViewModel : ViewModel() {
     var lazyListPosition by mutableIntStateOf(0)
     var dialodTTSHelp by mutableStateOf(false)
     var dialodTTSHelpError by mutableStateOf(false)
+    val oldKnigaGlava = mutableStateListOf<Int>()
     private var autoScrollJob: Job? = null
     private var autoScrollTextVisableJob: Job? = null
     private var isFirstDialodVisable = true
@@ -187,19 +187,16 @@ open class CytanniListViewModel : ViewModel() {
             var dir = File("${context.filesDir}/Catolik")
             if (isBibleEnable && perevod == Settings.PEREVODCATOLIK && !dir.exists()) {
                 dialogDownLoad = true
-                setPerevod = Settings.PEREVODCATOLIK
             }
             isBibleEnable = k.getBoolean("sinoidal_bible", false)
             dir = File("${context.filesDir}/Sinodal")
             if (isBibleEnable && perevod == Settings.PEREVODSINOIDAL && !dir.exists()) {
                 dialogDownLoad = true
-                setPerevod = Settings.PEREVODSINOIDAL
             }
             isBibleEnable = k.getBoolean("newkingjames_translate", false)
             dir = File("${context.filesDir}/NewAmericanBible")
             if (isBibleEnable && perevod == Settings.PEREVODNEWAMERICANBIBLE && !dir.exists()) {
                 dialogDownLoad = true
-                setPerevod = Settings.PEREVODNEWAMERICANBIBLE
             }
             isFirstDialodVisable = false
         }
@@ -253,7 +250,7 @@ open class CytanniListViewModel : ViewModel() {
         }
     }
 
-    fun updatePage(biblia: Int, page: Int, perevod: String) {
+    fun updatePage(biblia: Int, page: Int, perevod: String, updatePageCompleted: () -> Unit) {
         if (listState[page].item.isEmpty()) {
             viewModelScope.launch {
                 withContext(Dispatchers.IO) {
@@ -266,6 +263,7 @@ open class CytanniListViewModel : ViewModel() {
                     if (listState[page].item.isEmpty()) {
                         listState[page].item.addAll(resultPage)
                     }
+                    updatePageCompleted()
                 }
             }
         }
@@ -279,7 +277,6 @@ open class CytanniListViewModel : ViewModel() {
     }
 
     fun setPerevodBible(context: Context, biblia: Int, cytanne: String, perevod: String, oldPerevod: String) {
-        listState.clear()
         if (biblia == Settings.CHYTANNI_BIBLIA) {
             if (oldPerevod == Settings.PEREVODSEMUXI || oldPerevod == Settings.PEREVODNADSAN || oldPerevod == Settings.PEREVODSINOIDAL) {
                 if (perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODNEWAMERICANBIBLE) {
@@ -329,6 +326,12 @@ open class CytanniListViewModel : ViewModel() {
                 }
             }
         }
+        if (biblia == Settings.CHYTANNI_VYBRANAE || biblia == Settings.CHYTANNI_MARANATA) {
+            val firstVisibleItemIndex = listState[selectedIndex].lazyListState.firstVisibleItemIndex
+            oldKnigaGlava.add(listState[selectedIndex].item[firstVisibleItemIndex].kniga)
+            oldKnigaGlava.add(listState[selectedIndex].item[firstVisibleItemIndex].glava)
+        }
+        listState.clear()
         initViewModel(context, biblia, cytanne, perevod)
         initTTS(context, perevod)
     }
@@ -421,11 +424,11 @@ open class CytanniListViewModel : ViewModel() {
         }
     }
 
-    suspend fun downLoadBibile(context: Context, count: Int = 0) {
+    suspend fun downLoadBibile(context: Context, perevod: String, count: Int = 0) {
         var error = false
         try {
             val file = File("${context.filesDir}/cache/cache.zip")
-            when (setPerevod) {
+            when (perevod) {
                 Settings.PEREVODCATOLIK -> Malitounik.referens.child("/chytanne/Catolik/catolik.zip").getFile(file).addOnFailureListener {
                     error = true
                 }.await()
@@ -442,7 +445,7 @@ open class CytanniListViewModel : ViewModel() {
             error = true
         }
         if (error && count < 3) {
-            downLoadBibile(context, count + 1)
+            downLoadBibile(context, perevod, count + 1)
         }
     }
 
@@ -475,19 +478,16 @@ open class CytanniListViewModel : ViewModel() {
                     when (perevod) {
                         Settings.PEREVODCATOLIK -> {
                             fireBaseVersionUpdate = destinationDir.exists()
-                            setPerevod = Settings.PEREVODCATOLIK
                             dialogDownLoad = true
                         }
 
                         Settings.PEREVODSINOIDAL -> {
                             fireBaseVersionUpdate = destinationDir.exists()
-                            setPerevod = Settings.PEREVODSINOIDAL
                             dialogDownLoad = true
                         }
 
                         Settings.PEREVODNEWAMERICANBIBLE -> {
                             fireBaseVersionUpdate = destinationDir.exists()
-                            setPerevod = Settings.PEREVODNEWAMERICANBIBLE
                             dialogDownLoad = true
                         }
                     }
@@ -527,9 +527,9 @@ open class CytanniListViewModel : ViewModel() {
         return result
     }
 
-    fun saveVersionFile(context: Context) {
+    fun saveVersionFile(context: Context, perevod: String) {
         if (fireBaseVersion > 1) {
-            when (setPerevod) {
+            when (perevod) {
                 Settings.PEREVODCATOLIK -> {
                     val file = File("${context.filesDir}/catolikVersion.txt")
                     file.writer().use {
@@ -780,8 +780,7 @@ fun CytanniList(
         }
     }
     if (viewModel.dialogDownLoad) {
-        DialogDownLoadBible(viewModel, onConfirmation = {
-            perevod = viewModel.setPerevod
+        DialogDownLoadBible(viewModel, perevod, onConfirmation = {
             k.edit {
                 if (biblia == Settings.CHYTANNI_MARANATA) {
                     putString(
@@ -791,7 +790,7 @@ fun CytanniList(
                 apply()
             }
             if (viewModel.fireBaseVersionUpdate) {
-                viewModel.saveVersionFile(context)
+                viewModel.saveVersionFile(context, perevod)
                 viewModel.fireBaseVersionUpdate = false
             }
             viewModel.dialogDownLoad = false
@@ -812,7 +811,6 @@ fun CytanniList(
             Settings.PEREVODCATOLIK -> {
                 val dir = File("${context.filesDir}/Catolik")
                 if (!dir.exists()) {
-                    viewModel.setPerevod = Settings.PEREVODCATOLIK
                     viewModel.dialogDownLoad = true
                 }
             }
@@ -820,7 +818,6 @@ fun CytanniList(
             Settings.PEREVODSINOIDAL -> {
                 val dir = File("${context.filesDir}/Sinodal")
                 if (!dir.exists()) {
-                    viewModel.setPerevod = Settings.PEREVODSINOIDAL
                     viewModel.dialogDownLoad = true
                 }
             }
@@ -828,7 +825,6 @@ fun CytanniList(
             Settings.PEREVODNEWAMERICANBIBLE -> {
                 val dir = File("${context.filesDir}/NewAmericanBible")
                 if (!dir.exists()) {
-                    viewModel.setPerevod = Settings.PEREVODNEWAMERICANBIBLE
                     viewModel.dialogDownLoad = true
                 }
             }
@@ -1262,13 +1258,12 @@ fun CytanniList(
                                             viewModel.isPaused = false
                                             viewModel.isSpeaking = false
                                             viewModel.stop()
+                                            perevod = Settings.PEREVODCATOLIK
                                             val dir = File("${context.filesDir}/Catolik")
                                             if (!dir.exists()) {
-                                                viewModel.setPerevod = Settings.PEREVODCATOLIK
                                                 viewModel.dialogDownLoad = true
                                             } else {
                                                 val oldPerevod = perevod
-                                                perevod = Settings.PEREVODCATOLIK
                                                 if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
                                                     "perevodMaranata", perevod
                                                 )
@@ -1285,13 +1280,12 @@ fun CytanniList(
                                             viewModel.isPaused = false
                                             viewModel.isSpeaking = false
                                             viewModel.stop()
+                                            perevod = Settings.PEREVODCATOLIK
                                             val dir = File("${context.filesDir}/Catolik")
                                             if (!dir.exists()) {
-                                                viewModel.setPerevod = Settings.PEREVODCATOLIK
                                                 viewModel.dialogDownLoad = true
                                             } else {
                                                 val oldPerevod = perevod
-                                                perevod = Settings.PEREVODCATOLIK
                                                 if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
                                                     "perevodMaranata", perevod
                                                 )
@@ -1342,13 +1336,12 @@ fun CytanniList(
                                             viewModel.isPaused = false
                                             viewModel.isSpeaking = false
                                             viewModel.stop()
+                                            perevod = Settings.PEREVODSINOIDAL
                                             val dir = File("${context.filesDir}/Sinodal")
                                             if (!dir.exists()) {
-                                                viewModel.setPerevod = Settings.PEREVODSINOIDAL
                                                 viewModel.dialogDownLoad = true
                                             } else {
                                                 val oldPerevod = perevod
-                                                perevod = Settings.PEREVODSINOIDAL
                                                 if (biblia == Settings.CHYTANNI_MARANATA) {
                                                     edit.putString(
                                                         "perevodMaranata", perevod
@@ -1364,13 +1357,12 @@ fun CytanniList(
                                             viewModel.isPaused = false
                                             viewModel.isSpeaking = false
                                             viewModel.stop()
+                                            perevod = Settings.PEREVODSINOIDAL
                                             val dir = File("${context.filesDir}/Sinodal")
                                             if (!dir.exists()) {
-                                                viewModel.setPerevod = Settings.PEREVODSINOIDAL
                                                 viewModel.dialogDownLoad = true
                                             } else {
                                                 val oldPerevod = perevod
-                                                perevod = Settings.PEREVODSINOIDAL
                                                 if (biblia == Settings.CHYTANNI_MARANATA) {
                                                     edit.putString(
                                                         "perevodMaranata", perevod
@@ -1394,13 +1386,12 @@ fun CytanniList(
                                                 viewModel.isPaused = false
                                                 viewModel.isSpeaking = false
                                                 viewModel.stop()
+                                                perevod = Settings.PEREVODNEWAMERICANBIBLE
                                                 val dir = File("${context.filesDir}/NewAmericanBible")
                                                 if (!dir.exists()) {
-                                                    viewModel.setPerevod = Settings.PEREVODNEWAMERICANBIBLE
                                                     viewModel.dialogDownLoad = true
                                                 } else {
                                                     val oldPerevod = perevod
-                                                    perevod = Settings.PEREVODNEWAMERICANBIBLE
                                                     if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
                                                         "perevodMaranata", perevod
                                                     )
@@ -1414,13 +1405,12 @@ fun CytanniList(
                                                 viewModel.isPaused = false
                                                 viewModel.isSpeaking = false
                                                 viewModel.stop()
+                                                perevod = Settings.PEREVODNEWAMERICANBIBLE
                                                 val dir = File("${context.filesDir}/NewAmericanBible")
                                                 if (!dir.exists()) {
-                                                    viewModel.setPerevod = Settings.PEREVODNEWAMERICANBIBLE
                                                     viewModel.dialogDownLoad = true
                                                 } else {
                                                     val oldPerevod = perevod
-                                                    perevod = Settings.PEREVODNEWAMERICANBIBLE
                                                     if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
                                                         "perevodMaranata", perevod
                                                     )
@@ -1712,79 +1702,76 @@ fun CytanniList(
                         }
                     }
                 }
-                if (viewModel.listState[viewModel.selectedIndex].item.isNotEmpty()) {
-                    LaunchedEffect(Unit) {
-                        coroutineScope.launch {
-                            viewModel.listState[viewModel.selectedIndex].lazyListState.scrollToItem(AppNavGraphState.getScrollValuePosition(title), AppNavGraphState.getScrollValueOffset(title))
-                        }
-                    }
-                    if (biblia == Settings.CHYTANNI_BIBLIA && positionRemember != -1) {
-                        LaunchedEffect(positionRemember) {
-                            coroutineScope.launch {
-                                viewModel.listState[viewModel.selectedIndex].lazyListState.scrollToItem(positionRemember)
-                                positionRemember = -1
-                            }
-                        }
-                    }
-                    if (biblia == Settings.CHYTANNI_LITURGICHNYIA && skipUtran && utranEndPosition > 0) {
-                        var pos = AppNavGraphState.getScrollValuePosition(title)
-                        val offset = AppNavGraphState.getScrollValueOffset(title)
-                        if (pos == 0) pos = utranEndPosition
-                        LaunchedEffect(pos) {
-                            coroutineScope.launch {
-                                viewModel.listState[viewModel.selectedIndex].lazyListState.scrollToItem(pos, offset)
-                                positionRemember = -1
-                                skipUtran = false
-                            }
-                        }
-                    }
-                }
                 HorizontalPager(
                     pageSpacing = 10.dp, state = pagerState, flingBehavior = fling, verticalAlignment = Alignment.Top, userScrollEnabled = biblia == Settings.CHYTANNI_BIBLIA
                 ) { page ->
-                    viewModel.updatePage(biblia, page, perevod)
                     val resultPage = viewModel.listState[page].item
-                    if (resultPage.isNotEmpty() && biblia != Settings.CHYTANNI_BIBLIA && positionRemember != -1) {
-                        var resultCount = 0
-                        if (positionRemember != 0) {
-                            var tit = ""
-                            var cnt = 0
-                            for (i in 0 until resultPage.size) {
-                                if (tit.isNotEmpty() && resultPage[i].title != tit) {
-                                    cnt++
-                                    if (cnt == positionRemember) {
-                                        resultCount = i
+                    viewModel.updatePage(biblia, page, perevod, updatePageCompleted = {
+                        when {
+                            (biblia == Settings.CHYTANNI_VYBRANAE || biblia == Settings.CHYTANNI_MARANATA) && viewModel.oldKnigaGlava.isNotEmpty() -> {
+                                var findIndex = 0
+                                for (i in resultPage.indices) {
+                                    if (viewModel.oldKnigaGlava[0] == resultPage[i].kniga && viewModel.oldKnigaGlava[1] == resultPage[i].glava) {
+                                        findIndex = i
                                         break
                                     }
                                 }
-                                tit = resultPage[i].title
+                                viewModel.oldKnigaGlava.clear()
+                                coroutineScope.launch {
+                                    viewModel.listState[page].lazyListState.scrollToItem(findIndex)
+                                }
+                            }
+
+                            biblia == Settings.CHYTANNI_LITURGICHNYIA && skipUtran -> {
+                                val tit = resultPage[viewModel.selectedIndex].title
+                                for (i in 0 until resultPage.size) {
+                                    if (resultPage[i].title != tit) {
+                                        utranEndPosition = i
+                                        break
+                                    }
+                                }
+                                coroutineScope.launch {
+                                    viewModel.listState[viewModel.selectedIndex].lazyListState.scrollToItem(utranEndPosition)
+                                    skipUtran = false
+                                }
+                            }
+
+                            biblia != Settings.CHYTANNI_BIBLIA && positionRemember != -1 -> {
+                                var resultCount = 0
+                                if (positionRemember != 0) {
+                                    var tit = ""
+                                    var cnt = 0
+                                    for (i in 0 until resultPage.size) {
+                                        if (tit.isNotEmpty() && resultPage[i].title != tit) {
+                                            cnt++
+                                            if (cnt == positionRemember) {
+                                                resultCount = i
+                                                break
+                                            }
+                                        }
+                                        tit = resultPage[i].title
+                                    }
+                                }
+                                coroutineScope.launch {
+                                    viewModel.listState[page].lazyListState.scrollToItem(resultCount)
+                                    positionRemember = -1
+                                }
+                            }
+
+                            else -> {
+                                coroutineScope.launch {
+                                    viewModel.listState[page].lazyListState.scrollToItem(AppNavGraphState.getScrollValuePosition(title), AppNavGraphState.getScrollValueOffset(title))
+                                }
                             }
                         }
-                        LaunchedEffect(resultCount) {
-                            coroutineScope.launch {
-                                viewModel.listState[viewModel.selectedIndex].lazyListState.scrollToItem(resultCount)
-                                positionRemember = -1
-                            }
+                        if (viewModel.selectState.isEmpty()) {
+                            viewModel.selectState.addAll(resultPage.map { false }.toMutableStateList())
                         }
-                    }
-                    if (resultPage.isNotEmpty() && skipUtran) {
-                        val tit = resultPage[viewModel.selectedIndex].title
-                        for (i in 0 until resultPage.size) {
-                            if (resultPage[i].title != tit) {
-                                utranEndPosition = i
-                                break
-                            }
-                        }
-                    }
-                    if (resultPage.isNotEmpty() && viewModel.selectState.isEmpty()) {
-                        viewModel.selectState.addAll(resultPage.map { false }.toMutableStateList())
-                    }
-                    if (resultPage.isNotEmpty()) {
                         if (biblia == Settings.CHYTANNI_BIBLIA && perevodRoot != Settings.PEREVODNADSAN) {
                             subTitle = resultPage[0].title.substringBeforeLast(" ")
                         }
                         if (biblia != Settings.CHYTANNI_BIBLIA) {
-                            LaunchedEffect(viewModel.listState[page]) {
+                            coroutineScope.launch {
                                 snapshotFlow { viewModel.listState[page].lazyListState.firstVisibleItemIndex }.collect { index ->
                                     if (subTitle != resultPage[index].title) {
                                         subTitle = resultPage[index].title
@@ -1792,7 +1779,7 @@ fun CytanniList(
                                 }
                             }
                         }
-                    }
+                    })
                     if (isSelectAll) {
                         isSelectAll = false
                         if (biblia == Settings.CHYTANNI_BIBLIA) {
@@ -2398,7 +2385,7 @@ fun getBible(cytanne: String, perevod: String, biblia: Int, isTitle: Boolean = f
                                         if (e > 0) {
                                             result.add(
                                                 CytanniListData(
-                                                    id = id, title = "${
+                                                    id = id, kniga = knigiBiblii, glava = glava, title = "${
                                                         getNameBook(
                                                             context, kniga, perevodNew, knigiBiblii >= 50
                                                         )
@@ -2409,7 +2396,7 @@ fun getBible(cytanne: String, perevod: String, biblia: Int, isTitle: Boolean = f
                                             if (isTitle) {
                                                 result.add(
                                                     CytanniListData(
-                                                        id = id, title = "${
+                                                        id = id, kniga = knigiBiblii, glava = glava, title = "${
                                                             getNameBook(
                                                                 context, kniga, perevodNew, knigiBiblii >= 50
                                                             )
@@ -2434,7 +2421,7 @@ fun getBible(cytanne: String, perevod: String, biblia: Int, isTitle: Boolean = f
                                     }
                                     result.add(
                                         CytanniListData(
-                                            id = id, title = "${
+                                            id = id, kniga = knigiBiblii, glava = glava, title = "${
                                                 getNameBook(
                                                     context, kniga, perevodNew, knigiBiblii >= 50
                                                 )
@@ -2445,16 +2432,15 @@ fun getBible(cytanne: String, perevod: String, biblia: Int, isTitle: Boolean = f
                                 }
                             }
                         } catch (_: Throwable) {
-                            result.add(CytanniListData(id = id, title = "", text = openAssetsResources(context, "biblia_error.txt")))
+                            result.add(CytanniListData(id = id, kniga = 0, glava = 1, title = "", text = openAssetsResources(context, "biblia_error.txt")))
                             id++
                         }
                     }
                 }
             }
         }
-    } catch (e: Throwable) {
-        e.printStackTrace()
-        result.add(CytanniListData(id = id, title = "", text = openAssetsResources(context, "biblia_error.txt")))
+    } catch (_: Throwable) {
+        result.add(CytanniListData(id = id, kniga = 0, glava = 1, title = "", text = openAssetsResources(context, "biblia_error.txt")))
         id++
     }
     return result
@@ -2853,7 +2839,7 @@ fun getParalel(kniga: Int, glava: Int, styx: Int, isPsaltyrGreek: Boolean): Stri
 data class CytanniListItemData(val item: SnapshotStateList<CytanniListData>, val lazyListState: LazyListState)
 
 data class CytanniListData(
-    val id: Int, val title: String, val text: String = "", val parallel: String = "+-+", val translate: String = ""
+    val id: Int, val kniga: Int, val glava: Int, val title: String, val text: String = "", val parallel: String = "+-+", val translate: String = ""
 )
 
 data class VybranaeData(
