@@ -2217,14 +2217,14 @@ fun Bogaslujbovyia(
                                 modifier = Modifier
                                     .padding(end = 10.dp)
                                     .clip(shape = RoundedCornerShape(10.dp))
-                                    .background(Button)
-                                    .size(40.dp)
-                                    .padding(5.dp)
                                     .clickable {
                                         viewModel.isSpeaking = false
                                         viewModel.isPaused = false
                                         viewModel.stop()
                                     }
+                                    .background(Button)
+                                    .size(40.dp)
+                                    .padding(5.dp)
                             )
                         }
                         AnimatedVisibility(
@@ -2240,9 +2240,6 @@ fun Bogaslujbovyia(
                                 modifier = Modifier
                                     .align(Alignment.Bottom)
                                     .clip(shape = RoundedCornerShape(10.dp))
-                                    .background(Button)
-                                    .size(40.dp)
-                                    .padding(5.dp)
                                     .clickable {
                                         if (viewModel.isPaused) {
                                             viewModel.resume()
@@ -2251,6 +2248,9 @@ fun Bogaslujbovyia(
                                         }
                                         viewModel.isPaused = !viewModel.isPaused
                                     }
+                                    .background(Button)
+                                    .size(40.dp)
+                                    .padding(5.dp)
                             )
                         }
                         AnimatedVisibility(
@@ -2266,9 +2266,6 @@ fun Bogaslujbovyia(
                                 modifier = Modifier
                                     .padding(horizontal = 10.dp)
                                     .clip(shape = RoundedCornerShape(10.dp))
-                                    .background(Button)
-                                    .size(40.dp)
-                                    .padding(5.dp)
                                     .clickable {
                                         if (viewModel.autoScrollSpeed in 10..125) {
                                             viewModel.autoScrollSpeed += 5
@@ -2280,6 +2277,9 @@ fun Bogaslujbovyia(
                                             viewModel.autoScrollSpeed(context)
                                         }
                                     }
+                                    .background(Button)
+                                    .size(40.dp)
+                                    .padding(5.dp)
                             )
                         }
                         AnimatedVisibility(
@@ -2295,9 +2295,6 @@ fun Bogaslujbovyia(
                                 modifier = Modifier
                                     .align(Alignment.Bottom)
                                     .clip(shape = RoundedCornerShape(10.dp))
-                                    .background(Button)
-                                    .size(40.dp)
-                                    .padding(5.dp)
                                     .clickable {
                                         if (viewModel.autoScrollSpeed in 20..135) {
                                             viewModel.autoScrollSpeed -= 5
@@ -2309,6 +2306,10 @@ fun Bogaslujbovyia(
                                             viewModel.autoScrollSpeed(context)
                                         }
                                     }
+                                    .background(Button)
+                                    .size(40.dp)
+                                    .padding(5.dp)
+
                             )
                         }
                     }

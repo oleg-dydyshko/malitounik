@@ -2014,14 +2014,14 @@ fun CytanniList(
                             modifier = Modifier
                                 .padding(end = 10.dp)
                                 .clip(shape = RoundedCornerShape(10.dp))
-                                .background(Button)
-                                .size(40.dp)
-                                .padding(5.dp)
                                 .clickable {
                                     viewModel.isSpeaking = false
                                     viewModel.isPaused = false
                                     viewModel.stop()
                                 }
+                                .background(Button)
+                                .size(40.dp)
+                                .padding(5.dp)
                         )
                     }
                     AnimatedVisibility(
@@ -2037,9 +2037,6 @@ fun CytanniList(
                             modifier = Modifier
                                 .align(Alignment.Bottom)
                                 .clip(shape = RoundedCornerShape(10.dp))
-                                .background(Button)
-                                .size(40.dp)
-                                .padding(5.dp)
                                 .clickable {
                                     if (viewModel.isPaused) {
                                         viewModel.resume()
@@ -2048,6 +2045,9 @@ fun CytanniList(
                                     }
                                     viewModel.isPaused = !viewModel.isPaused
                                 }
+                                .background(Button)
+                                .size(40.dp)
+                                .padding(5.dp)
                         )
                     }
                     AnimatedVisibility(
@@ -2061,9 +2061,6 @@ fun CytanniList(
                             painter = painterResource(R.drawable.minus_auto_scroll), contentDescription = "", modifier = Modifier
                                 .padding(horizontal = 10.dp)
                                 .clip(shape = RoundedCornerShape(10.dp))
-                                .background(Button)
-                                .size(40.dp)
-                                .padding(5.dp)
                                 .clickable {
                                     if (viewModel.autoScrollSpeed in 10..125) {
                                         viewModel.autoScrollSpeed += 5
@@ -2073,7 +2070,11 @@ fun CytanniList(
                                         autoScrollText = "$proc%"
                                         viewModel.autoScrollSpeed(context)
                                     }
-                                })
+                                }
+                                .background(Button)
+                                .size(40.dp)
+                                .padding(5.dp)
+                        )
                     }
                     AnimatedVisibility(
                         viewModel.autoScrollSensor, enter = fadeIn(
@@ -2086,9 +2087,6 @@ fun CytanniList(
                             painter = painterResource(R.drawable.plus_auto_scroll), contentDescription = "", modifier = Modifier
                                 .align(Alignment.Bottom)
                                 .clip(shape = RoundedCornerShape(10.dp))
-                                .background(Button)
-                                .size(40.dp)
-                                .padding(5.dp)
                                 .clickable {
                                     if (viewModel.autoScrollSpeed in 20..135) {
                                         viewModel.autoScrollSpeed -= 5
@@ -2098,7 +2096,11 @@ fun CytanniList(
                                         autoScrollText = "$proc%"
                                         viewModel.autoScrollSpeed(context)
                                     }
-                                })
+                                }
+                                .background(Button)
+                                .size(40.dp)
+                                .padding(5.dp)
+                        )
                     }
                 }
             }
