@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -1116,7 +1115,7 @@ fun MainConteiner(
         var textTollBarColor by remember { mutableStateOf(PrimaryTextBlack) }
         var title by rememberSaveable { mutableStateOf("") }
         var isBottomBar by remember { mutableStateOf(k.getBoolean("bottomBar", false)) }
-        viewModel.isIconSort = currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.MAE_NATATKI_MENU || currentRoute == AllDestinations.BIBLIA_SEMUXA || currentRoute == AllDestinations.BIBLIA_BOKUNA || currentRoute == AllDestinations.BIBLIA_NADSAN || currentRoute == AllDestinations.BIBLIA_CHARNIAUSKI || currentRoute == AllDestinations.BIBLIA_SINODAL || currentRoute == AllDestinations.BIBLIA_CATOLIK || currentRoute == AllDestinations.BIBLIA_NEW_AMERICAN_BIBLE
+        viewModel.isIconSort = currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.MAE_NATATKI_MENU
         title = when (currentRoute) {
             AllDestinations.KALIANDAR -> stringResource(R.string.kaliandar2)
             AllDestinations.KALIANDAR_YEAR -> stringResource(R.string.kaliandar2)
@@ -1161,7 +1160,7 @@ fun MainConteiner(
             }
         }
         LaunchedEffect(viewModel.textFieldValueState) {
-            if (!currentRoute.contains("Biblia_")) {
+            if (!(viewModel.perevodBiblii == Settings.PEREVODSINOIDAL || viewModel.perevodBiblii == Settings.PEREVODNEWAMERICANBIBLE)) {
                 val edit = zamena(viewModel.textFieldValueState.text)
                 if (edit != viewModel.textFieldValueState.text) {
                     val selection = TextRange(edit.length)

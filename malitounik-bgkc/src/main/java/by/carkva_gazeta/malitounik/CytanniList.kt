@@ -1723,7 +1723,7 @@ fun CytanniList(
                             }
 
                             biblia == Settings.CHYTANNI_LITURGICHNYIA && skipUtran -> {
-                                val tit = resultPage[viewModel.selectedIndex].title
+                                val tit = resultPage[page].title
                                 for (i in 0 until resultPage.size) {
                                     if (resultPage[i].title != tit) {
                                         utranEndPosition = i
@@ -1731,30 +1731,37 @@ fun CytanniList(
                                     }
                                 }
                                 coroutineScope.launch {
-                                    viewModel.listState[viewModel.selectedIndex].lazyListState.scrollToItem(utranEndPosition)
+                                    viewModel.listState[page].lazyListState.scrollToItem(utranEndPosition)
                                     skipUtran = false
                                 }
                             }
 
-                            biblia != Settings.CHYTANNI_BIBLIA && positionRemember != -1 -> {
-                                var resultCount = 0
-                                if (positionRemember != 0) {
-                                    var tit = ""
-                                    var cnt = 0
-                                    for (i in 0 until resultPage.size) {
-                                        if (tit.isNotEmpty() && resultPage[i].title != tit) {
-                                            cnt++
-                                            if (cnt == positionRemember) {
-                                                resultCount = i
-                                                break
+                            positionRemember != -1 -> {
+                                if (biblia != Settings.CHYTANNI_BIBLIA) {
+                                    var resultCount = 0
+                                    if (positionRemember != 0) {
+                                        var tit = ""
+                                        var cnt = 0
+                                        for (i in 0 until resultPage.size) {
+                                            if (tit.isNotEmpty() && resultPage[i].title != tit) {
+                                                cnt++
+                                                if (cnt == positionRemember) {
+                                                    resultCount = i
+                                                    break
+                                                }
                                             }
+                                            tit = resultPage[i].title
                                         }
-                                        tit = resultPage[i].title
                                     }
-                                }
-                                coroutineScope.launch {
-                                    viewModel.listState[page].lazyListState.scrollToItem(resultCount)
-                                    positionRemember = -1
+                                    coroutineScope.launch {
+                                        viewModel.listState[page].lazyListState.scrollToItem(resultCount)
+                                        positionRemember = -1
+                                    }
+                                } else {
+                                    coroutineScope.launch {
+                                        viewModel.listState[page].lazyListState.scrollToItem(positionRemember)
+                                        positionRemember = -1
+                                    }
                                 }
                             }
 

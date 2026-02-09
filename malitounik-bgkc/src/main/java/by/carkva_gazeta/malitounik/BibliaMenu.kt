@@ -136,6 +136,7 @@ class SearchBibleViewModel : CytanniListViewModel() {
     var isEditMode by mutableStateOf(false)
     var isDeliteNatatka by mutableStateOf(false)
     var isIconSort by mutableStateOf(false)
+    var perevodBiblii = Settings.PEREVODSEMUXI
 
     fun doInBackground(
         context: Context, searche: String, perevod: String, isBogaslujbovyiaSearch: Boolean
@@ -156,6 +157,7 @@ class SearchBibleViewModel : CytanniListViewModel() {
 
     @Suppress("DEPRECATION")
     fun bogashlugbovya(context: Context, poshuk: String, secondRun: Boolean = false): ArrayList<SearchBibleItem> {
+        perevodBiblii = Settings.PEREVODSEMUXI
         val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
         var poshuk1 = poshuk
         val seashpost = ArrayList<SearchBibleItem>()
@@ -200,6 +202,7 @@ class SearchBibleViewModel : CytanniListViewModel() {
     fun biblia(
         context: Context, poshuk: String, perevod: String, secondRun: Boolean = false
     ): ArrayList<SearchBibleItem> {
+        perevodBiblii = perevod
         val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
         var poshuk1 = poshuk
         val seashpost = ArrayList<SearchBibleItem>()
@@ -531,12 +534,12 @@ fun BibliaMenu(
     navigateToBogaslujbovyia: (String, String) -> Unit,
     viewModel: SearchBibleViewModel
 ) {
+    viewModel.perevodBiblii = perevod
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
         AppNavigationActions(navController, k)
     }
-    //var bibleTime by remember { mutableStateOf(false) }
     LaunchedEffect(viewModel.bibleTime) {
         if (viewModel.bibleTime) {
             var defKniga = "Быц"
@@ -1161,6 +1164,8 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                     }
                 }
             }
+        } else {
+            viewModel.isIconSort = false
         }
         if (perevod == Settings.PEREVODNADSAN) {
             Column(
