@@ -2440,7 +2440,8 @@ fun getBible(cytanne: String, perevod: String, biblia: Int, isTitle: Boolean = f
                                     id++
                                 }
                             }
-                        } catch (_: Throwable) {
+                        } catch (e: Throwable) {
+                            e.printStackTrace()
                             result.add(CytanniListData(id = id, kniga = 0, glava = 1, title = "", text = openAssetsResources(context, "biblia_error.txt")))
                             id++
                         }
@@ -2448,7 +2449,8 @@ fun getBible(cytanne: String, perevod: String, biblia: Int, isTitle: Boolean = f
                 }
             }
         }
-    } catch (_: Throwable) {
+    } catch (e: Throwable) {
+        e.printStackTrace()
         result.add(CytanniListData(id = id, kniga = 0, glava = 1, title = "", text = openAssetsResources(context, "biblia_error.txt")))
         id++
     }
@@ -2518,7 +2520,7 @@ fun knigaBiblii(kniga: String): Int {
     if (kniga == "1 Ян") bible = 58
     if (kniga == "2 Ян") bible = 59
     if (kniga == "3 Ян") bible = 60
-    if (kniga == "Юды") bible = 61
+    if (kniga == "Юд") bible = 61
     if (kniga == "Рым") bible = 62
     if (kniga == "1 Кар") bible = 63
     if (kniga == "2 Кар") bible = 64
