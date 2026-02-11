@@ -921,5 +921,7 @@
     <string name="tts_help_title_be">БЕЛАРУСКАЯ МОВА</string>
     <string name="tts_help_title_ru">РАСЕЙСКАЯ МОВА</string>
     <string name="tts_help_title_en">АНГЕЛЬСКАЯ МОВА</string>
+    <string name="find_up">Пошук працягнуты з канца</string>
+    <string name="find_back">Пошук працягнуты спачатку</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

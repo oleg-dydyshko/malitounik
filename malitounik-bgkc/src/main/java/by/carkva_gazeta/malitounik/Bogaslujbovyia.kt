@@ -244,6 +244,10 @@ class BogaslujbovyiaViewModel : ViewModel() {
             if (result.isNotEmpty()) {
                 if (result.size - 1 > resultPosition) {
                     resultPosition += 1
+                } else {
+                    resultPosition = 0
+                    val context = Malitounik.applicationContext()
+                    Toast.makeText(context, context.getString(R.string.find_back), Toast.LENGTH_SHORT).show()
                 }
                 val t1 = result[resultPosition][0]
                 if (t1 != -1) {
@@ -260,6 +264,10 @@ class BogaslujbovyiaViewModel : ViewModel() {
             if (result.isNotEmpty()) {
                 if (resultPosition > 0) {
                     resultPosition -= 1
+                } else {
+                    resultPosition = result.size - 1
+                    val context = Malitounik.applicationContext()
+                    Toast.makeText(context, context.getString(R.string.find_up), Toast.LENGTH_SHORT).show()
                 }
                 val t1 = result[resultPosition][0]
                 if (t1 != -1) {
@@ -1447,47 +1455,27 @@ fun Bogaslujbovyia(
                         },
                         actions = {
                             if (viewModel.searchText) {
-                                if (viewModel.resultPosition > 0) {
-                                    PlainTooltip(stringResource(R.string.poshuk_back), TooltipAnchorPosition.Below) {
-                                        IconButton(onClick = {
-                                            viewModel.findBack(textLayout)
-                                        }) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.arrow_upward),
-                                                contentDescription = "",
-                                                tint = MaterialTheme.colorScheme.onSecondary
-                                            )
-                                        }
+                                PlainTooltip(stringResource(R.string.poshuk_back), TooltipAnchorPosition.Below) {
+                                    IconButton(onClick = {
+                                        viewModel.findBack(textLayout)
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.arrow_upward),
+                                            contentDescription = "",
+                                            tint = MaterialTheme.colorScheme.onSecondary
+                                        )
                                     }
-                                } else {
-                                    Icon(
-                                        modifier = Modifier
-                                            .padding(10.dp)
-                                            .size(24.dp),
-                                        painter = painterResource(R.drawable.empty),
-                                        contentDescription = ""
-                                    )
                                 }
-                                if (viewModel.resultPosition < viewModel.result.size - 1) {
-                                    PlainTooltip(stringResource(R.string.poshuk_forvard), TooltipAnchorPosition.Below) {
-                                        IconButton(onClick = {
-                                            viewModel.findForward(textLayout)
-                                        }) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.arrow_downward),
-                                                contentDescription = "",
-                                                tint = MaterialTheme.colorScheme.onSecondary
-                                            )
-                                        }
+                                PlainTooltip(stringResource(R.string.poshuk_forvard), TooltipAnchorPosition.Below) {
+                                    IconButton(onClick = {
+                                        viewModel.findForward(textLayout)
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.arrow_downward),
+                                            contentDescription = "",
+                                            tint = MaterialTheme.colorScheme.onSecondary
+                                        )
                                     }
-                                } else {
-                                    Icon(
-                                        modifier = Modifier
-                                            .padding(10.dp)
-                                            .size(24.dp),
-                                        painter = painterResource(R.drawable.empty),
-                                        contentDescription = ""
-                                    )
                                 }
                             } else {
                                 if (!isShare) {
@@ -2010,11 +1998,12 @@ fun Bogaslujbovyia(
                             if (viewModel.result.isNotEmpty()) {
                                 textLayout?.let {
                                     val firstTextPosition = it.getLineStart(it.getLineForVerticalPosition(viewModel.scrollState.value.toFloat()))
+                                    val lastTextPosition = it.getLineEnd(it.getLineForVerticalPosition(viewModel.scrollState.value.toFloat()))
                                     if (firstTextPosition < viewModel.result[0][0]) {
                                         viewModel.resultPosition = -1
                                     } else {
                                         for (i in viewModel.result.indices) {
-                                            if (viewModel.result[i][0] == firstTextPosition) {
+                                            if (viewModel.result[i][0] in firstTextPosition..lastTextPosition || firstTextPosition < viewModel.result[i][0]) {
                                                 viewModel.resultPosition = i
                                                 break
                                             }
