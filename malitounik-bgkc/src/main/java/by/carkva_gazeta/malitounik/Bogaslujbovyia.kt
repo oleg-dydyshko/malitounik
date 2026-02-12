@@ -199,6 +199,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
     var dialodTTSHelp by mutableStateOf(false)
     var dialodTTSHelpError by mutableStateOf(false)
     var curentPosition = 0
+    var editSearshString = ""
     private var findTTSPosition = 0
     private val gson = Gson()
     private val type = TypeToken.getParameterized(ArrayList::class.java, VybranaeDataAll::class.java).type
@@ -1158,19 +1159,21 @@ fun Bogaslujbovyia(
         }
     }
     LaunchedEffect(viewModel.searshString) {
-        var edit = viewModel.searshString.text
-        edit = edit.replace("и", "і")
-        edit = edit.replace("щ", "ў")
-        edit = edit.replace("И", "І")
-        edit = edit.replace("Щ", "Ў")
-        edit = edit.replace("ъ", "'")
-        viewModel.searchTextResult = AnnotatedString("")
-        if (edit != viewModel.searshString.text) {
-            val selection = TextRange(edit.length)
-            viewModel.searshString = TextFieldValue(edit, selection)
+        if (viewModel.editSearshString != viewModel.searshString.text) {
+            viewModel.editSearshString = viewModel.searshString.text
+            viewModel.editSearshString = viewModel.editSearshString.replace("и", "і")
+            viewModel.editSearshString = viewModel.editSearshString.replace("щ", "ў")
+            viewModel.editSearshString = viewModel.editSearshString.replace("И", "І")
+            viewModel.editSearshString = viewModel.editSearshString.replace("Щ", "Ў")
+            viewModel.editSearshString = viewModel.editSearshString.replace("ъ", "'")
+            viewModel.searchTextResult = AnnotatedString("")
+            if (viewModel.editSearshString != viewModel.searshString.text) {
+                val selection = TextRange(viewModel.editSearshString.length)
+                viewModel.searshString = TextFieldValue(viewModel.editSearshString, selection)
+            }
+            AppNavGraphState.searchBogaslujbovyia = viewModel.searshString.text
+            viewModel.search(textLayout)
         }
-        AppNavGraphState.searchBogaslujbovyia = viewModel.searshString.text
-        viewModel.search(textLayout)
     }
     var paddingValues by remember { mutableStateOf(PaddingValues()) }
     BottomSheetScaffold(
@@ -2000,7 +2003,7 @@ fun Bogaslujbovyia(
                                     val firstTextPosition = it.getLineStart(it.getLineForVerticalPosition(viewModel.scrollState.value.toFloat()))
                                     val lastTextPosition = it.getLineEnd(it.getLineForVerticalPosition(viewModel.scrollState.value.toFloat()))
                                     if (firstTextPosition < viewModel.result[0][0]) {
-                                        viewModel.resultPosition = -1
+                                        viewModel.resultPosition = 0
                                     } else {
                                         for (i in viewModel.result.indices) {
                                             if (viewModel.result[i][0] in firstTextPosition..lastTextPosition || firstTextPosition < viewModel.result[i][0]) {
@@ -2022,7 +2025,7 @@ fun Bogaslujbovyia(
                     if (viewModel.searchText && viewModel.result.isNotEmpty()) {
                         Text(
                             modifier = Modifier.padding(10.dp),
-                            text = stringResource(R.string.searh_text_result, if (viewModel.resultPosition == -1) 1 else viewModel.resultPosition + 1, viewModel.result.size),
+                            text = stringResource(R.string.searh_text_result, viewModel.resultPosition + 1, viewModel.result.size),
                             fontStyle = FontStyle.Italic,
                             fontSize = Settings.fontInterface.sp,
                             color = MaterialTheme.colorScheme.secondary
