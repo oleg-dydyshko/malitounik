@@ -26,7 +26,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -57,13 +56,11 @@ import by.carkva_gazeta.malitounik.ui.theme.PrimaryBlack
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.PlainTooltip
 import by.carkva_gazeta.malitounik.views.openAssetsResources
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Cytaty(navController: NavHostController) {
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
     val view = LocalView.current
     val inputStream = openAssetsResources(context, "citata.txt")
     val listState = remember { inputStream.split("\n") }
@@ -78,9 +75,7 @@ fun Cytaty(navController: NavHostController) {
         }
     }
     LaunchedEffect(Unit) {
-        coroutineScope.launch {
-            lazyListState.scrollToItem(AppNavGraphState.getScrollValuePosition("Cytaty"),AppNavGraphState.getScrollValueOffset("Cytaty"))
-        }
+        lazyListState.scrollToItem(AppNavGraphState.getScrollValuePosition("Cytaty"),AppNavGraphState.getScrollValueOffset("Cytaty"))
     }
     Scaffold(
         topBar = {

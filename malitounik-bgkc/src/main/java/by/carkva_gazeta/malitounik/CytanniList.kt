@@ -707,9 +707,7 @@ fun CytanniList(
     if (viewModel.listState[viewModel.selectedIndex].item.isNotEmpty() && viewModel.bibleTime) {
         viewModel.bibleTime = false
         LaunchedEffect(Unit) {
-            coroutineScope.launch {
-                viewModel.listState[viewModel.selectedIndex].lazyListState.scrollToItem(k.getInt("bible_time_${viewModel.perevodName}_stix", 0))
-            }
+            viewModel.listState[viewModel.selectedIndex].lazyListState.scrollToItem(k.getInt("bible_time_${viewModel.perevodName}_stix", 0))
         }
     }
     var isSelectMode by rememberSaveable { mutableStateOf(false) }
@@ -753,9 +751,7 @@ fun CytanniList(
     if (isUpList) {
         LaunchedEffect(Unit) {
             isUpList = false
-            coroutineScope.launch {
-                viewModel.listState[viewModel.selectedIndex].lazyListState.animateScrollToItem(0)
-            }
+            viewModel.listState[viewModel.selectedIndex].lazyListState.animateScrollToItem(0)
         }
     }
     LaunchedEffect(fullscreen) {
@@ -1614,19 +1610,17 @@ fun CytanniList(
         ) {
             if (biblia == Settings.CHYTANNI_BIBLIA) {
                 LaunchedEffect(viewModel.selectedIndex) {
-                    coroutineScope.launch {
-                        viewModel.isVybranoe = false
-                        if (viewModel.vybranoeList.isNotEmpty()) {
-                            for (i in 0 until viewModel.vybranoeList.size) {
-                                if (viewModel.knigaText == viewModel.vybranoeList[i].knigaText && viewModel.vybranoeList[i].glava == viewModel.selectedIndex) {
-                                    viewModel.isVybranoe = true
-                                    break
-                                }
+                    viewModel.isVybranoe = false
+                    if (viewModel.vybranoeList.isNotEmpty()) {
+                        for (i in 0 until viewModel.vybranoeList.size) {
+                            if (viewModel.knigaText == viewModel.vybranoeList[i].knigaText && viewModel.vybranoeList[i].glava == viewModel.selectedIndex) {
+                                viewModel.isVybranoe = true
+                                break
                             }
                         }
-                        pagerState.scrollToPage(viewModel.selectedIndex)
-                        lazyRowState.scrollToItem(viewModel.selectedIndex)
                     }
+                    pagerState.scrollToPage(viewModel.selectedIndex)
+                    lazyRowState.scrollToItem(viewModel.selectedIndex)
                 }
                 LaunchedEffect(pagerState) {
                     snapshotFlow { pagerState.currentPage }.collect { page ->

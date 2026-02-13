@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,7 +37,6 @@ import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.views.AllDestinations
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
-import kotlinx.coroutines.launch
 import java.text.Collator
 import java.util.Locale
 
@@ -737,7 +735,6 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
             )
         }
     }
-    val coroutineScope = rememberCoroutineScope()
     val piesnyListState = rememberLazyListState()
     val keyboardController = LocalSoftwareKeyboardController.current
     val nestedScrollConnection = remember {
@@ -752,9 +749,7 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
         }
     }
     LaunchedEffect(Unit) {
-        coroutineScope.launch {
-            piesnyListState.scrollToItem(AppNavGraphState.getScrollValuePosition(piesny), AppNavGraphState.getScrollValueOffset(piesny))
-        }
+        piesnyListState.scrollToItem(AppNavGraphState.getScrollValuePosition(piesny), AppNavGraphState.getScrollValueOffset(piesny))
     }
     LazyColumn(Modifier.nestedScroll(nestedScrollConnection), state = piesnyListState) {
         items(

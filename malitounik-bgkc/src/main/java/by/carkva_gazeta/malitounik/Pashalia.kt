@@ -40,7 +40,6 @@ import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
 import by.carkva_gazeta.malitounik.views.AppNavigationActions
-import kotlinx.coroutines.coroutineScope
 import java.util.Calendar
 import java.util.GregorianCalendar
 
@@ -61,9 +60,7 @@ fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, sear
             listAll.add(pasxa(context, year))
             if (year == cal[Calendar.YEAR] - 3) {
                 findIndex = year
-                coroutineScope {
-                    lazyListState.scrollToItem(findIndex - 1582)
-                }
+                lazyListState.scrollToItem(findIndex - 1582)
             }
         }
     }
@@ -90,9 +87,7 @@ fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, sear
             }
         } else {
             filteredItems.addAll(listAll)
-            coroutineScope {
-                lazyListState.scrollToItem(findIndex - 1582)
-            }
+            lazyListState.scrollToItem(findIndex - 1582)
         }
     }
     Column(modifier = Modifier.nestedScroll(nestedScrollConnection)) {

@@ -12,7 +12,6 @@ import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -21,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import by.carkva_gazeta.malitounik.Settings
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,13 +33,10 @@ fun PlainTooltip(title: String, positioning: TooltipAnchorPosition = TooltipAnch
         }
     }
     val state = rememberTooltipState(isPersistent = true)
-    val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(state.isVisible) {
         if (state.isVisible) {
-            coroutineScope.launch {
-                delay(delay)
-                state.dismiss()
-            }
+            delay(delay)
+            state.dismiss()
         }
     }
     TooltipBox(

@@ -139,67 +139,65 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
     }
     LaunchedEffect(Unit) {
         if (Settings.isNetworkAvailable(context)) {
-            coroutineScope.launch {
-                getBibliateka(
-                    context,
-                    biblijateka,
-                    bibliatekaList = { list ->
-                        biblijatekaAllList.addAll(list)
-                        when (biblijateka) {
-                            AllDestinations.BIBLIJATEKA_NIADAUNIA -> {
-                                val gson = Gson()
-                                val type = TypeToken.getParameterized(
+            getBibliateka(
+                context,
+                biblijateka,
+                bibliatekaList = { list ->
+                    biblijatekaAllList.addAll(list)
+                    when (biblijateka) {
+                        AllDestinations.BIBLIJATEKA_NIADAUNIA -> {
+                            val gson = Gson()
+                            val type = TypeToken.getParameterized(
+                                ArrayList::class.java,
+                                TypeToken.getParameterized(
                                     ArrayList::class.java,
-                                    TypeToken.getParameterized(
-                                        ArrayList::class.java,
-                                        String::class.java
-                                    ).type
+                                    String::class.java
                                 ).type
-                                val fileNadaunia = File("${context.filesDir}/biblijateka_latest.json")
-                                if (fileNadaunia.exists()) {
-                                    bibliatekaList.addAll(gson.fromJson(fileNadaunia.readText(), type))
-                                }
+                            ).type
+                            val fileNadaunia = File("${context.filesDir}/biblijateka_latest.json")
+                            if (fileNadaunia.exists()) {
+                                bibliatekaList.addAll(gson.fromJson(fileNadaunia.readText(), type))
                             }
+                        }
 
-                            AllDestinations.BIBLIJATEKA_GISTORYIA -> {
-                                val newList = list.filter { it[4].toInt() == 1 }
-                                bibliatekaList.addAll(newList)
-                            }
+                        AllDestinations.BIBLIJATEKA_GISTORYIA -> {
+                            val newList = list.filter { it[4].toInt() == 1 }
+                            bibliatekaList.addAll(newList)
+                        }
 
-                            AllDestinations.BIBLIJATEKA_MALITOUNIKI -> {
-                                val newList = list.filter { it[4].toInt() == 2 }
-                                bibliatekaList.addAll(newList)
-                            }
+                        AllDestinations.BIBLIJATEKA_MALITOUNIKI -> {
+                            val newList = list.filter { it[4].toInt() == 2 }
+                            bibliatekaList.addAll(newList)
+                        }
 
-                            AllDestinations.BIBLIJATEKA_SPEUNIKI -> {
-                                val newList = list.filter { it[4].toInt() == 3 }
-                                bibliatekaList.addAll(newList)
-                            }
+                        AllDestinations.BIBLIJATEKA_SPEUNIKI -> {
+                            val newList = list.filter { it[4].toInt() == 3 }
+                            bibliatekaList.addAll(newList)
+                        }
 
-                            AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA -> {
-                                val newList = list.filter { it[4].toInt() == 4 }
-                                bibliatekaList.addAll(newList)
-                            }
+                        AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA -> {
+                            val newList = list.filter { it[4].toInt() == 4 }
+                            bibliatekaList.addAll(newList)
+                        }
 
-                            AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU -> {
-                                val newList = list.filter { it[4].toInt() == 5 }
-                                bibliatekaList.addAll(newList)
-                                bibliatekaList.sortByDescending {
-                                    val t1 = it[0].indexOf("(")
-                                    val t2 = it[0].indexOf(")")
-                                    if (t2 != -1) {
-                                        it[0].substring(t1 + 1, t2)
-                                    } else {
-                                        it[0]
-                                    }
+                        AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU -> {
+                            val newList = list.filter { it[4].toInt() == 5 }
+                            bibliatekaList.addAll(newList)
+                            bibliatekaList.sortByDescending {
+                                val t1 = it[0].indexOf("(")
+                                val t2 = it[0].indexOf(")")
+                                if (t2 != -1) {
+                                    it[0].substring(t1 + 1, t2)
+                                } else {
+                                    it[0]
                                 }
                             }
                         }
-                    },
-                    progressVisable = { progress ->
-                        isProgressVisable = progress
-                    })
-            }
+                    }
+                },
+                progressVisable = { progress ->
+                    isProgressVisable = progress
+                })
         }
     }
     LaunchedEffect(viewModel.textFieldValueState.text, viewModel.searchText) {
@@ -267,7 +265,7 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
                         writeFile(
                             context, fileName, loadComplete = {
                                 if (share) {
-                                    sharePdfFile(context,listItem[2])
+                                    sharePdfFile(context, listItem[2])
                                 } else {
                                     addNiadaunia(context, listItem)
                                     navigationActions.navigateToBiblijateka(
@@ -298,7 +296,7 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
                 writeFile(
                     context, fileName, loadComplete = {
                         if (share) {
-                            sharePdfFile(context,listItem[2])
+                            sharePdfFile(context, listItem[2])
                         } else {
                             addNiadaunia(context, listItem)
                             navigationActions.navigateToBiblijateka(
@@ -372,7 +370,7 @@ fun BiblijatekaListItems(
     LaunchedEffect(isShare) {
         if (isShare) {
             if (fileExistsBiblijateka(context, listItem[shreIndex][2])) {
-                sharePdfFile(context,listItem[shreIndex][2])
+                sharePdfFile(context, listItem[shreIndex][2])
             } else {
                 setIsDialogBiblijatekaVisable(shreIndex, true, true)
             }

@@ -258,62 +258,60 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
     val fileOpisanie = File("${context.filesDir}/sviatyja/opisanie$mun.json")
     val fileSvity = File("${context.filesDir}/sviaty.json")
     LaunchedEffect(Unit) {
-        coroutineScope.launch {
-            isProgressVisable = true
-            if (!Settings.isNetworkAvailable(context)) {
-                if (svity) {
-                    if (fileSvity.exists()) {
-                        val sviatyiaListLocale = loadOpisanieSviat(context, position)
-                        sviatyiaList.clear()
-                        sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, true, position))
-                    } else {
-                        dialoNoIntent = true
-                    }
+        isProgressVisable = true
+        if (!Settings.isNetworkAvailable(context)) {
+            if (svity) {
+                if (fileSvity.exists()) {
+                    val sviatyiaListLocale = loadOpisanieSviat(context, position)
+                    sviatyiaList.clear()
+                    sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, true, position))
                 } else {
-                    if (fileOpisanie.exists()) {
-                        val sviatyiaListLocale = loadOpisanieSviatyia(context, year, mun, day)
-                        sviatyiaList.clear()
-                        sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, false, position))
-                    } else {
-                        dialoNoIntent = true
-                    }
+                    dialoNoIntent = true
                 }
             } else {
-                try {
-                    if (Settings.isNetworkAvailable(context)) {
-                        if (svity) {
-                            if (fileSvity.exists()) {
-                                sviatyiaList.clear()
-                                sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviat(context, position), true, position))
-                            }
-                            downloadOpisanieSviat(context)
-                            getIcons(context, dirList, loadOpisanieSviat(context, position), true, isloadIcons, position, wiFiExists = { dialoNoWIFI = true })
-                            if (!dialoNoWIFI) {
-                                sviatyiaList.clear()
-                                sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviat(context, position), true, position))
-                            }
-                        } else {
-                            if (fileOpisanie.exists()) {
-                                sviatyiaList.clear()
-                                sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviatyia(context, year, mun, day), false, position))
-                            }
-                            downloadOpisanieSviatyia(context, mun)
-                            getIcons(context, dirList, loadOpisanieSviatyia(context, year, mun, day), false, isloadIcons, position, wiFiExists = { dialoNoWIFI = true })
-                            if (!dialoNoWIFI) {
-                                sviatyiaList.clear()
-                                sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviatyia(context, year, mun, day), false, position))
-                            }
-                        }
-                        getPiarliny(context)
-                        checkPiarliny = checkParliny(context, mun, day)
-                    } else {
-                        dialoNoIntent = true
-                    }
-                } catch (_: Throwable) {
+                if (fileOpisanie.exists()) {
+                    val sviatyiaListLocale = loadOpisanieSviatyia(context, year, mun, day)
+                    sviatyiaList.clear()
+                    sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, false, position))
+                } else {
+                    dialoNoIntent = true
                 }
             }
-            isProgressVisable = false
+        } else {
+            try {
+                if (Settings.isNetworkAvailable(context)) {
+                    if (svity) {
+                        if (fileSvity.exists()) {
+                            sviatyiaList.clear()
+                            sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviat(context, position), true, position))
+                        }
+                        downloadOpisanieSviat(context)
+                        getIcons(context, dirList, loadOpisanieSviat(context, position), true, isloadIcons, position, wiFiExists = { dialoNoWIFI = true })
+                        if (!dialoNoWIFI) {
+                            sviatyiaList.clear()
+                            sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviat(context, position), true, position))
+                        }
+                    } else {
+                        if (fileOpisanie.exists()) {
+                            sviatyiaList.clear()
+                            sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviatyia(context, year, mun, day), false, position))
+                        }
+                        downloadOpisanieSviatyia(context, mun)
+                        getIcons(context, dirList, loadOpisanieSviatyia(context, year, mun, day), false, isloadIcons, position, wiFiExists = { dialoNoWIFI = true })
+                        if (!dialoNoWIFI) {
+                            sviatyiaList.clear()
+                            sviatyiaList.addAll(loadIconsOnImageView(context, loadOpisanieSviatyia(context, year, mun, day), false, position))
+                        }
+                    }
+                    getPiarliny(context)
+                    checkPiarliny = checkParliny(context, mun, day)
+                } else {
+                    dialoNoIntent = true
+                }
+            } catch (_: Throwable) {
+            }
         }
+        isProgressVisable = false
     }
     var zoomAll by remember { mutableFloatStateOf(1f) }
     var offsetX by remember { mutableFloatStateOf(0f) }
@@ -337,30 +335,28 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
     }
     LaunchedEffect(viewModel.edit) {
         if (viewModel.edit) {
-            coroutineScope.launch {
-                getSviatyiaFile(context = context, isLoad = {
-                    isProgressVisable = it
-                }) { list, svityia ->
-                    viewModel.svaity.clear()
-                    viewModel.svaity.addAll(list)
-                    val arrayList = ArrayList<String>()
-                    arrayList.add("0")
-                    arrayList.add("0")
-                    arrayList.add("-1")
-                    arrayList.add(svityia)
-                    viewModel.svaity.add(0, arrayList)
-                    if (viewModel.initState && svity) {
-                        for (i in viewModel.svaity.indices) {
-                            if (viewModel.svaity[i][0].toInt() == sviatyiaList[0].date && viewModel.svaity[i][1].toInt() == sviatyiaList[0].mun) {
-                                viewModel.sviatyPosotion = i
-                                viewModel.positionPasha = viewModel.svaity[i][2].toInt()
-                                break
-                            }
+            getSviatyiaFile(context = context, isLoad = {
+                isProgressVisable = it
+            }) { list, svityia ->
+                viewModel.svaity.clear()
+                viewModel.svaity.addAll(list)
+                val arrayList = ArrayList<String>()
+                arrayList.add("0")
+                arrayList.add("0")
+                arrayList.add("-1")
+                arrayList.add(svityia)
+                viewModel.svaity.add(0, arrayList)
+                if (viewModel.initState && svity) {
+                    for (i in viewModel.svaity.indices) {
+                        if (viewModel.svaity[i][0].toInt() == sviatyiaList[0].date && viewModel.svaity[i][1].toInt() == sviatyiaList[0].mun) {
+                            viewModel.sviatyPosotion = i
+                            viewModel.positionPasha = viewModel.svaity[i][2].toInt()
+                            break
                         }
                     }
-                    viewModel.initState = false
-                    textFieldValueStateTitle = TextFieldValue(viewModel.svaity[viewModel.sviatyPosotion][3])
                 }
+                viewModel.initState = false
+                textFieldValueStateTitle = TextFieldValue(viewModel.svaity[viewModel.sviatyPosotion][3])
             }
         }
     }

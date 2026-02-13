@@ -920,11 +920,9 @@ fun Bogaslujbovyia(
     )
     LaunchedEffect(viewModel.find) {
         if (viewModel.find) {
-            coroutineScope.launch {
                 viewModel.scrollState.animateScrollTo(viewModel.scrollToY.toInt())
                 AppNavGraphState.setScrollValuePosition(title, viewModel.scrollState.value)
                 viewModel.find = false
-            }
         }
     }
     LaunchedEffect(Unit) {
@@ -1037,9 +1035,7 @@ fun Bogaslujbovyia(
     if (isUpList) {
         LaunchedEffect(Unit) {
             isUpList = false
-            coroutineScope.launch {
-                viewModel.scrollState.animateScrollTo(0)
-            }
+            viewModel.scrollState.animateScrollTo(0)
         }
     }
     val view = LocalView.current
@@ -1404,8 +1400,6 @@ fun Bogaslujbovyia(
                                                 iskniga = false
                                             } else {
                                                 viewModel.searchText = false
-                                                viewModel.searshString = TextFieldValue("")
-                                                viewModel.searchTextResult = AnnotatedString("")
                                                 AppNavGraphState.searchBogaslujbovyia = ""
                                             }
                                             if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
@@ -1597,6 +1591,7 @@ fun Bogaslujbovyia(
                                             DropdownMenuItem(onClick = {
                                                 expandedUp = false
                                                 viewModel.searchText = true
+                                                viewModel.search(textLayout)
                                                 viewModel.autoScroll(title, false)
                                             }, text = { Text(stringResource(R.string.searche_text), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                                 Icon(
@@ -1891,6 +1886,7 @@ fun Bogaslujbovyia(
                                         IconButton(onClick = {
                                             viewModel.searchText = true
                                             viewModel.autoScroll(title, false)
+                                            viewModel.search(textLayout)
                                         }) {
                                             Icon(
                                                 painter = painterResource(R.drawable.search),
