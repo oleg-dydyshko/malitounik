@@ -3,6 +3,7 @@ package by.carkva_gazeta.malitounik.admin
 import android.app.Activity
 import android.content.Context
 import android.graphics.Typeface
+import android.icu.util.Calendar
 import android.net.Uri
 import android.os.Build
 import android.print.PrintAttributes
@@ -781,6 +782,7 @@ class Piasochnica : ViewModel() {
                             var countDayNovyGog = 0
                             var calPos = 0
                             var calPosNovyGod = -1
+                            var isNovyYear = false
                             Settings.data.forEachIndexed { index, strings ->
                                 if (strings[3].toInt() == year && calPosNovyGod == -1) {
                                     calPosNovyGod = index
@@ -792,14 +794,14 @@ class Piasochnica : ViewModel() {
                             }
                             localFile1.forEachLine { fw ->
                                 if (fw.isNotEmpty()) {
-                                    var c = Settings.data[calPos + countDay]
-                                    var myDayOfPasha = c[22].toInt()
-                                    if (c[3].toInt() != year) {
-                                        c = Settings.data[calPosNovyGod + countDayNovyGog]
-                                        myDayOfPasha = c[22].toInt()
-                                        countDayNovyGog++
+                                    val c = if (isNovyYear) Settings.data[calPosNovyGod + countDayNovyGog]
+                                    else Settings.data[calPos + countDay]
+                                    val myDayOfPasha = c[22].toInt()
+                                    if (isNovyYear) countDayNovyGog++
+                                    else countDay++
+                                    if (c[3].toInt() == year && c[2].toInt() == Calendar.DECEMBER && c[1].toInt() == 31) {
+                                        isNovyYear = true
                                     }
-                                    countDay++
                                     if (dayOfPascha == myDayOfPasha) {
                                         val preList = fw.split("<>")
                                         sb.append(preList[0]).append("<>").append(preList[1]).append("<>").append(titleCytanne).append("<>").append(cytanne).append("\n")
