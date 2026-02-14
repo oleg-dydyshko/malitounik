@@ -843,7 +843,9 @@ class BogaslujbovyiaViewModel : ViewModel() {
     fun speak() {
         val list = ArrayList<String>()
         for (i in srcListTTS.indices) {
-            val text = (AnnotatedString.fromHtml(srcListTTS[i].textSpik).text).replace("*", "")
+            val text = (AnnotatedString.fromHtml(srcListTTS[i].textSpik).text)
+                .replace("*", "")
+                .replace("а́", "а")
             list.add(text)
         }
         ttsManager.speakLongText(list, findTTSPosition)

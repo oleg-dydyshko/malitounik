@@ -419,6 +419,16 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
                 3, "pesny/piesni_kalady_u_betlejem_spiaszajma.html", "У Бэтлеем сьпяшайма"
             )
         )
+        piesnyKaliadyList.add(
+            PiesnyListItem(
+                3, "pesny/piesni_kalady_oj_u_betlejeme_viasiola_navina.html", "Ой, у Бэтлееме Вясёла навіна"
+            )
+        )
+        piesnyKaliadyList.add(
+            PiesnyListItem(
+                3, "pesny/piesni_kalady_sviataja_nocz.html", "Сьвятая ноч"
+            )
+        )
         piesnyPraslList.add(PiesnyListItem(0, "pesny/pesny_prasl_0.html", "Ён паўсюль"))
         piesnyPraslList.add(PiesnyListItem(0, "pesny/pesny_prasl_1.html", "Ісус вызваліў мяне"))
         piesnyPraslList.add(PiesnyListItem(0, "pesny/pesny_prasl_2.html", "Ісус нам дае збаўленьне"))

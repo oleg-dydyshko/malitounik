@@ -1405,6 +1405,11 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
+                33, "Сустрэча Госпада нашага Ісуса Хрыста (ГРАМНІЦЫ)", "bogashlugbovya/mm_02_02_sustrecza_hospada_jutran.html", JUTRAN
+            )
+        )
+        datMinALL.add(
+            SlugbovyiaTextuData(
                 33, "Сустрэча Госпада нашага Ісуса Хрыста (ГРАМНІЦЫ)", "bogashlugbovya/mm_02_02_sustrecza_hospada_liturhija.html", LITURHIJA
             )
         )
