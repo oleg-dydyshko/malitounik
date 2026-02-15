@@ -4,6 +4,8 @@ package by.carkva_gazeta.malitounik
 
 import android.content.Context
 import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -14,9 +16,9 @@ import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -108,9 +110,9 @@ internal constructor(
 
     internal fun onDragStart(offset: Offset) {
         state.layoutInfo.visibleItemsInfo.firstOrNull { item -> offset.y.toInt() in item.offset..(item.offset + item.size) }?.also {
-                draggingItemIndex = it.index
-                draggingItemInitialOffset = it.offset
-            }
+            draggingItemIndex = it.index
+            draggingItemInitialOffset = it.offset
+        }
     }
 
     internal fun onDragInterrupted() {
@@ -330,8 +332,8 @@ fun MaeNatatki(
                                 textFieldLoaded = true
                             }
                         }, placeholder = { Text(stringResource(R.string.natatka), fontSize = Settings.fontInterface.sp) }, value = viewModel.textFieldValueNatatkaContent, onValueChange = {
-                    viewModel.textFieldValueNatatkaContent = it
-                }, textStyle = TextStyle(fontSize = Settings.fontInterface.sp)
+                        viewModel.textFieldValueNatatkaContent = it
+                    }, textStyle = TextStyle(fontSize = Settings.fontInterface.sp)
                 )
             } else {
                 SelectionContainer {
@@ -346,25 +348,35 @@ fun MaeNatatki(
     } else {
         LazyColumn(modifier = Modifier.dragContainer(dragDropState), state = lazyListState) {
             itemsIndexed(viewModel.fileList, key = { _, item -> item.id }) { index, item ->
-                DraggableItem(dragDropState, index) {
-                    Row(
-                        modifier = Modifier
-                            .padding(start = 10.dp)
-                            .clickable {
-                                viewModel.natatkaPosition = index
-                                viewModel.natatkaVisable = true
-                                viewModel.textFieldValueState = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].title)
-                                viewModel.textFieldValueNatatkaContent = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].content)
-                            }, verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
-                        )
-                        Text(
-                            item.title, modifier = Modifier
-                                .weight(1f)
-                                .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                        )
+                Column {
+                    DraggableItem(dragDropState, index) {
+                        Row(
+                            modifier = Modifier
+                                .padding(start = 10.dp)
+                                .clickable {
+                                    viewModel.natatkaPosition = index
+                                    viewModel.natatkaVisable = true
+                                    viewModel.textFieldValueState = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].title)
+                                    viewModel.textFieldValueNatatkaContent = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].content)
+                                }, verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                            )
+                            Text(
+                                item.title, modifier = Modifier
+                                    .weight(1f)
+                                    .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                            )
+                            if (viewModel.fileList.size > 1) {
+                                Icon(
+                                    modifier = Modifier
+                                        .padding(10.dp)
+                                        .size(24.dp),
+                                    painter = painterResource(R.drawable.menu_move), tint = MaterialTheme.colorScheme.secondary, contentDescription = ""
+                                )
+                            }
+                        }
                     }
                     HorizontalDivider()
                 }
@@ -394,13 +406,22 @@ fun rememberDragDropState(
 }
 
 fun Modifier.dragContainer(dragDropState: DragDropState): Modifier {
+    val vibrate = Malitounik.applicationContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+    val pattern = longArrayOf(1000)
     return pointerInput(dragDropState) {
         detectDragGesturesAfterLongPress(
             onDrag = { change, offset ->
                 change.consume()
                 dragDropState.onDrag(offset = offset)
             },
-            onDragStart = { offset -> dragDropState.onDragStart(offset) },
+            onDragStart = { offset ->
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    vibrate.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_DOUBLE_CLICK))
+                } else {
+                    vibrate.vibrate(pattern, 0)
+                }
+                dragDropState.onDragStart(offset)
+            },
             onDragEnd = { dragDropState.onDragInterrupted() },
             onDragCancel = { dragDropState.onDragInterrupted() },
         )
@@ -412,7 +433,7 @@ fun LazyItemScope.DraggableItem(
     dragDropState: DragDropState,
     index: Int,
     modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.(isDragging: Boolean) -> Unit,
+    content: @Composable RowScope.(isDragging: Boolean) -> Unit,
 ) {
     val dragging = index == dragDropState.draggingItemIndex
     val draggingModifier = if (dragging) {
@@ -428,7 +449,7 @@ fun LazyItemScope.DraggableItem(
     } else {
         Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)
     }
-    Column(modifier = modifier.then(draggingModifier)) { content(dragging) }
+    Row(modifier = modifier.then(draggingModifier), verticalAlignment = Alignment.CenterVertically) { content(dragging) }
 }
 
 @Composable

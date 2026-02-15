@@ -882,9 +882,17 @@ fun MainConteiner(
             viewModel.searchText || viewModel.searchFullText || viewModel.isEditMode || viewModel.natatkaVisable -> {
                 viewModel.searchText = false
                 viewModel.searchFullText = false
-                viewModel.isEditMode = false
-                viewModel.natatkaVisable = false
-                viewModel.addFileNatatki = false
+                when {
+                    viewModel.addFileNatatki -> {
+                        viewModel.addFileNatatki = false
+                        viewModel.isEditMode = false
+                        viewModel.natatkaVisable = false
+                    }
+
+                    viewModel.isEditMode -> viewModel.isEditMode = false
+
+                    else -> viewModel.natatkaVisable = false
+                }
             }
 
             drawerState.isClosed -> coroutineScope.launch { drawerState.open() }
@@ -1212,9 +1220,17 @@ fun MainConteiner(
                             IconButton(onClick = {
                                 viewModel.searchText = false
                                 viewModel.searchFullText = false
-                                viewModel.isEditMode = false
-                                viewModel.natatkaVisable = false
-                                viewModel.addFileNatatki = false
+                                when {
+                                    viewModel.addFileNatatki -> {
+                                        viewModel.addFileNatatki = false
+                                        viewModel.isEditMode = false
+                                        viewModel.natatkaVisable = false
+                                    }
+
+                                    viewModel.isEditMode -> viewModel.isEditMode = false
+
+                                    else -> viewModel.natatkaVisable = false
+                                }
                             }, content = {
                                 Icon(
                                     painter = painterResource(R.drawable.close), tint = textTollBarColor, contentDescription = ""

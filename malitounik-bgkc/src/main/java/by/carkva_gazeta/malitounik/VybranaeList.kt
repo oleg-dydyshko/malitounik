@@ -8,7 +8,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.BoxWithConstraintsScope
@@ -300,36 +300,44 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
             state = lazyColumnFileState
         ) {
             itemsIndexed(viewModel.vybranaeListFile, key = { _, item -> item.id }) { index, item ->
-                DraggableItem(dragDropFileState, index) {
-                    Row(
-                        modifier = Modifier
-                            .clickable {
-                                navigateToBogaslujbovyia(item.title, item.resource)
-                            }
-                            .padding(start = 10.dp), verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
-                        )
-                        Text(
-                            item.title, modifier = Modifier
-                                .weight(1f)
-                                .animateItem(
-                                    fadeInSpec = null, fadeOutSpec = null, placementSpec = spring(
-                                        stiffness = Spring.StiffnessMediumLow, visibilityThreshold = IntOffset.VisibilityThreshold
-                                    )
-                                )
-                                .fillMaxSize()
-                                .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                        )
-                        Icon(
+                Column {
+                    DraggableItem(dragDropFileState, index) {
+                        Row(
                             modifier = Modifier
-                                .padding(end = 5.dp)
-                                .clickable {
-                                    removeItem = index
-                                    removeResourse = true
-                                }, painter = painterResource(R.drawable.delete), tint = MaterialTheme.colorScheme.secondary, contentDescription = ""
-                        )
+                                .weight(1f)
+                                .combinedClickable(
+                                    onClick = {
+                                        navigateToBogaslujbovyia(item.title, item.resource)
+                                    },
+                                    onLongClick = {
+                                        removeItem = index
+                                        removeResourse = true
+                                    }
+                                )
+                                .padding(start = 10.dp), verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                            )
+                            Text(
+                                item.title, modifier = Modifier
+                                    .animateItem(
+                                        fadeInSpec = null, fadeOutSpec = null, placementSpec = spring(
+                                            stiffness = Spring.StiffnessMediumLow, visibilityThreshold = IntOffset.VisibilityThreshold
+                                        )
+                                    )
+                                    .fillMaxSize()
+                                    .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                            )
+                        }
+                        if (viewModel.vybranaeListFile.size > 1) {
+                            Icon(
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .size(24.dp),
+                                painter = painterResource(R.drawable.menu_move), tint = MaterialTheme.colorScheme.secondary, contentDescription = ""
+                            )
+                        }
                     }
                     HorizontalDivider()
                 }
@@ -348,14 +356,20 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
                     }
                 }
             }
-            var collapsed by remember { mutableStateOf(AppNavGraphState.setItemsValue(viewModel.vybranaeListTitleBible[i].title , true)) }
+            var collapsed by remember { mutableStateOf(AppNavGraphState.setItemsValue(viewModel.vybranaeListTitleBible[i].title, true)) }
             if (viewModel.vybranaeListTitleBible[i].title.isNotEmpty()) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                        .clickable {
-                            AppNavGraphState.setItemsValue(viewModel.vybranaeListTitleBible[i].title)
-                            collapsed = !collapsed
-                        }
+                        .combinedClickable(
+                            onClick = {
+                                AppNavGraphState.setItemsValue(viewModel.vybranaeListTitleBible[i].title)
+                                collapsed = !collapsed
+                            },
+                            onLongClick = {
+                                removeItem = i
+                                removeBibleAll = true
+                            }
+                        )
                         .fillMaxWidth()
                 ) {
                     Icon(
@@ -368,14 +382,6 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
                         viewModel.vybranaeListTitleBible[i].title, modifier = Modifier
                             .padding(10.dp)
                             .weight(1f), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                    )
-                    Icon(
-                        modifier = Modifier
-                            .padding(end = 5.dp)
-                            .clickable {
-                                removeItem = i
-                                removeBibleAll = true
-                            }, painter = painterResource(R.drawable.delete), tint = MaterialTheme.colorScheme.secondary, contentDescription = ""
                     )
                 }
                 HorizontalDivider()
@@ -398,40 +404,47 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
                     state = viewModel.lazyColumnBibleState[i]
                 ) {
                     itemsIndexed(viewModel.vybranaeListTitleBible[i].listBible, key = { _, item -> item.id }) { index, item ->
-                        DraggableItem(dragDropFileState, item.id.toInt()) {
-                            Row(
-                                modifier = Modifier
-                                    .clickable {
-                                        val newList = StringBuilder()
-                                        for (r in 0 until viewModel.vybranaeListTitleBible[i].listBible.size) {
-                                            val char = if (r == viewModel.vybranaeListTitleBible[i].listBible.size - 1) ""
-                                            else ";"
-                                            newList.append(viewModel.vybranaeListTitleBible[i].listBible[r].knigaText + " " + (viewModel.vybranaeListTitleBible[i].listBible[r].glava + 1) + char)
-                                        }
-                                        navigateToCytanniList(
-                                            newList.toString(), index, item.perevod
-                                        )
-                                    }
-                                    .padding(start = 30.dp), verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
-                                )
-                                Text(
-                                    item.title + " " + (item.glava + 1), modifier = Modifier
-                                        .weight(1f)
-                                        .fillMaxSize()
-                                        .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
-                                )
-                                Icon(
+                        Column {
+                            DraggableItem(dragDropBibleState, index) {
+                                Row(
                                     modifier = Modifier
-                                        .padding(end = 5.dp)
-                                        .clickable {
-                                            removeItem = i
-                                            removeItemBible = index
-                                            removeBible = true
-                                        }, painter = painterResource(R.drawable.delete), tint = MaterialTheme.colorScheme.secondary, contentDescription = ""
-                                )
+                                        .weight(1f)
+                                        .combinedClickable(
+                                            onClick = {
+                                                val newList = StringBuilder()
+                                                for (r in 0 until viewModel.vybranaeListTitleBible[i].listBible.size) {
+                                                    val char = if (r == viewModel.vybranaeListTitleBible[i].listBible.size - 1) ""
+                                                    else ";"
+                                                    newList.append(viewModel.vybranaeListTitleBible[i].listBible[r].knigaText + " " + (viewModel.vybranaeListTitleBible[i].listBible[r].glava + 1) + char)
+                                                }
+                                                navigateToCytanniList(
+                                                    newList.toString(), index, item.perevod
+                                                )
+                                            },
+                                            onLongClick = {
+                                                removeItem = i
+                                                removeItemBible = index
+                                                removeBible = true
+                                            }
+                                        )
+                                        .padding(start = 30.dp), verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                                    )
+                                    Text(
+                                        item.title + " " + (item.glava + 1), modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
+                                    )
+                                }
+                                if (viewModel.vybranaeListTitleBible[i].listBible.size > 1) {
+                                    Icon(
+                                        modifier = Modifier
+                                            .padding(10.dp).size(24.dp),
+                                        painter = painterResource(R.drawable.menu_move), tint = MaterialTheme.colorScheme.secondary, contentDescription = ""
+                                    )
+                                }
                             }
                             HorizontalDivider()
                         }
