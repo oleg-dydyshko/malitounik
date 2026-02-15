@@ -218,6 +218,7 @@ fun DialogEditBiblijteka(list: ArrayList<String>, onSave: (title: String, rubrik
                                     )
                                     .padding(vertical = 10.dp)
                                     .clickable {
+                                        Settings.vibrate()
                                         val intent = Intent()
                                         intent.type = "*/*"
                                         intent.action = Intent.ACTION_GET_CONTENT
@@ -240,6 +241,7 @@ fun DialogEditBiblijteka(list: ArrayList<String>, onSave: (title: String, rubrik
                                             shape = RoundedCornerShape(10.dp)
                                         )
                                         .clickable {
+                                            Settings.vibrate()
                                             val intent = Intent()
                                             intent.type = "*/*"
                                             intent.action = Intent.ACTION_GET_CONTENT
@@ -255,6 +257,7 @@ fun DialogEditBiblijteka(list: ArrayList<String>, onSave: (title: String, rubrik
                                 .padding(horizontal = 10.dp)
                                 .padding(bottom = 10.dp)
                                 .clickable {
+                                    Settings.vibrate()
                                     val intent = Intent()
                                     intent.type = "application/pdf"
                                     intent.action = Intent.ACTION_GET_CONTENT
@@ -283,13 +286,17 @@ fun DialogEditBiblijteka(list: ArrayList<String>, onSave: (title: String, rubrik
                             horizontalArrangement = Arrangement.End,
                         ) {
                             TextButton(
-                                onClick = { onDismiss(list[5]) }, shape = MaterialTheme.shapes.small
+                                onClick = {
+                                    Settings.vibrate()
+                                    onDismiss(list[5])
+                                }, shape = MaterialTheme.shapes.small
                             ) {
                                 Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                                 Text(stringResource(R.string.cansel), fontSize = 18.sp)
                             }
                             TextButton(
                                 onClick = {
+                                    Settings.vibrate()
                                     onSave(textFieldValueStateTitle, rubryka + 1, textFieldValueStateApisanne, pdfFileName)
                                 }, shape = MaterialTheme.shapes.small
                             ) {

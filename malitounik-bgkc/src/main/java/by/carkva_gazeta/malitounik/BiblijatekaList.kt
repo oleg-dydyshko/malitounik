@@ -387,6 +387,7 @@ fun BiblijatekaListItems(
                         .padding(start = 10.dp)
                         .combinedClickable(
                             onClick = {
+                                Settings.vibrate()
                                 if (fileExistsBiblijateka(context, listItem[index][2])) {
                                     addNiadaunia(context, listItem[index])
                                     navigationActions.navigateToBiblijateka(
@@ -398,6 +399,7 @@ fun BiblijatekaListItems(
                                 }
                             },
                             onLongClick = {
+                                Settings.vibrate(true)
                                 if (k.getBoolean("admin", false) && biblijateka != AllDestinations.BIBLIJATEKA_NIADAUNIA && !searchText) {
                                     editListItem(listItem[index])
                                 }
@@ -423,6 +425,7 @@ fun BiblijatekaListItems(
                     Icon(
                         modifier = Modifier
                             .clickable {
+                                Settings.vibrate()
                                 shreIndex = index
                                 isShare = true
                             }
@@ -453,6 +456,7 @@ fun BiblijatekaListItems(
                                 .align(Alignment.CenterHorizontally)
                                 .combinedClickable(
                                     onClick = {
+                                        Settings.vibrate()
                                         if (fileExistsBiblijateka(
                                                 context,
                                                 listItem[index][2]
@@ -468,6 +472,7 @@ fun BiblijatekaListItems(
                                         }
                                     },
                                     onLongClick = {
+                                        Settings.vibrate(true)
                                         if (k.getBoolean("admin", false) && biblijateka != AllDestinations.BIBLIJATEKA_NIADAUNIA && !searchText) {
                                             editListItem(listItem[index])
                                         }
@@ -483,6 +488,7 @@ fun BiblijatekaListItems(
                             .padding(10.dp)
                             .fillMaxWidth()
                             .clickable {
+                                Settings.vibrate()
                                 maxLine.intValue = if (maxLine.intValue == Int.MAX_VALUE) 2
                                 else Int.MAX_VALUE
                             }, text = AnnotatedString.fromHtml(listItem[index][1]), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis
@@ -771,7 +777,10 @@ fun DialogBiblijateka(
                     Column {
                         TextButton(
                             modifier = Modifier.align(Alignment.End),
-                            onClick = { onConfirmation() },
+                            onClick = {
+                                Settings.vibrate()
+                                onConfirmation()
+                            },
                             shape = MaterialTheme.shapes.small
                         ) {
                             Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
@@ -779,7 +788,10 @@ fun DialogBiblijateka(
                         }
                         TextButton(
                             modifier = Modifier.align(Alignment.End),
-                            onClick = { onDismiss() },
+                            onClick = {
+                                Settings.vibrate()
+                                onDismiss()
+                            },
                             shape = MaterialTheme.shapes.small
                         ) {
                             Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
@@ -819,14 +831,20 @@ fun DialogNoWiFI(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() },
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        },
                         shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
-                        onClick = { onConfirmation() },
+                        onClick = {
+                            Settings.vibrate()
+                            onConfirmation()
+                        },
                         shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")

@@ -83,6 +83,7 @@ fun DropdownMenuBox(
             menuList.forEachIndexed { index, option ->
                 DropdownMenuItem(
                     text = { Text(option, fontSize = Settings.fontInterface.sp) }, onClick = {
+                        Settings.vibrate()
                         textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option)
                         expanded = false
                         onClickItem(index)

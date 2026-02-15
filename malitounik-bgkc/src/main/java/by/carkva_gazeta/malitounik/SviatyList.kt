@@ -48,6 +48,7 @@ fun SviatyList(navController: NavHostController, innerPadding: PaddingValues) {
                         modifier = Modifier
                             .padding(start = 10.dp)
                             .clickable {
+                                Settings.vibrate()
                                 val calendar = Calendar.getInstance()
                                 calendar[Calendar.DAY_OF_YEAR] = listSviat[index].dayOfYear
                                 for (e in Settings.data.indices) {
@@ -66,11 +67,11 @@ fun SviatyList(navController: NavHostController, innerPadding: PaddingValues) {
                         Icon(
                             modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
                         )
-                        val dvunadSv= stringResource(R.string.dvunad_sv)
-                        val vialSv= stringResource(R.string.vial_sv)
-                        val dniYspaminPam= stringResource(R.string.dni_yspamin_pam)
-                        val carkvaPamiatData= stringResource(R.string.carkva_pamiat_data)
-                        val parafiaSv= stringResource(R.string.parafia_sv)
+                        val dvunadSv = stringResource(R.string.dvunad_sv)
+                        val vialSv = stringResource(R.string.vial_sv)
+                        val dniYspaminPam = stringResource(R.string.dni_yspamin_pam)
+                        val carkvaPamiatData = stringResource(R.string.carkva_pamiat_data)
+                        val parafiaSv = stringResource(R.string.parafia_sv)
                         Column {
                             if (index == 0) {
                                 val title = when (i) {

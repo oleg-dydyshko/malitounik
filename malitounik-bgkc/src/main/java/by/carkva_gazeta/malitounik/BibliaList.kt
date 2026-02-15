@@ -130,6 +130,7 @@ fun BibliaList(
                     Column {
                         Text(
                             modifier = Modifier.clickable {
+                                Settings.vibrate()
                                 maxLine.intValue = Int.MAX_VALUE
                                 coroutineScope.launch {
                                     delay(5000L)
@@ -146,6 +147,7 @@ fun BibliaList(
                         if (perevod != Settings.PEREVODNADSAN) {
                             Text(
                                 modifier = Modifier.clickable {
+                                    Settings.vibrate()
                                     maxLine.intValue = Int.MAX_VALUE
                                     coroutineScope.launch {
                                         delay(5000L)
@@ -166,6 +168,7 @@ fun BibliaList(
                     PlainTooltip(stringResource(R.string.exit_page), TooltipAnchorPosition.Below) {
                         IconButton(
                             onClick = {
+                                Settings.vibrate()
                                 navController.popBackStack()
                             },
                             content = {
@@ -221,6 +224,7 @@ private fun BoxWithConstraintsScope.ScopedContent(perevod: String, isNovyZapavet
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .clickable {
+                                Settings.vibrate()
                                 AppNavGraphState.setItemsValue(dataItem.title)
                                 collapsedState[i] = !collapsed
                                 coroutineScope.launch {
@@ -277,6 +281,7 @@ private fun BoxWithConstraintsScope.ScopedContent(perevod: String, isNovyZapavet
                                     )
                                     .background(Divider)
                                     .clickable {
+                                        Settings.vibrate()
                                         navigateToCytanniList(
                                             dataItem.subTitle + " " + (item + 1).toString(),
                                             perevod

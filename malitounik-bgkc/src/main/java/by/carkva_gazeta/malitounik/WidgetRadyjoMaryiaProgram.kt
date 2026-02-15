@@ -173,7 +173,11 @@ fun DialogProgramRadoiMaryia(
                 )
                 if (progress) {
                     Box(modifier = Modifier.fillMaxWidth()) {
-                        CircularProgressIndicator(modifier = Modifier.padding(10.dp).align(Alignment.Center))
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .align(Alignment.Center)
+                        )
                     }
                 } else {
                     Text(
@@ -194,6 +198,7 @@ fun DialogProgramRadoiMaryia(
                 ) {
                     TextButton(
                         onClick = {
+                            Settings.vibrate()
                             onDismiss()
                             sendTitlePadioMaryiaJob?.cancel()
                             sendTitlePadioMaryiaJob = null
@@ -243,7 +248,10 @@ fun DialogNoInternet(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() },
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        },
                         shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")

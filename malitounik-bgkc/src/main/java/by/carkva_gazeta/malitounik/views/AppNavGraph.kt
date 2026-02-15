@@ -1029,7 +1029,6 @@ fun MainConteiner(
     var isToDay by remember { mutableStateOf(false) }
     val color = MaterialTheme.colorScheme.onTertiary
     var colorBlackboard by remember { mutableStateOf(color) }
-    var dialogKniga by remember { mutableStateOf(false) }
     var addBiblijateka by remember { mutableStateOf(false) }
     var dialogHelpCustomSort by remember { mutableStateOf(false) }
     if (dialogHelpCustomSort) {
@@ -1182,6 +1181,7 @@ fun MainConteiner(
                     if (!(viewModel.searchText || viewModel.searchFullText || viewModel.isEditMode)) {
                         Text(
                             modifier = Modifier.clickable {
+                                Settings.vibrate()
                                 maxLine.intValue = Int.MAX_VALUE
                                 coroutineScope.launch {
                                     delay(5000L)
@@ -1203,6 +1203,7 @@ fun MainConteiner(
                                 viewModel.textFieldValueState = newText
                             }, singleLine = true, trailingIcon = {
                                 IconButton(onClick = {
+                                    Settings.vibrate()
                                     viewModel.textFieldValueState = TextFieldValue("")
                                 }) {
                                     Icon(
@@ -1218,6 +1219,7 @@ fun MainConteiner(
                     if (viewModel.searchText || viewModel.searchFullText || viewModel.isEditMode || viewModel.natatkaVisable) {
                         PlainTooltip(stringResource(R.string.close), TooltipAnchorPosition.Below) {
                             IconButton(onClick = {
+                                Settings.vibrate()
                                 viewModel.searchText = false
                                 viewModel.searchFullText = false
                                 when {
@@ -1239,7 +1241,10 @@ fun MainConteiner(
                         }
                     } else {
                         PlainTooltip(stringResource(R.string.show_menu), TooltipAnchorPosition.Below) {
-                            IconButton(onClick = { coroutineScope.launch { drawerState.open() } }, content = {
+                            IconButton(onClick = {
+                                Settings.vibrate()
+                                coroutineScope.launch { drawerState.open() }
+                            }, content = {
                                 Icon(
                                     painter = painterResource(R.drawable.menu), tint = textTollBarColor, contentDescription = ""
                                 )
@@ -1253,6 +1258,7 @@ fun MainConteiner(
                                 Text(
                                     text = Calendar.getInstance()[Calendar.DATE].toString(), modifier = Modifier
                                         .clickable {
+                                            Settings.vibrate()
                                             showDropdownMenuPos = 1
                                             showDropdown = true
                                         }
@@ -1266,6 +1272,7 @@ fun MainConteiner(
                             }
                             PlainTooltip(stringResource(if (k.getBoolean("caliandarList", false)) R.string.set_book_caliandar else R.string.set_list_caliandar), TooltipAnchorPosition.Below) {
                                 IconButton(onClick = {
+                                    Settings.vibrate()
                                     k.edit {
                                         if (k.getBoolean("caliandarList", false)) {
                                             navigationActions.navigateToKaliandar()
@@ -1306,6 +1313,7 @@ fun MainConteiner(
                                 sortedVybranae = k.getInt("sortedVybranae", Settings.SORT_BY_ABC)
                                 sortedNatatki = k.getInt("natatki_sort", Settings.SORT_BY_ABC)
                                 DropdownMenuItem(onClick = {
+                                    Settings.vibrate()
                                     expandedSort = false
                                     sortedVybranae = Settings.SORT_BY_ABC
                                     sortedNatatki = Settings.SORT_BY_ABC
@@ -1329,6 +1337,7 @@ fun MainConteiner(
                                     }
                                 })
                                 DropdownMenuItem(onClick = {
+                                    Settings.vibrate()
                                     expandedSort = false
                                     sortedVybranae = Settings.SORT_BY_TIME
                                     sortedNatatki = Settings.SORT_BY_TIME
@@ -1352,6 +1361,7 @@ fun MainConteiner(
                                     }
                                 })
                                 DropdownMenuItem(onClick = {
+                                    Settings.vibrate()
                                     expandedSort = false
                                     sortedVybranae = Settings.SORT_BY_CUSTOM
                                     sortedNatatki = Settings.SORT_BY_CUSTOM
@@ -1380,6 +1390,7 @@ fun MainConteiner(
                             }
                             PlainTooltip(stringResource(R.string.sort), TooltipAnchorPosition.Below) {
                                 IconButton(onClick = {
+                                    Settings.vibrate()
                                     expandedSort = true
                                 }) {
                                     Icon(
@@ -1414,6 +1425,7 @@ fun MainConteiner(
                         if (currentRoute == AllDestinations.PIASOCHNICA_LIST) {
                             PlainTooltip(stringResource(R.string.pasochnica_add_folder), TooltipAnchorPosition.Below) {
                                 IconButton(onClick = {
+                                    Settings.vibrate()
                                     PasochnicaList.pasochnicaAction = PasochnicaList.FILE
                                 }) {
                                     Icon(
@@ -1423,6 +1435,7 @@ fun MainConteiner(
                             }
                             PlainTooltip(stringResource(R.string.pasochnica_add_basa), TooltipAnchorPosition.Below) {
                                 IconButton(onClick = {
+                                    Settings.vibrate()
                                     PasochnicaList.pasochnicaAction = PasochnicaList.WWW
                                 }) {
                                     Icon(
@@ -1432,6 +1445,7 @@ fun MainConteiner(
                             }
                             PlainTooltip(stringResource(R.string.add_file), TooltipAnchorPosition.Below) {
                                 IconButton(onClick = {
+                                    Settings.vibrate()
                                     PasochnicaList.pasochnicaAction = PasochnicaList.ADD
                                 }) {
                                     Icon(
@@ -1441,7 +1455,10 @@ fun MainConteiner(
                             }
                         }
                         PlainTooltip(stringResource(R.string.more_items), TooltipAnchorPosition.Below) {
-                            IconButton(onClick = { expandedUp = true }) {
+                            IconButton(onClick = {
+                                Settings.vibrate()
+                                expandedUp = true
+                            }) {
                                 Icon(
                                     painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = textTollBarColor
                                 )
@@ -1450,14 +1467,20 @@ fun MainConteiner(
                     }
                     if (currentRoute == AllDestinations.MAE_NATATKI_MENU && viewModel.natatkaVisable && !viewModel.isEditMode) {
                         PlainTooltip(stringResource(R.string.redagaktirovat)) {
-                            IconButton(onClick = { viewModel.isEditMode = true }) {
+                            IconButton(onClick = {
+                                Settings.vibrate()
+                                viewModel.isEditMode = true
+                            }) {
                                 Icon(
                                     painter = painterResource(R.drawable.edit), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
                         }
                         PlainTooltip(stringResource(R.string.delite)) {
-                            IconButton(onClick = { viewModel.isDeliteNatatka = true }) {
+                            IconButton(onClick = {
+                                Settings.vibrate()
+                                viewModel.isDeliteNatatka = true
+                            }) {
                                 Icon(
                                     painter = painterResource(R.drawable.delete), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                 )
@@ -1466,7 +1489,10 @@ fun MainConteiner(
                     }
                     if (currentRoute == AllDestinations.MAE_NATATKI_MENU && viewModel.isEditMode) {
                         PlainTooltip(stringResource(R.string.save_sabytie)) {
-                            IconButton(onClick = { viewModel.saveFileNatatki = true }) {
+                            IconButton(onClick = {
+                                Settings.vibrate()
+                                viewModel.saveFileNatatki = true
+                            }) {
                                 Icon(
                                     painter = painterResource(R.drawable.save), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                 )
@@ -1475,7 +1501,10 @@ fun MainConteiner(
                     }
                     if (viewModel.searchFullText || (viewModel.searchText && currentRoute.contains("BIBLIA", ignoreCase = true))) {
                         PlainTooltip(stringResource(R.string.settings_bible)) {
-                            IconButton(onClick = { viewModel.searchSettings = true }) {
+                            IconButton(onClick = {
+                                Settings.vibrate()
+                                viewModel.searchSettings = true
+                            }) {
                                 Icon(
                                     painter = painterResource(R.drawable.settings), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                 )
@@ -1485,6 +1514,7 @@ fun MainConteiner(
                     AppDropdownMenu(
                         expanded = expandedUp, onDismissRequest = { expandedUp = false }) {
                         DropdownMenuItem(onClick = {
+                            Settings.vibrate()
                             expandedUp = false
                             navigationActions.navigateToSettingsView()
                         }, text = { Text(stringResource(R.string.tools_item), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
@@ -1494,6 +1524,7 @@ fun MainConteiner(
                         })
                         if (currentRoute == AllDestinations.PIASOCHNICA_LIST) {
                             DropdownMenuItem(onClick = {
+                                Settings.vibrate()
                                 PasochnicaList.pasochnicaAction = PasochnicaList.DEL_ALL_PASOCHNICA
                                 expandedUp = false
                             }, text = { Text(stringResource(R.string.del_pasochnica), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
@@ -1504,6 +1535,7 @@ fun MainConteiner(
                         }
                         if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
                             DropdownMenuItem(onClick = {
+                                Settings.vibrate()
                                 expandedUp = false
                                 navigationActions.navigateToUmouniaZnachenni()
                             }, text = { Text(stringResource(R.string.symbols_menu), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
@@ -1513,6 +1545,7 @@ fun MainConteiner(
                             })
                             if (!isBottomBar) {
                                 DropdownMenuItem(onClick = {
+                                    Settings.vibrate()
                                     expandedUp = false
                                     navigationActions.navigateToPadzeiView()
                                 }, text = { Text(stringResource(R.string.sabytie), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
@@ -1521,6 +1554,7 @@ fun MainConteiner(
                                     )
                                 })
                                 DropdownMenuItem(onClick = {
+                                    Settings.vibrate()
                                     expandedUp = false
                                     viewModel.searchText = true
                                 }, text = { Text(stringResource(R.string.poshuk_sviatych), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
@@ -1535,6 +1569,7 @@ fun MainConteiner(
                             if (!k.getBoolean("adminOnlyNotifications", false)) {
                                 if (currentRoute.contains(AllDestinations.KALIANDAR) || (currentRoute.contains("BIBLIJATEKA", ignoreCase = true) && currentRoute != AllDestinations.BIBLIJATEKA_NIADAUNIA)) {
                                     DropdownMenuItem(onClick = {
+                                        Settings.vibrate()
                                         expandedUp = false
                                         if (currentRoute.contains(AllDestinations.KALIANDAR)) {
                                             dialogEditSvityiaAndSviaty = true
@@ -1549,6 +1584,7 @@ fun MainConteiner(
                                 }
                                 if (currentRoute == AllDestinations.LITURGIKON_MENU || currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.CHASASLOU_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU) {
                                     DropdownMenuItem(onClick = {
+                                        Settings.vibrate()
                                         expandedUp = false
                                         viewModel.searchFullText = true
                                     }, text = { Text(stringResource(R.string.searche_bogasluz_text), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
@@ -1560,6 +1596,7 @@ fun MainConteiner(
                             }
                             if (!k.getBoolean("adminNotifications", false)) {
                                 DropdownMenuItem(onClick = {
+                                    Settings.vibrate()
                                     expandedUp = false
                                     if (Settings.isNetworkAvailable(context)) {
                                         logView = true
@@ -1611,6 +1648,7 @@ fun MainConteiner(
                             if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
                                 PlainTooltip(stringResource(R.string.poshuk_sviatych)) {
                                     IconButton(onClick = {
+                                        Settings.vibrate()
                                         viewModel.searchText = true
                                     }) {
                                         Icon(
@@ -1620,6 +1658,7 @@ fun MainConteiner(
                                 }
                                 PlainTooltip(stringResource(R.string.sabytie)) {
                                     IconButton(onClick = {
+                                        Settings.vibrate()
                                         navigationActions.navigateToPadzeiView()
                                     }) {
                                         Icon(
@@ -1650,6 +1689,7 @@ fun MainConteiner(
                                     Text(
                                         text = Calendar.getInstance()[Calendar.DATE].toString(), modifier = Modifier
                                             .clickable {
+                                                Settings.vibrate()
                                                 showDropdownMenuPos = 1
                                                 showDropdown = true
                                             }
@@ -1681,6 +1721,7 @@ fun MainConteiner(
                     )
                     TextButton(
                         onClick = {
+                            Settings.vibrate()
                             val appUpdateManager = AppUpdateManagerFactory.create(context)
                             appUpdateManager.completeUpdate()
                             k.edit {
@@ -1758,7 +1799,7 @@ fun MainConteiner(
                             HorizontalPager(
                                 pageSpacing = 10.dp, state = pagerState, flingBehavior = fling, verticalAlignment = Alignment.Top, modifier = Modifier.padding(10.dp)
                             ) { page ->
-                                KaliandarScreen(page, innerPadding, navigateToCytanneList = { title, chytanne, biblia ->
+                                KaliandarScreen(page, viewModel, innerPadding, navigateToCytanneList = { title, chytanne, biblia ->
                                     viewModel.setPerevod(context, biblia, chytanne, Settings.PEREVODSEMUXI)
                                     navigationActions.navigateToCytanniList(
                                         title, chytanne, biblia, Settings.PEREVODSEMUXI, -1
@@ -1768,8 +1809,6 @@ fun MainConteiner(
                                     navigationActions.navigateToSvityiaView(svity, position)
                                 }, navigateToBogaslujbovyia = { title, resurs ->
                                     navigationActions.navigateToBogaslujbovyia(title, resurs)
-                                }, navigateToKniga = {
-                                    dialogKniga = true
                                 })
                             }
                         }
@@ -2061,21 +2100,19 @@ fun MainConteiner(
             }
         }
         AnimatedVisibility(
-            dialogKniga, enter = fadeIn(
+            viewModel.dialogKniga, enter = fadeIn(
                 tween(
                     durationMillis = 500, easing = LinearOutSlowInEasing
                 )
             ), exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
         ) {
-            KaliandarKnigaView(colorBlackboard, navigateToBogaslujbovyia = { title, resourse ->
-                dialogKniga = false
+            KaliandarKnigaView(colorBlackboard, viewModel, navigateToBogaslujbovyia = { title, resourse ->
                 navigationActions.navigateToBogaslujbovyia(title, resourse)
             }, navigateToSvityiaView = { svity, position ->
                 sviatyiaviewModel.initState = true
-                dialogKniga = false
                 navigationActions.navigateToSvityiaView(svity, position)
             }) {
-                dialogKniga = false
+                viewModel.dialogKniga = false
             }
         }
     }
@@ -2110,6 +2147,7 @@ fun SearchSviatyia(lazyColumnStateSearchSvityia: LazyListState, innerPadding: Pa
                     modifier = Modifier
                         .padding(start = 10.dp)
                         .clickable {
+                            Settings.vibrate()
                             val calendar = Calendar.getInstance()
                             calendar[Calendar.DAY_OF_YEAR] = viewModel.searchListSvityia[index].dayOfYear
                             for (e in Settings.data.indices) {
@@ -2212,6 +2250,7 @@ fun DialogLogProgramy(
                 ) {
                     HtmlText(
                         modifier = Modifier.clickable {
+                            Settings.vibrate()
                             viewModel.checkFiles(context)
                         }, text = viewModel.logViewText, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
                     )
@@ -2225,6 +2264,7 @@ fun DialogLogProgramy(
                     ) {
                         TextButton(
                             onClick = {
+                                Settings.vibrate()
                                 viewModel.onDismiss()
                                 onDismiss()
                             }, shape = MaterialTheme.shapes.small
@@ -2242,6 +2282,7 @@ fun DialogLogProgramy(
                     ) {
                         TextButton(
                             onClick = {
+                                Settings.vibrate()
                                 viewModel.onDismiss()
                                 onDismiss()
                             }, shape = MaterialTheme.shapes.small
@@ -2251,6 +2292,7 @@ fun DialogLogProgramy(
                         }
                         TextButton(
                             onClick = {
+                                Settings.vibrate()
                                 viewModel.createAndSentFile(context)
                                 onDismiss()
                             }, shape = MaterialTheme.shapes.small
@@ -2296,13 +2338,19 @@ fun DialogUpdateNoWiFI(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
-                        onClick = { onConfirmation() }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onConfirmation()
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
                         Text(stringResource(R.string.ok), fontSize = 18.sp)

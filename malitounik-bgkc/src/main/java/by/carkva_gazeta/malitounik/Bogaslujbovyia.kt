@@ -922,9 +922,9 @@ fun Bogaslujbovyia(
     )
     LaunchedEffect(viewModel.find) {
         if (viewModel.find) {
-                viewModel.scrollState.animateScrollTo(viewModel.scrollToY.toInt())
-                AppNavGraphState.setScrollValuePosition(title, viewModel.scrollState.value)
-                viewModel.find = false
+            viewModel.scrollState.animateScrollTo(viewModel.scrollToY.toInt())
+            AppNavGraphState.setScrollValuePosition(title, viewModel.scrollState.value)
+            viewModel.find = false
         }
     }
     LaunchedEffect(Unit) {
@@ -1187,6 +1187,7 @@ fun Bogaslujbovyia(
                                 .fillMaxWidth()
                                 .padding(10.dp)
                                 .clickable {
+                                    Settings.vibrate()
                                     adminResourceEditPosition = i
                                     subTitle = listResource[i].title
                                     subText = openAssetsResources(context, listResource[i].resource)
@@ -1259,6 +1260,7 @@ fun Bogaslujbovyia(
                                     .fillMaxWidth()
                                     .padding(10.dp)
                                     .clickable {
+                                        Settings.vibrate()
                                         coroutineScope.launch {
                                             bottomSheetScaffoldState.bottomSheetState.hide()
                                         }
@@ -1328,6 +1330,7 @@ fun Bogaslujbovyia(
                             if (!viewModel.searchText) {
                                 Text(
                                     modifier = Modifier.clickable {
+                                        Settings.vibrate()
                                         maxLine.intValue = Int.MAX_VALUE
                                         coroutineScope.launch {
                                             delay(5000L)
@@ -1366,6 +1369,7 @@ fun Bogaslujbovyia(
                                     },
                                     trailingIcon = {
                                         IconButton(onClick = {
+                                            Settings.vibrate()
                                             viewModel.searshString = TextFieldValue("")
                                         }) {
                                             Icon(
@@ -1393,6 +1397,7 @@ fun Bogaslujbovyia(
                                 PlainTooltip(stringResource(R.string.close), TooltipAnchorPosition.Below) {
                                     IconButton(
                                         onClick = {
+                                            Settings.vibrate()
                                             if (iskniga) {
                                                 if (bottomSheetScaffoldIsVisible) {
                                                     coroutineScope.launch {
@@ -1418,6 +1423,7 @@ fun Bogaslujbovyia(
                                 PlainTooltip(stringResource(R.string.exit_page), TooltipAnchorPosition.Below) {
                                     IconButton(
                                         onClick = {
+                                            Settings.vibrate()
                                             when {
                                                 iskniga -> {
                                                     coroutineScope.launch {
@@ -1456,6 +1462,7 @@ fun Bogaslujbovyia(
                             if (viewModel.searchText) {
                                 PlainTooltip(stringResource(R.string.poshuk_back), TooltipAnchorPosition.Below) {
                                     IconButton(onClick = {
+                                        Settings.vibrate()
                                         viewModel.findBack(textLayout)
                                     }) {
                                         Icon(
@@ -1467,6 +1474,7 @@ fun Bogaslujbovyia(
                                 }
                                 PlainTooltip(stringResource(R.string.poshuk_forvard), TooltipAnchorPosition.Below) {
                                     IconButton(onClick = {
+                                        Settings.vibrate()
                                         viewModel.findForward(textLayout)
                                     }) {
                                         Icon(
@@ -1481,6 +1489,7 @@ fun Bogaslujbovyia(
                                     if (!iskniga && listResource.isNotEmpty()) {
                                         PlainTooltip(stringResource(R.string.zmennyia_chastki), TooltipAnchorPosition.Below) {
                                             IconButton(onClick = {
+                                                Settings.vibrate()
                                                 showDropdown = false
                                                 coroutineScope.launch {
                                                     bottomSheetScaffoldIsVisible = !bottomSheetScaffoldIsVisible
@@ -1506,6 +1515,7 @@ fun Bogaslujbovyia(
                                                 else painterResource(R.drawable.play_circle)
                                                 PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play), TooltipAnchorPosition.Below) {
                                                     IconButton(onClick = {
+                                                        Settings.vibrate()
                                                         viewModel.autoScrollSensor = !viewModel.autoScrollSensor
                                                         viewModel.autoScroll(title, viewModel.autoScrollSensor)
                                                         if (viewModel.autoScrollSensor) {
@@ -1526,6 +1536,7 @@ fun Bogaslujbovyia(
                                             } else if (viewModel.scrollState.canScrollBackward) {
                                                 PlainTooltip(stringResource(R.string.auto_up), TooltipAnchorPosition.Below) {
                                                     IconButton(onClick = {
+                                                        Settings.vibrate()
                                                         isUpList = true
                                                     }) {
                                                         Icon(
@@ -1540,6 +1551,7 @@ fun Bogaslujbovyia(
                                         if (listResource.isEmpty()) {
                                             PlainTooltip(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), TooltipAnchorPosition.Below) {
                                                 IconButton(onClick = {
+                                                    Settings.vibrate()
                                                     viewModel.saveVybranoe(context, title, resursEncode)
                                                 }) {
                                                     val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
@@ -1553,7 +1565,10 @@ fun Bogaslujbovyia(
                                             }
                                         }
                                         PlainTooltip(stringResource(R.string.more_items), TooltipAnchorPosition.Below) {
-                                            IconButton(onClick = { expandedUp = true }) {
+                                            IconButton(onClick = {
+                                                Settings.vibrate()
+                                                expandedUp = true
+                                            }) {
                                                 Icon(
                                                     painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                                 )
@@ -1563,6 +1578,8 @@ fun Bogaslujbovyia(
                                             expanded = expandedUp, onDismissRequest = { expandedUp = false }) {
                                             if (listResource.isNotEmpty()) {
                                                 DropdownMenuItem(onClick = {
+                                                    Settings.vibrate()
+
                                                     expandedUp = false
                                                     viewModel.saveVybranoe(context, title, resursEncode)
                                                 }, text = { Text(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
@@ -1574,6 +1591,7 @@ fun Bogaslujbovyia(
                                                 })
                                             }
                                             DropdownMenuItem(onClick = {
+                                                Settings.vibrate()
                                                 expandedUp = false
                                                 viewModel.autoScroll(title, false)
                                                 isShare = true
@@ -1583,6 +1601,7 @@ fun Bogaslujbovyia(
                                                 )
                                             })
                                             DropdownMenuItem(onClick = {
+                                                Settings.vibrate()
                                                 expandedUp = false
                                                 fullscreen = true
                                             }, text = { Text(stringResource(R.string.fullscreen), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
@@ -1591,6 +1610,7 @@ fun Bogaslujbovyia(
                                                 )
                                             })
                                             DropdownMenuItem(onClick = {
+                                                Settings.vibrate()
                                                 expandedUp = false
                                                 viewModel.searchText = true
                                                 viewModel.search(textLayout)
@@ -1601,6 +1621,7 @@ fun Bogaslujbovyia(
                                                 )
                                             })
                                             DropdownMenuItem(onClick = {
+                                                Settings.vibrate()
                                                 expandedUp = false
                                                 showDropdown = !showDropdown
                                                 viewModel.autoScroll(title, false)
@@ -1610,6 +1631,7 @@ fun Bogaslujbovyia(
                                                 )
                                             })
                                             DropdownMenuItem(onClick = {
+                                                Settings.vibrate()
                                                 expandedUp = false
                                                 if (viewModel.isSpeaking || viewModel.isPaused) {
                                                     viewModel.isSpeaking = false
@@ -1634,6 +1656,7 @@ fun Bogaslujbovyia(
                                             if (k.getBoolean("admin", false)) {
                                                 HorizontalDivider()
                                                 DropdownMenuItem(onClick = {
+                                                    Settings.vibrate()
                                                     expandedUp = false
                                                     viewModel.autoScroll(title, false)
                                                     viewModel.viewModelScope.launch {
@@ -1691,6 +1714,7 @@ fun Bogaslujbovyia(
                                     if (k.getBoolean("admin", false) && (isBottomBar || iskniga)) {
                                         PlainTooltip(stringResource(R.string.redagaktirovat)) {
                                             IconButton(onClick = {
+                                                Settings.vibrate()
                                                 viewModel.autoScroll(title, false)
                                                 viewModel.viewModelScope.launch {
                                                     isProgressVisable = true
@@ -1765,6 +1789,7 @@ fun Bogaslujbovyia(
                                     .weight(1f), text = stringResource(R.string.share_help), fontSize = Settings.fontInterface.sp, lineHeight = (Settings.fontInterface * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
                             )
                             IconButton(onClick = {
+                                Settings.vibrate()
                                 showDropdown = false
                                 viewModel.autoScroll(title, false)
                                 shareIsLaunch = true
@@ -1836,6 +1861,7 @@ fun Bogaslujbovyia(
                                 ) {
                                     PlainTooltip(stringResource(R.string.tts)) {
                                         IconButton(onClick = {
+                                            Settings.vibrate()
                                             if (viewModel.isSpeaking || viewModel.isPaused) {
                                                 viewModel.isSpeaking = false
                                                 viewModel.isPaused = false
@@ -1861,6 +1887,7 @@ fun Bogaslujbovyia(
                                     }
                                     PlainTooltip(stringResource(R.string.menu_font_size_app_info)) {
                                         IconButton(onClick = {
+                                            Settings.vibrate()
                                             showDropdown = !showDropdown
                                             viewModel.autoScroll(title, false)
                                         }) {
@@ -1873,6 +1900,7 @@ fun Bogaslujbovyia(
                                     }
                                     PlainTooltip(stringResource(R.string.share)) {
                                         IconButton(onClick = {
+                                            Settings.vibrate()
                                             showDropdown = false
                                             viewModel.autoScroll(title, false)
                                             isShare = true
@@ -1886,6 +1914,7 @@ fun Bogaslujbovyia(
                                     }
                                     PlainTooltip(stringResource(R.string.searche_text)) {
                                         IconButton(onClick = {
+                                            Settings.vibrate()
                                             viewModel.searchText = true
                                             viewModel.autoScroll(title, false)
                                             viewModel.search(textLayout)
@@ -1899,6 +1928,7 @@ fun Bogaslujbovyia(
                                     }
                                     PlainTooltip(stringResource(R.string.fullscreen_apis)) {
                                         IconButton(onClick = {
+                                            Settings.vibrate()
                                             fullscreen = true
                                         }) {
                                             Icon(
@@ -1910,6 +1940,7 @@ fun Bogaslujbovyia(
                                     }
                                     PlainTooltip(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add)) {
                                         IconButton(onClick = {
+                                            Settings.vibrate()
                                             viewModel.saveVybranoe(context, title, resursEncode)
                                         }) {
                                             val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
@@ -1928,6 +1959,7 @@ fun Bogaslujbovyia(
                                                 else painterResource(R.drawable.play_circle)
                                             PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play)) {
                                                 IconButton(onClick = {
+                                                    Settings.vibrate()
                                                     viewModel.autoScrollSensor = !viewModel.autoScrollSensor
                                                     viewModel.autoScroll(title, viewModel.autoScrollSensor)
                                                     if (viewModel.autoScrollSensor) {
@@ -1948,6 +1980,7 @@ fun Bogaslujbovyia(
                                         } else if (viewModel.scrollState.canScrollBackward) {
                                             PlainTooltip(stringResource(R.string.auto_up)) {
                                                 IconButton(onClick = {
+                                                    Settings.vibrate()
                                                     isUpList = true
                                                 }) {
                                                     Icon(
@@ -2208,6 +2241,7 @@ fun Bogaslujbovyia(
                                     .padding(end = 10.dp)
                                     .clip(shape = RoundedCornerShape(10.dp))
                                     .clickable {
+                                        Settings.vibrate()
                                         viewModel.isSpeaking = false
                                         viewModel.isPaused = false
                                         viewModel.stop()
@@ -2231,6 +2265,7 @@ fun Bogaslujbovyia(
                                     .align(Alignment.Bottom)
                                     .clip(shape = RoundedCornerShape(10.dp))
                                     .clickable {
+                                        Settings.vibrate()
                                         if (viewModel.isPaused) {
                                             viewModel.resume()
                                         } else {
@@ -2257,6 +2292,7 @@ fun Bogaslujbovyia(
                                     .padding(horizontal = 10.dp)
                                     .clip(shape = RoundedCornerShape(10.dp))
                                     .clickable {
+                                        Settings.vibrate()
                                         if (viewModel.autoScrollSpeed in 10..125) {
                                             viewModel.autoScrollSpeed += 5
                                             val proc = 100 - (viewModel.autoScrollSpeed - 15) * 100 / 115
@@ -2286,6 +2322,7 @@ fun Bogaslujbovyia(
                                     .align(Alignment.Bottom)
                                     .clip(shape = RoundedCornerShape(10.dp))
                                     .clickable {
+                                        Settings.vibrate()
                                         if (viewModel.autoScrollSpeed in 20..135) {
                                             viewModel.autoScrollSpeed -= 5
                                             val proc = 100 - (viewModel.autoScrollSpeed - 15) * 100 / 115
@@ -2424,7 +2461,10 @@ fun DialogLiturgia(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() },
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        },
                         shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
@@ -2480,6 +2520,7 @@ fun DialogHelpTTS(perevod: String = Settings.PEREVODSEMUXI, isError: Boolean, on
                             text = stringResource(R.string.not_show), modifier = Modifier
                                 .padding(10.dp)
                                 .clickable {
+                                    Settings.vibrate()
                                     isCheck = !isCheck
                                 }, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
                         )
@@ -2492,7 +2533,10 @@ fun DialogHelpTTS(perevod: String = Settings.PEREVODSEMUXI, isError: Boolean, on
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss(isCheck) }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss(isCheck)
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
                         Text(stringResource(R.string.ok), fontSize = 18.sp)

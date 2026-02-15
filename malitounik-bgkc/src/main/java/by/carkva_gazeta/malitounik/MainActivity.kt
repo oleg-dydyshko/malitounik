@@ -24,6 +24,9 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -1012,6 +1015,24 @@ object Settings {
         notificationManager.deleteNotificationChannel("3002")
         notificationManager.deleteNotificationChannel("2002")
     }
+
+    @Suppress("DEPRECATION")
+    fun vibrate(isLongVibrator: Boolean = false) {
+        val context = Malitounik.applicationContext()
+        val vibrate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibratorManager.defaultVibrator
+        } else {
+            context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        }
+        val pattern = if (isLongVibrator) longArrayOf(0, 50, 100, 50)
+        else longArrayOf(0, 50)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            vibrate.vibrate(VibrationEffect.createPredefined(if (isLongVibrator) VibrationEffect.EFFECT_DOUBLE_CLICK else VibrationEffect.EFFECT_CLICK))
+        } else {
+            vibrate.vibrate(pattern, -1)
+        }
+    }
 }
 
 enum class SystemNavigation {
@@ -1060,7 +1081,10 @@ fun DialogSztoHovaha(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.close), fontSize = 18.sp)

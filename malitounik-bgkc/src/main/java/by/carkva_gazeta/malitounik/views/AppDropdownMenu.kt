@@ -26,11 +26,13 @@ fun AppDropdownMenu(expanded: Boolean, onDismissRequest: () -> Unit, content: @C
     if (expanded) {
         val interactionSourse = remember { MutableInteractionSource() }
         Popup(onDismissRequest = { onDismissRequest() }) {
-            Column(modifier = Modifier
-                .fillMaxSize()
-                .clickable(interactionSource = interactionSourse, indication = null) {
-                    onDismissRequest()
-                }, horizontalAlignment = Alignment.End) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable(interactionSource = interactionSourse, indication = null) {
+                        onDismissRequest()
+                    }, horizontalAlignment = Alignment.End
+            ) {
                 Surface(
                     modifier = Modifier.padding(5.dp),
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.secondary),

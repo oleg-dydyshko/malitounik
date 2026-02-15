@@ -989,6 +989,7 @@ fun Piasochnica(
                 title = {
                     Text(
                         modifier = Modifier.clickable {
+                            Settings.vibrate()
                             maxLine.intValue = Int.MAX_VALUE
                             coroutineScope.launch {
                                 delay(5000L)
@@ -1007,6 +1008,7 @@ fun Piasochnica(
                     PlainTooltip(stringResource(R.string.exit_page), TooltipAnchorPosition.Below) {
                         IconButton(
                             onClick = {
+                                Settings.vibrate()
                                 when {
                                     showDropdown -> {
                                         showDropdown = false
@@ -1033,6 +1035,7 @@ fun Piasochnica(
                 },
                 actions = {
                     IconButton(onClick = {
+                        Settings.vibrate()
                         viewModel.htmlText = editText.text as SpannableStringBuilder
                         viewModel.saveResult(resours, true)
                     }) {
@@ -1041,7 +1044,10 @@ fun Piasochnica(
                         )
                     }
                     PlainTooltip(stringResource(R.string.more_items), TooltipAnchorPosition.Below) {
-                        IconButton(onClick = { expandedUp = true }) {
+                        IconButton(onClick = {
+                            Settings.vibrate()
+                            expandedUp = true
+                        }) {
                             Icon(
                                 painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                             )
@@ -1050,6 +1056,7 @@ fun Piasochnica(
                     AppDropdownMenu(
                         expanded = expandedUp, onDismissRequest = { expandedUp = false }) {
                         DropdownMenuItem(onClick = {
+                            Settings.vibrate()
                             expandedUp = false
                             showDropdown = !showDropdown
                         }, text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
@@ -1108,6 +1115,7 @@ fun Piasochnica(
             ) {
                 if (viewModel.isBackPressVisable) {
                     IconButton(onClick = {
+                        Settings.vibrate()
                         editText.removeTextChangedListener(textWatcher)
                         if (viewModel.history.isNotEmpty()) {
                             val editPosition = if (viewModel.history[0].editPosition == 0) endEditPosition
@@ -1129,6 +1137,7 @@ fun Piasochnica(
                     }
                 }
                 IconButton(onClick = {
+                    Settings.vibrate()
                     startEditPosition = editText.selectionStart
                     endEditPosition = editText.selectionEnd
                     if (viewModel.isHTML) {
@@ -1170,6 +1179,7 @@ fun Piasochnica(
                     )
                 }
                 IconButton(onClick = {
+                    Settings.vibrate()
                     startEditPosition = editText.selectionStart
                     endEditPosition = editText.selectionEnd
                     if (viewModel.isHTML) {
@@ -1211,6 +1221,7 @@ fun Piasochnica(
                     )
                 }
                 IconButton(onClick = {
+                    Settings.vibrate()
                     startEditPosition = editText.selectionStart
                     endEditPosition = editText.selectionEnd
                     if (viewModel.isHTML) {
@@ -1252,6 +1263,7 @@ fun Piasochnica(
                 }
                 if (!viewModel.isHTML) {
                     IconButton(onClick = {
+                        Settings.vibrate()
                         endEditPosition = editText.selectionEnd
                         val text = editText.text.toString()
                         val build = with(StringBuilder()) {
@@ -1277,6 +1289,7 @@ fun Piasochnica(
                     }
                 }
                 IconButton(onClick = {
+                    Settings.vibrate()
                     val startSelect = editText.selectionStart
                     val endSelect = editText.selectionEnd
                     if (startSelect == endSelect) {
@@ -1403,13 +1416,17 @@ fun DialogCrateURL(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
                         onClick = {
+                            Settings.vibrate()
                             setURL(textFieldValueState)
                             onDismiss()
                         }, shape = MaterialTheme.shapes.small

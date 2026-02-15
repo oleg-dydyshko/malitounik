@@ -74,6 +74,7 @@ fun KaliandarScreenInfo(navController: NavHostController) {
                 title = {
                     Text(
                         modifier = Modifier.clickable {
+                            Settings.vibrate()
                             maxLine.intValue = Int.MAX_VALUE
                             coroutineScope.launch {
                                 delay(5000L)
@@ -92,6 +93,7 @@ fun KaliandarScreenInfo(navController: NavHostController) {
                     PlainTooltip(stringResource(R.string.exit_page), TooltipAnchorPosition.Below) {
                         IconButton(
                             onClick = {
+                                Settings.vibrate()
                                 if (!backPressHandled) {
                                     backPressHandled = true
                                     navController.popBackStack()
@@ -110,10 +112,12 @@ fun KaliandarScreenInfo(navController: NavHostController) {
             )
         }
     ) { innerPadding ->
-        Column(modifier = Modifier
-            .padding(innerPadding)
-            .padding(10.dp)
-            .verticalScroll(rememberScrollState())) {
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .padding(10.dp)
+                .verticalScroll(rememberScrollState())
+        ) {
             Text(
                 text = stringResource(R.string.Znaki_cviat),
                 fontSize = (Settings.fontInterface - 2).sp,

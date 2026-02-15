@@ -121,13 +121,17 @@ fun KaliandarScreenYear(
                     textAlign = TextAlign.Center
                 )
                 if (text.isNotEmpty()) {
-                    Row(modifier = Modifier
-                        .padding(top = 10.dp)
-                        .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 10.dp)
+                            .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center
+                    ) {
                         if (data[index][7].toInt() != 1) {
-                            Icon(modifier = Modifier
-                                .padding(end = 10.dp)
-                                .size(22.dp), painter = painterResource(R.drawable.fishe), contentDescription = "", tint = colorIcon)
+                            Icon(
+                                modifier = Modifier
+                                    .padding(end = 10.dp)
+                                    .size(22.dp), painter = painterResource(R.drawable.fishe), contentDescription = "", tint = colorIcon
+                            )
                         }
                         Text(
                             text = text,
@@ -216,6 +220,7 @@ fun KaliandarScreenYear(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
+                                Settings.vibrate()
                                 navigateToSvityiaView(false, index)
                             }
                     ) {

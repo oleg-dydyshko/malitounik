@@ -346,6 +346,7 @@ fun Biblijateka(
                     title = {
                         Text(
                             modifier = Modifier.clickable {
+                                Settings.vibrate()
                                 maxLine.intValue = Int.MAX_VALUE
                                 coroutineScope.launch {
                                     delay(5000L)
@@ -364,6 +365,7 @@ fun Biblijateka(
                         PlainTooltip(stringResource(R.string.exit_page), TooltipAnchorPosition.Below) {
                             IconButton(
                                 onClick = {
+                                    Settings.vibrate()
                                     navController.popBackStack()
                                 },
                                 content = {
@@ -383,7 +385,10 @@ fun Biblijateka(
                             color = PrimaryTextBlack
                         )
                         PlainTooltip(stringResource(R.string.more_items), TooltipAnchorPosition.Below) {
-                            IconButton(onClick = { expanded = true }) {
+                            IconButton(onClick = {
+                                Settings.vibrate()
+                                expanded = true
+                            }) {
                                 Icon(
                                     painter = painterResource(R.drawable.more_vert),
                                     contentDescription = "",
@@ -397,6 +402,7 @@ fun Biblijateka(
                         ) {
                             DropdownMenuItem(
                                 onClick = {
+                                    Settings.vibrate()
                                     expanded = false
                                     val uri = FileProvider.getUriForFile(
                                         context,
@@ -420,6 +426,7 @@ fun Biblijateka(
                             )
                             DropdownMenuItem(
                                 onClick = {
+                                    Settings.vibrate()
                                     expanded = false
                                     fullscreen = true
                                 },
@@ -435,6 +442,7 @@ fun Biblijateka(
                             )
                             DropdownMenuItem(
                                 onClick = {
+                                    Settings.vibrate()
                                     expanded = false
                                     isShare = true
                                 },
@@ -450,6 +458,7 @@ fun Biblijateka(
                             )
                             DropdownMenuItem(
                                 onClick = {
+                                    Settings.vibrate()
                                     expanded = false
                                     val printAdapter = PdfDocumentAdapter(context, fileName)
                                     val printManager =

@@ -246,13 +246,17 @@ fun DialogEditSvityiaAndSviaty(adminViewModel: Piasochnica, onDismiss: () -> Uni
                             horizontalArrangement = Arrangement.End,
                         ) {
                             TextButton(
-                                onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
+                                onClick = {
+                                    Settings.vibrate()
+                                    onDismiss()
+                                }, shape = MaterialTheme.shapes.small
                             ) {
                                 Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                                 Text(stringResource(R.string.cansel), fontSize = 18.sp)
                             }
                             TextButton(
                                 onClick = {
+                                    Settings.vibrate()
                                     adminViewModel.sendPostRequest(textFieldValueStateTitle, textFieldValueStateCytanne, style, tipicon.toString(), textFieldStateTitleCytanne, textFieldStateCytanne, dayPascha) {
                                         isProgressVisable = it
                                         if (!isProgressVisable) onDismiss()
@@ -265,7 +269,11 @@ fun DialogEditSvityiaAndSviaty(adminViewModel: Piasochnica, onDismiss: () -> Uni
                         }
                     }
                     item {
-                        Spacer(modifier = Modifier.imePadding().padding(bottom = 10.dp))
+                        Spacer(
+                            modifier = Modifier
+                                .imePadding()
+                                .padding(bottom = 10.dp)
+                        )
                     }
                 }
             }
@@ -435,6 +443,7 @@ fun DropdownMenuBoxTipicon(
                             Text(option.title, fontSize = Settings.fontInterface.sp)
                         }
                     }, onClick = {
+                        Settings.vibrate()
                         textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option.title)
                         textFieldMyPosition = index
                         expanded = false

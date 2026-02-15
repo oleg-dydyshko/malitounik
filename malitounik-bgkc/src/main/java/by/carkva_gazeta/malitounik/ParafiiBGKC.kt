@@ -82,6 +82,7 @@ fun ParafiiBGKC(navController: NavHostController, innerPadding: PaddingValues) {
                 modifier = Modifier
                     .padding(start = 10.dp)
                     .clickable {
+                        Settings.vibrate()
                         navigationActions.navigateToBogaslujbovyia(
                             curyia.title, curyia.resource
                         )
@@ -105,6 +106,7 @@ fun ParafiiBGKC(navController: NavHostController, innerPadding: PaddingValues) {
                     verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
+                            Settings.vibrate()
                             AppNavGraphState.setItemsValue(dataItem.title)
                             collapsedState[i] = !collapsed
                         }) {
@@ -133,6 +135,7 @@ fun ParafiiBGKC(navController: NavHostController, innerPadding: PaddingValues) {
                         modifier = Modifier
                             .padding(start = 30.dp)
                             .clickable {
+                                Settings.vibrate()
                                 navigationActions.navigateToBogaslujbovyia(
                                     dataItem.list[index].title, dataItem.list[index].resource
                                 )

@@ -307,9 +307,11 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
                                 .weight(1f)
                                 .combinedClickable(
                                     onClick = {
+                                        Settings.vibrate()
                                         navigateToBogaslujbovyia(item.title, item.resource)
                                     },
                                     onLongClick = {
+                                        Settings.vibrate(true)
                                         removeItem = index
                                         removeResourse = true
                                     }
@@ -333,9 +335,9 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
                         if (viewModel.vybranaeListFile.size > 1) {
                             Icon(
                                 modifier = Modifier
-                                    .padding(10.dp)
+                                    .padding(top = 10.dp, start = 5.dp, end = 15.dp, bottom = 10.dp)
                                     .size(24.dp),
-                                painter = painterResource(R.drawable.menu_move), tint = MaterialTheme.colorScheme.secondary, contentDescription = ""
+                                painter = painterResource(R.drawable.menu_move), tint = Divider, contentDescription = ""
                             )
                         }
                     }
@@ -362,10 +364,12 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
                     verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                         .combinedClickable(
                             onClick = {
+                                Settings.vibrate()
                                 AppNavGraphState.setItemsValue(viewModel.vybranaeListTitleBible[i].title)
                                 collapsed = !collapsed
                             },
                             onLongClick = {
+                                Settings.vibrate(true)
                                 removeItem = i
                                 removeBibleAll = true
                             }
@@ -411,6 +415,7 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
                                         .weight(1f)
                                         .combinedClickable(
                                             onClick = {
+                                                Settings.vibrate()
                                                 val newList = StringBuilder()
                                                 for (r in 0 until viewModel.vybranaeListTitleBible[i].listBible.size) {
                                                     val char = if (r == viewModel.vybranaeListTitleBible[i].listBible.size - 1) ""
@@ -422,6 +427,7 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
                                                 )
                                             },
                                             onLongClick = {
+                                                Settings.vibrate(true)
                                                 removeItem = i
                                                 removeItemBible = index
                                                 removeBible = true
@@ -441,8 +447,9 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
                                 if (viewModel.vybranaeListTitleBible[i].listBible.size > 1) {
                                     Icon(
                                         modifier = Modifier
-                                            .padding(10.dp).size(24.dp),
-                                        painter = painterResource(R.drawable.menu_move), tint = MaterialTheme.colorScheme.secondary, contentDescription = ""
+                                            .padding(top = 10.dp, start = 5.dp, end = 15.dp, bottom = 10.dp)
+                                            .size(24.dp),
+                                        painter = painterResource(R.drawable.menu_move), tint = Divider, contentDescription = ""
                                     )
                                 }
                             }
@@ -490,13 +497,19 @@ fun DialogDelite(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.sabytie_no), fontSize = 18.sp)
                     }
                     TextButton(
-                        onClick = { onConfirmation() }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onConfirmation()
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
                         Text(stringResource(R.string.sabytie_yes), fontSize = 18.sp)

@@ -862,6 +862,7 @@ fun CytanniList(
                             if (!isParallelVisable) {
                                 Text(
                                     modifier = Modifier.clickable {
+                                        Settings.vibrate()
                                         maxLine.intValue = Int.MAX_VALUE
                                         coroutineScope.launch {
                                             delay(5000L)
@@ -871,6 +872,7 @@ fun CytanniList(
                                 )
                                 Text(
                                     modifier = Modifier.clickable {
+                                        Settings.vibrate()
                                         maxLine.intValue = Int.MAX_VALUE
                                         coroutineScope.launch {
                                             delay(5000L)
@@ -881,6 +883,7 @@ fun CytanniList(
                             } else {
                                 Text(
                                     modifier = Modifier.clickable {
+                                        Settings.vibrate()
                                         maxLine.intValue = Int.MAX_VALUE
                                         coroutineScope.launch {
                                             delay(5000L)
@@ -895,6 +898,7 @@ fun CytanniList(
                     if (isSelectMode || isParallelVisable) {
                         PlainTooltip(stringResource(R.string.close), TooltipAnchorPosition.Below) {
                             IconButton(onClick = {
+                                Settings.vibrate()
                                 if (isSelectMode) {
                                     viewModel.selectState.clear()
                                     isSelectMode = false
@@ -908,6 +912,7 @@ fun CytanniList(
                     } else {
                         PlainTooltip(stringResource(R.string.exit_page), TooltipAnchorPosition.Below) {
                             IconButton(onClick = {
+                                Settings.vibrate()
                                 when {
                                     isParallelVisable -> isParallelVisable = false
                                     showDropdown -> {
@@ -946,6 +951,7 @@ fun CytanniList(
                     if (isSelectMode) {
                         PlainTooltip(stringResource(R.string.select_all), TooltipAnchorPosition.Below) {
                             IconButton(onClick = {
+                                Settings.vibrate()
                                 isSelectAll = true
                             }) {
                                 Icon(
@@ -955,6 +961,7 @@ fun CytanniList(
                         }
                         PlainTooltip(stringResource(R.string.copy_list), TooltipAnchorPosition.Below) {
                             IconButton(onClick = {
+                                Settings.vibrate()
                                 isCopyMode = true
                             }) {
                                 Icon(
@@ -964,6 +971,7 @@ fun CytanniList(
                         }
                         PlainTooltip(stringResource(R.string.share), TooltipAnchorPosition.Below) {
                             IconButton(onClick = {
+                                Settings.vibrate()
                                 isShareMode = true
                             }) {
                                 Icon(
@@ -983,6 +991,7 @@ fun CytanniList(
                                     else painterResource(R.drawable.play_circle)
                                     PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play), TooltipAnchorPosition.Below) {
                                         IconButton(onClick = {
+                                            Settings.vibrate()
                                             viewModel.autoScrollSensor = !viewModel.autoScrollSensor
                                             viewModel.autoScroll(title, viewModel.autoScrollSensor)
                                             if (viewModel.autoScrollSensor) {
@@ -1001,6 +1010,7 @@ fun CytanniList(
                                 } else if (viewModel.listState[viewModel.selectedIndex].lazyListState.canScrollBackward) {
                                     PlainTooltip(stringResource(R.string.auto_up), TooltipAnchorPosition.Below) {
                                         IconButton(onClick = {
+                                            Settings.vibrate()
                                             isUpList = true
                                         }) {
                                             Icon(
@@ -1014,6 +1024,7 @@ fun CytanniList(
                                 PlainTooltip(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), TooltipAnchorPosition.Below) {
                                     IconButton(
                                         onClick = {
+                                            Settings.vibrate()
                                             viewModel.saveVybranoe(context, perevod)
                                         }) {
                                         val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
@@ -1025,7 +1036,10 @@ fun CytanniList(
                                 }
                             }
                             PlainTooltip(stringResource(R.string.more_items), TooltipAnchorPosition.Below) {
-                                IconButton(onClick = { expandedUp = true }) {
+                                IconButton(onClick = {
+                                    Settings.vibrate()
+                                    expandedUp = true
+                                }) {
                                     Icon(
                                         painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                     )
@@ -1035,6 +1049,7 @@ fun CytanniList(
                                 expanded = expandedUp, onDismissRequest = { expandedUp = false }) {
                                 if (biblia == Settings.CHYTANNI_BIBLIA && viewModel.listState.size - 1 > 1) {
                                     DropdownMenuItem(onClick = {
+                                        Settings.vibrate()
                                         expandedUp = false
                                         dialogRazdel = true
                                         viewModel.autoScroll(title, false)
@@ -1045,6 +1060,7 @@ fun CytanniList(
                                     })
                                 }
                                 DropdownMenuItem(onClick = {
+                                    Settings.vibrate()
                                     expandedUp = false
                                     viewModel.autoScroll(title, false)
                                     isSelectMode = true
@@ -1054,6 +1070,7 @@ fun CytanniList(
                                     )
                                 })
                                 DropdownMenuItem(onClick = {
+                                    Settings.vibrate()
                                     expandedUp = false
                                     fullscreen = true
                                 }, text = { Text(stringResource(R.string.fullscreen), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
@@ -1062,6 +1079,7 @@ fun CytanniList(
                                     )
                                 })
                                 DropdownMenuItem(onClick = {
+                                    Settings.vibrate()
                                     expandedUp = false
                                     showDropdown = !showDropdown
                                     viewModel.autoScroll(title, false)
@@ -1073,6 +1091,7 @@ fun CytanniList(
                                     )
                                 })
                                 DropdownMenuItem(onClick = {
+                                    Settings.vibrate()
                                     expandedUp = false
                                     showDropdown = !showDropdown
                                     viewModel.autoScroll(title, false)
@@ -1083,6 +1102,7 @@ fun CytanniList(
                                     )
                                 })
                                 DropdownMenuItem(onClick = {
+                                    Settings.vibrate()
                                     expandedUp = false
                                     if (viewModel.isSpeaking || viewModel.isPaused) {
                                         viewModel.isSpeaking = false
@@ -1128,6 +1148,7 @@ fun CytanniList(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
+                                            Settings.vibrate()
                                             viewModel.isPaused = false
                                             viewModel.isSpeaking = false
                                             viewModel.stop()
@@ -1145,6 +1166,7 @@ fun CytanniList(
                                 ) {
                                     RadioButton(
                                         selected = perevod == Settings.PEREVODSEMUXI, onClick = {
+                                            Settings.vibrate()
                                             viewModel.isPaused = false
                                             viewModel.isSpeaking = false
                                             viewModel.stop()
@@ -1169,6 +1191,7 @@ fun CytanniList(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
+                                            Settings.vibrate()
                                             viewModel.isPaused = false
                                             viewModel.isSpeaking = false
                                             viewModel.stop()
@@ -1186,6 +1209,7 @@ fun CytanniList(
                                 ) {
                                     RadioButton(
                                         selected = perevod == Settings.PEREVODBOKUNA, onClick = {
+                                            Settings.vibrate()
                                             viewModel.isPaused = false
                                             viewModel.isSpeaking = false
                                             viewModel.stop()
@@ -1210,6 +1234,7 @@ fun CytanniList(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
+                                            Settings.vibrate()
                                             viewModel.isPaused = false
                                             viewModel.isSpeaking = false
                                             viewModel.stop()
@@ -1227,6 +1252,7 @@ fun CytanniList(
                                 ) {
                                     RadioButton(
                                         selected = perevod == Settings.PEREVODCARNIAUSKI, onClick = {
+                                            Settings.vibrate()
                                             viewModel.isPaused = false
                                             viewModel.isSpeaking = false
                                             viewModel.stop()
@@ -1251,6 +1277,7 @@ fun CytanniList(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
+                                            Settings.vibrate()
                                             viewModel.isPaused = false
                                             viewModel.isSpeaking = false
                                             viewModel.stop()
@@ -1273,6 +1300,7 @@ fun CytanniList(
                                 ) {
                                     RadioButton(
                                         selected = perevod == Settings.PEREVODCATOLIK, onClick = {
+                                            Settings.vibrate()
                                             viewModel.isPaused = false
                                             viewModel.isSpeaking = false
                                             viewModel.stop()
@@ -1302,6 +1330,7 @@ fun CytanniList(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
+                                            Settings.vibrate()
                                             viewModel.isPaused = false
                                             viewModel.isSpeaking = false
                                             viewModel.stop()
@@ -1312,6 +1341,7 @@ fun CytanniList(
                                 ) {
                                     RadioButton(
                                         selected = perevod == Settings.PEREVODNADSAN, onClick = {
+                                            Settings.vibrate()
                                             viewModel.isPaused = false
                                             viewModel.isSpeaking = false
                                             viewModel.stop()
@@ -1329,6 +1359,7 @@ fun CytanniList(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
+                                            Settings.vibrate()
                                             viewModel.isPaused = false
                                             viewModel.isSpeaking = false
                                             viewModel.stop()
@@ -1350,6 +1381,7 @@ fun CytanniList(
                                 ) {
                                     RadioButton(
                                         selected = perevod == Settings.PEREVODSINOIDAL, onClick = {
+                                            Settings.vibrate()
                                             viewModel.isPaused = false
                                             viewModel.isSpeaking = false
                                             viewModel.stop()
@@ -1379,6 +1411,7 @@ fun CytanniList(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .clickable {
+                                                Settings.vibrate()
                                                 viewModel.isPaused = false
                                                 viewModel.isSpeaking = false
                                                 viewModel.stop()
@@ -1398,6 +1431,7 @@ fun CytanniList(
                                     ) {
                                         RadioButton(
                                             selected = perevod == Settings.PEREVODNEWAMERICANBIBLE, onClick = {
+                                                Settings.vibrate()
                                                 viewModel.isPaused = false
                                                 viewModel.isSpeaking = false
                                                 viewModel.stop()
@@ -1458,6 +1492,7 @@ fun CytanniList(
                         if (!isParallelVisable) {
                             PlainTooltip(stringResource(R.string.tts)) {
                                 IconButton(onClick = {
+                                    Settings.vibrate()
                                     if (viewModel.isSpeaking || viewModel.isPaused) {
                                         viewModel.isSpeaking = false
                                         viewModel.isPaused = false
@@ -1483,6 +1518,7 @@ fun CytanniList(
                             PlainTooltip(stringResource(R.string.menu_font_size_app_info)) {
                                 IconButton(
                                     onClick = {
+                                        Settings.vibrate()
                                         showDropdown = !showDropdown
                                         viewModel.autoScroll(title, false)
                                         menuPosition = 1
@@ -1494,6 +1530,7 @@ fun CytanniList(
                             }
                             PlainTooltip(stringResource(R.string.share)) {
                                 IconButton(onClick = {
+                                    Settings.vibrate()
                                     showDropdown = false
                                     viewModel.autoScroll(title, false)
                                     isSelectMode = true
@@ -1508,6 +1545,7 @@ fun CytanniList(
                             PlainTooltip(stringResource(R.string.set_perakvad_biblii)) {
                                 IconButton(
                                     onClick = {
+                                        Settings.vibrate()
                                         showDropdown = !showDropdown
                                         viewModel.autoScroll(title, false)
                                         menuPosition = 2
@@ -1521,6 +1559,7 @@ fun CytanniList(
                             PlainTooltip(stringResource(R.string.fullscreen_apis)) {
                                 IconButton(
                                     onClick = {
+                                        Settings.vibrate()
                                         fullscreen = true
                                     }) {
                                     Icon(
@@ -1532,6 +1571,7 @@ fun CytanniList(
                                 PlainTooltip(stringResource(R.string.set_glava_biblii)) {
                                     IconButton(
                                         onClick = {
+                                            Settings.vibrate()
                                             viewModel.autoScroll(title, false)
                                             dialogRazdel = true
                                         }) {
@@ -1545,6 +1585,7 @@ fun CytanniList(
                                 PlainTooltip(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add)) {
                                     IconButton(
                                         onClick = {
+                                            Settings.vibrate()
                                             viewModel.saveVybranoe(context, perevod)
                                         }) {
                                         val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
@@ -1561,6 +1602,7 @@ fun CytanniList(
                                     else painterResource(R.drawable.play_circle)
                                     PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play)) {
                                         IconButton(onClick = {
+                                            Settings.vibrate()
                                             viewModel.autoScrollSensor = !viewModel.autoScrollSensor
                                             viewModel.autoScroll(title, viewModel.autoScrollSensor)
                                             if (viewModel.autoScrollSensor) {
@@ -1579,6 +1621,7 @@ fun CytanniList(
                                 } else if (viewModel.listState[viewModel.selectedIndex].lazyListState.canScrollBackward) {
                                     PlainTooltip(stringResource(R.string.auto_up)) {
                                         IconButton(onClick = {
+                                            Settings.vibrate()
                                             isUpList = true
                                         }) {
                                             Icon(
@@ -1592,6 +1635,7 @@ fun CytanniList(
                             IconButton(
                                 enabled = false,
                                 onClick = {
+                                    Settings.vibrate()
                                 }) {
                                 Image(
                                     modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.empty), contentDescription = ""
@@ -1664,6 +1708,7 @@ fun CytanniList(
                             Text(
                                 (page + 1).toString(), modifier = Modifier
                                     .clickable {
+                                        Settings.vibrate()
                                         viewModel.selectedIndex = page
                                     }
                                     .padding(10.dp)
@@ -1925,6 +1970,7 @@ fun CytanniList(
                                             painter = painterResource(if ((viewModel.isPaused || viewModel.isSpeaking) && viewModel.selectState[index]) R.drawable.select_check_box else R.drawable.check_box_outline_blank), contentDescription = "", tint = MaterialTheme.colorScheme.secondary, modifier = Modifier
                                                 .padding(start = 5.dp)
                                                 .clickable {
+                                                    Settings.vibrate()
                                                     viewModel.selectState[index] = !viewModel.selectState[index]
                                                 })
                                     }
@@ -2016,6 +2062,7 @@ fun CytanniList(
                                 .padding(end = 10.dp)
                                 .clip(shape = RoundedCornerShape(10.dp))
                                 .clickable {
+                                    Settings.vibrate()
                                     viewModel.isSpeaking = false
                                     viewModel.isPaused = false
                                     viewModel.stop()
@@ -2039,6 +2086,7 @@ fun CytanniList(
                                 .align(Alignment.Bottom)
                                 .clip(shape = RoundedCornerShape(10.dp))
                                 .clickable {
+                                    Settings.vibrate()
                                     if (viewModel.isPaused) {
                                         viewModel.resume()
                                     } else {
@@ -2063,6 +2111,7 @@ fun CytanniList(
                                 .padding(horizontal = 10.dp)
                                 .clip(shape = RoundedCornerShape(10.dp))
                                 .clickable {
+                                    Settings.vibrate()
                                     if (viewModel.autoScrollSpeed in 10..125) {
                                         viewModel.autoScrollSpeed += 5
                                         val proc = 100 - (viewModel.autoScrollSpeed - 15) * 100 / 115
@@ -2089,6 +2138,7 @@ fun CytanniList(
                                 .align(Alignment.Bottom)
                                 .clip(shape = RoundedCornerShape(10.dp))
                                 .clickable {
+                                    Settings.vibrate()
                                     if (viewModel.autoScrollSpeed in 20..135) {
                                         viewModel.autoScrollSpeed -= 5
                                         val proc = 100 - (viewModel.autoScrollSpeed - 15) * 100 / 115
@@ -2189,13 +2239,17 @@ fun DialogRazdzel(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
                         onClick = {
+                            Settings.vibrate()
                             if (textFieldValueState.isNotEmpty() && textFieldValueState.toInt() > 0 && textFieldValueState.toInt() <= listSize) {
                                 setSelectedIndex(textFieldValueState.toInt() - 1)
                             }

@@ -75,7 +75,7 @@ fun Cytaty(navController: NavHostController) {
         }
     }
     LaunchedEffect(Unit) {
-        lazyListState.scrollToItem(AppNavGraphState.getScrollValuePosition("Cytaty"),AppNavGraphState.getScrollValueOffset("Cytaty"))
+        lazyListState.scrollToItem(AppNavGraphState.getScrollValuePosition("Cytaty"), AppNavGraphState.getScrollValueOffset("Cytaty"))
     }
     Scaffold(
         topBar = {
@@ -89,6 +89,7 @@ fun Cytaty(navController: NavHostController) {
                 }, navigationIcon = {
                     PlainTooltip(stringResource(R.string.exit_page), TooltipAnchorPosition.Below) {
                         IconButton(onClick = {
+                            Settings.vibrate()
                             navController.popBackStack()
                         }, content = {
                             Icon(

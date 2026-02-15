@@ -22,8 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -48,25 +46,22 @@ import java.util.Calendar
 @Composable
 fun KaliandarKnigaView(
     colorBlackboard: Color,
+    viewModel: SearchBibleViewModel,
     navigateToBogaslujbovyia: (title: String, resurs: String) -> Unit,
     navigateToSvityiaView: (svity: Boolean, position: Int) -> Unit,
     onDismiss: () -> Unit
 ) {
     val interactionSourse = remember { MutableInteractionSource() }
-    var dialogKnigaView by remember { mutableStateOf(false) }
-    val slujbaList = remember { mutableStateListOf<SlugbovyiaTextuData>() }
-    var slujva by remember { mutableIntStateOf(SlugbovyiaTextu.LITURHIJA) }
     BackHandler(true) {
         onDismiss()
     }
-    if (dialogKnigaView) {
+    if (viewModel.dialogKnigaView) {
         DialogKniga(
-            slujva, slujbaList,
+            viewModel.slujva, viewModel.slujbaList,
             navigateToBogaslujbovyia = { title, resourse ->
                 navigateToBogaslujbovyia(title, resourse)
-                dialogKnigaView = false
             }) {
-            dialogKnigaView = false
+            viewModel.dialogKnigaView = false
         }
     }
     Row(
@@ -116,10 +111,10 @@ fun KaliandarKnigaView(
                                 if (listSlujbaViach.size == 1) {
                                     navigateToBogaslujbovyia(listSlujbaViach[0].title, listSlujbaViach[0].resource)
                                 } else {
-                                    slujbaList.clear()
-                                    slujbaList.addAll(listSlujbaViach)
-                                    slujva = SlugbovyiaTextu.VIACZERNIA
-                                    dialogKnigaView = true
+                                    viewModel.slujbaList.clear()
+                                    viewModel.slujbaList.addAll(listSlujbaViach)
+                                    viewModel.slujva = SlugbovyiaTextu.VIACZERNIA
+                                    viewModel.dialogKnigaView = true
                                 }
                             }
                             .padding(vertical = 10.dp)
@@ -138,18 +133,20 @@ fun KaliandarKnigaView(
                     }
                     val listSlujbaPavia = slujba.loadSluzbaDayList(SlugbovyiaTextu.PAVIACHERNICA, dayOfYear, year)
                     listSlujbaPavia.add(SlugbovyiaTextuData(0, "Павячэрніца малая", "bogashlugbovya/paviaczernica_malaja.html", SlugbovyiaTextu.PAVIACHERNICA))
-                    Column(modifier = modifier
-                        .clickable {
-                            if (listSlujbaPavia.size == 1) {
-                                navigateToBogaslujbovyia(listSlujbaPavia[0].title, listSlujbaPavia[0].resource)
-                            } else {
-                                slujbaList.clear()
-                                slujbaList.addAll(listSlujbaPavia)
-                                slujva = SlugbovyiaTextu.PAVIACHERNICA
-                                dialogKnigaView = true
+                    Column(
+                        modifier = modifier
+                            .clickable {
+                                Settings.vibrate()
+                                if (listSlujbaPavia.size == 1) {
+                                    navigateToBogaslujbovyia(listSlujbaPavia[0].title, listSlujbaPavia[0].resource)
+                                } else {
+                                    viewModel.slujbaList.clear()
+                                    viewModel.slujbaList.addAll(listSlujbaPavia)
+                                    viewModel.slujva = SlugbovyiaTextu.PAVIACHERNICA
+                                    viewModel.dialogKnigaView = true
+                                }
                             }
-                        }
-                        .padding(vertical = 10.dp)
+                            .padding(vertical = 10.dp)
                     ) {
                         val newTint = if (listSlujbaPavia.isEmpty()) SecondaryText else tint
                         Icon(
@@ -164,18 +161,19 @@ fun KaliandarKnigaView(
                         )
                     }
                     val listSlujbaPaunoch = slujba.loadSluzbaDayList(SlugbovyiaTextu.PAUNOCHNICA, dayOfYear, year)
-                    Column(modifier = modifier
-                        .clickable(listSlujbaPaunoch.isNotEmpty()) {
-                            if (listSlujbaPaunoch.size == 1) {
-                                navigateToBogaslujbovyia(listSlujbaPaunoch[0].title, listSlujbaPaunoch[0].resource)
-                            } else {
-                                slujbaList.clear()
-                                slujbaList.addAll(listSlujbaPaunoch)
-                                slujva = SlugbovyiaTextu.PAUNOCHNICA
-                                dialogKnigaView = true
+                    Column(
+                        modifier = modifier
+                            .clickable(listSlujbaPaunoch.isNotEmpty()) {
+                                if (listSlujbaPaunoch.size == 1) {
+                                    navigateToBogaslujbovyia(listSlujbaPaunoch[0].title, listSlujbaPaunoch[0].resource)
+                                } else {
+                                    viewModel.slujbaList.clear()
+                                    viewModel.slujbaList.addAll(listSlujbaPaunoch)
+                                    viewModel.slujva = SlugbovyiaTextu.PAUNOCHNICA
+                                    viewModel.dialogKnigaView = true
+                                }
                             }
-                        }
-                        .padding(vertical = 10.dp)
+                            .padding(vertical = 10.dp)
                     ) {
                         val newTint = if (listSlujbaPaunoch.isEmpty()) SecondaryText else tint
                         Icon(
@@ -195,18 +193,19 @@ fun KaliandarKnigaView(
                     if (data[0].toInt() == Calendar.SUNDAY) {
                         listSlujbaJutran.add(SlugbovyiaTextuData(0, "Ютрань нядзельная (у скароце)", "bogashlugbovya/jutran_niadzelnaja.html", SlugbovyiaTextu.JUTRAN))
                     }
-                    Column(modifier = modifier
-                        .clickable(listSlujbaJutran.isNotEmpty()) {
-                            if (listSlujbaJutran.size == 1) {
-                                navigateToBogaslujbovyia(listSlujbaJutran[0].title, listSlujbaJutran[0].resource)
-                            } else {
-                                slujbaList.clear()
-                                slujbaList.addAll(listSlujbaJutran)
-                                slujva = SlugbovyiaTextu.JUTRAN
-                                dialogKnigaView = true
+                    Column(
+                        modifier = modifier
+                            .clickable(listSlujbaJutran.isNotEmpty()) {
+                                if (listSlujbaJutran.size == 1) {
+                                    navigateToBogaslujbovyia(listSlujbaJutran[0].title, listSlujbaJutran[0].resource)
+                                } else {
+                                    viewModel.slujbaList.clear()
+                                    viewModel.slujbaList.addAll(listSlujbaJutran)
+                                    viewModel.slujva = SlugbovyiaTextu.JUTRAN
+                                    viewModel.dialogKnigaView = true
+                                }
                             }
-                        }
-                        .padding(vertical = 10.dp)
+                            .padding(vertical = 10.dp)
                     ) {
                         val newTint = if (listSlujbaJutran.isEmpty()) SecondaryText else tint
                         Icon(
@@ -221,18 +220,19 @@ fun KaliandarKnigaView(
                         )
                     }
                     val listSlujbaVilHadz = slujba.loadSluzbaDayList(SlugbovyiaTextu.VIALHADZINY, dayOfYear, year)
-                    Column(modifier = modifier
-                        .clickable(listSlujbaVilHadz.isNotEmpty()) {
-                            if (listSlujbaVilHadz.size == 1) {
-                                navigateToBogaslujbovyia(listSlujbaVilHadz[0].title, listSlujbaVilHadz[0].resource)
-                            } else {
-                                slujbaList.clear()
-                                slujbaList.addAll(listSlujbaVilHadz)
-                                slujva = SlugbovyiaTextu.VIALHADZINY
-                                dialogKnigaView = true
+                    Column(
+                        modifier = modifier
+                            .clickable(listSlujbaVilHadz.isNotEmpty()) {
+                                if (listSlujbaVilHadz.size == 1) {
+                                    navigateToBogaslujbovyia(listSlujbaVilHadz[0].title, listSlujbaVilHadz[0].resource)
+                                } else {
+                                    viewModel.slujbaList.clear()
+                                    viewModel.slujbaList.addAll(listSlujbaVilHadz)
+                                    viewModel.slujva = SlugbovyiaTextu.VIALHADZINY
+                                    viewModel.dialogKnigaView = true
+                                }
                             }
-                        }
-                        .padding(vertical = 10.dp)
+                            .padding(vertical = 10.dp)
                     ) {
                         val newTint = if (listSlujbaVilHadz.isEmpty()) SecondaryText else tint
                         Icon(
@@ -248,18 +248,19 @@ fun KaliandarKnigaView(
                     }
                     val listSlujbaLitur = if (isLiturgia(data)) slujba.loadSluzbaDayList(SlugbovyiaTextu.LITURHIJA, dayOfYear, year)
                     else ArrayList()
-                    Column(modifier = modifier
-                        .clickable(listSlujbaLitur.isNotEmpty()) {
-                            if (listSlujbaLitur.size == 1) {
-                                navigateToBogaslujbovyia(listSlujbaLitur[0].title, listSlujbaLitur[0].resource)
-                            } else {
-                                slujbaList.clear()
-                                slujbaList.addAll(listSlujbaLitur)
-                                slujva = SlugbovyiaTextu.LITURHIJA
-                                dialogKnigaView = true
+                    Column(
+                        modifier = modifier
+                            .clickable(listSlujbaLitur.isNotEmpty()) {
+                                if (listSlujbaLitur.size == 1) {
+                                    navigateToBogaslujbovyia(listSlujbaLitur[0].title, listSlujbaLitur[0].resource)
+                                } else {
+                                    viewModel.slujbaList.clear()
+                                    viewModel.slujbaList.addAll(listSlujbaLitur)
+                                    viewModel.slujva = SlugbovyiaTextu.LITURHIJA
+                                    viewModel.dialogKnigaView = true
+                                }
                             }
-                        }
-                        .padding(vertical = 10.dp)
+                            .padding(vertical = 10.dp)
                     ) {
                         val newTint = if (listSlujbaLitur.isEmpty()) SecondaryText else tint
                         Icon(
@@ -289,11 +290,12 @@ fun KaliandarKnigaView(
                         )
                     }
                     val svityia = data[4]
-                    Column(modifier = modifier
-                        .clickable(svityia != "no_sviatyia") {
-                            navigateToSvityiaView(false, Settings.caliandarPosition)
-                        }
-                        .padding(vertical = 10.dp)
+                    Column(
+                        modifier = modifier
+                            .clickable(svityia != "no_sviatyia") {
+                                navigateToSvityiaView(false, Settings.caliandarPosition)
+                            }
+                            .padding(vertical = 10.dp)
                     ) {
                         val newTint = if (svityia == "no_sviatyia") SecondaryText else tint
                         Icon(
@@ -308,11 +310,12 @@ fun KaliandarKnigaView(
                         )
                     }
                     val parliny = slujba.checkParliny(dayOfYear)
-                    Column(modifier = modifier
-                        .clickable(parliny) {
-                            viewPiarliny = true
-                        }
-                        .padding(vertical = 10.dp)
+                    Column(
+                        modifier = modifier
+                            .clickable(parliny) {
+                                viewPiarliny = true
+                            }
+                            .padding(vertical = 10.dp)
                     ) {
                         val newTint = if (!parliny) SecondaryText else tint
                         Icon(
@@ -376,6 +379,7 @@ fun DialogKniga(
                             .fillMaxWidth()
                             .padding(horizontal = 10.dp)
                             .clickable {
+                                Settings.vibrate()
                                 navigateToBogaslujbovyia(list[i].title, list[i].resource)
                             },
                         verticalAlignment = Alignment.CenterVertically
@@ -398,7 +402,10 @@ fun DialogKniga(
                     HorizontalDivider()
                 }
                 TextButton(
-                    onClick = { onDismiss() },
+                    onClick = {
+                        Settings.vibrate()
+                        onDismiss()
+                    },
                     modifier = Modifier
                         .padding(8.dp)
                         .align(Alignment.End),

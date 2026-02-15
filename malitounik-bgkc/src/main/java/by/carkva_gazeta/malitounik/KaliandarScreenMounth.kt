@@ -103,6 +103,7 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(modifier = Modifier.clickable {
+                Settings.vibrate()
                 expanded = true
             }) {
                 Text(
@@ -123,6 +124,7 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                 modifier = Modifier
                     .padding(start = 20.dp)
                     .clickable {
+                        Settings.vibrate()
                         expanded2 = true
                     }) {
                 Text(
@@ -335,6 +337,7 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                                         modifier = Modifier
                                             .weight(1f)
                                             .clickable {
+                                                Settings.vibrate()
                                                 Settings.caliandarPosition = clickPos
                                                 setPageCaliandar(clickPos)
                                             }
@@ -359,6 +362,7 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
         }
         TextButton(
             onClick = {
+                Settings.vibrate()
                 val calendar = Calendar.getInstance()
                 for (i in Settings.data.indices) {
                     if (calendar[Calendar.DATE] == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
@@ -417,6 +421,7 @@ fun DialogSetDataCaliandar(
                                     .fillMaxWidth()
                                     .padding(start = 10.dp)
                                     .clickable {
+                                        Settings.vibrate()
                                         coroutineScope.launch {
                                             pagerState.scrollToPage(getFindPage(i, year))
                                         }
@@ -442,6 +447,7 @@ fun DialogSetDataCaliandar(
                                     .fillMaxWidth()
                                     .padding(start = 10.dp)
                                     .clickable {
+                                        Settings.vibrate()
                                         coroutineScope.launch {
                                             pagerState.scrollToPage(getFindPage(mun, i))
                                         }
@@ -468,7 +474,10 @@ fun DialogSetDataCaliandar(
                 horizontalArrangement = Arrangement.End,
             ) {
                 TextButton(
-                    onClick = { onDismiss() },
+                    onClick = {
+                        Settings.vibrate()
+                        onDismiss()
+                    },
                     shape = MaterialTheme.shapes.small
                 ) {
                     Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")

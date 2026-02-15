@@ -325,6 +325,7 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                     modifier = Modifier
                         .padding(start = 10.dp)
                         .combinedClickable(onClick = {
+                            Settings.vibrate()
                             val fileName = fileList[index].fileName
                             coroutineScope.launch {
                                 viewModel.isProgressVisable = true
@@ -367,6 +368,7 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                                 viewModel.isProgressVisable = false
                             }
                         }, onLongClick = {
+                            Settings.vibrate(true)
                             position = index
                             dialogContextMenu = true
                         }),
@@ -378,9 +380,11 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                         tint = MaterialTheme.colorScheme.primary,
                         contentDescription = ""
                     )
-                    Column(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp)) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp)
+                    ) {
                         Text(
                             text = fileList[index].fileName,
                             color = MaterialTheme.colorScheme.secondary,
@@ -526,6 +530,7 @@ fun DialogNetFileExplorer(
                             modifier = Modifier
                                 .padding(start = 10.dp)
                                 .combinedClickable(onClick = {
+                                    Settings.vibrate()
                                     when (viewModel.fileList[index].resources) {
                                         R.drawable.directory_up -> {
                                             val t1 = dir.lastIndexOf("/")
@@ -544,6 +549,7 @@ fun DialogNetFileExplorer(
                                         }
                                     }
                                 }, onLongClick = {
+                                    Settings.vibrate(true)
                                     if (!(viewModel.fileList[index].resources == R.drawable.directory_up || viewModel.fileList[index].resources == R.drawable.directory_icon)) {
                                         position = index
                                         dialogContextMenu = true
@@ -576,7 +582,10 @@ fun DialogNetFileExplorer(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
@@ -584,6 +593,7 @@ fun DialogNetFileExplorer(
                     if (fileName.isNotEmpty()) {
                         TextButton(
                             onClick = {
+                                Settings.vibrate()
                                 if (textFieldValueState.isEmpty()) {
                                     Toast.makeText(context, setfileName, Toast.LENGTH_SHORT).show()
                                 } else {
@@ -659,13 +669,17 @@ fun DialogSetNameFile(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
                         onClick = {
+                            Settings.vibrate()
                             setFileName(textFieldValueState)
                             onDismiss()
                         }, shape = MaterialTheme.shapes.small
@@ -712,13 +726,17 @@ fun DialogFileExists(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
                         onClick = {
+                            Settings.vibrate()
                             setFileName(fileName)
                             onDismiss()
                         }, shape = MaterialTheme.shapes.small

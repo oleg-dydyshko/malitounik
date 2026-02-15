@@ -124,6 +124,7 @@ fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, sear
                     ),
                     shape = MaterialTheme.shapes.small,
                     onClick = {
+                        Settings.vibrate()
                         navigationActions.navigateToBogaslujbovyia(
                             paschaKaliandarBel,
                             "pasxa.html"

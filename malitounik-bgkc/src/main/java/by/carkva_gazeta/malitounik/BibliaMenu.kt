@@ -136,6 +136,10 @@ class SearchBibleViewModel : CytanniListViewModel() {
     var isEditMode by mutableStateOf(false)
     var isDeliteNatatka by mutableStateOf(false)
     var isIconSort by mutableStateOf(false)
+    var dialogKniga by mutableStateOf(false)
+    val slujbaList = mutableStateListOf<SlugbovyiaTextuData>()
+    var dialogKnigaView by mutableStateOf(false)
+    var slujva by mutableIntStateOf(SlugbovyiaTextu.LITURHIJA)
     var perevodBiblii = Settings.PEREVODSEMUXI
 
     fun doInBackground(
@@ -631,6 +635,7 @@ fun BibliaMenu(
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.clickable {
+                            Settings.vibrate()
                             isRegistr = !isRegistr
                             k.edit {
                                 putBoolean("pegistrbukv", isRegistr)
@@ -656,6 +661,7 @@ fun BibliaMenu(
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.clickable {
+                            Settings.vibrate()
                             isDakladnaeSupadzenne = if (isDakladnaeSupadzenne == 0) 1
                             else 0
                             k.edit {
@@ -705,6 +711,7 @@ fun BibliaMenu(
                         modifier = Modifier
                             .padding(10.dp)
                             .clickable {
+                                Settings.vibrate()
                                 viewModel.setPerevod(context, Settings.CHYTANNI_BIBLIA, viewModel.searchList[index].title + " " + viewModel.searchList[index].glava.toString(), perevod)
                                 viewModel.oldTextFieldValueState = viewModel.textFieldValueState.text
                                 navigateToCytanniList(
@@ -830,6 +837,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
         if (perevod != Settings.PEREVODCATOLIK) {
             TextButton(
                 onClick = {
+                    Settings.vibrate()
                     novyZapavet = false
                     when (perevod) {
                         Settings.PEREVODSINOIDAL -> {
@@ -877,6 +885,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
         if (perevod != Settings.PEREVODNADSAN) {
             TextButton(
                 onClick = {
+                    Settings.vibrate()
                     novyZapavet = true
                     when (perevod) {
                         Settings.PEREVODCATOLIK -> {
@@ -931,6 +940,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
         }
         TextButton(
             onClick = {
+                Settings.vibrate()
                 when (perevod) {
                     Settings.PEREVODCATOLIK -> {
                         val dir = File("${context.filesDir}/Catolik")
@@ -1024,10 +1034,12 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                     modifier = Modifier
                         .combinedClickable(
                             onClick = {
+                                Settings.vibrate()
                                 AppNavGraphState.setItemsValue(titlePerevod)
                                 collapsedState = !collapsedState
                             },
                             onLongClick = {
+                                Settings.vibrate(true)
                                 isDeliteVybranaeAll = true
                             }
                         )
@@ -1120,6 +1132,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                             Row(
                                 modifier = Modifier
                                     .clickable {
+                                        Settings.vibrate()
                                         val newList = StringBuilder()
                                         for (r in 0 until list.size) {
                                             val char = if (r == list.size - 1) ""
@@ -1155,6 +1168,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                                     modifier = Modifier
                                         .padding(end = 5.dp)
                                         .clickable {
+                                            Settings.vibrate()
                                             removeItem = index
                                         }, painter = painterResource(R.drawable.delete), tint = MaterialTheme.colorScheme.secondary, contentDescription = ""
                                 )
@@ -1208,6 +1222,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                                 .background(Divider)
                                 .padding(vertical = 5.dp)
                                 .clickable {
+                                    Settings.vibrate()
                                     val index = when (i) {
                                         1 -> "1"
                                         2 -> "9"
@@ -1243,6 +1258,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                                 .background(Divider)
                                 .padding(vertical = 5.dp)
                                 .clickable {
+                                    Settings.vibrate()
                                     val index = when (i) {
                                         6 -> "37"
                                         7 -> "46"
@@ -1278,6 +1294,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                                 .background(Divider)
                                 .padding(vertical = 5.dp)
                                 .clickable {
+                                    Settings.vibrate()
                                     val index = when (i) {
                                         11 -> "77"
                                         12 -> "85"
@@ -1313,6 +1330,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                                 .background(Divider)
                                 .padding(vertical = 5.dp)
                                 .clickable {
+                                    Settings.vibrate()
                                     val index = when (i) {
                                         16 -> "109"
                                         17 -> "118"
@@ -1339,6 +1357,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
             val malitvaPered = stringResource(R.string.malitva_pered)
             TextButton(
                 onClick = {
+                    Settings.vibrate()
                     navigateToBogaslujbovyia(malitvaPered, "nadsan_pered.html")
                 },
                 modifier = Modifier
@@ -1358,6 +1377,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
             val malitvaPosle = stringResource(R.string.malitva_posle)
             TextButton(
                 onClick = {
+                    Settings.vibrate()
                     navigateToBogaslujbovyia(malitvaPosle, "nadsan_posle.html")
                 },
                 modifier = Modifier
@@ -1384,6 +1404,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier
                         .clickable {
+                            Settings.vibrate()
                             pesnyView = !pesnyView
                         }
                         .clip(MaterialTheme.shapes.small)
@@ -1424,6 +1445,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                             modifier = Modifier
                                 .padding(start = 10.dp)
                                 .clickable {
+                                    Settings.vibrate()
                                     navigateToBogaslujbovyia(
                                         pesnia,
                                         when (i) {
@@ -1463,6 +1485,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
             }
             TextButton(
                 onClick = {
+                    Settings.vibrate()
                     dialogPeryiadyView = true
                 },
                 modifier = Modifier
@@ -1489,6 +1512,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier
                         .clickable {
+                            Settings.vibrate()
                             dialogImageView = !dialogImageView
                         }
                         .clip(MaterialTheme.shapes.small)
@@ -1532,6 +1556,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
         if (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODCATOLIK) {
             TextButton(
                 onClick = {
+                    Settings.vibrate()
                     dialogVisable = true
                 },
                 modifier = Modifier
@@ -1597,7 +1622,10 @@ fun DialogSemuxa(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() },
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        },
                         shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
@@ -1658,35 +1686,35 @@ fun DialogDownLoadBible(
     LaunchedEffect(download) {
         if (download) {
             if (Settings.isNetworkAvailable(context)) {
-                    isProgressVisable = true
-                    viewModel.downLoadBibile(context, perevod)
-                    viewModel.downLoadVersionBibile(context, perevod)
-                    viewModel.saveVersionFile(context, perevod)
-                    val destinationDir = when (perevod) {
-                        Settings.PEREVODCATOLIK -> "${context.filesDir}/Catolik"
+                isProgressVisable = true
+                viewModel.downLoadBibile(context, perevod)
+                viewModel.downLoadVersionBibile(context, perevod)
+                viewModel.saveVersionFile(context, perevod)
+                val destinationDir = when (perevod) {
+                    Settings.PEREVODCATOLIK -> "${context.filesDir}/Catolik"
 
-                        Settings.PEREVODSINOIDAL -> "${context.filesDir}/Sinodal"
+                    Settings.PEREVODSINOIDAL -> "${context.filesDir}/Sinodal"
 
-                        Settings.PEREVODNEWAMERICANBIBLE -> "${context.filesDir}/NewAmericanBible"
+                    Settings.PEREVODNEWAMERICANBIBLE -> "${context.filesDir}/NewAmericanBible"
 
-                        else -> "${context.filesDir}/Sinodal"
-                    }
-                    val dir = File(destinationDir)
-                    if (!dir.exists()) dir.mkdir()
-                    val zipFile = File("${context.filesDir}/cache/cache.zip")
-                    ZipFile(zipFile).use { zip ->
-                        zip.entries().asSequence().forEach { entry ->
-                            val entryFile = File(destinationDir, entry.name)
-                            zip.getInputStream(entry).use { input ->
-                                FileOutputStream(entryFile).use { output ->
-                                    input.copyTo(output)
-                                }
+                    else -> "${context.filesDir}/Sinodal"
+                }
+                val dir = File(destinationDir)
+                if (!dir.exists()) dir.mkdir()
+                val zipFile = File("${context.filesDir}/cache/cache.zip")
+                ZipFile(zipFile).use { zip ->
+                    zip.entries().asSequence().forEach { entry ->
+                        val entryFile = File(destinationDir, entry.name)
+                        zip.getInputStream(entry).use { input ->
+                            FileOutputStream(entryFile).use { output ->
+                                input.copyTo(output)
                             }
                         }
                     }
-                    isProgressVisable = false
-                    zipFile.delete()
-                    onConfirmation()
+                }
+                isProgressVisable = false
+                zipFile.delete()
+                onConfirmation()
             } else {
                 Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
             }
@@ -1722,7 +1750,10 @@ fun DialogDownLoadBible(
                 ) {
                     if (!download) {
                         TextButton(
-                            onClick = { onDismiss() },
+                            onClick = {
+                                Settings.vibrate()
+                                onDismiss()
+                            },
                             shape = MaterialTheme.shapes.small
                         ) {
                             Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
@@ -1730,7 +1761,10 @@ fun DialogDownLoadBible(
                         }
 
                         TextButton(
-                            onClick = { download = true },
+                            onClick = {
+                                Settings.vibrate()
+                                download = true
+                            },
                             shape = MaterialTheme.shapes.small
                         ) {
                             Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
@@ -1738,7 +1772,10 @@ fun DialogDownLoadBible(
                         }
                     } else {
                         TextButton(
-                            onClick = { onDismiss() },
+                            onClick = {
+                                Settings.vibrate()
+                                onDismiss()
+                            },
                             shape = MaterialTheme.shapes.small
                         ) {
                             Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
@@ -1787,7 +1824,10 @@ fun DialogPeryaidy(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() },
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        },
                         shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
@@ -1827,7 +1867,10 @@ fun DialogImage(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() },
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        },
                         shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")

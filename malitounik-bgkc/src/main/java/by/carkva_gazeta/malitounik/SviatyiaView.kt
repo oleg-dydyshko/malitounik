@@ -374,6 +374,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                         Column {
                             Text(
                                 modifier = Modifier.clickable {
+                                    Settings.vibrate()
                                     if (maxLine.intValue == Int.MAX_VALUE) maxLine.intValue = 1
                                     else maxLine.intValue = Int.MAX_VALUE
                                 },
@@ -390,6 +391,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                         if (viewModel.edit) {
                             PlainTooltip(stringResource(R.string.close), TooltipAnchorPosition.Below) {
                                 IconButton(onClick = {
+                                    Settings.vibrate()
                                     viewModel.edit = false
                                 }, content = {
                                     Icon(
@@ -402,6 +404,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                 PlainTooltip(stringResource(R.string.close), TooltipAnchorPosition.Below) {
                                     IconButton(
                                         onClick = {
+                                            Settings.vibrate()
                                             imageOpisanne = ""
                                             imageFull = false
                                         },
@@ -417,6 +420,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                 PlainTooltip(stringResource(R.string.exit_page), TooltipAnchorPosition.Below) {
                                     IconButton(
                                         onClick = {
+                                            Settings.vibrate()
                                             when {
                                                 showDropdown -> {
                                                     showDropdown = false
@@ -515,6 +519,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                             }
                             PlainTooltip(stringResource(R.string.fullscreen_apis), TooltipAnchorPosition.Below) {
                                 IconButton(onClick = {
+                                    Settings.vibrate()
                                     fullscreen = true
                                 }) {
                                     Icon(
@@ -528,6 +533,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                 VerticalDivider()
                                 PlainTooltip(stringResource(R.string.redagaktirovat), TooltipAnchorPosition.Below) {
                                     IconButton(onClick = {
+                                        Settings.vibrate()
                                         if (viewModel.svaity.isNotEmpty()) textFieldValueStateTitle = TextFieldValue(viewModel.svaity[viewModel.sviatyPosotion][3])
                                         imageFull = false
                                         viewModel.edit = true
@@ -559,6 +565,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     IconButton(onClick = {
+                        Settings.vibrate()
                         val startSelect = textFieldValueStateTitle.selection.start
                         val endSelect = textFieldValueStateTitle.selection.end
                         val text = textFieldValueStateTitle.text
@@ -580,6 +587,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                         )
                     }
                     IconButton(onClick = {
+                        Settings.vibrate()
                         val startSelect = textFieldValueStateTitle.selection.start
                         val endSelect = textFieldValueStateTitle.selection.end
                         val text = textFieldValueStateTitle.text
@@ -601,6 +609,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                         )
                     }
                     IconButton(onClick = {
+                        Settings.vibrate()
                         val startSelect = textFieldValueStateTitle.selection.start
                         val endSelect = textFieldValueStateTitle.selection.end
                         val text = textFieldValueStateTitle.text
@@ -621,6 +630,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                         )
                     }
                     IconButton(onClick = {
+                        Settings.vibrate()
                         val endSelect = textFieldValueStateTitle.selection.start
                         val text = textFieldValueStateTitle.text
                         val build = with(StringBuilder()) {
@@ -797,6 +807,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                             modifier = Modifier
                                                 .padding(end = 10.dp)
                                                 .clickable {
+                                                    Settings.vibrate()
                                                     val sb = StringBuilder()
                                                     sb.append(sviatyiaList[index].text)
                                                     sb.append(sviatyiaList[index].text.trim())
@@ -845,6 +856,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                                 .size(imW.dp, imH.dp)
                                                 .align(Alignment.CenterHorizontally)
                                                 .clickable {
+                                                    Settings.vibrate()
                                                     imageOpisanne = if (fileImageOpis.exists()) fileImageOpis.readText()
                                                     else ""
                                                     fullImagePathVisable = file.absolutePath
@@ -1602,7 +1614,10 @@ fun DialogPairlinyView(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() },
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        },
                         shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
@@ -1671,6 +1686,7 @@ fun DropdownMenuBoxSvityia(
                 else AnnotatedString.fromHtml(datam.take(30)).toString()
                 DropdownMenuItem(
                     text = { Text(title, fontSize = Settings.fontInterface.sp) }, onClick = {
+                        Settings.vibrate()
                         textFieldNotificstionState.setTextAndPlaceCursorAtEnd(title)
                         expanded = false
                         onClickItem(index)

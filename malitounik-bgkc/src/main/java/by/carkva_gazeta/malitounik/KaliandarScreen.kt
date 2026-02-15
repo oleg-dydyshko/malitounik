@@ -81,11 +81,11 @@ fun measureTextWidth(text: String, fontSize: TextUnit): Dp {
 @Composable
 fun KaliandarScreen(
     position: Int,
+    viewModel: SearchBibleViewModel,
     innerPadding: PaddingValues,
     navigateToCytanneList: (String, String, Int) -> Unit,
     navigateToSvityiaView: (svity: Boolean, position: Int) -> Unit,
-    navigateToBogaslujbovyia: (title: String, resurs: String) -> Unit,
-    navigateToKniga: () -> Unit
+    navigateToBogaslujbovyia: (title: String, resurs: String) -> Unit
 ) {
     val data = Settings.data[position]
     val context = LocalContext.current
@@ -129,6 +129,7 @@ fun KaliandarScreen(
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
                             .clickable {
+                                Settings.vibrate()
                                 val trapary = getTraparyKandakiNiadzelnyia()
                                 navigateToBogaslujbovyia(trapary[data[20].toInt() - 1].title, trapary[data[20].toInt() - 1].resource)
                             }, text = "Тон ${data[20]}", textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.primary, fontSize = Settings.fontInterface.sp
@@ -190,7 +191,8 @@ fun KaliandarScreen(
                     .align(Alignment.Bottom)
                     .size(30.dp)
                     .clickable {
-                        navigateToKniga()
+                        Settings.vibrate()
+                        viewModel.dialogKniga = true
                     })
         }
         if (data[5].toInt() > 0 || data[6].isNotEmpty()) {
@@ -265,6 +267,7 @@ fun KaliandarScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
+                        Settings.vibrate()
                         navigateToSvityiaView(false, position)
                     }) {
                 for (i in list.indices) {
@@ -323,7 +326,10 @@ fun KaliandarScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 10.dp, start = 10.dp, end = 10.dp)
-                        .clickable { navigateToCytanneList(title, removeZnakiAndSlovy(data[9]), Settings.CHYTANNI_LITURGICHNYIA) }, text = data[9], color = colorText, fontSize = Settings.fontInterface.sp
+                        .clickable {
+                            Settings.vibrate()
+                            navigateToCytanneList(title, removeZnakiAndSlovy(data[9]), Settings.CHYTANNI_LITURGICHNYIA)
+                        }, text = data[9], color = colorText, fontSize = Settings.fontInterface.sp
                 )
             }
             if (isLiturgia(data)) {
@@ -335,7 +341,10 @@ fun KaliandarScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 10.dp, start = 10.dp, end = 10.dp)
-                            .clickable { navigateToCytanneList(title, removeZnakiAndSlovy(data[10]), Settings.CHYTANNI_LITURGICHNYIA) }, text = data[10], fontStyle = FontStyle.Italic, color = colorText, fontSize = Settings.fontInterface.sp
+                            .clickable {
+                                Settings.vibrate()
+                                navigateToCytanneList(title, removeZnakiAndSlovy(data[10]), Settings.CHYTANNI_LITURGICHNYIA)
+                            }, text = data[10], fontStyle = FontStyle.Italic, color = colorText, fontSize = Settings.fontInterface.sp
                     )
                 }
                 if (data[11].isNotEmpty()) {
@@ -346,7 +355,10 @@ fun KaliandarScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 10.dp, start = 10.dp, end = 10.dp)
-                            .clickable { navigateToCytanneList(title, removeZnakiAndSlovy(data[11]), Settings.CHYTANNI_LITURGICHNYIA) }, text = data[11], fontStyle = FontStyle.Italic, color = colorText, fontSize = Settings.fontInterface.sp
+                            .clickable {
+                                Settings.vibrate()
+                                navigateToCytanneList(title, removeZnakiAndSlovy(data[11]), Settings.CHYTANNI_LITURGICHNYIA)
+                            }, text = data[11], fontStyle = FontStyle.Italic, color = colorText, fontSize = Settings.fontInterface.sp
                     )
                 }
             }
@@ -377,7 +389,10 @@ fun KaliandarScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 10.dp)
-                        .clickable { navigateToCytanneList(title, data[13], Settings.CHYTANNI_MARANATA) }, text = data[13], color = colorText, fontSize = Settings.fontInterface.sp
+                        .clickable {
+                            Settings.vibrate()
+                            navigateToCytanneList(title, data[13], Settings.CHYTANNI_MARANATA)
+                        }, text = data[13], color = colorText, fontSize = Settings.fontInterface.sp
                 )
             }
         }
@@ -516,7 +531,10 @@ fun SetPadzeia(title: String, apisanne: String, color: Int, raznica: Boolean, re
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color(colors[color].toColorInt()))
-                    .clickable { message = !message }, horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically
+                    .clickable {
+                        Settings.vibrate()
+                        message = !message
+                    }, horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
                     modifier = Modifier.padding(start = 10.dp)

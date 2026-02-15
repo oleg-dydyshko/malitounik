@@ -313,6 +313,7 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
             PADZEI_VIEW
         }
     }
+
     fun navigateToSvityiaView(svity: Boolean, position: Int) {
         navController.navigate("$SVITYIA_VIEW/$svity/$position") {
             SVITYIA_VIEW

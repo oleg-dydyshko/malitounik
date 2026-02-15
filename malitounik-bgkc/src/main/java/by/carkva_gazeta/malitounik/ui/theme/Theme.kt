@@ -43,8 +43,8 @@ private val DarkColorScheme = darkColorScheme(
 
 @Composable
 fun MalitounikTheme(
-    darkTheme : Boolean = isSystemInDarkTheme(),
-    content : @Composable () -> Unit
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme
     else LightColorScheme

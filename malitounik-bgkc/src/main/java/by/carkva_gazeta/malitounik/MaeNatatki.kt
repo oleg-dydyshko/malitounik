@@ -4,8 +4,6 @@ package by.carkva_gazeta.malitounik
 
 import android.content.Context
 import android.os.Build
-import android.os.VibrationEffect
-import android.os.Vibrator
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -69,6 +67,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import androidx.core.content.edit
+import by.carkva_gazeta.malitounik.ui.theme.Divider
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
@@ -354,6 +353,7 @@ fun MaeNatatki(
                             modifier = Modifier
                                 .padding(start = 10.dp)
                                 .clickable {
+                                    Settings.vibrate()
                                     viewModel.natatkaPosition = index
                                     viewModel.natatkaVisable = true
                                     viewModel.textFieldValueState = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].title)
@@ -371,9 +371,9 @@ fun MaeNatatki(
                             if (viewModel.fileList.size > 1) {
                                 Icon(
                                     modifier = Modifier
-                                        .padding(10.dp)
+                                        .padding(top = 10.dp, start = 5.dp, end = 15.dp, bottom = 10.dp)
                                         .size(24.dp),
-                                    painter = painterResource(R.drawable.menu_move), tint = MaterialTheme.colorScheme.secondary, contentDescription = ""
+                                    painter = painterResource(R.drawable.menu_move), tint = Divider, contentDescription = ""
                                 )
                             }
                         }
@@ -406,8 +406,6 @@ fun rememberDragDropState(
 }
 
 fun Modifier.dragContainer(dragDropState: DragDropState): Modifier {
-    val vibrate = Malitounik.applicationContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-    val pattern = longArrayOf(1000)
     return pointerInput(dragDropState) {
         detectDragGesturesAfterLongPress(
             onDrag = { change, offset ->
@@ -415,11 +413,7 @@ fun Modifier.dragContainer(dragDropState: DragDropState): Modifier {
                 dragDropState.onDrag(offset = offset)
             },
             onDragStart = { offset ->
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    vibrate.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_DOUBLE_CLICK))
-                } else {
-                    vibrate.vibrate(pattern, 0)
-                }
+                Settings.vibrate(true)
                 dragDropState.onDragStart(offset)
             },
             onDragEnd = { dragDropState.onDragInterrupted() },
@@ -483,7 +477,10 @@ fun DialogHelpCustomSort(onDismiss: (Boolean) -> Unit) {
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss(isCheck) }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss(isCheck)
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
                         Text(stringResource(R.string.ok), fontSize = 18.sp)

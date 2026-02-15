@@ -104,6 +104,7 @@ fun DrawView(
             label = stringResource(id = R.string.kaliandar2),
             selected = route.contains(AllDestinations.KALIANDAR),
             onClick = {
+                Settings.vibrate()
                 navigateToRazdel(AllDestinations.KALIANDAR)
             },
             icon = {
@@ -119,6 +120,7 @@ fun DrawView(
             label = stringResource(id = R.string.bogaslugbovyia_teksty),
             selected = route == AllDestinations.BOGASLUJBOVYIA_MENU,
             onClick = {
+                Settings.vibrate()
                 navigateToRazdel(AllDestinations.BOGASLUJBOVYIA_MENU)
             },
             icon = {
@@ -135,6 +137,7 @@ fun DrawView(
             label = stringResource(id = R.string.liturgikon),
             selected = route == AllDestinations.LITURGIKON_MENU,
             onClick = {
+                Settings.vibrate()
                 navigateToRazdel(AllDestinations.LITURGIKON_MENU)
             },
             icon = {
@@ -150,6 +153,7 @@ fun DrawView(
             label = stringResource(id = R.string.chasaslou),
             selected = route == AllDestinations.CHASASLOU_MENU,
             onClick = {
+                Settings.vibrate()
                 navigateToRazdel(AllDestinations.CHASASLOU_MENU)
             },
             icon = {
@@ -165,6 +169,7 @@ fun DrawView(
             label = stringResource(id = R.string.malitvy),
             selected = route == AllDestinations.MALITVY_MENU,
             onClick = {
+                Settings.vibrate()
                 navigateToRazdel(AllDestinations.MALITVY_MENU)
             },
             icon = {
@@ -180,6 +185,7 @@ fun DrawView(
             label = stringResource(id = R.string.akafisty),
             selected = route == AllDestinations.AKAFIST_MENU,
             onClick = {
+                Settings.vibrate()
                 navigateToRazdel(AllDestinations.AKAFIST_MENU)
             },
             icon = {
@@ -195,6 +201,7 @@ fun DrawView(
             label = stringResource(id = R.string.maje_natatki),
             selected = route == AllDestinations.MAE_NATATKI_MENU,
             onClick = {
+                Settings.vibrate()
                 navigateToRazdel(AllDestinations.MAE_NATATKI_MENU)
             },
             icon = {
@@ -210,6 +217,7 @@ fun DrawView(
             label = stringResource(id = R.string.MenuVybranoe),
             selected = route == AllDestinations.VYBRANAE_LIST,
             onClick = {
+                Settings.vibrate()
                 navigateToRazdel(AllDestinations.VYBRANAE_LIST)
             },
             icon = {
@@ -226,6 +234,7 @@ fun DrawView(
                 label = stringResource(id = R.string.pasochnica_up),
                 selected = route == AllDestinations.PIASOCHNICA_LIST,
                 onClick = {
+                    Settings.vibrate()
                     navigateToRazdel(AllDestinations.PIASOCHNICA_LIST)
                 },
                 icon = {
@@ -247,6 +256,7 @@ fun DrawView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
+                        Settings.vibrate()
                         AppNavGraphState.bibleItem = !AppNavGraphState.bibleItem
                         if (AppNavGraphState.bibleItem && !AppNavGraphState.biblijatekaItem && !AppNavGraphState.piesnyItem && !AppNavGraphState.underItem) {
                             coroutineScope.launch {
@@ -294,6 +304,7 @@ fun DrawView(
                         label = stringResource(id = R.string.title_biblia),
                         selected = route == AllDestinations.BIBLIA_SEMUXA,
                         onClick = {
+                            Settings.vibrate()
                             navigateToRazdel(AllDestinations.BIBLIA_SEMUXA)
                         },
                         icon = {
@@ -309,6 +320,7 @@ fun DrawView(
                         label = stringResource(id = R.string.title_biblia_bokun),
                         selected = route == AllDestinations.BIBLIA_BOKUNA,
                         onClick = {
+                            Settings.vibrate()
                             navigateToRazdel(AllDestinations.BIBLIA_BOKUNA)
                         },
                         icon = {
@@ -324,6 +336,7 @@ fun DrawView(
                         label = stringResource(id = R.string.title_psalter),
                         selected = route == AllDestinations.BIBLIA_NADSAN,
                         onClick = {
+                            Settings.vibrate()
                             navigateToRazdel(AllDestinations.BIBLIA_NADSAN)
                         },
                         icon = {
@@ -339,6 +352,7 @@ fun DrawView(
                         label = stringResource(id = R.string.title_biblia_charniauski),
                         selected = route == AllDestinations.BIBLIA_CHARNIAUSKI,
                         onClick = {
+                            Settings.vibrate()
                             navigateToRazdel(AllDestinations.BIBLIA_CHARNIAUSKI)
                         },
                         icon = {
@@ -355,6 +369,7 @@ fun DrawView(
                             label = stringResource(id = R.string.title_biblia_catolik),
                             selected = route == AllDestinations.BIBLIA_CATOLIK,
                             onClick = {
+                                Settings.vibrate()
                                 navigateToRazdel(AllDestinations.BIBLIA_CATOLIK)
                             },
                             icon = {
@@ -372,6 +387,7 @@ fun DrawView(
                             label = stringResource(id = R.string.bsinaidal),
                             selected = route == AllDestinations.BIBLIA_SINODAL,
                             onClick = {
+                                Settings.vibrate()
                                 navigateToRazdel(AllDestinations.BIBLIA_SINODAL)
                             },
                             icon = {
@@ -389,6 +405,7 @@ fun DrawView(
                             label = stringResource(id = R.string.perevod_new_american_bible),
                             selected = route == AllDestinations.BIBLIA_NEW_AMERICAN_BIBLE,
                             onClick = {
+                                Settings.vibrate()
                                 navigateToRazdel(AllDestinations.BIBLIA_NEW_AMERICAN_BIBLE)
                             },
                             icon = {
@@ -436,6 +453,7 @@ fun DrawView(
                 modifier = Modifier
                     .padding(horizontal = 10.dp)
                     .clickable {
+                        Settings.vibrate()
                         dialogProgram = true
                     },
                 painter = painterResource(R.drawable.description),
@@ -447,6 +465,7 @@ fun DrawView(
                 modifier = Modifier
                     .padding(horizontal = 10.dp)
                     .clickable {
+                        Settings.vibrate()
                         if (Settings.isNetworkAvailable(context)) {
                             if (!ServiceRadyjoMaryia.isServiceRadioMaryiaRun) {
                                 Settings.isProgressVisableRadyjoMaryia.value = true
@@ -483,6 +502,7 @@ fun DrawView(
                 modifier = Modifier
                     .padding(horizontal = 10.dp)
                     .clickable {
+                        Settings.vibrate()
                         if (ServiceRadyjoMaryia.isServiceRadioMaryiaRun) {
                             if (context.isConnectServise) {
                                 context.unbindService(context.mConnection)
@@ -532,7 +552,9 @@ fun DrawView(
                         modifier = Modifier
                             .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
                             .clip(MaterialTheme.shapes.small)
-                            .clickable {}
+                            .clickable {
+                                Settings.vibrate()
+                            }
                             .background(Divider)
                             .fillMaxWidth()
                             .padding(horizontal = 5.dp),
@@ -564,6 +586,7 @@ fun DrawView(
                         radioMaryiaList.forEachIndexed { index, option ->
                             DropdownMenuItem(
                                 text = { Text(text = option, fontSize = (Settings.fontInterface - 2).sp, lineHeight = (Settings.fontInterface * 1.15f).sp) }, onClick = {
+                                    Settings.vibrate()
                                     if (radioMaryiaListPosition != index) {
                                         radioMaryiaListPosition = index
                                         expandedSviaty = false
@@ -619,6 +642,7 @@ fun DrawView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
+                        Settings.vibrate()
                         AppNavGraphState.biblijatekaItem = !AppNavGraphState.biblijatekaItem
                         if (AppNavGraphState.biblijatekaItem && !AppNavGraphState.piesnyItem && !AppNavGraphState.underItem) {
                             coroutineScope.launch {
@@ -666,6 +690,7 @@ fun DrawView(
                         label = stringResource(id = R.string.bibliateka_niadaunia),
                         selected = route == AllDestinations.BIBLIJATEKA_NIADAUNIA,
                         onClick = {
+                            Settings.vibrate()
                             navigateToRazdel(AllDestinations.BIBLIJATEKA_NIADAUNIA)
                         },
                         icon = {
@@ -681,6 +706,7 @@ fun DrawView(
                         label = stringResource(id = R.string.bibliateka_gistoryia_carkvy),
                         selected = route == AllDestinations.BIBLIJATEKA_GISTORYIA,
                         onClick = {
+                            Settings.vibrate()
                             navigateToRazdel(AllDestinations.BIBLIJATEKA_GISTORYIA)
                         },
                         icon = {
@@ -696,6 +722,7 @@ fun DrawView(
                         label = stringResource(id = R.string.bibliateka_malitouniki),
                         selected = route == AllDestinations.BIBLIJATEKA_MALITOUNIKI,
                         onClick = {
+                            Settings.vibrate()
                             navigateToRazdel(AllDestinations.BIBLIJATEKA_MALITOUNIKI)
                         },
                         icon = {
@@ -711,6 +738,7 @@ fun DrawView(
                         label = stringResource(id = R.string.bibliateka_speuniki),
                         selected = route == AllDestinations.BIBLIJATEKA_SPEUNIKI,
                         onClick = {
+                            Settings.vibrate()
                             navigateToRazdel(AllDestinations.BIBLIJATEKA_SPEUNIKI)
                         },
                         icon = {
@@ -726,6 +754,7 @@ fun DrawView(
                         label = stringResource(id = R.string.bibliateka_rel_litaratura),
                         selected = route == AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA,
                         onClick = {
+                            Settings.vibrate()
                             navigateToRazdel(AllDestinations.BIBLIJATEKA_RELIGIJNAIA_LITARATURA)
                         },
                         icon = {
@@ -741,6 +770,7 @@ fun DrawView(
                         label = stringResource(id = R.string.arx_num_gaz),
                         selected = route == AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU,
                         onClick = {
+                            Settings.vibrate()
                             navigateToRazdel(AllDestinations.BIBLIJATEKA_ARXIU_NUMAROU)
                         },
                         icon = {
@@ -760,6 +790,7 @@ fun DrawView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
+                        Settings.vibrate()
                         AppNavGraphState.piesnyItem = !AppNavGraphState.piesnyItem
                         if (AppNavGraphState.piesnyItem && !AppNavGraphState.underItem) {
                             coroutineScope.launch {
@@ -807,6 +838,7 @@ fun DrawView(
                         label = stringResource(id = R.string.pesny1),
                         selected = route == AllDestinations.PIESNY_PRASLAULENNIA,
                         onClick = {
+                            Settings.vibrate()
                             navigateToRazdel(AllDestinations.PIESNY_PRASLAULENNIA)
                         },
                         icon = {
@@ -822,6 +854,7 @@ fun DrawView(
                         label = stringResource(id = R.string.pesny2),
                         selected = route == AllDestinations.PIESNY_ZA_BELARUS,
                         onClick = {
+                            Settings.vibrate()
                             navigateToRazdel(AllDestinations.PIESNY_ZA_BELARUS)
                         },
                         icon = {
@@ -837,6 +870,7 @@ fun DrawView(
                         label = stringResource(id = R.string.pesny3),
                         selected = route == AllDestinations.PIESNY_DA_BAGARODZICY,
                         onClick = {
+                            Settings.vibrate()
                             navigateToRazdel(AllDestinations.PIESNY_DA_BAGARODZICY)
                         },
                         icon = {
@@ -852,6 +886,7 @@ fun DrawView(
                         label = stringResource(id = R.string.pesny4),
                         selected = route == AllDestinations.PIESNY_KALIADNYIA,
                         onClick = {
+                            Settings.vibrate()
                             navigateToRazdel(AllDestinations.PIESNY_KALIADNYIA)
                         },
                         icon = {
@@ -867,6 +902,7 @@ fun DrawView(
                         label = stringResource(id = R.string.pesny5),
                         selected = route == AllDestinations.PIESNY_TAIZE,
                         onClick = {
+                            Settings.vibrate()
                             navigateToRazdel(AllDestinations.PIESNY_TAIZE)
                         },
                         icon = {
@@ -890,6 +926,7 @@ fun DrawView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
+                        Settings.vibrate()
                         AppNavGraphState.underItem = !AppNavGraphState.underItem
                         if (AppNavGraphState.underItem) {
                             coroutineScope.launch {
@@ -937,6 +974,7 @@ fun DrawView(
                         label = stringResource(id = R.string.spovedz),
                         selected = route == AllDestinations.UNDER_PADRYXTOUKA,
                         onClick = {
+                            Settings.vibrate()
                             navigateToRazdel(AllDestinations.UNDER_PADRYXTOUKA)
                         },
                         icon = {
@@ -952,6 +990,7 @@ fun DrawView(
                         label = stringResource(id = R.string.pamiatka),
                         selected = route == AllDestinations.UNDER_PAMIATKA,
                         onClick = {
+                            Settings.vibrate()
                             navigateToRazdel(AllDestinations.UNDER_PAMIATKA)
                         },
                         icon = {
@@ -967,6 +1006,7 @@ fun DrawView(
                         label = stringResource(id = R.string.sviaty),
                         selected = route == AllDestinations.UNDER_SVAITY_MUNU,
                         onClick = {
+                            Settings.vibrate()
                             navigateToRazdel(AllDestinations.UNDER_SVAITY_MUNU)
                         },
                         icon = {
@@ -982,6 +1022,7 @@ fun DrawView(
                         label = stringResource(id = R.string.parafii),
                         selected = route == AllDestinations.UNDER_PARAFII_BGKC,
                         onClick = {
+                            Settings.vibrate()
                             navigateToRazdel(AllDestinations.UNDER_PARAFII_BGKC)
                         },
                         icon = {
@@ -997,6 +1038,7 @@ fun DrawView(
                         label = stringResource(id = R.string.paschalia),
                         selected = route == AllDestinations.UNDER_PASHALIA,
                         onClick = {
+                            Settings.vibrate()
                             navigateToRazdel(AllDestinations.UNDER_PASHALIA)
                         },
                         icon = {
@@ -1012,6 +1054,7 @@ fun DrawView(
                         label = stringResource(id = R.string.help),
                         selected = route == AllDestinations.HELP,
                         onClick = {
+                            Settings.vibrate()
                             navigateToRazdel(AllDestinations.HELP)
                         },
                         icon = {
@@ -1027,6 +1070,7 @@ fun DrawView(
                         label = stringResource(id = R.string.pra_nas),
                         selected = route == AllDestinations.PRANAS,
                         onClick = {
+                            Settings.vibrate()
                             navigateToRazdel(AllDestinations.PRANAS)
                         },
                         icon = {
@@ -1062,6 +1106,7 @@ fun NavigationItem(
             .clip(MaterialTheme.shapes.small)
             .background(color)
             .clickable {
+                Settings.vibrate()
                 onClick()
             }
             .fillMaxWidth(),
@@ -1098,6 +1143,7 @@ fun DrawerHeader(onClick: () -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
+                    Settings.vibrate()
                     onClick()
                 }
                 .padding(bottom = 10.dp),

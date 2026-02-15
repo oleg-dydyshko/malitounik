@@ -435,6 +435,7 @@ fun PadzeiaView(navController: NavHostController) {
                     if (editMode) {
                         PlainTooltip(stringResource(R.string.close), TooltipAnchorPosition.Below) {
                             IconButton(onClick = {
+                                Settings.vibrate()
                                 editMode = false
                                 editPadzeiaInit = true
                             }, content = {
@@ -446,6 +447,7 @@ fun PadzeiaView(navController: NavHostController) {
                     } else {
                         PlainTooltip(stringResource(R.string.exit_page), TooltipAnchorPosition.Below) {
                             IconButton(onClick = {
+                                Settings.vibrate()
                                 if (!backPressHandled) {
                                     backPressHandled = true
                                     navController.popBackStack()
@@ -509,9 +511,11 @@ fun PadzeiaView(navController: NavHostController) {
                         modifier = Modifier
                             .padding(start = 10.dp)
                             .combinedClickable(onClick = {
+                                Settings.vibrate()
                                 showPadziaPosition = index
                                 showPadzia = true
                             }, onLongClick = {
+                                Settings.vibrate(true)
                                 showPadziaPosition = index
                                 dialogContextMenu = true
                             }), verticalAlignment = Alignment.CenterVertically
@@ -727,6 +731,7 @@ fun AddPadzeia(
                 if (padzeia.isNotEmpty()) {
                     PlainTooltip(stringResource(R.string.close), TooltipAnchorPosition.Below) {
                         IconButton(onClick = {
+                            Settings.vibrate()
                             padzeia = ""
                         }) {
                             Icon(
@@ -744,20 +749,24 @@ fun AddPadzeia(
                 modifier = Modifier
                     .padding(start = 10.dp)
                     .clickable {
+                        Settings.vibrate()
                         setShowKalendar(1)
                     }, text = data, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
             )
             Icon(modifier = Modifier.clickable {
+                Settings.vibrate()
                 setShowKalendar(1)
             }, painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = "", tint = Divider)
             Text(
                 modifier = Modifier
                     .padding(start = 10.dp)
                     .clickable {
+                        Settings.vibrate()
                         setShowTimePicker(1)
                     }, text = time, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
             )
             Icon(modifier = Modifier.clickable {
+                Settings.vibrate()
                 setShowTimePicker(1)
             }, painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = "", tint = Divider)
         }
@@ -779,20 +788,24 @@ fun AddPadzeia(
                     modifier = Modifier
                         .padding(start = 10.dp)
                         .clickable {
+                            Settings.vibrate()
                             setShowKalendar(2)
                         }, text = data2, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
                 )
                 Icon(modifier = Modifier.clickable {
+                    Settings.vibrate()
                     setShowKalendar(2)
                 }, painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = "", tint = Divider)
                 Text(
                     modifier = Modifier
                         .padding(start = 10.dp)
                         .clickable {
+                            Settings.vibrate()
                             setShowTimePicker(2)
                         }, text = time2, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
                 )
                 Icon(modifier = Modifier.clickable {
+                    Settings.vibrate()
                     setShowTimePicker(2)
                 }, painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = "", tint = Divider)
             }
@@ -859,6 +872,7 @@ fun AddPadzeia(
                                     option, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
                                 )
                             }, onClick = {
+                                Settings.vibrate()
                                 textFieldNotificstionState2.setTextAndPlaceCursorAtEnd(option)
                                 textFieldState2Position = position
                                 expanded2 = false
@@ -944,6 +958,7 @@ fun AddPadzeia(
                                     option, fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary
                                 )
                             }, onClick = {
+                                Settings.vibrate()
                                 textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option)
                                 textFieldStatePosition = position
                                 expanded = false
@@ -960,11 +975,13 @@ fun AddPadzeia(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
+                                Settings.vibrate()
                                 modeRepit = 1
                             }, verticalAlignment = Alignment.CenterVertically
                     ) {
                         RadioButton(
                             selected = modeRepit == 1, onClick = {
+                                Settings.vibrate()
                                 modeRepit = 1
                             })
                         Text(
@@ -975,11 +992,13 @@ fun AddPadzeia(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
+                                Settings.vibrate()
                                 modeRepit = 2
                             }, verticalAlignment = Alignment.CenterVertically
                     ) {
                         RadioButton(
                             selected = modeRepit == 2, onClick = {
+                                Settings.vibrate()
                                 modeRepit = 2
                             })
                         Text(
@@ -1016,11 +1035,13 @@ fun AddPadzeia(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
+                                Settings.vibrate()
                                 modeRepit = 3
                             }, verticalAlignment = Alignment.CenterVertically
                     ) {
                         RadioButton(
                             selected = modeRepit == 3, onClick = {
+                                Settings.vibrate()
                                 modeRepit = 3
                             })
                         Text(
@@ -1032,6 +1053,7 @@ fun AddPadzeia(
                             countText, modifier = Modifier
                                 .padding(start = 10.dp)
                                 .clickable {
+                                    Settings.vibrate()
                                     setShowKalendar(3)
                                 }, textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                         )
@@ -1086,6 +1108,7 @@ fun AddPadzeia(
                                     textFieldColorState.text.toString(), style = MaterialTheme.typography.bodyLarge, fontSize = Settings.fontInterface.sp, color = PrimaryTextBlack
                                 )
                             }, onClick = {
+                                Settings.vibrate()
                                 colorPosition = position
                                 color = option
                                 expanded1 = false
@@ -1143,13 +1166,17 @@ fun MyTimePickerDialog(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.close), fontSize = 18.sp)
                     }
                     TextButton(
                         onClick = {
+                            Settings.vibrate()
                             onConfirm(timePickerState)
                         }, shape = MaterialTheme.shapes.small
                     ) {
@@ -1713,13 +1740,19 @@ fun DialogSabytieShow(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onEdit(position) }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onEdit(position)
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.edit), contentDescription = "")
                         Text(stringResource(R.string.redagaktirovat), fontSize = 18.sp)
                     }
                     TextButton(
-                        onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.close), fontSize = 18.sp)
@@ -1757,20 +1790,29 @@ fun DialogDelitePadsei(
                     horizontalArrangement = Arrangement.Center,
                 ) {
                     TextButton(
-                        onClick = { onDelOld() }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onDelOld()
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.delete), contentDescription = "")
                         Text(stringResource(R.string.sabytie_del_old), fontSize = 18.sp)
                     }
                     TextButton(
-                        onClick = { onDelAll() }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onDelAll()
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.delete), contentDescription = "")
                         Text(stringResource(R.string.sabytie_del_all), fontSize = 18.sp)
                     }
                 }
                 TextButton(
-                    onClick = { onDismiss() }, shape = MaterialTheme.shapes.small, modifier = Modifier.align(Alignment.CenterHorizontally)
+                    onClick = {
+                        Settings.vibrate()
+                        onDismiss()
+                    }, shape = MaterialTheme.shapes.small, modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
                     Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                     Text(stringResource(R.string.cansel), fontSize = 18.sp)
@@ -1814,6 +1856,7 @@ fun DialogContextMenu(
                         .fillMaxWidth()
                         .padding(horizontal = 10.dp)
                         .clickable {
+                            Settings.vibrate()
                             onEdit()
                         }, verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -1830,6 +1873,7 @@ fun DialogContextMenu(
                         .fillMaxWidth()
                         .padding(horizontal = 10.dp)
                         .clickable {
+                            Settings.vibrate()
                             onDelite()
                         }, verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -1842,7 +1886,10 @@ fun DialogContextMenu(
                 }
                 HorizontalDivider()
                 TextButton(
-                    onClick = { onDismiss() }, modifier = Modifier
+                    onClick = {
+                        Settings.vibrate()
+                        onDismiss()
+                    }, modifier = Modifier
                         .padding(8.dp)
                         .align(Alignment.End), shape = MaterialTheme.shapes.small
                 ) {

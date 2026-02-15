@@ -251,6 +251,7 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
                     PlainTooltip(stringResource(R.string.exit_page), TooltipAnchorPosition.Below) {
                         IconButton(
                             onClick = {
+                                Settings.vibrate()
                                 navController.popBackStack()
                             },
                             content = {
@@ -302,6 +303,7 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
                                     .padding(vertical = 10.dp)
                                     .combinedClickable(
                                         onClick = {
+                                            Settings.vibrate()
                                             position = newPosition
                                             val intent = Intent()
                                             intent.type = "*/*"
@@ -310,6 +312,7 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
                                             mActivityResultFile.launch(Intent.createChooser(intent, vybracFile))
                                         },
                                         onLongClick = {
+                                            Settings.vibrate(true)
                                             if (iconList[position].size > 0) {
                                                 position = newPosition
                                                 isDialodDeliteIcon = true
@@ -330,11 +333,13 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
                                     .padding(10.dp)
                                     .combinedClickable(
                                         onClick = {
+                                            Settings.vibrate()
                                             position = newPosition
                                             fileName = iconList[newPosition].file.name
                                             isDialodApisanne = true
                                         },
                                         onLongClick = {
+                                            Settings.vibrate(true)
                                             if (iconList[newPosition].iconApisanne.isNotEmpty()) {
                                                 position = newPosition
                                                 fileName = iconList[newPosition].file.name
@@ -350,6 +355,7 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
                                     .fillMaxWidth()
                                     .padding(vertical = 10.dp)
                                     .clickable {
+                                        Settings.vibrate()
                                         position = newPosition
                                         val intent = Intent()
                                         intent.type = "*/*"
@@ -426,13 +432,17 @@ fun DialogApisanneIcony(apisanneIcony: String, saveApisanne: (String) -> Unit, o
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
                         onClick = {
+                            Settings.vibrate()
                             saveApisanne(textFieldValueStateTitle)
                         }, shape = MaterialTheme.shapes.small
                     ) {

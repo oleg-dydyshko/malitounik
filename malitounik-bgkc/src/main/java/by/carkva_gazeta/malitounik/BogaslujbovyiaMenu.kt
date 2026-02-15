@@ -204,6 +204,7 @@ fun BogaslujbovyiaMenu(
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.clickable {
+                            Settings.vibrate()
                             isRegistr = !isRegistr
                             k.edit {
                                 putBoolean("pegistrbukv", isRegistr)
@@ -229,6 +230,7 @@ fun BogaslujbovyiaMenu(
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.clickable {
+                            Settings.vibrate()
                             isDakladnaeSupadzenne = if (isDakladnaeSupadzenne == 0) 1
                             else 0
                             k.edit {
@@ -279,6 +281,7 @@ fun BogaslujbovyiaMenu(
                             .fillMaxWidth()
                             .padding(10.dp)
                             .clickable {
+                                Settings.vibrate()
                                 viewModel.oldTextFieldValueState = viewModel.textFieldValueState.text
                                 AppNavGraphState.searchBogaslujbovyia = viewModel.textFieldValueState.text
                                 navigationActions.navigateToBogaslujbovyia(viewModel.searchList[index].title, viewModel.searchList[index].resource)
@@ -306,6 +309,7 @@ fun BogaslujbovyiaMenu(
                         modifier = Modifier
                             .padding(start = 10.dp)
                             .clickable {
+                                Settings.vibrate()
                                 if (folderList[index] == "АКТОІХ") {
                                     navigationActions.navigateToMalitvyListAll(
                                         folderList[index], Settings.MENU_AKTOIX
@@ -355,6 +359,7 @@ fun BogaslujbovyiaMenu(
                     modifier = Modifier
                         .padding(start = 10.dp)
                         .clickable {
+                            Settings.vibrate()
                             if (menuItem != Settings.MENU_MAE_NATATKI) {
                                 navigationActions.navigateToBogaslujbovyia(
                                     filteredItems[index].title, filteredItems[index].resource
@@ -387,6 +392,7 @@ fun BogaslujbovyiaMenu(
                         modifier = Modifier
                             .padding(start = 10.dp)
                             .clickable {
+                                Settings.vibrate()
                                 navigationActions.navigateToMalitvyListAll(
                                     "МАЛІТВЫ ПАСЬЛЯ СЬВЯТОГА ПРЫЧАСЬЦЯ", Settings.MENU_MALITVY_PASLIA_PRYCHASCIA
                                 )
@@ -410,6 +416,7 @@ fun BogaslujbovyiaMenu(
                         modifier = Modifier
                             .padding(start = 10.dp)
                             .clickable {
+                                Settings.vibrate()
                                 navigationActions.navigateToMalitvyListAll(
                                     "ВЯЧЭРНЯ", Settings.MENU_VIACHERNIA
                                 )
@@ -434,6 +441,7 @@ fun BogaslujbovyiaMenu(
                         modifier = Modifier
                             .padding(start = 10.dp)
                             .clickable {
+                                Settings.vibrate()
                                 navigationActions.navigateToMalitvyListAll(
                                     title, Settings.MENU_MALITVY_PRYNAGODNYIA
                                 )
@@ -456,6 +464,7 @@ fun BogaslujbovyiaMenu(
                         modifier = Modifier
                             .padding(start = 10.dp)
                             .clickable {
+                                Settings.vibrate()
                                 navigationActions.navigateToMalitvyListAll(
                                     title, Settings.MENU_MALITVY_RUJANEC
                                 )

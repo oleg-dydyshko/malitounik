@@ -130,6 +130,7 @@ fun DialogWidgetConfigRadioMaryia(
                         radioMaryiaList.forEachIndexed { index, option ->
                             DropdownMenuItem(
                                 text = { Text(text = option, fontSize = (Settings.fontInterface - 2).sp) }, onClick = {
+                                    Settings.vibrate()
                                     if (radioMaryiaListPosition != index) {
                                         radioMaryiaListPosition = index
                                         expandedSviaty = false
@@ -167,7 +168,10 @@ fun DialogWidgetConfigRadioMaryia(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() },
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        },
                         shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")

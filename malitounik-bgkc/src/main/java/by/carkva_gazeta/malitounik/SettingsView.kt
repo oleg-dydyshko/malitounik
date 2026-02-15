@@ -227,6 +227,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                 title = {
                     Text(
                         modifier = Modifier.clickable {
+                            Settings.vibrate()
                             maxLine.intValue = Int.MAX_VALUE
                             coroutineScope.launch {
                                 delay(5000L)
@@ -237,6 +238,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                 }, navigationIcon = {
                     PlainTooltip(stringResource(R.string.exit_page), TooltipAnchorPosition.Below) {
                         IconButton(onClick = {
+                            Settings.vibrate()
                             if (!backPressHandled) {
                                 backPressHandled = true
                                 navController.popBackStack()
@@ -250,6 +252,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                 }, actions = {
                     if (admin) {
                         IconButton(onClick = {
+                            Settings.vibrate()
                             dialodAdmitExit = true
                         }) {
                             Icon(
@@ -297,6 +300,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
+                            Settings.vibrate()
                             modeNight = Settings.MODE_NIGHT_SYSTEM
                             edit.putInt(
                                 "mode_night", Settings.MODE_NIGHT_SYSTEM
@@ -308,6 +312,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                 ) {
                     RadioButton(
                         selected = modeNight == Settings.MODE_NIGHT_SYSTEM, onClick = {
+                            Settings.vibrate()
                             modeNight = Settings.MODE_NIGHT_SYSTEM
                             edit.putInt(
                                 "mode_night", Settings.MODE_NIGHT_SYSTEM
@@ -324,6 +329,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
+                            Settings.vibrate()
                             modeNight = Settings.MODE_NIGHT_NO
                             edit.putInt("mode_night", Settings.MODE_NIGHT_NO)
                             edit.apply()
@@ -333,6 +339,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                 ) {
                     RadioButton(
                         selected = modeNight == Settings.MODE_NIGHT_NO, onClick = {
+                            Settings.vibrate()
                             modeNight = Settings.MODE_NIGHT_NO
                             edit.putInt("mode_night", Settings.MODE_NIGHT_NO)
                             edit.apply()
@@ -347,6 +354,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
+                            Settings.vibrate()
                             modeNight = Settings.MODE_NIGHT_YES
                             edit.putInt(
                                 "mode_night", Settings.MODE_NIGHT_YES
@@ -358,6 +366,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                 ) {
                     RadioButton(
                         selected = modeNight == Settings.MODE_NIGHT_YES, onClick = {
+                            Settings.vibrate()
                             modeNight = Settings.MODE_NIGHT_YES
                             edit.putInt(
                                 "mode_night", Settings.MODE_NIGHT_YES
@@ -374,6 +383,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
+                            Settings.vibrate()
                             modeNight = Settings.MODE_NIGHT_AUTO
                             edit.putInt(
                                 "mode_night", Settings.MODE_NIGHT_AUTO
@@ -384,6 +394,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                 ) {
                     RadioButton(
                         selected = modeNight == Settings.MODE_NIGHT_AUTO, onClick = {
+                            Settings.vibrate()
                             modeNight = Settings.MODE_NIGHT_AUTO
                             edit.putInt(
                                 "mode_night", Settings.MODE_NIGHT_AUTO
@@ -424,6 +435,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
+                            Settings.vibrate()
                             buttomBar = false
                             edit.putBoolean("bottomBar", false)
                             edit.apply()
@@ -431,6 +443,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                 ) {
                     RadioButton(
                         selected = !buttomBar, onClick = {
+                            Settings.vibrate()
                             buttomBar = false
                             edit.putBoolean("bottomBar", false)
                             edit.apply()
@@ -443,6 +456,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
+                            Settings.vibrate()
                             buttomBar = true
                             edit.putBoolean("bottomBar", true)
                             edit.apply()
@@ -450,6 +464,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                 ) {
                     RadioButton(
                         selected = buttomBar, onClick = {
+                            Settings.vibrate()
                             buttomBar = true
                             edit.putBoolean("bottomBar", true)
                             edit.apply()
@@ -471,6 +486,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                     verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                         .padding(vertical = 10.dp)
                         .clickable {
+                            Settings.vibrate()
                             adminDayInYearState = !adminDayInYearState
                             k.edit {
                                 putBoolean("adminDayInYear", adminDayInYearState)
@@ -493,6 +509,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                     verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                         .padding(vertical = 10.dp)
                         .clickable {
+                            Settings.vibrate()
                             adminOnlyNotificationsState = !adminOnlyNotificationsState
                             k.edit {
                                 putBoolean("adminOnlyNotifications", adminOnlyNotificationsState)
@@ -517,6 +534,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                     verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                         .padding(vertical = 10.dp)
                         .clickable {
+                            Settings.vibrate()
                             adminNotificationsState = !adminNotificationsState
                             k.edit {
                                 putBoolean("adminNotifications", adminNotificationsState)
@@ -544,6 +562,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
             Row(
                 verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                     .clickable {
+                        Settings.vibrate()
                         power = !power
                         k.edit {
                             putBoolean("power", power)
@@ -575,6 +594,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
             Row(
                 verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                     .clickable {
+                        Settings.vibrate()
                         sinoidalState = !sinoidalState
                         k.edit {
                             putBoolean("sinoidal_bible", sinoidalState)
@@ -618,6 +638,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
             Row(
                 verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                     .clickable {
+                        Settings.vibrate()
                         catolikState = !catolikState
                         k.edit {
                             putBoolean("catolik_bible", catolikState)
@@ -672,6 +693,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                 Row(
                     verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                         .clickable {
+                            Settings.vibrate()
                             newkingjamesState = !newkingjamesState
                             k.edit {
                                 putBoolean("newkingjames_bible", newkingjamesState)
@@ -723,6 +745,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                     Row(
                         verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                             .clickable {
+                                Settings.vibrate()
                                 newkingjamesTranslate = !newkingjamesTranslate
                                 k.edit {
                                     putBoolean("newkingjames_translate", newkingjamesTranslate)
@@ -760,6 +783,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                 Row(
                     verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                         .clickable {
+                            Settings.vibrate()
                             maranafaState = !maranafaState
                             k.edit {
                                 putBoolean("maranafa", maranafaState)
@@ -791,6 +815,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                     Row(
                         verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                             .clickable {
+                                Settings.vibrate()
                                 paralelState = !paralelState
                                 k.edit {
                                     putBoolean("paralel_maranata", paralelState)
@@ -822,6 +847,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
+                            Settings.vibrate()
                             modeNotification = Settings.NOTIFICATION_SVIATY_ONLY
                             k.edit {
                                 putInt("notification", modeNotification)
@@ -840,6 +866,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                 ) {
                     RadioButton(
                         selected = modeNotification == Settings.NOTIFICATION_SVIATY_ONLY, onClick = {
+                            Settings.vibrate()
                             modeNotification = Settings.NOTIFICATION_SVIATY_ONLY
                             k.edit {
                                 putInt("notification", modeNotification)
@@ -863,6 +890,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
+                            Settings.vibrate()
                             modeNotification = Settings.NOTIFICATION_SVIATY_FULL
                             k.edit {
                                 putInt("notification", modeNotification)
@@ -881,6 +909,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                 ) {
                     RadioButton(
                         selected = modeNotification == Settings.NOTIFICATION_SVIATY_FULL, onClick = {
+                            Settings.vibrate()
                             modeNotification = Settings.NOTIFICATION_SVIATY_FULL
                             k.edit {
                                 putInt("notification", modeNotification)
@@ -904,6 +933,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
+                            Settings.vibrate()
                             modeNotification = Settings.NOTIFICATION_SVIATY_NONE
                             k.edit {
                                 putInt("notification", modeNotification)
@@ -913,6 +943,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                 ) {
                     RadioButton(
                         selected = modeNotification == Settings.NOTIFICATION_SVIATY_NONE, onClick = {
+                            Settings.vibrate()
                             modeNotification = Settings.NOTIFICATION_SVIATY_NONE
                             k.edit {
                                 putInt("notification", modeNotification)
@@ -974,6 +1005,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                         dataTimes.forEachIndexed { index, option ->
                             DropdownMenuItem(
                                 text = { Text(text = option.title, fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp) }, onClick = {
+                                    Settings.vibrate()
                                     textFieldNotificstionState.setTextAndPlaceCursorAtEnd(option.title)
                                     expandedSviaty = false
                                     k.edit {
@@ -989,6 +1021,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                 val error = stringResource(R.string.error_ch)
                 TextButton(
                     onClick = {
+                        Settings.vibrate()
                         try {
                             val intent = Intent(android.provider.Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
                             intent.putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, context.packageName)
@@ -1019,6 +1052,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
             Row(
                 verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                     .clickable {
+                        Settings.vibrate()
                         modePkcSvaity = !modePkcSvaity
                         k.edit {
                             putBoolean("s_pkc", modePkcSvaity)
@@ -1042,6 +1076,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
             Row(
                 verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                     .clickable {
+                        Settings.vibrate()
                         modePravasSvaity = !modePravasSvaity
                         k.edit {
                             putBoolean("s_pravas", modePravasSvaity)
@@ -1065,6 +1100,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
             Row(
                 verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                     .clickable {
+                        Settings.vibrate()
                         modeGosudSvaity = !modeGosudSvaity
                         k.edit {
                             putBoolean("s_gosud", modeGosudSvaity)
@@ -1088,6 +1124,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
             Row(
                 verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                     .clickable {
+                        Settings.vibrate()
                         modePafesiiSvaity = !modePafesiiSvaity
                         k.edit {
                             putBoolean("s_pafesii", modePafesiiSvaity)
@@ -1111,6 +1148,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
             val save = stringResource(R.string.save)
             TextButton(
                 onClick = {
+                    Settings.vibrate()
                     k.edit {
                         for ((key) in k.all) {
                             if (key.contains("WIDGET", true) || key.contains("bible_time", true) || key.contains("akafist", true)) {
@@ -1154,6 +1192,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
             }
             TextButton(
                 onClick = {
+                    Settings.vibrate()
                     dialodClearChache = true
                 }, modifier = Modifier
                     .align(Alignment.CenterHorizontally)
@@ -1200,13 +1239,19 @@ fun DialogClearChash(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
-                        onClick = { onConfirm() }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onConfirm()
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.delete), contentDescription = "")
                         Text(stringResource(R.string.delite), fontSize = 18.sp)
@@ -1245,6 +1290,7 @@ fun DialogLogin(
                         login = newText
                     }, singleLine = true, textStyle = TextStyle(fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp), trailingIcon = {
                         IconButton(onClick = {
+                            Settings.vibrate()
                             login = ""
                         }) {
                             Icon(
@@ -1264,14 +1310,20 @@ fun DialogLogin(
                         textStyle = TextStyle(fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp),
                         trailingIcon = {
                             if (showPassword) {
-                                IconButton(onClick = { showPassword = false }) {
+                                IconButton(onClick = {
+                                    Settings.vibrate()
+                                    showPassword = false
+                                }) {
                                     Icon(
                                         painter = painterResource(R.drawable.visibility), contentDescription = "hide_password"
                                     )
                                 }
                             } else {
                                 IconButton(
-                                    onClick = { showPassword = true }) {
+                                    onClick = {
+                                        Settings.vibrate()
+                                        showPassword = true
+                                    }) {
                                     Icon(
                                         painter = painterResource(R.drawable.visibility_off), contentDescription = "hide_password"
                                     )
@@ -1293,7 +1345,10 @@ fun DialogLogin(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onLogin(login.trim() == "Царква" && password.trim() == "Дворнікава63") }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onLogin(login.trim() == "Царква" && password.trim() == "Дворнікава63")
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
                         Text(stringResource(R.string.ok), fontSize = 18.sp)
@@ -1336,13 +1391,19 @@ fun DialogAdminExit(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
-                        onClick = { onConfirm() }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onConfirm()
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
                         Text(stringResource(R.string.ok), fontSize = 18.sp)
@@ -1385,13 +1446,19 @@ fun DialogNotification(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
-                        onClick = { onConfirm() }, shape = MaterialTheme.shapes.small
+                        onClick = {
+                            Settings.vibrate()
+                            onConfirm()
+                        }, shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
                         Text(stringResource(R.string.dazvolic), fontSize = 18.sp)

@@ -217,6 +217,7 @@ fun MalitvyListAll(
                         Column {
                             Text(
                                 modifier = Modifier.clickable {
+                                    Settings.vibrate()
                                     maxLine.intValue = Int.MAX_VALUE
                                     coroutineScope.launch {
                                         delay(5000L)
@@ -227,6 +228,7 @@ fun MalitvyListAll(
                             if (subTitle != "") {
                                 Text(
                                     modifier = Modifier.clickable {
+                                        Settings.vibrate()
                                         maxLine.intValue = Int.MAX_VALUE
                                         coroutineScope.launch {
                                             delay(5000L)
@@ -253,7 +255,10 @@ fun MalitvyListAll(
                                     painter = painterResource(R.drawable.search), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
                                 )
                             }, trailingIcon = {
-                                IconButton(onClick = { textFieldValueState = "" }) {
+                                IconButton(onClick = {
+                                    Settings.vibrate()
+                                    textFieldValueState = ""
+                                }) {
                                     Icon(
                                         painter = if (textFieldValueState.isNotEmpty()) painterResource(R.drawable.close) else painterResource(R.drawable.empty), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
                                     )
@@ -267,6 +272,7 @@ fun MalitvyListAll(
                     if (searchText) {
                         PlainTooltip(stringResource(R.string.close), TooltipAnchorPosition.Below) {
                             IconButton(onClick = {
+                                Settings.vibrate()
                                 searchText = false
                             }, content = {
                                 Icon(
@@ -277,6 +283,7 @@ fun MalitvyListAll(
                     } else {
                         PlainTooltip(stringResource(R.string.exit_page), TooltipAnchorPosition.Below) {
                             IconButton(onClick = {
+                                Settings.vibrate()
                                 if (!backPressHandled) {
                                     backPressHandled = true
                                     navController.popBackStack()
@@ -347,6 +354,7 @@ fun MalitvyListAll(
                                 verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                                     .fillMaxWidth()
                                     .clickable {
+                                        Settings.vibrate()
                                         AppNavGraphState.setItemsValue(dataItem.title)
                                         collapsedState[i] = !collapsed
                                     }) {
@@ -443,6 +451,7 @@ fun MalitvyListAll(
                                     modifier = Modifier
                                         .padding(start = 30.dp)
                                         .clickable {
+                                            Settings.vibrate()
                                             navigationActions.navigateToBogaslujbovyia(
                                                 subList[index].title, subList[index].resource
                                             )
@@ -470,6 +479,7 @@ fun MalitvyListAll(
                                 .padding(start = 10.dp)
                                 .fillMaxWidth()
                                 .clickable {
+                                    Settings.vibrate()
                                     when (menuItem) {
                                         Settings.MENU_TRYEDZ_POSNAIA -> {
                                             when (list[index].resource) {
@@ -575,6 +585,7 @@ fun MalitvyListAll(
                                             .padding(end = 20.dp)
                                             .align(Alignment.End)
                                             .clickable {
+                                                Settings.vibrate()
                                                 val uri = "https://soundcloud.com/24dwbqqpu9sk/trapar-${index + 1}?in=24dwbqqpu9sk/sets/trapary-bgkts&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing".toUri()
                                                 val intent = Intent(Intent.ACTION_VIEW, uri)
                                                 context.startActivity(intent)
@@ -592,6 +603,7 @@ fun MalitvyListAll(
                             modifier = Modifier
                                 .padding(start = 10.dp)
                                 .clickable {
+                                    Settings.vibrate()
                                     navigationActions.navigateToMalitvyListAll(
                                         "ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ", Settings.MENU_TRAPARY_KANDAKI_SHTODZENNYIA
                                     )
@@ -645,6 +657,7 @@ fun PynagodnyiaList(prynagodnyaList: SnapshotStateList<BogaslujbovyiaListData>, 
                     modifier = Modifier
                         .padding(start = 10.dp)
                         .clickable {
+                            Settings.vibrate()
                             navigationActions.navigateToBogaslujbovyia(
                                 prynagodnyaList[index].title, prynagodnyaList[index].resource
                             )

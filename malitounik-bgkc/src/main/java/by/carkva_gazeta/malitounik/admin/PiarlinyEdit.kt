@@ -154,7 +154,10 @@ fun DialogPairlinyEdit(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() },
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        },
                         shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
@@ -162,6 +165,7 @@ fun DialogPairlinyEdit(
                     }
                     TextButton(
                         onClick = {
+                            Settings.vibrate()
                             if (result.isNotEmpty()) {
                                 if (time == 0L) {
                                     val gc = GregorianCalendar(2020, Settings.data[Settings.caliandarPosition][2].toInt(), Settings.data[Settings.caliandarPosition][1].toInt())

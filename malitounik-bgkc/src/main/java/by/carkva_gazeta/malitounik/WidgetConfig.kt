@@ -89,9 +89,11 @@ fun DialogWidgetConfig(
                         .background(MaterialTheme.colorScheme.onTertiary)
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
-                Column(Modifier
-                    .selectableGroup()
-                    .padding(10.dp)) {
+                Column(
+                    Modifier
+                        .selectableGroup()
+                        .padding(10.dp)
+                ) {
                     Text(
                         stringResource(R.string.dzen_noch),
                         modifier = Modifier.padding(start = 10.dp, top = 10.dp),
@@ -104,6 +106,7 @@ fun DialogWidgetConfig(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
+                                Settings.vibrate()
                                 modeNight = Settings.MODE_NIGHT_SYSTEM
                             },
                         verticalAlignment = Alignment.CenterVertically
@@ -111,6 +114,7 @@ fun DialogWidgetConfig(
                         RadioButton(
                             selected = modeNight == Settings.MODE_NIGHT_SYSTEM,
                             onClick = {
+                                Settings.vibrate()
                                 modeNight = Settings.MODE_NIGHT_SYSTEM
                             }
                         )
@@ -125,6 +129,7 @@ fun DialogWidgetConfig(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
+                                Settings.vibrate()
                                 modeNight = Settings.MODE_NIGHT_NO
                             },
                         verticalAlignment = Alignment.CenterVertically
@@ -132,6 +137,7 @@ fun DialogWidgetConfig(
                         RadioButton(
                             selected = modeNight == Settings.MODE_NIGHT_NO,
                             onClick = {
+                                Settings.vibrate()
                                 modeNight = Settings.MODE_NIGHT_NO
                             }
                         )
@@ -146,6 +152,7 @@ fun DialogWidgetConfig(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
+                                Settings.vibrate()
                                 modeNight = Settings.MODE_NIGHT_YES
                             },
                         verticalAlignment = Alignment.CenterVertically
@@ -153,6 +160,7 @@ fun DialogWidgetConfig(
                         RadioButton(
                             selected = modeNight == Settings.MODE_NIGHT_YES,
                             onClick = {
+                                Settings.vibrate()
                                 modeNight = Settings.MODE_NIGHT_YES
                             }
                         )
@@ -171,7 +179,10 @@ fun DialogWidgetConfig(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(
-                        onClick = { onDismiss() },
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        },
                         shape = MaterialTheme.shapes.small
                     ) {
                         Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
@@ -179,6 +190,7 @@ fun DialogWidgetConfig(
                     }
                     TextButton(
                         onClick = {
+                            Settings.vibrate()
                             k.edit {
                                 if (isWidgetMun) putInt("mode_night_widget_mun", modeNight)
                                 else putInt("mode_night_widget_day", modeNight)

@@ -769,6 +769,7 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
                     modifier = Modifier
                         .padding(start = 10.dp)
                         .clickable {
+                            Settings.vibrate()
                             navigationActions.navigateToBogaslujbovyia(
                                 filteredItems[index].title, filteredItems[index].resurs
                             )
