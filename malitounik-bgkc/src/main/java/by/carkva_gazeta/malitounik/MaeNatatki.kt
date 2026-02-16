@@ -466,6 +466,7 @@ fun DialogHelpCustomSort(onDismiss: (Boolean) -> Unit) {
                 Text(text = stringResource(R.string.sort_custom_help), modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(checked = isCheck, onCheckedChange = {
+                        Settings.vibrate()
                         isCheck = !isCheck
                     })
                     Text(text = stringResource(R.string.not_show), modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)

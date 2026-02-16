@@ -773,6 +773,7 @@ fun AddPadzeia(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(
                 checked = !konecSabytie, onCheckedChange = {
+                    Settings.vibrate()
                     konecSabytie = !konecSabytie
                 })
             Text(

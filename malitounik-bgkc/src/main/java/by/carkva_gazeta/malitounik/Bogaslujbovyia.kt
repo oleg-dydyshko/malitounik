@@ -1034,10 +1034,10 @@ fun Bogaslujbovyia(
         }
     }
     var isUpList by remember { mutableStateOf(false) }
-    if (isUpList) {
-        LaunchedEffect(Unit) {
-            isUpList = false
+    LaunchedEffect(isUpList) {
+        if (isUpList) {
             viewModel.scrollState.animateScrollTo(0)
+            isUpList = false
         }
     }
     val view = LocalView.current
@@ -2514,6 +2514,7 @@ fun DialogHelpTTS(perevod: String = Settings.PEREVODSEMUXI, isError: Boolean, on
                 if (!isError) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Checkbox(checked = isCheck, onCheckedChange = {
+                            Settings.vibrate()
                             isCheck = !isCheck
                         })
                         Text(

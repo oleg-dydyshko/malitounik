@@ -499,6 +499,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                     )
                     Switch(
                         modifier = Modifier.scale(0.8f), checked = adminDayInYearState, onCheckedChange = {
+                            Settings.vibrate()
                             adminDayInYearState = it
                             k.edit {
                                 putBoolean("adminDayInYear", adminDayInYearState)
@@ -523,6 +524,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                     )
                     Switch(
                         modifier = Modifier.scale(0.8f), checked = adminOnlyNotificationsState, onCheckedChange = {
+                            Settings.vibrate()
                             adminOnlyNotificationsState = it
                             k.edit {
                                 putBoolean("adminOnlyNotifications", adminOnlyNotificationsState)
@@ -547,6 +549,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                     )
                     Switch(
                         modifier = Modifier.scale(0.8f), checked = adminNotificationsState, onCheckedChange = {
+                            Settings.vibrate()
                             adminNotificationsState = it
                             k.edit {
                                 putBoolean("adminNotifications", adminNotificationsState)
@@ -578,6 +581,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                 )
                 Switch(
                     modifier = Modifier.scale(0.8f), checked = power, onCheckedChange = {
+                        Settings.vibrate()
                         power = it
                         k.edit {
                             putBoolean("power", power)
@@ -618,6 +622,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                 )
                 Switch(
                     modifier = Modifier.scale(0.8f), checked = sinoidalState, onCheckedChange = {
+                        Settings.vibrate()
                         sinoidalState = it
                         k.edit {
                             putBoolean("sinoidal_bible", sinoidalState)
@@ -662,6 +667,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                 )
                 Switch(
                     modifier = Modifier.scale(0.8f), checked = catolikState, onCheckedChange = {
+                        Settings.vibrate()
                         catolikState = it
                         k.edit {
                             putBoolean("catolik_bible", catolikState)
@@ -721,6 +727,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                     )
                     Switch(
                         modifier = Modifier.scale(0.8f), checked = newkingjamesState, onCheckedChange = {
+                            Settings.vibrate()
                             newkingjamesState = it
                             k.edit {
                                 putBoolean("newkingjames_bible", newkingjamesState)
@@ -759,6 +766,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                         )
                         Switch(
                             modifier = Modifier.scale(0.8f), checked = newkingjamesTranslate, onCheckedChange = {
+                                Settings.vibrate()
                                 newkingjamesTranslate = it
                                 k.edit {
                                     putBoolean("newkingjames_translate", newkingjamesTranslate)
@@ -801,6 +809,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                     )
                     Switch(
                         modifier = Modifier.scale(0.8f), checked = maranafaState, onCheckedChange = {
+                            Settings.vibrate()
                             maranafaState = it
                             k.edit {
                                 putBoolean("maranafa", maranafaState)
@@ -829,6 +838,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                         )
                         Switch(
                             modifier = Modifier.scale(0.8f), checked = paralelState, onCheckedChange = {
+                                Settings.vibrate()
                                 paralelState = it
                                 k.edit {
                                     putBoolean("paralel_maranata", paralelState)
@@ -1066,6 +1076,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                 )
                 Switch(
                     modifier = Modifier.scale(0.8f), checked = modePkcSvaity, onCheckedChange = {
+                        Settings.vibrate()
                         modePkcSvaity = it
                         k.edit {
                             putBoolean("s_pkc", modePkcSvaity)
@@ -1090,6 +1101,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                 )
                 Switch(
                     modifier = Modifier.scale(0.8f), checked = modePravasSvaity, onCheckedChange = {
+                        Settings.vibrate()
                         modePravasSvaity = it
                         k.edit {
                             putBoolean("s_pravas", modePravasSvaity)
@@ -1114,6 +1126,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                 )
                 Switch(
                     modifier = Modifier.scale(0.8f), checked = modeGosudSvaity, onCheckedChange = {
+                        Settings.vibrate()
                         modeGosudSvaity = it
                         k.edit {
                             putBoolean("s_gosud", modeGosudSvaity)
@@ -1138,6 +1151,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                 )
                 Switch(
                     modifier = Modifier.scale(0.8f), checked = modePafesiiSvaity, onCheckedChange = {
+                        Settings.vibrate()
                         modePafesiiSvaity = it
                         k.edit {
                             putBoolean("s_pafesii", modePafesiiSvaity)

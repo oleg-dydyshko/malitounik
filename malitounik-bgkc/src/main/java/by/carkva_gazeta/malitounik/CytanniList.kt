@@ -748,10 +748,10 @@ fun CytanniList(
         }
     }
     var isUpList by remember { mutableStateOf(false) }
-    if (isUpList) {
-        LaunchedEffect(Unit) {
-            isUpList = false
+    LaunchedEffect(isUpList) {
+        if (isUpList) {
             viewModel.listState[viewModel.selectedIndex].lazyListState.animateScrollToItem(0)
+            isUpList = false
         }
     }
     LaunchedEffect(fullscreen) {

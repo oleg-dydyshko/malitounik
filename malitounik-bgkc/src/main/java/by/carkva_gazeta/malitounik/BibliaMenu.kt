@@ -645,6 +645,7 @@ fun BibliaMenu(
                         Checkbox(
                             checked = !isRegistr,
                             onCheckedChange = {
+                                Settings.vibrate()
                                 isRegistr = !isRegistr
                                 k.edit {
                                     putBoolean("pegistrbukv", isRegistr)
@@ -672,6 +673,7 @@ fun BibliaMenu(
                         Checkbox(
                             checked = isDakladnaeSupadzenne == 1,
                             onCheckedChange = {
+                                Settings.vibrate()
                                 isDakladnaeSupadzenne = if (isDakladnaeSupadzenne == 0) 1
                                 else 0
                                 k.edit {
