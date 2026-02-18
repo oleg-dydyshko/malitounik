@@ -35,6 +35,7 @@ fun PlainTooltip(title: String, positioning: TooltipAnchorPosition = TooltipAnch
     val state = rememberTooltipState(isPersistent = true)
     LaunchedEffect(state.isVisible) {
         if (state.isVisible) {
+            Settings.vibrate(true)
             delay(delay)
             state.dismiss()
         }
