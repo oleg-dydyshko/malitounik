@@ -1204,7 +1204,7 @@ fun Bogaslujbovyia(
                                 modifier = Modifier.size(5.dp),
                                 painter = painterResource(R.drawable.poiter),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                             Text(
                                 modifier = Modifier.padding(start = 10.dp),
@@ -1274,7 +1274,7 @@ fun Bogaslujbovyia(
                                     modifier = Modifier.size(5.dp),
                                     painter = painterResource(R.drawable.poiter),
                                     tint = MaterialTheme.colorScheme.primary,
-                                    contentDescription = ""
+                                    contentDescription = null
                                 )
                                 Text(
                                     modifier = Modifier.padding(start = 10.dp),
@@ -1364,7 +1364,7 @@ fun Bogaslujbovyia(
                                         Icon(
                                             painter = painterResource(R.drawable.search),
                                             tint = MaterialTheme.colorScheme.onSecondary,
-                                            contentDescription = ""
+                                            contentDescription = stringResource(R.string.poshuk)
                                         )
                                     },
                                     trailingIcon = {
@@ -1374,7 +1374,7 @@ fun Bogaslujbovyia(
                                         }) {
                                             Icon(
                                                 painter = if (viewModel.searshString.text.isNotEmpty()) painterResource(R.drawable.close) else painterResource(R.drawable.empty),
-                                                contentDescription = "",
+                                                contentDescription = stringResource(R.string.poshuk),
                                                 tint = MaterialTheme.colorScheme.onSecondary
                                             )
                                         }
@@ -1415,7 +1415,7 @@ fun Bogaslujbovyia(
                                             Icon(
                                                 painter = painterResource(R.drawable.close),
                                                 tint = MaterialTheme.colorScheme.onSecondary,
-                                                contentDescription = ""
+                                                contentDescription = stringResource(R.string.close)
                                             )
                                         })
                                 }
@@ -1452,7 +1452,7 @@ fun Bogaslujbovyia(
                                             Icon(
                                                 painter = painterResource(R.drawable.arrow_back),
                                                 tint = MaterialTheme.colorScheme.onSecondary,
-                                                contentDescription = ""
+                                                contentDescription = stringResource(R.string.exit_page)
                                             )
                                         })
                                 }
@@ -1467,7 +1467,7 @@ fun Bogaslujbovyia(
                                     }) {
                                         Icon(
                                             painter = painterResource(R.drawable.arrow_upward),
-                                            contentDescription = "",
+                                            contentDescription = stringResource(R.string.poshuk_back),
                                             tint = MaterialTheme.colorScheme.onSecondary
                                         )
                                     }
@@ -1479,7 +1479,7 @@ fun Bogaslujbovyia(
                                     }) {
                                         Icon(
                                             painter = painterResource(R.drawable.arrow_downward),
-                                            contentDescription = "",
+                                            contentDescription = stringResource(R.string.poshuk_forvard),
                                             tint = MaterialTheme.colorScheme.onSecondary
                                         )
                                     }
@@ -1499,7 +1499,7 @@ fun Bogaslujbovyia(
                                                 Icon(
                                                     modifier = Modifier.size(24.dp),
                                                     painter = painterResource(R.drawable.book_red),
-                                                    contentDescription = "",
+                                                    contentDescription = stringResource(R.string.zmennyia_chastki),
                                                     tint = MaterialTheme.colorScheme.onSecondary
                                                 )
                                             }
@@ -1528,7 +1528,7 @@ fun Bogaslujbovyia(
                                                     }) {
                                                         Icon(
                                                             iconAutoScroll,
-                                                            contentDescription = "",
+                                                            contentDescription = stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play),
                                                             tint = MaterialTheme.colorScheme.onSecondary
                                                         )
                                                     }
@@ -1541,7 +1541,7 @@ fun Bogaslujbovyia(
                                                     }) {
                                                         Icon(
                                                             painter = painterResource(R.drawable.arrow_upward),
-                                                            contentDescription = "",
+                                                            contentDescription = stringResource(R.string.auto_up),
                                                             tint = MaterialTheme.colorScheme.onSecondary
                                                         )
                                                     }
@@ -1558,7 +1558,7 @@ fun Bogaslujbovyia(
                                                     else painterResource(R.drawable.star)
                                                     Icon(
                                                         painter = icon,
-                                                        contentDescription = "",
+                                                        contentDescription = stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add),
                                                         tint = MaterialTheme.colorScheme.onSecondary
                                                     )
                                                 }
@@ -1570,7 +1570,7 @@ fun Bogaslujbovyia(
                                                 expandedUp = true
                                             }) {
                                                 Icon(
-                                                    painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                                    painter = painterResource(R.drawable.more_vert), contentDescription = stringResource(R.string.more_items), tint = MaterialTheme.colorScheme.onSecondary
                                                 )
                                             }
                                         }
@@ -1579,14 +1579,13 @@ fun Bogaslujbovyia(
                                             if (listResource.isNotEmpty()) {
                                                 DropdownMenuItem(onClick = {
                                                     Settings.vibrate()
-
                                                     expandedUp = false
                                                     viewModel.saveVybranoe(context, title, resursEncode)
                                                 }, text = { Text(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                                     val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
                                                     else painterResource(R.drawable.star)
                                                     Icon(
-                                                        painter = icon, contentDescription = ""
+                                                        painter = icon, contentDescription = stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add)
                                                     )
                                                 })
                                             }
@@ -1597,7 +1596,7 @@ fun Bogaslujbovyia(
                                                 isShare = true
                                             }, text = { Text(stringResource(R.string.share), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                                 Icon(
-                                                    painter = painterResource(R.drawable.share), contentDescription = ""
+                                                    painter = painterResource(R.drawable.share), contentDescription = stringResource(R.string.share)
                                                 )
                                             })
                                             DropdownMenuItem(onClick = {
@@ -1606,7 +1605,7 @@ fun Bogaslujbovyia(
                                                 fullscreen = true
                                             }, text = { Text(stringResource(R.string.fullscreen), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                                 Icon(
-                                                    painter = painterResource(R.drawable.fullscreen), contentDescription = ""
+                                                    painter = painterResource(R.drawable.fullscreen), contentDescription = stringResource(R.string.fullscreen)
                                                 )
                                             })
                                             DropdownMenuItem(onClick = {
@@ -1617,7 +1616,7 @@ fun Bogaslujbovyia(
                                                 viewModel.autoScroll(title, false)
                                             }, text = { Text(stringResource(R.string.searche_text), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                                 Icon(
-                                                    painter = painterResource(R.drawable.search), contentDescription = ""
+                                                    painter = painterResource(R.drawable.search), contentDescription = stringResource(R.string.searche_text)
                                                 )
                                             })
                                             DropdownMenuItem(onClick = {
@@ -1627,7 +1626,7 @@ fun Bogaslujbovyia(
                                                 viewModel.autoScroll(title, false)
                                             }, text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                                 Icon(
-                                                    painter = painterResource(R.drawable.format_size), contentDescription = ""
+                                                    painter = painterResource(R.drawable.format_size), contentDescription = stringResource(R.string.menu_font_size_app)
                                                 )
                                             })
                                             DropdownMenuItem(onClick = {
@@ -1650,7 +1649,7 @@ fun Bogaslujbovyia(
                                                 }
                                             }, text = { Text(stringResource(R.string.tts), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                                 Icon(
-                                                    painter = painterResource(R.drawable.text_to_speech), contentDescription = ""
+                                                    painter = painterResource(R.drawable.text_to_speech), contentDescription = stringResource(R.string.tts)
                                                 )
                                             })
                                             if (k.getBoolean("admin", false)) {
@@ -1705,7 +1704,7 @@ fun Bogaslujbovyia(
                                                     }
                                                 }, text = { Text(stringResource(R.string.redagaktirovat), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                                     Icon(
-                                                        painter = painterResource(R.drawable.edit), contentDescription = ""
+                                                        painter = painterResource(R.drawable.edit), contentDescription = stringResource(R.string.redagaktirovat)
                                                     )
                                                 })
                                             }
@@ -1762,7 +1761,7 @@ fun Bogaslujbovyia(
                                                 }
                                             }) {
                                                 Icon(
-                                                    painter = painterResource(R.drawable.edit), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                                    painter = painterResource(R.drawable.edit), contentDescription = stringResource(R.string.redagaktirovat), tint = MaterialTheme.colorScheme.onSecondary
                                                 )
                                             }
                                         }
@@ -1797,7 +1796,7 @@ fun Bogaslujbovyia(
                             }) {
                                 Icon(
                                     painter = painterResource(R.drawable.share),
-                                    contentDescription = "",
+                                    contentDescription = stringResource(R.string.share),
                                     tint = MaterialTheme.colorScheme.secondary
                                 )
                             }
@@ -1880,7 +1879,7 @@ fun Bogaslujbovyia(
                                         }) {
                                             Icon(
                                                 painter = painterResource(R.drawable.text_to_speech),
-                                                contentDescription = "",
+                                                contentDescription = stringResource(R.string.tts),
                                                 tint = MaterialTheme.colorScheme.onSecondary
                                             )
                                         }
@@ -1893,7 +1892,7 @@ fun Bogaslujbovyia(
                                         }) {
                                             Icon(
                                                 painter = painterResource(R.drawable.format_size),
-                                                contentDescription = "",
+                                                contentDescription = stringResource(R.string.menu_font_size_app),
                                                 tint = MaterialTheme.colorScheme.onSecondary
                                             )
                                         }
@@ -1907,7 +1906,7 @@ fun Bogaslujbovyia(
                                         }) {
                                             Icon(
                                                 painter = painterResource(R.drawable.share),
-                                                contentDescription = "",
+                                                contentDescription = stringResource(R.string.share),
                                                 tint = MaterialTheme.colorScheme.onSecondary
                                             )
                                         }
@@ -1921,7 +1920,7 @@ fun Bogaslujbovyia(
                                         }) {
                                             Icon(
                                                 painter = painterResource(R.drawable.search),
-                                                contentDescription = "",
+                                                contentDescription = stringResource(R.string.searche_text),
                                                 tint = MaterialTheme.colorScheme.onSecondary
                                             )
                                         }
@@ -1933,7 +1932,7 @@ fun Bogaslujbovyia(
                                         }) {
                                             Icon(
                                                 painter = painterResource(R.drawable.fullscreen),
-                                                contentDescription = "",
+                                                contentDescription = stringResource(R.string.fullscreen),
                                                 tint = MaterialTheme.colorScheme.onSecondary
                                             )
                                         }
@@ -1947,7 +1946,7 @@ fun Bogaslujbovyia(
                                             else painterResource(R.drawable.star)
                                             Icon(
                                                 painter = icon,
-                                                contentDescription = "",
+                                                contentDescription = stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add),
                                                 tint = MaterialTheme.colorScheme.onSecondary
                                             )
                                         }
@@ -1972,7 +1971,7 @@ fun Bogaslujbovyia(
                                                 }) {
                                                     Icon(
                                                         iconAutoScroll,
-                                                        contentDescription = "",
+                                                        contentDescription = stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play),
                                                         tint = MaterialTheme.colorScheme.onSecondary
                                                     )
                                                 }
@@ -1985,7 +1984,7 @@ fun Bogaslujbovyia(
                                                 }) {
                                                     Icon(
                                                         painter = painterResource(R.drawable.arrow_upward),
-                                                        contentDescription = "",
+                                                        contentDescription = stringResource(R.string.auto_up),
                                                         tint = MaterialTheme.colorScheme.onSecondary
                                                     )
                                                 }
@@ -2467,7 +2466,7 @@ fun DialogLiturgia(
                         },
                         shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                         Text(stringResource(R.string.close), fontSize = 18.sp)
                     }
                 }
@@ -2539,7 +2538,7 @@ fun DialogHelpTTS(perevod: String = Settings.PEREVODSEMUXI, isError: Boolean, on
                             onDismiss(isCheck)
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = null)
                         Text(stringResource(R.string.ok), fontSize = 18.sp)
                     }
                 }

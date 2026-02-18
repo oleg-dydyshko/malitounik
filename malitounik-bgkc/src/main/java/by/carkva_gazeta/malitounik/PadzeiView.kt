@@ -440,7 +440,7 @@ fun PadzeiaView(navController: NavHostController) {
                                 editPadzeiaInit = true
                             }, content = {
                                 Icon(
-                                    painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                                    painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = stringResource(R.string.close)
                                 )
                             })
                         }
@@ -454,7 +454,7 @@ fun PadzeiaView(navController: NavHostController) {
                                 }
                             }, content = {
                                 Icon(
-                                    painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                                    painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = stringResource(R.string.exit_page)
                                 )
                             })
                         }
@@ -466,7 +466,7 @@ fun PadzeiaView(navController: NavHostController) {
                                 savePadzia = true
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.save), tint = PrimaryTextBlack, contentDescription = ""
+                                    painter = painterResource(R.drawable.save), tint = PrimaryTextBlack, contentDescription = stringResource(R.string.save_sabytie)
                                 )
                             }
                         }
@@ -478,7 +478,7 @@ fun PadzeiaView(navController: NavHostController) {
                                 editPadzeiaInit = false
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.add), tint = PrimaryTextBlack, contentDescription = ""
+                                    painter = painterResource(R.drawable.add), tint = PrimaryTextBlack, contentDescription = stringResource(R.string.add_sabytie)
                                 )
                             }
                         }
@@ -487,7 +487,7 @@ fun PadzeiaView(navController: NavHostController) {
                                 deliteAll = true
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.delete), tint = PrimaryTextBlack, contentDescription = ""
+                                    painter = painterResource(R.drawable.delete), tint = PrimaryTextBlack, contentDescription = stringResource(R.string.del_all_sabytie)
                                 )
                             }
                         }
@@ -735,7 +735,7 @@ fun AddPadzeia(
                             padzeia = ""
                         }) {
                             Icon(
-                                painter = painterResource(R.drawable.close), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
+                                painter = painterResource(R.drawable.close), contentDescription = stringResource(R.string.close), tint = MaterialTheme.colorScheme.secondary
                             )
                         }
                     }
@@ -756,7 +756,7 @@ fun AddPadzeia(
             Icon(modifier = Modifier.clickable {
                 Settings.vibrate()
                 setShowKalendar(1)
-            }, painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = "", tint = Divider)
+            }, painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = null, tint = Divider)
             Text(
                 modifier = Modifier
                     .padding(start = 10.dp)
@@ -768,7 +768,7 @@ fun AddPadzeia(
             Icon(modifier = Modifier.clickable {
                 Settings.vibrate()
                 setShowTimePicker(1)
-            }, painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = "", tint = Divider)
+            }, painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = null, tint = Divider)
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(
@@ -796,7 +796,7 @@ fun AddPadzeia(
                 Icon(modifier = Modifier.clickable {
                     Settings.vibrate()
                     setShowKalendar(2)
-                }, painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = "", tint = Divider)
+                }, painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = null, tint = Divider)
                 Text(
                     modifier = Modifier
                         .padding(start = 10.dp)
@@ -808,7 +808,7 @@ fun AddPadzeia(
                 Icon(modifier = Modifier.clickable {
                     Settings.vibrate()
                     setShowTimePicker(2)
-                }, painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = "", tint = Divider)
+                }, painter = painterResource(R.drawable.keyboard_arrow_down), contentDescription = null, tint = Divider)
             }
         }
         val options = stringArrayResource(R.array.sabytie_izmerenie)
@@ -859,7 +859,7 @@ fun AddPadzeia(
                     Icon(
                         modifier = Modifier
                             .padding(start = 21.dp, end = 2.dp)
-                            .size(22.dp, 22.dp), painter = painterResource(if (expanded2) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down), tint = PrimaryText, contentDescription = ""
+                            .size(22.dp, 22.dp), painter = painterResource(if (expanded2) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down), tint = PrimaryText, contentDescription = if (expanded2) stringResource(R.string.open_menu) else stringResource(R.string.close_menu)
                     )
                 }
                 ExposedDropdownMenu(
@@ -945,7 +945,7 @@ fun AddPadzeia(
                     Icon(
                         modifier = Modifier
                             .padding(start = 21.dp, end = 2.dp)
-                            .size(22.dp, 22.dp), painter = painterResource(if (expanded) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down), tint = PrimaryText, contentDescription = ""
+                            .size(22.dp, 22.dp), painter = painterResource(if (expanded) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down), tint = PrimaryText, contentDescription = if (expanded) stringResource(R.string.open_menu) else stringResource(R.string.close_menu)
                     )
                 }
                 ExposedDropdownMenu(
@@ -1095,7 +1095,7 @@ fun AddPadzeia(
                     Icon(
                         modifier = Modifier
                             .padding(start = 21.dp, end = 2.dp)
-                            .size(22.dp, 22.dp), painter = painterResource(if (expanded1) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down), tint = PrimaryTextBlack, contentDescription = ""
+                            .size(22.dp, 22.dp), painter = painterResource(if (expanded1) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down), tint = PrimaryTextBlack, contentDescription = if (expanded1) stringResource(R.string.open_menu) else stringResource(R.string.close_menu)
                     )
                 }
                 ExposedDropdownMenu(
@@ -1172,7 +1172,7 @@ fun MyTimePickerDialog(
                             onDismiss()
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                         Text(stringResource(R.string.close), fontSize = 18.sp)
                     }
                     TextButton(
@@ -1181,7 +1181,7 @@ fun MyTimePickerDialog(
                             onConfirm(timePickerState)
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = null)
                         Text(stringResource(R.string.ok), fontSize = 18.sp)
                     }
                 }
@@ -1746,7 +1746,7 @@ fun DialogSabytieShow(
                             onEdit(position)
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.edit), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.edit), contentDescription = null)
                         Text(stringResource(R.string.redagaktirovat), fontSize = 18.sp)
                     }
                     TextButton(
@@ -1755,7 +1755,7 @@ fun DialogSabytieShow(
                             onDismiss()
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                         Text(stringResource(R.string.close), fontSize = 18.sp)
                     }
                 }
@@ -1796,7 +1796,7 @@ fun DialogDelitePadsei(
                             onDelOld()
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.delete), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.delete), contentDescription = null)
                         Text(stringResource(R.string.sabytie_del_old), fontSize = 18.sp)
                     }
                     TextButton(
@@ -1805,7 +1805,7 @@ fun DialogDelitePadsei(
                             onDelAll()
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.delete), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.delete), contentDescription = null)
                         Text(stringResource(R.string.sabytie_del_all), fontSize = 18.sp)
                     }
                 }
@@ -1815,7 +1815,7 @@ fun DialogDelitePadsei(
                         onDismiss()
                     }, shape = MaterialTheme.shapes.small, modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
-                    Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                    Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                     Text(stringResource(R.string.cansel), fontSize = 18.sp)
                 }
             }
@@ -1862,7 +1862,7 @@ fun DialogContextMenu(
                         }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.edit), tint = MaterialTheme.colorScheme.secondary, contentDescription = ""
+                        modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.edit), tint = MaterialTheme.colorScheme.secondary, contentDescription = null
                     )
                     Text(
                         text = editTitle, modifier = Modifier.padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
@@ -1879,7 +1879,7 @@ fun DialogContextMenu(
                         }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.delete), tint = MaterialTheme.colorScheme.secondary, contentDescription = ""
+                        modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.delete), tint = MaterialTheme.colorScheme.secondary, contentDescription = null
                     )
                     Text(
                         text = stringResource(R.string.delite), modifier = Modifier.padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
@@ -1894,7 +1894,7 @@ fun DialogContextMenu(
                         .padding(8.dp)
                         .align(Alignment.End), shape = MaterialTheme.shapes.small
                 ) {
-                    Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                    Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                     Text(stringResource(R.string.cansel), fontSize = 18.sp)
                 }
             }

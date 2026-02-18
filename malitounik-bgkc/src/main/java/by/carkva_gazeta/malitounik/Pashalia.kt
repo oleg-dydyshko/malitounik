@@ -154,7 +154,7 @@ fun Pashalia(navController: NavHostController, innerPadding: PaddingValues, sear
                             modifier = Modifier.size(5.dp),
                             painter = painterResource(R.drawable.poiter),
                             tint = MaterialTheme.colorScheme.primary,
-                            contentDescription = ""
+                            contentDescription = null
                         )
                         Column(modifier = Modifier.padding(10.dp)) {
                             Text(

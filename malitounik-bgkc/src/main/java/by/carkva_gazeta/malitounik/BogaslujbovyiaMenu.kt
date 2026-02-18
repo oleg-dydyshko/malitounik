@@ -345,7 +345,7 @@ fun BogaslujbovyiaMenu(
                             }, verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                            modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                         )
                         Text(
                             folderList[index].uppercase(), modifier = Modifier
@@ -371,7 +371,7 @@ fun BogaslujbovyiaMenu(
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
-                            modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                            modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                         )
                         Text(
                             text = filteredItems[index].title, modifier = Modifier
@@ -401,7 +401,7 @@ fun BogaslujbovyiaMenu(
                             }, verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                            modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                         )
                         Text(
                             "МАЛІТВЫ ПАСЬЛЯ СЬВЯТОГА ПРЫЧАСЬЦЯ", modifier = Modifier
@@ -425,7 +425,7 @@ fun BogaslujbovyiaMenu(
                             }, verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                            modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                         )
                         Text(
                             "ВЯЧЭРНЯ", modifier = Modifier
@@ -450,7 +450,7 @@ fun BogaslujbovyiaMenu(
                             }, verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                            modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                         )
                         Text(
                             title.uppercase(), modifier = Modifier
@@ -473,7 +473,7 @@ fun BogaslujbovyiaMenu(
                             }, verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                            modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                         )
                         Text(
                             title.uppercase(), modifier = Modifier

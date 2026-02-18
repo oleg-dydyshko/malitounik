@@ -252,7 +252,7 @@ fun MalitvyListAll(
                                 textFieldValueState = newText
                             }, singleLine = true, leadingIcon = {
                                 Icon(
-                                    painter = painterResource(R.drawable.search), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                                    painter = painterResource(R.drawable.search), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = stringResource(R.string.poshuk)
                                 )
                             }, trailingIcon = {
                                 IconButton(onClick = {
@@ -260,7 +260,7 @@ fun MalitvyListAll(
                                     textFieldValueState = ""
                                 }) {
                                     Icon(
-                                        painter = if (textFieldValueState.isNotEmpty()) painterResource(R.drawable.close) else painterResource(R.drawable.empty), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                        painter = if (textFieldValueState.isNotEmpty()) painterResource(R.drawable.close) else painterResource(R.drawable.empty), contentDescription = if (textFieldValueState.isNotEmpty()) stringResource(R.string.close) else null, tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
                             }, colors = TextFieldDefaults.colors(
@@ -276,7 +276,7 @@ fun MalitvyListAll(
                                 searchText = false
                             }, content = {
                                 Icon(
-                                    painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                                    painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = stringResource(R.string.close)
                                 )
                             })
                         }
@@ -290,7 +290,7 @@ fun MalitvyListAll(
                                 }
                             }, content = {
                                 Icon(
-                                    painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                                    painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = stringResource(R.string.exit_page)
                                 )
                             })
                         }
@@ -302,7 +302,7 @@ fun MalitvyListAll(
                                 searchText = true
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.search), tint = PrimaryTextBlack, contentDescription = ""
+                                    painter = painterResource(R.drawable.search), tint = PrimaryTextBlack, contentDescription = stringResource(R.string.search_prynagodnyia)
                                 )
                             }
                         }
@@ -361,7 +361,7 @@ fun MalitvyListAll(
                                 Icon(
                                     painter = if (collapsed) painterResource(R.drawable.keyboard_arrow_down)
                                     else painterResource(R.drawable.keyboard_arrow_up),
-                                    contentDescription = "",
+                                    contentDescription = if (collapsed) stringResource(R.string.open_menu) else stringResource(R.string.close_menu),
                                     tint = Divider,
                                 )
                                 val title = if (menuItem == Settings.MENU_MINEIA_MESIACHNAIA) dataItem.dayOfMonth.toString()
@@ -458,7 +458,7 @@ fun MalitvyListAll(
                                         }, verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(
-                                        modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                                        modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                                     )
                                     val titleSluzba = if (menuItem == Settings.MENU_MINEIA_MESIACHNAIA) subList[index].title + ". " + subList[index].titleSluzba
                                     else subList[index].titleSluzba
@@ -565,7 +565,7 @@ fun MalitvyListAll(
                         ) {
                             Icon(
                                 modifier = if (menuItem == Settings.MENU_TRYEDZ || menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH || menuItem == Settings.MENU_TRYEDZ_POSNAIA) Modifier.size(17.dp, 17.dp) else Modifier.size(5.dp), painter = if (menuItem == Settings.MENU_TRYEDZ || menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH || menuItem == Settings.MENU_TRYEDZ_POSNAIA) painterResource(R.drawable.folder)
-                                else painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                                else painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                             )
                             Text(
                                 text = if (menuItem == Settings.MENU_TRYEDZ || menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH || menuItem == Settings.MENU_TRYEDZ_POSNAIA) list[index].title.uppercase() else list[index].title, modifier = Modifier.padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontWeight = if (menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH) {
@@ -589,7 +589,7 @@ fun MalitvyListAll(
                                                 val uri = "https://soundcloud.com/24dwbqqpu9sk/trapar-${index + 1}?in=24dwbqqpu9sk/sets/trapary-bgkts&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing".toUri()
                                                 val intent = Intent(Intent.ACTION_VIEW, uri)
                                                 context.startActivity(intent)
-                                            }, painter = painterResource(R.drawable.play_arrow), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
+                                            }, painter = painterResource(R.drawable.play_arrow), contentDescription = stringResource(R.string.play_ton, index), tint = MaterialTheme.colorScheme.secondary
                                     )
                                 }
                             }
@@ -610,7 +610,7 @@ fun MalitvyListAll(
                                 }, verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                                modifier = Modifier.size(17.dp, 17.dp), painter = painterResource(R.drawable.folder), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                             )
                             Text(
                                 "ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ", modifier = Modifier
@@ -664,7 +664,7 @@ fun PynagodnyiaList(prynagodnyaList: SnapshotStateList<BogaslujbovyiaListData>, 
                         }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                        modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                     )
                     Text(
                         text = prynagodnyaList[index].title, modifier = Modifier

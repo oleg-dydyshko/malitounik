@@ -103,7 +103,7 @@ fun KaliandarScreenInfo(navController: NavHostController) {
                                 Icon(
                                     painter = painterResource(R.drawable.arrow_back),
                                     tint = MaterialTheme.colorScheme.onSecondary,
-                                    contentDescription = ""
+                                    contentDescription = stringResource(R.string.exit_page)
                                 )
                             })
                     }
@@ -125,7 +125,7 @@ fun KaliandarScreenInfo(navController: NavHostController) {
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
             Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.znaki_krest_v_kruge), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.znaki_krest_v_kruge), contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                 val text = stringResource(R.string.dvuna_i_vial)
                 val t1 = text.indexOf("\n")
                 val annotatedString =
@@ -141,7 +141,7 @@ fun KaliandarScreenInfo(navController: NavHostController) {
                 )
             }
             Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.znaki_krest_v_polukruge), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.znaki_krest_v_polukruge), contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                 Text(
                     modifier = Modifier.padding(start = 10.dp),
                     text = stringResource(R.string.Z_Lic_na_ve),
@@ -150,7 +150,7 @@ fun KaliandarScreenInfo(navController: NavHostController) {
                 )
             }
             Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.znaki_krest), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.znaki_krest), contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                 Text(
                     modifier = Modifier.padding(start = 10.dp),
                     text = stringResource(R.string.Z_v_v_v_u_n_u),
@@ -159,7 +159,7 @@ fun KaliandarScreenInfo(navController: NavHostController) {
                 )
             }
             Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.znaki_ttk), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.znaki_ttk), contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                 Text(
                     modifier = Modifier.padding(start = 10.dp),
                     text = stringResource(R.string.Z_sh_v_v_u_u),
@@ -168,7 +168,7 @@ fun KaliandarScreenInfo(navController: NavHostController) {
                 )
             }
             Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.znaki_ttk_black), contentDescription = "", tint = MaterialTheme.colorScheme.secondary)
+                Icon(modifier = Modifier.size(22.dp, 22.dp), painter = painterResource(R.drawable.znaki_ttk_black), contentDescription = null, tint = MaterialTheme.colorScheme.secondary)
                 Text(
                     modifier = Modifier.padding(start = 10.dp),
                     text = stringResource(R.string.Z_sh_v_m_u_u),
@@ -211,7 +211,7 @@ fun KaliandarScreenInfo(navController: NavHostController) {
                 color = PrimaryText
             )
             Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(modifier = Modifier.size(22.dp), painter = painterResource(R.drawable.fishe), contentDescription = "", tint = MaterialTheme.colorScheme.secondary)
+                Icon(modifier = Modifier.size(22.dp), painter = painterResource(R.drawable.fishe), contentDescription = null, tint = MaterialTheme.colorScheme.secondary)
                 Text(
                     modifier = Modifier
                         .padding(start = 10.dp)
@@ -223,7 +223,7 @@ fun KaliandarScreenInfo(navController: NavHostController) {
                 )
             }
             Row(modifier = Modifier.padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(modifier = Modifier.size(22.dp), painter = painterResource(R.drawable.fishe), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                Icon(modifier = Modifier.size(22.dp), painter = painterResource(R.drawable.fishe), contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                 Text(
                     modifier = Modifier
                         .padding(start = 10.dp)

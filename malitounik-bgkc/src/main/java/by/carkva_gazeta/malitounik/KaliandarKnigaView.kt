@@ -121,7 +121,7 @@ fun KaliandarKnigaView(
                     ) {
                         val newTint = if (listSlujbaViach.isEmpty()) SecondaryText else tint
                         Icon(
-                            painterResource(R.drawable.moon2_white), contentDescription = "", modifier = Modifier
+                            painterResource(R.drawable.moon2_white), contentDescription = null, modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .size(40.dp), tint = newTint
                         )
@@ -150,7 +150,7 @@ fun KaliandarKnigaView(
                     ) {
                         val newTint = if (listSlujbaPavia.isEmpty()) SecondaryText else tint
                         Icon(
-                            painterResource(R.drawable.moon_white), contentDescription = "", modifier = Modifier
+                            painterResource(R.drawable.moon_white), contentDescription = null, modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .size(40.dp), tint = newTint
                         )
@@ -177,7 +177,7 @@ fun KaliandarKnigaView(
                     ) {
                         val newTint = if (listSlujbaPaunoch.isEmpty()) SecondaryText else tint
                         Icon(
-                            painterResource(R.drawable.sun2_white), contentDescription = "", modifier = Modifier
+                            painterResource(R.drawable.sun2_white), contentDescription = null, modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .size(40.dp), tint = newTint
                         )
@@ -209,7 +209,7 @@ fun KaliandarKnigaView(
                     ) {
                         val newTint = if (listSlujbaJutran.isEmpty()) SecondaryText else tint
                         Icon(
-                            painterResource(R.drawable.sun_white), contentDescription = "", modifier = Modifier
+                            painterResource(R.drawable.sun_white), contentDescription = null, modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .size(40.dp), tint = newTint
                         )
@@ -236,7 +236,7 @@ fun KaliandarKnigaView(
                     ) {
                         val newTint = if (listSlujbaVilHadz.isEmpty()) SecondaryText else tint
                         Icon(
-                            painterResource(R.drawable.clock_white), contentDescription = "", modifier = Modifier
+                            painterResource(R.drawable.clock_white), contentDescription = null, modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .size(40.dp), tint = newTint
                         )
@@ -264,7 +264,7 @@ fun KaliandarKnigaView(
                     ) {
                         val newTint = if (listSlujbaLitur.isEmpty()) SecondaryText else tint
                         Icon(
-                            painterResource(R.drawable.carkva_white), contentDescription = "", modifier = Modifier
+                            painterResource(R.drawable.carkva_white), contentDescription = null, modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .size(40.dp), tint = newTint
                         )
@@ -276,10 +276,13 @@ fun KaliandarKnigaView(
                     }
                 }
                 Row(modifier = Modifier.padding(vertical = 10.dp)) {
-                    Column(modifier = modifier.padding(vertical = 10.dp)) {
+                    Column(modifier = modifier
+                        .clickable(false) {
+                        }
+                        .padding(vertical = 10.dp)) {
                         val newTint = SecondaryText
                         Icon(
-                            painterResource(R.drawable.kanon_white), contentDescription = "", modifier = Modifier
+                            painterResource(R.drawable.kanon_white), contentDescription = null, modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .size(40.dp), tint = newTint
                         )
@@ -299,7 +302,7 @@ fun KaliandarKnigaView(
                     ) {
                         val newTint = if (svityia == "no_sviatyia") SecondaryText else tint
                         Icon(
-                            painterResource(R.drawable.man_white), contentDescription = "", modifier = Modifier
+                            painterResource(R.drawable.man_white), contentDescription = null, modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .size(40.dp), tint = newTint
                         )
@@ -319,7 +322,7 @@ fun KaliandarKnigaView(
                     ) {
                         val newTint = if (!parliny) SecondaryText else tint
                         Icon(
-                            painterResource(R.drawable.book_white), contentDescription = "", modifier = Modifier
+                            painterResource(R.drawable.book_white), contentDescription = null, modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .size(40.dp), tint = newTint
                         )
@@ -388,7 +391,7 @@ fun DialogKniga(
                             modifier = Modifier.size(5.dp),
                             painter = painterResource(R.drawable.poiter),
                             tint = MaterialTheme.colorScheme.primary,
-                            contentDescription = ""
+                            contentDescription = null
                         )
                         Text(
                             text = if (slujba == list[i].sluzba) list[i].title
@@ -411,7 +414,7 @@ fun DialogKniga(
                         .align(Alignment.End),
                     shape = MaterialTheme.shapes.small
                 ) {
-                    Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                    Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                     Text(stringResource(R.string.cansel), fontSize = 18.sp)
                 }
             }

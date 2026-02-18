@@ -776,7 +776,7 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
                         }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                        modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                     )
                     Text(
                         text = filteredItems[index].title, modifier = Modifier

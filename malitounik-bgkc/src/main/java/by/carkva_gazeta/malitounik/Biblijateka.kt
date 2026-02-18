@@ -372,7 +372,7 @@ fun Biblijateka(
                                     Icon(
                                         painter = painterResource(R.drawable.arrow_back),
                                         tint = MaterialTheme.colorScheme.onSecondary,
-                                        contentDescription = ""
+                                        contentDescription = stringResource(R.string.exit_page)
                                     )
                                 })
                         }
@@ -391,7 +391,7 @@ fun Biblijateka(
                             }) {
                                 Icon(
                                     painter = painterResource(R.drawable.more_vert),
-                                    contentDescription = "",
+                                    contentDescription = stringResource(R.string.more_items),
                                     tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
@@ -420,7 +420,7 @@ fun Biblijateka(
                                 trailingIcon = {
                                     Icon(
                                         painter = painterResource(R.drawable.open_in_new),
-                                        contentDescription = ""
+                                        contentDescription = stringResource(R.string.open_in)
                                     )
                                 }
                             )
@@ -436,7 +436,7 @@ fun Biblijateka(
                                 trailingIcon = {
                                     Icon(
                                         painter = painterResource(R.drawable.fullscreen),
-                                        contentDescription = ""
+                                        contentDescription = stringResource(R.string.fullscreen)
                                     )
                                 }
                             )
@@ -452,7 +452,7 @@ fun Biblijateka(
                                 trailingIcon = {
                                     Icon(
                                         painter = painterResource(R.drawable.share),
-                                        contentDescription = ""
+                                        contentDescription = stringResource(R.string.share)
                                     )
                                 }
                             )
@@ -474,7 +474,7 @@ fun Biblijateka(
                                 trailingIcon = {
                                     Icon(
                                         painter = painterResource(R.drawable.print),
-                                        contentDescription = ""
+                                        contentDescription = stringResource(R.string.print)
                                     )
                                 }
                             )

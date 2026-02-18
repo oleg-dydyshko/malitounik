@@ -130,7 +130,7 @@ fun KaliandarScreenYear(
                             Icon(
                                 modifier = Modifier
                                     .padding(end = 10.dp)
-                                    .size(22.dp), painter = painterResource(R.drawable.fishe), contentDescription = "", tint = colorIcon
+                                    .size(22.dp), painter = painterResource(R.drawable.fishe), contentDescription = null, tint = colorIcon
                             )
                         }
                         Text(
@@ -162,7 +162,7 @@ fun KaliandarScreenYear(
                                 Icon(
                                     painter = painterResource(R.drawable.znaki_krest_v_kruge),
                                     tint = MaterialTheme.colorScheme.primary,
-                                    contentDescription = "",
+                                    contentDescription = null,
                                     modifier = Modifier
                                         .size(22.dp)
                                 )
@@ -248,7 +248,7 @@ fun KaliandarScreenYear(
                                 if (icon != null && i == 0) {
                                     Icon(
                                         painter = icon,
-                                        contentDescription = "",
+                                        contentDescription = null,
                                         tint = iconTint,
                                         modifier = Modifier
                                             .size(22.dp)

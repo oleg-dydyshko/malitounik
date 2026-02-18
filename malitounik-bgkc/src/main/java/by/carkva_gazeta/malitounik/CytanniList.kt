@@ -905,7 +905,7 @@ fun CytanniList(
                                 } else isParallelVisable = false
                             }, content = {
                                 Icon(
-                                    painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                                    painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = stringResource(R.string.close)
                                 )
                             })
                         }
@@ -942,7 +942,7 @@ fun CytanniList(
                                 }
                             }, content = {
                                 Icon(
-                                    painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                                    painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = stringResource(R.string.exit_page)
                                 )
                             })
                         }
@@ -955,7 +955,7 @@ fun CytanniList(
                                 isSelectAll = true
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.select_all), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    painter = painterResource(R.drawable.select_all), contentDescription = stringResource(R.string.select_all), tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
                         }
@@ -965,7 +965,7 @@ fun CytanniList(
                                 isCopyMode = true
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.content_copy), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    painter = painterResource(R.drawable.content_copy), contentDescription = stringResource(R.string.copy_list), tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
                         }
@@ -975,7 +975,7 @@ fun CytanniList(
                                 isShareMode = true
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.share), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    painter = painterResource(R.drawable.share), contentDescription = stringResource(R.string.share), tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
                         }
@@ -1003,7 +1003,7 @@ fun CytanniList(
                                             }
                                         }) {
                                             Icon(
-                                                iconAutoScroll, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                                iconAutoScroll, contentDescription = stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play), tint = MaterialTheme.colorScheme.onSecondary
                                             )
                                         }
                                     }
@@ -1014,7 +1014,7 @@ fun CytanniList(
                                             isUpList = true
                                         }) {
                                             Icon(
-                                                painter = painterResource(R.drawable.arrow_upward), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                                painter = painterResource(R.drawable.arrow_upward), contentDescription = stringResource(R.string.auto_up), tint = MaterialTheme.colorScheme.onSecondary
                                             )
                                         }
                                     }
@@ -1030,7 +1030,7 @@ fun CytanniList(
                                         val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
                                         else painterResource(R.drawable.star)
                                         Icon(
-                                            painter = icon, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                            painter = icon, contentDescription = stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), tint = MaterialTheme.colorScheme.onSecondary
                                         )
                                     }
                                 }
@@ -1041,7 +1041,7 @@ fun CytanniList(
                                     expandedUp = true
                                 }) {
                                     Icon(
-                                        painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                        painter = painterResource(R.drawable.more_vert), contentDescription = stringResource(R.string.more_items), tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
                             }
@@ -1055,7 +1055,7 @@ fun CytanniList(
                                         viewModel.autoScroll(title, false)
                                     }, text = { Text(stringResource(R.string.pazdel), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                         Icon(
-                                            painter = painterResource(R.drawable.apps), contentDescription = ""
+                                            painter = painterResource(R.drawable.apps), contentDescription = stringResource(R.string.pazdel)
                                         )
                                     })
                                 }
@@ -1066,7 +1066,7 @@ fun CytanniList(
                                     isSelectMode = true
                                 }, text = { Text(stringResource(R.string.share), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                     Icon(
-                                        painter = painterResource(R.drawable.share), contentDescription = ""
+                                        painter = painterResource(R.drawable.share), contentDescription = stringResource(R.string.share)
                                     )
                                 })
                                 DropdownMenuItem(onClick = {
@@ -1075,7 +1075,7 @@ fun CytanniList(
                                     fullscreen = true
                                 }, text = { Text(stringResource(R.string.fullscreen), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                     Icon(
-                                        painter = painterResource(R.drawable.fullscreen), contentDescription = ""
+                                        painter = painterResource(R.drawable.fullscreen), contentDescription = stringResource(R.string.fullscreen)
                                     )
                                 })
                                 DropdownMenuItem(onClick = {
@@ -1087,7 +1087,7 @@ fun CytanniList(
                                 }, text = { Text(stringResource(R.string.perevody), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                     Icon(
                                         modifier = Modifier.size(24.dp),
-                                        painter = painterResource(R.drawable.book_red), contentDescription = ""
+                                        painter = painterResource(R.drawable.book_red), contentDescription = stringResource(R.string.perevody)
                                     )
                                 })
                                 DropdownMenuItem(onClick = {
@@ -1098,7 +1098,7 @@ fun CytanniList(
                                     menuPosition = 1
                                 }, text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                     Icon(
-                                        painter = painterResource(R.drawable.format_size), contentDescription = ""
+                                        painter = painterResource(R.drawable.format_size), contentDescription = stringResource(R.string.menu_font_size_app)
                                     )
                                 })
                                 DropdownMenuItem(onClick = {
@@ -1120,7 +1120,7 @@ fun CytanniList(
                                     }
                                 }, text = { Text(stringResource(R.string.tts), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                     Icon(
-                                        painter = painterResource(R.drawable.text_to_speech), contentDescription = ""
+                                        painter = painterResource(R.drawable.text_to_speech), contentDescription = stringResource(R.string.tts)
                                     )
                                 })
                             }
@@ -1510,7 +1510,7 @@ fun CytanniList(
                                 }) {
                                     Icon(
                                         painter = painterResource(R.drawable.text_to_speech),
-                                        contentDescription = "",
+                                        contentDescription = stringResource(R.string.tts),
                                         tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
@@ -1524,7 +1524,7 @@ fun CytanniList(
                                         menuPosition = 1
                                     }) {
                                     Icon(
-                                        modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.format_size), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                        modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.format_size), contentDescription = stringResource(R.string.menu_font_size_app), tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
                             }
@@ -1537,7 +1537,7 @@ fun CytanniList(
                                 }) {
                                     Icon(
                                         painter = painterResource(R.drawable.share),
-                                        contentDescription = "",
+                                        contentDescription = stringResource(R.string.share),
                                         tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
@@ -1552,7 +1552,7 @@ fun CytanniList(
                                     }) {
                                     Icon(
                                         modifier = Modifier.size(24.dp),
-                                        painter = painterResource(R.drawable.book_red), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                        painter = painterResource(R.drawable.book_red), contentDescription = stringResource(R.string.set_perakvad_biblii), tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
                             }
@@ -1563,7 +1563,7 @@ fun CytanniList(
                                         fullscreen = true
                                     }) {
                                     Icon(
-                                        painter = painterResource(R.drawable.fullscreen), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                        painter = painterResource(R.drawable.fullscreen), contentDescription = stringResource(R.string.fullscreen), tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
                             }
@@ -1576,7 +1576,7 @@ fun CytanniList(
                                             dialogRazdel = true
                                         }) {
                                         Icon(
-                                            painter = painterResource(R.drawable.apps), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                            painter = painterResource(R.drawable.apps), contentDescription = stringResource(R.string.set_glava_biblii), tint = MaterialTheme.colorScheme.onSecondary
                                         )
                                     }
                                 }
@@ -1591,7 +1591,7 @@ fun CytanniList(
                                         val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
                                         else painterResource(R.drawable.star)
                                         Icon(
-                                            painter = icon, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                            painter = icon, contentDescription = stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), tint = MaterialTheme.colorScheme.onSecondary
                                         )
                                     }
                                 }
@@ -1614,7 +1614,7 @@ fun CytanniList(
                                             }
                                         }) {
                                             Icon(
-                                                painter = iconAutoScroll, contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                                painter = iconAutoScroll, contentDescription = stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play), tint = MaterialTheme.colorScheme.onSecondary
                                             )
                                         }
                                     }
@@ -1625,7 +1625,7 @@ fun CytanniList(
                                             isUpList = true
                                         }) {
                                             Icon(
-                                                painter = painterResource(R.drawable.arrow_upward), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                                painter = painterResource(R.drawable.arrow_upward), contentDescription = stringResource(R.string.auto_up), tint = MaterialTheme.colorScheme.onSecondary
                                             )
                                         }
                                     }
@@ -1967,7 +1967,7 @@ fun CytanniList(
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     if (isSelectMode) {
                                         Icon(
-                                            painter = painterResource(if ((viewModel.isPaused || viewModel.isSpeaking) && viewModel.selectState[index]) R.drawable.select_check_box else R.drawable.check_box_outline_blank), contentDescription = "", tint = MaterialTheme.colorScheme.secondary, modifier = Modifier
+                                            painter = painterResource(if ((viewModel.isPaused || viewModel.isSpeaking) && viewModel.selectState[index]) R.drawable.select_check_box else R.drawable.check_box_outline_blank), contentDescription = stringResource(if ((viewModel.isPaused || viewModel.isSpeaking) && viewModel.selectState[index]) R.string.check_item_bible else R.string.empty_item_bible) , tint = MaterialTheme.colorScheme.secondary, modifier = Modifier
                                                 .padding(start = 5.dp)
                                                 .clickable {
                                                     Settings.vibrate()
@@ -2244,7 +2244,7 @@ fun DialogRazdzel(
                             onDismiss()
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
@@ -2257,7 +2257,7 @@ fun DialogRazdzel(
                             onDismiss()
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = null)
                         Text(stringResource(R.string.ok), fontSize = 18.sp)
                     }
                 }

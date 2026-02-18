@@ -378,7 +378,7 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                         modifier = Modifier.size(5.dp),
                         painter = painterResource(R.drawable.poiter),
                         tint = MaterialTheme.colorScheme.primary,
-                        contentDescription = ""
+                        contentDescription = null
                     )
                     Column(
                         modifier = Modifier
@@ -561,7 +561,7 @@ fun DialogNetFileExplorer(
                                 modifier = Modifier.size(48.dp, 48.dp),
                                 painter = painterResource(viewModel.fileList[index].resources),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                             Text(
                                 text = viewModel.fileList[index].title,
@@ -587,7 +587,7 @@ fun DialogNetFileExplorer(
                             onDismiss()
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     if (fileName.isNotEmpty()) {
@@ -608,7 +608,7 @@ fun DialogNetFileExplorer(
                                 }
                             }, shape = MaterialTheme.shapes.small
                         ) {
-                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = null)
                             Text(stringResource(R.string.ok), fontSize = 18.sp)
                         }
                     }
@@ -674,7 +674,7 @@ fun DialogSetNameFile(
                             onDismiss()
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
@@ -684,7 +684,7 @@ fun DialogSetNameFile(
                             onDismiss()
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = null)
                         Text(stringResource(R.string.ok), fontSize = 18.sp)
                     }
                 }
@@ -731,7 +731,7 @@ fun DialogFileExists(
                             onDismiss()
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
@@ -741,7 +741,7 @@ fun DialogFileExists(
                             onDismiss()
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = null)
                         Text(stringResource(R.string.ok), fontSize = 18.sp)
                     }
                 }

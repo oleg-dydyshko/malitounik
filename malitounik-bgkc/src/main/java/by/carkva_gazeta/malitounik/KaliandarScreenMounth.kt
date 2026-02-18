@@ -117,7 +117,7 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                         .size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
-                    contentDescription = ""
+                    contentDescription = null
                 )
             }
             Row(
@@ -138,7 +138,7 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                         .size(22.dp, 22.dp),
                     painter = painterResource(R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
-                    contentDescription = ""
+                    contentDescription = null
                 )
             }
         }
@@ -429,7 +429,7 @@ fun DialogSetDataCaliandar(
                                     }, verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
-                                    modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                                    modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                                 )
                                 Text(
                                     text = list[i], modifier = Modifier
@@ -455,7 +455,7 @@ fun DialogSetDataCaliandar(
                                     }, verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
-                                    modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                                    modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                                 )
                                 Text(
                                     text = i.toString(), modifier = Modifier
@@ -480,7 +480,7 @@ fun DialogSetDataCaliandar(
                     },
                     shape = MaterialTheme.shapes.small
                 ) {
-                    Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                    Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                     Text(stringResource(R.string.cansel), fontSize = 18.sp)
                 }
             }

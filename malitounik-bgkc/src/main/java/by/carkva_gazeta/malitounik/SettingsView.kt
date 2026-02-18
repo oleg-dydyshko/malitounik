@@ -245,7 +245,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                             }
                         }, content = {
                             Icon(
-                                painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                                painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = stringResource(R.string.exit_page)
                             )
                         })
                     }
@@ -256,7 +256,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                             dialodAdmitExit = true
                         }) {
                             Icon(
-                                painter = painterResource(R.drawable.logout), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                painter = painterResource(R.drawable.logout), contentDescription = null, tint = MaterialTheme.colorScheme.onSecondary
                             )
                         }
                     }
@@ -1004,7 +1004,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                                 .size(22.dp, 22.dp),
                             painter = painterResource(if (expandedSviaty) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                             tint = PrimaryText,
-                            contentDescription = ""
+                            contentDescription = if (expandedSviaty) stringResource(R.string.open_menu) else stringResource(R.string.close_menu)
                         )
                     }
                     ExposedDropdownMenu(
@@ -1258,7 +1258,7 @@ fun DialogClearChash(
                             onDismiss()
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
@@ -1267,7 +1267,7 @@ fun DialogClearChash(
                             onConfirm()
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.delete), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.delete), contentDescription = null)
                         Text(stringResource(R.string.delite), fontSize = 18.sp)
                     }
                 }
@@ -1308,7 +1308,7 @@ fun DialogLogin(
                             login = ""
                         }) {
                             Icon(
-                                painter = if (login.isNotEmpty()) painterResource(R.drawable.close) else painterResource(R.drawable.empty), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
+                                painter = if (login.isNotEmpty()) painterResource(R.drawable.close) else painterResource(R.drawable.empty), contentDescription = null, tint = MaterialTheme.colorScheme.secondary
                             )
                         }
                     })
@@ -1364,7 +1364,7 @@ fun DialogLogin(
                             onLogin(login.trim() == "Царква" && password.trim() == "Дворнікава63")
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = null)
                         Text(stringResource(R.string.ok), fontSize = 18.sp)
                     }
                 }
@@ -1410,7 +1410,7 @@ fun DialogAdminExit(
                             onDismiss()
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
@@ -1419,7 +1419,7 @@ fun DialogAdminExit(
                             onConfirm()
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = null)
                         Text(stringResource(R.string.ok), fontSize = 18.sp)
                     }
                 }
@@ -1465,7 +1465,7 @@ fun DialogNotification(
                             onDismiss()
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
@@ -1474,7 +1474,7 @@ fun DialogNotification(
                             onConfirm()
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = null)
                         Text(stringResource(R.string.dazvolic), fontSize = 18.sp)
                     }
                 }

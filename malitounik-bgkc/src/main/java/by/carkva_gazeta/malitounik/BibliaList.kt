@@ -175,7 +175,7 @@ fun BibliaList(
                                 Icon(
                                     painter = painterResource(R.drawable.arrow_back),
                                     tint = MaterialTheme.colorScheme.onSecondary,
-                                    contentDescription = ""
+                                    contentDescription = stringResource(R.string.exit_page)
                                 )
                             })
                     }
@@ -237,7 +237,7 @@ private fun BoxWithConstraintsScope.ScopedContent(perevod: String, isNovyZapavet
                                 painterResource(R.drawable.keyboard_arrow_down)
                             else
                                 painterResource(R.drawable.keyboard_arrow_up),
-                            contentDescription = "",
+                            contentDescription = if (collapsed) stringResource(R.string.open_menu) else stringResource(R.string.close_menu),
                             tint = Divider,
                         )
                         Text(

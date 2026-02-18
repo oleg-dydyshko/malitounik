@@ -1064,7 +1064,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                             painterResource(R.drawable.keyboard_arrow_down)
                         else
                             painterResource(R.drawable.keyboard_arrow_up),
-                        contentDescription = "",
+                        contentDescription = if (!collapsedState) stringResource(R.string.open_menu) else stringResource(R.string.close_menu),
                         tint = PrimaryText,
                     )
                 }
@@ -1155,7 +1155,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                                     modifier = Modifier.size(5.dp),
                                     painter = painterResource(R.drawable.poiter),
                                     tint = MaterialTheme.colorScheme.primary,
-                                    contentDescription = ""
+                                    contentDescription = null
                                 )
                                 Text(
                                     item.title + " " + (item.glava + 1),
@@ -1172,7 +1172,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                                         .clickable {
                                             Settings.vibrate()
                                             removeItem = index
-                                        }, painter = painterResource(R.drawable.delete), tint = MaterialTheme.colorScheme.secondary, contentDescription = ""
+                                        }, painter = painterResource(R.drawable.delete), tint = MaterialTheme.colorScheme.secondary, contentDescription = stringResource(R.string.delite)
                                 )
                             }
                             HorizontalDivider()
@@ -1428,7 +1428,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                             painterResource(R.drawable.keyboard_arrow_down)
                         else
                             painterResource(R.drawable.keyboard_arrow_up),
-                        contentDescription = "",
+                        contentDescription = if (pesnyView) stringResource(R.string.open_menu) else stringResource(R.string.close_menu),
                         tint = PrimaryText,
                     )
                 }
@@ -1470,7 +1470,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                                 modifier = Modifier.size(5.dp),
                                 painter = painterResource(R.drawable.poiter),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                             Text(
                                 stringResource(R.string.pesnia, i),
@@ -1536,7 +1536,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                             painterResource(R.drawable.keyboard_arrow_down)
                         else
                             painterResource(R.drawable.keyboard_arrow_up),
-                        contentDescription = "",
+                        contentDescription = if (dialogImageView) stringResource(R.string.open_menu) else stringResource(R.string.close_menu),
                         tint = PrimaryText,
                     )
                 }
@@ -1630,7 +1630,7 @@ fun DialogSemuxa(
                         },
                         shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                         Text(stringResource(R.string.close), fontSize = 18.sp)
                     }
                 }
@@ -1758,7 +1758,7 @@ fun DialogDownLoadBible(
                             },
                             shape = MaterialTheme.shapes.small
                         ) {
-                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                             Text(stringResource(R.string.cansel), fontSize = 18.sp)
                         }
 
@@ -1769,7 +1769,7 @@ fun DialogDownLoadBible(
                             },
                             shape = MaterialTheme.shapes.small
                         ) {
-                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = null)
                             Text(stringResource(R.string.ok), fontSize = 18.sp)
                         }
                     } else {
@@ -1780,7 +1780,7 @@ fun DialogDownLoadBible(
                             },
                             shape = MaterialTheme.shapes.small
                         ) {
-                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = null)
                             Text(stringResource(R.string.close), fontSize = 18.sp)
                         }
                     }
@@ -1832,7 +1832,7 @@ fun DialogPeryaidy(
                         },
                         shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                         Text(stringResource(R.string.close), fontSize = 18.sp)
                     }
                 }
@@ -1875,7 +1875,7 @@ fun DialogImage(
                         },
                         shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                         Text(stringResource(R.string.close), fontSize = 18.sp)
                     }
                 }

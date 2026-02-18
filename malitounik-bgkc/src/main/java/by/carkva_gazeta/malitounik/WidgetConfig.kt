@@ -185,7 +185,7 @@ fun DialogWidgetConfig(
                         },
                         shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
@@ -199,7 +199,7 @@ fun DialogWidgetConfig(
                         },
                         shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = null)
                         Text(stringResource(R.string.save_sabytie), fontSize = 18.sp)
                     }
                 }

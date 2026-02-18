@@ -93,7 +93,7 @@ fun Cytaty(navController: NavHostController) {
                             navController.popBackStack()
                         }, content = {
                             Icon(
-                                painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                                painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = stringResource(R.string.exit_page)
                             )
                         })
                     }
@@ -145,7 +145,7 @@ fun Cytaty(navController: NavHostController) {
                             modifier = Modifier.size(5.dp),
                             painter = painterResource(R.drawable.poiter),
                             tint = MaterialTheme.colorScheme.primary,
-                            contentDescription = ""
+                            contentDescription = null
                         )
                         Text(
                             text = cytata,

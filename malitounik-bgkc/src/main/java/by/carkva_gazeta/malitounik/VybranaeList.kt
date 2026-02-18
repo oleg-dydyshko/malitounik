@@ -319,7 +319,7 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
                                 .padding(start = 10.dp), verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                                modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                             )
                             Text(
                                 item.title, modifier = Modifier
@@ -337,7 +337,7 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
                                 modifier = Modifier
                                     .padding(top = 10.dp, start = 5.dp, end = 15.dp, bottom = 10.dp)
                                     .size(24.dp),
-                                painter = painterResource(R.drawable.menu_move), tint = Divider, contentDescription = ""
+                                painter = painterResource(R.drawable.menu_move), tint = Divider, contentDescription = null
                             )
                         }
                     }
@@ -379,7 +379,7 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
                     Icon(
                         painter = if (collapsed) painterResource(R.drawable.keyboard_arrow_down)
                         else painterResource(R.drawable.keyboard_arrow_up),
-                        contentDescription = "",
+                        contentDescription = if (collapsed) stringResource(R.string.open_menu) else stringResource(R.string.close_menu),
                         tint = Divider,
                     )
                     Text(
@@ -436,7 +436,7 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
                                         .padding(start = 30.dp), verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(
-                                        modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                                        modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                                     )
                                     Text(
                                         item.title + " " + (item.glava + 1), modifier = Modifier
@@ -449,7 +449,7 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
                                         modifier = Modifier
                                             .padding(top = 10.dp, start = 5.dp, end = 15.dp, bottom = 10.dp)
                                             .size(24.dp),
-                                        painter = painterResource(R.drawable.menu_move), tint = Divider, contentDescription = ""
+                                        painter = painterResource(R.drawable.menu_move), tint = Divider, contentDescription = null
                                     )
                                 }
                             }
@@ -502,7 +502,7 @@ fun DialogDelite(
                             onDismiss()
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                         Text(stringResource(R.string.sabytie_no), fontSize = 18.sp)
                     }
                     TextButton(
@@ -511,7 +511,7 @@ fun DialogDelite(
                             onConfirmation()
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = null)
                         Text(stringResource(R.string.sabytie_yes), fontSize = 18.sp)
                     }
                 }

@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -89,7 +90,7 @@ fun ParafiiBGKC(navController: NavHostController, innerPadding: PaddingValues) {
                     }, verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                    modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                 )
                 Text(
                     curyia.title, modifier = Modifier
@@ -113,7 +114,7 @@ fun ParafiiBGKC(navController: NavHostController, innerPadding: PaddingValues) {
                     Icon(
                         painter = if (collapsed) painterResource(R.drawable.keyboard_arrow_down)
                         else painterResource(R.drawable.keyboard_arrow_up),
-                        contentDescription = "",
+                        contentDescription = if (collapsed) stringResource(R.string.open_menu) else stringResource(R.string.close_menu),
                         tint = Divider,
                     )
                     Text(
@@ -142,7 +143,7 @@ fun ParafiiBGKC(navController: NavHostController, innerPadding: PaddingValues) {
                             }, verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                            modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                         )
                         Text(
                             dataItem.list[index].title, modifier = Modifier

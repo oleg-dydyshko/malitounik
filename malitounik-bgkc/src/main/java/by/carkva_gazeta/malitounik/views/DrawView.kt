@@ -111,7 +111,7 @@ fun DrawView(
                 Icon(
                     modifier = Modifier.size(22.dp),
                     painter = painterResource(R.drawable.krest),
-                    contentDescription = "",
+                    contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
@@ -129,7 +129,7 @@ fun DrawView(
                         .size(22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = ""
+                    contentDescription = null
                 )
             }
         )
@@ -145,7 +145,7 @@ fun DrawView(
                     modifier = Modifier.size(22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = ""
+                    contentDescription = null
                 )
             }
         )
@@ -161,7 +161,7 @@ fun DrawView(
                     modifier = Modifier.size(22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = ""
+                    contentDescription = null
                 )
             }
         )
@@ -177,7 +177,7 @@ fun DrawView(
                     modifier = Modifier.size(22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = ""
+                    contentDescription = null
                 )
             }
         )
@@ -193,7 +193,7 @@ fun DrawView(
                     modifier = Modifier.size(22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = ""
+                    contentDescription = null
                 )
             }
         )
@@ -209,7 +209,7 @@ fun DrawView(
                     modifier = Modifier.size(22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = ""
+                    contentDescription = null
                 )
             }
         )
@@ -225,7 +225,7 @@ fun DrawView(
                     modifier = Modifier.size(22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = ""
+                    contentDescription = null
                 )
             }
         )
@@ -242,7 +242,7 @@ fun DrawView(
                         modifier = Modifier.size(22.dp),
                         painter = painterResource(R.drawable.krest),
                         tint = MaterialTheme.colorScheme.primary,
-                        contentDescription = ""
+                        contentDescription = null
                     )
                 }
             )
@@ -273,7 +273,7 @@ fun DrawView(
                         .size(22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = ""
+                    contentDescription = null
                 )
                 Text(
                     modifier = Modifier
@@ -289,7 +289,7 @@ fun DrawView(
                         .size(22.dp),
                     painter = painterResource(if (AppNavGraphState.bibleItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
-                    contentDescription = ""
+                    contentDescription = if (AppNavGraphState.bibleItem) stringResource(R.string.open_menu) else stringResource(R.string.close_menu)
                 )
             }
             AnimatedVisibility(
@@ -312,7 +312,7 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                         }
                     )
@@ -328,7 +328,7 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                         }
                     )
@@ -344,7 +344,7 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                         }
                     )
@@ -360,7 +360,7 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                         }
                     )
@@ -377,7 +377,7 @@ fun DrawView(
                                     modifier = Modifier.size(12.dp, 12.dp),
                                     painter = painterResource(R.drawable.krest),
                                     tint = MaterialTheme.colorScheme.primary,
-                                    contentDescription = ""
+                                    contentDescription = null
                                 )
                             }
                         )
@@ -395,7 +395,7 @@ fun DrawView(
                                     modifier = Modifier.size(12.dp, 12.dp),
                                     painter = painterResource(R.drawable.krest),
                                     tint = MaterialTheme.colorScheme.primary,
-                                    contentDescription = ""
+                                    contentDescription = null
                                 )
                             }
                         )
@@ -413,7 +413,7 @@ fun DrawView(
                                     modifier = Modifier.size(12.dp, 12.dp),
                                     painter = painterResource(R.drawable.krest),
                                     tint = MaterialTheme.colorScheme.primary,
-                                    contentDescription = ""
+                                    contentDescription = null
                                 )
                             }
                         )
@@ -431,7 +431,7 @@ fun DrawView(
                     .size(22.dp),
                 painter = painterResource(R.drawable.krest),
                 tint = MaterialTheme.colorScheme.primary,
-                contentDescription = ""
+                contentDescription = null
             )
             Text(
                 modifier = Modifier
@@ -457,7 +457,7 @@ fun DrawView(
                         dialogProgram = true
                     },
                 painter = painterResource(R.drawable.description),
-                contentDescription = ""
+                contentDescription = stringResource(R.string.program_radio_maryia)
             )
             val icon = if (!ServiceRadyjoMaryia.isPlayingRadyjoMaryia) painterResource(R.drawable.play_arrow)
             else painterResource(R.drawable.pause)
@@ -496,7 +496,7 @@ fun DrawView(
                         }
                     },
                 painter = icon,
-                contentDescription = ""
+                contentDescription = stringResource(if (!ServiceRadyjoMaryia.isPlayingRadyjoMaryia) R.string.play_rm else R.string.pause_rm)
             )
             Icon(
                 modifier = Modifier
@@ -513,7 +513,7 @@ fun DrawView(
                         }
                     },
                 painter = painterResource(R.drawable.stop),
-                contentDescription = ""
+                contentDescription = stringResource(R.string.stop_rm)
             )
         }
         if (ServiceRadyjoMaryia.isServiceRadioMaryiaRun) {
@@ -528,7 +528,7 @@ fun DrawView(
                         modifier = Modifier.size(5.dp),
                         painter = painterResource(R.drawable.poiter),
                         tint = MaterialTheme.colorScheme.primary,
-                        contentDescription = ""
+                        contentDescription = null
                     )
                     Text(
                         text = ServiceRadyjoMaryia.titleRadyjoMaryia,
@@ -575,7 +575,7 @@ fun DrawView(
                                 .size(22.dp),
                             painter = painterResource(if (expandedSviaty) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                             tint = PrimaryText,
-                            contentDescription = ""
+                            contentDescription = if (expandedSviaty) stringResource(R.string.open_menu) else stringResource(R.string.close_menu)
                         )
                     }
                     ExposedDropdownMenu(
@@ -659,7 +659,7 @@ fun DrawView(
                         .size(22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = ""
+                    contentDescription = null
                 )
                 Text(
                     modifier = Modifier
@@ -675,7 +675,7 @@ fun DrawView(
                         .size(22.dp),
                     painter = painterResource(if (AppNavGraphState.biblijatekaItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
-                    contentDescription = ""
+                    contentDescription = if (AppNavGraphState.biblijatekaItem) stringResource(R.string.open_menu) else stringResource(R.string.close_menu)
                 )
             }
             AnimatedVisibility(
@@ -698,7 +698,7 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                         }
                     )
@@ -714,7 +714,7 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                         }
                     )
@@ -730,7 +730,7 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                         }
                     )
@@ -746,7 +746,7 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                         }
                     )
@@ -762,7 +762,7 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                         }
                     )
@@ -778,7 +778,7 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                         }
                     )
@@ -807,7 +807,7 @@ fun DrawView(
                         .size(22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = ""
+                    contentDescription = null
                 )
                 Text(
                     modifier = Modifier
@@ -823,7 +823,7 @@ fun DrawView(
                         .size(22.dp),
                     painter = painterResource(if (AppNavGraphState.piesnyItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
-                    contentDescription = ""
+                    contentDescription = if (AppNavGraphState.piesnyItem) stringResource(R.string.open_menu) else stringResource(R.string.close_menu)
                 )
             }
             AnimatedVisibility(
@@ -846,7 +846,7 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                         }
                     )
@@ -862,7 +862,7 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                         }
                     )
@@ -878,7 +878,7 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                         }
                     )
@@ -894,7 +894,7 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                         }
                     )
@@ -910,7 +910,7 @@ fun DrawView(
                                 modifier = Modifier.size(12.dp, 12.dp),
                                 painter = painterResource(R.drawable.krest),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                         }
                     )
@@ -943,7 +943,7 @@ fun DrawView(
                         .size(22.dp),
                     painter = painterResource(R.drawable.krest),
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = ""
+                    contentDescription = null
                 )
                 Text(
                     modifier = Modifier
@@ -959,7 +959,7 @@ fun DrawView(
                         .size(22.dp),
                     painter = painterResource(if (AppNavGraphState.underItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
-                    contentDescription = ""
+                    contentDescription = if (AppNavGraphState.underItem) stringResource(R.string.open_menu) else stringResource(R.string.close_menu)
                 )
             }
             AnimatedVisibility(
@@ -982,7 +982,7 @@ fun DrawView(
                                 modifier = Modifier.size(5.dp),
                                 painter = painterResource(R.drawable.poiter),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                         }
                     )
@@ -998,7 +998,7 @@ fun DrawView(
                                 modifier = Modifier.size(5.dp),
                                 painter = painterResource(R.drawable.poiter),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                         }
                     )
@@ -1014,7 +1014,7 @@ fun DrawView(
                                 modifier = Modifier.size(5.dp),
                                 painter = painterResource(R.drawable.poiter),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                         }
                     )
@@ -1030,7 +1030,7 @@ fun DrawView(
                                 modifier = Modifier.size(5.dp),
                                 painter = painterResource(R.drawable.poiter),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                         }
                     )
@@ -1046,7 +1046,7 @@ fun DrawView(
                                 modifier = Modifier.size(5.dp),
                                 painter = painterResource(R.drawable.poiter),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                         }
                     )
@@ -1062,7 +1062,7 @@ fun DrawView(
                                 modifier = Modifier.size(5.dp),
                                 painter = painterResource(R.drawable.poiter),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                         }
                     )
@@ -1078,7 +1078,7 @@ fun DrawView(
                                 modifier = Modifier.size(5.dp),
                                 painter = painterResource(R.drawable.poiter),
                                 tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = ""
+                                contentDescription = null
                             )
                         }
                     )
@@ -1156,8 +1156,8 @@ fun DrawerHeader(onClick: () -> Unit) {
         Icon(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 10.dp), painter = painterResource(R.drawable.lahatyp), contentDescription = "", tint = MaterialTheme.colorScheme.primary
+                .padding(bottom = 10.dp), painter = painterResource(R.drawable.lahatyp), contentDescription = null, tint = MaterialTheme.colorScheme.primary
         )
-        Icon(modifier = Modifier.fillMaxWidth(), painter = painterResource(R.drawable.lahatyp_apis), contentDescription = "", tint = MaterialTheme.colorScheme.secondary)
+        Icon(modifier = Modifier.fillMaxWidth(), painter = painterResource(R.drawable.lahatyp_apis), contentDescription = null, tint = MaterialTheme.colorScheme.secondary)
     }
 }

@@ -65,7 +65,7 @@ fun SviatyList(navController: NavHostController, innerPadding: PaddingValues) {
                             }, verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                            modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                         )
                         val dvunadSv = stringResource(R.string.dvunad_sv)
                         val vialSv = stringResource(R.string.vial_sv)

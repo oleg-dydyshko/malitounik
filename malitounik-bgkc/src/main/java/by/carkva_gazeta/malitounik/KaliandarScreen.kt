@@ -145,7 +145,7 @@ fun KaliandarScreen(
                             val color = if (data[7].toInt() == 3) MaterialTheme.colorScheme.primary
                             else MaterialTheme.colorScheme.secondary
                             Icon(
-                                painter = painterResource(R.drawable.fishe), contentDescription = "", tint = color, modifier = Modifier
+                                painter = painterResource(R.drawable.fishe), contentDescription = null, tint = color, modifier = Modifier
                                     .size(22.dp)
                                     .align(Alignment.CenterHorizontally)
                             )
@@ -186,7 +186,7 @@ fun KaliandarScreen(
                 }
             }
             Icon(
-                painter = painterResource(R.drawable.book_red), contentDescription = "", tint = colorBlackboardBook, modifier = Modifier
+                painter = painterResource(R.drawable.book_red), contentDescription = stringResource(R.string.bogaslugbovyia_teksty), tint = colorBlackboardBook, modifier = Modifier
                     .padding(start = 50.dp)
                     .align(Alignment.Bottom)
                     .size(30.dp)
@@ -210,7 +210,7 @@ fun KaliandarScreen(
                 var padding = 0.dp
                 if (data[5].toInt() == 1 || data[5].toInt() == 2) {
                     Icon(
-                        painter = painterResource(R.drawable.znaki_krest_v_kruge), tint = MaterialTheme.colorScheme.primary, contentDescription = "", modifier = Modifier
+                        painter = painterResource(R.drawable.znaki_krest_v_kruge), tint = MaterialTheme.colorScheme.primary, contentDescription = null, modifier = Modifier
                             .padding(end = 10.dp)
                             .size(22.dp)
                     )
@@ -288,7 +288,7 @@ fun KaliandarScreen(
                         if (icon != null && i == 0) {
                             Box(modifier = Modifier.padding(start = 10.dp)) {
                                 Icon(
-                                    painter = icon, contentDescription = "", tint = iconTint, modifier = Modifier.size(22.dp)
+                                    painter = icon, contentDescription = null, tint = iconTint, modifier = Modifier.size(22.dp)
                                 )
                             }
                         }

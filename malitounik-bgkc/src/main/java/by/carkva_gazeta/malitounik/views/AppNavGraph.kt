@@ -1207,7 +1207,7 @@ fun MainConteiner(
                                     viewModel.textFieldValueState = TextFieldValue("")
                                 }) {
                                     Icon(
-                                        painter = if (viewModel.textFieldValueState.text.isNotEmpty()) painterResource(R.drawable.close) else painterResource(R.drawable.empty), contentDescription = "", tint = textTollBarColor
+                                        painter = if (viewModel.textFieldValueState.text.isNotEmpty()) painterResource(R.drawable.close) else painterResource(R.drawable.empty), contentDescription = if (viewModel.textFieldValueState.text.isNotEmpty()) stringResource(R.string.close) else null, tint = textTollBarColor
                                     )
                                 }
                             }, colors = TextFieldDefaults.colors(
@@ -1235,7 +1235,7 @@ fun MainConteiner(
                                 }
                             }, content = {
                                 Icon(
-                                    painter = painterResource(R.drawable.close), tint = textTollBarColor, contentDescription = ""
+                                    painter = painterResource(R.drawable.close), tint = textTollBarColor, contentDescription = stringResource(R.string.close)
                                 )
                             })
                         }
@@ -1246,7 +1246,7 @@ fun MainConteiner(
                                 coroutineScope.launch { drawerState.open() }
                             }, content = {
                                 Icon(
-                                    painter = painterResource(R.drawable.menu), tint = textTollBarColor, contentDescription = ""
+                                    painter = painterResource(R.drawable.menu), tint = textTollBarColor, contentDescription = stringResource(R.string.show_menu)
                                 )
                             })
                         }
@@ -1286,7 +1286,7 @@ fun MainConteiner(
                                     val icon = if (k.getBoolean("caliandarList", false)) painterResource(R.drawable.calendar_today)
                                     else painterResource(R.drawable.list)
                                     Icon(
-                                        painter = icon, contentDescription = "", tint = textTollBarColor
+                                        painter = icon, contentDescription = stringResource(if (k.getBoolean("caliandarList", false)) R.string.set_book_caliandar else R.string.set_list_caliandar), tint = textTollBarColor
                                     )
                                 }
                             }
@@ -1301,7 +1301,7 @@ fun MainConteiner(
                                     viewModel.textFieldValueNatatkaContent = TextFieldValue("")
                                 }) {
                                     Icon(
-                                        painter = painterResource(R.drawable.add), tint = textTollBarColor, contentDescription = ""
+                                        painter = painterResource(R.drawable.add), tint = textTollBarColor, contentDescription = stringResource(R.string.add_natatku)
                                     )
                                 }
                             }
@@ -1328,11 +1328,11 @@ fun MainConteiner(
                                     Row {
                                         if ((isSortedVybranae && sortedVybranae == Settings.SORT_BY_ABC) || (currentRoute == AllDestinations.MAE_NATATKI_MENU && sortedNatatki == Settings.SORT_BY_ABC)) {
                                             Icon(
-                                                painter = painterResource(R.drawable.check), contentDescription = ""
+                                                painter = painterResource(R.drawable.check), contentDescription = null
                                             )
                                         }
                                         Icon(
-                                            painter = painterResource(R.drawable.sort_by_az), contentDescription = ""
+                                            painter = painterResource(R.drawable.sort_by_az), contentDescription = null
                                         )
                                     }
                                 })
@@ -1352,11 +1352,11 @@ fun MainConteiner(
                                     Row {
                                         if ((isSortedVybranae && sortedVybranae == Settings.SORT_BY_TIME) || (currentRoute == AllDestinations.MAE_NATATKI_MENU && sortedNatatki == Settings.SORT_BY_TIME)) {
                                             Icon(
-                                                painter = painterResource(R.drawable.check), contentDescription = ""
+                                                painter = painterResource(R.drawable.check), contentDescription = null
                                             )
                                         }
                                         Icon(
-                                            painter = painterResource(R.drawable.sort_by_time), contentDescription = ""
+                                            painter = painterResource(R.drawable.sort_by_time), contentDescription = null
                                         )
                                     }
                                 })
@@ -1379,11 +1379,11 @@ fun MainConteiner(
                                     Row {
                                         if ((isSortedVybranae && sortedVybranae == Settings.SORT_BY_CUSTOM) || (currentRoute == AllDestinations.MAE_NATATKI_MENU && sortedNatatki == Settings.SORT_BY_CUSTOM)) {
                                             Icon(
-                                                painter = painterResource(R.drawable.check), contentDescription = ""
+                                                painter = painterResource(R.drawable.check), contentDescription = null
                                             )
                                         }
                                         Icon(
-                                            painter = painterResource(R.drawable.sort), contentDescription = ""
+                                            painter = painterResource(R.drawable.sort), contentDescription = null
                                         )
                                     }
                                 })
@@ -1394,7 +1394,7 @@ fun MainConteiner(
                                     expandedSort = true
                                 }) {
                                     Icon(
-                                        painter = painterResource(R.drawable.sort), contentDescription = "", tint = textTollBarColor
+                                        painter = painterResource(R.drawable.sort), contentDescription = null, tint = textTollBarColor
                                     )
                                 }
                             }
@@ -1406,7 +1406,7 @@ fun MainConteiner(
                                     else removeAllNatatkiDialog = !removeAllNatatkiDialog
                                 }) {
                                     Icon(
-                                        painter = painterResource(R.drawable.delete), tint = textTollBarColor, contentDescription = ""
+                                        painter = painterResource(R.drawable.delete), tint = textTollBarColor, contentDescription = stringResource(if (currentRoute == AllDestinations.VYBRANAE_LIST) R.string.vybranae_all_remove else R.string.vybranae_remove_all_natatka)
                                     )
                                 }
                             }
@@ -1417,7 +1417,7 @@ fun MainConteiner(
                                     viewModel.searchText = true
                                 }) {
                                     Icon(
-                                        painter = painterResource(R.drawable.search), tint = textTollBarColor, contentDescription = ""
+                                        painter = painterResource(R.drawable.search), tint = textTollBarColor, contentDescription = stringResource(R.string.poshuk)
                                     )
                                 }
                             }
@@ -1429,7 +1429,7 @@ fun MainConteiner(
                                     PasochnicaList.pasochnicaAction = PasochnicaList.FILE
                                 }) {
                                     Icon(
-                                        modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.directory_icon_menu), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                        modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.directory_icon_menu), contentDescription = stringResource(R.string.pasochnica_add_folder), tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
                             }
@@ -1439,7 +1439,7 @@ fun MainConteiner(
                                     PasochnicaList.pasochnicaAction = PasochnicaList.WWW
                                 }) {
                                     Icon(
-                                        modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.www_icon), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                        modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.www_icon), contentDescription = stringResource(R.string.pasochnica_add_basa), tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
                             }
@@ -1449,7 +1449,7 @@ fun MainConteiner(
                                     PasochnicaList.pasochnicaAction = PasochnicaList.ADD
                                 }) {
                                     Icon(
-                                        modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.plus), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                        modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.plus), contentDescription = stringResource(R.string.add_file), tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
                             }
@@ -1460,7 +1460,7 @@ fun MainConteiner(
                                 expandedUp = true
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = textTollBarColor
+                                    painter = painterResource(R.drawable.more_vert), contentDescription = stringResource(R.string.more_items), tint = textTollBarColor
                                 )
                             }
                         }
@@ -1472,7 +1472,7 @@ fun MainConteiner(
                                 viewModel.isEditMode = true
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.edit), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    painter = painterResource(R.drawable.edit), contentDescription = stringResource(R.string.redagaktirovat), tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
                         }
@@ -1482,7 +1482,7 @@ fun MainConteiner(
                                 viewModel.isDeliteNatatka = true
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.delete), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    painter = painterResource(R.drawable.delete), contentDescription = stringResource(R.string.delite), tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
                         }
@@ -1494,7 +1494,7 @@ fun MainConteiner(
                                 viewModel.saveFileNatatki = true
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.save), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    painter = painterResource(R.drawable.save), contentDescription = stringResource(R.string.save_sabytie), tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
                         }
@@ -1506,7 +1506,7 @@ fun MainConteiner(
                                 viewModel.searchSettings = true
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.settings), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                    painter = painterResource(R.drawable.settings), contentDescription = stringResource(R.string.settings_bible), tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
                         }
@@ -1519,7 +1519,7 @@ fun MainConteiner(
                             navigationActions.navigateToSettingsView()
                         }, text = { Text(stringResource(R.string.tools_item), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                             Icon(
-                                painter = painterResource(R.drawable.settings), contentDescription = ""
+                                painter = painterResource(R.drawable.settings), contentDescription = stringResource(R.string.tools_item)
                             )
                         })
                         if (currentRoute == AllDestinations.PIASOCHNICA_LIST) {
@@ -1529,7 +1529,7 @@ fun MainConteiner(
                                 expandedUp = false
                             }, text = { Text(stringResource(R.string.del_pasochnica), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                 Icon(
-                                    painter = painterResource(R.drawable.delete), contentDescription = ""
+                                    painter = painterResource(R.drawable.delete), contentDescription = stringResource(R.string.del_pasochnica)
                                 )
                             })
                         }
@@ -1540,7 +1540,7 @@ fun MainConteiner(
                                 navigationActions.navigateToUmouniaZnachenni()
                             }, text = { Text(stringResource(R.string.symbols_menu), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                 Icon(
-                                    painter = painterResource(R.drawable.info), contentDescription = ""
+                                    painter = painterResource(R.drawable.info), contentDescription = stringResource(R.string.symbols_menu)
                                 )
                             })
                             if (!isBottomBar) {
@@ -1550,7 +1550,7 @@ fun MainConteiner(
                                     navigationActions.navigateToPadzeiView()
                                 }, text = { Text(stringResource(R.string.sabytie), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                     Icon(
-                                        painter = painterResource(R.drawable.event), contentDescription = ""
+                                        painter = painterResource(R.drawable.event), contentDescription = stringResource(R.string.sabytie)
                                     )
                                 })
                                 DropdownMenuItem(onClick = {
@@ -1559,7 +1559,7 @@ fun MainConteiner(
                                     viewModel.searchText = true
                                 }, text = { Text(stringResource(R.string.poshuk_sviatych), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                     Icon(
-                                        painter = painterResource(R.drawable.search), contentDescription = ""
+                                        painter = painterResource(R.drawable.search), contentDescription = stringResource(R.string.poshuk_sviatych)
                                     )
                                 })
                             }
@@ -1578,7 +1578,7 @@ fun MainConteiner(
                                         }
                                     }, text = { Text(stringResource(if (currentRoute.contains(AllDestinations.KALIANDAR)) R.string.redagaktirovat else R.string.add_file), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                         Icon(
-                                            painter = painterResource(R.drawable.edit), contentDescription = ""
+                                            painter = painterResource(R.drawable.edit), contentDescription = stringResource(if (currentRoute.contains(AllDestinations.KALIANDAR)) R.string.redagaktirovat else R.string.add_file)
                                         )
                                     })
                                 }
@@ -1589,7 +1589,7 @@ fun MainConteiner(
                                         viewModel.searchFullText = true
                                     }, text = { Text(stringResource(R.string.searche_bogasluz_text), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                         Icon(
-                                            painter = painterResource(R.drawable.search), contentDescription = ""
+                                            painter = painterResource(R.drawable.search), contentDescription = stringResource(R.string.searche_bogasluz_text)
                                         )
                                     })
                                 }
@@ -1605,7 +1605,7 @@ fun MainConteiner(
                                     }
                                 }, text = { Text(stringResource(R.string.log_m), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                     Icon(
-                                        painter = painterResource(R.drawable.description), contentDescription = ""
+                                        painter = painterResource(R.drawable.description), contentDescription = stringResource(R.string.log_m)
                                     )
                                 })
                             }
@@ -1652,7 +1652,7 @@ fun MainConteiner(
                                         viewModel.searchText = true
                                     }) {
                                         Icon(
-                                            painter = painterResource(R.drawable.search), contentDescription = "", tint = textTollBarColor
+                                            painter = painterResource(R.drawable.search), contentDescription = stringResource(R.string.poshuk_sviatych), tint = textTollBarColor
                                         )
                                     }
                                 }
@@ -1662,7 +1662,7 @@ fun MainConteiner(
                                         navigationActions.navigateToPadzeiView()
                                     }) {
                                         Icon(
-                                            painter = painterResource(R.drawable.event), contentDescription = "", tint = textTollBarColor
+                                            painter = painterResource(R.drawable.event), contentDescription = stringResource(R.string.sabytie), tint = textTollBarColor
                                         )
                                     }
                                 }
@@ -1681,7 +1681,7 @@ fun MainConteiner(
                                         val icon = if (k.getBoolean("caliandarList", false)) painterResource(R.drawable.calendar_today)
                                         else painterResource(R.drawable.list)
                                         Icon(
-                                            painter = icon, tint = textTollBarColor, contentDescription = ""
+                                            painter = icon, tint = textTollBarColor, contentDescription = stringResource(if (k.getBoolean("caliandarList", false)) R.string.set_book_caliandar else R.string.set_list_caliandar)
                                         )
                                     }
                                 }
@@ -2160,7 +2160,7 @@ fun SearchSviatyia(lazyColumnStateSearchSvityia: LazyListState, innerPadding: Pa
                         }, verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                        modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                     )
                     Column {
                         Text(
@@ -2269,7 +2269,7 @@ fun DialogLogProgramy(
                                 onDismiss()
                             }, shape = MaterialTheme.shapes.small
                         ) {
-                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                             Text(stringResource(R.string.cansel), fontSize = 18.sp)
                         }
                     }
@@ -2287,7 +2287,7 @@ fun DialogLogProgramy(
                                 onDismiss()
                             }, shape = MaterialTheme.shapes.small
                         ) {
-                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                             Text(stringResource(R.string.close), fontSize = 18.sp)
                         }
                         TextButton(
@@ -2297,7 +2297,7 @@ fun DialogLogProgramy(
                                 onDismiss()
                             }, shape = MaterialTheme.shapes.small
                         ) {
-                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = null)
                             Text(stringResource(R.string.set_log), fontSize = 18.sp)
                         }
                     }
@@ -2343,7 +2343,7 @@ fun DialogUpdateNoWiFI(
                             onDismiss()
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
@@ -2352,7 +2352,7 @@ fun DialogUpdateNoWiFI(
                             onConfirmation()
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = null)
                         Text(stringResource(R.string.ok), fontSize = 18.sp)
                     }
                 }

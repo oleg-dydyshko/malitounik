@@ -361,7 +361,7 @@ fun MaeNatatki(
                                 }, verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = ""
+                                modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                             )
                             Text(
                                 item.title, modifier = Modifier
@@ -373,7 +373,7 @@ fun MaeNatatki(
                                     modifier = Modifier
                                         .padding(top = 10.dp, start = 5.dp, end = 15.dp, bottom = 10.dp)
                                         .size(24.dp),
-                                    painter = painterResource(R.drawable.menu_move), tint = Divider, contentDescription = ""
+                                    painter = painterResource(R.drawable.menu_move), tint = Divider, contentDescription = null
                                 )
                             }
                         }
@@ -483,7 +483,7 @@ fun DialogHelpCustomSort(onDismiss: (Boolean) -> Unit) {
                             onDismiss(isCheck)
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = null)
                         Text(stringResource(R.string.ok), fontSize = 18.sp)
                     }
                 }

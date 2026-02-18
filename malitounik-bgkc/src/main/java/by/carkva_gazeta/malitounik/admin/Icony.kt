@@ -258,7 +258,7 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
                                 Icon(
                                     painter = painterResource(R.drawable.arrow_back),
                                     tint = MaterialTheme.colorScheme.onSecondary,
-                                    contentDescription = ""
+                                    contentDescription = stringResource(R.string.exit_page)
                                 )
                             })
                     }
@@ -318,7 +318,7 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
                                                 isDialodDeliteIcon = true
                                             }
                                         }
-                                    ), bitmap = myBitmap.asImageBitmap(), contentDescription = ""
+                                    ), bitmap = myBitmap.asImageBitmap(), contentDescription = null
                             )
                             Text(
                                 modifier = Modifier
@@ -437,7 +437,7 @@ fun DialogApisanneIcony(apisanneIcony: String, saveApisanne: (String) -> Unit, o
                             onDismiss()
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
@@ -446,7 +446,7 @@ fun DialogApisanneIcony(apisanneIcony: String, saveApisanne: (String) -> Unit, o
                             saveApisanne(textFieldValueStateTitle)
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.save), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.save), contentDescription = null)
                         Text(stringResource(R.string.save_sabytie), fontSize = 18.sp)
                     }
                 }

@@ -247,7 +247,7 @@ fun DialogEditBiblijteka(list: ArrayList<String>, onSave: (title: String, rubrik
                                             intent.action = Intent.ACTION_GET_CONTENT
                                             intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/jpeg", "image/png"))
                                             mActivityResultImageFile.launch(Intent.createChooser(intent, vybracFile))
-                                        }, bitmap = bitmap.asImageBitmap(), contentDescription = ""
+                                        }, bitmap = bitmap.asImageBitmap(), contentDescription = null
                                 )
                             }
                         }
@@ -291,7 +291,7 @@ fun DialogEditBiblijteka(list: ArrayList<String>, onSave: (title: String, rubrik
                                     onDismiss(list[5])
                                 }, shape = MaterialTheme.shapes.small
                             ) {
-                                Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                                Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                                 Text(stringResource(R.string.cansel), fontSize = 18.sp)
                             }
                             TextButton(
@@ -300,7 +300,7 @@ fun DialogEditBiblijteka(list: ArrayList<String>, onSave: (title: String, rubrik
                                     onSave(textFieldValueStateTitle, rubryka + 1, textFieldValueStateApisanne, pdfFileName)
                                 }, shape = MaterialTheme.shapes.small
                             ) {
-                                Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.save), contentDescription = "")
+                                Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.save), contentDescription = null)
                                 Text(stringResource(R.string.save_sabytie), fontSize = 18.sp)
                             }
                         }

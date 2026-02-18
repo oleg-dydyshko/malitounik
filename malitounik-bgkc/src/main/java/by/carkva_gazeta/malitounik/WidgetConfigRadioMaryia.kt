@@ -119,7 +119,7 @@ fun DialogWidgetConfigRadioMaryia(
                                 .size(22.dp, 22.dp),
                             painter = painterResource(if (expandedSviaty) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                             tint = PrimaryText,
-                            contentDescription = ""
+                            contentDescription = null
                         )
                     }
                     ExposedDropdownMenu(
@@ -174,7 +174,7 @@ fun DialogWidgetConfigRadioMaryia(
                         },
                         shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                         Text(stringResource(R.string.close), fontSize = 18.sp)
                     }
                 }

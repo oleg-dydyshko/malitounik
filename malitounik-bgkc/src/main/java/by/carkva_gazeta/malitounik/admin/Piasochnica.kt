@@ -1028,20 +1028,22 @@ fun Piasochnica(
                                 Icon(
                                     painter = painterResource(R.drawable.arrow_back),
                                     tint = MaterialTheme.colorScheme.onSecondary,
-                                    contentDescription = ""
+                                    contentDescription = stringResource(R.string.exit_page)
                                 )
                             })
                     }
                 },
                 actions = {
-                    IconButton(onClick = {
-                        Settings.vibrate()
-                        viewModel.htmlText = editText.text as SpannableStringBuilder
-                        viewModel.saveResult(resours, true)
-                    }) {
-                        Icon(
-                            painter = painterResource(R.drawable.save_as), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
-                        )
+                    PlainTooltip(stringResource(R.string.save_as), TooltipAnchorPosition.Below) {
+                        IconButton(onClick = {
+                            Settings.vibrate()
+                            viewModel.htmlText = editText.text as SpannableStringBuilder
+                            viewModel.saveResult(resours, true)
+                        }) {
+                            Icon(
+                                painter = painterResource(R.drawable.save_as), contentDescription = stringResource(R.string.save_as), tint = MaterialTheme.colorScheme.onSecondary
+                            )
+                        }
                     }
                     PlainTooltip(stringResource(R.string.more_items), TooltipAnchorPosition.Below) {
                         IconButton(onClick = {
@@ -1049,7 +1051,7 @@ fun Piasochnica(
                             expandedUp = true
                         }) {
                             Icon(
-                                painter = painterResource(R.drawable.more_vert), contentDescription = "", tint = MaterialTheme.colorScheme.onSecondary
+                                painter = painterResource(R.drawable.more_vert), contentDescription = stringResource(R.string.more_items), tint = MaterialTheme.colorScheme.onSecondary
                             )
                         }
                     }
@@ -1061,7 +1063,7 @@ fun Piasochnica(
                             showDropdown = !showDropdown
                         }, text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                             Icon(
-                                painter = painterResource(R.drawable.format_size), contentDescription = ""
+                                painter = painterResource(R.drawable.format_size), contentDescription = null
                             )
                         })
                     }
@@ -1131,7 +1133,7 @@ fun Piasochnica(
                         Icon(
                             modifier = Modifier.size(24.dp),
                             painter = painterResource(R.drawable.back),
-                            contentDescription = "",
+                            contentDescription = stringResource(R.string.cansel),
                             tint = MaterialTheme.colorScheme.onSecondary
                         )
                     }
@@ -1174,7 +1176,7 @@ fun Piasochnica(
                     Icon(
                         modifier = Modifier.size(24.dp),
                         painter = painterResource(R.drawable.bold_menu),
-                        contentDescription = "",
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSecondary
                     )
                 }
@@ -1216,7 +1218,7 @@ fun Piasochnica(
                     Icon(
                         modifier = Modifier.size(24.dp),
                         painter = painterResource(R.drawable.italic),
-                        contentDescription = "",
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSecondary
                     )
                 }
@@ -1258,7 +1260,7 @@ fun Piasochnica(
                     Image(
                         modifier = Modifier.size(24.dp),
                         painter = painterResource(R.drawable.red_menu),
-                        contentDescription = ""
+                        contentDescription = null
                     )
                 }
                 if (!viewModel.isHTML) {
@@ -1283,7 +1285,7 @@ fun Piasochnica(
                         Icon(
                             modifier = Modifier.size(24.dp),
                             painter = painterResource(R.drawable.br_menu),
-                            contentDescription = "",
+                            contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSecondary
                         )
                     }
@@ -1306,7 +1308,7 @@ fun Piasochnica(
                     Icon(
                         modifier = Modifier.size(24.dp),
                         painter = painterResource(R.drawable.a_menu),
-                        contentDescription = "",
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSecondary
                     )
                 }
@@ -1421,7 +1423,7 @@ fun DialogCrateURL(
                             onDismiss()
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
@@ -1431,7 +1433,7 @@ fun DialogCrateURL(
                             onDismiss()
                         }, shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = null)
                         Text(stringResource(R.string.ok), fontSize = 18.sp)
                     }
                 }

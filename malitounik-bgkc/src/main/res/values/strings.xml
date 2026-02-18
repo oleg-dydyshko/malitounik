@@ -923,5 +923,14 @@
     <string name="tts_help_title_en">АНГЕЛЬСКАЯ МОВА</string>
     <string name="find_up">Пошук працягнуты з канца</string>
     <string name="find_back">Пошук працягнуты спачатку</string>
+    <string name="open_menu">Адчыніць меню</string>
+    <string name="close_menu">Зачыніць меню</string>
+    <string name="check_item_bible">Выбраны верш</string>
+    <string name="empty_item_bible">Не выбраны верш</string>
+    <string name="play_ton">Паслухаць тон %1$d</string>
+    <string name="play_rm">Паслухаць Радыё Марыя</string>
+    <string name="pause_rm">Пауза Радыё Марыя</string>
+    <string name="stop_rm">Стоп Радыё Марыя</string>
+    <string name="save_as">Захаваць як</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

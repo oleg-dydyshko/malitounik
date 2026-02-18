@@ -395,7 +395,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                     viewModel.edit = false
                                 }, content = {
                                     Icon(
-                                        painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = ""
+                                        painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = stringResource(R.string.close)
                                     )
                                 })
                             }
@@ -412,7 +412,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                             Icon(
                                                 painter = painterResource(R.drawable.close),
                                                 tint = MaterialTheme.colorScheme.onSecondary,
-                                                contentDescription = ""
+                                                contentDescription = stringResource(R.string.close)
                                             )
                                         })
                                 }
@@ -438,7 +438,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                             Icon(
                                                 painter = painterResource(R.drawable.arrow_back),
                                                 tint = MaterialTheme.colorScheme.onSecondary,
-                                                contentDescription = ""
+                                                contentDescription = stringResource(R.string.exit_page)
                                             )
                                         })
                                 }
@@ -455,7 +455,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                         modifier = Modifier.size(24.dp),
                                         painter = painterResource(R.drawable.book_white_edit),
                                         tint = PrimaryTextBlack,
-                                        contentDescription = ""
+                                        contentDescription = stringResource(R.string.edit_admin_piarliny)
                                     )
                                 }
                             }
@@ -467,7 +467,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                         modifier = Modifier.size(24.dp),
                                         painter = painterResource(R.drawable.image_icon_file),
                                         tint = PrimaryTextBlack,
-                                        contentDescription = ""
+                                        contentDescription = stringResource(R.string.edit_admin_img_sviat)
                                     )
                                 }
                             }
@@ -498,7 +498,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                     Icon(
                                         painter = painterResource(R.drawable.save),
                                         tint = PrimaryTextBlack,
-                                        contentDescription = ""
+                                        contentDescription = stringResource(R.string.save_sabytie)
                                     )
                                 }
                             }
@@ -512,7 +512,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                             modifier = Modifier.size(24.dp),
                                             painter = painterResource(R.drawable.book_white),
                                             tint = PrimaryTextBlack,
-                                            contentDescription = ""
+                                            contentDescription = stringResource(R.string.piarliny)
                                         )
                                     }
                                 }
@@ -524,7 +524,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                 }) {
                                     Icon(
                                         painter = painterResource(R.drawable.fullscreen),
-                                        contentDescription = "",
+                                        contentDescription = stringResource(R.string.fullscreen),
                                         tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
@@ -540,7 +540,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                     }) {
                                         Icon(
                                             painter = painterResource(R.drawable.edit),
-                                            contentDescription = "",
+                                            contentDescription = stringResource(R.string.redagaktirovat),
                                             tint = MaterialTheme.colorScheme.onSecondary
                                         )
                                     }
@@ -582,7 +582,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                         Icon(
                             modifier = Modifier.size(24.dp),
                             painter = painterResource(R.drawable.bold_menu),
-                            contentDescription = "",
+                            contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSecondary
                         )
                     }
@@ -604,7 +604,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                         Icon(
                             modifier = Modifier.size(24.dp),
                             painter = painterResource(R.drawable.italic),
-                            contentDescription = "",
+                            contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSecondary
                         )
                     }
@@ -626,7 +626,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                         Image(
                             modifier = Modifier.size(24.dp),
                             painter = painterResource(R.drawable.red_menu),
-                            contentDescription = ""
+                            contentDescription = null
                         )
                     }
                     IconButton(onClick = {
@@ -644,7 +644,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                         Icon(
                             modifier = Modifier.size(24.dp),
                             painter = painterResource(R.drawable.br_menu),
-                            contentDescription = "",
+                            contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSecondary
                         )
                     }
@@ -701,7 +701,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                     offsetY += dragAmount.y * 3
                                 }
                             }
-                            .align(Alignment.CenterHorizontally), bitmap = BitmapFactory.decodeFile(fullImagePathVisable).asImageBitmap(), contentDescription = ""
+                            .align(Alignment.CenterHorizontally), bitmap = BitmapFactory.decodeFile(fullImagePathVisable).asImageBitmap(), contentDescription = null
                     )
                 }
             }
@@ -829,7 +829,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                                         context.startActivity(Intent.createChooser(sendIntent, zmiest))
                                                     }
                                                     Toast.makeText(context, copy, Toast.LENGTH_SHORT).show()
-                                                }, painter = painterResource(R.drawable.share), contentDescription = "", tint = MaterialTheme.colorScheme.secondary
+                                                }, painter = painterResource(R.drawable.share), contentDescription = stringResource(R.string.share), tint = MaterialTheme.colorScheme.secondary
                                         )
                                     }
                                     if (file.exists()) {
@@ -861,7 +861,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                                     else ""
                                                     fullImagePathVisable = file.absolutePath
                                                     imageFull = true
-                                                }, bitmap = image, contentDescription = ""
+                                                }, bitmap = image, contentDescription = null
                                         )
                                         if (fileImageOpis.exists()) {
                                             Text(
@@ -1620,7 +1620,7 @@ fun DialogPairlinyView(
                         },
                         shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                         Text(stringResource(R.string.close), fontSize = 18.sp)
                     }
                 }
@@ -1671,7 +1671,7 @@ fun DropdownMenuBoxSvityia(
                     .size(22.dp, 22.dp),
                 painter = painterResource(if (expanded) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                 tint = PrimaryText,
-                contentDescription = ""
+                contentDescription = if (expanded) stringResource(R.string.open_menu) else stringResource(R.string.close_menu)
             )
         }
         ExposedDropdownMenu(

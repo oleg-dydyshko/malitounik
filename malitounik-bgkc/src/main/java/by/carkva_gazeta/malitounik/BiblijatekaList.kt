@@ -411,7 +411,7 @@ fun BiblijatekaListItems(
                         modifier = Modifier.size(5.dp),
                         painter = painterResource(R.drawable.poiter),
                         tint = MaterialTheme.colorScheme.primary,
-                        contentDescription = ""
+                        contentDescription = null
                     )
                     Text(
                         text = if (listItem[index][0] != "") listItem[index][0]
@@ -432,7 +432,7 @@ fun BiblijatekaListItems(
                             .padding(10.dp),
                         painter = painterResource(R.drawable.share),
                         tint = MaterialTheme.colorScheme.secondary,
-                        contentDescription = ""
+                        contentDescription = stringResource(R.string.share)
                     )
                 }
                 if (listItem[index][5] != "") {
@@ -783,7 +783,7 @@ fun DialogBiblijateka(
                             },
                             shape = MaterialTheme.shapes.small
                         ) {
-                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = null)
                             Text(stringResource(R.string.download_bibliateka_file, pdfFileSize), fontSize = 18.sp)
                         }
                         TextButton(
@@ -794,7 +794,7 @@ fun DialogBiblijateka(
                             },
                             shape = MaterialTheme.shapes.small
                         ) {
-                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                            Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                             Text(stringResource(R.string.close), fontSize = 18.sp)
                         }
                     }
@@ -837,7 +837,7 @@ fun DialogNoWiFI(
                         },
                         shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                         Text(stringResource(R.string.cansel), fontSize = 18.sp)
                     }
                     TextButton(
@@ -847,7 +847,7 @@ fun DialogNoWiFI(
                         },
                         shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = "")
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = null)
                         Text(stringResource(R.string.ok), fontSize = 18.sp)
                     }
                 }
