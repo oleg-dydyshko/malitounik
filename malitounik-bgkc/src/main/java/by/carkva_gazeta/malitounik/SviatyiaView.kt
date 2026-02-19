@@ -1671,7 +1671,7 @@ fun DropdownMenuBoxSvityia(
                     .size(22.dp, 22.dp),
                 painter = painterResource(if (expanded) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                 tint = PrimaryText,
-                contentDescription = if (expanded) stringResource(R.string.open_menu) else stringResource(R.string.close_menu)
+                contentDescription = null
             )
         }
         ExposedDropdownMenu(

@@ -379,7 +379,7 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
                     Icon(
                         painter = if (collapsed) painterResource(R.drawable.keyboard_arrow_down)
                         else painterResource(R.drawable.keyboard_arrow_up),
-                        contentDescription = if (collapsed) stringResource(R.string.open_menu) else stringResource(R.string.close_menu),
+                        contentDescription = null,
                         tint = Divider,
                     )
                     Text(

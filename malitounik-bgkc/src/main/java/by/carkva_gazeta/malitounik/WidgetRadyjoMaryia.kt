@@ -153,7 +153,7 @@ fun RadyjoMaryia(context: Context) {
             Row(modifier = GlanceModifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                 Box(modifier = GlanceModifier.padding(10.dp).clickable(getRadyjoMaryiaActionCallback(RadyjoMaryiaClickActionCallback.TYPE_PROGRAM))) {
                     Image(
-                        modifier = GlanceModifier.size(24.dp), provider = ImageProvider(R.drawable.programm_rado_maria2), contentDescription = "", colorFilter = ColorFilter.tint(ColorProvider(PrimaryTextBlack, PrimaryTextBlack))
+                        modifier = GlanceModifier.size(24.dp), provider = ImageProvider(R.drawable.programm_rado_maria2), contentDescription = null, colorFilter = ColorFilter.tint(ColorProvider(PrimaryTextBlack, PrimaryTextBlack))
                     )
                 }
                 if (action == ServiceRadyjoMaryia.START) {
@@ -161,18 +161,18 @@ fun RadyjoMaryia(context: Context) {
                 } else {
                     Box(modifier = GlanceModifier.padding(10.dp).clickable(getRadyjoMaryiaActionCallback(RadyjoMaryiaClickActionCallback.TYPE_PLAY_PAUSE))) {
                         Image(
-                            modifier = GlanceModifier.size(24.dp), provider = if (isPlaying) ImageProvider(R.drawable.pause3) else ImageProvider(R.drawable.play3), contentDescription = "", colorFilter = ColorFilter.tint(ColorProvider(PrimaryTextBlack, PrimaryTextBlack))
+                            modifier = GlanceModifier.size(24.dp), provider = if (isPlaying) ImageProvider(R.drawable.pause3) else ImageProvider(R.drawable.play3), contentDescription = null, colorFilter = ColorFilter.tint(ColorProvider(PrimaryTextBlack, PrimaryTextBlack))
                         )
                     }
                 }
                 Box(modifier = GlanceModifier.padding(10.dp).clickable(getRadyjoMaryiaActionCallback(RadyjoMaryiaClickActionCallback.TYPE_STOP))) {
                     Image(
-                        modifier = GlanceModifier.size(24.dp), provider = ImageProvider(R.drawable.stop3), contentDescription = "", colorFilter = ColorFilter.tint(ColorProvider(PrimaryTextBlack, PrimaryTextBlack))
+                        modifier = GlanceModifier.size(24.dp), provider = ImageProvider(R.drawable.stop3), contentDescription = null, colorFilter = ColorFilter.tint(ColorProvider(PrimaryTextBlack, PrimaryTextBlack))
                     )
                 }
             }
         }
-        Image(modifier = GlanceModifier.size(75.dp), provider = ImageProvider(R.drawable.maria), contentDescription = "")
+        Image(modifier = GlanceModifier.size(75.dp), provider = ImageProvider(R.drawable.maria), contentDescription = null)
     }
 }
 

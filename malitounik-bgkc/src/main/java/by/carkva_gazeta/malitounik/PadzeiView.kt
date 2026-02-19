@@ -859,7 +859,7 @@ fun AddPadzeia(
                     Icon(
                         modifier = Modifier
                             .padding(start = 21.dp, end = 2.dp)
-                            .size(22.dp, 22.dp), painter = painterResource(if (expanded2) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down), tint = PrimaryText, contentDescription = if (expanded2) stringResource(R.string.open_menu) else stringResource(R.string.close_menu)
+                            .size(22.dp, 22.dp), painter = painterResource(if (expanded2) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down), tint = PrimaryText, contentDescription = null
                     )
                 }
                 ExposedDropdownMenu(
@@ -945,7 +945,7 @@ fun AddPadzeia(
                     Icon(
                         modifier = Modifier
                             .padding(start = 21.dp, end = 2.dp)
-                            .size(22.dp, 22.dp), painter = painterResource(if (expanded) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down), tint = PrimaryText, contentDescription = if (expanded) stringResource(R.string.open_menu) else stringResource(R.string.close_menu)
+                            .size(22.dp, 22.dp), painter = painterResource(if (expanded) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down), tint = PrimaryText, contentDescription = null
                     )
                 }
                 ExposedDropdownMenu(
@@ -1095,7 +1095,7 @@ fun AddPadzeia(
                     Icon(
                         modifier = Modifier
                             .padding(start = 21.dp, end = 2.dp)
-                            .size(22.dp, 22.dp), painter = painterResource(if (expanded1) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down), tint = PrimaryTextBlack, contentDescription = if (expanded1) stringResource(R.string.open_menu) else stringResource(R.string.close_menu)
+                            .size(22.dp, 22.dp), painter = painterResource(if (expanded1) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down), tint = PrimaryTextBlack, contentDescription = null
                     )
                 }
                 ExposedDropdownMenu(

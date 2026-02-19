@@ -1004,7 +1004,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                                 .size(22.dp, 22.dp),
                             painter = painterResource(if (expandedSviaty) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                             tint = PrimaryText,
-                            contentDescription = if (expandedSviaty) stringResource(R.string.open_menu) else stringResource(R.string.close_menu)
+                            contentDescription = null
                         )
                     }
                     ExposedDropdownMenu(

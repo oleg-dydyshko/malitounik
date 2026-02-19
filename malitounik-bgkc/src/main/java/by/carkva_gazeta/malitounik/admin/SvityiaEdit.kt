@@ -251,7 +251,7 @@ fun DialogEditSvityiaAndSviaty(adminViewModel: Piasochnica, onDismiss: () -> Uni
                                     onDismiss()
                                 }, shape = MaterialTheme.shapes.small
                             ) {
-                                Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = "")
+                                Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
                                 Text(stringResource(R.string.cansel), fontSize = 18.sp)
                             }
                             TextButton(
@@ -263,7 +263,7 @@ fun DialogEditSvityiaAndSviaty(adminViewModel: Piasochnica, onDismiss: () -> Uni
                                     }
                                 }, shape = MaterialTheme.shapes.small
                             ) {
-                                Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.save), contentDescription = "")
+                                Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.save), contentDescription = null)
                                 Text(stringResource(R.string.save_sabytie), fontSize = 18.sp)
                             }
                         }
@@ -405,7 +405,7 @@ fun DropdownMenuBoxTipicon(
                     .padding(start = 5.dp, end = 10.dp)
                     .size(22.dp, 22.dp),
                 painter = painterResource(menuList[textFieldMyPosition].imageResource),
-                contentDescription = ""
+                contentDescription = null
             )
             Text(
                 modifier = Modifier
@@ -421,7 +421,7 @@ fun DropdownMenuBoxTipicon(
                     .size(22.dp, 22.dp),
                 painter = painterResource(if (expanded) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                 tint = PrimaryText,
-                contentDescription = ""
+                contentDescription = null
             )
         }
         ExposedDropdownMenu(
@@ -438,7 +438,7 @@ fun DropdownMenuBoxTipicon(
                                     .padding(start = 5.dp, end = 10.dp)
                                     .size(22.dp, 22.dp),
                                 painter = painterResource(option.imageResource),
-                                contentDescription = ""
+                                contentDescription = null
                             )
                             Text(option.title, fontSize = Settings.fontInterface.sp)
                         }

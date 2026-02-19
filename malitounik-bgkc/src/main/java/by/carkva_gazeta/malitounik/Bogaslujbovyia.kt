@@ -2235,7 +2235,7 @@ fun Bogaslujbovyia(
                         ) {
                             Image(
                                 painter = painterResource(R.drawable.tts_stop),
-                                contentDescription = "",
+                                contentDescription = null,
                                 modifier = Modifier
                                     .padding(end = 10.dp)
                                     .clip(shape = RoundedCornerShape(10.dp))
@@ -2259,7 +2259,7 @@ fun Bogaslujbovyia(
                         ) {
                             Image(
                                 painter = painterResource(if (viewModel.isPaused) R.drawable.tts_play else R.drawable.tts_pause),
-                                contentDescription = "",
+                                contentDescription = null,
                                 modifier = Modifier
                                     .align(Alignment.Bottom)
                                     .clip(shape = RoundedCornerShape(10.dp))
@@ -2286,7 +2286,7 @@ fun Bogaslujbovyia(
                         ) {
                             Image(
                                 painter = painterResource(R.drawable.minus_auto_scroll),
-                                contentDescription = "",
+                                contentDescription = null,
                                 modifier = Modifier
                                     .padding(horizontal = 10.dp)
                                     .clip(shape = RoundedCornerShape(10.dp))
@@ -2316,7 +2316,7 @@ fun Bogaslujbovyia(
                         ) {
                             Image(
                                 painter = painterResource(R.drawable.plus_auto_scroll),
-                                contentDescription = "",
+                                contentDescription = null,
                                 modifier = Modifier
                                     .align(Alignment.Bottom)
                                     .clip(shape = RoundedCornerShape(10.dp))

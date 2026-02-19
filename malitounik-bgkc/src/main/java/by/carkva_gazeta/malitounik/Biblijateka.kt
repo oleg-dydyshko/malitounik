@@ -637,7 +637,7 @@ fun Biblijateka(
 private fun PdfPage(page: Bitmap) {
     AsyncImage(
         model = page,
-        contentDescription = "",
+        contentDescription = null,
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(page.width.toFloat() / page.height.toFloat())

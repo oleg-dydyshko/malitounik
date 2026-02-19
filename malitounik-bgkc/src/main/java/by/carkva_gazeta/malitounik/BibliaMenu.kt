@@ -1064,7 +1064,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                             painterResource(R.drawable.keyboard_arrow_down)
                         else
                             painterResource(R.drawable.keyboard_arrow_up),
-                        contentDescription = if (!collapsedState) stringResource(R.string.open_menu) else stringResource(R.string.close_menu),
+                        contentDescription = null,
                         tint = PrimaryText,
                     )
                 }
@@ -1428,7 +1428,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                             painterResource(R.drawable.keyboard_arrow_down)
                         else
                             painterResource(R.drawable.keyboard_arrow_up),
-                        contentDescription = if (pesnyView) stringResource(R.string.open_menu) else stringResource(R.string.close_menu),
+                        contentDescription = null,
                         tint = PrimaryText,
                     )
                 }
@@ -1536,7 +1536,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                             painterResource(R.drawable.keyboard_arrow_down)
                         else
                             painterResource(R.drawable.keyboard_arrow_up),
-                        contentDescription = if (dialogImageView) stringResource(R.string.open_menu) else stringResource(R.string.close_menu),
+                        contentDescription = null,
                         tint = PrimaryText,
                     )
                 }
@@ -1550,7 +1550,7 @@ fun BoxWithConstraintsScope.BibliaMenuList(
             ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
         ) {
             Image(
-                painter = painterResource(R.drawable.pravily_chytannia_psaltyria), contentDescription = "", modifier = Modifier
+                painter = painterResource(R.drawable.pravily_chytannia_psaltyria), contentDescription = null, modifier = Modifier
                     .padding(10.dp)
                     .fillMaxWidth(), contentScale = ContentScale.FillWidth
             )
@@ -1859,7 +1859,7 @@ fun DialogImage(
                     .verticalScroll(rememberScrollState())
             ) {
                 Image(
-                    painter = painter, contentDescription = "", Modifier
+                    painter = painter, contentDescription = null, Modifier
                         .fillMaxWidth(), contentScale = ContentScale.FillWidth
                 )
                 Row(

@@ -141,7 +141,7 @@ private fun Caliandar(context: Context) {
                     if (data[6].isNotEmpty()) {
                         if (data[5].toInt() == 1 || data[5].toInt() == 2) {
                             Row(modifier = GlanceModifier.fillMaxWidth().padding(bottom = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                                Image(provider = ImageProvider(R.drawable.znaki_krest_v_kruge), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = ColorFilter.tint(if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary)))
+                                Image(provider = ImageProvider(R.drawable.znaki_krest_v_kruge), contentDescription = null, modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = ColorFilter.tint(if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary)))
                             }
                             Text(modifier = GlanceModifier.fillMaxWidth(), text = data[6], style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp, textAlign = TextAlign.Center, fontWeight = if (data[5].toInt() == 2) FontWeight.Normal else FontWeight.Bold))
                         } else {
@@ -178,7 +178,7 @@ private fun Caliandar(context: Context) {
                                     val t1 = text.indexOf("\n")
                                     if (icon != 0) {
                                         Row(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                                            Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
+                                            Image(provider = ImageProvider(icon), contentDescription = null, modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
                                         }
                                     }
                                     Text(text = text.take(t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp, fontWeight = FontWeight.Bold))
@@ -186,7 +186,7 @@ private fun Caliandar(context: Context) {
                                 } else {
                                     if (icon != 0) {
                                         Row(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                                            Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
+                                            Image(provider = ImageProvider(icon), contentDescription = null, modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
                                         }
                                     }
                                     Text(text = AnnotatedString.fromHtml(data[4]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp, fontWeight = FontWeight.Bold))
@@ -197,7 +197,7 @@ private fun Caliandar(context: Context) {
                                     val t1 = text.indexOf("\n")
                                     if (icon != 0) {
                                         Row(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                                            Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
+                                            Image(provider = ImageProvider(icon), contentDescription = null, modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
                                         }
                                     }
                                     Text(text = text.take(t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp))
@@ -205,7 +205,7 @@ private fun Caliandar(context: Context) {
                                 } else {
                                     if (icon != 0) {
                                         Row(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                                            Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
+                                            Image(provider = ImageProvider(icon), contentDescription = null, modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
                                         }
                                     }
                                     Text(text = AnnotatedString.fromHtml(data[4]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp))
@@ -214,7 +214,7 @@ private fun Caliandar(context: Context) {
                         } else {
                             if (icon != 0) {
                                 Row(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Image(provider = ImageProvider(icon), contentDescription = "", modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
+                                    Image(provider = ImageProvider(icon), contentDescription = null, modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
                                 }
                             }
                             Text(text = AnnotatedString.fromHtml(data[4]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
@@ -230,7 +230,7 @@ private fun Caliandar(context: Context) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalAlignment = Alignment.Bottom) {
                         Row(modifier = GlanceModifier.fillMaxWidth().background(colorBackgroundButtom), horizontalAlignment = Alignment.CenterHorizontally, verticalAlignment = Alignment.CenterVertically) {
                             if (data[7].toInt() != 1) {
-                                Image(provider = ImageProvider(if (data[7].toInt() == 3) R.drawable.fishe_red_black else R.drawable.fishe), contentDescription = "", modifier = GlanceModifier.size(26.dp, 13.dp))
+                                Image(provider = ImageProvider(if (data[7].toInt() == 3) R.drawable.fishe_red_black else R.drawable.fishe), contentDescription = null, modifier = GlanceModifier.size(26.dp, 13.dp))
                             }
                             Text(modifier = GlanceModifier.padding(start = 10.dp), text = post, style = TextStyle(color = ColorProvider(colorText, colorText), fontSize = 18.sp, textAlign = TextAlign.Center))
                         }

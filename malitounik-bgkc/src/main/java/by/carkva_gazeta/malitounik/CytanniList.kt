@@ -1635,10 +1635,9 @@ fun CytanniList(
                             IconButton(
                                 enabled = false,
                                 onClick = {
-                                    Settings.vibrate()
                                 }) {
                                 Image(
-                                    modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.empty), contentDescription = ""
+                                    modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.empty), contentDescription = null
                                 )
                             }
                         }
@@ -2057,7 +2056,7 @@ fun CytanniList(
                     ) {
                         Image(
                             painter = painterResource(R.drawable.tts_stop),
-                            contentDescription = "",
+                            contentDescription = null,
                             modifier = Modifier
                                 .padding(end = 10.dp)
                                 .clip(shape = RoundedCornerShape(10.dp))
@@ -2081,7 +2080,7 @@ fun CytanniList(
                     ) {
                         Image(
                             painter = painterResource(if (viewModel.isPaused) R.drawable.tts_play else R.drawable.tts_pause),
-                            contentDescription = "",
+                            contentDescription = null,
                             modifier = Modifier
                                 .align(Alignment.Bottom)
                                 .clip(shape = RoundedCornerShape(10.dp))
@@ -2107,7 +2106,7 @@ fun CytanniList(
                         ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
                     ) {
                         Image(
-                            painter = painterResource(R.drawable.minus_auto_scroll), contentDescription = "", modifier = Modifier
+                            painter = painterResource(R.drawable.minus_auto_scroll), contentDescription = null, modifier = Modifier
                                 .padding(horizontal = 10.dp)
                                 .clip(shape = RoundedCornerShape(10.dp))
                                 .clickable {
@@ -2134,7 +2133,7 @@ fun CytanniList(
                         ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
                     ) {
                         Image(
-                            painter = painterResource(R.drawable.plus_auto_scroll), contentDescription = "", modifier = Modifier
+                            painter = painterResource(R.drawable.plus_auto_scroll), contentDescription = null, modifier = Modifier
                                 .align(Alignment.Bottom)
                                 .clip(shape = RoundedCornerShape(10.dp))
                                 .clickable {

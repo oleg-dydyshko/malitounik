@@ -237,7 +237,7 @@ private fun BoxWithConstraintsScope.ScopedContent(perevod: String, isNovyZapavet
                                 painterResource(R.drawable.keyboard_arrow_down)
                             else
                                 painterResource(R.drawable.keyboard_arrow_up),
-                            contentDescription = if (collapsed) stringResource(R.string.open_menu) else stringResource(R.string.close_menu),
+                            contentDescription = null,
                             tint = Divider,
                         )
                         Text(

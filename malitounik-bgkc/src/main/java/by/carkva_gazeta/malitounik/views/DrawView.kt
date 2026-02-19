@@ -289,7 +289,7 @@ fun DrawView(
                         .size(22.dp),
                     painter = painterResource(if (AppNavGraphState.bibleItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
-                    contentDescription = if (AppNavGraphState.bibleItem) stringResource(R.string.open_menu) else stringResource(R.string.close_menu)
+                    contentDescription = null
                 )
             }
             AnimatedVisibility(
@@ -575,7 +575,7 @@ fun DrawView(
                                 .size(22.dp),
                             painter = painterResource(if (expandedSviaty) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                             tint = PrimaryText,
-                            contentDescription = if (expandedSviaty) stringResource(R.string.open_menu) else stringResource(R.string.close_menu)
+                            contentDescription = null
                         )
                     }
                     ExposedDropdownMenu(
@@ -675,7 +675,7 @@ fun DrawView(
                         .size(22.dp),
                     painter = painterResource(if (AppNavGraphState.biblijatekaItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
-                    contentDescription = if (AppNavGraphState.biblijatekaItem) stringResource(R.string.open_menu) else stringResource(R.string.close_menu)
+                    contentDescription = null
                 )
             }
             AnimatedVisibility(
@@ -823,7 +823,7 @@ fun DrawView(
                         .size(22.dp),
                     painter = painterResource(if (AppNavGraphState.piesnyItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
-                    contentDescription = if (AppNavGraphState.piesnyItem) stringResource(R.string.open_menu) else stringResource(R.string.close_menu)
+                    contentDescription = null
                 )
             }
             AnimatedVisibility(
@@ -959,7 +959,7 @@ fun DrawView(
                         .size(22.dp),
                     painter = painterResource(if (AppNavGraphState.underItem) R.drawable.keyboard_arrow_up else R.drawable.keyboard_arrow_down),
                     tint = MaterialTheme.colorScheme.secondary,
-                    contentDescription = if (AppNavGraphState.underItem) stringResource(R.string.open_menu) else stringResource(R.string.close_menu)
+                    contentDescription = null
                 )
             }
             AnimatedVisibility(

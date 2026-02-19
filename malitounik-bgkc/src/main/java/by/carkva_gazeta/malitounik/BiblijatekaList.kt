@@ -479,7 +479,7 @@ fun BiblijatekaListItems(
                                     }
                                 ),
                             bitmap = bitmap.asImageBitmap(),
-                            contentDescription = ""
+                            contentDescription = null
                         )
                     }
                     val maxLine = remember { mutableIntStateOf(2) }

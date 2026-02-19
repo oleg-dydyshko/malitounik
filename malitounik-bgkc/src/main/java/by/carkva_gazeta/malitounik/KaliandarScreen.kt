@@ -542,7 +542,7 @@ fun SetPadzeia(title: String, apisanne: String, color: Int, raznica: Boolean, re
                     val image = if (message) painterResource(R.drawable.keyboard_arrow_up)
                     else painterResource(R.drawable.keyboard_arrow_down)
                     Image(
-                        painter = image, contentDescription = "", modifier = Modifier.size(20.dp)
+                        painter = image, contentDescription = null, modifier = Modifier.size(20.dp)
                     )
                 }
                 Text(
