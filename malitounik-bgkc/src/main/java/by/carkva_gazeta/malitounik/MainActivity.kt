@@ -1025,8 +1025,8 @@ object Settings {
         } else {
             context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         }
-        val pattern = if (isLongVibrator) longArrayOf(0, 50, 100, 50)
-        else longArrayOf(0, 50)
+        val pattern = if (isLongVibrator) longArrayOf(0, 30, 100, 30)
+        else longArrayOf(0, 30)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             vibrate.vibrate(VibrationEffect.createPredefined(if (isLongVibrator) VibrationEffect.EFFECT_DOUBLE_CLICK else VibrationEffect.EFFECT_HEAVY_CLICK))
         } else {
