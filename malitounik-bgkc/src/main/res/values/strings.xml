@@ -923,8 +923,7 @@
     <string name="tts_help_title_en">АНГЕЛЬСКАЯ МОВА</string>
     <string name="find_up">Пошук працягнуты з канца</string>
     <string name="find_back">Пошук працягнуты спачатку</string>
-    <string name="check_item_bible">Выбраны верш</string>
-    <string name="empty_item_bible">Не выбраны верш</string>
+    <string name="set_item_bible">Выбар вершу</string>
     <string name="play_ton">Паслухаць тон %1$d</string>
     <string name="play_rm">Паслухаць Радыё Марыя</string>
     <string name="pause_rm">Пауза Радыё Марыя</string>

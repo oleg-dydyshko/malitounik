@@ -5,6 +5,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -900,7 +901,6 @@ fun CytanniList(
                             IconButton(onClick = {
                                 Settings.vibrate()
                                 if (isSelectMode) {
-                                    viewModel.selectState.clear()
                                     isSelectMode = false
                                 } else isParallelVisable = false
                             }, content = {
@@ -1965,8 +1965,9 @@ fun CytanniList(
                                 }
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     if (isSelectMode) {
+                                        Log.d("Oleg", ((viewModel.isPaused || viewModel.isSpeaking) && viewModel.selectState[index]).toString())
                                         Icon(
-                                            painter = painterResource(if ((viewModel.isPaused || viewModel.isSpeaking) && viewModel.selectState[index]) R.drawable.select_check_box else R.drawable.check_box_outline_blank), contentDescription = stringResource(if ((viewModel.isPaused || viewModel.isSpeaking) && viewModel.selectState[index]) R.string.check_item_bible else R.string.empty_item_bible) , tint = MaterialTheme.colorScheme.secondary, modifier = Modifier
+                                            painter = painterResource(if (viewModel.selectState[index]) R.drawable.select_check_box else R.drawable.check_box_outline_blank), contentDescription = stringResource(R.string.set_item_bible) , tint = MaterialTheme.colorScheme.secondary, modifier = Modifier
                                                 .padding(start = 5.dp)
                                                 .clickable {
                                                     Settings.vibrate()
@@ -2464,7 +2465,7 @@ fun getBible(cytanne: String, perevod: String, biblia: Int, isTitle: Boolean = f
                                                         } else {
                                                             var help = ""
                                                             if (biblia == Settings.CHYTANNI_MARANATA && list.size == 6 && i == 3) {
-                                                                help = "<em><font color=\"#999999\">Чытаецца 28.02 ці 01.03</font></em><br><br>"
+                                                                help = "<em><font color=\"#999999\">Чытаецца 28.02 ці 1.03</font></em><br><br>"
                                                             }
                                                             "$titlePerevod<br>$help<strong>" + getNameBook(
                                                                 context, kniga, perevodNew, knigiBiblii >= 50
