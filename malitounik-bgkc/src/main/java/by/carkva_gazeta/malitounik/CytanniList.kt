@@ -2458,13 +2458,17 @@ fun getBible(cytanne: String, perevod: String, biblia: Int, isTitle: Boolean = f
                                                             )
                                                         } ${textBible[w].glava}", text = if (biblia == Settings.CHYTANNI_LITURGICHNYIA) {
                                                             val eGlavy = knigaStyxi.ifEmpty { glava.toString() }
-                                                            "$titlePerevod<strong><br>" + getNameBook(
+                                                            "$titlePerevod<br><strong>" + getNameBook(
                                                                 context, kniga, perevodNew, knigiBiblii >= 50
-                                                            ) + " $eGlavy<strong><br>"
+                                                            ) + " $eGlavy</strong><br>"
                                                         } else {
-                                                            "$titlePerevod<strong><br>" + getNameBook(
+                                                            var help = ""
+                                                            if (biblia == Settings.CHYTANNI_MARANATA && list.size == 6 && i == 3) {
+                                                                help = "<em><font color=\"#999999\">Чытаецца 28.02 ці 01.03</font></em><br><br>"
+                                                            }
+                                                            "$titlePerevod<br>$help<strong>" + getNameBook(
                                                                 context, kniga, perevodNew, knigiBiblii >= 50
-                                                            ) + " $glava<strong><br>"
+                                                            ) + " $glava</strong><br>"
                                                         }))
                                             }
                                         }
@@ -2487,8 +2491,7 @@ fun getBible(cytanne: String, perevod: String, biblia: Int, isTitle: Boolean = f
                                     id++
                                 }
                             }
-                        } catch (e: Throwable) {
-                            e.printStackTrace()
+                        } catch (_: Throwable) {
                             result.add(CytanniListData(id = id, kniga = 0, glava = 1, title = "", text = openAssetsResources(context, "biblia_error.txt")))
                             id++
                         }
@@ -2496,8 +2499,7 @@ fun getBible(cytanne: String, perevod: String, biblia: Int, isTitle: Boolean = f
                 }
             }
         }
-    } catch (e: Throwable) {
-        e.printStackTrace()
+    } catch (_: Throwable) {
         result.add(CytanniListData(id = id, kniga = 0, glava = 1, title = "", text = openAssetsResources(context, "biblia_error.txt")))
         id++
     }
