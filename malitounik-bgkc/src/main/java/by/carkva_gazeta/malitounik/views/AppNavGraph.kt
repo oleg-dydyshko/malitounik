@@ -1220,6 +1220,8 @@ fun MainConteiner(
                         PlainTooltip(stringResource(R.string.close), TooltipAnchorPosition.Below) {
                             IconButton(onClick = {
                                 Settings.vibrate()
+                                viewModel.textFieldValueState = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].title)
+                                viewModel.textFieldValueNatatkaContent = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].content)
                                 viewModel.searchText = false
                                 viewModel.searchFullText = false
                                 when {

@@ -278,19 +278,55 @@ fun MaeNatatki(
                 viewModel.fileList[viewModel.natatkaPosition].content = viewModel.textFieldValueNatatkaContent.text
             }
             val sortedNatatki = k.getInt("natatki_sort", Settings.SORT_BY_ABC)
-            if (sortedNatatki == Settings.SORT_BY_ABC) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-                    viewModel.fileList.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
-                } else {
-                    viewModel.fileList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
+            when (sortedNatatki) {
+                Settings.SORT_BY_ABC -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                        viewModel.fileList.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+                    } else {
+                        viewModel.fileList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
+                    }
                 }
-            } else {
-                viewModel.fileList.sortByDescending { it.lastModified }
+
+                Settings.SORT_BY_TIME -> {
+                    viewModel.fileList.sortByDescending { it.lastModified }
+                }
+
+                Settings.SORT_BY_CUSTOM -> {
+                    val file = File("${context.filesDir}/MaeNatatkiList.json")
+                    val gson = Gson()
+                    val type = TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
+                    val list = ArrayList<String>()
+                    list.addAll(gson.fromJson(file.readText(), type))
+                    viewModel.fileList.clear()
+                    for (i in list.indices) {
+                        val file = File(context.filesDir.toString().plus("/Malitva/" + list[i]))
+                        if (file.exists()) {
+                            val name = file.name
+                            val inputStream = FileReader(file)
+                            val reader = BufferedReader(inputStream)
+                            val res = reader.readText().split("<MEMA></MEMA>")
+                            inputStream.close()
+                            var lRTE: Long = 1
+                            var content = res[1]
+                            if (res[1].contains("<RTE></RTE>")) {
+                                val start = res[1].indexOf("<RTE></RTE>")
+                                content = res[1].substring(0, start)
+                                val end = res[1].length
+                                lRTE = res[1].substring(start + 11, end).toLong()
+                            }
+                            if (lRTE <= 1) {
+                                lRTE = file.lastModified()
+                            }
+                            val t1 = name.lastIndexOf("_")
+                            val id = name.substring(t1 + 1).toInt()
+                            viewModel.fileList.add(MaeNatatkiItem(id, lRTE, res[0], content, name))
+                        }
+                    }
+                }
             }
             viewModel.saveFileNatatki = false
             viewModel.addFileNatatki = false
             viewModel.isEditMode = false
-            viewModel.natatkaVisable = false
         })
     }
     val lazyListState = rememberLazyListState()

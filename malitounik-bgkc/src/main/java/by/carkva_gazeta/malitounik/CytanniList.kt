@@ -5,7 +5,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -1825,63 +1824,71 @@ fun CytanniList(
                             }
                         }
                     })
-                    if (isSelectAll) {
-                        isSelectAll = false
-                        if (biblia == Settings.CHYTANNI_BIBLIA) {
-                            viewModel.selectState.forEachIndexed { index, _ ->
-                                viewModel.selectState[index] = true
-                            }
-                        } else {
-                            var findTitle = ""
-                            resultPage.forEachIndexed { index, text ->
-                                if (viewModel.selectState[index]) {
-                                    findTitle = text.title
-                                    return@forEachIndexed
-                                }
-                            }
-                            resultPage.forEachIndexed { index, text ->
-                                if (findTitle == text.title) {
+                    LaunchedEffect(isSelectAll) {
+                        if (isSelectAll) {
+                            isSelectAll = false
+                            if (biblia == Settings.CHYTANNI_BIBLIA) {
+                                viewModel.selectState.forEachIndexed { index, _ ->
                                     viewModel.selectState[index] = true
                                 }
+                            } else {
+                                var findTitle = ""
+                                resultPage.forEachIndexed { index, text ->
+                                    if (viewModel.selectState[index]) {
+                                        findTitle = text.title
+                                        return@forEachIndexed
+                                    }
+                                }
+                                resultPage.forEachIndexed { index, text ->
+                                    if (findTitle == text.title) {
+                                        viewModel.selectState[index] = true
+                                    }
+                                }
                             }
                         }
                     }
-                    if (!isSelectMode) {
-                        viewModel.selectState.forEachIndexed { index, _ ->
-                            viewModel.selectState[index] = false
+                    LaunchedEffect(isSelectMode) {
+                        if (!isSelectMode) {
+                            viewModel.selectState.forEachIndexed { index, _ ->
+                                viewModel.selectState[index] = false
+                            }
                         }
                     }
-                    if (isCopyMode || isShareMode) {
-                        val sb = StringBuilder()
-                        resultPage.forEachIndexed { index, text ->
-                            if (viewModel.selectState[index]) {
-                                sb.append(
-                                    AnnotatedString.fromHtml(text.text).toString() + "\n"
-                                )
+                    val copyStyx = stringResource(R.string.copy)
+                    val abarVersh = stringResource(R.string.styx_is_emty)
+                    LaunchedEffect(isCopyMode, isShareMode) {
+                        if (isCopyMode || isShareMode) {
+                            val sb = StringBuilder()
+                            resultPage.forEachIndexed { index, text ->
+                                if (viewModel.selectState[index]) {
+                                    sb.append(
+                                        AnnotatedString.fromHtml(text.text).toString() + "\n"
+                                    )
+                                }
                             }
+                            if (sb.isNotEmpty()) {
+                                if (isCopyMode) {
+                                    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                    val clip = ClipData.newPlainText(
+                                        "", sb.toString()
+                                    )
+                                    clipboard.setPrimaryClip(clip)
+                                    Toast.makeText(context, copyStyx, Toast.LENGTH_SHORT).show()
+                                }
+                                if (isShareMode) {
+                                    val sendIntent = Intent()
+                                    sendIntent.action = Intent.ACTION_SEND
+                                    sendIntent.putExtra(Intent.EXTRA_TEXT, sb.toString())
+                                    sendIntent.type = "text/plain"
+                                    context.startActivity(Intent.createChooser(sendIntent, null))
+                                }
+                                isSelectMode = false
+                            } else {
+                                Toast.makeText(context, abarVersh, Toast.LENGTH_SHORT).show()
+                            }
+                            isCopyMode = false
+                            isShareMode = false
                         }
-                        if (sb.isNotEmpty()) {
-                            if (isCopyMode) {
-                                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                val clip = ClipData.newPlainText(
-                                    "", sb.toString()
-                                )
-                                clipboard.setPrimaryClip(clip)
-                                Toast.makeText(context, stringResource(R.string.copy), Toast.LENGTH_SHORT).show()
-                            }
-                            if (isShareMode) {
-                                val sendIntent = Intent()
-                                sendIntent.action = Intent.ACTION_SEND
-                                sendIntent.putExtra(Intent.EXTRA_TEXT, sb.toString())
-                                sendIntent.type = "text/plain"
-                                context.startActivity(Intent.createChooser(sendIntent, null))
-                            }
-                            isSelectMode = false
-                        } else {
-                            Toast.makeText(context, stringResource(R.string.styx_is_emty), Toast.LENGTH_SHORT).show()
-                        }
-                        isCopyMode = false
-                        isShareMode = false
                     }
                     LazyColumn(
                         Modifier
@@ -1965,9 +1972,8 @@ fun CytanniList(
                                 }
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     if (isSelectMode) {
-                                        Log.d("Oleg", ((viewModel.isPaused || viewModel.isSpeaking) && viewModel.selectState[index]).toString())
                                         Icon(
-                                            painter = painterResource(if (viewModel.selectState[index]) R.drawable.select_check_box else R.drawable.check_box_outline_blank), contentDescription = stringResource(R.string.set_item_bible) , tint = MaterialTheme.colorScheme.secondary, modifier = Modifier
+                                            painter = painterResource(if (viewModel.selectState[index]) R.drawable.select_check_box else R.drawable.check_box_outline_blank), contentDescription = stringResource(R.string.set_item_bible), tint = MaterialTheme.colorScheme.secondary, modifier = Modifier
                                                 .padding(start = 5.dp)
                                                 .clickable {
                                                     Settings.vibrate()
