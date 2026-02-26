@@ -1744,6 +1744,8 @@ fun CytanniList(
                 ) { page ->
                     val resultPage = viewModel.listState[page].item
                     viewModel.updatePage(biblia, page, perevod, updatePageCompleted = {
+                        viewModel.selectState.clear()
+                        viewModel.selectState.addAll(resultPage.map { false }.toMutableStateList())
                         when {
                             (biblia == Settings.CHYTANNI_VYBRANAE || biblia == Settings.CHYTANNI_MARANATA) && viewModel.oldKnigaGlava.isNotEmpty() -> {
                                 var findIndex = 0
@@ -1807,9 +1809,6 @@ fun CytanniList(
                                     viewModel.listState[page].lazyListState.scrollToItem(AppNavGraphState.getScrollValuePosition(title), AppNavGraphState.getScrollValueOffset(title))
                                 }
                             }
-                        }
-                        if (viewModel.selectState.isEmpty()) {
-                            viewModel.selectState.addAll(resultPage.map { false }.toMutableStateList())
                         }
                         if (biblia == Settings.CHYTANNI_BIBLIA && perevodRoot != Settings.PEREVODNADSAN) {
                             subTitle = resultPage[0].title.substringBeforeLast(" ")
