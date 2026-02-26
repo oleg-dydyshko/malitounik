@@ -151,7 +151,6 @@ open class CytanniListViewModel : ViewModel() {
     private lateinit var ttsManager: TTSManager
     var isSpeaking by mutableStateOf(false)
     var isPaused by mutableStateOf(false)
-    val selectState = mutableStateListOf<Boolean>()
     val listState = mutableStateListOf<CytanniListItemData>()
     var selectedIndex by mutableIntStateOf(-1)
     var knigaText by mutableStateOf("")
@@ -245,7 +244,7 @@ open class CytanniListViewModel : ViewModel() {
             val count = if (biblia == Settings.CHYTANNI_BIBLIA) bibleCount(knigaBiblii(knigaText), perevod)
             else 1
             (0 until count).forEach { _ ->
-                listState.add(CytanniListItemData(SnapshotStateList(), LazyListState()))
+                listState.add(CytanniListItemData(SnapshotStateList(), LazyListState(), SnapshotStateList()))
             }
         }
     }
@@ -1744,8 +1743,9 @@ fun CytanniList(
                 ) { page ->
                     val resultPage = viewModel.listState[page].item
                     viewModel.updatePage(biblia, page, perevod, updatePageCompleted = {
-                        viewModel.selectState.clear()
-                        viewModel.selectState.addAll(resultPage.map { false }.toMutableStateList())
+                        if (viewModel.listState[page].stateList.isEmpty()) {
+                            viewModel.listState[page].stateList.addAll(resultPage.map { false }.toMutableStateList())
+                        }
                         when {
                             (biblia == Settings.CHYTANNI_VYBRANAE || biblia == Settings.CHYTANNI_MARANATA) && viewModel.oldKnigaGlava.isNotEmpty() -> {
                                 var findIndex = 0
@@ -1827,20 +1827,20 @@ fun CytanniList(
                         if (isSelectAll) {
                             isSelectAll = false
                             if (biblia == Settings.CHYTANNI_BIBLIA) {
-                                viewModel.selectState.forEachIndexed { index, _ ->
-                                    viewModel.selectState[index] = true
+                                viewModel.listState[page].stateList.forEachIndexed { index, _ ->
+                                    viewModel.listState[page].stateList[index] = true
                                 }
                             } else {
                                 var findTitle = ""
                                 resultPage.forEachIndexed { index, text ->
-                                    if (viewModel.selectState[index]) {
+                                    if (viewModel.listState[page].stateList[index]) {
                                         findTitle = text.title
                                         return@forEachIndexed
                                     }
                                 }
                                 resultPage.forEachIndexed { index, text ->
                                     if (findTitle == text.title) {
-                                        viewModel.selectState[index] = true
+                                        viewModel.listState[page].stateList[index] = true
                                     }
                                 }
                             }
@@ -1848,8 +1848,8 @@ fun CytanniList(
                     }
                     LaunchedEffect(isSelectMode) {
                         if (!isSelectMode) {
-                            viewModel.selectState.forEachIndexed { index, _ ->
-                                viewModel.selectState[index] = false
+                            viewModel.listState[page].stateList.forEachIndexed { index, _ ->
+                                viewModel.listState[page].stateList[index] = false
                             }
                         }
                     }
@@ -1859,7 +1859,7 @@ fun CytanniList(
                         if (isCopyMode || isShareMode) {
                             val sb = StringBuilder()
                             resultPage.forEachIndexed { index, text ->
-                                if (viewModel.selectState[index]) {
+                                if (viewModel.listState[page].stateList[index]) {
                                     sb.append(
                                         AnnotatedString.fromHtml(text.text).toString() + "\n"
                                     )
@@ -1926,7 +1926,7 @@ fun CytanniList(
                                                     paralelChtenia = resultPage[index].parallel
                                                 }
                                                 if (isSelectMode) {
-                                                    viewModel.selectState[index] = !viewModel.selectState[index]
+                                                    viewModel.listState[page].stateList[index] = !viewModel.listState[page].stateList[index]
                                                 }
                                             }, onDoubleTap = {
                                                 fullscreen = !fullscreen
@@ -1972,11 +1972,11 @@ fun CytanniList(
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     if (isSelectMode) {
                                         Icon(
-                                            painter = painterResource(if (viewModel.selectState[index]) R.drawable.select_check_box else R.drawable.check_box_outline_blank), contentDescription = stringResource(R.string.set_item_bible), tint = MaterialTheme.colorScheme.secondary, modifier = Modifier
+                                            painter = painterResource(if (viewModel.listState[page].stateList[index]) R.drawable.select_check_box else R.drawable.check_box_outline_blank), contentDescription = stringResource(R.string.set_item_bible), tint = MaterialTheme.colorScheme.secondary, modifier = Modifier
                                                 .padding(start = 5.dp)
                                                 .clickable {
                                                     Settings.vibrate()
-                                                    viewModel.selectState[index] = !viewModel.selectState[index]
+                                                    viewModel.listState[page].stateList[index] = !viewModel.listState[page].stateList[index]
                                                 })
                                     }
                                     HtmlText(
@@ -2902,7 +2902,7 @@ fun getParalel(kniga: Int, glava: Int, styx: Int, isPsaltyrGreek: Boolean): Stri
     return translateToBelarus(res)
 }
 
-data class CytanniListItemData(val item: SnapshotStateList<CytanniListData>, val lazyListState: LazyListState)
+data class CytanniListItemData(val item: SnapshotStateList<CytanniListData>, val lazyListState: LazyListState, val stateList: SnapshotStateList<Boolean>)
 
 data class CytanniListData(
     val id: Int, val kniga: Int, val glava: Int, val title: String, val text: String = "", val parallel: String = "+-+", val translate: String = ""
