@@ -1167,7 +1167,7 @@ fun MainConteiner(
             }
         }
         LaunchedEffect(viewModel.textFieldValueState) {
-            if (!(viewModel.perevodBiblii == Settings.PEREVODSINOIDAL || viewModel.perevodBiblii == Settings.PEREVODNEWAMERICANBIBLE)) {
+            if (!(viewModel.perevodBiblii == Settings.PEREVODSINOIDAL || viewModel.perevodBiblii == Settings.PEREVODNEWAMERICANBIBLE || currentRoute == AllDestinations.MAE_NATATKI_MENU)) {
                 val edit = zamena(viewModel.textFieldValueState.text)
                 if (edit != viewModel.textFieldValueState.text) {
                     val selection = TextRange(edit.length)

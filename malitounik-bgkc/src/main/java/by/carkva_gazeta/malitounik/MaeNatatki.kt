@@ -177,6 +177,7 @@ fun MaeNatatki(
 ) {
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+    val lazyListState = rememberLazyListState()
     LaunchedEffect(Unit) {
         if (viewModel.fileList.isEmpty()) {
             File(context.filesDir.toString().plus("/Malitva")).walk().forEach {
@@ -251,6 +252,7 @@ fun MaeNatatki(
                 }
             }
         }
+        lazyListState.animateScrollToItem(0)
     }
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
@@ -269,14 +271,24 @@ fun MaeNatatki(
     }
     if (viewModel.saveFileNatatki) {
         write(context, viewModel.textFieldValueState.text, viewModel.textFieldValueNatatkaContent.text, if (viewModel.addFileNatatki) "" else viewModel.fileList[viewModel.natatkaPosition].fileName, viewModel.addFileNatatki, onFileEdit = { title, fileName, time ->
+            val gson = Gson()
+            val type = TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
             if (viewModel.addFileNatatki) {
                 val t1 = fileName.lastIndexOf("_")
                 val id = fileName.substring(t1 + 1).toInt()
-                viewModel.fileList.add(MaeNatatkiItem(id, time, title, viewModel.textFieldValueNatatkaContent.text, fileName))
-            } else {
-                viewModel.fileList[viewModel.natatkaPosition].title = title
-                viewModel.fileList[viewModel.natatkaPosition].content = viewModel.textFieldValueNatatkaContent.text
+                viewModel.fileList.add(0,MaeNatatkiItem(id, time, title, viewModel.textFieldValueNatatkaContent.text, fileName))
+                val saveList = ArrayList<String>()
+                for (i in viewModel.fileList.indices) {
+                    saveList.add(viewModel.fileList[i].fileName)
+                }
+                val localFile = File("${context.filesDir}/MaeNatatkiList.json")
+                localFile.writer().use {
+                    it.write(gson.toJson(saveList, type))
+                }
+                viewModel.natatkaPosition = 0
             }
+            viewModel.fileList[viewModel.natatkaPosition].title = title
+            viewModel.fileList[viewModel.natatkaPosition].content = viewModel.textFieldValueNatatkaContent.text
             val sortedNatatki = k.getInt("natatki_sort", Settings.SORT_BY_ABC)
             when (sortedNatatki) {
                 Settings.SORT_BY_ABC -> {
@@ -293,8 +305,6 @@ fun MaeNatatki(
 
                 Settings.SORT_BY_CUSTOM -> {
                     val file = File("${context.filesDir}/MaeNatatkiList.json")
-                    val gson = Gson()
-                    val type = TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
                     val list = ArrayList<String>()
                     list.addAll(gson.fromJson(file.readText(), type))
                     viewModel.fileList.clear()
@@ -329,7 +339,6 @@ fun MaeNatatki(
             viewModel.isEditMode = false
         })
     }
-    val lazyListState = rememberLazyListState()
     val dragDropState = rememberDragDropState(lazyListState) { fromIndex, toIndex ->
         if (fromIndex < viewModel.fileList.size && toIndex < viewModel.fileList.size) {
             viewModel.fileList.apply { add(toIndex, removeAt(fromIndex)) }
