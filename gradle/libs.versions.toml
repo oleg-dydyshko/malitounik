@@ -21,9 +21,9 @@ commonsText = "1.15.0"
 coil = "3.4.0"
 material3 = "1.4.0"
 navigation = "2.9.7"
-compose-bom = "2026.02.00"
+compose-bom = "2026.02.01"
 activity-compose = "1.12.4"
-firebase-bom = "34.9.0"
+firebase-bom = "34.10.0"
 glanceAppwidget = "1.1.1"
 
 [libraries]

@@ -929,5 +929,7 @@
     <string name="pause_rm">Пауза Радыё Марыя</string>
     <string name="stop_rm">Стоп Радыё Марыя</string>
     <string name="save_as">Захаваць як</string>
+    <string name="is_save">ЗАХАВАЦЬ?</string>
+    <string name="is_save_check">Захаваць змены?</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

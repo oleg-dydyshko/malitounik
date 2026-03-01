@@ -3,7 +3,6 @@
 package by.carkva_gazeta.malitounik
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.compose.animation.core.Spring
@@ -72,7 +71,6 @@ import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.views.AppNavGraphState
-import by.carkva_gazeta.malitounik.views.AppNavigationActions
 import by.carkva_gazeta.malitounik.views.PlainTooltip
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -84,10 +82,8 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MalitvyListAll(
-    navController: NavHostController, title: String, menuItem: Int, subTitle: String = ""
-) {
+    navController: NavHostController, title: String, menuItem: Int, subTitle: String = "", navigateToMalitvyListAll: (String, Int, String) -> Unit, navigateToBogaslujbovyia: (String, String) -> Unit, viewModel: BogaslujbovyiaViewModel) {
     val context = LocalContext.current
-    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val view = LocalView.current
     SideEffect {
         val window = (view.context as Activity).window
@@ -98,9 +94,6 @@ fun MalitvyListAll(
             isAppearanceLightStatusBars = false
             isAppearanceLightNavigationBars = !Settings.dzenNoch
         }
-    }
-    val navigationActions = remember(navController) {
-        AppNavigationActions(navController, k)
     }
     val coroutineScope = rememberCoroutineScope()
     val maxLine = remember { mutableIntStateOf(1) }
@@ -195,18 +188,17 @@ fun MalitvyListAll(
     var searchText by rememberSaveable { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
-    var textFieldValueState by remember { mutableStateOf("") }
     var backPressHandled by remember { mutableStateOf(false) }
     val collapsedState = remember(listPrynagodnyia) { listPrynagodnyia.map { AppNavGraphState.setItemsValue(it.title, true) }.toMutableStateList() }
-    LaunchedEffect(textFieldValueState) {
-        var edit = textFieldValueState
+    LaunchedEffect(viewModel.searchPrynagodnyiaMalitvy) {
+        var edit = viewModel.searchPrynagodnyiaMalitvy
         edit = edit.replace("и", "і")
         edit = edit.replace("щ", "ў")
         edit = edit.replace("И", "І")
         edit = edit.replace("Щ", "Ў")
         edit = edit.replace("ъ", "'")
-        if (edit != textFieldValueState) {
-            textFieldValueState = edit
+        if (edit != viewModel.searchPrynagodnyiaMalitvy) {
+            viewModel.searchPrynagodnyiaMalitvy = edit
         }
     }
     Scaffold(
@@ -248,8 +240,8 @@ fun MalitvyListAll(
                                         focusRequester.requestFocus()
                                         textFieldLoaded = true
                                     }
-                                }, value = textFieldValueState, onValueChange = { newText ->
-                                textFieldValueState = newText
+                                }, value = viewModel.searchPrynagodnyiaMalitvy, onValueChange = { newText ->
+                                viewModel.searchPrynagodnyiaMalitvy = newText
                             }, singleLine = true, leadingIcon = {
                                 Icon(
                                     painter = painterResource(R.drawable.search), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = stringResource(R.string.poshuk)
@@ -257,10 +249,10 @@ fun MalitvyListAll(
                             }, trailingIcon = {
                                 IconButton(onClick = {
                                     Settings.vibrate()
-                                    textFieldValueState = ""
+                                    viewModel.searchPrynagodnyiaMalitvy = ""
                                 }) {
                                     Icon(
-                                        painter = if (textFieldValueState.isNotEmpty()) painterResource(R.drawable.close) else painterResource(R.drawable.empty), contentDescription = if (textFieldValueState.isNotEmpty()) stringResource(R.string.close) else null, tint = MaterialTheme.colorScheme.onSecondary
+                                        painter = if (viewModel.searchPrynagodnyiaMalitvy.isNotEmpty()) painterResource(R.drawable.close) else painterResource(R.drawable.empty), contentDescription = if (viewModel.searchPrynagodnyiaMalitvy.isNotEmpty()) stringResource(R.string.close) else null, tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
                             }, colors = TextFieldDefaults.colors(
@@ -325,11 +317,11 @@ fun MalitvyListAll(
                 listAll.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
             }
         }
-        LaunchedEffect(textFieldValueState, searchText) {
+        LaunchedEffect(viewModel.searchPrynagodnyiaMalitvy, searchText) {
             filteredItems.clear()
             if (searchText) {
-                if (textFieldValueState.isNotEmpty()) {
-                    val filterList = listAll.filter { it.title.contains(textFieldValueState, ignoreCase = true) }
+                if (viewModel.searchPrynagodnyiaMalitvy.isNotEmpty()) {
+                    val filterList = listAll.filter { it.title.contains(viewModel.searchPrynagodnyiaMalitvy, ignoreCase = true) }
                     filteredItems.addAll(filterList)
                 } else {
                     filteredItems.addAll(listAll)
@@ -337,7 +329,9 @@ fun MalitvyListAll(
             }
         }
         if (searchText) {
-            PynagodnyiaList(filteredItems, navigationActions, innerPadding)
+            PynagodnyiaList(filteredItems, innerPadding, navigateToBogaslujbovyia = { title, resource ->
+                navigateToBogaslujbovyia(title, resource)
+            })
         } else {
             LazyColumn(
                 modifier = Modifier
@@ -452,7 +446,7 @@ fun MalitvyListAll(
                                         .padding(start = 30.dp)
                                         .clickable {
                                             Settings.vibrate()
-                                            navigationActions.navigateToBogaslujbovyia(
+                                            navigateToBogaslujbovyia(
                                                 subList[index].title, subList[index].resource
                                             )
                                         }, verticalAlignment = Alignment.CenterVertically
@@ -484,37 +478,37 @@ fun MalitvyListAll(
                                         Settings.MENU_TRYEDZ_POSNAIA -> {
                                             when (list[index].resource) {
                                                 "1" -> {
-                                                    navigationActions.navigateToMalitvyListAll(
+                                                    navigateToMalitvyListAll(
                                                         title, Settings.MENU_TRYEDZ_POSNAIA_1, list[index].title
                                                     )
                                                 }
 
                                                 "2" -> {
-                                                    navigationActions.navigateToMalitvyListAll(
+                                                    navigateToMalitvyListAll(
                                                         title, Settings.MENU_TRYEDZ_POSNAIA_2, list[index].title
                                                     )
                                                 }
 
                                                 "3" -> {
-                                                    navigationActions.navigateToMalitvyListAll(
+                                                    navigateToMalitvyListAll(
                                                         title, Settings.MENU_TRYEDZ_POSNAIA_3, list[index].title
                                                     )
                                                 }
 
                                                 "4" -> {
-                                                    navigationActions.navigateToMalitvyListAll(
+                                                    navigateToMalitvyListAll(
                                                         title, Settings.MENU_TRYEDZ_POSNAIA_4, list[index].title
                                                     )
                                                 }
 
                                                 "5" -> {
-                                                    navigationActions.navigateToMalitvyListAll(
+                                                    navigateToMalitvyListAll(
                                                         title, Settings.MENU_TRYEDZ_POSNAIA_5, list[index].title
                                                     )
                                                 }
 
                                                 "6" -> {
-                                                    navigationActions.navigateToMalitvyListAll(
+                                                    navigateToMalitvyListAll(
                                                         title, Settings.MENU_TRYEDZ_POSNAIA_6, list[index].title
                                                     )
                                                 }
@@ -524,25 +518,25 @@ fun MalitvyListAll(
                                         Settings.MENU_TRYEDZ -> {
                                             when (list[index].resource) {
                                                 "10" -> {
-                                                    navigationActions.navigateToMalitvyListAll(
+                                                    navigateToMalitvyListAll(
                                                         title, Settings.MENU_TRYEDZ_POSNAIA, list[index].title
                                                     )
                                                 }
 
                                                 "11" -> {
-                                                    navigationActions.navigateToMalitvyListAll(
+                                                    navigateToMalitvyListAll(
                                                         title, Settings.MENU_TRYEDZ_VIALIKAGA_TYDNIA, list[index].title
                                                     )
                                                 }
 
                                                 "12" -> {
-                                                    navigationActions.navigateToMalitvyListAll(
+                                                    navigateToMalitvyListAll(
                                                         title, Settings.MENU_TRYEDZ_SVETLAGA_TYDNIA, list[index].title
                                                     )
                                                 }
 
                                                 "13" -> {
-                                                    navigationActions.navigateToMalitvyListAll(
+                                                    navigateToMalitvyListAll(
                                                         title, Settings.MENU_TRYEDZ_KVETNAIA, list[index].title
                                                     )
                                                 }
@@ -550,13 +544,13 @@ fun MalitvyListAll(
                                         }
 
                                         Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH -> {
-                                            navigationActions.navigateToMalitvyListAll(
+                                            navigateToMalitvyListAll(
                                                 title, Settings.MENU_MINEIA_MESIACHNAIA, list[index].title
                                             )
                                         }
 
                                         else -> {
-                                            navigationActions.navigateToBogaslujbovyia(
+                                            navigateToBogaslujbovyia(
                                                 list[index].title, list[index].resource
                                             )
                                         }
@@ -604,8 +598,8 @@ fun MalitvyListAll(
                                 .padding(start = 10.dp)
                                 .clickable {
                                     Settings.vibrate()
-                                    navigationActions.navigateToMalitvyListAll(
-                                        "ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ", Settings.MENU_TRAPARY_KANDAKI_SHTODZENNYIA
+                                    navigateToMalitvyListAll(
+                                        "ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ", Settings.MENU_TRAPARY_KANDAKI_SHTODZENNYIA, ""
                                     )
                                 }, verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -630,7 +624,7 @@ fun MalitvyListAll(
 }
 
 @Composable
-fun PynagodnyiaList(prynagodnyaList: SnapshotStateList<BogaslujbovyiaListData>, navigationActions: AppNavigationActions, innerPadding: PaddingValues) {
+fun PynagodnyiaList(prynagodnyaList: SnapshotStateList<BogaslujbovyiaListData>, innerPadding: PaddingValues, navigateToBogaslujbovyia: (String, String) -> Unit) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
@@ -658,7 +652,7 @@ fun PynagodnyiaList(prynagodnyaList: SnapshotStateList<BogaslujbovyiaListData>, 
                         .padding(start = 10.dp)
                         .clickable {
                             Settings.vibrate()
-                            navigationActions.navigateToBogaslujbovyia(
+                            navigateToBogaslujbovyia(
                                 prynagodnyaList[index].title, prynagodnyaList[index].resource
                             )
                         }, verticalAlignment = Alignment.CenterVertically

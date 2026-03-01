@@ -129,10 +129,12 @@ import by.carkva_gazeta.malitounik.Biblijateka
 import by.carkva_gazeta.malitounik.BiblijtekaList
 import by.carkva_gazeta.malitounik.Bogaslujbovyia
 import by.carkva_gazeta.malitounik.BogaslujbovyiaMenu
+import by.carkva_gazeta.malitounik.BogaslujbovyiaViewModel
 import by.carkva_gazeta.malitounik.CytanniList
 import by.carkva_gazeta.malitounik.Cytaty
 import by.carkva_gazeta.malitounik.DialogDelite
 import by.carkva_gazeta.malitounik.DialogHelpCustomSort
+import by.carkva_gazeta.malitounik.DialogIsSaveNanatka
 import by.carkva_gazeta.malitounik.KaliandarKnigaView
 import by.carkva_gazeta.malitounik.KaliandarScreen
 import by.carkva_gazeta.malitounik.KaliandarScreenInfo
@@ -336,7 +338,7 @@ fun openAssetsResources(context: Context, fileName: String): String {
 }
 
 @Composable
-fun AppNavGraph(navController: NavHostController = rememberNavController(), viewModel: SearchBibleViewModel = viewModel(), sviatyiaViewModel: SviatyiaViewModel = viewModel(), adminViewModel: Piasochnica = viewModel()) {
+fun AppNavGraph(navController: NavHostController = rememberNavController(), bogaslujbovyiaViewModel: BogaslujbovyiaViewModel = viewModel(), viewModel: SearchBibleViewModel = viewModel(), sviatyiaViewModel: SviatyiaViewModel = viewModel(), adminViewModel: Piasochnica = viewModel()) {
     val drawerScrollStete = rememberScrollState()
     val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var start by remember { mutableStateOf(k.getString("navigate", AllDestinations.KALIANDAR) ?: AllDestinations.KALIANDAR) }
@@ -569,7 +571,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
         }
 
         composable(AllDestinations.UNDER_PADRYXTOUKA) {
-            Bogaslujbovyia(navController, stringResource(R.string.spovedz), "padryxtouka_da_spovedzi.html", adminViewModel = adminViewModel)
+            Bogaslujbovyia(navController = navController, title = stringResource(R.string.spovedz), resurs = "padryxtouka_da_spovedzi.html", viewModel = bogaslujbovyiaViewModel, adminViewModel = adminViewModel)
         }
 
         composable(AllDestinations.SETTINGS_VIEW) {
@@ -591,15 +593,15 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
         }
 
         composable(AllDestinations.UNDER_PAMIATKA) {
-            Bogaslujbovyia(navController, stringResource(R.string.pamiatka), "pamiatka.html", adminViewModel = adminViewModel)
+            Bogaslujbovyia(navController, stringResource(R.string.pamiatka), "pamiatka.html", viewModel = bogaslujbovyiaViewModel, adminViewModel = adminViewModel)
         }
 
         composable(AllDestinations.PRANAS) {
-            Bogaslujbovyia(navController, stringResource(R.string.pra_nas), "onas.html", adminViewModel = adminViewModel)
+            Bogaslujbovyia(navController, stringResource(R.string.pra_nas), "onas.html", viewModel = bogaslujbovyiaViewModel, adminViewModel = adminViewModel)
         }
 
         composable(AllDestinations.HELP) {
-            Bogaslujbovyia(navController, stringResource(R.string.help), "help.html", adminViewModel = adminViewModel)
+            Bogaslujbovyia(navController, stringResource(R.string.help), "help.html", viewModel = bogaslujbovyiaViewModel, adminViewModel = adminViewModel)
         }
 
         composable(AllDestinations.UNDER_SVAITY_MUNU) {
@@ -637,7 +639,11 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
             val title = stackEntry.arguments?.getString("title") ?: ""
             val subTitle = stackEntry.arguments?.getString("subTitle") ?: ""
             val menuItemt = stackEntry.arguments?.getInt("menuItem") ?: Settings.MENU_BOGASLUJBOVYIA
-            MalitvyListAll(navController, title, menuItemt, subTitle)
+            MalitvyListAll(navController, title, menuItemt, subTitle, navigateToMalitvyListAll = { title, menuItem, subTitle ->
+                navigationActions.navigateToMalitvyListAll(title, menuItem, subTitle)
+            }, navigateToBogaslujbovyia = { title, resource ->
+                navigationActions.navigateToBogaslujbovyia(title, resource)
+            }, viewModel = bogaslujbovyiaViewModel)
         }
 
         composable(
@@ -685,7 +691,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), view
                             )
                         }
                     }
-                }, adminViewModel = adminViewModel
+                }, viewModel = bogaslujbovyiaViewModel, adminViewModel = adminViewModel
             )
         }
 
@@ -1175,6 +1181,31 @@ fun MainConteiner(
                 }
             }
         }
+        var dialogIsSaveNanatka by remember { mutableStateOf(false) }
+        if (dialogIsSaveNanatka) {
+            DialogIsSaveNanatka(onConfirmation = {
+                viewModel.saveFileNatatki = true
+                if (viewModel.addFileNatatki) {
+                    viewModel.addFileNatatki = false
+                    viewModel.isEditMode = false
+                    viewModel.natatkaVisable = false
+                } else {
+                    viewModel.isEditMode = false
+                }
+                dialogIsSaveNanatka = false
+            }) {
+                if (viewModel.addFileNatatki) {
+                    viewModel.addFileNatatki = false
+                    viewModel.isEditMode = false
+                    viewModel.natatkaVisable = false
+                } else {
+                    viewModel.isEditMode = false
+                }
+                viewModel.textFieldValueState = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].title)
+                viewModel.textFieldValueNatatkaContent = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].content)
+                dialogIsSaveNanatka = false
+            }
+        }
         Scaffold(topBar = {
             TopAppBar(
                 title = {
@@ -1220,21 +1251,37 @@ fun MainConteiner(
                         PlainTooltip(stringResource(R.string.close), TooltipAnchorPosition.Below) {
                             IconButton(onClick = {
                                 Settings.vibrate()
-                                viewModel.textFieldValueState = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].title)
-                                viewModel.textFieldValueNatatkaContent = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].content)
-                                viewModel.searchText = false
-                                viewModel.searchFullText = false
                                 when {
                                     viewModel.addFileNatatki -> {
-                                        viewModel.addFileNatatki = false
-                                        viewModel.isEditMode = false
-                                        viewModel.natatkaVisable = false
+                                        if (viewModel.textFieldValueState.text != viewModel.fileList[viewModel.natatkaPosition].title || viewModel.textFieldValueNatatkaContent.text != viewModel.fileList[viewModel.natatkaPosition].content) {
+                                            dialogIsSaveNanatka = true
+                                        } else {
+                                            viewModel.addFileNatatki = false
+                                            viewModel.isEditMode = false
+                                            viewModel.natatkaVisable = false
+                                            viewModel.textFieldValueState = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].title)
+                                            viewModel.textFieldValueNatatkaContent = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].content)
+                                        }
                                     }
 
-                                    viewModel.isEditMode -> viewModel.isEditMode = false
+                                    viewModel.isEditMode -> {
+                                        if (viewModel.textFieldValueState.text != viewModel.fileList[viewModel.natatkaPosition].title || viewModel.textFieldValueNatatkaContent.text != viewModel.fileList[viewModel.natatkaPosition].content) {
+                                            dialogIsSaveNanatka = true
+                                        } else {
+                                            viewModel.isEditMode = false
+                                            viewModel.textFieldValueState = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].title)
+                                            viewModel.textFieldValueNatatkaContent = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].content)
+                                        }
+                                    }
 
-                                    else -> viewModel.natatkaVisable = false
+                                    else -> {
+                                        viewModel.natatkaVisable = false
+                                        viewModel.textFieldValueState = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].title)
+                                        viewModel.textFieldValueNatatkaContent = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].content)
+                                    }
                                 }
+                                viewModel.searchText = false
+                                viewModel.searchFullText = false
                             }, content = {
                                 Icon(
                                     painter = painterResource(R.drawable.close), tint = textTollBarColor, contentDescription = stringResource(R.string.close)

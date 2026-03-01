@@ -203,6 +203,22 @@ fun MaeNatatki(
                     viewModel.fileList.add(MaeNatatkiItem(id, lRTE, res[0], content, name))
                 }
             }
+            val file = File("${context.filesDir}/MaeNatatkiList.json")
+            if (file.exists()) {
+                val gson = Gson()
+                val type = TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
+                val list = ArrayList<String>()
+                list.addAll(gson.fromJson(file.readText(), type))
+                if (list.size != viewModel.fileList.size) {
+                    val saveList = ArrayList<String>()
+                    for (i in viewModel.fileList.indices) {
+                        saveList.add(viewModel.fileList[i].fileName)
+                    }
+                    file.writer().use {
+                        it.write(gson.toJson(saveList, type))
+                    }
+                }
+            }
         }
     }
     LaunchedEffect(sort) {
@@ -221,90 +237,9 @@ fun MaeNatatki(
 
             Settings.SORT_BY_CUSTOM -> {
                 val file = File("${context.filesDir}/MaeNatatkiList.json")
-                val gson = Gson()
-                val type = TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
-                val list = ArrayList<String>()
-                list.addAll(gson.fromJson(file.readText(), type))
-                viewModel.fileList.clear()
-                for (i in list.indices) {
-                    val file = File(context.filesDir.toString().plus("/Malitva/" + list[i]))
-                    if (file.exists()) {
-                        val name = file.name
-                        val inputStream = FileReader(file)
-                        val reader = BufferedReader(inputStream)
-                        val res = reader.readText().split("<MEMA></MEMA>")
-                        inputStream.close()
-                        var lRTE: Long = 1
-                        var content = res[1]
-                        if (res[1].contains("<RTE></RTE>")) {
-                            val start = res[1].indexOf("<RTE></RTE>")
-                            content = res[1].substring(0, start)
-                            val end = res[1].length
-                            lRTE = res[1].substring(start + 11, end).toLong()
-                        }
-                        if (lRTE <= 1) {
-                            lRTE = file.lastModified()
-                        }
-                        val t1 = name.lastIndexOf("_")
-                        val id = name.substring(t1 + 1).toInt()
-                        viewModel.fileList.add(MaeNatatkiItem(id, lRTE, res[0], content, name))
-                    }
-                }
-            }
-        }
-        lazyListState.animateScrollToItem(0)
-    }
-    val focusRequester = remember { FocusRequester() }
-    var textFieldLoaded by remember { mutableStateOf(false) }
-    if (viewModel.isDeliteNatatka) {
-        DialogDelite(
-            stringResource(R.string.vybranoe_biblia_delite, viewModel.fileList[viewModel.natatkaPosition].title), onConfirmation = {
-                val filedel = File(
-                    context.filesDir.toString().plus("/Malitva/").plus(viewModel.fileList[viewModel.natatkaPosition].fileName)
-                )
-                if (filedel.exists()) filedel.delete()
-                viewModel.fileList.removeAt(viewModel.natatkaPosition)
-                viewModel.isEditMode = false
-                viewModel.natatkaVisable = false
-                viewModel.isDeliteNatatka = false
-            }) { viewModel.isDeliteNatatka = false }
-    }
-    if (viewModel.saveFileNatatki) {
-        write(context, viewModel.textFieldValueState.text, viewModel.textFieldValueNatatkaContent.text, if (viewModel.addFileNatatki) "" else viewModel.fileList[viewModel.natatkaPosition].fileName, viewModel.addFileNatatki, onFileEdit = { title, fileName, time ->
-            val gson = Gson()
-            val type = TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
-            if (viewModel.addFileNatatki) {
-                val t1 = fileName.lastIndexOf("_")
-                val id = fileName.substring(t1 + 1).toInt()
-                viewModel.fileList.add(0,MaeNatatkiItem(id, time, title, viewModel.textFieldValueNatatkaContent.text, fileName))
-                val saveList = ArrayList<String>()
-                for (i in viewModel.fileList.indices) {
-                    saveList.add(viewModel.fileList[i].fileName)
-                }
-                val localFile = File("${context.filesDir}/MaeNatatkiList.json")
-                localFile.writer().use {
-                    it.write(gson.toJson(saveList, type))
-                }
-                viewModel.natatkaPosition = 0
-            }
-            viewModel.fileList[viewModel.natatkaPosition].title = title
-            viewModel.fileList[viewModel.natatkaPosition].content = viewModel.textFieldValueNatatkaContent.text
-            val sortedNatatki = k.getInt("natatki_sort", Settings.SORT_BY_ABC)
-            when (sortedNatatki) {
-                Settings.SORT_BY_ABC -> {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-                        viewModel.fileList.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
-                    } else {
-                        viewModel.fileList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
-                    }
-                }
-
-                Settings.SORT_BY_TIME -> {
-                    viewModel.fileList.sortByDescending { it.lastModified }
-                }
-
-                Settings.SORT_BY_CUSTOM -> {
-                    val file = File("${context.filesDir}/MaeNatatkiList.json")
+                if (file.exists()) {
+                    val gson = Gson()
+                    val type = TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
                     val list = ArrayList<String>()
                     list.addAll(gson.fromJson(file.readText(), type))
                     viewModel.fileList.clear()
@@ -330,6 +265,105 @@ fun MaeNatatki(
                             val t1 = name.lastIndexOf("_")
                             val id = name.substring(t1 + 1).toInt()
                             viewModel.fileList.add(MaeNatatkiItem(id, lRTE, res[0], content, name))
+                        }
+                    }
+                } else {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                        viewModel.fileList.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+                    } else {
+                        viewModel.fileList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
+                    }
+                }
+            }
+        }
+        lazyListState.animateScrollToItem(0)
+    }
+    val focusRequester = remember { FocusRequester() }
+    var textFieldLoaded by remember { mutableStateOf(false) }
+    if (viewModel.isDeliteNatatka) {
+        DialogDelite(
+            stringResource(R.string.vybranoe_biblia_delite, viewModel.fileList[viewModel.natatkaPosition].title), onConfirmation = {
+                val filedel = File(
+                    context.filesDir.toString().plus("/Malitva/").plus(viewModel.fileList[viewModel.natatkaPosition].fileName)
+                )
+                if (filedel.exists()) filedel.delete()
+                viewModel.fileList.removeAt(viewModel.natatkaPosition)
+                viewModel.isEditMode = false
+                viewModel.natatkaVisable = false
+                viewModel.isDeliteNatatka = false
+            }) { viewModel.isDeliteNatatka = false }
+    }
+    if (viewModel.saveFileNatatki) {
+        write(context, viewModel.textFieldValueState.text, viewModel.textFieldValueNatatkaContent.text, if (viewModel.addFileNatatki) "" else viewModel.fileList[viewModel.natatkaPosition].fileName, viewModel.addFileNatatki, onFileEdit = { title, fileName, time ->
+            val sortedNatatki = k.getInt("natatki_sort", Settings.SORT_BY_ABC)
+            val gson = Gson()
+            val type = TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
+            if (viewModel.addFileNatatki) {
+                val t1 = fileName.lastIndexOf("_")
+                val id = fileName.substring(t1 + 1).toInt()
+                viewModel.fileList.add(0, MaeNatatkiItem(id, time, title, viewModel.textFieldValueNatatkaContent.text, fileName))
+                val localFile = File("${context.filesDir}/MaeNatatkiList.json")
+                if (localFile.exists() || sortedNatatki == Settings.SORT_BY_CUSTOM) {
+                    val saveList = ArrayList<String>()
+                    for (i in viewModel.fileList.indices) {
+                        saveList.add(viewModel.fileList[i].fileName)
+                    }
+                    localFile.writer().use {
+                        it.write(gson.toJson(saveList, type))
+                    }
+                }
+                viewModel.natatkaPosition = 0
+            }
+            viewModel.fileList[viewModel.natatkaPosition].title = title
+            viewModel.fileList[viewModel.natatkaPosition].content = viewModel.textFieldValueNatatkaContent.text
+            when (sortedNatatki) {
+                Settings.SORT_BY_ABC -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                        viewModel.fileList.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+                    } else {
+                        viewModel.fileList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
+                    }
+                }
+
+                Settings.SORT_BY_TIME -> {
+                    viewModel.fileList.sortByDescending { it.lastModified }
+                }
+
+                Settings.SORT_BY_CUSTOM -> {
+                    val fileMaeNatatkiList = File("${context.filesDir}/MaeNatatkiList.json")
+                    if (fileMaeNatatkiList.exists()) {
+                        val list = ArrayList<String>()
+                        list.addAll(gson.fromJson(fileMaeNatatkiList.readText(), type))
+                        viewModel.fileList.clear()
+                        for (i in list.indices) {
+                            val file = File(context.filesDir.toString().plus("/Malitva/" + list[i]))
+                            if (file.exists()) {
+                                val name = file.name
+                                val inputStream = FileReader(file)
+                                val reader = BufferedReader(inputStream)
+                                val res = reader.readText().split("<MEMA></MEMA>")
+                                inputStream.close()
+                                var lRTE: Long = 1
+                                var content = res[1]
+                                if (res[1].contains("<RTE></RTE>")) {
+                                    val start = res[1].indexOf("<RTE></RTE>")
+                                    content = res[1].substring(0, start)
+                                    val end = res[1].length
+                                    lRTE = res[1].substring(start + 11, end).toLong()
+                                }
+                                if (lRTE <= 1) {
+                                    lRTE = file.lastModified()
+                                }
+                                val t1 = name.lastIndexOf("_")
+                                val id = name.substring(t1 + 1).toInt()
+                                viewModel.fileList.add(MaeNatatkiItem(id, lRTE, res[0], content, name))
+                            }
+                        }
+                    } else {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                            viewModel.fileList.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+                        } else {
+                            viewModel.fileList.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
                         }
                     }
                 }
@@ -489,6 +523,53 @@ fun LazyItemScope.DraggableItem(
         Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)
     }
     Row(modifier = modifier.then(draggingModifier), verticalAlignment = Alignment.CenterVertically) { content(dragging) }
+}
+
+@Composable
+fun DialogIsSaveNanatka(onConfirmation: () -> Unit, onDismiss: () -> Unit) {
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+                Text(
+                    text = stringResource(R.string.is_save).uppercase(), modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.onTertiary)
+                        .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
+                )
+                Text(text = stringResource(R.string.is_save_check), modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    TextButton(
+                        onClick = {
+                            Settings.vibrate()
+                            onDismiss()
+                        }, shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.close), contentDescription = null)
+                        Text(stringResource(R.string.sabytie_no), fontSize = 18.sp)
+                    }
+                    TextButton(
+                        onClick = {
+                            Settings.vibrate()
+                            onConfirmation()
+                        }, shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(modifier = Modifier.padding(end = 5.dp), painter = painterResource(R.drawable.check), contentDescription = null)
+                        Text(stringResource(R.string.sabytie_yes), fontSize = 18.sp)
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable

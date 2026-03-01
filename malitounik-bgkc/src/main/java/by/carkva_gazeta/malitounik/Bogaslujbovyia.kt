@@ -203,6 +203,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
     private var findTTSPosition = 0
     private val gson = Gson()
     private val type = TypeToken.getParameterized(ArrayList::class.java, VybranaeDataAll::class.java).type
+    var searchPrynagodnyiaMalitvy by mutableStateOf("")
 
     fun search(textLayout: TextLayoutResult?) {
         if (searshString.text.trim().length >= 3) {
@@ -872,7 +873,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
 @Composable
 fun Bogaslujbovyia(
     navController: NavHostController, title: String, resurs: String,
-    navigateTo: (String, skipUtran: Boolean) -> Unit = { _, _ -> }, viewModel: BogaslujbovyiaViewModel = viewModel(), adminViewModel: Piasochnica
+    navigateTo: (String, skipUtran: Boolean) -> Unit = { _, _ -> }, viewModel: BogaslujbovyiaViewModel, adminViewModel: Piasochnica
 ) {
     val resursEncode = URLDecoder.decode(resurs, "UTF8")
     val context = LocalContext.current
