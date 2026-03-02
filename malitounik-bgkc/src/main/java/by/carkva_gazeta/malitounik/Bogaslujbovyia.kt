@@ -139,7 +139,6 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import by.carkva_gazeta.malitounik.admin.PaisochnicaFileList
 import by.carkva_gazeta.malitounik.admin.Piasochnica
@@ -282,11 +281,9 @@ class BogaslujbovyiaViewModel : ViewModel() {
     }
 
     fun initVybranoe(context: Context, resurs: String) {
-        if (htmlText.isEmpty()) {
-            val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-            autoScrollSpeed = k.getInt("autoscrollSpid", 60)
-            htmlText = openAssetsResources(context, resurs)
-        }
+        val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+        autoScrollSpeed = k.getInt("autoscrollSpid", 60)
+        htmlText = openAssetsResources(context, resurs)
         val file = File("${context.filesDir}/vybranoe_all.json")
         if (file.exists() && vybranoeList.isEmpty()) {
             vybranoeList.addAll(gson.fromJson(file.readText(), type))
@@ -892,7 +889,6 @@ fun Bogaslujbovyia(
     var textFieldLoaded by remember { mutableStateOf(false) }
     var adminResourceEditPosition by remember { mutableIntStateOf(0) }
     val scrollStateDop = rememberScrollState()
-    viewModel.initVybranoe(context, resursEncode)
     var isBottomBar by remember { mutableStateOf(k.getBoolean("bottomBar", false)) }
     var backPressHandled by remember { mutableStateOf(false) }
     var iskniga by rememberSaveable { mutableStateOf(false) }
@@ -929,6 +925,7 @@ fun Bogaslujbovyia(
         }
     }
     LaunchedEffect(Unit) {
+        viewModel.initVybranoe(context, resursEncode)
         viewModel.initTTS(
             context, textLayout, isLiturgia && isLiturgia(data), navigateTo = { navigate ->
                 navigateTo(navigate, false)

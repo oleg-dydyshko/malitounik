@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,12 +56,18 @@ fun KaliandarKnigaView(
     BackHandler(true) {
         onDismiss()
     }
-    if (viewModel.dialogKnigaView) {
+    var dialogKniga by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        if (viewModel.dialogKnigaView) dialogKniga = true
+    }
+    if (viewModel.dialogKnigaView && dialogKniga) {
         DialogKniga(
             viewModel.slujva, viewModel.slujbaList,
             navigateToBogaslujbovyia = { title, resourse ->
+                dialogKniga = false
                 navigateToBogaslujbovyia(title, resourse)
             }) {
+            dialogKniga = false
             viewModel.dialogKnigaView = false
         }
     }
@@ -115,6 +122,7 @@ fun KaliandarKnigaView(
                                     viewModel.slujbaList.addAll(listSlujbaViach)
                                     viewModel.slujva = SlugbovyiaTextu.VIACZERNIA
                                     viewModel.dialogKnigaView = true
+                                    dialogKniga = true
                                 }
                             }
                             .padding(vertical = 10.dp)
@@ -144,6 +152,7 @@ fun KaliandarKnigaView(
                                     viewModel.slujbaList.addAll(listSlujbaPavia)
                                     viewModel.slujva = SlugbovyiaTextu.PAVIACHERNICA
                                     viewModel.dialogKnigaView = true
+                                    dialogKniga = true
                                 }
                             }
                             .padding(vertical = 10.dp)
@@ -171,6 +180,7 @@ fun KaliandarKnigaView(
                                     viewModel.slujbaList.addAll(listSlujbaPaunoch)
                                     viewModel.slujva = SlugbovyiaTextu.PAUNOCHNICA
                                     viewModel.dialogKnigaView = true
+                                    dialogKniga = true
                                 }
                             }
                             .padding(vertical = 10.dp)
@@ -203,6 +213,7 @@ fun KaliandarKnigaView(
                                     viewModel.slujbaList.addAll(listSlujbaJutran)
                                     viewModel.slujva = SlugbovyiaTextu.JUTRAN
                                     viewModel.dialogKnigaView = true
+                                    dialogKniga = true
                                 }
                             }
                             .padding(vertical = 10.dp)
@@ -230,6 +241,7 @@ fun KaliandarKnigaView(
                                     viewModel.slujbaList.addAll(listSlujbaVilHadz)
                                     viewModel.slujva = SlugbovyiaTextu.VIALHADZINY
                                     viewModel.dialogKnigaView = true
+                                    dialogKniga = true
                                 }
                             }
                             .padding(vertical = 10.dp)
@@ -258,6 +270,7 @@ fun KaliandarKnigaView(
                                     viewModel.slujbaList.addAll(listSlujbaLitur)
                                     viewModel.slujva = SlugbovyiaTextu.LITURHIJA
                                     viewModel.dialogKnigaView = true
+                                    dialogKniga = true
                                 }
                             }
                             .padding(vertical = 10.dp)
