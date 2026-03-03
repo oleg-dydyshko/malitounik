@@ -1275,9 +1275,11 @@ fun MainConteiner(
                                     }
 
                                     else -> {
-                                        viewModel.natatkaVisable = false
-                                        viewModel.textFieldValueState = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].title)
-                                        viewModel.textFieldValueNatatkaContent = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].content)
+                                        if (viewModel.natatkaVisable) {
+                                            viewModel.natatkaVisable = false
+                                            viewModel.textFieldValueState = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].title)
+                                            viewModel.textFieldValueNatatkaContent = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].content)
+                                        }
                                     }
                                 }
                                 viewModel.searchText = false
