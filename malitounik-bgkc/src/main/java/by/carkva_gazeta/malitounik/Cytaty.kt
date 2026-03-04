@@ -63,7 +63,7 @@ fun Cytaty(navController: NavHostController) {
     val context = LocalContext.current
     val view = LocalView.current
     val inputStream = openAssetsResources(context, "citata.txt")
-    val listState = remember { inputStream.split("\n") }
+    val listState = remember { inputStream.split("\n").filter { it.isNotEmpty() } }
     val lazyListState = rememberLazyListState()
     SideEffect {
         val window = (view.context as Activity).window
@@ -131,8 +131,8 @@ fun Cytaty(navController: NavHostController) {
                                 fontFamily = FontFamily(Font(R.font.andantinoscript)), fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic, color = if (Settings.dzenNoch) PrimaryBlack else Primary, fontSize = (Settings.fontInterface + 4).sp
                             ), 0, 1
                         )
-                        addStyle(SpanStyle(fontFamily = FontFamily(Font(R.font.comici))), 1, this.length)
                         if (t1 != -1) {
+                            addStyle(SpanStyle(fontFamily = FontFamily(Font(R.font.comici))), 1, this.length)
                             addStyle(ParagraphStyle(textAlign = TextAlign.Right), t1, this.length)
                         }
                     }.toAnnotatedString()
