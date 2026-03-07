@@ -244,7 +244,7 @@ open class CytanniListViewModel : ViewModel() {
             val count = if (biblia == Settings.CHYTANNI_BIBLIA) bibleCount(knigaBiblii(knigaText), perevod)
             else 1
             (0 until count).forEach { _ ->
-                listState.add(CytanniListItemData(SnapshotStateList(), LazyListState(), SnapshotStateList()))
+                listState.add(CytanniListItemData(SnapshotStateList(), LazyListState(), SnapshotStateList(), 0, 0))
             }
         }
     }
@@ -1665,7 +1665,10 @@ fun CytanniList(
                 }
                 LaunchedEffect(pagerState) {
                     snapshotFlow { pagerState.currentPage }.collect { page ->
+                        viewModel.listState[viewModel.selectedIndex].lazyListIndex = viewModel.listState[viewModel.selectedIndex].lazyListState.firstVisibleItemIndex
+                        viewModel.listState[viewModel.selectedIndex].lazyListIndexOffset = viewModel.listState[viewModel.selectedIndex].lazyListState.firstVisibleItemScrollOffset
                         viewModel.selectedIndex = page
+                        viewModel.listState[page].lazyListState.scrollToItem(viewModel.listState[page].lazyListIndex, viewModel.listState[page].lazyListIndexOffset)
                         if (perevodRoot == Settings.PEREVODNADSAN) {
                             var kafizma = 1
                             if (page + 1 in 9..16) kafizma = 2
@@ -2902,7 +2905,7 @@ fun getParalel(kniga: Int, glava: Int, styx: Int, isPsaltyrGreek: Boolean): Stri
     return translateToBelarus(res)
 }
 
-data class CytanniListItemData(val item: SnapshotStateList<CytanniListData>, val lazyListState: LazyListState, val stateList: SnapshotStateList<Boolean>)
+data class CytanniListItemData(val item: SnapshotStateList<CytanniListData>, val lazyListState: LazyListState, val stateList: SnapshotStateList<Boolean>, var lazyListIndex: Int, var lazyListIndexOffset: Int)
 
 data class CytanniListData(
     val id: Int, val kniga: Int, val glava: Int, val title: String, val text: String = "", val parallel: String = "+-+", val translate: String = ""
