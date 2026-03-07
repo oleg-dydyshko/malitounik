@@ -1490,6 +1490,11 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
+                85, "Дабравешчаньне Найсьвяцейшай Багародзіцы", "bogashlugbovya/mm_25_03_dabravieszczannie_jutran.html", JUTRAN
+            )
+        )
+        datMinALL.add(
+            SlugbovyiaTextuData(
                 105, "Між сьвятымі айца нашага Марціна Вызнаўцы, папы Рымскага", "bogashlugbovya/mm_14_04_marcina_papy_rymskaha_viaczernia.html", VIACZERNIA
             )
         )
