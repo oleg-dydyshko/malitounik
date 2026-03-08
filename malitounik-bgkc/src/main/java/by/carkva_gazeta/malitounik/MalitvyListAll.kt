@@ -1025,6 +1025,16 @@ fun getTrebnik(): ArrayList<BogaslujbovyiaListData> {
             "Малітоўны чын сьвятарскіх адведзінаў парафіянаў", "bogashlugbovya/malitouny_czyn_sviatarskich_adviedzinau_parafijanau.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЭБНІК"
         )
     )
+    list.add(
+        BogaslujbovyiaListData(
+            "Служба на ўсякую патрэбу", "bogashlugbovya/sluzba_na_usiakuju_patrebu.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЭБНІК"
+        )
+    )
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+        list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
+    } else {
+        list.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it.title })
+    }
     return list
 }
 

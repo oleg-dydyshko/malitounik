@@ -653,7 +653,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), boga
             val context = LocalContext.current
             val resurs = stackEntry.arguments?.getString("resurs") ?: "bogashlugbovya_error.html"
             val error = stringResource(R.string.error_ch)
-            val data = findCaliandarToDay()
+            val data = findCaliandarToDay(false)
             val titleCh = stringResource(R.string.czytanne3, data[1].toInt(), LocalResources.current.getStringArray(R.array.meciac_smoll)[2])
             Bogaslujbovyia(
                 navController, title, resurs, navigateTo = { navigate, skipUtran ->
