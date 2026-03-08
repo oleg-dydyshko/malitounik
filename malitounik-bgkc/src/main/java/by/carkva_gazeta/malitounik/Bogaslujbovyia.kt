@@ -285,7 +285,8 @@ class BogaslujbovyiaViewModel : ViewModel() {
         autoScrollSpeed = k.getInt("autoscrollSpid", 60)
         htmlText = openAssetsResources(context, resurs)
         val file = File("${context.filesDir}/vybranoe_all.json")
-        if (file.exists() && vybranoeList.isEmpty()) {
+        if (file.exists()) {
+            vybranoeList.clear()
             vybranoeList.addAll(gson.fromJson(file.readText(), type))
             if (vybranoeList.isNotEmpty()) {
                 for (i in 0 until vybranoeList.size) {

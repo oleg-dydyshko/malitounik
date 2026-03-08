@@ -723,7 +723,7 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
         piesnyAll.addAll(piesnyKaliadyList)
         piesnyAll.addAll(piesnyTaizeList)
     }
-    LaunchedEffect(viewModel.searchText) {
+    LaunchedEffect(viewModel.textFieldValueState.text, viewModel.searchText) {
         if (viewModel.searchText) {
             filteredItems.clear()
             val filter = piesnyAll.filter {

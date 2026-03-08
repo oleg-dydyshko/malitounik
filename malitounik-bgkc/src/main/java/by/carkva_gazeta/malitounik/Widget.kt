@@ -239,7 +239,7 @@ private fun Caliandar(context: Context) {
                 if (data[20] != "0" && data[0].toInt() == Calendar.SUNDAY) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalAlignment = Alignment.Bottom) {
                         Row(modifier = GlanceModifier.fillMaxWidth().background(Primary), horizontalAlignment = Alignment.CenterHorizontally, verticalAlignment = Alignment.CenterVertically) {
-                            Text(modifier = GlanceModifier.padding(start = 10.dp), text = "Тон ${data[20]}", style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 18.sp, textAlign = TextAlign.Center))
+                            Text(text = "Тон ${data[20]}", style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 18.sp, textAlign = TextAlign.Center))
                         }
                     }
                 }
