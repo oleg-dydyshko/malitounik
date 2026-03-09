@@ -281,19 +281,22 @@ class BogaslujbovyiaViewModel : ViewModel() {
     }
 
     fun initVybranoe(context: Context, resurs: String) {
+        isVybranoe = false
         val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
         autoScrollSpeed = k.getInt("autoscrollSpid", 60)
         htmlText = openAssetsResources(context, resurs)
         val file = File("${context.filesDir}/vybranoe_all.json")
-        if (file.exists()) {
-            vybranoeList.clear()
+        if (file.exists() && vybranoeList.isEmpty()) {
             vybranoeList.addAll(gson.fromJson(file.readText(), type))
-            if (vybranoeList.isNotEmpty()) {
-                for (i in 0 until vybranoeList.size) {
-                    if (resurs == vybranoeList[i].resource) {
-                        isVybranoe = true
-                        break
-                    }
+            if (vybranoeList.isEmpty()) {
+                file.delete()
+            }
+        }
+        if (vybranoeList.isNotEmpty()) {
+            for (i in 0 until vybranoeList.size) {
+                if (resurs == vybranoeList[i].resource) {
+                    isVybranoe = true
+                    break
                 }
             }
         }
