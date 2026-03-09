@@ -706,7 +706,7 @@ fun CytanniList(
     if (viewModel.listState[viewModel.selectedIndex].item.isNotEmpty() && viewModel.bibleTime) {
         viewModel.bibleTime = false
         LaunchedEffect(Unit) {
-            viewModel.listState[viewModel.selectedIndex].lazyListState.scrollToItem(k.getInt("bible_time_${viewModel.perevodName}_stix", 0))
+            viewModel.listState[viewModel.selectedIndex].lazyListState.scrollToItem(k.getInt("bible_time_${viewModel.perevodName}_stix", 0), k.getInt("bible_time_${viewModel.perevodName}_offset", 0))
         }
     }
     var isSelectMode by rememberSaveable { mutableStateOf(false) }
@@ -736,6 +736,7 @@ fun CytanniList(
                         putInt(
                             "bible_time_${viewModel.perevodName}_stix", viewModel.listState[viewModel.selectedIndex].lazyListState.firstVisibleItemIndex
                         )
+                        putInt("bible_time_${viewModel.perevodName}_offset", viewModel.listState[viewModel.selectedIndex].lazyListState.firstVisibleItemScrollOffset)
                     }
                 }
                 backPressHandled = true
@@ -929,6 +930,7 @@ fun CytanniList(
                                                     putInt(
                                                         "bible_time_${viewModel.perevodName}_stix", viewModel.listState[viewModel.selectedIndex].lazyListState.firstVisibleItemIndex
                                                     )
+                                                    putInt("bible_time_${viewModel.perevodName}_offset", viewModel.listState[viewModel.selectedIndex].lazyListState.firstVisibleItemScrollOffset)
                                                 }
                                             }
                                             if (!k.getBoolean("power", false)) actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
