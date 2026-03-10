@@ -53,6 +53,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -114,6 +115,7 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
         }
     }
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
     val iconList = remember { mutableStateListOf<DataImages>() }
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var fontSize by remember { mutableFloatStateOf(k.getFloat("font_biblia", 22F)) }
@@ -121,8 +123,8 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
     var position by remember { mutableIntStateOf(0) }
     var isDialodApisanne by rememberSaveable { mutableStateOf(false) }
     var isDialodDeliteIcon by rememberSaveable { mutableStateOf(false) }
+    var isDialodDeliteIconConform by rememberSaveable { mutableStateOf(false) }
     var isDialodDeliteApisanne by rememberSaveable { mutableStateOf(false) }
-    var fileName by rememberSaveable { mutableStateOf("") }
     val mActivityResultFile = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == RESULT_OK) {
             val imageUri = it.data?.data
@@ -142,15 +144,15 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
             }
         }
     }
-    if (isDialodDeliteIcon) {
-        DialogDelite(title = stringResource(R.string.del_icon_apis), onConfirmation = {
+    LaunchedEffect(isDialodDeliteIconConform) {
+        if (isDialodDeliteIconConform) {
             if (Settings.isNetworkAvailable(context)) {
-                CoroutineScope(Dispatchers.Main).launch {
+                coroutineScope.launch {
                     isProgressVisable = true
                     try {
-                        val t1 = fileName.lastIndexOf(".")
-                        val fileNameT = fileName.take(t1) + ".txt"
                         val file = iconList[position].file
+                        val t1 = file.name.lastIndexOf(".")
+                        val fileNameT = file.name.take(t1) + ".txt"
                         Malitounik.referens.child("/chytanne/icons/" + file.name).delete().await()
                         Malitounik.referens.child("/chytanne/iconsApisanne/$fileNameT").delete().await()
                         loadFilesMetaData(context)
@@ -162,9 +164,15 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
                     } catch (_: Throwable) {
                     }
                     isProgressVisable = false
+                    isDialodDeliteIconConform = false
                 }
-                isDialodDeliteIcon = false
             }
+        }
+    }
+    if (isDialodDeliteIcon) {
+        DialogDelite(title = stringResource(R.string.del_icon_apis), onConfirmation = {
+            isDialodDeliteIconConform = true
+            isDialodDeliteIcon = false
         }) {
             isDialodDeliteIcon = false
         }
@@ -172,9 +180,10 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
     if (isDialodDeliteApisanne) {
         DialogDelite(title = stringResource(R.string.del_apis), onConfirmation = {
             if (Settings.isNetworkAvailable(context)) {
-                CoroutineScope(Dispatchers.Main).launch {
+                coroutineScope.launch {
                     isProgressVisable = true
                     try {
+                        val fileName = iconList[position].file.name
                         val t1 = fileName.lastIndexOf(".")
                         val fileNameT = fileName.take(t1) + ".txt"
                         Malitounik.referens.child("/chytanne/iconsApisanne/$fileNameT").delete().await()
@@ -184,8 +193,8 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
                     } catch (_: Throwable) {
                     }
                     isProgressVisable = false
+                    isDialodDeliteApisanne = false
                 }
-                isDialodDeliteApisanne = false
             }
         }) {
             isDialodDeliteApisanne = false
@@ -195,11 +204,12 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
         val noInternet = stringResource(R.string.no_internet)
         DialogApisanneIcony(iconList[position].iconApisanne, saveApisanne = { iconApisanne ->
             if (Settings.isNetworkAvailable(context)) {
-                CoroutineScope(Dispatchers.Main).launch {
+                coroutineScope.launch {
                     isProgressVisable = true
                     try {
                         val dir = File("${context.filesDir}/iconsApisanne")
                         if (!dir.exists()) dir.mkdir()
+                        val fileName = iconList[position].file.name
                         val t1 = fileName.lastIndexOf(".")
                         val fileNameT = fileName.take(t1) + ".txt"
                         val localFile = File("${context.filesDir}/iconsApisanne/$fileNameT")
@@ -335,14 +345,12 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
                                         onClick = {
                                             Settings.vibrate()
                                             position = newPosition
-                                            fileName = iconList[newPosition].file.name
                                             isDialodApisanne = true
                                         },
                                         onLongClick = {
                                             Settings.vibrate(true)
                                             if (iconList[newPosition].iconApisanne.isNotEmpty()) {
                                                 position = newPosition
-                                                fileName = iconList[newPosition].file.name
                                                 isDialodDeliteApisanne = true
                                             }
                                         }
@@ -600,12 +608,14 @@ fun fileUpload(context: Context, position: Int, bitmap: Bitmap?, isSviatyia: Boo
                     out.close()
                 }
             }
+            var isSuccess = false
             bitmap?.let {
                 Malitounik.referens.child("/chytanne/icons/${pref}_${day}_${mun}_${position + 1}.jpg").putFile(Uri.fromFile(localFile)).addOnSuccessListener {
-                    result(localFile)
+                    isSuccess = true
                 }.await()
             }
             loadFilesMetaData(context)
+            if (isSuccess) result(localFile)
             isLoad(false)
         }
     } else {

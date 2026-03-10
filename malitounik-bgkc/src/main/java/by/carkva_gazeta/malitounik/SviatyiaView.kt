@@ -108,6 +108,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -843,17 +844,27 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                         val image = BitmapFactory.decodeFile(sviatyiaList[index].image).asImageBitmap()
                                         var imW = image.width.toFloat()
                                         var imH = image.height.toFloat()
+                                        var imgWSize = imW.dp
+                                        var imgHSize = imH.dp
                                         val imageScale: Float = imW / imH
+                                        if (imW > imH) {
+                                            imgWSize = Dp.Unspecified
+                                            imgHSize = Dp.Unspecified
+                                        } else {
                                         if (imW > 150F) {
                                             imW = 150F
                                             imH = 150F / imageScale
+                                            imgWSize = imW.dp
+                                            imgHSize = imH.dp
                                         }
+                                            }
                                         val t3 = file.name.lastIndexOf(".")
                                         val fileNameT = file.name.substring(0, t3) + ".txt"
                                         val fileImageOpis = File("${context.filesDir}/iconsApisanne/$fileNameT")
                                         Image(
                                             modifier = Modifier
-                                                .size(imW.dp, imH.dp)
+                                                .padding(horizontal = 10.dp)
+                                                .size(imgWSize, imgHSize)
                                                 .align(Alignment.CenterHorizontally)
                                                 .clickable {
                                                     Settings.vibrate()
@@ -1449,6 +1460,7 @@ suspend fun getIcons(
                 val sizeBytes = metadata.sizeBytes
                 pathReference.getFile(fileIcon).addOnFailureListener {
                     error = true
+                    if (fileIcon.exists()) fileIcon.delete()
                 }.await()
                 if (sizeBytes != fileIcon.length()) {
                     if (fileIcon.exists()) fileIcon.delete()
