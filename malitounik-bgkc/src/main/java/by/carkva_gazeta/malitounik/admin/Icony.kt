@@ -308,6 +308,12 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         val vybracFile = stringResource(R.string.vybrac_file)
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 10.dp, end = 10.dp, top = 10.dp),
+                            text = iconList[newPosition].title, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary, textAlign = TextAlign.Center
+                        )
                         if (myBitmap != null) {
                             Image(
                                 modifier = Modifier
@@ -330,12 +336,6 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
                                             }
                                         }
                                     ), bitmap = myBitmap.asImageBitmap(), contentDescription = null
-                            )
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 10.dp),
-                                text = iconList[newPosition].title, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary, textAlign = TextAlign.Center
                             )
                             Text(
                                 text = iconList[newPosition].iconApisanne.ifEmpty { stringResource(R.string.niama_apisannia) },
@@ -535,7 +535,9 @@ suspend fun getIcons(context: Context, viewModel: SviatyiaViewModel, resultList:
             }
         }
         for (i in if (type < 0) 1..sviatyiaList.size else 1..1) {
-            if (!itPos.contains(i.toString())) images.add(DataImages(getSviatyia(context, i - 1), 0, File(""), i.toLong(), ""))
+            if (!itPos.contains(i.toString())) {
+                images.add(DataImages(getSviatyia(context, i - 1), 0, File(""), i.toLong(), ""))
+            }
         }
         images.sortBy { it.position }
         resultList(images)
