@@ -88,6 +88,7 @@ import by.carkva_gazeta.malitounik.Malitounik
 import by.carkva_gazeta.malitounik.R
 import by.carkva_gazeta.malitounik.Settings
 import by.carkva_gazeta.malitounik.SviatyiaViewModel
+import by.carkva_gazeta.malitounik.loadOpisanieSviatyia
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
 import by.carkva_gazeta.malitounik.views.PlainTooltip
 import com.google.gson.Gson
@@ -492,6 +493,8 @@ suspend fun getIcons(context: Context, viewModel: SviatyiaViewModel, resultList:
         var day = viewModel.svaity[viewModel.sviatyPosotion][0].toInt()
         var mun = viewModel.svaity[viewModel.sviatyPosotion][1].toInt()
         val type = viewModel.svaity[viewModel.sviatyPosotion][2].toInt()
+        val data = Settings.data[Settings.caliandarPosition]
+        val sviatyiaList = loadOpisanieSviatyia(context, data[0].toInt(), data[2].toInt() + 1, data[1].toInt())
         var fileName = "v_${day}_${mun}_"
         if (type == -2) fileName = "s_${day}_${mun}_"
         if (type == -1) {
@@ -531,7 +534,7 @@ suspend fun getIcons(context: Context, viewModel: SviatyiaViewModel, resultList:
                 itPos.append(e)
             }
         }
-        for (i in if (type < 0) 1..4 else 1..1) {
+        for (i in if (type < 0) 1..sviatyiaList.size else 1..1) {
             if (!itPos.contains(i.toString())) images.add(DataImages(getSviatyia(context, i - 1), 0, File(""), i.toLong(), ""))
         }
         images.sortBy { it.position }
