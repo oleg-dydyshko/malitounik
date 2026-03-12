@@ -503,15 +503,16 @@ suspend fun getIcons(context: Context, viewModel: SviatyiaViewModel, resultList:
             fileName = "s_${day}_${mun}_"
         }
         list.items.forEach {
-            if (it.name.contains(fileName)) {
-                val fileIcon = File("${context.filesDir}/icons/" + it.name)
+            val fileNameRef = it.name
+            if (fileNameRef.contains(fileName)) {
+                val fileIcon = File("${context.filesDir}/icons/" + fileNameRef)
                 it.getFile(fileIcon).addOnFailureListener {
                     Toast.makeText(context, context.getString(R.string.error), Toast.LENGTH_SHORT).show()
                 }.await()
                 var iconApisanne = ""
                 try {
-                    val t1 = it.name.lastIndexOf(".")
-                    val fileNameT = it.name.substring(0, t1) + ".txt"
+                    val t1 = fileNameRef.lastIndexOf(".")
+                    val fileNameT = fileNameRef.substring(0, t1) + ".txt"
                     val file = File("${context.filesDir}/iconsApisanne/$fileNameT")
                     Malitounik.referens.child("/chytanne/iconsApisanne/$fileNameT").getFile(file).await()
                     iconApisanne = file.readText()
@@ -519,7 +520,7 @@ suspend fun getIcons(context: Context, viewModel: SviatyiaViewModel, resultList:
                 }
                 var e = 1
                 val s1 = fileName.length
-                val s3 = it.name.substring(s1 + 1, s1 + 2)
+                val s3 = fileNameRef.substring(s1, s1 + 1)
                 if (s3.isDigitsOnly()) e = s3.toInt()
                 var title = ""
                 if (type != -1) {
