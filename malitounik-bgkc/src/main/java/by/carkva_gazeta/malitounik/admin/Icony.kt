@@ -100,6 +100,8 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
+import java.text.Collator
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -154,14 +156,14 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
                         val file = iconList[position].file
                         val t1 = file.name.lastIndexOf(".")
                         val fileNameT = file.name.take(t1) + ".txt"
-                        Malitounik.referens.child("/chytanne/icons/" + file.name).delete().await()
-                        Malitounik.referens.child("/chytanne/iconsApisanne/$fileNameT").delete().await()
-                        loadFilesMetaData(context)
+                        loadFilesMetaData(context, file.name, true)
                         val imageFile = File("${context.filesDir}/icons/" + file.name)
                         if (imageFile.exists()) imageFile.delete()
                         val localFile = File("${context.filesDir}/iconsApisanne/$fileNameT")
                         if (localFile.exists()) localFile.delete()
                         iconList[position] = DataImages(iconList[position].title, 0, File(""), iconList[position].position, "")
+                        Malitounik.referens.child("/chytanne/icons/" + file.name).delete().await()
+                        Malitounik.referens.child("/chytanne/iconsApisanne/$fileNameT").delete().await()
                     } catch (_: Throwable) {
                     }
                     isProgressVisable = false
@@ -620,7 +622,7 @@ fun fileUpload(context: Context, position: Int, bitmap: Bitmap?, isSviatyia: Boo
                     isSuccess = true
                 }.await()
             }
-            loadFilesMetaData(context)
+            loadFilesMetaData(context, "${pref}_${day}_${mun}_${position + 1}.jpg", false)
             if (isSuccess) result(localFile)
             isLoad(false)
         }
@@ -629,14 +631,48 @@ fun fileUpload(context: Context, position: Int, bitmap: Bitmap?, isSviatyia: Boo
     }
 }
 
-suspend fun loadFilesMetaData(context: Context) {
-    val sb = StringBuilder()
-    val list = Malitounik.referens.child("/chytanne/icons").list(1000).await()
-    list.items.forEach {
-        val meta = it.metadata.await()
-        sb.append(it.name).append("<-->").append(meta.sizeBytes).append("<-->").append(meta.updatedTimeMillis).append("\n")
-    }
+@Suppress("DEPRECATION")
+suspend fun loadFilesMetaData(context: Context, fileName: String, isDelite: Boolean, count: Int = 0) {
+    val list = ArrayList<String>()
     val fileIcon = File("${context.filesDir}/iconsMataData.txt")
+    var isError = false
+    Malitounik.referens.child("/chytanne/iconsMataData.txt").getFile(fileIcon).addOnFailureListener {
+        isError = true
+    }.await()
+    if (isError && count < 3) {
+        loadFilesMetaData(context, fileName, isDelite, count + 1)
+        return
+    }
+    var isAddFile = true
+    val listFile = fileIcon.readText().split("\n").filter { it.isNotEmpty() }
+    listFile.forEach {
+        val t1 = it.indexOf("<-->")
+        val name = it.take(t1)
+        if (isDelite) {
+            if (fileName != name) list.add("$it\n")
+        } else {
+            if (fileName == name) {
+                isAddFile = false
+                val meta = Malitounik.referens.child("/chytanne/icons/$fileName").metadata.await()
+                list.add("$fileName<-->${meta.sizeBytes}<-->${meta.updatedTimeMillis}\n")
+            } else {
+                list.add("$it\n")
+            }
+        }
+    }
+    if (isAddFile && !isDelite) {
+        val meta = Malitounik.referens.child("/chytanne/icons/$fileName").metadata.await()
+        list.add("$fileName<-->${meta.sizeBytes}<-->${meta.updatedTimeMillis}\n")
+    }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+        list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it })
+    } else {
+        list.sortWith(compareBy(Collator.getInstance(Locale("be", "BE"))) { it })
+    }
+    val sb = StringBuilder()
+    list.forEach {
+        sb.append(it)
+    }
     fileIcon.writer().use {
         it.write(sb.toString())
     }
