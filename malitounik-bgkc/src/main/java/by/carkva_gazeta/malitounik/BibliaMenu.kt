@@ -467,6 +467,29 @@ class SearchBibleViewModel : CytanniListViewModel() {
                 }
             }
         }
+        if ("Марыі Ягіпецкай".contains(poshuk, true)) {
+            val list = ArrayList<String>()
+            Settings.data.forEach { arrayList ->
+                if (year == arrayList[3].toInt() && -14 == arrayList[22].toInt()) {
+                    list.addAll(arrayList)
+                    return@forEach
+                }
+            }
+            result.add(Prazdniki(list[24].toInt(), "Пач. Марыі Ягіпецкай", list[1] + " " + munName[list[2].toInt()] + ", " + nedelName[list[0].toInt()], 0))
+        }
+        if ("Яна Лесьвічніка".contains(poshuk, true)) {
+            val list = ArrayList<String>()
+            Settings.data.forEach { arrayList ->
+                if (year == arrayList[3].toInt() && -21 == arrayList[22].toInt()) {
+                    list.addAll(arrayList)
+                    return@forEach
+                }
+            }
+            result.add(Prazdniki(list[24].toInt(), "Пач. Яна Лесьвічніка", list[1] + " " + munName[list[2].toInt()] + ", " + nedelName[list[0].toInt()], 0))
+        }
+        result.sortBy {
+            it.dayOfYear
+        }
         val data = getPrazdnik(context, 1)
         data.addAll(getPrazdnik(context, 2))
         data.addAll(getPrazdnik(context, 3))
