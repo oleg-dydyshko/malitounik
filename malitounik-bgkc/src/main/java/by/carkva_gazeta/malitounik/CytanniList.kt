@@ -1363,12 +1363,12 @@ fun CytanniList(
                                             viewModel.isPaused = false
                                             viewModel.isSpeaking = false
                                             viewModel.stop()
+                                            val oldPerevod = perevod
                                             perevod = Settings.PEREVODSINOIDAL
                                             val dir = File("${context.filesDir}/Sinodal")
                                             if (!dir.exists()) {
                                                 viewModel.dialogDownLoad = true
                                             } else {
-                                                val oldPerevod = perevod
                                                 if (biblia == Settings.CHYTANNI_MARANATA) {
                                                     edit.putString(
                                                         "perevodMaranata", perevod
@@ -1385,12 +1385,12 @@ fun CytanniList(
                                             viewModel.isPaused = false
                                             viewModel.isSpeaking = false
                                             viewModel.stop()
+                                            val oldPerevod = perevod
                                             perevod = Settings.PEREVODSINOIDAL
                                             val dir = File("${context.filesDir}/Sinodal")
                                             if (!dir.exists()) {
                                                 viewModel.dialogDownLoad = true
                                             } else {
-                                                val oldPerevod = perevod
                                                 if (biblia == Settings.CHYTANNI_MARANATA) {
                                                     edit.putString(
                                                         "perevodMaranata", perevod
@@ -1415,12 +1415,12 @@ fun CytanniList(
                                                 viewModel.isPaused = false
                                                 viewModel.isSpeaking = false
                                                 viewModel.stop()
+                                                val oldPerevod = perevod
                                                 perevod = Settings.PEREVODNEWAMERICANBIBLE
                                                 val dir = File("${context.filesDir}/NewAmericanBible")
                                                 if (!dir.exists()) {
                                                     viewModel.dialogDownLoad = true
                                                 } else {
-                                                    val oldPerevod = perevod
                                                     if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
                                                         "perevodMaranata", perevod
                                                     )
@@ -1435,12 +1435,12 @@ fun CytanniList(
                                                 viewModel.isPaused = false
                                                 viewModel.isSpeaking = false
                                                 viewModel.stop()
+                                                val oldPerevod = perevod
                                                 perevod = Settings.PEREVODNEWAMERICANBIBLE
                                                 val dir = File("${context.filesDir}/NewAmericanBible")
                                                 if (!dir.exists()) {
                                                     viewModel.dialogDownLoad = true
                                                 } else {
-                                                    val oldPerevod = perevod
                                                     if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
                                                         "perevodMaranata", perevod
                                                     )

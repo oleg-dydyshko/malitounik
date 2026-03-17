@@ -1,5 +1,5 @@
 [versions]
-media3Exoplayer = "1.9.2"
+media3Exoplayer = "1.9.3"
 media = "1.7.1"
 agp = "9.1.0"
 kotlin = "2.3.10"
