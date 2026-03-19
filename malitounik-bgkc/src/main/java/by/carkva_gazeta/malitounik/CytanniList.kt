@@ -275,18 +275,34 @@ open class CytanniListViewModel : ViewModel() {
         initViewModel(context, biblia, cytanne, perevod)
     }
 
-    fun setPerevodBible(context: Context, biblia: Int, cytanne: String, perevod: String, oldPerevod: String) {
+    fun setPerevodBible(context: Context, title: String, biblia: Int, cytanne: String, perevod: String, oldPerevod: String) {
+        if (oldPerevod == perevod) return
         if (biblia == Settings.CHYTANNI_BIBLIA) {
             if (oldPerevod == Settings.PEREVODSEMUXI || oldPerevod == Settings.PEREVODNADSAN || oldPerevod == Settings.PEREVODSINOIDAL) {
                 if (perevod == Settings.PEREVODCARNIAUSKI || perevod == Settings.PEREVODBOKUNA || perevod == Settings.PEREVODNEWAMERICANBIBLE) {
                     if (knigaBiblii(knigaText) == 21) {
-                        if (selectedIndex in 10..112) selectedIndex += 1
-                        if (selectedIndex == 113) selectedIndex = 114
-                        if (selectedIndex == 114 || selectedIndex == 115) selectedIndex = 116
-                        if (selectedIndex in 116..145) selectedIndex += 1
-                        if (selectedIndex == 146) selectedIndex = 147
-                        if (selectedIndex == 9) {
-                            selectedIndex = 10
+                        when (selectedIndex + 1) {
+                            9 -> if (listState[selectedIndex].lazyListState.firstVisibleItemIndex >= 21) {
+                                AppNavGraphState.setScrollValuePosition(title, 0, 0)
+                                selectedIndex += 1
+                            }
+                            in 10..112 -> selectedIndex += 1
+                            113 -> {
+                                selectedIndex = if (listState[selectedIndex].lazyListState.firstVisibleItemIndex >= 8) 114
+                                else 113
+                                AppNavGraphState.setScrollValuePosition(title, 0, 0)
+                            }
+                            114 -> selectedIndex =  115
+                            115 -> {
+                                AppNavGraphState.setScrollValuePosition(title, 8, 0)
+                                selectedIndex =  115
+                            }
+                            in 116..145 -> selectedIndex += 1
+                            146 -> selectedIndex = 146
+                            147 -> {
+                                AppNavGraphState.setScrollValuePosition(title, 8, 0)
+                                selectedIndex = 146
+                            }
                         }
                     }
                 }
@@ -294,14 +310,28 @@ open class CytanniListViewModel : ViewModel() {
             if (oldPerevod == Settings.PEREVODCARNIAUSKI || oldPerevod == Settings.PEREVODBOKUNA || oldPerevod == Settings.PEREVODNEWAMERICANBIBLE) {
                 if (perevod == Settings.PEREVODSEMUXI || perevod == Settings.PEREVODNADSAN || perevod == Settings.PEREVODSINOIDAL) {
                     if (knigaBiblii(knigaText) == 21) {
-                        if (selectedIndex == 10) selectedIndex = 9
-                        if (selectedIndex in 11..113) selectedIndex -= 1
-                        if (selectedIndex == 114 || selectedIndex == 115) selectedIndex = 113
-                        if (selectedIndex == 116) selectedIndex = 114
-                        if (selectedIndex in 117..146) selectedIndex -= 1
-                        if (selectedIndex == 147) selectedIndex = 146
-                        if (selectedIndex == 10) {
-                            selectedIndex = 9
+                        when (selectedIndex + 1) {
+                            10 -> {
+                                AppNavGraphState.setScrollValuePosition(title, 21, 0)
+                                selectedIndex -= 1
+                            }
+                            in 11..113 -> selectedIndex -= 1
+                            114 -> selectedIndex = 112
+                            115 -> {
+                                AppNavGraphState.setScrollValuePosition(title, 8, 0)
+                                selectedIndex = 112
+                            }
+                            116 -> {
+                                selectedIndex = if (listState[selectedIndex].lazyListState.firstVisibleItemIndex >= 8) 114
+                                else 113
+                                AppNavGraphState.setScrollValuePosition(title, 0, 0)
+                            }
+                            in 117..146 -> selectedIndex -= 1
+                            147 -> {
+                                selectedIndex = if (listState[selectedIndex].lazyListState.firstVisibleItemIndex >= 8) 146
+                                else 145
+                                AppNavGraphState.setScrollValuePosition(title, 0, 0)
+                            }
                         }
                     }
                 }
@@ -1161,7 +1191,7 @@ fun CytanniList(
                                                 "perevod", perevod
                                             )
                                             edit.apply()
-                                            viewModel.setPerevodBible(context, biblia, cytanne, perevod, oldPerevod)
+                                            viewModel.setPerevodBible(context, title, biblia, cytanne, perevod, oldPerevod)
                                         }, verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     RadioButton(
@@ -1179,7 +1209,7 @@ fun CytanniList(
                                                 "perevod", perevod
                                             )
                                             edit.apply()
-                                            viewModel.setPerevodBible(context, biblia, cytanne, perevod, oldPerevod)
+                                            viewModel.setPerevodBible(context, title, biblia, cytanne, perevod, oldPerevod)
                                         })
                                     Text(
                                         stringResource(R.string.title_biblia2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
@@ -1204,7 +1234,7 @@ fun CytanniList(
                                                 "perevod", perevod
                                             )
                                             edit.apply()
-                                            viewModel.setPerevodBible(context, biblia, cytanne, perevod, oldPerevod)
+                                            viewModel.setPerevodBible(context, title, biblia, cytanne, perevod, oldPerevod)
                                         }, verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     RadioButton(
@@ -1222,7 +1252,7 @@ fun CytanniList(
                                                 "perevod", perevod
                                             )
                                             edit.apply()
-                                            viewModel.setPerevodBible(context, biblia, cytanne, perevod, oldPerevod)
+                                            viewModel.setPerevodBible(context, title, biblia, cytanne, perevod, oldPerevod)
                                         })
                                     Text(
                                         stringResource(R.string.title_biblia_bokun2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
@@ -1247,7 +1277,7 @@ fun CytanniList(
                                                 "perevod", perevod
                                             )
                                             edit.apply()
-                                            viewModel.setPerevodBible(context, biblia, cytanne, perevod, oldPerevod)
+                                            viewModel.setPerevodBible(context, title, biblia, cytanne, perevod, oldPerevod)
                                         }, verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     RadioButton(
@@ -1265,7 +1295,7 @@ fun CytanniList(
                                                 "perevod", perevod
                                             )
                                             edit.apply()
-                                            viewModel.setPerevodBible(context, biblia, cytanne, perevod, oldPerevod)
+                                            viewModel.setPerevodBible(context, title, biblia, cytanne, perevod, oldPerevod)
                                         })
                                     Text(
                                         stringResource(R.string.title_biblia_charniauski2), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
@@ -1294,7 +1324,7 @@ fun CytanniList(
                                                     "perevod", perevod
                                                 )
                                                 edit.apply()
-                                                viewModel.setPerevodBible(context, biblia, cytanne, perevod, oldPerevod)
+                                                viewModel.setPerevodBible(context, title, biblia, cytanne, perevod, oldPerevod)
                                             }
                                         }, verticalAlignment = Alignment.CenterVertically
                                 ) {
@@ -1317,7 +1347,7 @@ fun CytanniList(
                                                     "perevod", perevod
                                                 )
                                                 edit.apply()
-                                                viewModel.setPerevodBible(context, biblia, cytanne, perevod, oldPerevod)
+                                                viewModel.setPerevodBible(context, title, biblia, cytanne, perevod, oldPerevod)
                                             }
                                         })
                                     Text(
@@ -1336,7 +1366,7 @@ fun CytanniList(
                                             viewModel.stop()
                                             val oldPerevod = perevod
                                             perevod = Settings.PEREVODNADSAN
-                                            viewModel.setPerevodBible(context, biblia, cytanne, perevod, oldPerevod)
+                                            viewModel.setPerevodBible(context, title, biblia, cytanne, perevod, oldPerevod)
                                         }, verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     RadioButton(
@@ -1347,7 +1377,7 @@ fun CytanniList(
                                             viewModel.stop()
                                             val oldPerevod = perevod
                                             perevod = Settings.PEREVODNADSAN
-                                            viewModel.setPerevodBible(context, biblia, cytanne, perevod, oldPerevod)
+                                            viewModel.setPerevodBible(context, title, biblia, cytanne, perevod, oldPerevod)
                                         })
                                     Text(
                                         stringResource(R.string.title_psalter), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
@@ -1375,7 +1405,7 @@ fun CytanniList(
                                                     )
                                                 }
                                                 edit.apply()
-                                                viewModel.setPerevodBible(context, biblia, cytanne, perevod, oldPerevod)
+                                                viewModel.setPerevodBible(context, title, biblia, cytanne, perevod, oldPerevod)
                                             }
                                         }, verticalAlignment = Alignment.CenterVertically
                                 ) {
@@ -1397,7 +1427,7 @@ fun CytanniList(
                                                     )
                                                 }
                                                 edit.apply()
-                                                viewModel.setPerevodBible(context, biblia, cytanne, perevod, oldPerevod)
+                                                viewModel.setPerevodBible(context, title, biblia, cytanne, perevod, oldPerevod)
                                             }
                                         })
                                     Text(
@@ -1425,7 +1455,7 @@ fun CytanniList(
                                                         "perevodMaranata", perevod
                                                     )
                                                     edit.apply()
-                                                    viewModel.setPerevodBible(context, biblia, cytanne, perevod, oldPerevod)
+                                                    viewModel.setPerevodBible(context, title, biblia, cytanne, perevod, oldPerevod)
                                                 }
                                             }, verticalAlignment = Alignment.CenterVertically
                                     ) {
@@ -1445,7 +1475,7 @@ fun CytanniList(
                                                         "perevodMaranata", perevod
                                                     )
                                                     edit.apply()
-                                                    viewModel.setPerevodBible(context, biblia, cytanne, perevod, oldPerevod)
+                                                    viewModel.setPerevodBible(context, title, biblia, cytanne, perevod, oldPerevod)
                                                 }
                                             })
                                         Text(

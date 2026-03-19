@@ -2,7 +2,7 @@
 media3Exoplayer = "1.9.3"
 media = "1.7.1"
 agp = "9.1.0"
-kotlin = "2.3.10"
+kotlin = "2.3.20"
 services = "4.4.4"
 coreKtx = "1.18.0"
 junit = "4.13.2"
