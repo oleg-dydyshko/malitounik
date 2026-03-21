@@ -978,11 +978,9 @@ fun Bogaslujbovyia(
         } else {
             coroutineScope.launch {
                 viewModel.search(textLayout)
-                withContext(Dispatchers.IO) {
-                    viewModel.scrollState.animateScrollTo(viewModel.scrollToY.toInt())
-                    AppNavGraphState.setScrollValuePosition(title, viewModel.scrollState.value)
-                    viewModel.find = false
-                }
+                viewModel.scrollState.animateScrollTo(viewModel.scrollToY.toInt())
+                AppNavGraphState.setScrollValuePosition(title, viewModel.scrollState.value)
+                viewModel.find = false
             }
         }
         onPauseOrDispose {

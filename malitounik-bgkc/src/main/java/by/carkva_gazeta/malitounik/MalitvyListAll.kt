@@ -183,7 +183,7 @@ fun MalitvyListAll(
         Settings.MENU_TRYEDZ_POSNAIA_4 -> getTtyedzPosnaia(Settings.MENU_TRYEDZ_POSNAIA_4)
         Settings.MENU_TRYEDZ_POSNAIA_5 -> getTtyedzPosnaia(Settings.MENU_TRYEDZ_POSNAIA_5)
         Settings.MENU_TRYEDZ_POSNAIA_6 -> getTtyedzPosnaia(Settings.MENU_TRYEDZ_POSNAIA_6)
-        else -> ArrayList()
+        else -> SnapshotStateList()
     }
     var searchText by rememberSaveable { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
@@ -676,8 +676,8 @@ fun PynagodnyiaList(prynagodnyaList: SnapshotStateList<BogaslujbovyiaListData>, 
 }
 
 @Composable
-fun getTtyedzPosnaia(menuItem: Int): ArrayList<BogaslujbovyiaListData> {
-    val list = ArrayList<BogaslujbovyiaListData>()
+fun getTtyedzPosnaia(menuItem: Int): SnapshotStateList<BogaslujbovyiaListData> {
+    val list = SnapshotStateList<BogaslujbovyiaListData>()
     val subList = getTtyedzBialikagaTydnia(menuItem)
     subList.forEach { item ->
         list.add(
@@ -689,8 +689,8 @@ fun getTtyedzPosnaia(menuItem: Int): ArrayList<BogaslujbovyiaListData> {
     return list
 }
 
-fun getTtyedzPosnaia(): ArrayList<BogaslujbovyiaListData> {
-    val list = ArrayList<BogaslujbovyiaListData>()
+fun getTtyedzPosnaia(): SnapshotStateList<BogaslujbovyiaListData> {
+    val list = SnapshotStateList<BogaslujbovyiaListData>()
     list.add(BogaslujbovyiaListData("Службы 1-га тыдня Вялікага посту", "1"))
     list.add(BogaslujbovyiaListData("Службы 2-га тыдня Вялікага посту", "2"))
     list.add(BogaslujbovyiaListData("Службы 3-га тыдня Вялікага посту", "3"))
@@ -740,8 +740,8 @@ fun getTtyedzBialikagaTydnia(menuItem: Int): ArrayList<MineiaList> {
     return mineiaList
 }
 
-fun getTtyedz(): ArrayList<BogaslujbovyiaListData> {
-    val list = ArrayList<BogaslujbovyiaListData>()
+fun getTtyedz(): SnapshotStateList<BogaslujbovyiaListData> {
+    val list = SnapshotStateList<BogaslujbovyiaListData>()
     list.add(BogaslujbovyiaListData("Трыёдзь посная", "10"))
     list.add(BogaslujbovyiaListData("Службы Вялікага тыдня", "11"))
     list.add(BogaslujbovyiaListData("Службы Сьветлага тыдня", "12"))
@@ -792,9 +792,9 @@ fun getMineiaMesiachnaia(subTitle: String): ArrayList<MineiaList> {
     return mineiaList
 }
 
-fun getMineiaMesiachnaiaMounth(): ArrayList<BogaslujbovyiaListData> {
+fun getMineiaMesiachnaiaMounth(): SnapshotStateList<BogaslujbovyiaListData> {
     val context = Malitounik.applicationContext()
-    val list = ArrayList<BogaslujbovyiaListData>()
+    val list = SnapshotStateList<BogaslujbovyiaListData>()
     val mounthList = context.resources.getStringArray(R.array.meciac3)
     mounthList.forEachIndexed { index, item ->
         list.add(BogaslujbovyiaListData(item, index.toString()))
@@ -802,8 +802,8 @@ fun getMineiaMesiachnaiaMounth(): ArrayList<BogaslujbovyiaListData> {
     return list
 }
 
-fun getMineiaAgulnaia(): ArrayList<BogaslujbovyiaListData> {
-    val list = ArrayList<BogaslujbovyiaListData>()
+fun getMineiaAgulnaia(): SnapshotStateList<BogaslujbovyiaListData> {
+    val list = SnapshotStateList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
             "Вячэрня агульная Найсьвяцейшай Багародзіцы", "bogashlugbovya/viachernia_mineia_agulnaia1.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> МІНЭЯ АГУЛЬНАЯ"
@@ -982,8 +982,8 @@ fun getMineiaAgulnaia(): ArrayList<BogaslujbovyiaListData> {
     return list
 }
 
-fun getTrebnik(): ArrayList<BogaslujbovyiaListData> {
-    val list = ArrayList<BogaslujbovyiaListData>()
+fun getTrebnik(): SnapshotStateList<BogaslujbovyiaListData> {
+    val list = SnapshotStateList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
             "Служба аб вызваленьні бязьвінна зьняволеных", "bogashlugbovya/sluzba_vyzvalen_biazvinna_zniavolenych.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЭБНІК"
@@ -1038,8 +1038,8 @@ fun getTrebnik(): ArrayList<BogaslujbovyiaListData> {
     return list
 }
 
-fun getMalitvyPasliaPrychascia(): ArrayList<BogaslujbovyiaListData> {
-    val list = ArrayList<BogaslujbovyiaListData>()
+fun getMalitvyPasliaPrychascia(): SnapshotStateList<BogaslujbovyiaListData> {
+    val list = SnapshotStateList<BogaslujbovyiaListData>()
     list.add(BogaslujbovyiaListData("Малітва падзякі", "bogashlugbovya/paslia_prychascia1.html", "ЛІТУРГІКОН -> МАЛІТВЫ ПАСЬЛЯ СЬВЯТОГА ПРЫЧАСЬЦЯ"))
     list.add(BogaslujbovyiaListData("Малітва сьв. Васіля Вялікага", "bogashlugbovya/paslia_prychascia2.html", "ЛІТУРГІКОН -> МАЛІТВЫ ПАСЬЛЯ СЬВЯТОГА ПРЫЧАСЬЦЯ"))
     list.add(BogaslujbovyiaListData("Малітва Сымона Мэтафраста", "bogashlugbovya/paslia_prychascia3.html", "ЛІТУРГІКОН -> МАЛІТВЫ ПАСЬЛЯ СЬВЯТОГА ПРЫЧАСЬЦЯ"))
@@ -1052,8 +1052,8 @@ fun getMalitvyPasliaPrychascia(): ArrayList<BogaslujbovyiaListData> {
     return list
 }
 
-fun getTraparyKandakiNiadzelnyia(): ArrayList<BogaslujbovyiaListData> {
-    val list = ArrayList<BogaslujbovyiaListData>()
+fun getTraparyKandakiNiadzelnyia(): SnapshotStateList<BogaslujbovyiaListData> {
+    val list = SnapshotStateList<BogaslujbovyiaListData>()
     list.add(BogaslujbovyiaListData("Тон 1", "bogashlugbovya/ton1.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРАПАРЫ І КАНДАКІ НЯДЗЕЛЬНЫЯ ВАСЬМІ ТОНАЎ"))
     list.add(BogaslujbovyiaListData("Тон 2", "bogashlugbovya/ton2.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРАПАРЫ І КАНДАКІ НЯДЗЕЛЬНЫЯ ВАСЬМІ ТОНАЎ"))
     list.add(BogaslujbovyiaListData("Тон 3", "bogashlugbovya/ton3.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРАПАРЫ І КАНДАКІ НЯДЗЕЛЬНЫЯ ВАСЬМІ ТОНАЎ"))
@@ -1065,8 +1065,8 @@ fun getTraparyKandakiNiadzelnyia(): ArrayList<BogaslujbovyiaListData> {
     return list
 }
 
-fun getTraparyKandakiShtodzennyia(): ArrayList<BogaslujbovyiaListData> {
-    val list = ArrayList<BogaslujbovyiaListData>()
+fun getTraparyKandakiShtodzennyia(): SnapshotStateList<BogaslujbovyiaListData> {
+    val list = SnapshotStateList<BogaslujbovyiaListData>()
     list.add(BogaslujbovyiaListData("ПАНЯДЗЕЛАК\nСлужба сьвятым анёлам", "bogashlugbovya/ton1_budni.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ"))
     list.add(BogaslujbovyiaListData("АЎТОРАК\nСлужба сьвятому Яну Хрысьціцелю", "bogashlugbovya/ton2_budni.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРАПАРЫ І КАНДАКІ ШТОДЗЁННЫЯ - НА КОЖНЫ ДЗЕНЬ ТЫДНЯ"))
     list.add(
@@ -1084,8 +1084,8 @@ fun getTraparyKandakiShtodzennyia(): ArrayList<BogaslujbovyiaListData> {
     return list
 }
 
-fun getViachernia(): ArrayList<BogaslujbovyiaListData> {
-    val list = ArrayList<BogaslujbovyiaListData>()
+fun getViachernia(): SnapshotStateList<BogaslujbovyiaListData> {
+    val list = SnapshotStateList<BogaslujbovyiaListData>()
     list.add(BogaslujbovyiaListData("Вячэрня ў нядзелі і сьвяты", "bogashlugbovya/viaczernia_niadzelnaja.html", "ЧАСАСЛОЎ -> ВЯЧЭРНЯ"))
     list.add(
         BogaslujbovyiaListData(
@@ -1103,8 +1103,8 @@ fun getViachernia(): ArrayList<BogaslujbovyiaListData> {
     return list
 }
 
-fun getAktoix(): ArrayList<BogaslujbovyiaListData> {
-    val list = ArrayList<BogaslujbovyiaListData>()
+fun getAktoix(): SnapshotStateList<BogaslujbovyiaListData> {
+    val list = SnapshotStateList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
             "Вячэрня Тон 1", "bogashlugbovya/viaczernia_ton1.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> АКТОІХ"
@@ -1153,8 +1153,8 @@ fun getAktoix(): ArrayList<BogaslujbovyiaListData> {
     return list
 }
 
-fun getPrynagodnyia1(): ArrayList<BogaslujbovyiaListData> {
-    val list = ArrayList<BogaslujbovyiaListData>()
+fun getPrynagodnyia1(): SnapshotStateList<BogaslujbovyiaListData> {
+    val list = SnapshotStateList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
             "Малітва да Маці Божай Браслаўскай, Валадаркі Азёраў", "prynagodnyia/prynagodnyia_7.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
@@ -1202,8 +1202,8 @@ fun getPrynagodnyia1(): ArrayList<BogaslujbovyiaListData> {
     return list
 }
 
-fun getPrynagodnyia2(): ArrayList<BogaslujbovyiaListData> {
-    val list = ArrayList<BogaslujbovyiaListData>()
+fun getPrynagodnyia2(): SnapshotStateList<BogaslujbovyiaListData> {
+    val list = SnapshotStateList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
             "Малітва аб дапамозе ў выбары жыцьцёвай дарогі дзіцяці", "prynagodnyia/prynagodnyia_1.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
@@ -1236,8 +1236,8 @@ fun getPrynagodnyia2(): ArrayList<BogaslujbovyiaListData> {
     return list
 }
 
-fun getPrynagodnyia3(): ArrayList<BogaslujbovyiaListData> {
-    val list = ArrayList<BogaslujbovyiaListData>()
+fun getPrynagodnyia3(): SnapshotStateList<BogaslujbovyiaListData> {
+    val list = SnapshotStateList<BogaslujbovyiaListData>()
     list.add(BogaslujbovyiaListData("Малітва за Беларусь", "prynagodnyia/prynagodnyia_10.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(BogaslujbovyiaListData("Малітва за Айчыну - Ян Павел II", "prynagodnyia/prynagodnyia_36.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(
@@ -1253,8 +1253,8 @@ fun getPrynagodnyia3(): ArrayList<BogaslujbovyiaListData> {
     return list
 }
 
-fun getPrynagodnyia4(): ArrayList<BogaslujbovyiaListData> {
-    val list = ArrayList<BogaslujbovyiaListData>()
+fun getPrynagodnyia4(): SnapshotStateList<BogaslujbovyiaListData> {
+    val list = SnapshotStateList<BogaslujbovyiaListData>()
     list.add(BogaslujbovyiaListData("Малітва аб еднасьці", "prynagodnyia/mltv_ab_jednasci.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(BogaslujbovyiaListData("Малітва за парафію", "prynagodnyia/prynagodnyia_13.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(BogaslujbovyiaListData("Малітва за хрысьціянскую еднасьць", "prynagodnyia/prynagodnyia_16.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
@@ -1290,8 +1290,8 @@ fun getPrynagodnyia4(): ArrayList<BogaslujbovyiaListData> {
     return list
 }
 
-fun getPrynagodnyia5(): ArrayList<BogaslujbovyiaListData> {
-    val list = ArrayList<BogaslujbovyiaListData>()
+fun getPrynagodnyia5(): SnapshotStateList<BogaslujbovyiaListData> {
+    val list = SnapshotStateList<BogaslujbovyiaListData>()
     list.add(
         BogaslujbovyiaListData(
             "Малітва за хворага («Міласэрны Божа»)", "prynagodnyia/mltv_za_chvoraha_milaserny_boza.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
@@ -1312,8 +1312,8 @@ fun getPrynagodnyia5(): ArrayList<BogaslujbovyiaListData> {
     return list
 }
 
-fun getPrynagodnyia6(): ArrayList<BogaslujbovyiaListData> {
-    val list = ArrayList<BogaslujbovyiaListData>()
+fun getPrynagodnyia6(): SnapshotStateList<BogaslujbovyiaListData> {
+    val list = SnapshotStateList<BogaslujbovyiaListData>()
     list.add(BogaslujbovyiaListData("Малітва перад пачаткам навучаньня", "prynagodnyia/prynagodnyia_21.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(
         BogaslujbovyiaListData(

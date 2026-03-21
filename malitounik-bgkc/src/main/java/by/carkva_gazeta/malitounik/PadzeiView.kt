@@ -113,7 +113,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileWriter
 import java.util.Calendar
@@ -158,7 +157,7 @@ fun PadzeiaView(navController: NavHostController) {
     }
     val removePadzea = stringResource(R.string.remove_padzea)
     if (deliteAll) {
-        DialogDelitePadsei(onDismiss = { deliteAll = false }, onDelOld = {
+        DialogDelitePadzei(onDismiss = { deliteAll = false }, onDelOld = {
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             val c2 = Calendar.getInstance()
             c2.set(Calendar.SECOND, 0)
@@ -207,21 +206,19 @@ fun PadzeiaView(navController: NavHostController) {
             }
             deliteAll = false
         }, onDelAll = {
-            CoroutineScope(Dispatchers.Main).launch {
-                withContext(Dispatchers.IO) {
-                    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                    for (p in listPadzeia) {
-                        if (p.sec != "-1") {
-                            val intent = Settings.createIntentSabytie(context, p.padz, p.dat, p.tim)
-                            val londs3 = p.paznic / 100000L
-                            val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
-                            alarmManager.cancel(pIntent)
-                            pIntent.cancel()
-                        }
+            coroutineScope.launch {
+                val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                for (p in listPadzeia) {
+                    if (p.sec != "-1") {
+                        val intent = Settings.createIntentSabytie(context, p.padz, p.dat, p.tim)
+                        val londs3 = p.paznic / 100000L
+                        val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
+                        alarmManager.cancel(pIntent)
+                        pIntent.cancel()
                     }
-                    val file = File("${context.filesDir}/Sabytie.json")
-                    if (file.exists()) file.delete()
                 }
+                val file = File("${context.filesDir}/Sabytie.json")
+                if (file.exists()) file.delete()
                 listPadzeia.clear()
                 Toast.makeText(context, removePadzea, Toast.LENGTH_SHORT).show()
             }
@@ -1765,7 +1762,7 @@ fun DialogSabytieShow(
 }
 
 @Composable
-fun DialogDelitePadsei(
+fun DialogDelitePadzei(
     onDismiss: () -> Unit, onDelAll: () -> Unit, onDelOld: () -> Unit
 ) {
     Dialog(onDismissRequest = { onDismiss() }) {
