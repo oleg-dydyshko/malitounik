@@ -129,14 +129,17 @@ fun PadzeiaView(navController: NavHostController) {
     var editPadzeiaInit by remember { mutableStateOf(true) }
     var deliteAll by remember { mutableStateOf(false) }
     val listPadzeia = remember { mutableStateListOf<Padzeia>() }
-    LaunchedEffect(Unit) {
-        listPadzeia.addAll(setListPadzeia(context))
-    }
     val lazyListState = rememberLazyListState()
     val view = LocalView.current
     val day = Calendar.getInstance()
     val colors = stringArrayResource(R.array.colors)
+    var data by remember { mutableStateOf("") }
+    var data2 by remember { mutableStateOf("") }
+    var data3 by remember { mutableStateOf("") }
+    var time by remember { mutableStateOf("") }
+    var time2 by remember { mutableStateOf("") }
     LaunchedEffect(Unit) {
+        listPadzeia.addAll(setListPadzeia(context))
         val c2 = Calendar.getInstance()
         var nol1 = ""
         var nol2 = ""
@@ -150,6 +153,21 @@ fun PadzeiaView(navController: NavHostController) {
                 break
             }
         }
+        c2.add(Calendar.HOUR, 1)
+        for (i in Settings.data.indices) {
+            if (c2[Calendar.DATE] == Settings.data[i][1].toInt() && c2[Calendar.MONTH] == Settings.data[i][2].toInt() && c2[Calendar.YEAR] == Settings.data[i][3].toInt()) {
+                var nol1 = ""
+                var nol2 = ""
+                if (c2[Calendar.DAY_OF_MONTH] < 10) nol1 = "0"
+                if (c2[Calendar.MONTH] < 9) nol2 = "0"
+                data = nol1 + c2[Calendar.DAY_OF_MONTH] + "." + nol2 + (c2[Calendar.MONTH] + 1) + "." + c2[Calendar.YEAR]
+                data2 = data
+                data3 = data
+                time = "${c2[Calendar.HOUR_OF_DAY]}:00"
+                time2 = time
+                break
+            }
+        }
         if (initPosition == -1) initPosition = 0
         coroutineScope.launch {
             lazyListState.scrollToItem(initPosition)
@@ -157,7 +175,7 @@ fun PadzeiaView(navController: NavHostController) {
     }
     val removePadzea = stringResource(R.string.remove_padzea)
     if (deliteAll) {
-        DialogDelitePadzei(onDismiss = { deliteAll = false }, onDelOld = {
+        DialogDelitePadzei(onDelOld = {
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             val c2 = Calendar.getInstance()
             c2.set(Calendar.SECOND, 0)
@@ -223,7 +241,9 @@ fun PadzeiaView(navController: NavHostController) {
                 Toast.makeText(context, removePadzea, Toast.LENGTH_SHORT).show()
             }
             deliteAll = false
-        })
+        }) {
+            deliteAll = false
+        }
     }
     SideEffect {
         val window = (view.context as Activity).window
@@ -244,28 +264,8 @@ fun PadzeiaView(navController: NavHostController) {
     var kalendarMun by remember { mutableStateOf(false) }
     var kalendarMun2 by remember { mutableStateOf(false) }
     var kalendarMun3 by remember { mutableStateOf(false) }
-    var initData = ""
-    var initTime = ""
-    val calendar = Calendar.getInstance()
-    calendar.add(Calendar.HOUR, 1)
-    for (i in Settings.data.indices) {
-        if (calendar[Calendar.DATE] == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
-            var nol1 = ""
-            var nol2 = ""
-            if (calendar[Calendar.DAY_OF_MONTH] < 10) nol1 = "0"
-            if (calendar[Calendar.MONTH] < 9) nol2 = "0"
-            initData = nol1 + calendar[Calendar.DAY_OF_MONTH] + "." + nol2 + (calendar[Calendar.MONTH] + 1) + "." + calendar[Calendar.YEAR]
-            initTime = "${calendar[Calendar.HOUR_OF_DAY]}:00"
-            break
-        }
-    }
-    var data by remember { mutableStateOf(initData) }
-    var data2 by remember { mutableStateOf(initData) }
-    var data3 by remember { mutableStateOf(initData) }
     var dialogTimePickerDialog by remember { mutableStateOf(false) }
     var dialogTimePickerDialog2 by remember { mutableStateOf(false) }
-    var time by remember { mutableStateOf(initTime) }
-    var time2 by remember { mutableStateOf(initTime) }
     var savePadzia by remember { mutableStateOf(false) }
     if (dialogTimePickerDialog || dialogTimePickerDialog2) {
         val currentTime = Calendar.getInstance()
@@ -358,10 +358,9 @@ fun PadzeiaView(navController: NavHostController) {
     if (delitePadzia) {
         DialogDelite(listPadzeia[showPadziaPosition].padz, onConfirmation = {
             val sab = listPadzeia[showPadziaPosition]
-            val filen = sab.padz
             val del = ArrayList<Padzeia>()
             for (p in listPadzeia) {
-                if (p.padz == filen) {
+                if (p.padz == sab.padz) {
                     del.add(p)
                 }
             }
@@ -384,7 +383,7 @@ fun PadzeiaView(navController: NavHostController) {
                         }
                     } else {
                         for (p in del) {
-                            if (p.padz.contains(filen)) {
+                            if (p.padz == sab.padz) {
                                 if (p.sec != "-1") {
                                     val intent = Settings.createIntentSabytie(context, p.padz, p.dat, p.tim)
                                     val londs3 = p.paznic / 100000L
@@ -1119,7 +1118,7 @@ fun AddPadzeia(
     }
     if (save) {
         savePadzeia(
-            LocalContext.current, listPadzeia, position, padzeia, setTimeZa, data, data2, time, time2, textFieldState2Position, textFieldStatePosition, modeRepit, setPautorRaz, countText, konecSabytie, colorPosition, isSave = { isSave() })
+            context, listPadzeia, position, padzeia, setTimeZa, data, data2, time, time2, textFieldState2Position, textFieldStatePosition, modeRepit, setPautorRaz, countText, konecSabytie, colorPosition, isSave = { isSave() })
     }
 }
 
@@ -1198,7 +1197,7 @@ fun savePadzeia(
     var dataK = data2
     var timeK = time2
     val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-    if (edit != "") {
+    if (edit.isNotEmpty()) {
         var londs: Long = 0
         var londs2: Long = 0
         val days = data.split(".")
@@ -1220,7 +1219,7 @@ fun savePadzeia(
         } else {
             edit2 = "-1"
         }
-        if (position != -1) {
+        if (position != -1 && padzeiaList.isNotEmpty()) {
             val p = padzeiaList[position]
             val del = ArrayList<Padzeia>()
             padzeiaList.forEach {
@@ -1763,7 +1762,7 @@ fun DialogSabytieShow(
 
 @Composable
 fun DialogDelitePadzei(
-    onDismiss: () -> Unit, onDelAll: () -> Unit, onDelOld: () -> Unit
+    onDelOld: () -> Unit, onDelAll: () -> Unit, onDismiss: () -> Unit
 ) {
     Dialog(onDismissRequest = { onDismiss() }) {
         Card(
