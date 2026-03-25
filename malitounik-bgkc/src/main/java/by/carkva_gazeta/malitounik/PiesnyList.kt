@@ -672,6 +672,11 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
         )
         piesnyPraslList.add(
             PiesnyListItem(
+                0, "pesny/piesni_prasl_ziamla_biazvodnaja_pustaja.html", "Зямля бязводная, пустая"
+            )
+        )
+        piesnyPraslList.add(
+            PiesnyListItem(
                 0, "pesny/piesni_vialik_radujmasia_chryscijanie.html", "Радуймася, хрысьціяне"
             )
         )
