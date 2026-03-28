@@ -138,7 +138,7 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
                 } else {
                     @Suppress("DEPRECATION") MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
                 }
-                fileUpload(context, position, bitmap, iconList.size > 1, isLoad = { isload ->
+                fileUpload(context, position, bitmap, viewModel.svaity[viewModel.sviatyPosotion][2].toInt() < 0, isLoad = { isload ->
                     isProgressVisable = isload
                 }) { file ->
                     iconList[position] = DataImages(iconList[position].title, file.length(), file, iconList[position].position, iconList[position].iconApisanne)

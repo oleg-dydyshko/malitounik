@@ -1030,6 +1030,11 @@ fun getTrebnik(): SnapshotStateList<BogaslujbovyiaListData> {
             "Служба на ўсякую патрэбу", "bogashlugbovya/sluzba_na_usiakuju_patrebu.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЭБНІК"
         )
     )
+    list.add(
+        BogaslujbovyiaListData(
+            "Чын ліцьці, які зьдзяйсьняе вернік за спачылага", "bogashlugbovya/liccia_za_spaczylaha_vierniki.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ -> ТРЭБНІК"
+        )
+    )
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
         list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
     } else {

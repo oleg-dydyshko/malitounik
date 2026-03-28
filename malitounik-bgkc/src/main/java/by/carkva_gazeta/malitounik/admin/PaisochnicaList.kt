@@ -265,7 +265,19 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
         DialogSetNameFile(fileList[position].fileName, setFileName = { fileName ->
             val oldFileName = fileList[position].fileName
             fileList[position].fileName = fileList[position].fileName.replace(oldFileName, fileName)
-            viewModel.getFileRenamePostRequest(oldFileName, fileName, false)
+            viewModel.getFileRenamePostRequest(oldFileName, fileName, false) {
+                coroutineScope.launch {
+                    viewModel.isProgressVisable = true
+                    fileList.clear()
+                    fileList.addAll(viewModel.getPasochnicaFileList())
+                    fileList.sortWith(
+                        compareByDescending {
+                            it.updatedTimeMillis
+                        }
+                    )
+                    viewModel.isProgressVisable = false
+                }
+            }
             dialogSetFileName = false
         }) {
             dialogSetFileName = false
@@ -448,9 +460,9 @@ fun DialogNetFileExplorer(
         DialogSetNameFile(viewModel.fileList[position].title, setFileName = { fileName ->
             val oldFileName = dir + "/" + viewModel.fileList[position].title
             val isSite = !oldFileName.contains("/admin/piasochnica")
-            viewModel.getFileRenamePostRequest(oldFileName, "$dir/$fileName", isSite, update = {
+            viewModel.getFileRenamePostRequest(oldFileName, "$dir/$fileName", isSite) {
                 viewModel.getDirListRequest(dir)
-            })
+            }
             dialogSetFileName = false
         }) {
             dialogSetFileName = false

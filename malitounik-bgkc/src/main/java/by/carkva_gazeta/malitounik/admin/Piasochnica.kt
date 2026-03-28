@@ -244,7 +244,7 @@ class Piasochnica : ViewModel() {
         }
     }
 
-    fun getFileRenamePostRequest(oldFileName: String, fileName: String, isSite: Boolean, update: () -> Unit = {}) {
+    fun getFileRenamePostRequest(oldFileName: String, fileName: String, isSite: Boolean, update: () -> Unit) {
         val context = Malitounik.applicationContext()
         if (Settings.isNetworkAvailable(context)) {
             viewModelScope.launch {

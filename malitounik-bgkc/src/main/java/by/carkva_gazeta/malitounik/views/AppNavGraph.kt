@@ -1209,460 +1209,459 @@ fun MainConteiner(
         Scaffold(topBar = {
             TopAppBar(
                 title = {
-                    if (!(viewModel.searchText || viewModel.searchFullText || viewModel.isEditMode)) {
-                        Text(
-                            modifier = Modifier.clickable {
-                                Settings.vibrate()
-                                maxLine.intValue = Int.MAX_VALUE
-                                coroutineScope.launch {
-                                    delay(5000L)
-                                    maxLine.intValue = 2
+                if (!(viewModel.searchText || viewModel.searchFullText || viewModel.isEditMode)) {
+                    Text(
+                        modifier = Modifier.clickable {
+                            Settings.vibrate()
+                            maxLine.intValue = Int.MAX_VALUE
+                            coroutineScope.launch {
+                                delay(5000L)
+                                maxLine.intValue = 2
+                            }
+                        }, text = if (viewModel.natatkaVisable) viewModel.fileList[viewModel.natatkaPosition].title else title.uppercase(), color = textTollBarColor, fontWeight = FontWeight.Bold, fontSize = Settings.fontInterface.sp, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis
+                    )
+                } else {
+                    TextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .focusRequester(focusRequester)
+                            .onGloballyPositioned {
+                                if (!textFieldLoaded) {
+                                    focusRequester.requestFocus()
+                                    textFieldLoaded = true
                                 }
-                            }, text = if (viewModel.natatkaVisable) viewModel.fileList[viewModel.natatkaPosition].title else title.uppercase(), color = textTollBarColor, fontWeight = FontWeight.Bold, fontSize = Settings.fontInterface.sp, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis
-                        )
-                    } else {
-                        TextField(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .focusRequester(focusRequester)
-                                .onGloballyPositioned {
-                                    if (!textFieldLoaded) {
-                                        focusRequester.requestFocus()
-                                        textFieldLoaded = true
+                            }, value = viewModel.textFieldValueState, placeholder = { Text(stringResource(if (viewModel.isEditMode) R.string.natatka_name else R.string.poshuk), fontSize = Settings.fontInterface.sp, color = textTollBarColor) }, onValueChange = { newText ->
+                        viewModel.textFieldValueState = newText
+                    }, singleLine = true, trailingIcon = {
+                        IconButton(onClick = {
+                            Settings.vibrate()
+                            viewModel.textFieldValueState = TextFieldValue("")
+                        }) {
+                            Icon(
+                                painter = if (viewModel.textFieldValueState.text.isNotEmpty()) painterResource(R.drawable.close) else painterResource(R.drawable.empty), contentDescription = if (viewModel.textFieldValueState.text.isNotEmpty()) stringResource(R.string.close) else null, tint = textTollBarColor
+                            )
+                        }
+                    }, colors = TextFieldDefaults.colors(
+                        focusedContainerColor = tollBarColor, unfocusedContainerColor = tollBarColor, focusedTextColor = textTollBarColor, unfocusedTextColor = textTollBarColor, focusedIndicatorColor = textTollBarColor, unfocusedIndicatorColor = textTollBarColor, cursorColor = textTollBarColor
+                    ), textStyle = TextStyle(fontSize = TextUnit(Settings.fontInterface, TextUnitType.Sp))
+                    )
+                }
+            }, navigationIcon = {
+                if (viewModel.searchText || viewModel.searchFullText || viewModel.isEditMode || viewModel.natatkaVisable) {
+                    PlainTooltip(stringResource(R.string.close), TooltipAnchorPosition.Below) {
+                        IconButton(onClick = {
+                            Settings.vibrate()
+                            when {
+                                viewModel.addFileNatatki -> {
+                                    if (viewModel.textFieldValueState.text != viewModel.fileList[viewModel.natatkaPosition].title || viewModel.textFieldValueNatatkaContent.text != viewModel.fileList[viewModel.natatkaPosition].content) {
+                                        dialogIsSaveNanatka = true
+                                    } else {
+                                        viewModel.addFileNatatki = false
+                                        viewModel.isEditMode = false
+                                        viewModel.natatkaVisable = false
+                                        viewModel.textFieldValueState = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].title)
+                                        viewModel.textFieldValueNatatkaContent = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].content)
                                     }
-                                }, value = viewModel.textFieldValueState, placeholder = { Text(stringResource(if (viewModel.isEditMode) R.string.natatka_name else R.string.poshuk), fontSize = Settings.fontInterface.sp, color = textTollBarColor) }, onValueChange = { newText ->
-                                viewModel.textFieldValueState = newText
-                            }, singleLine = true, trailingIcon = {
-                                IconButton(onClick = {
-                                    Settings.vibrate()
-                                    viewModel.textFieldValueState = TextFieldValue("")
-                                }) {
-                                    Icon(
-                                        painter = if (viewModel.textFieldValueState.text.isNotEmpty()) painterResource(R.drawable.close) else painterResource(R.drawable.empty), contentDescription = if (viewModel.textFieldValueState.text.isNotEmpty()) stringResource(R.string.close) else null, tint = textTollBarColor
-                                    )
                                 }
-                            }, colors = TextFieldDefaults.colors(
-                                focusedContainerColor = tollBarColor, unfocusedContainerColor = tollBarColor, focusedTextColor = textTollBarColor, unfocusedTextColor = textTollBarColor, focusedIndicatorColor = textTollBarColor, unfocusedIndicatorColor = textTollBarColor, cursorColor = textTollBarColor
-                            ), textStyle = TextStyle(fontSize = TextUnit(Settings.fontInterface, TextUnitType.Sp))
-                        )
-                    }
-                }, navigationIcon = {
-                    if (viewModel.searchText || viewModel.searchFullText || viewModel.isEditMode || viewModel.natatkaVisable) {
-                        PlainTooltip(stringResource(R.string.close), TooltipAnchorPosition.Below) {
-                            IconButton(onClick = {
-                                Settings.vibrate()
-                                when {
-                                    viewModel.addFileNatatki -> {
-                                        if (viewModel.textFieldValueState.text != viewModel.fileList[viewModel.natatkaPosition].title || viewModel.textFieldValueNatatkaContent.text != viewModel.fileList[viewModel.natatkaPosition].content) {
-                                            dialogIsSaveNanatka = true
-                                        } else {
-                                            viewModel.addFileNatatki = false
-                                            viewModel.isEditMode = false
-                                            viewModel.natatkaVisable = false
-                                            viewModel.textFieldValueState = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].title)
-                                            viewModel.textFieldValueNatatkaContent = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].content)
-                                        }
-                                    }
 
-                                    viewModel.isEditMode -> {
-                                        if (viewModel.textFieldValueState.text != viewModel.fileList[viewModel.natatkaPosition].title || viewModel.textFieldValueNatatkaContent.text != viewModel.fileList[viewModel.natatkaPosition].content) {
-                                            dialogIsSaveNanatka = true
-                                        } else {
-                                            viewModel.isEditMode = false
-                                            viewModel.textFieldValueState = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].title)
-                                            viewModel.textFieldValueNatatkaContent = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].content)
-                                        }
+                                viewModel.isEditMode -> {
+                                    if (viewModel.textFieldValueState.text != viewModel.fileList[viewModel.natatkaPosition].title || viewModel.textFieldValueNatatkaContent.text != viewModel.fileList[viewModel.natatkaPosition].content) {
+                                        dialogIsSaveNanatka = true
+                                    } else {
+                                        viewModel.isEditMode = false
+                                        viewModel.textFieldValueState = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].title)
+                                        viewModel.textFieldValueNatatkaContent = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].content)
                                     }
+                                }
 
-                                    else -> {
-                                        if (viewModel.natatkaVisable) {
-                                            viewModel.natatkaVisable = false
-                                            viewModel.textFieldValueState = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].title)
-                                            viewModel.textFieldValueNatatkaContent = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].content)
-                                        }
+                                else -> {
+                                    if (viewModel.natatkaVisable) {
+                                        viewModel.natatkaVisable = false
+                                        viewModel.textFieldValueState = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].title)
+                                        viewModel.textFieldValueNatatkaContent = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].content)
                                     }
                                 }
-                                viewModel.searchText = false
-                                viewModel.searchFullText = false
-                            }, content = {
-                                Icon(
-                                    painter = painterResource(R.drawable.close), tint = textTollBarColor, contentDescription = stringResource(R.string.close)
-                                )
-                            })
-                        }
-                    } else {
-                        PlainTooltip(stringResource(R.string.show_menu), TooltipAnchorPosition.Below) {
-                            IconButton(onClick = {
-                                Settings.vibrate()
-                                coroutineScope.launch { drawerState.open() }
-                            }, content = {
-                                Icon(
-                                    painter = painterResource(R.drawable.menu), tint = textTollBarColor, contentDescription = stringResource(R.string.show_menu)
-                                )
-                            })
-                        }
+                            }
+                            viewModel.searchText = false
+                            viewModel.searchFullText = false
+                        }, content = {
+                            Icon(
+                                painter = painterResource(R.drawable.close), tint = textTollBarColor, contentDescription = stringResource(R.string.close)
+                            )
+                        })
                     }
-                }, actions = {
-                    if (!(viewModel.searchText || viewModel.searchFullText || viewModel.isEditMode || viewModel.natatkaVisable)) {
-                        if (!isBottomBar && (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR)) {
-                            PlainTooltip(stringResource(R.string.set_data), TooltipAnchorPosition.Below) {
-                                Text(
-                                    text = Calendar.getInstance()[Calendar.DATE].toString(), modifier = Modifier
-                                        .clickable {
-                                            Settings.vibrate()
-                                            showDropdownMenuPos = 1
-                                            showDropdown = true
-                                        }
-                                        .padding(horizontal = 10.dp, vertical = 7.dp)
-                                        .clip(shape = RoundedCornerShape(3.dp))
-                                        .background(textTollBarColor)
-                                        .padding(1.dp)
-                                        .clip(shape = RoundedCornerShape(3.dp))
-                                        .background(if (isToDay) Divider else StrogiPost)
-                                        .padding(horizontal = 5.dp), fontSize = 14.sp, color = if (isToDay) PrimaryText else PrimaryTextBlack)
-                            }
-                            PlainTooltip(stringResource(if (k.getBoolean("caliandarList", false)) R.string.set_book_caliandar else R.string.set_list_caliandar), TooltipAnchorPosition.Below) {
-                                IconButton(onClick = {
+                } else {
+                    PlainTooltip(stringResource(R.string.show_menu), TooltipAnchorPosition.Below) {
+                        IconButton(onClick = {
+                            Settings.vibrate()
+                            coroutineScope.launch { drawerState.open() }
+                        }, content = {
+                            Icon(
+                                painter = painterResource(R.drawable.menu), tint = textTollBarColor, contentDescription = stringResource(R.string.show_menu)
+                            )
+                        })
+                    }
+                }
+            }, actions = {
+                if (!(viewModel.searchText || viewModel.searchFullText || viewModel.isEditMode || viewModel.natatkaVisable)) {
+                    if (!isBottomBar && (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR)) {
+                        PlainTooltip(stringResource(R.string.set_data), TooltipAnchorPosition.Below) {
+                            Text(text = Calendar.getInstance()[Calendar.DATE].toString(), modifier = Modifier
+                                .clickable {
                                     Settings.vibrate()
-                                    k.edit {
-                                        if (k.getBoolean("caliandarList", false)) {
-                                            navigationActions.navigateToKaliandar()
-                                            putBoolean("caliandarList", false)
-                                        } else {
-                                            putBoolean("caliandarList", true)
-                                            navigationActions.navigateToKaliandarYear()
-                                        }
-                                    }
-                                }) {
-                                    val icon = if (k.getBoolean("caliandarList", false)) painterResource(R.drawable.calendar_today)
-                                    else painterResource(R.drawable.list)
-                                    Icon(
-                                        painter = icon, contentDescription = stringResource(if (k.getBoolean("caliandarList", false)) R.string.set_book_caliandar else R.string.set_list_caliandar), tint = textTollBarColor
-                                    )
+                                    showDropdownMenuPos = 1
+                                    showDropdown = true
                                 }
-                            }
+                                .padding(horizontal = 10.dp, vertical = 7.dp)
+                                .clip(shape = RoundedCornerShape(3.dp))
+                                .background(textTollBarColor)
+                                .padding(1.dp)
+                                .clip(shape = RoundedCornerShape(3.dp))
+                                .background(if (isToDay) Divider else StrogiPost)
+                                .padding(horizontal = 5.dp), fontSize = 14.sp, color = if (isToDay) PrimaryText else PrimaryTextBlack)
                         }
-                        if (currentRoute == AllDestinations.MAE_NATATKI_MENU) {
-                            PlainTooltip(stringResource(R.string.add_natatku), TooltipAnchorPosition.Below) {
-                                IconButton({
-                                    viewModel.addFileNatatki = true
-                                    viewModel.isEditMode = true
-                                    viewModel.natatkaVisable = true
-                                    viewModel.textFieldValueState = TextFieldValue("")
-                                    viewModel.textFieldValueNatatkaContent = TextFieldValue("")
-                                }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.add), tint = textTollBarColor, contentDescription = stringResource(R.string.add_natatku)
-                                    )
-                                }
-                            }
-                        }
-                        if (viewModel.isIconSort) {
-                            var expandedSort by remember { mutableStateOf(false) }
-                            val isSortedVybranae = currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.BIBLIA_SEMUXA || currentRoute == AllDestinations.BIBLIA_BOKUNA || currentRoute == AllDestinations.BIBLIA_NADSAN || currentRoute == AllDestinations.BIBLIA_CHARNIAUSKI || currentRoute == AllDestinations.BIBLIA_SINODAL || currentRoute == AllDestinations.BIBLIA_CATOLIK || currentRoute == AllDestinations.BIBLIA_NEW_AMERICAN_BIBLE
-                            AppDropdownMenu(expanded = expandedSort, onDismissRequest = { expandedSort = false }) {
-                                sortedVybranae = k.getInt("sortedVybranae", Settings.SORT_BY_ABC)
-                                sortedNatatki = k.getInt("natatki_sort", Settings.SORT_BY_ABC)
-                                DropdownMenuItem(onClick = {
-                                    Settings.vibrate()
-                                    expandedSort = false
-                                    sortedVybranae = Settings.SORT_BY_ABC
-                                    sortedNatatki = Settings.SORT_BY_ABC
-                                    k.edit {
-                                        if (isSortedVybranae) {
-                                            putInt(
-                                                "sortedVybranae", sortedVybranae
-                                            )
-                                        } else putInt("natatki_sort", sortedNatatki)
-                                    }
-                                }, text = { Text(stringResource(R.string.sort_abc), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                    Row {
-                                        if ((isSortedVybranae && sortedVybranae == Settings.SORT_BY_ABC) || (currentRoute == AllDestinations.MAE_NATATKI_MENU && sortedNatatki == Settings.SORT_BY_ABC)) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.check), contentDescription = null
-                                            )
-                                        }
-                                        Icon(
-                                            painter = painterResource(R.drawable.sort_by_az), contentDescription = null
-                                        )
-                                    }
-                                })
-                                DropdownMenuItem(onClick = {
-                                    Settings.vibrate()
-                                    expandedSort = false
-                                    sortedVybranae = Settings.SORT_BY_TIME
-                                    sortedNatatki = Settings.SORT_BY_TIME
-                                    k.edit {
-                                        if (isSortedVybranae) {
-                                            putInt(
-                                                "sortedVybranae", sortedVybranae
-                                            )
-                                        } else putInt("natatki_sort", sortedNatatki)
-                                    }
-                                }, text = { Text(stringResource(R.string.sort_time), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                    Row {
-                                        if ((isSortedVybranae && sortedVybranae == Settings.SORT_BY_TIME) || (currentRoute == AllDestinations.MAE_NATATKI_MENU && sortedNatatki == Settings.SORT_BY_TIME)) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.check), contentDescription = null
-                                            )
-                                        }
-                                        Icon(
-                                            painter = painterResource(R.drawable.sort_by_time), contentDescription = null
-                                        )
-                                    }
-                                })
-                                DropdownMenuItem(onClick = {
-                                    Settings.vibrate()
-                                    expandedSort = false
-                                    sortedVybranae = Settings.SORT_BY_CUSTOM
-                                    sortedNatatki = Settings.SORT_BY_CUSTOM
-                                    if (k.getBoolean("isCustomSortHelp", true)) {
-                                        dialogHelpCustomSort = true
-                                    }
-                                    k.edit {
-                                        if (isSortedVybranae) {
-                                            putInt(
-                                                "sortedVybranae", sortedVybranae
-                                            )
-                                        } else putInt("natatki_sort", sortedNatatki)
-                                    }
-                                }, text = { Text(stringResource(R.string.sort_custom), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                    Row {
-                                        if ((isSortedVybranae && sortedVybranae == Settings.SORT_BY_CUSTOM) || (currentRoute == AllDestinations.MAE_NATATKI_MENU && sortedNatatki == Settings.SORT_BY_CUSTOM)) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.check), contentDescription = null
-                                            )
-                                        }
-                                        Icon(
-                                            painter = painterResource(R.drawable.sort), contentDescription = null
-                                        )
-                                    }
-                                })
-                            }
-                            PlainTooltip(stringResource(R.string.sort), TooltipAnchorPosition.Below) {
-                                IconButton(onClick = {
-                                    Settings.vibrate()
-                                    expandedSort = true
-                                }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.sort), contentDescription = null, tint = textTollBarColor
-                                    )
-                                }
-                            }
-                        }
-                        if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.MAE_NATATKI_MENU) {
-                            PlainTooltip(stringResource(if (currentRoute == AllDestinations.VYBRANAE_LIST) R.string.vybranae_all_remove else R.string.vybranae_remove_all_natatka), TooltipAnchorPosition.Below) {
-                                IconButton({
-                                    if (currentRoute == AllDestinations.VYBRANAE_LIST) removeAllVybranaeDialog = !removeAllVybranaeDialog
-                                    else removeAllNatatkiDialog = !removeAllNatatkiDialog
-                                }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.delete), tint = textTollBarColor, contentDescription = stringResource(if (currentRoute == AllDestinations.VYBRANAE_LIST) R.string.vybranae_all_remove else R.string.vybranae_remove_all_natatka)
-                                    )
-                                }
-                            }
-                        }
-                        if (currentRoute == AllDestinations.LITURGIKON_MENU || currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.CHASASLOU_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA || currentRoute.contains("BIBLIA", ignoreCase = true)) {
-                            PlainTooltip(stringResource(R.string.poshuk), TooltipAnchorPosition.Below) {
-                                IconButton({
-                                    viewModel.searchText = true
-                                }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.search), tint = textTollBarColor, contentDescription = stringResource(R.string.poshuk)
-                                    )
-                                }
-                            }
-                        }
-                        if (currentRoute == AllDestinations.PIASOCHNICA_LIST) {
-                            PlainTooltip(stringResource(R.string.pasochnica_add_folder), TooltipAnchorPosition.Below) {
-                                IconButton(onClick = {
-                                    Settings.vibrate()
-                                    PasochnicaList.pasochnicaAction = PasochnicaList.FILE
-                                }) {
-                                    Icon(
-                                        modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.directory_icon_menu), contentDescription = stringResource(R.string.pasochnica_add_folder), tint = MaterialTheme.colorScheme.onSecondary
-                                    )
-                                }
-                            }
-                            PlainTooltip(stringResource(R.string.pasochnica_add_basa), TooltipAnchorPosition.Below) {
-                                IconButton(onClick = {
-                                    Settings.vibrate()
-                                    PasochnicaList.pasochnicaAction = PasochnicaList.WWW
-                                }) {
-                                    Icon(
-                                        modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.www_icon), contentDescription = stringResource(R.string.pasochnica_add_basa), tint = MaterialTheme.colorScheme.onSecondary
-                                    )
-                                }
-                            }
-                            PlainTooltip(stringResource(R.string.add_file), TooltipAnchorPosition.Below) {
-                                IconButton(onClick = {
-                                    Settings.vibrate()
-                                    PasochnicaList.pasochnicaAction = PasochnicaList.ADD
-                                }) {
-                                    Icon(
-                                        modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.plus), contentDescription = stringResource(R.string.add_file), tint = MaterialTheme.colorScheme.onSecondary
-                                    )
-                                }
-                            }
-                        }
-                        PlainTooltip(stringResource(R.string.more_items), TooltipAnchorPosition.Below) {
+                        PlainTooltip(stringResource(if (k.getBoolean("caliandarList", false)) R.string.set_book_caliandar else R.string.set_list_caliandar), TooltipAnchorPosition.Below) {
                             IconButton(onClick = {
                                 Settings.vibrate()
-                                expandedUp = true
+                                k.edit {
+                                    if (k.getBoolean("caliandarList", false)) {
+                                        navigationActions.navigateToKaliandar()
+                                        putBoolean("caliandarList", false)
+                                    } else {
+                                        putBoolean("caliandarList", true)
+                                        navigationActions.navigateToKaliandarYear()
+                                    }
+                                }
                             }) {
+                                val icon = if (k.getBoolean("caliandarList", false)) painterResource(R.drawable.calendar_today)
+                                else painterResource(R.drawable.list)
                                 Icon(
-                                    painter = painterResource(R.drawable.more_vert), contentDescription = stringResource(R.string.more_items), tint = textTollBarColor
+                                    painter = icon, contentDescription = stringResource(if (k.getBoolean("caliandarList", false)) R.string.set_book_caliandar else R.string.set_list_caliandar), tint = textTollBarColor
                                 )
                             }
                         }
                     }
-                    if (currentRoute == AllDestinations.MAE_NATATKI_MENU && viewModel.natatkaVisable && !viewModel.isEditMode) {
-                        PlainTooltip(stringResource(R.string.redagaktirovat)) {
-                            IconButton(onClick = {
-                                Settings.vibrate()
+                    if (currentRoute == AllDestinations.MAE_NATATKI_MENU) {
+                        PlainTooltip(stringResource(R.string.add_natatku), TooltipAnchorPosition.Below) {
+                            IconButton({
+                                viewModel.addFileNatatki = true
                                 viewModel.isEditMode = true
+                                viewModel.natatkaVisable = true
+                                viewModel.textFieldValueState = TextFieldValue("")
+                                viewModel.textFieldValueNatatkaContent = TextFieldValue("")
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.edit), contentDescription = stringResource(R.string.redagaktirovat), tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                            }
-                        }
-                        PlainTooltip(stringResource(R.string.delite)) {
-                            IconButton(onClick = {
-                                Settings.vibrate()
-                                viewModel.isDeliteNatatka = true
-                            }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.delete), contentDescription = stringResource(R.string.delite), tint = MaterialTheme.colorScheme.onSecondary
+                                    painter = painterResource(R.drawable.add), tint = textTollBarColor, contentDescription = stringResource(R.string.add_natatku)
                                 )
                             }
                         }
                     }
-                    if (currentRoute == AllDestinations.MAE_NATATKI_MENU && viewModel.isEditMode) {
-                        PlainTooltip(stringResource(R.string.save_sabytie)) {
+                    if (viewModel.isIconSort) {
+                        var expandedSort by remember { mutableStateOf(false) }
+                        val isSortedVybranae = currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.BIBLIA_SEMUXA || currentRoute == AllDestinations.BIBLIA_BOKUNA || currentRoute == AllDestinations.BIBLIA_NADSAN || currentRoute == AllDestinations.BIBLIA_CHARNIAUSKI || currentRoute == AllDestinations.BIBLIA_SINODAL || currentRoute == AllDestinations.BIBLIA_CATOLIK || currentRoute == AllDestinations.BIBLIA_NEW_AMERICAN_BIBLE
+                        AppDropdownMenu(expanded = expandedSort, onDismissRequest = { expandedSort = false }) {
+                            sortedVybranae = k.getInt("sortedVybranae", Settings.SORT_BY_ABC)
+                            sortedNatatki = k.getInt("natatki_sort", Settings.SORT_BY_ABC)
+                            DropdownMenuItem(onClick = {
+                                Settings.vibrate()
+                                expandedSort = false
+                                sortedVybranae = Settings.SORT_BY_ABC
+                                sortedNatatki = Settings.SORT_BY_ABC
+                                k.edit {
+                                    if (isSortedVybranae) {
+                                        putInt(
+                                            "sortedVybranae", sortedVybranae
+                                        )
+                                    } else putInt("natatki_sort", sortedNatatki)
+                                }
+                            }, text = { Text(stringResource(R.string.sort_abc), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                Row {
+                                    if ((isSortedVybranae && sortedVybranae == Settings.SORT_BY_ABC) || (currentRoute == AllDestinations.MAE_NATATKI_MENU && sortedNatatki == Settings.SORT_BY_ABC)) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.check), contentDescription = null
+                                        )
+                                    }
+                                    Icon(
+                                        painter = painterResource(R.drawable.sort_by_az), contentDescription = null
+                                    )
+                                }
+                            })
+                            DropdownMenuItem(onClick = {
+                                Settings.vibrate()
+                                expandedSort = false
+                                sortedVybranae = Settings.SORT_BY_TIME
+                                sortedNatatki = Settings.SORT_BY_TIME
+                                k.edit {
+                                    if (isSortedVybranae) {
+                                        putInt(
+                                            "sortedVybranae", sortedVybranae
+                                        )
+                                    } else putInt("natatki_sort", sortedNatatki)
+                                }
+                            }, text = { Text(stringResource(R.string.sort_time), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                Row {
+                                    if ((isSortedVybranae && sortedVybranae == Settings.SORT_BY_TIME) || (currentRoute == AllDestinations.MAE_NATATKI_MENU && sortedNatatki == Settings.SORT_BY_TIME)) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.check), contentDescription = null
+                                        )
+                                    }
+                                    Icon(
+                                        painter = painterResource(R.drawable.sort_by_time), contentDescription = null
+                                    )
+                                }
+                            })
+                            DropdownMenuItem(onClick = {
+                                Settings.vibrate()
+                                expandedSort = false
+                                sortedVybranae = Settings.SORT_BY_CUSTOM
+                                sortedNatatki = Settings.SORT_BY_CUSTOM
+                                if (k.getBoolean("isCustomSortHelp", true)) {
+                                    dialogHelpCustomSort = true
+                                }
+                                k.edit {
+                                    if (isSortedVybranae) {
+                                        putInt(
+                                            "sortedVybranae", sortedVybranae
+                                        )
+                                    } else putInt("natatki_sort", sortedNatatki)
+                                }
+                            }, text = { Text(stringResource(R.string.sort_custom), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                Row {
+                                    if ((isSortedVybranae && sortedVybranae == Settings.SORT_BY_CUSTOM) || (currentRoute == AllDestinations.MAE_NATATKI_MENU && sortedNatatki == Settings.SORT_BY_CUSTOM)) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.check), contentDescription = null
+                                        )
+                                    }
+                                    Icon(
+                                        painter = painterResource(R.drawable.sort), contentDescription = null
+                                    )
+                                }
+                            })
+                        }
+                        PlainTooltip(stringResource(R.string.sort), TooltipAnchorPosition.Below) {
                             IconButton(onClick = {
                                 Settings.vibrate()
-                                viewModel.saveFileNatatki = true
+                                expandedSort = true
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.save), contentDescription = stringResource(R.string.save_sabytie), tint = MaterialTheme.colorScheme.onSecondary
+                                    painter = painterResource(R.drawable.sort), contentDescription = null, tint = textTollBarColor
                                 )
                             }
                         }
                     }
-                    if (viewModel.searchFullText || (viewModel.searchText && currentRoute.contains("BIBLIA", ignoreCase = true))) {
-                        PlainTooltip(stringResource(R.string.settings_bible)) {
-                            IconButton(onClick = {
-                                Settings.vibrate()
-                                viewModel.searchSettings = true
+                    if (currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.MAE_NATATKI_MENU) {
+                        PlainTooltip(stringResource(if (currentRoute == AllDestinations.VYBRANAE_LIST) R.string.vybranae_all_remove else R.string.vybranae_remove_all_natatka), TooltipAnchorPosition.Below) {
+                            IconButton({
+                                if (currentRoute == AllDestinations.VYBRANAE_LIST) removeAllVybranaeDialog = !removeAllVybranaeDialog
+                                else removeAllNatatkiDialog = !removeAllNatatkiDialog
                             }) {
                                 Icon(
-                                    painter = painterResource(R.drawable.settings), contentDescription = stringResource(R.string.settings_bible), tint = MaterialTheme.colorScheme.onSecondary
+                                    painter = painterResource(R.drawable.delete), tint = textTollBarColor, contentDescription = stringResource(if (currentRoute == AllDestinations.VYBRANAE_LIST) R.string.vybranae_all_remove else R.string.vybranae_remove_all_natatka)
                                 )
                             }
                         }
                     }
-                    AppDropdownMenu(
-                        expanded = expandedUp, onDismissRequest = { expandedUp = false }) {
+                    if (currentRoute == AllDestinations.LITURGIKON_MENU || currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.CHASASLOU_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA || currentRoute.contains("BIBLIA", ignoreCase = true)) {
+                        PlainTooltip(stringResource(R.string.poshuk), TooltipAnchorPosition.Below) {
+                            IconButton({
+                                viewModel.searchText = true
+                            }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.search), tint = textTollBarColor, contentDescription = stringResource(R.string.poshuk)
+                                )
+                            }
+                        }
+                    }
+                    if (currentRoute == AllDestinations.PIASOCHNICA_LIST) {
+                        PlainTooltip(stringResource(R.string.pasochnica_add_folder), TooltipAnchorPosition.Below) {
+                            IconButton(onClick = {
+                                Settings.vibrate()
+                                PasochnicaList.pasochnicaAction = PasochnicaList.FILE
+                            }) {
+                                Icon(
+                                    modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.directory_icon_menu), contentDescription = stringResource(R.string.pasochnica_add_folder), tint = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
+                        }
+                        PlainTooltip(stringResource(R.string.pasochnica_add_basa), TooltipAnchorPosition.Below) {
+                            IconButton(onClick = {
+                                Settings.vibrate()
+                                PasochnicaList.pasochnicaAction = PasochnicaList.WWW
+                            }) {
+                                Icon(
+                                    modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.www_icon), contentDescription = stringResource(R.string.pasochnica_add_basa), tint = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
+                        }
+                        PlainTooltip(stringResource(R.string.add_file), TooltipAnchorPosition.Below) {
+                            IconButton(onClick = {
+                                Settings.vibrate()
+                                PasochnicaList.pasochnicaAction = PasochnicaList.ADD
+                            }) {
+                                Icon(
+                                    modifier = Modifier.size(24.dp), painter = painterResource(R.drawable.plus), contentDescription = stringResource(R.string.add_file), tint = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
+                        }
+                    }
+                    PlainTooltip(stringResource(R.string.more_items), TooltipAnchorPosition.Below) {
+                        IconButton(onClick = {
+                            Settings.vibrate()
+                            expandedUp = true
+                        }) {
+                            Icon(
+                                painter = painterResource(R.drawable.more_vert), contentDescription = stringResource(R.string.more_items), tint = textTollBarColor
+                            )
+                        }
+                    }
+                }
+                if (currentRoute == AllDestinations.MAE_NATATKI_MENU && viewModel.natatkaVisable && !viewModel.isEditMode) {
+                    PlainTooltip(stringResource(R.string.redagaktirovat)) {
+                        IconButton(onClick = {
+                            Settings.vibrate()
+                            viewModel.isEditMode = true
+                        }) {
+                            Icon(
+                                painter = painterResource(R.drawable.edit), contentDescription = stringResource(R.string.redagaktirovat), tint = MaterialTheme.colorScheme.onSecondary
+                            )
+                        }
+                    }
+                    PlainTooltip(stringResource(R.string.delite)) {
+                        IconButton(onClick = {
+                            Settings.vibrate()
+                            viewModel.isDeliteNatatka = true
+                        }) {
+                            Icon(
+                                painter = painterResource(R.drawable.delete), contentDescription = stringResource(R.string.delite), tint = MaterialTheme.colorScheme.onSecondary
+                            )
+                        }
+                    }
+                }
+                if (currentRoute == AllDestinations.MAE_NATATKI_MENU && viewModel.isEditMode) {
+                    PlainTooltip(stringResource(R.string.save_sabytie)) {
+                        IconButton(onClick = {
+                            Settings.vibrate()
+                            viewModel.saveFileNatatki = true
+                        }) {
+                            Icon(
+                                painter = painterResource(R.drawable.save), contentDescription = stringResource(R.string.save_sabytie), tint = MaterialTheme.colorScheme.onSecondary
+                            )
+                        }
+                    }
+                }
+                if (viewModel.searchFullText || (viewModel.searchText && currentRoute.contains("BIBLIA", ignoreCase = true))) {
+                    PlainTooltip(stringResource(R.string.settings_bible)) {
+                        IconButton(onClick = {
+                            Settings.vibrate()
+                            viewModel.searchSettings = true
+                        }) {
+                            Icon(
+                                painter = painterResource(R.drawable.settings), contentDescription = stringResource(R.string.settings_bible), tint = MaterialTheme.colorScheme.onSecondary
+                            )
+                        }
+                    }
+                }
+                AppDropdownMenu(
+                    expanded = expandedUp, onDismissRequest = { expandedUp = false }) {
+                    DropdownMenuItem(onClick = {
+                        Settings.vibrate()
+                        expandedUp = false
+                        navigationActions.navigateToSettingsView()
+                    }, text = { Text(stringResource(R.string.tools_item), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                        Icon(
+                            painter = painterResource(R.drawable.settings), contentDescription = stringResource(R.string.tools_item)
+                        )
+                    })
+                    if (currentRoute == AllDestinations.PIASOCHNICA_LIST) {
+                        DropdownMenuItem(onClick = {
+                            Settings.vibrate()
+                            PasochnicaList.pasochnicaAction = PasochnicaList.DEL_ALL_PASOCHNICA
+                            expandedUp = false
+                        }, text = { Text(stringResource(R.string.del_pasochnica), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                            Icon(
+                                painter = painterResource(R.drawable.delete), contentDescription = stringResource(R.string.del_pasochnica)
+                            )
+                        })
+                    }
+                    if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
                         DropdownMenuItem(onClick = {
                             Settings.vibrate()
                             expandedUp = false
-                            navigationActions.navigateToSettingsView()
-                        }, text = { Text(stringResource(R.string.tools_item), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                            navigationActions.navigateToUmouniaZnachenni()
+                        }, text = { Text(stringResource(R.string.symbols_menu), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                             Icon(
-                                painter = painterResource(R.drawable.settings), contentDescription = stringResource(R.string.tools_item)
+                                painter = painterResource(R.drawable.info), contentDescription = stringResource(R.string.symbols_menu)
                             )
                         })
-                        if (currentRoute == AllDestinations.PIASOCHNICA_LIST) {
-                            DropdownMenuItem(onClick = {
-                                Settings.vibrate()
-                                PasochnicaList.pasochnicaAction = PasochnicaList.DEL_ALL_PASOCHNICA
-                                expandedUp = false
-                            }, text = { Text(stringResource(R.string.del_pasochnica), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                Icon(
-                                    painter = painterResource(R.drawable.delete), contentDescription = stringResource(R.string.del_pasochnica)
-                                )
-                            })
-                        }
-                        if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
+                        if (!isBottomBar) {
                             DropdownMenuItem(onClick = {
                                 Settings.vibrate()
                                 expandedUp = false
-                                navigationActions.navigateToUmouniaZnachenni()
-                            }, text = { Text(stringResource(R.string.symbols_menu), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                navigationActions.navigateToPadzeiView()
+                            }, text = { Text(stringResource(R.string.sabytie), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                 Icon(
-                                    painter = painterResource(R.drawable.info), contentDescription = stringResource(R.string.symbols_menu)
+                                    painter = painterResource(R.drawable.event), contentDescription = stringResource(R.string.sabytie)
                                 )
                             })
-                            if (!isBottomBar) {
-                                DropdownMenuItem(onClick = {
-                                    Settings.vibrate()
-                                    expandedUp = false
-                                    navigationActions.navigateToPadzeiView()
-                                }, text = { Text(stringResource(R.string.sabytie), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.event), contentDescription = stringResource(R.string.sabytie)
-                                    )
-                                })
-                                DropdownMenuItem(onClick = {
-                                    Settings.vibrate()
-                                    expandedUp = false
-                                    viewModel.searchText = true
-                                }, text = { Text(stringResource(R.string.poshuk_sviatych), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.search), contentDescription = stringResource(R.string.poshuk_sviatych)
-                                    )
-                                })
-                            }
-                        }
-                        if (k.getBoolean("admin", false) || k.getBoolean("adminOnlyNotifications", false)) {
-                            HorizontalDivider()
-                            if (!k.getBoolean("adminOnlyNotifications", false)) {
-                                if (currentRoute.contains(AllDestinations.KALIANDAR) || (currentRoute.contains("BIBLIJATEKA", ignoreCase = true) && currentRoute != AllDestinations.BIBLIJATEKA_NIADAUNIA)) {
-                                    DropdownMenuItem(onClick = {
-                                        Settings.vibrate()
-                                        expandedUp = false
-                                        if (currentRoute.contains(AllDestinations.KALIANDAR)) {
-                                            dialogEditSvityiaAndSviaty = true
-                                        } else {
-                                            addBiblijateka = true
-                                        }
-                                    }, text = { Text(stringResource(if (currentRoute.contains(AllDestinations.KALIANDAR)) R.string.redagaktirovat else R.string.add_file), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.edit), contentDescription = stringResource(if (currentRoute.contains(AllDestinations.KALIANDAR)) R.string.redagaktirovat else R.string.add_file)
-                                        )
-                                    })
-                                }
-                                if (currentRoute == AllDestinations.LITURGIKON_MENU || currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.CHASASLOU_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU) {
-                                    DropdownMenuItem(onClick = {
-                                        Settings.vibrate()
-                                        expandedUp = false
-                                        viewModel.searchFullText = true
-                                    }, text = { Text(stringResource(R.string.searche_bogasluz_text), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.search), contentDescription = stringResource(R.string.searche_bogasluz_text)
-                                        )
-                                    })
-                                }
-                            }
-                            if (!k.getBoolean("adminNotifications", false)) {
-                                DropdownMenuItem(onClick = {
-                                    Settings.vibrate()
-                                    expandedUp = false
-                                    if (Settings.isNetworkAvailable(context)) {
-                                        logView = true
-                                    } else {
-                                        Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
-                                    }
-                                }, text = { Text(stringResource(R.string.log_m), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.description), contentDescription = stringResource(R.string.log_m)
-                                    )
-                                })
-                            }
+                            DropdownMenuItem(onClick = {
+                                Settings.vibrate()
+                                expandedUp = false
+                                viewModel.searchText = true
+                            }, text = { Text(stringResource(R.string.poshuk_sviatych), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.search), contentDescription = stringResource(R.string.poshuk_sviatych)
+                                )
+                            })
                         }
                     }
-                }, colors = TopAppBarDefaults.topAppBarColors(tollBarColor)
+                    if (k.getBoolean("admin", false) || k.getBoolean("adminOnlyNotifications", false)) {
+                        HorizontalDivider()
+                        if (!k.getBoolean("adminOnlyNotifications", false)) {
+                            if (currentRoute.contains(AllDestinations.KALIANDAR) || (currentRoute.contains("BIBLIJATEKA", ignoreCase = true) && currentRoute != AllDestinations.BIBLIJATEKA_NIADAUNIA)) {
+                                DropdownMenuItem(onClick = {
+                                    Settings.vibrate()
+                                    expandedUp = false
+                                    if (currentRoute.contains(AllDestinations.KALIANDAR)) {
+                                        dialogEditSvityiaAndSviaty = true
+                                    } else {
+                                        addBiblijateka = true
+                                    }
+                                }, text = { Text(stringResource(if (currentRoute.contains(AllDestinations.KALIANDAR)) R.string.redagaktirovat else R.string.add_file), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.edit), contentDescription = stringResource(if (currentRoute.contains(AllDestinations.KALIANDAR)) R.string.redagaktirovat else R.string.add_file)
+                                    )
+                                })
+                            }
+                            if (currentRoute == AllDestinations.LITURGIKON_MENU || currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.CHASASLOU_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU) {
+                                DropdownMenuItem(onClick = {
+                                    Settings.vibrate()
+                                    expandedUp = false
+                                    viewModel.searchFullText = true
+                                }, text = { Text(stringResource(R.string.searche_bogasluz_text), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.search), contentDescription = stringResource(R.string.searche_bogasluz_text)
+                                    )
+                                })
+                            }
+                        }
+                        if (!k.getBoolean("adminNotifications", false)) {
+                            DropdownMenuItem(onClick = {
+                                Settings.vibrate()
+                                expandedUp = false
+                                if (Settings.isNetworkAvailable(context)) {
+                                    logView = true
+                                } else {
+                                    Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+                                }
+                            }, text = { Text(stringResource(R.string.log_m), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.description), contentDescription = stringResource(R.string.log_m)
+                                )
+                            })
+                        }
+                    }
+                }
+            }, colors = TopAppBarDefaults.topAppBarColors(tollBarColor)
             )
         }, bottomBar = {
             if (!(currentRoute == AllDestinations.MAE_NATATKI_MENU || currentRoute == AllDestinations.LITURGIKON_MENU || currentRoute == AllDestinations.AKAFIST_MENU || currentRoute == AllDestinations.CHASASLOU_MENU || currentRoute == AllDestinations.MALITVY_MENU || currentRoute == AllDestinations.BOGASLUJBOVYIA_MENU || currentRoute.contains("BIBLIJATEKA", ignoreCase = true) || currentRoute.contains("PIESNY", ignoreCase = true) || currentRoute == AllDestinations.UNDER_PASHALIA || currentRoute == AllDestinations.UNDER_PARAFII_BGKC || currentRoute == AllDestinations.UNDER_SVAITY_MUNU || currentRoute.contains("BIBLIA", ignoreCase = true) || currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.PIASOCHNICA_LIST)) {
@@ -1737,20 +1736,19 @@ fun MainConteiner(
                                     }
                                 }
                                 PlainTooltip(stringResource(R.string.set_data)) {
-                                    Text(
-                                        text = Calendar.getInstance()[Calendar.DATE].toString(), modifier = Modifier
-                                            .clickable {
-                                                Settings.vibrate()
-                                                showDropdownMenuPos = 1
-                                                showDropdown = true
-                                            }
-                                            .padding(horizontal = 10.dp, vertical = 7.dp)
-                                            .clip(shape = RoundedCornerShape(3.dp))
-                                            .background(textTollBarColor)
-                                            .padding(1.dp)
-                                            .clip(shape = RoundedCornerShape(3.dp))
-                                            .background(if (isToDay) Divider else StrogiPost)
-                                            .padding(horizontal = 5.dp), fontSize = 14.sp, color = if (isToDay) PrimaryText else PrimaryTextBlack)
+                                    Text(text = Calendar.getInstance()[Calendar.DATE].toString(), modifier = Modifier
+                                        .clickable {
+                                            Settings.vibrate()
+                                            showDropdownMenuPos = 1
+                                            showDropdown = true
+                                        }
+                                        .padding(horizontal = 10.dp, vertical = 7.dp)
+                                        .clip(shape = RoundedCornerShape(3.dp))
+                                        .background(textTollBarColor)
+                                        .padding(1.dp)
+                                        .clip(shape = RoundedCornerShape(3.dp))
+                                        .background(if (isToDay) Divider else StrogiPost)
+                                        .padding(horizontal = 5.dp), fontSize = 14.sp, color = if (isToDay) PrimaryText else PrimaryTextBlack)
                                 }
                             }
                         }
@@ -2130,13 +2128,13 @@ fun MainConteiner(
                         textTollBarColor = PrimaryTextBlack
                         VybranaeList(
                             navigateToCytanniList = { chytanne, position, perevod2 ->
-                                viewModel.setPerevod(context, Settings.CHYTANNI_VYBRANAE, chytanne, perevod2)
-                                navigationActions.navigateToCytanniList(
-                                    "", chytanne, Settings.CHYTANNI_VYBRANAE, perevod2, position
-                                )
-                            }, navigateToBogaslujbovyia = { title, resourse ->
-                                navigationActions.navigateToBogaslujbovyia(title, resourse)
-                            }, sortedVybranae, removeAllVybranae, innerPadding
+                            viewModel.setPerevod(context, Settings.CHYTANNI_VYBRANAE, chytanne, perevod2)
+                            navigationActions.navigateToCytanniList(
+                                "", chytanne, Settings.CHYTANNI_VYBRANAE, perevod2, position
+                            )
+                        }, navigateToBogaslujbovyia = { title, resourse ->
+                            navigationActions.navigateToBogaslujbovyia(title, resourse)
+                        }, sortedVybranae, removeAllVybranae, innerPadding
                         )
                     }
 
