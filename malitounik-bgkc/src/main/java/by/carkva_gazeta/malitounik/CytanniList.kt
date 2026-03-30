@@ -2569,7 +2569,7 @@ fun knigaBiblii(kniga: String): Int {
     if (kniga == "Тав") bible = 17
     if (kniga == "Юдт") bible = 18
     if (kniga == "Эст") bible = 19
-    if (kniga == "Ёва") bible = 20
+    if (kniga == "Ёва" || kniga == "Ёў") bible = 20
     if (kniga == "Пс") bible = 21
     if (kniga == "Высл" || kniga == "Прып") bible = 22
     if (kniga == "Экл") bible = 23
