@@ -284,7 +284,8 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
             }
         }
     }
-    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+    val scrollState = rememberScrollState()
+    Column(modifier = Modifier.verticalScroll(scrollState)) {
         LazyColumn(
             modifier = Modifier
                 .dragContainer(dragDropFileState)
@@ -393,6 +394,9 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
                 collapsed = true
             }
             if (!collapsed) {
+                LaunchedEffect(scrollState.maxValue) {
+                    scrollState.animateScrollTo(scrollState.maxValue)
+                }
                 LazyColumn(
                     modifier = Modifier
                         .dragContainer(dragDropBibleState)

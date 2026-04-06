@@ -256,6 +256,9 @@ class BogaslujbovyiaViewModel : ViewModel() {
                     scrollToY = layout.getLineTop(line)
                     find = true
                 }
+            } else {
+                scrollToY = scrollState.maxValue.toFloat()
+                find = true
             }
         }
     }
@@ -276,6 +279,9 @@ class BogaslujbovyiaViewModel : ViewModel() {
                     scrollToY = layout.getLineTop(line)
                     find = true
                 }
+            } else {
+                scrollToY = 0f
+                find = true
             }
         }
     }
