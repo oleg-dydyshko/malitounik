@@ -931,5 +931,7 @@
     <string name="save_as">Захаваць як</string>
     <string name="is_save">ЗАХАВАЦЬ?</string>
     <string name="is_save_check">Захаваць змены?</string>
+    <string name="psalom_90">Псалом 90 (версія 1997, 2000 гг.)</string>
+    <string name="psalom_100">Псалом 100 (версія 1997, 2000 гг.)</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

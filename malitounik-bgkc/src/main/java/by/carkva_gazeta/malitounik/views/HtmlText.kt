@@ -250,6 +250,14 @@ fun HtmlText(
                     isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 7)
                 }
 
+                "https://localhost/gladztut90/" -> {
+                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 8)
+                }
+
+                "https://localhost/gladztut100/" -> {
+                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 9)
+                }
+
                 "https://localhost/uspaminpamerlyxijyvix/" -> {
                     isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 14)
                 }

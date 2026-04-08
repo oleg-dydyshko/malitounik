@@ -2416,6 +2416,16 @@ fun DialogLiturgia(
             title = stringResource(R.string.malitva_za_paclicanyx)
         }
 
+        8 -> {
+            filename = "psalom_90.html"
+            title = stringResource(R.string.psalom_90)
+        }
+
+        9 -> {
+            filename = "psalom_100.html"
+            title = stringResource(R.string.psalom_100)
+        }
+
         10 -> {
             filename = "bogashlugbovya/bogashlugbovya1_8.html"
             title = stringResource(R.string.ps_94)
