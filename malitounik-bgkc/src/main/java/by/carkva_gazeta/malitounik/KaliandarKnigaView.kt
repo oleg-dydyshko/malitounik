@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -136,7 +137,7 @@ fun KaliandarKnigaView(
                         Text(
                             text = stringResource(R.string.viachernia), modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
-                                .padding(top = 10.dp), fontSize = 18.sp, color = newTint
+                                .padding(top = 10.dp), maxLines = 1, overflow = TextOverflow.Ellipsis, fontSize = 18.sp, color = newTint
                         )
                     }
                     val listSlujbaPavia = slujba.loadSluzbaDayList(SlugbovyiaTextu.PAVIACHERNICA, dayOfYear, year)
@@ -166,7 +167,7 @@ fun KaliandarKnigaView(
                         Text(
                             text = stringResource(R.string.raviachernica), modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
-                                .padding(top = 10.dp), fontSize = 18.sp, color = newTint
+                                .padding(top = 10.dp), maxLines = 1, overflow = TextOverflow.Ellipsis, fontSize = 18.sp, color = newTint
                         )
                     }
                     val listSlujbaPaunoch = slujba.loadSluzbaDayList(SlugbovyiaTextu.PAUNOCHNICA, dayOfYear, year)
@@ -194,7 +195,7 @@ fun KaliandarKnigaView(
                         Text(
                             text = stringResource(R.string.paunochnica), modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
-                                .padding(top = 10.dp), fontSize = 18.sp, color = newTint
+                                .padding(top = 10.dp), maxLines = 1, overflow = TextOverflow.Ellipsis, fontSize = 18.sp, color = newTint
                         )
                     }
                 }
@@ -227,7 +228,7 @@ fun KaliandarKnigaView(
                         Text(
                             text = stringResource(R.string.utran), modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
-                                .padding(top = 10.dp), fontSize = 18.sp, color = newTint
+                                .padding(top = 10.dp), maxLines = 1, overflow = TextOverflow.Ellipsis, fontSize = 18.sp, color = newTint
                         )
                     }
                     val listSlujbaVilHadz = slujba.loadSluzbaDayList(SlugbovyiaTextu.VIALHADZINY, dayOfYear, year)
@@ -255,7 +256,7 @@ fun KaliandarKnigaView(
                         Text(
                             text = stringResource(R.string.gadziny), modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
-                                .padding(top = 10.dp), fontSize = 18.sp, color = newTint
+                                .padding(top = 10.dp), maxLines = 1, overflow = TextOverflow.Ellipsis, fontSize = 18.sp, color = newTint
                         )
                     }
                     val listSlujbaLitur = if (isLiturgia(data)) slujba.loadSluzbaDayList(SlugbovyiaTextu.LITURHIJA, dayOfYear, year)
@@ -284,7 +285,7 @@ fun KaliandarKnigaView(
                         Text(
                             text = stringResource(R.string.liturgia), modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
-                                .padding(top = 10.dp), fontSize = 18.sp, color = newTint
+                                .padding(top = 10.dp), maxLines = 1, overflow = TextOverflow.Ellipsis, fontSize = 18.sp, color = newTint
                         )
                     }
                 }
@@ -302,7 +303,7 @@ fun KaliandarKnigaView(
                         Text(
                             text = stringResource(R.string.ustau), modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
-                                .padding(top = 10.dp), fontSize = 18.sp, color = newTint
+                                .padding(top = 10.dp), maxLines = 1, overflow = TextOverflow.Ellipsis, fontSize = 18.sp, color = newTint
                         )
                     }
                     val svityia = data[4]
@@ -322,7 +323,7 @@ fun KaliandarKnigaView(
                         Text(
                             text = stringResource(R.string.jyci), modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
-                                .padding(top = 10.dp), fontSize = 18.sp, color = newTint
+                                .padding(top = 10.dp), maxLines = 1, overflow = TextOverflow.Ellipsis, fontSize = 18.sp, color = newTint
                         )
                     }
                     val parliny = slujba.checkParliny(dayOfYear)
@@ -342,7 +343,7 @@ fun KaliandarKnigaView(
                         Text(
                             text = stringResource(R.string.piarliny), modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
-                                .padding(top = 10.dp), fontSize = 18.sp, color = newTint
+                                .padding(top = 10.dp), maxLines = 1, overflow = TextOverflow.Ellipsis, fontSize = 18.sp, color = newTint
                         )
                     }
                 }

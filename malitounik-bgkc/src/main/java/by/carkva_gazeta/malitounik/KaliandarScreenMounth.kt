@@ -343,10 +343,11 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                                             }
                                             .padding(1.dp)
                                             .background(color)
-                                            .padding(5.dp)
-                                            .background(if (c[Calendar.DAY_OF_MONTH] == i && munTudey) color2 else color)
                                             .padding(2.dp)
-                                            .background(color),
+                                            .background(if (c[Calendar.DAY_OF_MONTH] == i && munTudey) color2 else color)
+                                            .padding(1.dp)
+                                            .background(color)
+                                            .padding(4.dp),
                                         textAlign = TextAlign.Center,
                                         fontWeight = bold,
                                         color = color2,

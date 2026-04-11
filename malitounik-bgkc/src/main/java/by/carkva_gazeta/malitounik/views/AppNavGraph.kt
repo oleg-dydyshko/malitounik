@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -654,7 +655,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), boga
             val resurs = stackEntry.arguments?.getString("resurs") ?: "bogashlugbovya_error.html"
             val error = stringResource(R.string.error_ch)
             val data = findCaliandarToDay(false)
-            val titleCh = stringResource(R.string.czytanne3, data[1].toInt(), LocalResources.current.getStringArray(R.array.meciac_smoll)[2])
+            val titleCh = stringResource(R.string.czytanne3, data[1].toInt(), LocalResources.current.getStringArray(R.array.meciac_smoll)[data[2].toInt()])
             Bogaslujbovyia(
                 navController, title, resurs, navigateTo = { navigate, skipUtran ->
                     when (navigate) {

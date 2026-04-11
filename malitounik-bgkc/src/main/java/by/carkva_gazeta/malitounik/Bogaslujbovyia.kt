@@ -161,6 +161,7 @@ import by.carkva_gazeta.malitounik.views.findCaliandarToDay
 import by.carkva_gazeta.malitounik.views.openAssetsResources
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -564,8 +565,8 @@ class BogaslujbovyiaViewModel : ViewModel() {
     fun initTTS(context: Context, layout: TextLayoutResult?, isLiturgia: Boolean, navigateTo: (String) -> Unit, isDialogListinner: (String, Int) -> Unit) {
         ttsManager = TTSManager(context, langNotSupported = {
             dialodTTSHelpError = true
-        }, speakText = {
-            curentPosition = it
+        }, speakText = { position ->
+            curentPosition = position
             var text = htmlText.replace("\n", "").replace(
                 "<!--<VERSION></VERSION>-->",
                 "<em>Версія праграмы: ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})</em><br><br>"
@@ -583,259 +584,18 @@ class BogaslujbovyiaViewModel : ViewModel() {
                         )
                     ) { link ->
                         val url = (link as LinkAnnotation.Url).url
-                        if (url.contains("https://localhost/")) {
-                            when (url) {
-                                "https://localhost/pasliachytaeca/" -> {
-                                    viewModelScope.launch {
-                                        scrollState.animateScrollTo(0)
-                                    }
-                                }
-
-                                "https://localhost/qr.code/" -> {
-                                    isDialogListinner(DialogListinner.DIALOGQRCODE.name, 0)
-                                }
-
-                                "https://localhost/shto.novaga/" -> {
-                                    isDialogListinner(DialogListinner.DIALOGSZTOHOVAHA.name, 0)
-                                }
-
-                                "https://localhost/malitvypasliaprychastia/" -> {
-                                    navigateTo("malitvypasliaprychastia")
-                                }
-
-                                "https://localhost/pershaiagadzina/" -> {
-                                    layout?.let { layout ->
-                                        val t1 = layout.layoutInput.text.indexOf("ПЕРШАЯ ГАДЗІНА")
-                                        if (t1 != -1) {
-                                            val line = layout.getLineForOffset(t1)
-                                            val y = layout.getLineTop(line)
-                                            viewModelScope.launch {
-                                                scrollState.animateScrollTo(y.toInt())
-                                            }
-                                        }
-                                    }
-                                }
-
-                                "https://localhost/trecaiagadzina/" -> {
-                                    layout?.let { layout ->
-                                        val t1 = layout.layoutInput.text.indexOf("ТРЭЦЯЯ ГАДЗІНА")
-                                        if (t1 != -1) {
-                                            val line = layout.getLineForOffset(t1)
-                                            val y = layout.getLineTop(line)
-                                            viewModelScope.launch {
-                                                scrollState.animateScrollTo(y.toInt())
-                                            }
-                                        }
-                                    }
-                                }
-
-                                "https://localhost/shostaiagadzina/" -> {
-                                    layout?.let { layout ->
-                                        val t1 = layout.layoutInput.text.indexOf("ШОСТАЯ ГАДЗІНА")
-                                        if (t1 != -1) {
-                                            val line = layout.getLineForOffset(t1)
-                                            val y = layout.getLineTop(line)
-                                            viewModelScope.launch {
-                                                scrollState.animateScrollTo(y.toInt())
-                                            }
-                                        }
-                                    }
-                                }
-
-                                "https://localhost/dzeviataiagadzina/" -> {
-                                    layout?.let { layout ->
-                                        val t1 = layout.layoutInput.text.indexOf("ДЗЯВЯТАЯ ГАДЗІНА")
-                                        if (t1 != -1) {
-                                            val line = layout.getLineForOffset(t1)
-                                            val y = layout.getLineTop(line)
-                                            viewModelScope.launch {
-                                                scrollState.animateScrollTo(y.toInt())
-                                            }
-                                        }
-                                    }
-                                }
-
-                                "https://localhost/zakanchennevialposty/" -> {
-                                    layout?.let { layout ->
-                                        val t1 = layout.layoutInput.text.indexOf("ЗАКАНЧЭНЬНЕ АБЕДНІЦЫ")
-                                        if (t1 != -1) {
-                                            val line = layout.getLineForOffset(t1)
-                                            val y = layout.getLineTop(line)
-                                            viewModelScope.launch {
-                                                scrollState.animateScrollTo(y.toInt())
-                                            }
-                                        }
-                                    }
-                                }
-
-                                "https://localhost/litciaiblaslavennechl/" -> {
-                                    navigateTo("litciaiblaslavennechl")
-                                }
-
-                                "https://localhost/zysimprapuskauca/" -> {
-                                    layout?.let { layout ->
-                                        val t1 = layout.layoutInput.text.indexOf("10 песьняў")
-                                        if (t1 != -1) {
-                                            val line = layout.getLineForOffset(t1)
-                                            val y = layout.getLineTop(line)
-                                            viewModelScope.launch {
-                                                scrollState.animateScrollTo(y.toInt())
-                                            }
-                                        }
-                                    }
-                                }
-
-                                "https://localhost/vybranyiavershyzpsalm/" -> {
-                                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 11)
-                                }
-
-                                "https://localhost/gltut/" -> {
-                                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 13)
-                                }
-
-                                "https://localhost/gospadzetabeklichu/" -> {
-                                    layout?.let { layout ->
-                                        val t1 = layout.layoutInput.text.indexOf("Псалом 140")
-                                        if (t1 != -1) {
-                                            val line = layout.getLineForOffset(t1)
-                                            val y = layout.getLineTop(line)
-                                            viewModelScope.launch {
-                                                scrollState.animateScrollTo(y.toInt())
-                                            }
-                                        }
-                                    }
-                                }
-
-                                "https://localhost/gladzinijai/" -> {
-                                    layout?.let { layout ->
-                                        val t1 = layout.layoutInput.text.indexOf("ЗАКАНЧЭНЬНЕ ВЯЧЭРНІ Ў ВЯЛІКІ ПОСТ")
-                                        if (t1 != -1) {
-                                            val line = layout.getLineForOffset(t1)
-                                            val y = layout.getLineTop(line)
-                                            viewModelScope.launch {
-                                                scrollState.animateScrollTo(y.toInt())
-                                            }
-                                        }
-                                    }
-                                }
-
-                                "https://localhost/gladztut102/" -> {
-                                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 1)
-                                }
-
-                                "https://localhost/gladztut91/" -> {
-                                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 2)
-                                }
-
-                                "https://localhost/gladztut145/" -> {
-                                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 3)
-                                }
-
-                                "https://localhost/gladztut92/" -> {
-                                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 4)
-                                }
-
-                                "https://localhost/gladztut94/" -> {
-                                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 10)
-                                }
-
-                                "https://localhost/inshyantyfon/" -> {
-                                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 5)
-                                }
-
-                                "https://localhost/malitvazapamerlyx/" -> {
-                                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 6)
-                                }
-
-                                "https://localhost/malitvazapaclikanyx/" -> {
-                                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 7)
-                                }
-
-                                "https://localhost/uspaminpamerlyxijyvix/" -> {
-                                    isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 14)
-                                }
-
-                                "https://localhost/adzinarodnesyne/" -> {
-                                    layout?.let { layout ->
-                                        val t1 = layout.layoutInput.text.indexOf("Адзінародны Сыне")
-                                        val t2 = layout.layoutInput.text.indexOf("Адзінародны Сыне", t1 + 17)
-                                        if (t2 != -1) {
-                                            val line = layout.getLineForOffset(t2)
-                                            val y = layout.getLineTop(line)
-                                            viewModelScope.launch {
-                                                scrollState.animateScrollTo(y.toInt())
-                                            }
-                                        }
-                                    }
-                                }
-
-                                "https://localhost/gliadzitutdabraveshchane/" -> {
-                                    navigateTo("gliadzitutdabraveshchane")
-                                }
-
-                                "https://localhost/autorakkanon/" -> {
-                                    layout?.let { layout ->
-                                        val t1 = layout.layoutInput.text.indexOf("АЎТОРАК")
-                                        if (t1 != -1) {
-                                            val line = layout.getLineForOffset(t1)
-                                            val y = layout.getLineTop(line)
-                                            viewModelScope.launch {
-                                                scrollState.animateScrollTo(y.toInt())
-                                            }
-                                        }
-                                    }
-                                }
-
-                                "https://localhost/seradakanon/" -> {
-                                    layout?.let { layout ->
-                                        val t1 = layout.layoutInput.text.indexOf("СЕРАДА")
-                                        if (t1 != -1) {
-                                            val line = layout.getLineForOffset(t1)
-                                            val y = layout.getLineTop(line)
-                                            viewModelScope.launch {
-                                                scrollState.animateScrollTo(y.toInt())
-                                            }
-                                        }
-                                    }
-                                }
-
-                                "https://localhost/chacverkanon/" -> {
-                                    layout?.let { layout ->
-                                        val t1 = layout.layoutInput.text.indexOf("ЧАЦЬВЕР")
-                                        if (t1 != -1) {
-                                            val line = layout.getLineForOffset(t1)
-                                            val y = layout.getLineTop(line)
-                                            viewModelScope.launch {
-                                                scrollState.animateScrollTo(y.toInt())
-                                            }
-                                        }
-                                    }
-                                }
-
-                                "https://localhost/cytanne/" -> {
-                                    if (isLiturgia) {
-                                        navigateTo("cytanne")
-                                    } else {
-                                        navigateTo("error")
-                                    }
-                                }
-
-                                else -> {
-                                    val error = context.getString(R.string.error_ch)
-                                    Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        } else {
-                            val browserIntent = Intent(Intent.ACTION_VIEW, url.toUri())
-                            context.startActivity(browserIntent)
-                        }
+                        goToLink(context, url, "", layout, isLiturgia, scrollState, viewModelScope, isDialogListinner = { title, position ->
+                            isDialogListinner(title, position)
+                        }, navigateTo = {
+                            navigateTo(it)
+                        })
                     }
                 )
-                addStyle(SpanStyle(textDecoration = TextDecoration.Underline), srcListTTS[it].start, srcListTTS[it].end)
+                addStyle(SpanStyle(textDecoration = TextDecoration.Underline), srcListTTS[position].start, srcListTTS[position].end)
             }
             searchTextResult = annotatedString
             layout?.let { textLayoutResult ->
-                val line = textLayoutResult.getLineForOffset(srcListTTS[it].start)
+                val line = textLayoutResult.getLineForOffset(srcListTTS[position].start)
                 scrollToY = textLayoutResult.getLineTop(line)
                 find = true
             }
@@ -2563,6 +2323,273 @@ fun DialogHelpTTS(perevod: String = Settings.PEREVODSEMUXI, isError: Boolean, on
     }
 }
 
+fun goToLink(context: Context, url: String, title: String, textLayout: TextLayoutResult?, isLiturgia: Boolean, scrollState: ScrollState, coroutineScope: CoroutineScope, isDialogListinner: (String, Int) -> Unit = { _, _ -> }, navigateTo: (String) -> Unit = {}) {
+    if (url.contains("https://localhost/")) {
+        when (url) {
+            "https://localhost/pasliachytaeca/" -> {
+                coroutineScope.launch {
+                    scrollState.animateScrollTo(0)
+                    if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
+                }
+            }
+
+            "https://localhost/qr.code/" -> {
+                isDialogListinner(DialogListinner.DIALOGQRCODE.name, 0)
+            }
+
+            "https://localhost/shto.novaga/" -> {
+                isDialogListinner(DialogListinner.DIALOGSZTOHOVAHA.name, 0)
+            }
+
+            "https://localhost/malitvypasliaprychastia/" -> {
+                navigateTo("malitvypasliaprychastia")
+            }
+
+            "https://localhost/pershaiagadzina/" -> {
+                textLayout?.let { layout ->
+                    val t1 = layout.layoutInput.text.indexOf("ПЕРШАЯ ГАДЗІНА")
+                    if (t1 != -1) {
+                        val line = layout.getLineForOffset(t1)
+                        val y = layout.getLineTop(line)
+                        coroutineScope.launch {
+                            scrollState.animateScrollTo(y.toInt())
+                            if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
+                        }
+                    }
+                }
+            }
+
+            "https://localhost/trecaiagadzina/" -> {
+                textLayout?.let { layout ->
+                    val t1 = layout.layoutInput.text.indexOf("ТРЭЦЯЯ ГАДЗІНА")
+                    if (t1 != -1) {
+                        val line = layout.getLineForOffset(t1)
+                        val y = layout.getLineTop(line)
+                        coroutineScope.launch {
+                            scrollState.animateScrollTo(y.toInt())
+                            if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
+                        }
+                    }
+                }
+            }
+
+            "https://localhost/shostaiagadzina/" -> {
+                textLayout?.let { layout ->
+                    val t1 = layout.layoutInput.text.indexOf("ШОСТАЯ ГАДЗІНА")
+                    if (t1 != -1) {
+                        val line = layout.getLineForOffset(t1)
+                        val y = layout.getLineTop(line)
+                        coroutineScope.launch {
+                            scrollState.animateScrollTo(y.toInt())
+                            if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
+                        }
+                    }
+                }
+            }
+
+            "https://localhost/dzeviataiagadzina/" -> {
+                textLayout?.let { layout ->
+                    val t1 = layout.layoutInput.text.indexOf("ДЗЯВЯТАЯ ГАДЗІНА")
+                    if (t1 != -1) {
+                        val line = layout.getLineForOffset(t1)
+                        val y = layout.getLineTop(line)
+                        coroutineScope.launch {
+                            scrollState.animateScrollTo(y.toInt())
+                            if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
+                        }
+                    }
+                }
+            }
+
+            "https://localhost/zakanchennevialposty/" -> {
+                textLayout?.let { layout ->
+                    val t1 = layout.layoutInput.text.indexOf("ЗАКАНЧЭНЬНЕ АБЕДНІЦЫ")
+                    if (t1 != -1) {
+                        val line = layout.getLineForOffset(t1)
+                        val y = layout.getLineTop(line)
+                        coroutineScope.launch {
+                            scrollState.animateScrollTo(y.toInt())
+                            if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
+                        }
+                    }
+                }
+            }
+
+            "https://localhost/litciaiblaslavennechl/" -> {
+                navigateTo("litciaiblaslavennechl")
+            }
+
+            "https://localhost/zysimprapuskauca/" -> {
+                textLayout?.let { layout ->
+                    val t1 = layout.layoutInput.text.indexOf("10 песьняў")
+                    if (t1 != -1) {
+                        val line = layout.getLineForOffset(t1)
+                        val y = layout.getLineTop(line)
+                        coroutineScope.launch {
+                            scrollState.animateScrollTo(y.toInt())
+                            if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
+                        }
+                    }
+                }
+            }
+
+            "https://localhost/vybranyiavershyzpsalm/" -> {
+                isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 11)
+            }
+
+            "https://localhost/gltut/" -> {
+                isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 13)
+            }
+
+            "https://localhost/gospadzetabeklichu/" -> {
+                textLayout?.let { layout ->
+                    val t1 = layout.layoutInput.text.indexOf("Псалом 140")
+                    if (t1 != -1) {
+                        val line = layout.getLineForOffset(t1)
+                        val y = layout.getLineTop(line)
+                        coroutineScope.launch {
+                            scrollState.animateScrollTo(y.toInt())
+                            if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
+                        }
+                    }
+                }
+            }
+
+            "https://localhost/gladzinijai/" -> {
+                textLayout?.let { layout ->
+                    val t1 = layout.layoutInput.text.indexOf("ЗАКАНЧЭНЬНЕ ВЯЧЭРНІ Ў ВЯЛІКІ ПОСТ")
+                    if (t1 != -1) {
+                        val line = layout.getLineForOffset(t1)
+                        val y = layout.getLineTop(line)
+                        coroutineScope.launch {
+                            scrollState.animateScrollTo(y.toInt())
+                            if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
+                        }
+                    }
+                }
+            }
+
+            "https://localhost/gladztut102/" -> {
+                isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 1)
+            }
+
+            "https://localhost/gladztut91/" -> {
+                isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 2)
+            }
+
+            "https://localhost/gladztut145/" -> {
+                isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 3)
+            }
+
+            "https://localhost/gladztut92/" -> {
+                isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 4)
+            }
+
+            "https://localhost/gladztut94/" -> {
+                isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 10)
+            }
+
+            "https://localhost/inshyantyfon/" -> {
+                isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 5)
+            }
+
+            "https://localhost/malitvazapamerlyx/" -> {
+                isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 6)
+            }
+
+            "https://localhost/malitvazapaclikanyx/" -> {
+                isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 7)
+            }
+
+            "https://localhost/gladztut90/" -> {
+                isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 8)
+            }
+
+            "https://localhost/gladztut100/" -> {
+                isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 9)
+            }
+
+            "https://localhost/uspaminpamerlyxijyvix/" -> {
+                isDialogListinner(DialogListinner.DIALOGLITURGIA.name, 14)
+            }
+
+            "https://localhost/adzinarodnesyne/" -> {
+                textLayout?.let { layout ->
+                    val t1 = layout.layoutInput.text.indexOf("Адзінародны Сыне")
+                    val t2 = layout.layoutInput.text.indexOf("Адзінародны Сыне", t1 + 17)
+                    if (t2 != -1) {
+                        val line = layout.getLineForOffset(t2)
+                        val y = layout.getLineTop(line)
+                        coroutineScope.launch {
+                            scrollState.animateScrollTo(y.toInt())
+                            if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
+                        }
+                    }
+                }
+            }
+
+            "https://localhost/gliadzitutdabraveshchane/" -> {
+                navigateTo("gliadzitutdabraveshchane")
+            }
+
+            "https://localhost/autorakkanon/" -> {
+                textLayout?.let { layout ->
+                    val t1 = layout.layoutInput.text.indexOf("АЎТОРАК")
+                    if (t1 != -1) {
+                        val line = layout.getLineForOffset(t1)
+                        val y = layout.getLineTop(line)
+                        coroutineScope.launch {
+                            scrollState.animateScrollTo(y.toInt())
+                            if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
+                        }
+                    }
+                }
+            }
+
+            "https://localhost/seradakanon/" -> {
+                textLayout?.let { layout ->
+                    val t1 = layout.layoutInput.text.indexOf("СЕРАДА")
+                    if (t1 != -1) {
+                        val line = layout.getLineForOffset(t1)
+                        val y = layout.getLineTop(line)
+                        coroutineScope.launch {
+                            scrollState.animateScrollTo(y.toInt())
+                            if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
+                        }
+                    }
+                }
+            }
+
+            "https://localhost/chacverkanon/" -> {
+                textLayout?.let { layout ->
+                    val t1 = layout.layoutInput.text.indexOf("ЧАЦЬВЕР")
+                    if (t1 != -1) {
+                        val line = layout.getLineForOffset(t1)
+                        val y = layout.getLineTop(line)
+                        coroutineScope.launch {
+                            scrollState.animateScrollTo(y.toInt())
+                            if (title.isNotEmpty()) AppNavGraphState.setScrollValuePosition(title, scrollState.value)
+                        }
+                    }
+                }
+            }
+
+            "https://localhost/cytanne/" -> {
+                if (isLiturgia) {
+                    navigateTo("cytanne")
+                } else {
+                    navigateTo("error")
+                }
+            }
+
+            else -> Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
+        }
+    } else {
+        val browserIntent = Intent(Intent.ACTION_VIEW, url.toUri())
+        context.startActivity(browserIntent)
+    }
+}
+
 fun isLiturgia(dataDayList: ArrayList<String>): Boolean {
     val dayIfYear = dataDayList[24].toInt()
     val dayInPasha = dataDayList[22].toInt()
@@ -2577,7 +2604,9 @@ fun isLiturgia(dataDayList: ArrayList<String>): Boolean {
     }
 }
 
-class TTSManager(val context: Context, val langNotSupported: () -> Unit, speakText: (Int) -> Unit, isDone: () -> Unit) {
+class TTSManager(
+    val context: Context, val langNotSupported: () -> Unit, speakText: (Int) -> Unit, isDone: () -> Unit
+) {
     private var tts: TextToSpeech? = null
     private var textList = listOf<String>()
     private var currentSentenceIndex = 0

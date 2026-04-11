@@ -360,6 +360,7 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
                 }
             }
             var collapsed by remember { mutableStateOf(AppNavGraphState.setItemsValue(viewModel.vybranaeListTitleBible[i].title, true)) }
+            var collapsedRun by remember { mutableStateOf(false) }
             if (viewModel.vybranaeListTitleBible[i].title.isNotEmpty()) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically, modifier = Modifier
@@ -368,6 +369,7 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
                                 Settings.vibrate()
                                 AppNavGraphState.setItemsValue(viewModel.vybranaeListTitleBible[i].title)
                                 collapsed = !collapsed
+                                collapsedRun = true
                             },
                             onLongClick = {
                                 Settings.vibrate(true)
@@ -394,8 +396,11 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
                 collapsed = true
             }
             if (!collapsed) {
-                LaunchedEffect(scrollState.maxValue) {
-                    scrollState.animateScrollTo(scrollState.maxValue)
+                LaunchedEffect(collapsedRun) {
+                    if (collapsedRun) {
+                        scrollState.animateScrollTo(scrollState.maxValue)
+                        collapsedRun = false
+                    }
                 }
                 LazyColumn(
                     modifier = Modifier

@@ -1108,12 +1108,12 @@ fun getViachernia(): SnapshotStateList<BogaslujbovyiaListData> {
         )
     )
     list.add(BogaslujbovyiaListData("Вячэрня ў звычайныя дні", "bogashlugbovya/viaczernia_na_kozny_dzen.html", "ЧАСАСЛОЎ -> ВЯЧЭРНЯ"))
-    list.add(BogaslujbovyiaListData("Вячэрня ў Вялікім посьце", "bogashlugbovya/viaczernia_u_vialikim_poscie.html", "ЧАСАСЛОЎ -> ВЯЧЭРНЯ"))
     list.add(
         BogaslujbovyiaListData(
             "Вячэрняя служба штодзённая (без сьвятара)", "bogashlugbovya/viaczerniaja_sluzba_sztodzionnaja_biez_sviatara.html", "ЧАСАСЛОЎ -> ВЯЧЭРНЯ"
         )
     )
+    list.add(BogaslujbovyiaListData("Вячэрня ў Вялікім посьце", "bogashlugbovya/viaczernia_u_vialikim_poscie.html", "ЧАСАСЛОЎ -> ВЯЧЭРНЯ"))
     list.add(BogaslujbovyiaListData("Вячэрня на Сьветлым тыдні", "bogashlugbovya/viaczernia_svietly_tydzien.html", "ЧАСАСЛОЎ -> ВЯЧЭРНЯ"))
     return list
 }
