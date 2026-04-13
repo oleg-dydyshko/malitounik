@@ -430,7 +430,6 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
             )
         )
         piesnyPraslList.add(PiesnyListItem(0, "pesny/pesny_prasl_0.html", "Ён паўсюль"))
-        piesnyPraslList.add(PiesnyListItem(0, "pesny/pesny_prasl_1.html", "Ісус вызваліў мяне"))
         piesnyPraslList.add(PiesnyListItem(0, "pesny/pesny_prasl_2.html", "Ісус нам дае збаўленьне"))
         piesnyPraslList.add(PiesnyListItem(0, "pesny/pesny_prasl_3.html", "Айцец наш і наш Валадар"))
         piesnyPraslList.add(
@@ -667,17 +666,42 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
         )
         piesnyPraslList.add(
             PiesnyListItem(
-                0, "pesny/piesni_vialik_chrystos_uvaskros_z_pamierlych.html", "Хрыстос уваскрос з памерлых"
-            )
-        )
-        piesnyPraslList.add(
-            PiesnyListItem(
                 0, "pesny/piesni_prasl_ziamla_biazvodnaja_pustaja.html", "Зямля бязводная, пустая"
             )
         )
         piesnyPraslList.add(
             PiesnyListItem(
-                0, "pesny/piesni_vialik_radujmasia_chryscijanie.html", "Радуймася, хрысьціяне"
+                0, "pesny/piesni_prasl_kali_duch_haspodni_napauniaje_mianie.html", "Калі Дух Гасподні напаўняе мяне"
+            )
+        )
+        piesnyPraslList.add(
+            PiesnyListItem(
+                0, "pesny/piesni_vlkdzn_chrystos_uvaskros_u_radasci_ziamla.html", "Хрыстос уваскрос – у радасьці зямля"
+            )
+        )
+        piesnyPraslList.add(
+            PiesnyListItem(
+                0, "pesny/piesni_vlkdzn_chrystos_uvaskros_z_pamierlych.html", "Хрыстос уваскрос з памерлых"
+            )
+        )
+        piesnyPraslList.add(
+            PiesnyListItem(
+                0, "pesny/piesni_vlkdzn_isus_vyzvaliu_mianie.html", "Ісус вызваліў мяне"
+            )
+        )
+        piesnyPraslList.add(
+            PiesnyListItem(
+                0, "pesny/piesni_vlkdzn_pryjszou_da_nas_vialikdzien.html", "Прыйшоў да нас Вялікдзень"
+            )
+        )
+        piesnyPraslList.add(
+            PiesnyListItem(
+                0, "pesny/piesni_vlkdzn_radujmasia_chryscijanie.html", "Радуймася, хрысьціяне"
+            )
+        )
+        piesnyPraslList.add(
+            PiesnyListItem(
+                0, "pesny/piesni_vlkdzn_vialikdzien.html", "Вялікдзень"
             )
         )
         piesnyTaizeList.add(PiesnyListItem(4, "pesny/pesny_taize_0.html", "Magnifikat"))
