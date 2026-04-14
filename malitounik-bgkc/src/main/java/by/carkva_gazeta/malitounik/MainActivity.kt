@@ -150,6 +150,12 @@ object Settings {
     const val CALAINDAR = 0
     const val PASHA = 1
     const val UNDER = 2
+    const val PIESNY_PRASLAULENNIA = 0
+    const val PIESNY_ZA_BELARUS = 1
+    const val PIESNY_DA_BAGARODZICY = 2
+    const val PIESNY_KALIADNYIA = 3
+    const val PIESNY_TAIZE = 4
+    const val PIESNY_VIALIKODNYIA = 5
     var destinations = AllDestinations.KALIANDAR
     var caliandarPosition = -1
     var data = ArrayList<ArrayList<String>>()

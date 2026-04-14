@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -571,6 +570,13 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), boga
             )
         }
 
+        composable(AllDestinations.PIESNY_VIALIKODNYIA) {
+            Settings.destinations = AllDestinations.PIESNY_VIALIKODNYIA
+            MainConteiner(
+                navController = navController, drawerScrollStete = drawerScrollStete, viewModel = viewModel, sviatyiaviewModel = sviatyiaViewModel, adminViewModel = adminViewModel
+            )
+        }
+
         composable(AllDestinations.UNDER_PADRYXTOUKA) {
             Bogaslujbovyia(navController = navController, title = stringResource(R.string.spovedz), resurs = "padryxtouka_da_spovedzi.html", viewModel = bogaslujbovyiaViewModel, adminViewModel = adminViewModel)
         }
@@ -1110,6 +1116,7 @@ fun MainConteiner(
                             AllDestinations.PIESNY_ZA_BELARUS -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_ZA_BELARUS)
                             AllDestinations.PIESNY_KALIADNYIA -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_KALIADNYIA)
                             AllDestinations.PIESNY_TAIZE -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_TAIZE)
+                            AllDestinations.PIESNY_VIALIKODNYIA -> navigationActions.navigateToPiesnyList(AllDestinations.PIESNY_VIALIKODNYIA)
                             AllDestinations.UNDER_PADRYXTOUKA -> navigationActions.navigateToPadryxtouka()
                             AllDestinations.UNDER_PAMIATKA -> navigationActions.navigateToPamiatka()
                             AllDestinations.PRANAS -> navigationActions.navigateToPraNas()
@@ -1151,6 +1158,7 @@ fun MainConteiner(
             AllDestinations.PIESNY_DA_BAGARODZICY -> stringResource(R.string.pesny3)
             AllDestinations.PIESNY_KALIADNYIA -> stringResource(R.string.pesny4)
             AllDestinations.PIESNY_TAIZE -> stringResource(R.string.pesny5)
+            AllDestinations.PIESNY_VIALIKODNYIA -> stringResource(R.string.pesny6)
             AllDestinations.UNDER_SVAITY_MUNU -> stringResource(R.string.sviaty)
             AllDestinations.UNDER_PARAFII_BGKC -> stringResource(R.string.parafii)
             AllDestinations.UNDER_PASHALIA -> stringResource(R.string.paschalia)
@@ -1954,6 +1962,12 @@ fun MainConteiner(
                         tollBarColor = MaterialTheme.colorScheme.onTertiary
                         textTollBarColor = PrimaryTextBlack
                         PiesnyList(navController, AllDestinations.PIESNY_TAIZE, innerPadding, viewModel)
+                    }
+
+                    AllDestinations.PIESNY_VIALIKODNYIA -> {
+                        tollBarColor = MaterialTheme.colorScheme.onTertiary
+                        textTollBarColor = PrimaryTextBlack
+                        PiesnyList(navController, AllDestinations.PIESNY_VIALIKODNYIA, innerPadding, viewModel)
                     }
 
                     AllDestinations.UNDER_SVAITY_MUNU -> {

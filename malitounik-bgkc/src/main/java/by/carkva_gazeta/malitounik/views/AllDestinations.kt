@@ -72,6 +72,7 @@ object AllDestinations {
     const val PIESNY_DA_BAGARODZICY = "Piesny_Da_Bagarodzicy"
     const val PIESNY_KALIADNYIA = "Piesny_Kaliadnyia"
     const val PIESNY_TAIZE = "Piesny_Taize"
+    const val PIESNY_VIALIKODNYIA = "Piesny_Vialikodnyia"
     const val UNDER_PAMIATKA = "Under_Pamiatka"
     const val UNDER_PADRYXTOUKA = "Under_Padryxtouka"
     const val UNDER_SVAITY_MUNU = "Under_Svity_Menu"

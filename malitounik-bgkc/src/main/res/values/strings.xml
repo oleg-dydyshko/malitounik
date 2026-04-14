@@ -88,6 +88,7 @@
     <string name="pesny3">Да Багародзіцы</string>
     <string name="pesny4">Калядныя</string>
     <string name="pesny5">Сьпевы Taize</string>
+    <string name="pesny6">Велікодныя</string>
     <string name="prynagodnyia">Прынагодныя малітвы</string>
     <string name="search_prynagodnyia">Пошук у прынагодных малітвах</string>
     <string name="bsinaidal">БИБЛИЯ (Синодальный перевод)</string>
@@ -933,5 +934,6 @@
     <string name="is_save_check">Захаваць змены?</string>
     <string name="psalom_90">Псалом 90 (версія 1997, 2000 гг.)</string>
     <string name="psalom_100">Псалом 100 (версія 1997, 2000 гг.)</string>
+    <string name="play_pesny">Паслухаць песьню</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

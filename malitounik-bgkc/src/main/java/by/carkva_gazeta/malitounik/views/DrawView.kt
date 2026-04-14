@@ -914,6 +914,22 @@ fun DrawView(
                             )
                         }
                     )
+                    NavigationItem(
+                        label = stringResource(id = R.string.pesny6),
+                        selected = route == AllDestinations.PIESNY_VIALIKODNYIA,
+                        onClick = {
+                            Settings.vibrate()
+                            navigateToRazdel(AllDestinations.PIESNY_VIALIKODNYIA)
+                        },
+                        icon = {
+                            Icon(
+                                modifier = Modifier.size(12.dp, 12.dp),
+                                painter = painterResource(R.drawable.krest),
+                                tint = MaterialTheme.colorScheme.primary,
+                                contentDescription = null
+                            )
+                        }
+                    )
                 }
             }
         }

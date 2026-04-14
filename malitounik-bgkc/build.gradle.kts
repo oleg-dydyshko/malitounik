@@ -5,14 +5,14 @@ plugins {
 
 android {
     namespace = "by.carkva_gazeta.malitounik"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "by.carkva_gazeta.malitounik"
         minSdk = 23
-        targetSdk = 36
-        versionCode = 442640
-        versionName = "6.0.6.11"
+        targetSdk = 37
+        versionCode = 442641
+        versionName = "6.0.6.12"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -52,7 +52,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-    compileSdkMinor = 1
+    compileSdkMinor = 0
 }
 
 dependencies {
