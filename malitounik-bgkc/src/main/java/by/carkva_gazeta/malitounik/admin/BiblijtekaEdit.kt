@@ -141,15 +141,13 @@ fun DialogEditBiblijteka(list: ArrayList<String>, onSave: (title: String, rubrik
                         var result: String? = null
                         if (uri.scheme.equals("content")) {
                             val cursor: Cursor? = context.contentResolver.query(uri, null, null, null, null)
-                            try {
+                            cursor.use { cursor ->
                                 if (cursor != null && cursor.moveToFirst()) {
                                     val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
                                     if (nameIndex != -1) {
                                         result = cursor.getString(nameIndex)
                                     }
                                 }
-                            } finally {
-                                cursor?.close()
                             }
                         }
                         if (result == null) {

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -803,23 +802,21 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
                     )
                     Text(
                         text = filteredItems[index].title, modifier = Modifier
+                            .weight(1f)
                             .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                     )
                     if (filteredItems[index].url.isNotEmpty()) {
                         val context = LocalContext.current
-                        Column(modifier = Modifier.fillMaxWidth()) {
-                            Icon(
-                                modifier = Modifier
-                                    .padding(end = 20.dp)
-                                    .align(Alignment.End)
-                                    .clickable {
-                                        Settings.vibrate()
-                                        val uri = filteredItems[index].url.toUri()
-                                        val intent = Intent(Intent.ACTION_VIEW, uri)
-                                        context.startActivity(intent)
-                                    }, painter = painterResource(R.drawable.play_arrow), contentDescription = stringResource(R.string.play_pesny), tint = MaterialTheme.colorScheme.secondary
-                            )
-                        }
+                        Icon(
+                            modifier = Modifier
+                                .padding(end = 20.dp)
+                                .clickable {
+                                    Settings.vibrate()
+                                    val uri = filteredItems[index].url.toUri()
+                                    val intent = Intent(Intent.ACTION_VIEW, uri)
+                                    context.startActivity(intent)
+                                }, painter = painterResource(R.drawable.play_arrow), contentDescription = stringResource(R.string.play_pesny), tint = MaterialTheme.colorScheme.secondary
+                        )
                     }
                 }
             }

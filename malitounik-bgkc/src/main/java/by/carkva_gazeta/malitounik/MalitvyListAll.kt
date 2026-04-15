@@ -82,7 +82,8 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MalitvyListAll(
-    navController: NavHostController, title: String, menuItem: Int, subTitle: String = "", navigateToMalitvyListAll: (String, Int, String) -> Unit, navigateToBogaslujbovyia: (String, String) -> Unit, viewModel: BogaslujbovyiaViewModel) {
+    navController: NavHostController, title: String, menuItem: Int, subTitle: String = "", navigateToMalitvyListAll: (String, Int, String) -> Unit, navigateToBogaslujbovyia: (String, String) -> Unit, viewModel: BogaslujbovyiaViewModel
+) {
     val context = LocalContext.current
     val view = LocalView.current
     SideEffect {
@@ -562,7 +563,8 @@ fun MalitvyListAll(
                                 else painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                             )
                             Text(
-                                text = if (menuItem == Settings.MENU_TRYEDZ || menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH || menuItem == Settings.MENU_TRYEDZ_POSNAIA) list[index].title.uppercase() else list[index].title, modifier = Modifier.padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontWeight = if (menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH) {
+                                modifier = Modifier.weight(1f).padding(10.dp),
+                                text = if (menuItem == Settings.MENU_TRYEDZ || menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH || menuItem == Settings.MENU_TRYEDZ_POSNAIA) list[index].title.uppercase() else list[index].title, color = MaterialTheme.colorScheme.secondary, fontWeight = if (menuItem == Settings.MENU_MINEIA_MESIACHNAIA_MOUNTH) {
                                     if (Calendar.getInstance()[Calendar.MONTH] == index) {
                                         FontWeight.Bold
                                     } else {
@@ -573,19 +575,16 @@ fun MalitvyListAll(
                                 }, fontSize = Settings.fontInterface.sp
                             )
                             if (menuItem == Settings.MENU_TRAPARY_KANDAKI_NIADZELNYIA) {
-                                Column(modifier = Modifier.fillMaxWidth()) {
-                                    Icon(
-                                        modifier = Modifier
-                                            .padding(end = 20.dp)
-                                            .align(Alignment.End)
-                                            .clickable {
-                                                Settings.vibrate()
-                                                val uri = "https://soundcloud.com/24dwbqqpu9sk/trapar-${index + 1}?in=24dwbqqpu9sk/sets/trapary-bgkts&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing".toUri()
-                                                val intent = Intent(Intent.ACTION_VIEW, uri)
-                                                context.startActivity(intent)
-                                            }, painter = painterResource(R.drawable.play_arrow), contentDescription = stringResource(R.string.play_ton, index), tint = MaterialTheme.colorScheme.secondary
-                                    )
-                                }
+                                Icon(
+                                    modifier = Modifier
+                                        .padding(end = 20.dp)
+                                        .clickable {
+                                            Settings.vibrate()
+                                            val uri = "https://soundcloud.com/24dwbqqpu9sk/trapar-${index + 1}?in=24dwbqqpu9sk/sets/trapary-bgkts&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing".toUri()
+                                            val intent = Intent(Intent.ACTION_VIEW, uri)
+                                            context.startActivity(intent)
+                                        }, painter = painterResource(R.drawable.play_arrow), contentDescription = stringResource(R.string.play_ton, index), tint = MaterialTheme.colorScheme.secondary
+                                )
                             }
                         }
                         HorizontalDivider()
