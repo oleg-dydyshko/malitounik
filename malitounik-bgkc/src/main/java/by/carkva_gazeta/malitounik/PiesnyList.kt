@@ -557,7 +557,7 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
         piesnyAll.add(PiesnyListItem(Settings.PIESNY_PRASLAULENNIA, "pesny/pesny_prasl_62.html", "Хвалім Цябе, Божа!"))
         piesnyAll.add(
             PiesnyListItem(
-                Settings.PIESNY_PRASLAULENNIA, "pesny/pesny_prasl_63.html", "Хрыстос уваскрос! (Resucito)"
+                Settings.PIESNY_VIALIKODNYIA, "pesny/pesny_prasl_63.html", "Хрыстос уваскрос! (Resucito)"
             )
         )
         piesnyAll.add(PiesnyListItem(Settings.PIESNY_PRASLAULENNIA, "pesny/pesny_prasl_65.html", "Шалом алэхем (Мір вам)"))
@@ -596,7 +596,7 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
         )
         piesnyAll.add(
             PiesnyListItem(
-                Settings.PIESNY_PRASLAULENNIA, "pesny/piesni_prasl_chrystos_uvaskros.html", "Хрыстос уваскрос"
+                Settings.PIESNY_VIALIKODNYIA, "pesny/piesni_prasl_chrystos_uvaskros.html", "Хрыстос уваскрос"
             )
         )
         piesnyAll.add(
