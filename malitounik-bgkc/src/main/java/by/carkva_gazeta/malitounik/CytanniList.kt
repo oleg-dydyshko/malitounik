@@ -72,6 +72,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -745,6 +746,7 @@ fun CytanniList(
     if (viewModel.autoScrollSensor) {
         actyvity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
+    val backTime by remember { mutableLongStateOf(System.currentTimeMillis()) }
     BackHandler(!backPressHandled || isSelectMode || isParallelVisable || showDropdown) {
         when {
             isSelectMode -> {
@@ -758,22 +760,24 @@ fun CytanniList(
             }
 
             !backPressHandled -> {
-                fullscreen = false
-                if (biblia == Settings.CHYTANNI_BIBLIA) {
-                    k.edit {
-                        putString("bible_time_${viewModel.perevodName}_kniga", viewModel.knigaText)
-                        putInt("bible_time_${viewModel.perevodName}_glava", viewModel.selectedIndex)
-                        putInt(
-                            "bible_time_${viewModel.perevodName}_stix", viewModel.listState[viewModel.selectedIndex].lazyListState.firstVisibleItemIndex
-                        )
-                        putInt("bible_time_${viewModel.perevodName}_offset", viewModel.listState[viewModel.selectedIndex].lazyListState.firstVisibleItemScrollOffset)
+                if (backTime + 1000 < System.currentTimeMillis()) {
+                    fullscreen = false
+                    if (biblia == Settings.CHYTANNI_BIBLIA) {
+                        k.edit {
+                            putString("bible_time_${viewModel.perevodName}_kniga", viewModel.knigaText)
+                            putInt("bible_time_${viewModel.perevodName}_glava", viewModel.selectedIndex)
+                            putInt(
+                                "bible_time_${viewModel.perevodName}_stix", viewModel.listState[viewModel.selectedIndex].lazyListState.firstVisibleItemIndex
+                            )
+                            putInt("bible_time_${viewModel.perevodName}_offset", viewModel.listState[viewModel.selectedIndex].lazyListState.firstVisibleItemScrollOffset)
+                        }
                     }
+                    backPressHandled = true
+                    if (!k.getBoolean("power", false)) actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    viewModel.autoScroll(title, false)
+                    viewModel.autoScrollSensor = false
+                    navController.popBackStack()
                 }
-                backPressHandled = true
-                if (!k.getBoolean("power", false)) actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                viewModel.autoScroll(title, false)
-                viewModel.autoScrollSensor = false
-                navController.popBackStack()
             }
         }
     }
