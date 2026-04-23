@@ -830,7 +830,9 @@ fun CytanniList(
         }
     }
     LifecycleResumeEffect(Unit) {
+        if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
         onPauseOrDispose {
+            viewModel.autoScroll(title, false)
             viewModel.shutdown()
             viewModel.isPaused = false
             viewModel.isSpeaking = false

@@ -734,6 +734,7 @@ fun Bogaslujbovyia(
         }
     }
     LifecycleResumeEffect(Unit) {
+        if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
         if (AppNavGraphState.searchBogaslujbovyia.isEmpty()) {
             if (resursEncode.contains("akafist")) {
                 AppNavGraphState.setScrollValuePosition(title, k.getInt(resursEncode, 0))
@@ -750,6 +751,7 @@ fun Bogaslujbovyia(
             }
         }
         onPauseOrDispose {
+            viewModel.autoScroll(title, false)
             viewModel.shutdown()
             viewModel.isPaused = false
             viewModel.isSpeaking = false
