@@ -1575,6 +1575,11 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
+                131, "Сьвятога апостала Сымана Зілота", "bogashlugbovya/mm_10_05_apostala_symana_zilota_viaczernia.html", VIACZERNIA
+            )
+        )
+        datMinALL.add(
+            SlugbovyiaTextuData(
                 161, "Кірылы, архібіскупа Александрыйскага", "bogashlugbovya/mm_09_06_kiryly_aleksandryjskaha_viaczernia.html", VIACZERNIA
             )
         )
