@@ -708,6 +708,22 @@ class Piasochnica : ViewModel() {
             result = clearEm(result)
             result = result.replace(" ", " ")
             if (!result.contains("<!DOCTYPE HTML>")) result = "<!DOCTYPE HTML>$result"
+            if (result.contains("<p")) {
+                val listFile = result.split("\n")
+                val sb = StringBuilder()
+                for (i in listFile.indices) {
+                    val t1 = listFile[i].indexOf("<p")
+                    if (t1 != -1) {
+                        val t2 = listFile[i].indexOf(">", t1 + 2)
+                        val sub1 = listFile[i].take(t1)
+                        val sub2 = listFile[i].substring(t2 + 1)
+                        sb.append(sub1).append(sub2).append("\n")
+                    } else {
+                        sb.append(listFile[i]).append("\n")
+                    }
+                }
+                result = sb.toString()
+            }
             getOrSendFilePostRequest(resours, result, saveAs)
         } else {
             getOrSendFilePostRequest(resours, htmlText.toString(), saveAs)
