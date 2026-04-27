@@ -449,6 +449,7 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
                                     )
                                     Text(
                                         item.title + " " + (item.glava + 1), modifier = Modifier
+                                            .weight(1f)
                                             .fillMaxSize()
                                             .padding(10.dp), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp
                                     )

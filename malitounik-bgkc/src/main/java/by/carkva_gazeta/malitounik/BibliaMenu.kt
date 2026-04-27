@@ -1153,50 +1153,56 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                     state = lazyColumnState
                 ) {
                     itemsIndexed(list, key = { _, item -> item.id }) { index, item ->
-                        DraggableItem(dragDropState, index) {
-                            Row(
-                                modifier = Modifier
-                                    .clickable {
-                                        Settings.vibrate()
-                                        val newList = StringBuilder()
-                                        for (r in 0 until list.size) {
-                                            val char = if (r == list.size - 1) ""
-                                            else ";"
-                                            newList.append(list[r].knigaText + " " + (list[r].glava + 1) + char)
-                                        }
-                                        navigateToCytanniList(
-                                            newList.toString(),
-                                            index,
-                                            item.perevod,
-                                            Settings.CHYTANNI_VYBRANAE
+                        Column {
+                            DraggableItem(dragDropState, index) {
+                                Row(
+                                    modifier = Modifier.padding(start = 10.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        modifier = Modifier.size(5.dp),
+                                        painter = painterResource(R.drawable.poiter),
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        contentDescription = null
+                                    )
+                                    Text(
+                                        item.title + " " + (item.glava + 1),
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .combinedClickable(
+                                                onClick = {
+                                                    Settings.vibrate()
+                                                    val newList = StringBuilder()
+                                                    for (r in 0 until list.size) {
+                                                        val char = if (r == list.size - 1) ""
+                                                        else ";"
+                                                        newList.append(list[r].knigaText + " " + (list[r].glava + 1) + char)
+                                                    }
+                                                    navigateToCytanniList(
+                                                        newList.toString(),
+                                                        index,
+                                                        item.perevod,
+                                                        Settings.CHYTANNI_VYBRANAE
+                                                    )
+                                                },
+                                                onLongClick = {
+                                                    Settings.vibrate(true)
+                                                    removeItem = index
+                                                }
+                                            )
+                                            .padding(10.dp),
+                                        color = MaterialTheme.colorScheme.secondary,
+                                        fontSize = Settings.fontInterface.sp
+                                    )
+                                    if (list.size > 1) {
+                                        Icon(
+                                            modifier = Modifier
+                                                .padding(top = 10.dp, start = 5.dp, end = 15.dp, bottom = 10.dp)
+                                                .size(24.dp),
+                                            painter = painterResource(R.drawable.menu_move), tint = Divider, contentDescription = null
                                         )
                                     }
-                                    .padding(start = 10.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    modifier = Modifier.size(5.dp),
-                                    painter = painterResource(R.drawable.poiter),
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    contentDescription = null
-                                )
-                                Text(
-                                    item.title + " " + (item.glava + 1),
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .fillMaxSize()
-                                        .padding(10.dp),
-                                    color = MaterialTheme.colorScheme.secondary,
-                                    fontSize = Settings.fontInterface.sp
-                                )
-                                Icon(
-                                    modifier = Modifier
-                                        .padding(end = 5.dp)
-                                        .clickable {
-                                            Settings.vibrate()
-                                            removeItem = index
-                                        }, painter = painterResource(R.drawable.delete), tint = MaterialTheme.colorScheme.secondary, contentDescription = stringResource(R.string.delite)
-                                )
+                                }
                             }
                             HorizontalDivider()
                         }
