@@ -1,5 +1,6 @@
 package by.carkva_gazeta.malitounik
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
@@ -200,7 +202,7 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                         fontSize = Settings.fontInterface.sp,
                         modifier = Modifier
                             .weight(1f)
-                            .padding(1.dp)
+                            .clip(RoundedCornerShape(topStart = 10.dp))
                             .background(Primary)
                             .padding(5.dp),
                         textAlign = TextAlign.Center,
@@ -211,7 +213,6 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                         fontSize = Settings.fontInterface.sp,
                         modifier = Modifier
                             .weight(1f)
-                            .padding(1.dp)
                             .background(TitleCalendarMounth)
                             .padding(5.dp),
                         textAlign = TextAlign.Center,
@@ -222,7 +223,6 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                         fontSize = Settings.fontInterface.sp,
                         modifier = Modifier
                             .weight(1f)
-                            .padding(1.dp)
                             .background(TitleCalendarMounth)
                             .padding(5.dp),
                         textAlign = TextAlign.Center,
@@ -233,7 +233,6 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                         fontSize = Settings.fontInterface.sp,
                         modifier = Modifier
                             .weight(1f)
-                            .padding(1.dp)
                             .background(TitleCalendarMounth)
                             .padding(5.dp),
                         textAlign = TextAlign.Center,
@@ -244,7 +243,6 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                         fontSize = Settings.fontInterface.sp,
                         modifier = Modifier
                             .weight(1f)
-                            .padding(1.dp)
                             .background(TitleCalendarMounth)
                             .padding(5.dp),
                         textAlign = TextAlign.Center,
@@ -255,7 +253,6 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                         fontSize = Settings.fontInterface.sp,
                         modifier = Modifier
                             .weight(1f)
-                            .padding(1.dp)
                             .background(TitleCalendarMounth)
                             .padding(5.dp),
                         textAlign = TextAlign.Center,
@@ -266,16 +263,16 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                         fontSize = Settings.fontInterface.sp,
                         modifier = Modifier
                             .weight(1f)
-                            .padding(1.dp)
+                            .clip(RoundedCornerShape(topEnd = 10.dp))
                             .background(TitleCalendarMounth)
                             .padding(5.dp),
                         textAlign = TextAlign.Center,
                         color = PrimaryTextBlack
                     )
                 }
-                (1..end / 7).forEach { _ ->
+                (1..end / 7).forEach { dayofmunth ->
                     Row(modifier = Modifier.fillMaxWidth()) {
-                        (1..7).forEach { _ ->
+                        (1..7).forEach { dayofweek ->
                             if (e < wik) {
                                 oldDay++
                                 day = "start"
@@ -287,6 +284,11 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                                 day = "end"
                                 i = 0
                             }
+                            val clipShare = when (dayofmunth) {
+                                end / 7 if dayofweek == Calendar.SUNDAY -> RoundedCornerShape(bottomStart = 10.dp)
+                                end / 7 if dayofweek == Calendar.SATURDAY -> RoundedCornerShape(bottomEnd = 10.dp)
+                                else -> RoundedCornerShape(0.dp)
+                            }
                             when (day) {
                                 "start" -> {
                                     val fon = if (e == 1) BezPosta
@@ -295,7 +297,7 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                                         text = oldDay.toString(),
                                         modifier = Modifier
                                             .weight(1f)
-                                            .padding(1.dp)
+                                            .clip(clipShare)
                                             .background(fon)
                                             .padding(7.dp),
                                         textAlign = TextAlign.Center,
@@ -309,7 +311,7 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                                         text = newDay.toString(),
                                         modifier = Modifier
                                             .weight(1f)
-                                            .padding(1.dp)
+                                            .clip(clipShare)
                                             .background(Divider)
                                             .padding(7.dp),
                                         textAlign = TextAlign.Center,
@@ -332,16 +334,19 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                                         if (Settings.data[calPas + i - 1][5].toInt() == 1 || Settings.data[calPas + i - 1][5].toInt() == 2 || Settings.data[calPas + i - 1][7].toInt() == 3) PrimaryTextBlack
                                         else PrimaryText
                                     val clickPos = calPas + i - 1
+                                    if (i == 31) {
+                                        Log.d("Oleg", "$wik == $e && ${end - 6} == $i")
+                                    }
                                     Text(
                                         text = day,
                                         modifier = Modifier
                                             .weight(1f)
+                                            .clip(clipShare)
                                             .clickable {
                                                 Settings.vibrate()
                                                 Settings.caliandarPosition = clickPos
                                                 setPageCaliandar(clickPos)
                                             }
-                                            .padding(1.dp)
                                             .background(color)
                                             .padding(2.dp)
                                             .background(if (c[Calendar.DAY_OF_MONTH] == i && munTudey) color2 else color)
