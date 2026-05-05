@@ -352,10 +352,9 @@ fun saveBibliateka(context: Context, arrayList: SnapshotStateList<ArrayList<Stri
                     newFile.delete()
                 }
                 if (image.exists()) image.delete()
-                Malitounik.referens.child("/data/bibliateka/$pdfFile").putFile(Uri.fromFile(localPdfFile)).await()
+                if (localPdfFile.exists()) Malitounik.referens.child("/data/bibliateka/$pdfFile").putFile(Uri.fromFile(localPdfFile)).await()
                 Malitounik.referens.child("/images/bibliateka/" + file.name).putFile(Uri.fromFile(file)).await()
                 saveBibliatekaJson(context, arrayList)
-                localPdfFile.delete()
             }
             Toast.makeText(context, context.getString(R.string.save), Toast.LENGTH_SHORT).show()
             isLoad(false)
