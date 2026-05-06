@@ -417,7 +417,6 @@ fun BiblijatekaListItems(
                                 }), bitmap = bitmap.asImageBitmap(), contentDescription = null)
                     }
                     val maxLine = remember { mutableIntStateOf(2) }
-                    val t1 = listItem[index][1].indexOf("</span><br>")
                     Text(
                         modifier = Modifier
                             .padding(10.dp)
@@ -426,7 +425,7 @@ fun BiblijatekaListItems(
                                 Settings.vibrate()
                                 maxLine.intValue = if (maxLine.intValue == Int.MAX_VALUE) 2
                                 else Int.MAX_VALUE
-                            }, text = AnnotatedString.fromHtml(if (t1 != -1) listItem[index][1].substring(t1 + 11) else listItem[index][1]), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis
+                            }, text = AnnotatedString.fromHtml(listItem[index][1]), color = MaterialTheme.colorScheme.secondary, fontSize = Settings.fontInterface.sp, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis
                     )
                 }
             }
