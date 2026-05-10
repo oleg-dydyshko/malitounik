@@ -33,6 +33,7 @@ import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.compose
+import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.background
@@ -212,144 +213,146 @@ fun CalendarMun(context: Context) {
                 }
             }
         }
-        Row(modifier = GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = context.getString(R.string.ndz),
-                modifier = GlanceModifier
-                    .defaultWeight()
-                    .background(Primary),
-                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 20.sp, textAlign = TextAlign.Center)
-            )
-            Text(
-                text = context.getString(R.string.pn),
-                modifier = GlanceModifier
-                    .defaultWeight()
-                    .background(TitleCalendarMounth),
-                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 20.sp, textAlign = TextAlign.Center)
-            )
-            Text(
-                text = context.getString(R.string.au),
-                modifier = GlanceModifier
-                    .defaultWeight()
-                    .background(TitleCalendarMounth),
-                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 20.sp, textAlign = TextAlign.Center)
-            )
-            Text(
-                text = context.getString(R.string.sp),
-                modifier = GlanceModifier
-                    .defaultWeight()
-                    .background(TitleCalendarMounth),
-                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 20.sp, textAlign = TextAlign.Center)
-            )
-            Text(
-                text = context.getString(R.string.ch),
-                modifier = GlanceModifier
-                    .defaultWeight()
-                    .background(TitleCalendarMounth),
-                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 20.sp, textAlign = TextAlign.Center)
-            )
-            Text(
-                text = context.getString(R.string.pt),
-                modifier = GlanceModifier
-                    .defaultWeight()
-                    .background(TitleCalendarMounth),
-                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 20.sp, textAlign = TextAlign.Center)
-            )
-            Text(
-                text = context.getString(R.string.sb),
-                modifier = GlanceModifier
-                    .defaultWeight()
-                    .background(TitleCalendarMounth),
-                style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 20.sp, textAlign = TextAlign.Center)
-            )
-        }
-        (1..end / 7).forEach { _ ->
-            Row(modifier = GlanceModifier.fillMaxWidth().defaultWeight(), verticalAlignment = Alignment.CenterVertically) {
-                (1..7).forEach { _ ->
-                    if (e < wik) {
-                        oldDay++
-                        day = "start"
-                    } else if (e < munAll + wik) {
-                        i++
-                        day = i.toString()
-                    } else {
-                        newDay++
-                        day = "end"
-                        i = 0
-                    }
-                    when (day) {
-                        "start" -> {
-                            val fon = if (e == 1) BezPosta
-                            else Divider
-                            Column(
-                                modifier = GlanceModifier
-                                    .fillMaxHeight()
-                                    .defaultWeight()
-                                    .background(fon),
-                                verticalAlignment = Alignment.CenterVertically, horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Text(
-                                    oldDay.toString(),
-                                    style = TextStyle(color = ColorProvider(SecondaryText, SecondaryText), fontSize = 20.sp, textAlign = TextAlign.Center)
-                                )
-                            }
+        Column(modifier = GlanceModifier.fillMaxSize().cornerRadius(10.dp)) {
+            Row(modifier = GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = context.getString(R.string.ndz),
+                    modifier = GlanceModifier
+                        .defaultWeight()
+                        .background(Primary),
+                    style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 20.sp, textAlign = TextAlign.Center)
+                )
+                Text(
+                    text = context.getString(R.string.pn),
+                    modifier = GlanceModifier
+                        .defaultWeight()
+                        .background(TitleCalendarMounth),
+                    style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 20.sp, textAlign = TextAlign.Center)
+                )
+                Text(
+                    text = context.getString(R.string.au),
+                    modifier = GlanceModifier
+                        .defaultWeight()
+                        .background(TitleCalendarMounth),
+                    style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 20.sp, textAlign = TextAlign.Center)
+                )
+                Text(
+                    text = context.getString(R.string.sp),
+                    modifier = GlanceModifier
+                        .defaultWeight()
+                        .background(TitleCalendarMounth),
+                    style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 20.sp, textAlign = TextAlign.Center)
+                )
+                Text(
+                    text = context.getString(R.string.ch),
+                    modifier = GlanceModifier
+                        .defaultWeight()
+                        .background(TitleCalendarMounth),
+                    style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 20.sp, textAlign = TextAlign.Center)
+                )
+                Text(
+                    text = context.getString(R.string.pt),
+                    modifier = GlanceModifier
+                        .defaultWeight()
+                        .background(TitleCalendarMounth),
+                    style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 20.sp, textAlign = TextAlign.Center)
+                )
+                Text(
+                    text = context.getString(R.string.sb),
+                    modifier = GlanceModifier
+                        .defaultWeight()
+                        .background(TitleCalendarMounth),
+                    style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 20.sp, textAlign = TextAlign.Center)
+                )
+            }
+            (1..end / 7).forEach { _ ->
+                Row(modifier = GlanceModifier.fillMaxWidth().defaultWeight(), verticalAlignment = Alignment.CenterVertically) {
+                    (1..7).forEach { _ ->
+                        if (e < wik) {
+                            oldDay++
+                            day = "start"
+                        } else if (e < munAll + wik) {
+                            i++
+                            day = i.toString()
+                        } else {
+                            newDay++
+                            day = "end"
+                            i = 0
                         }
-
-                        "end" -> {
-                            Column(
-                                modifier = GlanceModifier
-                                    .fillMaxHeight()
-                                    .defaultWeight()
-                                    .background(Divider),
-                                verticalAlignment = Alignment.CenterVertically, horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Text(
-                                    newDay.toString(),
-                                    style = TextStyle(color = ColorProvider(SecondaryText, SecondaryText), fontSize = 20.sp, textAlign = TextAlign.Center)
-                                )
-                            }
-                        }
-
-                        else -> {
-                            val bold =
-                                if (data[position + i - 1][4].contains("<font color=#d00505><strong>") || data[position + i - 1][5].toInt() == 1 || data[position + i - 1][5].toInt() == 3) FontWeight.Bold
-                                else FontWeight.Normal
-                            val color =
-                                if (data[position + i - 1][5].toInt() == 1 || data[position + i - 1][5].toInt() == 2) Primary
-                                else if (data[position + i - 1][5].toInt() == 3 || data[position + i - 1][7].toInt() == 1) BezPosta
-                                else if (data[position + i - 1][7].toInt() == 2) Post
-                                else if (data[position + i - 1][7].toInt() == 3) StrogiPost
+                        when (day) {
+                            "start" -> {
+                                val fon = if (e == 1) BezPosta
                                 else Divider
-                            val color2 =
-                                if (data[position + i - 1][5].toInt() == 1 || data[position + i - 1][5].toInt() == 2 || data[position + i - 1][7].toInt() == 3) PrimaryTextBlack
-                                else PrimaryText
-                            val clickPos = position + i - 1
-                            Column(
-                                modifier = GlanceModifier
-                                    .fillMaxHeight()
-                                    .defaultWeight()
-                                    .clickable(actionStartActivity<MainActivity>(actionParametersOf(destinationKey to true, destinationValue to clickPos)))
-                                    .background(color),
-                                verticalAlignment = Alignment.CenterVertically, horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                if (c[Calendar.DAY_OF_MONTH] == i && munTudey) {
-                                    Box(modifier = GlanceModifier.padding(2.dp).background(color2)) {
-                                        Text(
-                                            day,
-                                            modifier = GlanceModifier.background(color).padding(horizontal = 6.dp, vertical = 2.dp),
-                                            style = TextStyle(color = ColorProvider(color2, color2), fontSize = 20.sp, textAlign = TextAlign.Center, fontWeight = bold)
-                                        )
-                                    }
-                                } else {
+                                Column(
+                                    modifier = GlanceModifier
+                                        .fillMaxHeight()
+                                        .defaultWeight()
+                                        .background(fon),
+                                    verticalAlignment = Alignment.CenterVertically, horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
                                     Text(
-                                        day,
-                                        style = TextStyle(color = ColorProvider(color2, color2), fontSize = 20.sp, textAlign = TextAlign.Center, fontWeight = bold)
+                                        text = oldDay.toString(),
+                                        style = TextStyle(color = ColorProvider(SecondaryText, SecondaryText), fontSize = 20.sp, textAlign = TextAlign.Center)
                                     )
                                 }
                             }
+
+                            "end" -> {
+                                Column(
+                                    modifier = GlanceModifier
+                                        .fillMaxHeight()
+                                        .defaultWeight()
+                                        .background(Divider),
+                                    verticalAlignment = Alignment.CenterVertically, horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = newDay.toString(),
+                                        style = TextStyle(color = ColorProvider(SecondaryText, SecondaryText), fontSize = 20.sp, textAlign = TextAlign.Center)
+                                    )
+                                }
+                            }
+
+                            else -> {
+                                val bold =
+                                    if (data[position + i - 1][4].contains("<font color=#d00505><strong>") || data[position + i - 1][5].toInt() == 1 || data[position + i - 1][5].toInt() == 3) FontWeight.Bold
+                                    else FontWeight.Normal
+                                val color =
+                                    if (data[position + i - 1][5].toInt() == 1 || data[position + i - 1][5].toInt() == 2) Primary
+                                    else if (data[position + i - 1][5].toInt() == 3 || data[position + i - 1][7].toInt() == 1) BezPosta
+                                    else if (data[position + i - 1][7].toInt() == 2) Post
+                                    else if (data[position + i - 1][7].toInt() == 3) StrogiPost
+                                    else Divider
+                                val color2 =
+                                    if (data[position + i - 1][5].toInt() == 1 || data[position + i - 1][5].toInt() == 2 || data[position + i - 1][7].toInt() == 3) PrimaryTextBlack
+                                    else PrimaryText
+                                val clickPos = position + i - 1
+                                Column(
+                                    modifier = GlanceModifier
+                                        .fillMaxHeight()
+                                        .defaultWeight()
+                                        .clickable(actionStartActivity<MainActivity>(actionParametersOf(destinationKey to true, destinationValue to clickPos)))
+                                        .background(color),
+                                    verticalAlignment = Alignment.CenterVertically, horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    if (c[Calendar.DAY_OF_MONTH] == i && munTudey) {
+                                        Box(modifier = GlanceModifier.padding(1.dp).background(color2)) {
+                                            Text(
+                                                text = day,
+                                                modifier = GlanceModifier.background(color).padding(horizontal = 6.dp, vertical = 2.dp),
+                                                style = TextStyle(color = ColorProvider(color2, color2), fontSize = 20.sp, textAlign = TextAlign.Center, fontWeight = bold)
+                                            )
+                                        }
+                                    } else {
+                                        Text(
+                                            text = day,
+                                            style = TextStyle(color = ColorProvider(color2, color2), fontSize = 20.sp, textAlign = TextAlign.Center, fontWeight = bold)
+                                        )
+                                    }
+                                }
+                            }
                         }
+                        e++
                     }
-                    e++
                 }
             }
         }
