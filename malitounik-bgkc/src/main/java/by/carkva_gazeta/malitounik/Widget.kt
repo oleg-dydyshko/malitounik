@@ -126,18 +126,18 @@ private fun Caliandar(context: Context) {
         modifier = GlanceModifier.fillMaxSize().background(Color.Transparent)
     ) {
         Box(
-            modifier = GlanceModifier.background(if (dzenNoch) BackgroundDark else PrimaryTextBlack).cornerRadius(20.dp).clickable(actionStartActivity<MainActivity>(actionParametersOf(destinationKey to true, destinationPosition to position)))
+            modifier = GlanceModifier.cornerRadius(20.dp).clickable(actionStartActivity<MainActivity>(actionParametersOf(destinationKey to true, destinationPosition to position)))
         ) {
             Column(
                 verticalAlignment = Alignment.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally, verticalAlignment = Alignment.Top, modifier = GlanceModifier.fillMaxWidth().background(colorBackground)) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally, verticalAlignment = Alignment.Top, modifier = GlanceModifier.fillMaxWidth().padding(vertical = 5.dp).background(colorBackground)) {
                     Text(text = nedelName[nedel], style = TextStyle(color = ColorProvider(colorText, colorText), fontSize = 18.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Bold))
                     Text(text = dayofmounth, style = TextStyle(color = ColorProvider(colorText, colorText), fontSize = 40.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Bold))
                     Text(text = monthName[month], style = TextStyle(color = ColorProvider(colorText, colorText), fontSize = 18.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Bold))
                 }
-                Column(modifier = GlanceModifier.padding(5.dp)) {
+                Column(modifier = GlanceModifier.background(if (dzenNoch) BackgroundDark else PrimaryTextBlack).padding(5.dp)) {
                     if (data[6].isNotEmpty()) {
                         if (data[5].toInt() == 1 || data[5].toInt() == 2) {
                             Row(modifier = GlanceModifier.fillMaxWidth().padding(bottom = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -238,7 +238,7 @@ private fun Caliandar(context: Context) {
                 }
                 if (data[20] != "0" && data[0].toInt() == Calendar.SUNDAY) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalAlignment = Alignment.Bottom) {
-                        Row(modifier = GlanceModifier.fillMaxWidth().background(Primary), horizontalAlignment = Alignment.CenterHorizontally, verticalAlignment = Alignment.CenterVertically) {
+                        Row(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 2.dp).background(Primary), horizontalAlignment = Alignment.CenterHorizontally, verticalAlignment = Alignment.CenterVertically) {
                             Text(text = "Тон ${data[20]}", style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 18.sp, textAlign = TextAlign.Center))
                         }
                     }

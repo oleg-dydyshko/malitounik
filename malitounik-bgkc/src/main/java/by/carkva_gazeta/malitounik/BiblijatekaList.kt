@@ -609,6 +609,8 @@ private suspend fun getBibliateka(
         bibliatekaList(temp)
         progressVisable(false)
     } catch (_: Throwable) {
+        progressVisable(false)
+        Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
     }
 }
 
