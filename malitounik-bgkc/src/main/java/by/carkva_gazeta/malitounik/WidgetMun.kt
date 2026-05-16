@@ -213,7 +213,7 @@ fun CalendarMun(context: Context) {
                 }
             }
         }
-        Column(modifier = GlanceModifier.fillMaxSize().cornerRadius(10.dp)) {
+        Column(modifier = GlanceModifier.fillMaxSize().cornerRadius(10.dp).background(SecondaryText)) {
             Row(modifier = GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = context.getString(R.string.ndz),
