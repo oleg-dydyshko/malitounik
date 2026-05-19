@@ -28,6 +28,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -82,8 +83,8 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
             state = pagerState,
             pagerSnapDistance = PagerSnapDistance.atMost(1)
         )
-        var expanded by remember { mutableStateOf(false) }
-        var expanded2 by remember { mutableStateOf(false) }
+        var expanded by rememberSaveable { mutableStateOf(false) }
+        var expanded2 by rememberSaveable { mutableStateOf(false) }
         if (expanded) {
             DialogSetDataCaliandar(pagerState, mun1, year1, true) {
                 expanded = false
@@ -268,7 +269,7 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                         fontSize = Settings.fontInterface.sp,
                         modifier = Modifier
                             .weight(1f)
-                            .padding(end = 1.dp, bottom = 1.dp)
+                            .padding(bottom = 1.dp)
                             .background(TitleCalendarMounth)
                             .padding(5.dp),
                         textAlign = TextAlign.Center,

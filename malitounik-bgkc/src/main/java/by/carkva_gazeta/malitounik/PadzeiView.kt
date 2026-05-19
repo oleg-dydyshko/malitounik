@@ -254,16 +254,19 @@ fun PadzeiaView(navController: NavHostController) {
             isAppearanceLightNavigationBars = false
         }
     }
-    var showDropdown by remember { mutableStateOf(false) }
-    BackHandler(showDropdown || editMode) {
-        if (editMode) {
-            editMode = false
-            editPadzeiaInit = true
-        } else showDropdown = !showDropdown
-    }
     var kalendarMun by remember { mutableStateOf(false) }
     var kalendarMun2 by remember { mutableStateOf(false) }
     var kalendarMun3 by remember { mutableStateOf(false) }
+    BackHandler(kalendarMun || kalendarMun2 || kalendarMun3 || editMode) {
+        if (editMode) {
+            editMode = false
+            editPadzeiaInit = true
+        } else {
+            kalendarMun = false
+            kalendarMun2 = false
+            kalendarMun3 = false
+        }
+    }
     var dialogTimePickerDialog by remember { mutableStateOf(false) }
     var dialogTimePickerDialog2 by remember { mutableStateOf(false) }
     var savePadzia by remember { mutableStateOf(false) }
@@ -535,31 +538,32 @@ fun PadzeiaView(navController: NavHostController) {
                 }
             }
             val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-            if (showDropdown) {
+            if (kalendarMun || kalendarMun2 || kalendarMun3) {
                 ModalBottomSheet(
-                    scrimColor = Color.Transparent, sheetState = sheetState, properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false), containerColor = MaterialTheme.colorScheme.surfaceContainer, onDismissRequest = { showDropdown = false }) {
-                    if (kalendarMun || kalendarMun2 || kalendarMun3) {
-                        KaliandarScreenMounth(
-                            setPageCaliandar = { date ->
-                                var nol1 = ""
-                                var nol2 = ""
-                                val kal = Settings.data[date]
-                                if (kal[1].toInt() < 10) nol1 = "0"
-                                if (kal[2].toInt() < 9) nol2 = "0"
-                                if (kalendarMun) {
-                                    data = nol1 + kal[1] + "." + nol2 + (kal[2].toInt() + 1) + "." + kal[3]
-                                    data2 = nol1 + kal[1] + "." + nol2 + (kal[2].toInt() + 1) + "." + kal[3]
-                                } else if (kalendarMun2) {
-                                    data2 = nol1 + kal[1] + "." + nol2 + (kal[2].toInt() + 1) + "." + kal[3]
-                                } else {
-                                    data3 = nol1 + kal[1] + "." + nol2 + (kal[2].toInt() + 1) + "." + kal[3]
-                                }
-                                kalendarMun = false
-                                kalendarMun2 = false
-                                kalendarMun3 = false
-                                showDropdown = false
-                            })
-                    }
+                    sheetState = sheetState, properties = ModalBottomSheetProperties(isAppearanceLightStatusBars = false, isAppearanceLightNavigationBars = false), containerColor = MaterialTheme.colorScheme.tertiary, onDismissRequest = {
+                        kalendarMun = false
+                        kalendarMun2 = false
+                        kalendarMun3 = false
+                    }) {
+                    KaliandarScreenMounth(
+                        setPageCaliandar = { date ->
+                            var nol1 = ""
+                            var nol2 = ""
+                            val kal = Settings.data[date]
+                            if (kal[1].toInt() < 10) nol1 = "0"
+                            if (kal[2].toInt() < 9) nol2 = "0"
+                            if (kalendarMun) {
+                                data = nol1 + kal[1] + "." + nol2 + (kal[2].toInt() + 1) + "." + kal[3]
+                                data2 = nol1 + kal[1] + "." + nol2 + (kal[2].toInt() + 1) + "." + kal[3]
+                            } else if (kalendarMun2) {
+                                data2 = nol1 + kal[1] + "." + nol2 + (kal[2].toInt() + 1) + "." + kal[3]
+                            } else {
+                                data3 = nol1 + kal[1] + "." + nol2 + (kal[2].toInt() + 1) + "." + kal[3]
+                            }
+                            kalendarMun = false
+                            kalendarMun2 = false
+                            kalendarMun3 = false
+                        })
                 }
             }
             if (editMode) {
@@ -583,7 +587,6 @@ fun PadzeiaView(navController: NavHostController) {
                         if (it == 1) dialogTimePickerDialog = true
                         else dialogTimePickerDialog2 = true
                     }, setShowKalendar = {
-                        showDropdown = true
                         when (it) {
                             1 -> kalendarMun = true
                             2 -> kalendarMun2 = true
