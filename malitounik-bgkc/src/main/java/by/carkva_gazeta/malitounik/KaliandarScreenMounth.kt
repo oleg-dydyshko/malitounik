@@ -348,6 +348,7 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                                             .background(color)
                                             .padding(2.dp)
                                             .background(if (c[Calendar.DAY_OF_MONTH] == i && munTudey) color2 else color)
+                                            .clip(RoundedCornerShape(20.dp))
                                             .padding(1.dp)
                                             .background(color)
                                             .padding(4.dp),

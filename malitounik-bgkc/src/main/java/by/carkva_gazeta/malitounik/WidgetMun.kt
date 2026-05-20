@@ -338,7 +338,7 @@ fun CalendarMun(context: Context) {
                                         Box(modifier = GlanceModifier.padding(1.dp).background(color2)) {
                                             Text(
                                                 text = day,
-                                                modifier = GlanceModifier.background(color).padding(horizontal = 6.dp, vertical = 2.dp),
+                                                modifier = GlanceModifier.background(color).cornerRadius(20.dp).padding(horizontal = 6.dp, vertical = 2.dp),
                                                 style = TextStyle(color = ColorProvider(color2, color2), fontSize = 20.sp, textAlign = TextAlign.Center, fontWeight = bold)
                                             )
                                         }
