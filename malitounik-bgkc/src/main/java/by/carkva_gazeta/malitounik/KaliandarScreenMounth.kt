@@ -14,8 +14,8 @@ import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -34,7 +34,6 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -53,6 +52,7 @@ import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
 import by.carkva_gazeta.malitounik.ui.theme.StrogiPost
 import by.carkva_gazeta.malitounik.ui.theme.TitleCalendarMounth
+import by.carkva_gazeta.malitounik.views.PlainTooltip
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.GregorianCalendar
@@ -68,6 +68,7 @@ fun getFindPage(mounth: Int, year: Int): Int {
     return calPas
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
     Column {
@@ -102,30 +103,11 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp),
-            horizontalArrangement = Arrangement.Center,
+            horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(modifier = Modifier.clickable {
-                Settings.vibrate()
-                expanded = true
-            }) {
-                Text(
-                    textMounth,
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontSize = Settings.fontInterface.sp
-                )
-                Icon(
-                    modifier = Modifier
-                        .padding(start = 10.dp)
-                        .size(22.dp, 22.dp),
-                    painter = painterResource(R.drawable.keyboard_arrow_down),
-                    tint = MaterialTheme.colorScheme.secondary,
-                    contentDescription = null
-                )
-            }
             Row(
                 modifier = Modifier
-                    .padding(start = 20.dp)
                     .clickable {
                         Settings.vibrate()
                         expanded2 = true
@@ -138,8 +120,46 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                 Icon(
                     modifier = Modifier
                         .padding(start = 10.dp)
-                        .size(22.dp, 22.dp),
+                        .size(22.dp),
                     painter = painterResource(R.drawable.keyboard_arrow_down),
+                    tint = MaterialTheme.colorScheme.secondary,
+                    contentDescription = null
+                )
+            }
+            Row(modifier = Modifier.clickable {
+                Settings.vibrate()
+                expanded = true
+            }) {
+                Text(
+                    textMounth,
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontSize = Settings.fontInterface.sp
+                )
+                Icon(
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .size(22.dp),
+                    painter = painterResource(R.drawable.keyboard_arrow_down),
+                    tint = MaterialTheme.colorScheme.secondary,
+                    contentDescription = null
+                )
+            }
+            PlainTooltip(stringResource(R.string.search_call)) {
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable {
+                            Settings.vibrate()
+                            val calendar = Calendar.getInstance()
+                            for (i in Settings.data.indices) {
+                                if (calendar[Calendar.DATE] == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
+                                    Settings.caliandarPosition = i
+                                    break
+                                }
+                            }
+                            setPageCaliandar(Settings.caliandarPosition)
+                        },
+                    painter = painterResource(R.drawable.today),
                     tint = MaterialTheme.colorScheme.secondary,
                     contentDescription = null
                 )
@@ -196,7 +216,11 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                 end -= 7
             }
             var e = 1
-            Column(modifier = Modifier.clip(RoundedCornerShape(10.dp)).background(Divider2)) {
+            Column(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(Divider2)
+            ) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         stringResource(R.string.ndz),
@@ -364,32 +388,6 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                     }
                 }
             }
-        }
-        TextButton(
-            onClick = {
-                Settings.vibrate()
-                val calendar = Calendar.getInstance()
-                for (i in Settings.data.indices) {
-                    if (calendar[Calendar.DATE] == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
-                        Settings.caliandarPosition = i
-                        break
-                    }
-                }
-                setPageCaliandar(Settings.caliandarPosition)
-            },
-            modifier = Modifier
-                .padding(bottom = 10.dp)
-                .align(Alignment.CenterHorizontally)
-                .padding(5.dp),
-            colors = ButtonColors(
-                Divider,
-                Color.Unspecified,
-                Color.Unspecified,
-                Color.Unspecified
-            ),
-            shape = MaterialTheme.shapes.small
-        ) {
-            Text(stringResource(R.string.search_call), fontSize = Settings.fontInterface.sp, color = PrimaryText)
         }
     }
 }
