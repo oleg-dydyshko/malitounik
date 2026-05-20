@@ -1,6 +1,7 @@
 package by.carkva_gazeta.malitounik
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -2587,8 +2588,12 @@ fun goToLink(context: Context, url: String, title: String, textLayout: TextLayou
             else -> Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
         }
     } else {
-        val browserIntent = Intent(Intent.ACTION_VIEW, url.toUri())
-        context.startActivity(browserIntent)
+        try {
+            val browserIntent = Intent(Intent.ACTION_VIEW, url.toUri())
+            context.startActivity(browserIntent)
+        } catch (_: ActivityNotFoundException) {
+            Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
+        }
     }
 }
 

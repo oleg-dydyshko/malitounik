@@ -1094,8 +1094,11 @@ suspend fun downloadOpisanieSviat(context: Context, count: Int = 0) {
         downloadOpisanieSviat(context, count + 1)
         return
     }
-    val fileResult = File("${context.filesDir}/sviaty.json")
-    file.copyTo(fileResult, overwrite = true)
+    try {
+        val fileResult = File("${context.filesDir}/sviaty.json")
+        file.copyTo(fileResult, overwrite = true)
+    } catch (_: FileAlreadyExistsException) {
+    }
 }
 
 suspend fun downloadOpisanieSviatyia(context: Context, mun: Int, count: Int = 0) {
