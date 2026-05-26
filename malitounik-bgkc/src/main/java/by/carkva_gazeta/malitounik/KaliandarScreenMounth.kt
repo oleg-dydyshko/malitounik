@@ -324,7 +324,7 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                                             .weight(1f)
                                             .padding(end = 1.dp, bottom = 1.dp)
                                             .background(fon)
-                                            .padding(7.dp),
+                                            .padding(6.dp),
                                         textAlign = TextAlign.Center,
                                         color = SecondaryText,
                                         fontSize = Settings.fontInterface.sp
@@ -338,7 +338,7 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                                             .weight(1f)
                                             .padding(end = 1.dp, bottom = 1.dp)
                                             .background(Divider)
-                                            .padding(7.dp),
+                                            .padding(6.dp),
                                         textAlign = TextAlign.Center,
                                         color = SecondaryText,
                                         fontSize = Settings.fontInterface.sp
