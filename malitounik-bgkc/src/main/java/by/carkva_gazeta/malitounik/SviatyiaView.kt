@@ -721,17 +721,19 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                         modifier = Modifier
                             .fillMaxSize()
                             .pointerInput(PointerEventType.Press) {
-                                awaitPointerEventScope {
-                                    while (true) {
-                                        val event = awaitPointerEvent()
-                                        if (event.changes.size == 2) {
-                                            fontSize *= event.calculateZoom()
-                                            fontSize = fontSize.coerceIn(18f, 58f)
-                                            k.edit {
-                                                putFloat("font_biblia", fontSize)
-                                            }
-                                            event.changes.forEach { pointerInputChange: PointerInputChange ->
-                                                pointerInputChange.consume()
+                                if (k.getBoolean("gestures", true)) {
+                                    awaitPointerEventScope {
+                                        while (true) {
+                                            val event = awaitPointerEvent()
+                                            if (event.changes.size == 2) {
+                                                fontSize *= event.calculateZoom()
+                                                fontSize = fontSize.coerceIn(18f, 58f)
+                                                k.edit {
+                                                    putFloat("font_biblia", fontSize)
+                                                }
+                                                event.changes.forEach { pointerInputChange: PointerInputChange ->
+                                                    pointerInputChange.consume()
+                                                }
                                             }
                                         }
                                     }
@@ -740,7 +742,9 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                             .pointerInput(Unit) {
                                 detectTapGestures(
                                     onDoubleTap = {
-                                        fullscreen = !fullscreen
+                                        if (k.getBoolean("gestures", true)) {
+                                            fullscreen = !fullscreen
+                                        }
                                     }
                                 )
                             },
@@ -851,13 +855,13 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                             imgWSize = Dp.Unspecified
                                             imgHSize = Dp.Unspecified
                                         } else {
-                                        if (imW > 150F) {
-                                            imW = 150F
-                                            imH = 150F / imageScale
-                                            imgWSize = imW.dp
-                                            imgHSize = imH.dp
-                                        }
+                                            if (imW > 150F) {
+                                                imW = 150F
+                                                imH = 150F / imageScale
+                                                imgWSize = imW.dp
+                                                imgHSize = imH.dp
                                             }
+                                        }
                                         val t3 = file.name.lastIndexOf(".")
                                         val fileNameT = file.name.substring(0, t3) + ".txt"
                                         val fileImageOpis = File("${context.filesDir}/iconsApisanne/$fileNameT")

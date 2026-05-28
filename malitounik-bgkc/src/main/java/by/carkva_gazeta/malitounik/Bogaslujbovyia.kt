@@ -1849,7 +1849,9 @@ fun Bogaslujbovyia(
                             .pointerInput(Unit) {
                                 detectTapGestures(
                                     onDoubleTap = {
-                                        fullscreen = !fullscreen
+                                        if (k.getBoolean("gestures", true)) {
+                                            fullscreen = !fullscreen
+                                        }
                                     }
                                 )
                             }
@@ -1863,21 +1865,23 @@ fun Bogaslujbovyia(
                                     .fillMaxWidth()
                                     .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp))
                                     .pointerInput(Unit) {
-                                        awaitEachGesture {
-                                            awaitFirstDown()
-                                            do {
-                                                val event = awaitPointerEvent()
-                                                if (event.changes.size == 2) {
-                                                    fontSize *= event.calculateZoom()
-                                                    fontSize = fontSize.coerceIn(18f, 58f)
-                                                    k.edit {
-                                                        putFloat("font_biblia", fontSize)
+                                        if (k.getBoolean("gestures", true)) {
+                                            awaitEachGesture {
+                                                awaitFirstDown()
+                                                do {
+                                                    val event = awaitPointerEvent()
+                                                    if (event.changes.size == 2) {
+                                                        fontSize *= event.calculateZoom()
+                                                        fontSize = fontSize.coerceIn(18f, 58f)
+                                                        k.edit {
+                                                            putFloat("font_biblia", fontSize)
+                                                        }
+                                                        event.changes.forEach { pointerInputChange: PointerInputChange ->
+                                                            pointerInputChange.consume()
+                                                        }
                                                     }
-                                                    event.changes.forEach { pointerInputChange: PointerInputChange ->
-                                                        pointerInputChange.consume()
-                                                    }
-                                                }
-                                            } while (event.changes.any { it.pressed })
+                                                } while (event.changes.any { it.pressed })
+                                            }
                                         }
                                     },
                                 text = viewModel.htmlText,

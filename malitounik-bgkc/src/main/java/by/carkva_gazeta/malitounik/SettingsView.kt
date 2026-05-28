@@ -474,6 +474,31 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                     )
                 }
             }
+            var gestures by remember { mutableStateOf(k.getBoolean("gestures", true)) }
+            Row(
+                verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                    .padding(vertical = 10.dp)
+                    .clickable {
+                        Settings.vibrate()
+                        gestures = !gestures
+                        k.edit {
+                            putBoolean("gestures", gestures)
+                        }
+                    }) {
+                Text(
+                    stringResource(R.string.gestures), modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
+                )
+                Switch(
+                    modifier = Modifier.scale(0.8f), checked = gestures, onCheckedChange = {
+                        Settings.vibrate()
+                        gestures = it
+                        k.edit {
+                            putBoolean("gestures", gestures)
+                        }
+                    })
+            }
             var adminDayInYearState by remember { mutableStateOf(k.getBoolean("adminDayInYear", false)) }
             var adminOnlyNotificationsState by remember { mutableStateOf(k.getBoolean("adminOnlyNotifications", false)) }
             var adminNotificationsState by remember { mutableStateOf(k.getBoolean("adminNotifications", false)) }

@@ -287,17 +287,20 @@ open class CytanniListViewModel : ViewModel() {
                                 AppNavGraphState.setScrollValuePosition(title, 0, 0)
                                 selectedIndex += 1
                             }
+
                             in 10..112 -> selectedIndex += 1
                             113 -> {
                                 selectedIndex = if (listState[selectedIndex].lazyListState.firstVisibleItemIndex >= 8) 114
                                 else 113
                                 AppNavGraphState.setScrollValuePosition(title, 0, 0)
                             }
-                            114 -> selectedIndex =  115
+
+                            114 -> selectedIndex = 115
                             115 -> {
                                 AppNavGraphState.setScrollValuePosition(title, 8, 0)
-                                selectedIndex =  115
+                                selectedIndex = 115
                             }
+
                             in 116..145 -> selectedIndex += 1
                             146 -> selectedIndex = 146
                             147 -> {
@@ -316,17 +319,20 @@ open class CytanniListViewModel : ViewModel() {
                                 AppNavGraphState.setScrollValuePosition(title, 21, 0)
                                 selectedIndex -= 1
                             }
+
                             in 11..113 -> selectedIndex -= 1
                             114 -> selectedIndex = 112
                             115 -> {
                                 AppNavGraphState.setScrollValuePosition(title, 8, 0)
                                 selectedIndex = 112
                             }
+
                             116 -> {
                                 selectedIndex = if (listState[selectedIndex].lazyListState.firstVisibleItemIndex >= 8) 114
                                 else 113
                                 AppNavGraphState.setScrollValuePosition(title, 0, 0)
                             }
+
                             in 117..146 -> selectedIndex -= 1
                             147 -> {
                                 selectedIndex = if (listState[selectedIndex].lazyListState.firstVisibleItemIndex >= 8) 146
@@ -1933,23 +1939,25 @@ fun CytanniList(
                     LazyColumn(
                         Modifier
                             .pointerInput(PointerEventType.Press) {
-                                awaitPointerEventScope {
-                                    while (true) {
-                                        val event = awaitPointerEvent()
-                                        if (event.type == PointerEventType.Press) {
-                                            viewModel.autoScroll(title, false)
-                                        }
-                                        if (viewModel.autoScrollSensor && event.type == PointerEventType.Release && !isScrollRun) {
-                                            viewModel.autoScroll(title, true)
-                                        }
-                                        if (event.changes.size == 2) {
-                                            fontSize *= event.calculateZoom()
-                                            fontSize = fontSize.coerceIn(18f, 58f)
-                                            k.edit {
-                                                putFloat("font_biblia", fontSize)
+                                if (k.getBoolean("gestures", true)) {
+                                    awaitPointerEventScope {
+                                        while (true) {
+                                            val event = awaitPointerEvent()
+                                            if (event.type == PointerEventType.Press) {
+                                                viewModel.autoScroll(title, false)
                                             }
-                                            event.changes.forEach { pointerInputChange: PointerInputChange ->
-                                                pointerInputChange.consume()
+                                            if (viewModel.autoScrollSensor && event.type == PointerEventType.Release && !isScrollRun) {
+                                                viewModel.autoScroll(title, true)
+                                            }
+                                            if (event.changes.size == 2) {
+                                                fontSize *= event.calculateZoom()
+                                                fontSize = fontSize.coerceIn(18f, 58f)
+                                                k.edit {
+                                                    putFloat("font_biblia", fontSize)
+                                                }
+                                                event.changes.forEach { pointerInputChange: PointerInputChange ->
+                                                    pointerInputChange.consume()
+                                                }
                                             }
                                         }
                                     }
@@ -1970,7 +1978,9 @@ fun CytanniList(
                                                     viewModel.listState[page].stateList[index] = !viewModel.listState[page].stateList[index]
                                                 }
                                             }, onDoubleTap = {
-                                                fullscreen = !fullscreen
+                                                if (k.getBoolean("gestures", true)) {
+                                                    fullscreen = !fullscreen
+                                                }
                                             })
                                         }
                                 } else {
@@ -1978,7 +1988,9 @@ fun CytanniList(
                                         .pointerInput(Unit) {
                                             detectTapGestures(
                                                 onDoubleTap = {
-                                                    fullscreen = !fullscreen
+                                                    if (k.getBoolean("gestures", true)) {
+                                                        fullscreen = !fullscreen
+                                                    }
                                                 })
                                         }
                                 }
