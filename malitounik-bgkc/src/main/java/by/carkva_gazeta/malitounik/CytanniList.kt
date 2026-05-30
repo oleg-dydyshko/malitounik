@@ -2157,6 +2157,42 @@ fun CytanniList(
                                 .padding(5.dp)
                         )
                     }
+                    var autoScrollRepitPlus by remember { mutableStateOf(false) }
+                    var autoScrollRepitMinus by remember { mutableStateOf(false) }
+                    LaunchedEffect(autoScrollRepitPlus) {
+                        if (viewModel.autoScrollSensor) {
+                            var count = 1
+                            while (autoScrollRepitPlus) {
+                                if (count != 1) delay(600)
+                                if (viewModel.autoScrollSpeed in 20..135) {
+                                    viewModel.autoScrollSpeed -= 5
+                                    val proc = 100 - (viewModel.autoScrollSpeed - 15) * 100 / 115
+                                    autoScrollTextColor = Primary
+                                    autoScrollTextColor2 = PrimaryTextBlack
+                                    autoScrollText = "$proc%"
+                                    viewModel.autoScrollSpeed(context)
+                                }
+                                count++
+                            }
+                        }
+                    }
+                    LaunchedEffect(autoScrollRepitMinus) {
+                        if (viewModel.autoScrollSensor) {
+                            var count = 1
+                            while (autoScrollRepitMinus) {
+                                if (count != 1) delay(600)
+                                if (viewModel.autoScrollSpeed in 10..125) {
+                                    viewModel.autoScrollSpeed += 5
+                                    val proc = 100 - (viewModel.autoScrollSpeed - 15) * 100 / 115
+                                    autoScrollTextColor = Post
+                                    autoScrollTextColor2 = PrimaryText
+                                    autoScrollText = "$proc%"
+                                    viewModel.autoScrollSpeed(context)
+                                }
+                                count++
+                            }
+                        }
+                    }
                     AnimatedVisibility(
                         viewModel.autoScrollSensor, enter = fadeIn(
                             tween(
@@ -2168,15 +2204,18 @@ fun CytanniList(
                             painter = painterResource(R.drawable.minus_auto_scroll), contentDescription = null, modifier = Modifier
                                 .padding(horizontal = 10.dp)
                                 .clip(shape = RoundedCornerShape(10.dp))
-                                .clickable {
-                                    Settings.vibrate()
-                                    if (viewModel.autoScrollSpeed in 10..125) {
-                                        viewModel.autoScrollSpeed += 5
-                                        val proc = 100 - (viewModel.autoScrollSpeed - 15) * 100 / 115
-                                        autoScrollTextColor = Post
-                                        autoScrollTextColor2 = PrimaryText
-                                        autoScrollText = "$proc%"
-                                        viewModel.autoScrollSpeed(context)
+                                .pointerInput(PointerEventType.Press) {
+                                    awaitPointerEventScope {
+                                        while (true) {
+                                            val event = awaitPointerEvent()
+                                            if (event.type == PointerEventType.Press) {
+                                                Settings.vibrate()
+                                                autoScrollRepitMinus = true
+                                            }
+                                            if (event.type == PointerEventType.Release) {
+                                                autoScrollRepitMinus = false
+                                            }
+                                        }
                                     }
                                 }
                                 .background(Button)
@@ -2195,15 +2234,18 @@ fun CytanniList(
                             painter = painterResource(R.drawable.plus_auto_scroll), contentDescription = null, modifier = Modifier
                                 .align(Alignment.Bottom)
                                 .clip(shape = RoundedCornerShape(10.dp))
-                                .clickable {
-                                    Settings.vibrate()
-                                    if (viewModel.autoScrollSpeed in 20..135) {
-                                        viewModel.autoScrollSpeed -= 5
-                                        val proc = 100 - (viewModel.autoScrollSpeed - 15) * 100 / 115
-                                        autoScrollTextColor = Primary
-                                        autoScrollTextColor2 = PrimaryTextBlack
-                                        autoScrollText = "$proc%"
-                                        viewModel.autoScrollSpeed(context)
+                                .pointerInput(PointerEventType.Press) {
+                                    awaitPointerEventScope {
+                                        while (true) {
+                                            val event = awaitPointerEvent()
+                                            if (event.type == PointerEventType.Press) {
+                                                Settings.vibrate()
+                                                autoScrollRepitPlus = true
+                                            }
+                                            if (event.type == PointerEventType.Release) {
+                                                autoScrollRepitPlus = false
+                                            }
+                                        }
                                     }
                                 }
                                 .background(Button)
