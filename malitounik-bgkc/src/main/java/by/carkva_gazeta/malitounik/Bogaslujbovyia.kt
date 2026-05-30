@@ -2050,6 +2050,42 @@ fun Bogaslujbovyia(
                                     .padding(5.dp)
                             )
                         }
+                        var autoScrollRepitPlus by remember { mutableStateOf(false) }
+                        var autoScrollRepitMinus by remember { mutableStateOf(false) }
+                        LaunchedEffect(autoScrollRepitPlus) {
+                            if (viewModel.autoScrollSensor) {
+                                var isDelay = false
+                                while (autoScrollRepitPlus) {
+                                    if (isDelay) delay(600)
+                                    if (viewModel.autoScrollSpeed in 20..135) {
+                                        viewModel.autoScrollSpeed -= 5
+                                        val proc = 100 - (viewModel.autoScrollSpeed - 15) * 100 / 115
+                                        autoScrollTextColor = Primary
+                                        autoScrollTextColor2 = PrimaryTextBlack
+                                        autoScrollText = "$proc%"
+                                        viewModel.autoScrollSpeed(context)
+                                    }
+                                    isDelay = true
+                                }
+                            }
+                        }
+                        LaunchedEffect(autoScrollRepitMinus) {
+                            if (viewModel.autoScrollSensor) {
+                                var isDelay = false
+                                while (autoScrollRepitMinus) {
+                                    if (isDelay) delay(600)
+                                    if (viewModel.autoScrollSpeed in 10..125) {
+                                        viewModel.autoScrollSpeed += 5
+                                        val proc = 100 - (viewModel.autoScrollSpeed - 15) * 100 / 115
+                                        autoScrollTextColor = Post
+                                        autoScrollTextColor2 = PrimaryText
+                                        autoScrollText = "$proc%"
+                                        viewModel.autoScrollSpeed(context)
+                                    }
+                                    isDelay = true
+                                }
+                            }
+                        }
                         AnimatedVisibility(
                             viewModel.autoScrollSensor, enter = fadeIn(
                                 tween(
@@ -2063,16 +2099,18 @@ fun Bogaslujbovyia(
                                 modifier = Modifier
                                     .padding(horizontal = 10.dp)
                                     .clip(shape = RoundedCornerShape(10.dp))
-                                    .clickable {
-                                        Settings.vibrate()
-                                        if (viewModel.autoScrollSpeed in 10..125) {
-                                            viewModel.autoScrollSpeed += 5
-                                            val proc = 100 - (viewModel.autoScrollSpeed - 15) * 100 / 115
-                                            autoScrollTextColor = Post
-                                            autoScrollTextColor2 = PrimaryText
-                                            autoScrollText = "$proc%"
-                                            viewModel.autoScrollTextVisable = true
-                                            viewModel.autoScrollSpeed(context)
+                                    .pointerInput(PointerEventType.Press) {
+                                        awaitPointerEventScope {
+                                            while (true) {
+                                                val event = awaitPointerEvent()
+                                                if (event.type == PointerEventType.Press) {
+                                                    Settings.vibrate()
+                                                    autoScrollRepitMinus = true
+                                                }
+                                                if (event.type == PointerEventType.Release) {
+                                                    autoScrollRepitMinus = false
+                                                }
+                                            }
                                         }
                                     }
                                     .background(Button)
@@ -2093,16 +2131,18 @@ fun Bogaslujbovyia(
                                 modifier = Modifier
                                     .align(Alignment.Bottom)
                                     .clip(shape = RoundedCornerShape(10.dp))
-                                    .clickable {
-                                        Settings.vibrate()
-                                        if (viewModel.autoScrollSpeed in 20..135) {
-                                            viewModel.autoScrollSpeed -= 5
-                                            val proc = 100 - (viewModel.autoScrollSpeed - 15) * 100 / 115
-                                            autoScrollTextColor = Primary
-                                            autoScrollTextColor2 = PrimaryTextBlack
-                                            autoScrollText = "$proc%"
-                                            viewModel.autoScrollTextVisable = true
-                                            viewModel.autoScrollSpeed(context)
+                                    .pointerInput(PointerEventType.Press) {
+                                        awaitPointerEventScope {
+                                            while (true) {
+                                                val event = awaitPointerEvent()
+                                                if (event.type == PointerEventType.Press) {
+                                                    Settings.vibrate()
+                                                    autoScrollRepitPlus = true
+                                                }
+                                                if (event.type == PointerEventType.Release) {
+                                                    autoScrollRepitPlus = false
+                                                }
+                                            }
                                         }
                                     }
                                     .background(Button)

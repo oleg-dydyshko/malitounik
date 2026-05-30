@@ -2161,9 +2161,9 @@ fun CytanniList(
                     var autoScrollRepitMinus by remember { mutableStateOf(false) }
                     LaunchedEffect(autoScrollRepitPlus) {
                         if (viewModel.autoScrollSensor) {
-                            var count = 1
+                            var isDelay = false
                             while (autoScrollRepitPlus) {
-                                if (count != 1) delay(600)
+                                if (isDelay) delay(600)
                                 if (viewModel.autoScrollSpeed in 20..135) {
                                     viewModel.autoScrollSpeed -= 5
                                     val proc = 100 - (viewModel.autoScrollSpeed - 15) * 100 / 115
@@ -2172,15 +2172,15 @@ fun CytanniList(
                                     autoScrollText = "$proc%"
                                     viewModel.autoScrollSpeed(context)
                                 }
-                                count++
+                                isDelay = true
                             }
                         }
                     }
                     LaunchedEffect(autoScrollRepitMinus) {
                         if (viewModel.autoScrollSensor) {
-                            var count = 1
+                            var isDelay = false
                             while (autoScrollRepitMinus) {
-                                if (count != 1) delay(600)
+                                if (isDelay) delay(600)
                                 if (viewModel.autoScrollSpeed in 10..125) {
                                     viewModel.autoScrollSpeed += 5
                                     val proc = 100 - (viewModel.autoScrollSpeed - 15) * 100 / 115
@@ -2189,7 +2189,7 @@ fun CytanniList(
                                     autoScrollText = "$proc%"
                                     viewModel.autoScrollSpeed(context)
                                 }
-                                count++
+                                isDelay = true
                             }
                         }
                     }
