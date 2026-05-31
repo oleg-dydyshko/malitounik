@@ -2056,7 +2056,7 @@ fun Bogaslujbovyia(
                             if (viewModel.autoScrollSensor) {
                                 var isDelay = false
                                 while (autoScrollRepitPlus) {
-                                    if (isDelay) delay(800)
+                                    if (isDelay) delay(1000)
                                     if (viewModel.autoScrollSpeed in 20..135) {
                                         Settings.vibrate()
                                         viewModel.autoScrollSpeed -= 5
@@ -2074,7 +2074,7 @@ fun Bogaslujbovyia(
                             if (viewModel.autoScrollSensor) {
                                 var isDelay = false
                                 while (autoScrollRepitMinus) {
-                                    if (isDelay) delay(800)
+                                    if (isDelay) delay(1000)
                                     if (viewModel.autoScrollSpeed in 10..125) {
                                         Settings.vibrate()
                                         viewModel.autoScrollSpeed += 5

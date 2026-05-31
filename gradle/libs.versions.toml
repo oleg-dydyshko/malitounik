@@ -23,7 +23,7 @@ material3 = "1.4.0"
 navigation = "2.9.8"
 compose-bom = "2026.05.01"
 activity-compose = "1.13.0"
-firebase-bom = "34.13.0"
+firebase-bom = "34.14.0"
 glanceAppwidget = "1.1.1"
 
 [libraries]
