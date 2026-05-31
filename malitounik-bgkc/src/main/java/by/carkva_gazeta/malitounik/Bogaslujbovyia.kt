@@ -2056,8 +2056,9 @@ fun Bogaslujbovyia(
                             if (viewModel.autoScrollSensor) {
                                 var isDelay = false
                                 while (autoScrollRepitPlus) {
-                                    if (isDelay) delay(600)
+                                    if (isDelay) delay(800)
                                     if (viewModel.autoScrollSpeed in 20..135) {
+                                        Settings.vibrate()
                                         viewModel.autoScrollSpeed -= 5
                                         val proc = 100 - (viewModel.autoScrollSpeed - 15) * 100 / 115
                                         autoScrollTextColor = Primary
@@ -2073,8 +2074,9 @@ fun Bogaslujbovyia(
                             if (viewModel.autoScrollSensor) {
                                 var isDelay = false
                                 while (autoScrollRepitMinus) {
-                                    if (isDelay) delay(600)
+                                    if (isDelay) delay(800)
                                     if (viewModel.autoScrollSpeed in 10..125) {
+                                        Settings.vibrate()
                                         viewModel.autoScrollSpeed += 5
                                         val proc = 100 - (viewModel.autoScrollSpeed - 15) * 100 / 115
                                         autoScrollTextColor = Post
@@ -2104,7 +2106,6 @@ fun Bogaslujbovyia(
                                             while (true) {
                                                 val event = awaitPointerEvent()
                                                 if (event.type == PointerEventType.Press) {
-                                                    Settings.vibrate()
                                                     autoScrollRepitMinus = true
                                                 }
                                                 if (event.type == PointerEventType.Release) {
@@ -2136,7 +2137,6 @@ fun Bogaslujbovyia(
                                             while (true) {
                                                 val event = awaitPointerEvent()
                                                 if (event.type == PointerEventType.Press) {
-                                                    Settings.vibrate()
                                                     autoScrollRepitPlus = true
                                                 }
                                                 if (event.type == PointerEventType.Release) {
