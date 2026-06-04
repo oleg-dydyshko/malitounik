@@ -51,6 +51,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 
 class WidgetConfigRadioMaryia : ComponentActivity() {
@@ -142,7 +143,7 @@ fun DialogWidgetConfigRadioMaryia(
                                                 val intent2 = Intent(context, ServiceRadyjoMaryia::class.java)
                                                 intent2.putExtra("action", ServiceRadyjoMaryia.STOP)
                                                 ContextCompat.startForegroundService(context, intent2)
-                                                delay(200)
+                                                delay(200.milliseconds)
                                                 if (isNetworkAvailable(context)) {
                                                     val intent2 = Intent(context, ServiceRadyjoMaryia::class.java)
                                                     intent2.putExtra("action", ServiceRadyjoMaryia.PLAY_PAUSE)

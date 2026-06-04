@@ -173,6 +173,7 @@ import java.io.File
 import java.net.URLDecoder
 import java.util.Calendar
 import java.util.Locale
+import kotlin.time.Duration.Companion.milliseconds
 
 class BogaslujbovyiaViewModel : ViewModel() {
     private lateinit var ttsManager: TTSManager
@@ -301,7 +302,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
             }
         }
         if (vybranoeList.isNotEmpty()) {
-            for (i in 0 until vybranoeList.size) {
+            for (i in vybranoeList.indices) {
                 if (resurs == vybranoeList[i].resource) {
                     isVybranoe = true
                     break
@@ -313,7 +314,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
     fun saveVybranoe(context: Context, title: String, resurs: String) {
         if (isVybranoe) {
             var pos = 0
-            for (i in 0 until vybranoeList.size) {
+            for (i in vybranoeList.indices) {
                 if (resurs == vybranoeList[i].resource) {
                     pos = i
                     break
@@ -342,7 +343,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
                 autoScrollJob = viewModelScope.launch {
                     withContext(Dispatchers.Main) {
                         while (true) {
-                            delay(autoScrollSpeed.toLong())
+                            delay(autoScrollSpeed.milliseconds)
                             scrollState.scrollBy(2f)
                             AppNavGraphState.setScrollValuePosition(title, scrollState.value)
                         }
@@ -360,7 +361,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
         autoScrollTextVisable = true
         autoScrollTextVisableJob?.cancel()
         autoScrollTextVisableJob = viewModelScope.launch {
-            delay(3000)
+            delay(3000.milliseconds)
             autoScrollTextVisable = false
         }
         k.edit {
@@ -448,7 +449,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
         if (searchChars.length >= 3) {
             val findString = findChars(search, searchChars)
             if (findString.isNotEmpty()) arraySearsh.addAll(findString)
-            for (i in 0 until arraySearsh.size) {
+            for (i in arraySearsh.indices) {
                 val searchLig = arraySearsh[i].str.length
                 val strPosition = arraySearsh[i].position - searchLig
                 if (strPosition != -1) {
@@ -1102,7 +1103,7 @@ fun Bogaslujbovyia(
                                         Settings.vibrate()
                                         maxLine.intValue = Int.MAX_VALUE
                                         coroutineScope.launch {
-                                            delay(5000L)
+                                            delay(5000.milliseconds)
                                             maxLine.intValue = 1
                                         }
                                     },
@@ -2056,7 +2057,7 @@ fun Bogaslujbovyia(
                             if (viewModel.autoScrollSensor) {
                                 var isDelay = false
                                 while (autoScrollRepitPlus) {
-                                    if (isDelay) delay(1000)
+                                    if (isDelay) delay(1000.milliseconds)
                                     if (viewModel.autoScrollSpeed in 20..135) {
                                         Settings.vibrate()
                                         viewModel.autoScrollSpeed -= 5
@@ -2074,7 +2075,7 @@ fun Bogaslujbovyia(
                             if (viewModel.autoScrollSensor) {
                                 var isDelay = false
                                 while (autoScrollRepitMinus) {
-                                    if (isDelay) delay(1000)
+                                    if (isDelay) delay(1000.milliseconds)
                                     if (viewModel.autoScrollSpeed in 10..125) {
                                         Settings.vibrate()
                                         viewModel.autoScrollSpeed += 5

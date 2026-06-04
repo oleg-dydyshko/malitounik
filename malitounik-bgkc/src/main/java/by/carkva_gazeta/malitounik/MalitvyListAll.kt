@@ -78,6 +78,7 @@ import java.text.Collator
 import java.util.Calendar
 import java.util.GregorianCalendar
 import java.util.Locale
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -213,7 +214,7 @@ fun MalitvyListAll(
                                     Settings.vibrate()
                                     maxLine.intValue = Int.MAX_VALUE
                                     coroutineScope.launch {
-                                        delay(5000L)
+                                        delay(5000.milliseconds)
                                         maxLine.intValue = 1
                                     }
                                 }, text = title.uppercase(), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
@@ -224,7 +225,7 @@ fun MalitvyListAll(
                                         Settings.vibrate()
                                         maxLine.intValue = Int.MAX_VALUE
                                         coroutineScope.launch {
-                                            delay(5000L)
+                                            delay(5000.milliseconds)
                                             maxLine.intValue = 1
                                         }
                                     }, text = subTitle.uppercase(), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp

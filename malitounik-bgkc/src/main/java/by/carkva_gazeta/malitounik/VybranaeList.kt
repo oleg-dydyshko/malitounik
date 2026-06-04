@@ -426,7 +426,7 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
                                             onClick = {
                                                 Settings.vibrate()
                                                 val newList = StringBuilder()
-                                                for (r in 0 until viewModel.vybranaeListTitleBible[i].listBible.size) {
+                                                for (r in viewModel.vybranaeListTitleBible[i].listBible.indices) {
                                                     val char = if (r == viewModel.vybranaeListTitleBible[i].listBible.size - 1) ""
                                                     else ";"
                                                     newList.append(viewModel.vybranaeListTitleBible[i].listBible[r].knigaText + " " + (viewModel.vybranaeListTitleBible[i].listBible[r].glava + 1) + char)

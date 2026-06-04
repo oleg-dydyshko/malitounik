@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import by.carkva_gazeta.malitounik.Settings
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,7 +43,7 @@ fun PlainTooltip(title: String, positioning: TooltipAnchorPosition = TooltipAnch
     LaunchedEffect(state.isVisible) {
         if (state.isVisible) {
             Settings.vibrate(true)
-            delay(delay)
+            delay(delay.milliseconds)
             state.dismiss()
         }
     }

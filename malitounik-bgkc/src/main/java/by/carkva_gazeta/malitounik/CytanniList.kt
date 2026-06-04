@@ -147,6 +147,7 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Calendar
+import kotlin.time.Duration.Companion.milliseconds
 
 open class CytanniListViewModel : ViewModel() {
     private lateinit var ttsManager: TTSManager
@@ -380,7 +381,7 @@ open class CytanniListViewModel : ViewModel() {
         }
         isVybranoe = false
         if (vybranoeList.isNotEmpty()) {
-            for (i in 0 until vybranoeList.size) {
+            for (i in vybranoeList.indices) {
                 if (knigaText == vybranoeList[i].knigaText && vybranoeList[i].glava == selectedIndex) {
                     isVybranoe = true
                     break
@@ -393,7 +394,7 @@ open class CytanniListViewModel : ViewModel() {
         val file = File("${context.filesDir}/vybranoe_${perevodName}.json")
         if (isVybranoe) {
             var pos = 0
-            for (i in 0 until vybranoeList.size) {
+            for (i in vybranoeList.indices) {
                 if (knigaText == vybranoeList[i].knigaText && vybranoeList[i].glava == selectedIndex) {
                     pos = i
                     break
@@ -405,7 +406,7 @@ open class CytanniListViewModel : ViewModel() {
             val kniga = knigaBiblii(knigaText)
             val bibleCount = bibleCount(context, perevod, kniga >= 50)
             var titleBibleVybranoe = ""
-            for (w in 0 until bibleCount.size) {
+            for (w in bibleCount.indices) {
                 if (bibleCount[w].subTitle == knigaText) {
                     titleBibleVybranoe = bibleCount[w].title
                     break
@@ -434,7 +435,7 @@ open class CytanniListViewModel : ViewModel() {
                 autoScrollJob = viewModelScope.launch {
                     withContext(Dispatchers.Main) {
                         while (true) {
-                            delay(autoScrollSpeed.toLong())
+                            delay(autoScrollSpeed.milliseconds)
                             listState[selectedIndex].lazyListState.scrollBy(2f)
                             AppNavGraphState.setScrollValuePosition(title, listState[selectedIndex].lazyListState.firstVisibleItemIndex, listState[selectedIndex].lazyListState.firstVisibleItemScrollOffset)
                         }
@@ -452,7 +453,7 @@ open class CytanniListViewModel : ViewModel() {
         autoScrollTextVisable = true
         autoScrollTextVisableJob?.cancel()
         autoScrollTextVisableJob = viewModelScope.launch {
-            delay(3000)
+            delay(3000.milliseconds)
             autoScrollTextVisable = false
         }
         k.edit {
@@ -907,7 +908,7 @@ fun CytanniList(
                                         Settings.vibrate()
                                         maxLine.intValue = Int.MAX_VALUE
                                         coroutineScope.launch {
-                                            delay(5000L)
+                                            delay(5000.milliseconds)
                                             maxLine.intValue = 1
                                         }
                                     }, text = titleBible.uppercase(), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
@@ -917,7 +918,7 @@ fun CytanniList(
                                         Settings.vibrate()
                                         maxLine.intValue = Int.MAX_VALUE
                                         coroutineScope.launch {
-                                            delay(5000L)
+                                            delay(5000.milliseconds)
                                             maxLine.intValue = 1
                                         }
                                     }, text = subTitle, color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
@@ -928,7 +929,7 @@ fun CytanniList(
                                         Settings.vibrate()
                                         maxLine.intValue = Int.MAX_VALUE
                                         coroutineScope.launch {
-                                            delay(5000L)
+                                            delay(5000.milliseconds)
                                             maxLine.intValue = 1
                                         }
                                     }, text = stringResource(R.string.paralel), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
@@ -1697,7 +1698,7 @@ fun CytanniList(
                 LaunchedEffect(viewModel.selectedIndex) {
                     viewModel.isVybranoe = false
                     if (viewModel.vybranoeList.isNotEmpty()) {
-                        for (i in 0 until viewModel.vybranoeList.size) {
+                        for (i in viewModel.vybranoeList.indices) {
                             if (viewModel.knigaText == viewModel.vybranoeList[i].knigaText && viewModel.vybranoeList[i].glava == viewModel.selectedIndex) {
                                 viewModel.isVybranoe = true
                                 break
@@ -1810,7 +1811,7 @@ fun CytanniList(
 
                             biblia == Settings.CHYTANNI_LITURGICHNYIA && skipUtran -> {
                                 val tit = resultPage[page].title
-                                for (i in 0 until resultPage.size) {
+                                for (i in resultPage.indices) {
                                     if (resultPage[i].title != tit) {
                                         utranEndPosition = i
                                         break
@@ -1828,7 +1829,7 @@ fun CytanniList(
                                     if (positionRemember != 0) {
                                         var tit = ""
                                         var cnt = 0
-                                        for (i in 0 until resultPage.size) {
+                                        for (i in resultPage.indices) {
                                             if (tit.isNotEmpty() && resultPage[i].title != tit) {
                                                 cnt++
                                                 if (cnt == positionRemember) {
@@ -2163,7 +2164,7 @@ fun CytanniList(
                         if (viewModel.autoScrollSensor) {
                             var isDelay = false
                             while (autoScrollRepitPlus) {
-                                if (isDelay) delay(1000)
+                                if (isDelay) delay(1000.milliseconds)
                                 if (viewModel.autoScrollSpeed in 20..135) {
                                     Settings.vibrate()
                                     viewModel.autoScrollSpeed -= 5
@@ -2181,7 +2182,7 @@ fun CytanniList(
                         if (viewModel.autoScrollSensor) {
                             var isDelay = false
                             while (autoScrollRepitMinus) {
-                                if (isDelay) delay(1000)
+                                if (isDelay) delay(1000.milliseconds)
                                 if (viewModel.autoScrollSpeed in 10..125) {
                                     Settings.vibrate()
                                     viewModel.autoScrollSpeed += 5

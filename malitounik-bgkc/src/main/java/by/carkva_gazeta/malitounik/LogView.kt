@@ -153,7 +153,7 @@ class LogView : ViewModel() {
                     val logFile = File("${context.filesDir}/cache/log.txt")
                     val strB = StringBuilder()
                     val buffer = ByteArray(1024)
-                    for (index in 0 until log.size) {
+                    for (index in log.indices) {
                         val file = log[index]
                         var filePath = file.replace("//", "/")
                         val t1 = filePath.indexOf("(")

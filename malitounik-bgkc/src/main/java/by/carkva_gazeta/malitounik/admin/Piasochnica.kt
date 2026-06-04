@@ -119,6 +119,7 @@ import kotlinx.coroutines.tasks.await
 import org.apache.commons.text.StringEscapeUtils
 import java.io.File
 import java.security.MessageDigest
+import kotlin.time.Duration.Companion.milliseconds
 
 class Piasochnica : ViewModel() {
     var history = ArrayList<History>()
@@ -197,7 +198,7 @@ class Piasochnica : ViewModel() {
     }
 
     fun isFilePiasochnicaExitst(resours: String, fileList: SnapshotStateList<PaisochnicaFileList>): Boolean {
-        for (i in 0 until fileList.size) {
+        for (i in fileList.indices) {
             if (fileList[i].fileName.contains(resours)) {
                 return true
             }
@@ -362,7 +363,7 @@ class Piasochnica : ViewModel() {
 
     fun findResoursDir(fileName: String): String {
         var resours = "bogashlugbovya_error.html"
-        for (i in 0 until findDirAsSave.size) {
+        for (i in findDirAsSave.indices) {
             if (findDirAsSave[i].contains(fileName)) {
                 resours = findDirAsSave[i]
                 break
@@ -510,7 +511,7 @@ class Piasochnica : ViewModel() {
 
     fun findDirAsSave(resours: String): Boolean {
         if (resours != "") {
-            for (i in 0 until findDirAsSave.size) {
+            for (i in findDirAsSave.indices) {
                 val t1 = findDirAsSave[i].lastIndexOf("/")
                 if (t1 != -1 && findDirAsSave[i].substring(t1 + 1) == resours) {
                     return true
@@ -523,7 +524,7 @@ class Piasochnica : ViewModel() {
     private fun getDirAsSave(resours: String): String {
         var result = ""
         if (resours != "") {
-            for (i in 0 until findDirAsSave.size) {
+            for (i in findDirAsSave.indices) {
                 if (findDirAsSave[i].contains(resours)) {
                     result = findDirAsSave[i]
                     break
@@ -1008,7 +1009,7 @@ fun Piasochnica(
                             Settings.vibrate()
                             maxLine.intValue = Int.MAX_VALUE
                             coroutineScope.launch {
-                                delay(5000L)
+                                delay(5000.milliseconds)
                                 maxLine.intValue = 1
                             }
                         },

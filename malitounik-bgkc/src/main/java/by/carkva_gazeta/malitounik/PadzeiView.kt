@@ -117,6 +117,7 @@ import java.io.File
 import java.io.FileWriter
 import java.util.Calendar
 import java.util.GregorianCalendar
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -147,7 +148,7 @@ fun PadzeiaView(navController: NavHostController) {
         if (c2[Calendar.MONTH] < 9) nol2 = "0"
         val daInit = nol1 + c2[Calendar.DAY_OF_MONTH] + "." + nol2 + (c2[Calendar.MONTH] + 1) + "." + c2[Calendar.YEAR]
         var initPosition = -1
-        for (i in 0 until listPadzeia.size) {
+        for (i in listPadzeia.indices) {
             if (daInit == listPadzeia[i].dat) {
                 initPosition = i
                 break
@@ -424,7 +425,7 @@ fun PadzeiaView(navController: NavHostController) {
                             modifier = Modifier.clickable {
                                 maxLine.intValue = Int.MAX_VALUE
                                 coroutineScope.launch {
-                                    delay(5000L)
+                                    delay(5000.milliseconds)
                                     maxLine.intValue = 1
                                 }
                             }, text = stringResource(R.string.sabytie).uppercase(), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp

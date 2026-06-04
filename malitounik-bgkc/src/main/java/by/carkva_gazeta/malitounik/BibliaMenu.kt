@@ -177,7 +177,7 @@ class SearchBibleViewModel : CytanniListViewModel() {
             }
         }
         val bogaslugbovyiaListAll = getAllBogaslujbovyia(context)
-        for (i in 0 until bogaslugbovyiaListAll.size) {
+        for (i in bogaslugbovyiaListAll.indices) {
             if (searchJob?.isActive == false) break
             var nazva = context.getString(R.string.error_ch)
             val bibleline = openAssetsResources(context, bogaslugbovyiaListAll[i].resource)
@@ -237,7 +237,7 @@ class SearchBibleViewModel : CytanniListViewModel() {
             else setNovyZapavet(list, perevod)
             val range = if (perevod == Settings.PEREVODCATOLIK) {
                 if (k.getInt("biblia_seash_novy_zapavet", 0) == 0) {
-                    0 until getNameBook(context, perevod, true).size
+                    getNameBook(context, perevod, true).indices
                 } else {
                     0 until 4
                 }
@@ -250,7 +250,7 @@ class SearchBibleViewModel : CytanniListViewModel() {
 
                     2 -> {
                         if (novyZapaviet == 0) continue
-                        0 until getNameBook(context, perevod, true).size
+                        getNameBook(context, perevod, true).indices
                     }
 
                     3 -> {
@@ -260,12 +260,12 @@ class SearchBibleViewModel : CytanniListViewModel() {
 
                     4 -> {
                         if (novyZapaviet == 1) continue
-                        0 until getNameBook(context, perevod, false).size
+                        getNameBook(context, perevod, false).indices
                     }
 
                     else -> {
-                        if (novyZapaviet == 0) 0 until getNameBook(context, perevod, false).size
-                        else 0 until getNameBook(context, perevod, true).size
+                        if (novyZapaviet == 0) getNameBook(context, perevod, false).indices
+                        else getNameBook(context, perevod, true).indices
                     }
                 }
             }
@@ -327,7 +327,7 @@ class SearchBibleViewModel : CytanniListViewModel() {
                             span.append(aSviatyia)
                             0
                         }
-                        for (w in 0 until poshuk2.size) {
+                        for (w in poshuk2.indices) {
                             val t2 = poshuk2[w].str.length
                             val t1 = poshuk2[w].position + t3 + padd
                             span.addStyle(
@@ -715,13 +715,10 @@ fun BibliaMenu(
             }
         }
         Column {
-            if (viewModel.isProgressVisable) {
-                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-            }
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 10.dp),
+                    .padding(start = 10.dp, top = 5.dp),
                 text = stringResource(R.string.searh_sviatyia_result, viewModel.searchList.size),
                 fontStyle = FontStyle.Italic,
                 fontSize = Settings.fontInterface.sp,
@@ -756,6 +753,9 @@ fun BibliaMenu(
                     Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
                 }
             }
+        }
+        if (viewModel.isProgressVisable) {
+            LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
         }
     } else {
         BibliaMenuList(perevod, sort, innerPadding, viewModel, navigationActions, navigateToCytanniList = { chytanne, position, perevod2, biblia ->
@@ -1173,10 +1173,10 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                                                 onClick = {
                                                     Settings.vibrate()
                                                     val newList = StringBuilder()
-                                                    for (r in 0 until list.size) {
+                                                    for ((r, element) in list.withIndex()) {
                                                         val char = if (r == list.size - 1) ""
                                                         else ";"
-                                                        newList.append(list[r].knigaText + " " + (list[r].glava + 1) + char)
+                                                        newList.append(element.knigaText + " " + (element.glava + 1) + char)
                                                     }
                                                     navigateToCytanniList(
                                                         newList.toString(),

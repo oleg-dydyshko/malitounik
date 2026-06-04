@@ -99,6 +99,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.milliseconds
 
 class PdfBitmapConverter(
     private val density: Float,
@@ -349,7 +350,7 @@ fun Biblijateka(
                                 Settings.vibrate()
                                 maxLine.intValue = Int.MAX_VALUE
                                 coroutineScope.launch {
-                                    delay(5000L)
+                                    delay(5000.milliseconds)
                                     maxLine.intValue = 1
                                 }
                             },

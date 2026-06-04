@@ -713,189 +713,187 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                     )
                 ), exit = fadeOut(tween(durationMillis = 500, easing = LinearOutSlowInEasing))
             ) {
-                Column {
-                    if (isProgressVisable) {
-                        LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-                    }
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .pointerInput(PointerEventType.Press) {
-                                if (k.getBoolean("gestures", true)) {
-                                    awaitPointerEventScope {
-                                        while (true) {
-                                            val event = awaitPointerEvent()
-                                            if (event.changes.size == 2) {
-                                                fontSize *= event.calculateZoom()
-                                                fontSize = fontSize.coerceIn(18f, 58f)
-                                                k.edit {
-                                                    putFloat("font_biblia", fontSize)
-                                                }
-                                                event.changes.forEach { pointerInputChange: PointerInputChange ->
-                                                    pointerInputChange.consume()
-                                                }
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .pointerInput(PointerEventType.Press) {
+                            if (k.getBoolean("gestures", true)) {
+                                awaitPointerEventScope {
+                                    while (true) {
+                                        val event = awaitPointerEvent()
+                                        if (event.changes.size == 2) {
+                                            fontSize *= event.calculateZoom()
+                                            fontSize = fontSize.coerceIn(18f, 58f)
+                                            k.edit {
+                                                putFloat("font_biblia", fontSize)
+                                            }
+                                            event.changes.forEach { pointerInputChange: PointerInputChange ->
+                                                pointerInputChange.consume()
                                             }
                                         }
                                     }
                                 }
                             }
-                            .pointerInput(Unit) {
-                                detectTapGestures(
-                                    onDoubleTap = {
-                                        if (k.getBoolean("gestures", true)) {
-                                            fullscreen = !fullscreen
-                                        }
-                                    }
-                                )
-                            },
-                        state = lazyListState
-                    ) {
-                        item {
-                            Spacer(Modifier.padding(top = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp))
                         }
-                        if (viewModel.edit) {
-                            item {
-                                Column(modifier = Modifier.fillMaxWidth()) {
-                                    if (viewModel.svaity.isNotEmpty() && !viewModel.initState) {
-                                        DropdownMenuBoxSvityia(
-                                            menuList = viewModel.svaity,
-                                            viewModel = viewModel,
-                                        ) {
-                                            viewModel.sviatyPosotion = it
-                                            viewModel.positionPasha = viewModel.svaity[viewModel.sviatyPosotion][2].toInt()
-                                            textFieldValueStateTitle = TextFieldValue(viewModel.svaity[viewModel.sviatyPosotion][3])
-                                        }
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onDoubleTap = {
+                                    if (k.getBoolean("gestures", true)) {
+                                        fullscreen = !fullscreen
                                     }
-                                    if (viewModel.svaity.isNotEmpty() && viewModel.svaity[viewModel.sviatyPosotion][2].toInt() >= 0 && !viewModel.initState) {
-                                        DropdownMenuBox(
-                                            initValue = viewModel.positionPasha,
-                                            menuList = stringArrayResource(R.array.admin_svity_data)
-                                        ) {
-                                            viewModel.positionPasha = it
-                                        }
+                                }
+                            )
+                        },
+                    state = lazyListState
+                ) {
+                    item {
+                        Spacer(Modifier.padding(top = if (fullscreen) innerPadding.calculateTopPadding() else 0.dp))
+                    }
+                    if (viewModel.edit) {
+                        item {
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                if (viewModel.svaity.isNotEmpty() && !viewModel.initState) {
+                                    DropdownMenuBoxSvityia(
+                                        menuList = viewModel.svaity,
+                                        viewModel = viewModel,
+                                    ) {
+                                        viewModel.sviatyPosotion = it
+                                        viewModel.positionPasha = viewModel.svaity[viewModel.sviatyPosotion][2].toInt()
+                                        textFieldValueStateTitle = TextFieldValue(viewModel.svaity[viewModel.sviatyPosotion][3])
                                     }
-                                    TextField(
-                                        textStyle = TextStyle(fontSize = Settings.fontInterface.sp),
-                                        placeholder = { Text(stringResource(R.string.sviatyia), fontSize = Settings.fontInterface.sp) },
-                                        value = textFieldValueStateTitle,
-                                        onValueChange = {
-                                            textFieldValueStateTitle = it
+                                }
+                                if (viewModel.svaity.isNotEmpty() && viewModel.svaity[viewModel.sviatyPosotion][2].toInt() >= 0 && !viewModel.initState) {
+                                    DropdownMenuBox(
+                                        initValue = viewModel.positionPasha,
+                                        menuList = stringArrayResource(R.array.admin_svity_data)
+                                    ) {
+                                        viewModel.positionPasha = it
+                                    }
+                                }
+                                TextField(
+                                    textStyle = TextStyle(fontSize = Settings.fontInterface.sp),
+                                    placeholder = { Text(stringResource(R.string.sviatyia), fontSize = Settings.fontInterface.sp) },
+                                    value = textFieldValueStateTitle,
+                                    onValueChange = {
+                                        textFieldValueStateTitle = it
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .imePadding()
+                                        .focusRequester(focusRequester)
+                                        .onGloballyPositioned {
+                                            if (!textFieldLoaded) {
+                                                focusRequester.requestFocus()
+                                                textFieldLoaded = true
+                                            }
                                         },
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Default)
+                                )
+                            }
+                        }
+                    } else {
+                        items(sviatyiaList.size) { index ->
+                            val file = File(sviatyiaList[index].image)
+                            Column(modifier = Modifier) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
                                         modifier = Modifier
-                                            .fillMaxWidth()
-                                            .imePadding()
-                                            .focusRequester(focusRequester)
-                                            .onGloballyPositioned {
-                                                if (!textFieldLoaded) {
-                                                    focusRequester.requestFocus()
-                                                    textFieldLoaded = true
+                                            .padding(10.dp)
+                                            .weight(1f), text = sviatyiaList[index].title, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary
+                                    )
+                                    val copyText = stringResource(R.string.copy_text)
+                                    val copy = stringResource(R.string.copy)
+                                    val zmiest = stringResource(R.string.zmiest)
+                                    Icon(
+                                        modifier = Modifier
+                                            .padding(end = 10.dp)
+                                            .clickable {
+                                                Settings.vibrate()
+                                                val sb = StringBuilder()
+                                                sb.append(sviatyiaList[index].text)
+                                                sb.append(sviatyiaList[index].text.trim())
+                                                val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                                                val clip = ClipData.newPlainText(copyText, sb.toString())
+                                                clipboard.setPrimaryClip(clip)
+                                                if (file.exists()) {
+                                                    val sendIntent = Intent(Intent.ACTION_SEND)
+                                                    sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "by.carkva_gazeta.malitounik.fileprovider", file))
+                                                    sendIntent.putExtra(Intent.EXTRA_TEXT, sviatyiaList[index].text.trim())
+                                                    sendIntent.putExtra(Intent.EXTRA_SUBJECT, sviatyiaList[index].text.trim())
+                                                    sendIntent.type = "image/*"
+                                                    context.startActivity(Intent.createChooser(sendIntent, zmiest))
+                                                } else {
+                                                    val sendIntent = Intent(Intent.ACTION_SEND)
+                                                    sendIntent.putExtra(Intent.EXTRA_TEXT, sb.toString())
+                                                    sendIntent.putExtra(Intent.EXTRA_SUBJECT, zmiest)
+                                                    sendIntent.type = "text/plain"
+                                                    context.startActivity(Intent.createChooser(sendIntent, zmiest))
                                                 }
-                                            },
-                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Default)
+                                                Toast.makeText(context, copy, Toast.LENGTH_SHORT).show()
+                                            }, painter = painterResource(R.drawable.share), contentDescription = stringResource(R.string.share), tint = MaterialTheme.colorScheme.secondary
                                     )
                                 }
-                            }
-                        } else {
-                            items(sviatyiaList.size) { index ->
-                                val file = File(sviatyiaList[index].image)
-                                Column(modifier = Modifier) {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                if (file.exists()) {
+                                    try {
+                                        BitmapFactory.decodeFile(sviatyiaList[index].image).asImageBitmap()
+                                    } catch (_: Throwable) {
+                                        file.delete()
+                                    }
+                                }
+                                if (file.exists()) {
+                                    val image = BitmapFactory.decodeFile(sviatyiaList[index].image).asImageBitmap()
+                                    var imW = image.width.toFloat()
+                                    var imH = image.height.toFloat()
+                                    var imgWSize = imW.dp
+                                    var imgHSize = imH.dp
+                                    val imageScale: Float = imW / imH
+                                    if (imW > imH) {
+                                        imgWSize = Dp.Unspecified
+                                        imgHSize = Dp.Unspecified
+                                    } else {
+                                        if (imW > 150F) {
+                                            imW = 150F
+                                            imH = 150F / imageScale
+                                            imgWSize = imW.dp
+                                            imgHSize = imH.dp
+                                        }
+                                    }
+                                    val t3 = file.name.lastIndexOf(".")
+                                    val fileNameT = file.name.substring(0, t3) + ".txt"
+                                    val fileImageOpis = File("${context.filesDir}/iconsApisanne/$fileNameT")
+                                    Image(
+                                        modifier = Modifier
+                                            .padding(horizontal = 10.dp)
+                                            .size(imgWSize, imgHSize)
+                                            .align(Alignment.CenterHorizontally)
+                                            .clickable {
+                                                Settings.vibrate()
+                                                imageOpisanne = if (fileImageOpis.exists()) fileImageOpis.readText()
+                                                else ""
+                                                fullImagePathVisable = file.absolutePath
+                                                imageFull = true
+                                            }, bitmap = image, contentDescription = null
+                                    )
+                                    if (fileImageOpis.exists()) {
                                         Text(
                                             modifier = Modifier
                                                 .padding(10.dp)
-                                                .weight(1f), text = sviatyiaList[index].title, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary
-                                        )
-                                        val copyText = stringResource(R.string.copy_text)
-                                        val copy = stringResource(R.string.copy)
-                                        val zmiest = stringResource(R.string.zmiest)
-                                        Icon(
-                                            modifier = Modifier
-                                                .padding(end = 10.dp)
-                                                .clickable {
-                                                    Settings.vibrate()
-                                                    val sb = StringBuilder()
-                                                    sb.append(sviatyiaList[index].text)
-                                                    sb.append(sviatyiaList[index].text.trim())
-                                                    val clipboard = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-                                                    val clip = ClipData.newPlainText(copyText, sb.toString())
-                                                    clipboard.setPrimaryClip(clip)
-                                                    if (file.exists()) {
-                                                        val sendIntent = Intent(Intent.ACTION_SEND)
-                                                        sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "by.carkva_gazeta.malitounik.fileprovider", file))
-                                                        sendIntent.putExtra(Intent.EXTRA_TEXT, sviatyiaList[index].text.trim())
-                                                        sendIntent.putExtra(Intent.EXTRA_SUBJECT, sviatyiaList[index].text.trim())
-                                                        sendIntent.type = "image/*"
-                                                        context.startActivity(Intent.createChooser(sendIntent, zmiest))
-                                                    } else {
-                                                        val sendIntent = Intent(Intent.ACTION_SEND)
-                                                        sendIntent.putExtra(Intent.EXTRA_TEXT, sb.toString())
-                                                        sendIntent.putExtra(Intent.EXTRA_SUBJECT, zmiest)
-                                                        sendIntent.type = "text/plain"
-                                                        context.startActivity(Intent.createChooser(sendIntent, zmiest))
-                                                    }
-                                                    Toast.makeText(context, copy, Toast.LENGTH_SHORT).show()
-                                                }, painter = painterResource(R.drawable.share), contentDescription = stringResource(R.string.share), tint = MaterialTheme.colorScheme.secondary
+                                                .fillMaxWidth(), text = fileImageOpis.readText(), fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary, textAlign = TextAlign.Center, fontStyle = FontStyle.Italic
                                         )
                                     }
-                                    if (file.exists()) {
-                                        try {
-                                            BitmapFactory.decodeFile(sviatyiaList[index].image).asImageBitmap()
-                                        } catch (_: Throwable) {
-                                            file.delete()
-                                        }
-                                    }
-                                    if (file.exists()) {
-                                        val image = BitmapFactory.decodeFile(sviatyiaList[index].image).asImageBitmap()
-                                        var imW = image.width.toFloat()
-                                        var imH = image.height.toFloat()
-                                        var imgWSize = imW.dp
-                                        var imgHSize = imH.dp
-                                        val imageScale: Float = imW / imH
-                                        if (imW > imH) {
-                                            imgWSize = Dp.Unspecified
-                                            imgHSize = Dp.Unspecified
-                                        } else {
-                                            if (imW > 150F) {
-                                                imW = 150F
-                                                imH = 150F / imageScale
-                                                imgWSize = imW.dp
-                                                imgHSize = imH.dp
-                                            }
-                                        }
-                                        val t3 = file.name.lastIndexOf(".")
-                                        val fileNameT = file.name.substring(0, t3) + ".txt"
-                                        val fileImageOpis = File("${context.filesDir}/iconsApisanne/$fileNameT")
-                                        Image(
-                                            modifier = Modifier
-                                                .padding(horizontal = 10.dp)
-                                                .size(imgWSize, imgHSize)
-                                                .align(Alignment.CenterHorizontally)
-                                                .clickable {
-                                                    Settings.vibrate()
-                                                    imageOpisanne = if (fileImageOpis.exists()) fileImageOpis.readText()
-                                                    else ""
-                                                    fullImagePathVisable = file.absolutePath
-                                                    imageFull = true
-                                                }, bitmap = image, contentDescription = null
-                                        )
-                                        if (fileImageOpis.exists()) {
-                                            Text(
-                                                modifier = Modifier
-                                                    .padding(10.dp)
-                                                    .fillMaxWidth(), text = fileImageOpis.readText(), fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary, textAlign = TextAlign.Center, fontStyle = FontStyle.Italic
-                                            )
-                                        }
-                                    }
-                                    if (sviatyiaList[index].text.isNotEmpty()) {
-                                        Text(modifier = Modifier.padding(10.dp), text = sviatyiaList[index].text, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary)
-                                    }
+                                }
+                                if (sviatyiaList[index].text.isNotEmpty()) {
+                                    Text(modifier = Modifier.padding(10.dp), text = sviatyiaList[index].text, fontSize = fontSize.sp, lineHeight = (fontSize * 1.15).sp, color = MaterialTheme.colorScheme.secondary)
                                 }
                             }
                         }
-                        item {
-                            Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
-                        }
                     }
+                    item {
+                        Spacer(Modifier.padding(bottom = innerPadding.calculateBottomPadding()))
+                    }
+                }
+                if (isProgressVisable) {
+                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                 }
             }
         }
@@ -1226,7 +1224,7 @@ fun loadOpisanieSviatyia(context: Context, year: Int, mun: Int, day: Int): Snaps
                 for (i in 26..31) {
                     val pastvo = GregorianCalendar(year, Calendar.DECEMBER, i)
                     val iazepW = pastvo[Calendar.DAY_OF_WEEK]
-                    for (e in 0 until arrayList.size) {
+                    for (e in arrayList.indices) {
                         if (pastvoW != Calendar.SUNDAY) {
                             if (arrayList[e][1].toInt() == 0 && mun - 1 == Calendar.DECEMBER && day == i && Calendar.SUNDAY == iazepW) {
                                 val t1 = arrayList[e][2].indexOf("</strong>")
@@ -1259,7 +1257,7 @@ fun loadOpisanieSviatyia(context: Context, year: Int, mun: Int, day: Int): Snaps
                 val gc = GregorianCalendar()
                 val dayF = if (gc.isLeapYear(year)) 29
                 else 28
-                for (e in 0 until arrayList.size) {
+                for (e in arrayList.indices) {
                     if (arrayList[e][1].toInt() == 1 && mun - 1 == Calendar.FEBRUARY && day == dayF) {
                         val t1 = arrayList[e][2].indexOf("</strong>")
                         var textTitle = ""
@@ -1374,7 +1372,7 @@ suspend fun getIcons(
         return
     }
     val list = fileIconMataData.readText().split("\n")
-    for (i in 0 until sviatyiaList.size) {
+    for (i in sviatyiaList.indices) {
         list.forEach { iconList ->
             val t1 = iconList.indexOf("<-->")
             if (t1 != -1) {
@@ -1453,7 +1451,7 @@ suspend fun getIcons(
             wiFiExists()
         }
     } else {
-        for (i in 0 until dirList.size) {
+        for (i in dirList.indices) {
             try {
                 val fileIcon = File("${context.filesDir}/icons/" + dirList[i].name)
                 val pathReference = Malitounik.referens.child("/chytanne/icons/" + dirList[i].name)
@@ -1490,7 +1488,7 @@ fun loadIconsOnImageView(context: Context, sviatyiaList: SnapshotStateList<Opisa
     val pref = if (svity) "v"
     else "s"
     val fileList = File("${context.filesDir}/icons").list()
-    for (i in 0 until sviatyiaList.size) {
+    for (i in sviatyiaList.indices) {
         val indexImg = if (sviatyiaList[i].date == -1) 1
         else sviatyiaList[i].index
         fileList?.forEach {

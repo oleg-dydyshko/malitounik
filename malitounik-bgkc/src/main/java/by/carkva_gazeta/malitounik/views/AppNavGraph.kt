@@ -187,6 +187,7 @@ import java.io.FileNotFoundException
 import java.io.InputStreamReader
 import java.util.Calendar
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
 
 data class AppNavGraphStateScroll(val title: String, var scrollPosition: Int, var offset: Int = 0)
 
@@ -1223,7 +1224,7 @@ fun MainConteiner(
                                 Settings.vibrate()
                                 maxLine.intValue = Int.MAX_VALUE
                                 coroutineScope.launch {
-                                    delay(5000L)
+                                    delay(5000.milliseconds)
                                     maxLine.intValue = 2
                                 }
                             }, text = if (viewModel.natatkaVisable) viewModel.fileList[viewModel.natatkaPosition].title else title.uppercase(), color = textTollBarColor, fontWeight = FontWeight.Bold, fontSize = Settings.fontInterface.sp, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis

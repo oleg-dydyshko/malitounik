@@ -59,7 +59,7 @@ import java.util.GregorianCalendar
 
 fun getFindPage(mounth: Int, year: Int): Int {
     var calPas = Settings.caliandarPosition
-    for (find in 0 until Settings.data.size) {
+    for (find in Settings.data.indices) {
         if (Settings.data[find][2].toInt() == mounth && Settings.data[find][3].toInt() == year) {
             calPas = Settings.data[find][23].toInt()
             break
@@ -168,7 +168,7 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
         LaunchedEffect(pagerState) {
             snapshotFlow { pagerState.currentPage }.collect { page ->
                 var calPas = Settings.caliandarPosition
-                for (find in 0 until Settings.data.size) {
+                for (find in Settings.data.indices) {
                     if (Settings.data[find][23].toInt() == page) {
                         calPas = Settings.data[find][25].toInt()
                         break
@@ -189,7 +189,7 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                 .padding(10.dp)
         ) { page ->
             var calPas = Settings.caliandarPosition
-            for (find in 0 until Settings.data.size) {
+            for (find in Settings.data.indices) {
                 if (Settings.data[find][23].toInt() == page) {
                     calPas = Settings.data[find][25].toInt()
                     break

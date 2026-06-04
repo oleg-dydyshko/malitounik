@@ -573,7 +573,7 @@ private suspend fun getBibliateka(
             ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type
         ).type
         val biblioteka: ArrayList<ArrayList<String>> = gson.fromJson(sb, type)
-        for (i in 0 until biblioteka.size) {
+        for (i in biblioteka.indices) {
             val mySqlList = ArrayList<String>()
             val kniga = biblioteka[i]
             val rubrika = kniga[4]

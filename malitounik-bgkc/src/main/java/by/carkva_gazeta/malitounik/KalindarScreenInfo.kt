@@ -50,6 +50,7 @@ import by.carkva_gazeta.malitounik.ui.theme.StrogiPost
 import by.carkva_gazeta.malitounik.views.PlainTooltip
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,7 +78,7 @@ fun KaliandarScreenInfo(navController: NavHostController) {
                             Settings.vibrate()
                             maxLine.intValue = Int.MAX_VALUE
                             coroutineScope.launch {
-                                delay(5000L)
+                                delay(5000.milliseconds)
                                 maxLine.intValue = 1
                             }
                         },

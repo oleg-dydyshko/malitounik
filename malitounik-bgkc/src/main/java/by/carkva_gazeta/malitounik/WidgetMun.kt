@@ -152,7 +152,7 @@ private fun getDataKaliandar(date: Int, position: Int): Int {
     val calendar = if (date == 0) Calendar.getInstance() as GregorianCalendar
     else GregorianCalendar(oldData[3].toInt(), oldData[2].toInt(), oldData[1].toInt())
     calendar.add(Calendar.MONTH, date)
-    for (i in 0 until Settings.data.size) {
+    for (i in Settings.data.indices) {
         if ((calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt())) {
             newPosition = Settings.data[i][25].toInt()
             break

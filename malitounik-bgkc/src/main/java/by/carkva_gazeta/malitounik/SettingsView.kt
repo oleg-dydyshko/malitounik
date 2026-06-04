@@ -106,6 +106,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -230,7 +231,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                             Settings.vibrate()
                             maxLine.intValue = Int.MAX_VALUE
                             coroutineScope.launch {
-                                delay(5000L)
+                                delay(5000.milliseconds)
                                 maxLine.intValue = 1
                             }
                         }, text = stringResource(R.string.tools_item).uppercase(), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, fontSize = Settings.fontInterface.sp, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis

@@ -65,6 +65,7 @@ import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -260,7 +261,7 @@ fun DrawView(
                         AppNavGraphState.bibleItem = !AppNavGraphState.bibleItem
                         if (AppNavGraphState.bibleItem && !AppNavGraphState.biblijatekaItem && !AppNavGraphState.piesnyItem && !AppNavGraphState.underItem) {
                             coroutineScope.launch {
-                                delay(100)
+                                delay(100.milliseconds)
                                 drawerScrollStete.scrollTo(drawerScrollStete.maxValue)
                             }
                         }
@@ -646,7 +647,7 @@ fun DrawView(
                         AppNavGraphState.biblijatekaItem = !AppNavGraphState.biblijatekaItem
                         if (AppNavGraphState.biblijatekaItem && !AppNavGraphState.piesnyItem && !AppNavGraphState.underItem) {
                             coroutineScope.launch {
-                                delay(100)
+                                delay(100.milliseconds)
                                 drawerScrollStete.scrollTo(drawerScrollStete.maxValue)
                             }
                         }
@@ -794,7 +795,7 @@ fun DrawView(
                         AppNavGraphState.piesnyItem = !AppNavGraphState.piesnyItem
                         if (AppNavGraphState.piesnyItem && !AppNavGraphState.underItem) {
                             coroutineScope.launch {
-                                delay(100)
+                                delay(100.milliseconds)
                                 drawerScrollStete.scrollTo(drawerScrollStete.maxValue)
                             }
                         }
@@ -946,7 +947,7 @@ fun DrawView(
                         AppNavGraphState.underItem = !AppNavGraphState.underItem
                         if (AppNavGraphState.underItem) {
                             coroutineScope.launch {
-                                delay(100)
+                                delay(100.milliseconds)
                                 drawerScrollStete.scrollTo(drawerScrollStete.maxValue)
                             }
                         }
