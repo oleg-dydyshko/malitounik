@@ -11,8 +11,7 @@ import android.content.pm.ServiceInfo
 import android.graphics.BitmapFactory
 import android.os.Binder
 import android.os.Build
-import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.session.MediaSessionCompat
+import androidx.annotation.OptIn
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -24,7 +23,10 @@ import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.MediaSession
+import androidx.media3.session.MediaStyleNotificationHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,10 +54,10 @@ class ServiceRadyjoMaryia : Service() {
         var titleRadyjoMaryia by mutableStateOf("")
     }
 
-    private var player: ExoPlayer? = null
+    private val player = ExoPlayer.Builder(Malitounik.applicationContext()).build()
     private val isPlaying: Boolean
         get() {
-            val play = player?.isPlaying == true
+            val play = player.isPlaying
             isPlayingRadyjoMaryia = play
             return play
         }
@@ -91,7 +93,7 @@ class ServiceRadyjoMaryia : Service() {
         val k = getSharedPreferences("biblia", MODE_PRIVATE)
         val radioMaryiaList = resources.getStringArray(R.array.radio_maryia_url_list)
         val radioMaryiaListPosition = k.getInt("radioMaryiaListPosition", 0)
-        player = ExoPlayer.Builder(this).build().apply {
+        player.apply {
             setMediaItem(MediaItem.fromUri(radioMaryiaList[radioMaryiaListPosition].toUri()))
             prepare()
             addListener(object : Player.Listener {
@@ -142,9 +144,9 @@ class ServiceRadyjoMaryia : Service() {
 
     fun playOrPause() {
         if (isPlaying) {
-            player?.pause()
+            player.pause()
         } else {
-            player?.play()
+            player.play()
         }
         val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
@@ -157,7 +159,7 @@ class ServiceRadyjoMaryia : Service() {
     fun isPlayingRadioMaria() = isPlaying
 
     private fun stopPlay() {
-        player?.stop()
+        player.stop()
         val nm = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         nm.cancel(100)
     }
@@ -258,11 +260,10 @@ class ServiceRadyjoMaryia : Service() {
         }
     }
 
+    @OptIn(UnstableApi::class)
     private fun setRadioNotification(): Notification {
-        val mediaSession = MediaSessionCompat(this, "Radyjo Maryia session")
+        val mediaSession = MediaSession.Builder(this, player).build()
         val name = getString(R.string.padie_maryia_s)
-        mediaSession.setMetadata(MediaMetadataCompat.Builder().putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, BitmapFactory.decodeResource(resources, R.drawable.maria)).putString(MediaMetadataCompat.METADATA_KEY_TITLE, name).putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST, titleRadyjoMaryia).build())
-        mediaSession.isActive = true
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(Settings.NOTIFICATION_CHANNEL_ID_RADIO_MARYIA, name, NotificationManager.IMPORTANCE_LOW)
             channel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
@@ -272,7 +273,7 @@ class ServiceRadyjoMaryia : Service() {
         }
         val notifi = NotificationCompat.Builder(this, Settings.NOTIFICATION_CHANNEL_ID_RADIO_MARYIA)
         notifi.setShowWhen(false)
-        notifi.setStyle(androidx.media.app.NotificationCompat.MediaStyle().setMediaSession(mediaSession.sessionToken).setShowActionsInCompactView(0, 1))
+        notifi.setStyle(MediaStyleNotificationHelper.MediaStyle(mediaSession).setShowActionsInCompactView(0, 1))
         notifi.setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.maria))
         notifi.setSmallIcon(R.drawable.krest)
         notifi.setContentTitle(getString(R.string.padie_maryia_s))
