@@ -98,7 +98,7 @@ fun MalitvyListAll(
         }
     }
     val coroutineScope = rememberCoroutineScope()
-    val maxLine = remember { mutableIntStateOf(1) }
+    val maxLine = remember { mutableIntStateOf(2) }
     val listPrynagodnyia = when (menuItem) {
         Settings.MENU_MALITVY_PRYNAGODNYIA -> {
             val arrayList = ArrayList<MineiaList>()
@@ -215,7 +215,7 @@ fun MalitvyListAll(
                                     maxLine.intValue = Int.MAX_VALUE
                                     coroutineScope.launch {
                                         delay(5000.milliseconds)
-                                        maxLine.intValue = 1
+                                        maxLine.intValue = 2
                                     }
                                 }, text = title.uppercase(), color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
                             )

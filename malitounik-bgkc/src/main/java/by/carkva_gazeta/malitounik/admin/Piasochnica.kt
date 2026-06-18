@@ -931,7 +931,7 @@ fun Piasochnica(
             isAppearanceLightNavigationBars = false
         }
     }
-    val maxLine = remember { mutableIntStateOf(1) }
+    val maxLine = remember { mutableIntStateOf(2) }
     var isDialogNoWIFIVisable by remember { mutableStateOf(false) }
     var printFile by remember { mutableStateOf("") }
     if (viewModel.isDialogSaveFileExplorer) {
@@ -1010,7 +1010,7 @@ fun Piasochnica(
                             maxLine.intValue = Int.MAX_VALUE
                             coroutineScope.launch {
                                 delay(5000.milliseconds)
-                                maxLine.intValue = 1
+                                maxLine.intValue = 2
                             }
                         },
                         text = resours.replace("\n", " "),

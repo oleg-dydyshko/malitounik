@@ -871,7 +871,7 @@ fun Bogaslujbovyia(
             isAppearanceLightNavigationBars = false
         }
     }
-    val maxLine = remember { mutableIntStateOf(1) }
+    val maxLine = remember { mutableIntStateOf(2) }
     var subTitle by rememberSaveable { mutableStateOf("") }
     var subText by rememberSaveable { mutableStateOf("") }
     var isProgressVisable by remember { mutableStateOf(false) }
@@ -1104,7 +1104,7 @@ fun Bogaslujbovyia(
                                         maxLine.intValue = Int.MAX_VALUE
                                         coroutineScope.launch {
                                             delay(5000.milliseconds)
-                                            maxLine.intValue = 1
+                                            maxLine.intValue = 2
                                         }
                                     },
                                     text = if (iskniga) subTitle.replace("\n", " ").uppercase() else title.replace("\n", " ").uppercase(),

@@ -278,7 +278,7 @@ fun Biblijateka(
     val view = LocalView.current
     val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
-    val maxLine = remember { mutableIntStateOf(1) }
+    val maxLine = remember { mutableIntStateOf(2) }
     var pageState by remember { mutableStateOf("") }
     var isShare by remember { mutableStateOf(false) }
     if (isShare) {
@@ -351,7 +351,7 @@ fun Biblijateka(
                                 maxLine.intValue = Int.MAX_VALUE
                                 coroutineScope.launch {
                                     delay(5000.milliseconds)
-                                    maxLine.intValue = 1
+                                    maxLine.intValue = 2
                                 }
                             },
                             text = title.uppercase(),

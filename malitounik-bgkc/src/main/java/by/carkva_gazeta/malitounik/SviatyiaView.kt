@@ -159,7 +159,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
     val mun = Settings.data[position][2].toInt() + 1
     val day = Settings.data[position][1].toInt()
     val coroutineScope = rememberCoroutineScope()
-    val maxLine = remember { mutableIntStateOf(1) }
+    val maxLine = remember { mutableIntStateOf(2) }
     val lazyListState = rememberLazyListState()
     val view = LocalView.current
     SideEffect {
@@ -376,7 +376,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                             Text(
                                 modifier = Modifier.clickable {
                                     Settings.vibrate()
-                                    if (maxLine.intValue == Int.MAX_VALUE) maxLine.intValue = 1
+                                    if (maxLine.intValue == Int.MAX_VALUE) maxLine.intValue = 2
                                     else maxLine.intValue = Int.MAX_VALUE
                                 },
                                 text = imageOpisanne.ifEmpty { stringResource(R.string.zmiest).uppercase() },

@@ -174,41 +174,41 @@ private fun Caliandar(context: Context) {
                         if (svityia.contains("<font")) {
                             if (svityia.contains("<strong>")) {
                                 if (svityia.contains("<br>")) {
-                                    val text = AnnotatedString.fromHtml(data[4]).toString()
+                                    val text = AnnotatedString.fromHtml(svityia).toString()
                                     val t1 = text.indexOf("\n")
                                     if (icon != 0) {
                                         Row(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                                             Image(provider = ImageProvider(icon), contentDescription = null, modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
                                         }
                                     }
-                                    Text(text = text.take(t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp, fontWeight = FontWeight.Bold))
-                                    Text(text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
+                                    Text(modifier = GlanceModifier.fillMaxWidth(), text = text.take(t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp, fontWeight = FontWeight.Bold))
+                                    Text(modifier = GlanceModifier.fillMaxWidth(), text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
                                 } else {
                                     if (icon != 0) {
                                         Row(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                                             Image(provider = ImageProvider(icon), contentDescription = null, modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
                                         }
                                     }
-                                    Text(text = AnnotatedString.fromHtml(data[4]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp, fontWeight = FontWeight.Bold))
+                                    Text(modifier = GlanceModifier.fillMaxWidth(), text = AnnotatedString.fromHtml(svityia).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp, fontWeight = FontWeight.Bold))
                                 }
                             } else {
                                 if (svityia.contains("<br>")) {
-                                    val text = AnnotatedString.fromHtml(data[4]).toString()
+                                    val text = AnnotatedString.fromHtml(svityia).toString()
                                     val t1 = text.indexOf("\n")
                                     if (icon != 0) {
                                         Row(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                                             Image(provider = ImageProvider(icon), contentDescription = null, modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
                                         }
                                     }
-                                    Text(text = text.take(t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp))
-                                    Text(text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
+                                    Text(modifier = GlanceModifier.fillMaxWidth(), text = text.take(t1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp))
+                                    Text(modifier = GlanceModifier.fillMaxWidth(), text = text.substring(t1 + 1), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
                                 } else {
                                     if (icon != 0) {
                                         Row(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                                             Image(provider = ImageProvider(icon), contentDescription = null, modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
                                         }
                                     }
-                                    Text(text = AnnotatedString.fromHtml(data[4]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp))
+                                    Text(modifier = GlanceModifier.fillMaxWidth(), text = AnnotatedString.fromHtml(svityia).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryBlack, PrimaryBlack) else ColorProvider(Primary, Primary), fontSize = 18.sp))
                                 }
                             }
                         } else {
@@ -217,7 +217,7 @@ private fun Caliandar(context: Context) {
                                     Image(provider = ImageProvider(icon), contentDescription = null, modifier = GlanceModifier.size(20.dp, 20.dp), colorFilter = colorFilter)
                                 }
                             }
-                            Text(text = AnnotatedString.fromHtml(data[4]).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
+                            Text(modifier = GlanceModifier.fillMaxWidth(), text = AnnotatedString.fromHtml(svityia).toString(), style = TextStyle(color = if (dzenNoch) ColorProvider(PrimaryTextBlack, PrimaryTextBlack) else ColorProvider(PrimaryText, PrimaryText), fontSize = 18.sp))
                         }
                     }
                 }
