@@ -941,20 +941,26 @@ fun MainConteiner(
                             "caliandarList", false
                         )
                     ) {
+                        navigationActions.navigateToKaliandarYear()
                         Settings.caliandarPosition = caliandarPosition
                         lazyColumnState.scrollToItem(caliandarPosition)
-                    } else pagerState.scrollToPage(caliandarPosition)
+                    } else {
+                        navigationActions.navigateToKaliandar()
+                        pagerState.scrollToPage(caliandarPosition)
+                    }
                 }
             }
             if (extras.getBoolean(widgetday, false)) {
                 val caliandarPosition = extras.getInt("position", Settings.caliandarPosition)
                 if (k.getBoolean("caliandarList", false)) {
                     coroutineScope.launch {
+                        navigationActions.navigateToKaliandarYear()
                         Settings.caliandarPosition = caliandarPosition
                         lazyColumnState.scrollToItem(caliandarPosition)
                     }
                 } else {
                     coroutineScope.launch {
+                        navigationActions.navigateToKaliandar()
                         pagerState.scrollToPage(caliandarPosition)
                     }
                 }
@@ -963,9 +969,11 @@ fun MainConteiner(
                 val svitaPosition = extras.getInt("caliandarPosition")
                 coroutineScope.launch {
                     if (k.getBoolean("caliandarList", false)) {
+                        navigationActions.navigateToKaliandarYear()
                         Settings.caliandarPosition = svitaPosition
                         lazyColumnState.scrollToItem(svitaPosition)
                     } else {
+                        navigationActions.navigateToKaliandar()
                         pagerState.scrollToPage(svitaPosition)
                     }
                 }

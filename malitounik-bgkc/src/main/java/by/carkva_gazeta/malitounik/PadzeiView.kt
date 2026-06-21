@@ -364,7 +364,7 @@ fun PadzeiaView(navController: NavHostController) {
             val sab = listPadzeia[showPadziaPosition]
             val del = ArrayList<Padzeia>()
             for (p in listPadzeia) {
-                if (p.padz == sab.padz) {
+                if (p.padz == sab.padz && p.dat == sab.dat && p.tim == sab.tim) {
                     del.add(p)
                 }
             }
