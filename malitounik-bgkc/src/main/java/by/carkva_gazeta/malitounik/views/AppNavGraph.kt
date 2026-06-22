@@ -941,11 +941,15 @@ fun MainConteiner(
                             "caliandarList", false
                         )
                     ) {
-                        navigationActions.navigateToKaliandarYear()
+                        if (k.getString("navigate", AllDestinations.KALIANDAR) != AllDestinations.KALIANDAR_YEAR) {
+                                navigationActions.navigateToKaliandarYear()
+                            }
                         Settings.caliandarPosition = caliandarPosition
                         lazyColumnState.scrollToItem(caliandarPosition)
                     } else {
-                        navigationActions.navigateToKaliandar()
+                        if (k.getString("navigate", AllDestinations.KALIANDAR) != AllDestinations.KALIANDAR) {
+                            navigationActions.navigateToKaliandar()
+                        }
                         pagerState.scrollToPage(caliandarPosition)
                     }
                 }
@@ -954,13 +958,17 @@ fun MainConteiner(
                 val caliandarPosition = extras.getInt("position", Settings.caliandarPosition)
                 if (k.getBoolean("caliandarList", false)) {
                     coroutineScope.launch {
-                        navigationActions.navigateToKaliandarYear()
+                        if (k.getString("navigate", AllDestinations.KALIANDAR) != AllDestinations.KALIANDAR_YEAR) {
+                            navigationActions.navigateToKaliandarYear()
+                        }
                         Settings.caliandarPosition = caliandarPosition
                         lazyColumnState.scrollToItem(caliandarPosition)
                     }
                 } else {
                     coroutineScope.launch {
-                        navigationActions.navigateToKaliandar()
+                        if (k.getString("navigate", AllDestinations.KALIANDAR) != AllDestinations.KALIANDAR) {
+                            navigationActions.navigateToKaliandar()
+                        }
                         pagerState.scrollToPage(caliandarPosition)
                     }
                 }
@@ -969,11 +977,15 @@ fun MainConteiner(
                 val svitaPosition = extras.getInt("caliandarPosition")
                 coroutineScope.launch {
                     if (k.getBoolean("caliandarList", false)) {
-                        navigationActions.navigateToKaliandarYear()
+                        if (k.getString("navigate", AllDestinations.KALIANDAR) != AllDestinations.KALIANDAR_YEAR) {
+                            navigationActions.navigateToKaliandarYear()
+                        }
                         Settings.caliandarPosition = svitaPosition
                         lazyColumnState.scrollToItem(svitaPosition)
                     } else {
-                        navigationActions.navigateToKaliandar()
+                        if (k.getString("navigate", AllDestinations.KALIANDAR) != AllDestinations.KALIANDAR) {
+                            navigationActions.navigateToKaliandar()
+                        }
                         pagerState.scrollToPage(svitaPosition)
                     }
                 }
