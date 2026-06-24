@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.Build
 import android.view.WindowManager
 import android.widget.Toast
@@ -88,6 +89,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -1200,6 +1202,11 @@ fun MainConteiner(
             DialogEditSvityiaAndSviaty(adminViewModel) {
                 dialogEditSvityiaAndSviaty = false
             }
+        }
+        val configuration = LocalConfiguration.current
+        LaunchedEffect(configuration.orientation) {
+            isBottomBar = if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT && k.getBoolean("bottomBar", false)) k.getBoolean("bottomBar", false)
+            else false
         }
         LaunchedEffect(viewModel.textFieldValueState) {
             if (!(viewModel.perevodBiblii == Settings.PEREVODSINOIDAL || viewModel.perevodBiblii == Settings.PEREVODNEWAMERICANBIBLE || currentRoute == AllDestinations.MAE_NATATKI_MENU)) {

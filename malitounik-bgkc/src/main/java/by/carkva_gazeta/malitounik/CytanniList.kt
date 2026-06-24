@@ -5,6 +5,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -96,6 +97,7 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -693,7 +695,7 @@ fun CytanniList(
             break
         }
     }
-    var subTitle by remember { mutableStateOf("") }
+    var subTitle by rememberSaveable { mutableStateOf("") }
     val colorTollBar = if (isToDay == Settings.caliandarPosition || biblia == Settings.CHYTANNI_BIBLIA || biblia == Settings.CHYTANNI_VYBRANAE) MaterialTheme.colorScheme.onTertiary
     else StrogiPost
     var showDropdown by remember { mutableStateOf(false) }
@@ -741,6 +743,11 @@ fun CytanniList(
         state = pagerState, pagerSnapDistance = PagerSnapDistance.atMost(1)
     )
     var isBottomBar by remember { mutableStateOf(k.getBoolean("bottomBar", false)) }
+    val configuration = LocalConfiguration.current
+    LaunchedEffect(configuration.orientation) {
+        isBottomBar = if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT && k.getBoolean("bottomBar", false)) k.getBoolean("bottomBar", false)
+        else false
+    }
     if (viewModel.listState[viewModel.selectedIndex].item.isNotEmpty() && viewModel.bibleTime) {
         viewModel.bibleTime = false
         LaunchedEffect(Unit) {
@@ -1861,16 +1868,16 @@ fun CytanniList(
                         if (biblia == Settings.CHYTANNI_BIBLIA && perevodRoot != Settings.PEREVODNADSAN) {
                             subTitle = resultPage[0].title.substringBeforeLast(" ")
                         }
-                        if (biblia != Settings.CHYTANNI_BIBLIA) {
-                            coroutineScope.launch {
-                                snapshotFlow { viewModel.listState[page].lazyListState.firstVisibleItemIndex }.collect { index ->
-                                    if (subTitle != resultPage[index].title) {
-                                        subTitle = resultPage[index].title
-                                    }
+                    })
+                    if (biblia != Settings.CHYTANNI_BIBLIA) {
+                        LaunchedEffect(Unit) {
+                            snapshotFlow { viewModel.listState[page].lazyListState.firstVisibleItemIndex }.collect { index ->
+                                if (resultPage.isNotEmpty() && subTitle != resultPage[index].title) {
+                                    subTitle = resultPage[index].title
                                 }
                             }
                         }
-                    })
+                    }
                     LaunchedEffect(isSelectAll) {
                         if (isSelectAll) {
                             isSelectAll = false
@@ -2164,7 +2171,7 @@ fun CytanniList(
                         if (viewModel.autoScrollSensor) {
                             var isDelay = false
                             while (autoScrollRepitPlus) {
-                                if (isDelay) delay(1000.milliseconds)
+                                if (isDelay) delay(800.milliseconds)
                                 if (viewModel.autoScrollSpeed in 20..135) {
                                     Settings.vibrate()
                                     viewModel.autoScrollSpeed -= 5
@@ -2182,7 +2189,7 @@ fun CytanniList(
                         if (viewModel.autoScrollSensor) {
                             var isDelay = false
                             while (autoScrollRepitMinus) {
-                                if (isDelay) delay(1000.milliseconds)
+                                if (isDelay) delay(800.milliseconds)
                                 if (viewModel.autoScrollSpeed in 10..125) {
                                     Settings.vibrate()
                                     viewModel.autoScrollSpeed += 5
