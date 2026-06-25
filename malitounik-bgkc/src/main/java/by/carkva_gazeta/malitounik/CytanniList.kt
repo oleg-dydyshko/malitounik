@@ -173,6 +173,7 @@ open class CytanniListViewModel : ViewModel() {
     var dialodTTSHelp by mutableStateOf(false)
     var dialodTTSHelpError by mutableStateOf(false)
     val oldKnigaGlava = mutableStateListOf<Int>()
+    var subTitle by mutableStateOf("")
     private var autoScrollJob: Job? = null
     private var autoScrollTextVisableJob: Job? = null
     private var isFirstDialodVisable = true
@@ -695,7 +696,6 @@ fun CytanniList(
             break
         }
     }
-    var subTitle by rememberSaveable { mutableStateOf("") }
     val colorTollBar = if (isToDay == Settings.caliandarPosition || biblia == Settings.CHYTANNI_BIBLIA || biblia == Settings.CHYTANNI_VYBRANAE) MaterialTheme.colorScheme.onTertiary
     else StrogiPost
     var showDropdown by remember { mutableStateOf(false) }
@@ -928,7 +928,7 @@ fun CytanniList(
                                             delay(5000.milliseconds)
                                             maxLine.intValue = 1
                                         }
-                                    }, text = subTitle, color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
+                                    }, text = viewModel.subTitle, color = MaterialTheme.colorScheme.onSecondary, fontWeight = FontWeight.Bold, maxLines = maxLine.intValue, overflow = TextOverflow.Ellipsis, fontSize = Settings.fontInterface.sp
                                 )
                             } else {
                                 Text(
@@ -1742,7 +1742,7 @@ fun CytanniList(
                             if (page + 1 in 119..133) kafizma = 18
                             if (page + 1 in 134..142) kafizma = 19
                             if (page + 1 in 143..151) kafizma = 20
-                            subTitle = "Катызма $kafizma"
+                            viewModel.subTitle = "Катызма $kafizma"
                         }
                     }
                 }
@@ -1866,14 +1866,14 @@ fun CytanniList(
                             }
                         }
                         if (biblia == Settings.CHYTANNI_BIBLIA && perevodRoot != Settings.PEREVODNADSAN) {
-                            subTitle = resultPage[0].title.substringBeforeLast(" ")
+                            viewModel.subTitle = resultPage[0].title.substringBeforeLast(" ")
                         }
                     })
                     if (biblia != Settings.CHYTANNI_BIBLIA) {
                         LaunchedEffect(Unit) {
                             snapshotFlow { viewModel.listState[page].lazyListState.firstVisibleItemIndex }.collect { index ->
-                                if (resultPage.isNotEmpty() && subTitle != resultPage[index].title) {
-                                    subTitle = resultPage[index].title
+                                if (resultPage.isNotEmpty() && viewModel.subTitle != resultPage[index].title) {
+                                    viewModel.subTitle = resultPage[index].title
                                 }
                             }
                         }
