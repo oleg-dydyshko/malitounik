@@ -187,6 +187,7 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.InputStreamReader
+import java.net.URLDecoder
 import java.util.Calendar
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
@@ -659,7 +660,7 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), boga
         composable(
             AllDestinations.BOGASLUJBOVYIA + "/{title}/{resurs}"
         ) { stackEntry ->
-            val title = stackEntry.arguments?.getString("title") ?: ""
+            val title = URLDecoder.decode(stackEntry.arguments?.getString("title") ?: "", "UTF8")
             val context = LocalContext.current
             val resurs = stackEntry.arguments?.getString("resurs") ?: "bogashlugbovya_error.html"
             val error = stringResource(R.string.error_ch)

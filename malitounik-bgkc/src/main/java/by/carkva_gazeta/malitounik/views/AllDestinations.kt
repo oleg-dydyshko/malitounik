@@ -380,7 +380,7 @@ class AppNavigationActions(private val navController: NavHostController, k: Shar
     }
 
     fun navigateToBogaslujbovyia(title: String, resurs: String) {
-        navController.navigate("$BOGASLUJBOVYIA/$title/" + URLEncoder.encode(resurs, "UTF8")) {
+        navController.navigate("$BOGASLUJBOVYIA/" + URLEncoder.encode(title, "UTF8") + "/" + URLEncoder.encode(resurs, "UTF8")) {
             BOGASLUJBOVYIA
         }
     }

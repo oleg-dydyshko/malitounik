@@ -1625,6 +1625,11 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
+                176, "Нараджэньне сьвятога прарока Прадвесьніка і Хрысьціцеля", "bogashlugbovya/mm_24_06_jana_chrysciciela_jutran.html", JUTRAN
+            )
+        )
+        datMinALL.add(
+            SlugbovyiaTextuData(
                 181, "Сьвятых слаўных i годных пахвалы апосталаў Пятра i Паўла", "bogashlugbovya/mm_29_06_apostalau_piatra_i_paula_viaczernia.html", VIACZERNIA
             )
         )

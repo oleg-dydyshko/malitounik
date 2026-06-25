@@ -646,7 +646,7 @@ fun Bogaslujbovyia(
     navController: NavHostController, title: String, resurs: String,
     navigateTo: (String, skipUtran: Boolean) -> Unit = { _, _ -> }, viewModel: BogaslujbovyiaViewModel, adminViewModel: Piasochnica
 ) {
-    val resursEncode = URLDecoder.decode(resurs, "UTF8")
+    val resursEncode by remember { mutableStateOf(URLDecoder.decode(resurs, "UTF8")) }
     val context = LocalContext.current
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     val navigationActions = remember(navController) {
@@ -675,10 +675,10 @@ fun Bogaslujbovyia(
     var chast by rememberSaveable { mutableIntStateOf(0) }
     var dialogQrCode by rememberSaveable { mutableStateOf(false) }
     var dialogSztoHovahaVisable by remember { mutableStateOf(false) }
-    val isViachernia = resursEncode == "bogashlugbovya/viaczernia_niadzelnaja.html" || resursEncode == "bogashlugbovya/viaczernia_na_kozny_dzen.html" || resursEncode == "bogashlugbovya/viaczernia_u_vialikim_poscie.html" || resursEncode == "bogashlugbovya/viaczerniaja_sluzba_sztodzionnaja_biez_sviatara.html" || resursEncode == "bogashlugbovya/viaczernia_svietly_tydzien.html"
-    val isUtran = resursEncode == "bogashlugbovya/jutran_niadzelnaja.html"
-    val isLiturgia = resursEncode == "bogashlugbovya/lit_jana_zalatavusnaha.html" || resursEncode == "bogashlugbovya/lit_jan_zalat_vielikodn.html" || resursEncode == "bogashlugbovya/lit_vasila_vialikaha.html" || resursEncode == "bogashlugbovya/abiednica.html" || resursEncode == "bogashlugbovya/vialikdzien_liturhija.html"
-    val data = findCaliandarToDay(false)
+    val isViachernia by remember { mutableStateOf(resursEncode == "bogashlugbovya/viaczernia_niadzelnaja.html" || resursEncode == "bogashlugbovya/viaczernia_na_kozny_dzen.html" || resursEncode == "bogashlugbovya/viaczernia_u_vialikim_poscie.html" || resursEncode == "bogashlugbovya/viaczerniaja_sluzba_sztodzionnaja_biez_sviatara.html" || resursEncode == "bogashlugbovya/viaczernia_svietly_tydzien.html") }
+    val isUtran by remember { mutableStateOf(resursEncode == "bogashlugbovya/jutran_niadzelnaja.html") }
+    val isLiturgia by remember { mutableStateOf(resursEncode == "bogashlugbovya/lit_jana_zalatavusnaha.html" || resursEncode == "bogashlugbovya/lit_jan_zalat_vielikodn.html" || resursEncode == "bogashlugbovya/lit_vasila_vialikaha.html" || resursEncode == "bogashlugbovya/abiednica.html" || resursEncode == "bogashlugbovya/vialikdzien_liturhija.html") }
+    val data = remember { findCaliandarToDay(false) }
     if (viewModel.autoScrollSensor) {
         actyvity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
