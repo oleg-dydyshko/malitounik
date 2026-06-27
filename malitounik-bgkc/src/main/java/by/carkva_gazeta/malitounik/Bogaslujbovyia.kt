@@ -202,6 +202,7 @@ class BogaslujbovyiaViewModel : ViewModel() {
     val srcListTTS = ArrayList<TTS>()
     var dialodTTSHelp by mutableStateOf(false)
     var dialodTTSHelpError by mutableStateOf(false)
+    private var isVybranaeAllInit = false
     var curentPosition = 0
     var editSearshString = ""
     private var findTTSPosition = 0
@@ -311,30 +312,36 @@ class BogaslujbovyiaViewModel : ViewModel() {
                 }
             }
         }
+        isVybranaeAllInit = isVybranoe
     }
 
-    fun saveVybranoe(context: Context, title: String, resurs: String) {
-        if (isVybranoe) {
-            var pos = 0
-            for (i in vybranoeList.indices) {
-                if (resurs == vybranoeList[i].resource) {
-                    pos = i
-                    break
-                }
-            }
-            vybranoeList.removeAt(pos)
-            Toast.makeText(context, context.getString(R.string.removeVybranoe), Toast.LENGTH_SHORT).show()
-        } else {
-            vybranoeList.add(0, VybranaeDataAll(Calendar.getInstance().timeInMillis, title, resurs))
-            Toast.makeText(context, context.getString(R.string.addVybranoe), Toast.LENGTH_SHORT).show()
-        }
+    fun saveVybranoe(context: Context) {
         isVybranoe = !isVybranoe
-        val file = File("${context.filesDir}/vybranoe_all.json")
-        if (vybranoeList.isEmpty() && file.exists()) {
-            file.delete()
-        } else {
-            file.writer().use {
-                it.write(gson.toJson(vybranoeList, type))
+        if (isVybranoe) Toast.makeText(context, context.getString(R.string.addVybranoe), Toast.LENGTH_SHORT).show()
+        else Toast.makeText(context, context.getString(R.string.removeVybranoe), Toast.LENGTH_SHORT).show()
+    }
+
+    fun saveVybranaeOnDisk(context: Context, title: String, resurs: String) {
+        if (isVybranaeAllInit != isVybranoe) {
+            if (isVybranoe) {
+                vybranoeList.add(0, VybranaeDataAll(Calendar.getInstance().timeInMillis, title, resurs))
+            } else {
+                var pos = 0
+                for (i in vybranoeList.indices) {
+                    if (resurs == vybranoeList[i].resource) {
+                        pos = i
+                        break
+                    }
+                }
+                vybranoeList.removeAt(pos)
+            }
+            val file = File("${context.filesDir}/vybranoe_all.json")
+            if (vybranoeList.isEmpty() && file.exists()) {
+                file.delete()
+            } else {
+                file.writer().use {
+                    it.write(gson.toJson(vybranoeList, type))
+                }
             }
         }
     }
@@ -760,6 +767,7 @@ fun Bogaslujbovyia(
             }
         }
         onPauseOrDispose {
+            viewModel.saveVybranaeOnDisk(context, title, resursEncode)
             viewModel.autoScroll(title, false)
             viewModel.shutdown()
             viewModel.isPaused = false
@@ -806,6 +814,7 @@ fun Bogaslujbovyia(
                 if (!k.getBoolean("power", false)) actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 viewModel.autoScroll(title, false)
                 viewModel.autoScrollSensor = false
+                viewModel.saveVybranaeOnDisk(context, title, resursEncode)
                 navController.popBackStack()
             }
         }
@@ -1220,6 +1229,7 @@ fun Bogaslujbovyia(
                                                         backPressHandled = true
                                                         viewModel.autoScroll(title, false)
                                                         viewModel.autoScrollSensor = false
+                                                        viewModel.saveVybranaeOnDisk(context, title, resurs)
                                                         navController.popBackStack()
                                                     }
                                                 }
@@ -1329,7 +1339,7 @@ fun Bogaslujbovyia(
                                             PlainTooltip(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), TooltipAnchorPosition.Below) {
                                                 IconButton(onClick = {
                                                     Settings.vibrate()
-                                                    viewModel.saveVybranoe(context, title, resursEncode)
+                                                    viewModel.saveVybranoe(context)
                                                 }) {
                                                     val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
                                                     else painterResource(R.drawable.star)
@@ -1357,7 +1367,7 @@ fun Bogaslujbovyia(
                                                 DropdownMenuItem(onClick = {
                                                     Settings.vibrate()
                                                     expandedUp = false
-                                                    viewModel.saveVybranoe(context, title, resursEncode)
+                                                    viewModel.saveVybranoe(context)
                                                 }, text = { Text(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                                     val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
                                                     else painterResource(R.drawable.star)
@@ -1717,7 +1727,7 @@ fun Bogaslujbovyia(
                                     PlainTooltip(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add)) {
                                         IconButton(onClick = {
                                             Settings.vibrate()
-                                            viewModel.saveVybranoe(context, title, resursEncode)
+                                            viewModel.saveVybranoe(context)
                                         }) {
                                             val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
                                             else painterResource(R.drawable.star)
