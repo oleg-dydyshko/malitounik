@@ -2046,6 +2046,9 @@ fun Bogaslujbovyia(
                                     .clickable {
                                         Settings.vibrate()
                                         fontSize = fontGestureValue
+                                        k.edit {
+                                            putFloat("font_biblia", fontSize)
+                                        }
                                         fontGestureBakcVisable = false
                                     }
                                     .background(Button)
