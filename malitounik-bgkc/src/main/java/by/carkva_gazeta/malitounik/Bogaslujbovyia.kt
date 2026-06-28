@@ -1912,7 +1912,7 @@ fun Bogaslujbovyia(
                                                         }
                                                     }
                                                 } while (event.changes.any { it.pressed })
-                                                fontGestureBakcVisable = true
+                                                if (fontGestureValue != fontSize) fontGestureBakcVisable = true
                                             }
                                         }
                                     },
