@@ -167,6 +167,7 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -682,6 +683,8 @@ fun Bogaslujbovyia(
     var chast by rememberSaveable { mutableIntStateOf(0) }
     var dialogQrCode by rememberSaveable { mutableStateOf(false) }
     var dialogSztoHovahaVisable by remember { mutableStateOf(false) }
+    var fontGestureBakcVisable by remember { mutableStateOf(false) }
+    var fontGestureValue by remember { mutableFloatStateOf(fontSize) }
     val isViachernia by remember { mutableStateOf(resursEncode == "bogashlugbovya/viaczernia_niadzelnaja.html" || resursEncode == "bogashlugbovya/viaczernia_na_kozny_dzen.html" || resursEncode == "bogashlugbovya/viaczernia_u_vialikim_poscie.html" || resursEncode == "bogashlugbovya/viaczerniaja_sluzba_sztodzionnaja_biez_sviatara.html" || resursEncode == "bogashlugbovya/viaczernia_svietly_tydzien.html") }
     val isUtran by remember { mutableStateOf(resursEncode == "bogashlugbovya/jutran_niadzelnaja.html") }
     val isLiturgia by remember { mutableStateOf(resursEncode == "bogashlugbovya/lit_jana_zalatavusnaha.html" || resursEncode == "bogashlugbovya/lit_jan_zalat_vielikodn.html" || resursEncode == "bogashlugbovya/lit_vasila_vialikaha.html" || resursEncode == "bogashlugbovya/abiednica.html" || resursEncode == "bogashlugbovya/vialikdzien_liturhija.html") }
@@ -732,6 +735,14 @@ fun Bogaslujbovyia(
                     }
                 }
             })
+    }
+    LaunchedEffect(fontGestureBakcVisable) {
+        if (fontGestureBakcVisable) {
+            delay(7000.milliseconds)
+            fontGestureBakcVisable = false
+        } else {
+            cancel()
+        }
     }
     LaunchedEffect(Settings.dzenNoch) {
         if (viewModel.isPaused || viewModel.isSpeaking) {
@@ -1886,6 +1897,8 @@ fun Bogaslujbovyia(
                                         if (k.getBoolean("gestures", true)) {
                                             awaitEachGesture {
                                                 awaitFirstDown()
+                                                fontGestureBakcVisable = false
+                                                fontGestureValue = fontSize
                                                 do {
                                                     val event = awaitPointerEvent()
                                                     if (event.changes.size == 2) {
@@ -1899,6 +1912,7 @@ fun Bogaslujbovyia(
                                                         }
                                                     }
                                                 } while (event.changes.any { it.pressed })
+                                                fontGestureBakcVisable = true
                                             }
                                         }
                                     },
@@ -2008,6 +2022,35 @@ fun Bogaslujbovyia(
                                     .align(Alignment.CenterVertically),
                                 color = autoScrollTextColor2,
                                 fontSize = Settings.fontInterface.sp
+                            )
+                        }
+                    }
+                    AnimatedVisibility(
+                        fontGestureBakcVisable, enter = fadeIn(
+                            tween(
+                                durationMillis = 700, easing = LinearOutSlowInEasing
+                            )
+                        ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = if (viewModel.isSpeaking || viewModel.isPaused || viewModel.autoScrollSensor) 10.dp else 0.dp, end = 10.dp),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.back),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .clip(shape = RoundedCornerShape(10.dp))
+                                    .clickable {
+                                        Settings.vibrate()
+                                        fontSize = fontGestureValue
+                                        fontGestureBakcVisable = false
+                                    }
+                                    .background(Button)
+                                    .size(40.dp)
+                                    .padding(5.dp)
                             )
                         }
                     }
