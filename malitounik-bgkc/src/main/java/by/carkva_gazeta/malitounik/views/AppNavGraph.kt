@@ -1069,11 +1069,6 @@ fun MainConteiner(
     var dialogHelpCustomSort by remember { mutableStateOf(false) }
     if (dialogHelpCustomSort) {
         DialogHelpCustomSort {
-            if (it) {
-                k.edit {
-                    putBoolean("isCustomSortHelp", false)
-                }
-            }
             dialogHelpCustomSort = false
         }
     }
@@ -1452,9 +1447,7 @@ fun MainConteiner(
                                     expandedSort = false
                                     sortedVybranae = Settings.SORT_BY_CUSTOM
                                     sortedNatatki = Settings.SORT_BY_CUSTOM
-                                    if (k.getBoolean("isCustomSortHelp", true)) {
-                                        dialogHelpCustomSort = true
-                                    }
+                                    dialogHelpCustomSort = true
                                     k.edit {
                                         if (isSortedVybranae) {
                                             putInt(

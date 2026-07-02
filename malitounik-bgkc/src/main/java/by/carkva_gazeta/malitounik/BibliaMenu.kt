@@ -790,6 +790,12 @@ fun BoxWithConstraintsScope.BibliaMenuList(
     val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
     var dialogImageView by rememberSaveable { mutableStateOf(false) }
     var dialogVisable by remember { mutableStateOf(false) }
+    var dialogHelpCustomSort by remember { mutableStateOf(false) }
+    if (dialogHelpCustomSort) {
+        DialogHelpCustomSort {
+            dialogHelpCustomSort = false
+        }
+    }
     if (dialogVisable) {
         DialogSemuxa(perevod) {
             dialogVisable = false
@@ -1197,6 +1203,9 @@ fun BoxWithConstraintsScope.BibliaMenuList(
                                     if (list.size > 1) {
                                         Icon(
                                             modifier = Modifier
+                                                .clickable {
+                                                    dialogHelpCustomSort = true
+                                                }
                                                 .padding(top = 10.dp, start = 5.dp, end = 15.dp, bottom = 10.dp)
                                                 .size(24.dp),
                                             painter = painterResource(R.drawable.menu_move), tint = Divider, contentDescription = null

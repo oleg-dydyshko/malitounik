@@ -9,6 +9,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.scrollBy
@@ -34,7 +35,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -281,6 +281,12 @@ fun MaeNatatki(
     }
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
+    var dialogHelpCustomSort by remember { mutableStateOf(false) }
+    if (dialogHelpCustomSort) {
+        DialogHelpCustomSort {
+            dialogHelpCustomSort = false
+        }
+    }
     if (viewModel.isDeliteNatatka) {
         DialogDelite(
             stringResource(R.string.vybranoe_biblia_delite, viewModel.fileList[viewModel.natatkaPosition].title), onConfirmation = {
@@ -459,6 +465,9 @@ fun MaeNatatki(
                         if (viewModel.fileList.size > 1) {
                             Icon(
                                 modifier = Modifier
+                                    .clickable {
+                                        dialogHelpCustomSort = true
+                                    }
                                     .padding(top = 10.dp, start = 5.dp, end = 15.dp, bottom = 10.dp)
                                     .size(24.dp),
                                 painter = painterResource(R.drawable.menu_move), tint = Divider, contentDescription = null
@@ -598,13 +607,6 @@ fun DialogHelpCustomSort(onDismiss: (Boolean) -> Unit) {
                         .padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.onSecondary
                 )
                 Text(text = stringResource(R.string.sort_custom_help), modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(checked = isCheck, onCheckedChange = {
-                        Settings.vibrate()
-                        isCheck = !isCheck
-                    })
-                    Text(text = stringResource(R.string.not_show), modifier = Modifier.padding(10.dp), fontSize = Settings.fontInterface.sp, color = MaterialTheme.colorScheme.secondary)
-                }
                 Row(
                     modifier = Modifier
                         .align(Alignment.End)

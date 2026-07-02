@@ -8,6 +8,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -219,6 +220,12 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
     var removeBible by remember { mutableStateOf(false) }
     var removeBibleAll by remember { mutableStateOf(false) }
     var removeResourse by remember { mutableStateOf(false) }
+    var dialogHelpCustomSort by remember { mutableStateOf(false) }
+    if (dialogHelpCustomSort) {
+        DialogHelpCustomSort {
+            dialogHelpCustomSort = false
+        }
+    }
     if (removeBible) {
         DialogDelite(
             title = stringResource(R.string.vybranoe_biblia_delite, viewModel.vybranaeListTitleBible[removeItem].listBible[removeItemBible].title + " " + (viewModel.vybranaeListTitleBible[removeItem].listBible[removeItemBible].glava + 1)), onConfirmation = {
@@ -336,6 +343,9 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
                         if (viewModel.vybranaeListFile.size > 1) {
                             Icon(
                                 modifier = Modifier
+                                    .clickable {
+                                        dialogHelpCustomSort = true
+                                    }
                                     .padding(top = 10.dp, start = 5.dp, end = 15.dp, bottom = 10.dp)
                                     .size(24.dp),
                                 painter = painterResource(R.drawable.menu_move), tint = Divider, contentDescription = null
@@ -457,6 +467,9 @@ fun BoxWithConstraintsScope.VybranoeListBox(innerPadding: PaddingValues, viewMod
                                 if (viewModel.vybranaeListTitleBible[i].listBible.size > 1) {
                                     Icon(
                                         modifier = Modifier
+                                            .clickable {
+                                                dialogHelpCustomSort = true
+                                            }
                                             .padding(top = 10.dp, start = 5.dp, end = 15.dp, bottom = 10.dp)
                                             .size(24.dp),
                                         painter = painterResource(R.drawable.menu_move), tint = Divider, contentDescription = null
