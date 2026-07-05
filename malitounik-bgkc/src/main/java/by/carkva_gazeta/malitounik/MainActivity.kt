@@ -11,7 +11,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.res.Configuration
-import android.content.res.Resources
 import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -1331,7 +1330,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         })
         if (savedInstanceState == null) {
             val modeNight = k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM)
-            val configuration = Resources.getSystem().configuration
+            val configuration = resources.configuration
             Settings.dzenNoch = configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
             if (modeNight == Settings.MODE_NIGHT_NO) Settings.dzenNoch = false
             if (modeNight == Settings.MODE_NIGHT_YES) Settings.dzenNoch = true
@@ -1477,7 +1476,7 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
             setlightSensor()
         }
         if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_SYSTEM) {
-            val configuration = Resources.getSystem().configuration
+            val configuration = resources.configuration
             Settings.dzenNoch = configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
         }
     }

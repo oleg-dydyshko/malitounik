@@ -8,7 +8,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
-import android.content.res.Resources
 import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -323,7 +322,7 @@ class Widget : GlanceAppWidgetReceiver() {
         var dzenNoch = false
         when (modeNight) {
             Settings.MODE_NIGHT_SYSTEM -> {
-                val configuration = Resources.getSystem().configuration
+                val configuration = context.resources.configuration
                 dzenNoch = configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
             }
 
