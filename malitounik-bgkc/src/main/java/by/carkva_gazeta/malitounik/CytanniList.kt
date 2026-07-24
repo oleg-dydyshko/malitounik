@@ -1868,6 +1868,9 @@ fun CytanniList(
                         if (biblia == Settings.CHYTANNI_BIBLIA && perevodRoot != Settings.PEREVODNADSAN) {
                             viewModel.subTitle = resultPage[0].title.substringBeforeLast(" ")
                         }
+                        if (viewModel.subTitle.isEmpty() && biblia != Settings.CHYTANNI_BIBLIA) {
+                            viewModel.subTitle = resultPage[0].title
+                        }
                     })
                     if (biblia != Settings.CHYTANNI_BIBLIA) {
                         LaunchedEffect(Unit) {
