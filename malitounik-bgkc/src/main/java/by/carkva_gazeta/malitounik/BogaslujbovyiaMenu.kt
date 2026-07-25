@@ -610,6 +610,11 @@ fun getBogaslujbovyia(): SnapshotStateList<BogaslujbovyiaListData> {
             "Вялікі пакаянны канон сьвятога Андрэя Крыцкага(у 4-х частках)", "bogashlugbovya/kanon_andreja_kryckaha_4_czastki.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ"
         )
     )
+    list.add(
+        BogaslujbovyiaListData(
+            "Служба сьвятым братам-апосталам Пятру і Андрэю", "bogashlugbovya/sluzba_piatru_andreju_liturhija.html", "БОГАСЛУЖБОВЫЯ ТЭКСТЫ"
+        )
+    )
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
         list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
     } else {
