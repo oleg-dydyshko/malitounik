@@ -2489,8 +2489,8 @@ class SlugbovyiaTextu {
         if (piarliny.isEmpty() && loadPiarlinyJob?.isActive != true) {
             val filePiarliny = File("${Malitounik.applicationContext().filesDir}/piarliny.json")
             if (!filePiarliny.exists()) {
-                if (Settings.isNetworkAvailable(Malitounik.applicationContext())) {
-                    loadPiarlinyJob = CoroutineScope(Dispatchers.Main).launch {
+                loadPiarlinyJob = CoroutineScope(Dispatchers.Main).launch {
+                    if (Settings.isNetworkAvailable(Malitounik.applicationContext())) {
                         try {
                             getPiarliny(Malitounik.applicationContext())
                             val localFile = File("${Malitounik.applicationContext().filesDir}/piarliny.json")

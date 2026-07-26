@@ -196,9 +196,9 @@ fun DialogPairlinyEdit(
 }
 
 fun sendPostRequest(context: Context, resultArray: ArrayList<ArrayList<String>>, isLoad: (Boolean) -> Unit) {
-    if (Settings.isNetworkAvailable(context)) {
-        CoroutineScope(Dispatchers.Main).launch {
-            isLoad(true)
+    CoroutineScope(Dispatchers.Main).launch {
+        isLoad(true)
+        if (Settings.isNetworkAvailable(context)) {
             try {
                 val gson = Gson()
                 val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
@@ -218,8 +218,6 @@ fun sendPostRequest(context: Context, resultArray: ArrayList<ArrayList<String>>,
                 Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
             }
             isLoad(false)
-        }
-    } else {
-        Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+        } else isLoad(false)
     }
 }

@@ -135,8 +135,8 @@ class Piasochnica : ViewModel() {
 
     fun getDirListRequest(dir: String) {
         val context = Malitounik.applicationContext()
-        if (Settings.isNetworkAvailable(context)) {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            if (Settings.isNetworkAvailable(context)) {
                 try {
                     isProgressVisable = true
                     fileList.clear()
@@ -165,9 +165,7 @@ class Piasochnica : ViewModel() {
                     Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
                 }
                 isProgressVisable = false
-            }
-        } else {
-            Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+            } else isProgressVisable = false
         }
     }
 
@@ -208,8 +206,8 @@ class Piasochnica : ViewModel() {
 
     fun getFileCopyPostRequest(dirToFile: String, isProgressVisable: (Boolean) -> Unit, result: (String, String) -> Unit) {
         val context = Malitounik.applicationContext()
-        if (Settings.isNetworkAvailable(context)) {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            if (Settings.isNetworkAvailable(context)) {
                 isProgressVisable(true)
                 val t5 = dirToFile.lastIndexOf("/")
                 val fileName = dirToFile.substring(t5 + 1)
@@ -239,17 +237,15 @@ class Piasochnica : ViewModel() {
                 else text
                 result(text, newFileName)
                 isProgressVisable(false)
-            }
-        } else {
-            Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+            } else isProgressVisable(false)
         }
     }
 
     fun getFileRenamePostRequest(oldFileName: String, fileName: String, isSite: Boolean, update: () -> Unit) {
         val context = Malitounik.applicationContext()
-        if (Settings.isNetworkAvailable(context)) {
-            viewModelScope.launch {
-                isProgressVisable = true
+        viewModelScope.launch {
+            isProgressVisable = true
+            if (Settings.isNetworkAvailable(context)) {
                 try {
                     val localFile = File("${context.filesDir}/cache/cache.txt")
                     if (isSite) {
@@ -271,9 +267,7 @@ class Piasochnica : ViewModel() {
                 }
                 if (isSite) saveLogFile()
                 isProgressVisable = false
-            }
-        } else {
-            Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+            } else isProgressVisable = false
         }
     }
 
@@ -342,8 +336,8 @@ class Piasochnica : ViewModel() {
     fun getFileUnlinkPostRequest(fileName: String, isSite: Boolean) {
         isProgressVisable = true
         val context = Malitounik.applicationContext()
-        if (Settings.isNetworkAvailable(context)) {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            if (Settings.isNetworkAvailable(context)) {
                 try {
                     if (isSite) {
                         Malitounik.referens.child("/admin/piasochnica/$fileName").delete().await()
@@ -355,8 +349,6 @@ class Piasochnica : ViewModel() {
                 }
                 if (!isSite) saveLogFile()
             }
-        } else {
-            Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
         }
         isProgressVisable = false
     }
@@ -391,8 +383,8 @@ class Piasochnica : ViewModel() {
     fun crateNewFilePiasochnica(newFile: String) {
         isProgressVisable = true
         val context = Malitounik.applicationContext()
-        if (Settings.isNetworkAvailable(context)) {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            if (Settings.isNetworkAvailable(context)) {
                 val localFile = File("${context.filesDir}/cache/cache.txt")
                 localFile.writer().use {
                     it.write("")
@@ -406,9 +398,9 @@ class Piasochnica : ViewModel() {
     fun sendSaveAsPostRequest(dirToFile: String, fileName: String, count: Int = 0) {
         val context = Malitounik.applicationContext()
         var error = false
-        if (Settings.isNetworkAvailable(context)) {
-            viewModelScope.launch {
-                isProgressVisable = true
+        viewModelScope.launch {
+            isProgressVisable = true
+            if (Settings.isNetworkAvailable(context)) {
                 try {
                     val localFile = File("${context.filesDir}/cache/cache.txt")
                     Malitounik.referens.child("/admin/piasochnica/$fileName").getFile(localFile).addOnFailureListener {
@@ -450,7 +442,7 @@ class Piasochnica : ViewModel() {
                     saveLogFile()
                 }
                 isProgressVisable = false
-            }
+            } else isProgressVisable = false
         }
     }
 
@@ -470,9 +462,9 @@ class Piasochnica : ViewModel() {
         messageDigest.update(file.readText().toByteArray())
         val digest = messageDigest.digest()
         md5sumLocalFile = Base64.encodeToString(digest, Base64.DEFAULT)
-        if (Settings.isNetworkAvailable(context)) {
-            viewModelScope.launch {
-                isProgressVisable = true
+        viewModelScope.launch {
+            isProgressVisable = true
+            if (Settings.isNetworkAvailable(context)) {
                 if (findDirAsSave.isEmpty()) {
                     getFindFileListAsSave()
                 }
@@ -502,9 +494,7 @@ class Piasochnica : ViewModel() {
                 } catch (_: Throwable) {
                     Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
                 }
-            }
-        } else {
-            Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+            } else isProgressVisable = false
         }
         isProgressVisable = false
     }
@@ -734,9 +724,9 @@ class Piasochnica : ViewModel() {
     fun sendPostRequest(svityia: String, chtenieSvaitomu: String, style: Int, tipicon: String, titleCytanne: String, cytanne: String, dayOfPascha: Int, count: Int = 0, isLoad: (Boolean) -> Unit) {
         val context = Malitounik.applicationContext()
         var error = false
-        if (Settings.isNetworkAvailable(context)) {
-            viewModelScope.launch {
-                isLoad(true)
+        viewModelScope.launch {
+            isLoad(true)
+            if (Settings.isNetworkAvailable(context)) {
                 try {
                     var myTipicon = tipicon
                     if (myTipicon == "0") myTipicon = ""
@@ -849,9 +839,7 @@ class Piasochnica : ViewModel() {
                     Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
                 }
                 isLoad(false)
-            }
-        } else {
-            Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+            } else isLoad(false)
         }
         if (error && count < 3) {
             sendPostRequest(svityia, chtenieSvaitomu, style, tipicon, titleCytanne, cytanne, dayOfPascha, count + 1, isLoad = { })

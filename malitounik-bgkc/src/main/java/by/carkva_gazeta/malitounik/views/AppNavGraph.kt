@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Build
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -831,10 +830,11 @@ fun CheckUpdateMalitounik(
     }
     LaunchedEffect(Unit) {
         if (Settings.isNetworkAvailable(context)) {
+            val isNetworkAvailableCellular = Settings.isNetworkAvailable(context, Settings.TRANSPORT_CELLULAR)
             val appUpdateInfoTask = appUpdateManager.appUpdateInfo
             appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
                 if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
-                    if (Settings.isNetworkAvailable(context, Settings.TRANSPORT_CELLULAR)) {
+                    if (isNetworkAvailableCellular) {
                         totalBytesToDownload = appUpdateInfo.totalBytesToDownload().toFloat()
                         noWIFI = true
                     } else {
@@ -945,8 +945,8 @@ fun MainConteiner(
                         )
                     ) {
                         if (k.getString("navigate", AllDestinations.KALIANDAR) != AllDestinations.KALIANDAR_YEAR) {
-                                navigationActions.navigateToKaliandarYear()
-                            }
+                            navigationActions.navigateToKaliandarYear()
+                        }
                         Settings.caliandarPosition = caliandarPosition
                         lazyColumnState.scrollToItem(caliandarPosition)
                     } else {
@@ -1678,10 +1678,8 @@ fun MainConteiner(
                                 DropdownMenuItem(onClick = {
                                     Settings.vibrate()
                                     expandedUp = false
-                                    if (Settings.isNetworkAvailable(context)) {
-                                        logView = true
-                                    } else {
-                                        Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+                                    coroutineScope.launch {
+                                        if (Settings.isNetworkAvailable(context)) logView = true
                                     }
                                 }, text = { Text(stringResource(R.string.log_m), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                     Icon(

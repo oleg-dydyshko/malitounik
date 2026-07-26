@@ -302,12 +302,12 @@ suspend fun loadCalendarSviatyiaFile(context: Context, count: Int = 0): String {
 }
 
 fun setDate(context: Context, count: Int = 0, isLoad: (Boolean) -> Unit, dataList: (ArrayList<String>, String, String, Int) -> Unit) {
-    if (Settings.isNetworkAvailable(context)) {
-        isLoad(true)
-        var error = false
-        val dayOfPascha = Settings.data[Settings.caliandarPosition][22].toInt()
-        val year = Settings.data[Settings.caliandarPosition][3].toInt()
-        CoroutineScope(Dispatchers.Main).launch {
+    CoroutineScope(Dispatchers.Main).launch {
+        if (Settings.isNetworkAvailable(context)) {
+            isLoad(true)
+            var error = false
+            val dayOfPascha = Settings.data[Settings.caliandarPosition][22].toInt()
+            val year = Settings.data[Settings.caliandarPosition][3].toInt()
             try {
                 val builder = loadCalendarSviatyiaFile(context)
                 val sviatyia = ArrayList<ArrayList<String>>()
@@ -369,9 +369,7 @@ fun setDate(context: Context, count: Int = 0, isLoad: (Boolean) -> Unit, dataLis
                 setDate(context = context, count = count + 1, isLoad = { isLoad(false) }, dataList = { list, title, cytanne, dayOfPascha -> dataList(list, title, cytanne, dayOfPascha) })
             }
             isLoad(false)
-        }
-    } else {
-        Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+        } else isLoad(false)
     }
 }
 

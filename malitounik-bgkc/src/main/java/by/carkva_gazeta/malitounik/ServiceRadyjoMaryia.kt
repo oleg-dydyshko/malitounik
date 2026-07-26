@@ -214,8 +214,8 @@ class ServiceRadyjoMaryia : Service() {
     }
 
     private fun sendTitlePadioMaryia() {
-        if (Settings.isNetworkAvailable(this)) {
-            CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO).launch {
+            if (Settings.isNetworkAvailable(this@ServiceRadyjoMaryia)) {
                 runCatching {
                     withContext(Dispatchers.IO) {
                         try {

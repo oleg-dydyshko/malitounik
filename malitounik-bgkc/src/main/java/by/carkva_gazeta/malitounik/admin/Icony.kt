@@ -182,9 +182,9 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
     }
     if (isDialodDeliteApisanne) {
         DialogDelite(title = stringResource(R.string.del_apis), onConfirmation = {
-            if (Settings.isNetworkAvailable(context)) {
-                coroutineScope.launch {
-                    isProgressVisable = true
+            coroutineScope.launch {
+                isProgressVisable = true
+                if (Settings.isNetworkAvailable(context)) {
                     try {
                         val fileName = iconList[position].file.name
                         val t1 = fileName.lastIndexOf(".")
@@ -197,6 +197,9 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
                     }
                     isProgressVisable = false
                     isDialodDeliteApisanne = false
+                } else {
+                    isProgressVisable = false
+                    isDialodDeliteApisanne = false
                 }
             }
         }) {
@@ -204,11 +207,10 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
         }
     }
     if (isDialodApisanne) {
-        val noInternet = stringResource(R.string.no_internet)
         DialogApisanneIcony(iconList[position].iconApisanne, saveApisanne = { iconApisanne ->
-            if (Settings.isNetworkAvailable(context)) {
-                coroutineScope.launch {
-                    isProgressVisable = true
+            coroutineScope.launch {
+                isProgressVisable = true
+                if (Settings.isNetworkAvailable(context)) {
                     try {
                         val dir = File("${context.filesDir}/iconsApisanne")
                         if (!dir.exists()) dir.mkdir()
@@ -231,10 +233,9 @@ fun Icony(navController: NavHostController, viewModel: SviatyiaViewModel) {
                     }
                     isProgressVisable = false
                     isDialodApisanne = false
+                } else {
+                    isProgressVisable = false
                 }
-            } else {
-                Toast.makeText(context, noInternet, Toast.LENGTH_SHORT).show()
-                isDialodApisanne = false
             }
         }) {
             isDialodApisanne = false
@@ -601,9 +602,9 @@ suspend fun getSviatyia(context: Context, position: Int): String {
 }
 
 fun fileUpload(context: Context, position: Int, bitmap: Bitmap?, isSviatyia: Boolean, isLoad: (Boolean) -> Unit, result: (File) -> Unit) {
-    if (Settings.isNetworkAvailable(context)) {
-        CoroutineScope(Dispatchers.Main).launch {
-            isLoad(true)
+    CoroutineScope(Dispatchers.Main).launch {
+        isLoad(true)
+        if (Settings.isNetworkAvailable(context)) {
             val day = Settings.data[Settings.caliandarPosition][1].toInt()
             val mun = Settings.data[Settings.caliandarPosition][2].toInt() + 1
             val pref = if (isSviatyia) "s" else "v"
@@ -625,9 +626,7 @@ fun fileUpload(context: Context, position: Int, bitmap: Bitmap?, isSviatyia: Boo
             loadFilesMetaData(context, "${pref}_${day}_${mun}_${position + 1}.jpg", false)
             if (isSuccess) result(localFile)
             isLoad(false)
-        }
-    } else {
-        Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+        } else isLoad(false)
     }
 }
 

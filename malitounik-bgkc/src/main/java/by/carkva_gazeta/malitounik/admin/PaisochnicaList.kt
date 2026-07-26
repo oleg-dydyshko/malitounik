@@ -228,10 +228,9 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
     }
     if (dialogDeliteAllPiasochnica) {
         val error = stringResource(R.string.error_ch)
-        val noInternet = stringResource(R.string.no_internet)
         DialogDelite(title = stringResource(R.string.del_all_pasochnica), onConfirmation = {
-            if (Settings.isNetworkAvailable(context)) {
-                CoroutineScope(Dispatchers.Main).launch {
+            CoroutineScope(Dispatchers.Main).launch {
+                if (Settings.isNetworkAvailable(context)) {
                     try {
                         val list = Malitounik.referens.child("/admin/piasochnica").list(1000).await()
                         list.items.forEach {
@@ -242,8 +241,6 @@ fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues
                     }
                     fileList.clear()
                 }
-            } else {
-                Toast.makeText(context, noInternet, Toast.LENGTH_SHORT).show()
             }
             dialogDeliteAllPiasochnica = false
         }) {

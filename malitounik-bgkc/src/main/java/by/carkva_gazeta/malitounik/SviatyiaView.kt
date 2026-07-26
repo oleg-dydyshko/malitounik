@@ -901,9 +901,9 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
 }
 
 fun saveFilesSvaityxISvait(context: Context, svityList: SnapshotStateList<ArrayList<String>>, sviatyPosotion: Int, pasxaPosition: Int, apisanne: String, isLoad: (Boolean) -> Unit, finishSave: () -> Unit) {
-    if (Settings.isNetworkAvailable(context)) {
-        CoroutineScope(Dispatchers.Main).launch {
-            isLoad(true)
+    CoroutineScope(Dispatchers.Main).launch {
+        isLoad(true)
+        if (Settings.isNetworkAvailable(context)) {
             try {
                 val checkSaveFile = svityList[sviatyPosotion][2].toInt()
                 when (checkSaveFile) {
@@ -1010,7 +1010,7 @@ fun saveFilesSvaityxISvait(context: Context, svityList: SnapshotStateList<ArrayL
                 Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
             }
             isLoad(false)
-        }
+        } else isLoad(false)
     }
 }
 

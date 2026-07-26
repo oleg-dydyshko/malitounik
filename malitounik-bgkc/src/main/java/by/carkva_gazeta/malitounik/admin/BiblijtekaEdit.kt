@@ -317,9 +317,9 @@ fun DialogEditBiblijteka(list: ArrayList<String>, onSave: (title: String, rubrik
 }
 
 fun saveBibliateka(context: Context, arrayList: SnapshotStateList<ArrayList<String>>, position: Int, title: String, rubrika: Int, apisanne: String, pdfFile: String, isLoad: (Boolean) -> Unit) {
-    if (Settings.isNetworkAvailable(context)) {
-        CoroutineScope(Dispatchers.Main).launch {
-            isLoad(true)
+    CoroutineScope(Dispatchers.Main).launch {
+        isLoad(true)
+        if (Settings.isNetworkAvailable(context)) {
             withContext(Dispatchers.IO) {
                 val t1 = pdfFile.lastIndexOf(".")
                 val pdfName = if (t1 != -1) pdfFile.take(t1)
@@ -358,9 +358,7 @@ fun saveBibliateka(context: Context, arrayList: SnapshotStateList<ArrayList<Stri
             }
             Toast.makeText(context, context.getString(R.string.save), Toast.LENGTH_SHORT).show()
             isLoad(false)
-        }
-    } else {
-        Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+        } else isLoad(false)
     }
 }
 

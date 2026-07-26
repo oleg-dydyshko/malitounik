@@ -144,9 +144,9 @@ class LogView : ViewModel() {
     }
 
     fun createAndSentFile(context: Context) {
-        val zip = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "MalitounikResource.zip")
-        if (log.isNotEmpty() && Settings.isNetworkAvailable(context)) {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            val zip = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "MalitounikResource.zip")
+            if (log.isNotEmpty() && Settings.isNetworkAvailable(context)) {
                 withContext(Dispatchers.IO) {
                     val out = ZipOutputStream(BufferedOutputStream(FileOutputStream(zip)))
                     val localFile = File("${context.filesDir}/cache/cache.txt")
@@ -206,13 +206,13 @@ class LogView : ViewModel() {
                     out.close()
                 }
                 sendAndClearLogFile(context, zip)
+            } else {
+                sendAndClearLogFile(context, zip)
             }
-        } else {
-            sendAndClearLogFile(context, zip)
         }
     }
 
-    private fun sendAndClearLogFile(context: Context, zip: File, isClearLogFile: Boolean = true, isSendLogFile: Boolean = true) {
+    private suspend fun sendAndClearLogFile(context: Context, zip: File, isClearLogFile: Boolean = true, isSendLogFile: Boolean = true) {
         if (isSendLogFile) {
             val sendIntent = Intent(Intent.ACTION_SEND)
             sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "by.carkva_gazeta.malitounik.fileprovider", zip))

@@ -467,33 +467,35 @@ fun DrawView(
                     .padding(horizontal = 10.dp)
                     .clickable {
                         Settings.vibrate()
-                        if (Settings.isNetworkAvailable(context)) {
-                            if (!ServiceRadyjoMaryia.isServiceRadioMaryiaRun) {
-                                Settings.isProgressVisableRadyjoMaryia.value = true
-                                val intent = Intent(context, ServiceRadyjoMaryia::class.java)
-                                ContextCompat.startForegroundService(context, intent)
-                                context.bindService(
-                                    intent,
-                                    context.mConnection,
-                                    Context.BIND_AUTO_CREATE
-                                )
-                                ServiceRadyjoMaryia.isPlayingRadyjoMaryia = true
-                            } else {
-                                context.mRadyjoMaryiaService?.apply {
-                                    if (k.getBoolean("WIDGET_RADYJO_MARYIA_ENABLED", false)) {
-                                        context.sendBroadcast(
-                                            Intent(
-                                                context,
-                                                WidgetRadyjoMaryia::class.java
+                        coroutineScope.launch {
+                            if (Settings.isNetworkAvailable(context)) {
+                                if (!ServiceRadyjoMaryia.isServiceRadioMaryiaRun) {
+                                    Settings.isProgressVisableRadyjoMaryia.value = true
+                                    val intent = Intent(context, ServiceRadyjoMaryia::class.java)
+                                    ContextCompat.startForegroundService(context, intent)
+                                    context.bindService(
+                                        intent,
+                                        context.mConnection,
+                                        Context.BIND_AUTO_CREATE
+                                    )
+                                    ServiceRadyjoMaryia.isPlayingRadyjoMaryia = true
+                                } else {
+                                    context.mRadyjoMaryiaService?.apply {
+                                        if (k.getBoolean("WIDGET_RADYJO_MARYIA_ENABLED", false)) {
+                                            context.sendBroadcast(
+                                                Intent(
+                                                    context,
+                                                    WidgetRadyjoMaryia::class.java
+                                                )
                                             )
-                                        )
+                                        }
+                                        playOrPause()
+                                        ServiceRadyjoMaryia.isPlayingRadyjoMaryia = isPlayingRadioMaria()
                                     }
-                                    playOrPause()
-                                    ServiceRadyjoMaryia.isPlayingRadyjoMaryia = isPlayingRadioMaria()
                                 }
+                            } else {
+                                dialogNoInternet = true
                             }
-                        } else {
-                            dialogNoInternet = true
                         }
                     },
                 painter = icon,
@@ -602,33 +604,35 @@ fun DrawView(
                                             context.mRadyjoMaryiaService?.stopServiceRadioMaria()
                                             ServiceRadyjoMaryia.isPlayingRadyjoMaryia = false
                                         }
-                                        if (Settings.isNetworkAvailable(context)) {
-                                            if (!ServiceRadyjoMaryia.isServiceRadioMaryiaRun) {
-                                                Settings.isProgressVisableRadyjoMaryia.value = true
-                                                val intent = Intent(context, ServiceRadyjoMaryia::class.java)
-                                                ContextCompat.startForegroundService(context, intent)
-                                                context.bindService(
-                                                    intent,
-                                                    context.mConnection,
-                                                    Context.BIND_AUTO_CREATE
-                                                )
-                                                ServiceRadyjoMaryia.isPlayingRadyjoMaryia = true
-                                            } else {
-                                                context.mRadyjoMaryiaService?.apply {
-                                                    if (k.getBoolean("WIDGET_RADYJO_MARYIA_ENABLED", false)) {
-                                                        context.sendBroadcast(
-                                                            Intent(
-                                                                context,
-                                                                WidgetRadyjoMaryia::class.java
+                                        coroutineScope.launch {
+                                            if (Settings.isNetworkAvailable(context)) {
+                                                if (!ServiceRadyjoMaryia.isServiceRadioMaryiaRun) {
+                                                    Settings.isProgressVisableRadyjoMaryia.value = true
+                                                    val intent = Intent(context, ServiceRadyjoMaryia::class.java)
+                                                    ContextCompat.startForegroundService(context, intent)
+                                                    context.bindService(
+                                                        intent,
+                                                        context.mConnection,
+                                                        Context.BIND_AUTO_CREATE
+                                                    )
+                                                    ServiceRadyjoMaryia.isPlayingRadyjoMaryia = true
+                                                } else {
+                                                    context.mRadyjoMaryiaService?.apply {
+                                                        if (k.getBoolean("WIDGET_RADYJO_MARYIA_ENABLED", false)) {
+                                                            context.sendBroadcast(
+                                                                Intent(
+                                                                    context,
+                                                                    WidgetRadyjoMaryia::class.java
+                                                                )
                                                             )
-                                                        )
+                                                        }
+                                                        playOrPause()
+                                                        ServiceRadyjoMaryia.isPlayingRadyjoMaryia = isPlayingRadioMaria()
                                                     }
-                                                    playOrPause()
-                                                    ServiceRadyjoMaryia.isPlayingRadyjoMaryia = isPlayingRadioMaria()
                                                 }
+                                            } else {
+                                                dialogNoInternet = true
                                             }
-                                        } else {
-                                            dialogNoInternet = true
                                         }
                                     }
                                 }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding, colors = MenuDefaults.itemColors(textColor = PrimaryText)

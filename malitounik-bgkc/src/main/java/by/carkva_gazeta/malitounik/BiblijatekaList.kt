@@ -36,6 +36,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -233,31 +234,32 @@ fun BiblijtekaList(navController: NavHostController, biblijateka: String, innerP
         else {
             bibliatekaList[fileListPosition]
         }
+        val coroutineScope = rememberCoroutineScope()
         DialogBiblijateka(content = opisanie, isShare = share, pdfFileSize = izm, onDismiss = {
             isDialogBiblijatekaVisable = false
         }, onConfirmation = {
-            when {
-                !Settings.isNetworkAvailable(context) -> isDialogNoIntent = true
-                Settings.isNetworkAvailable(
-                    context
-                ) -> isDialogNoWIFIVisable = true
+            coroutineScope.launch {
+                when {
+                    !Settings.isNetworkAvailable(context) -> isDialogNoIntent = true
+                    Settings.isNetworkAvailable(context) -> isDialogNoWIFIVisable = true
 
-                else -> {
-                    writeFile(context, fileName, loadComplete = {
-                        if (share) {
-                            sharePdfFile(context, listItem[2])
-                        } else {
-                            addNiadaunia(context, listItem)
-                            navigationActions.navigateToBiblijateka(
-                                listItem[0], listItem[2]
-                            )
-                        }
-                    }, inProcess = {
-                        isProgressVisable = it
-                    })
+                    else -> {
+                        writeFile(context, fileName, loadComplete = {
+                            if (share) {
+                                sharePdfFile(context, listItem[2])
+                            } else {
+                                addNiadaunia(context, listItem)
+                                navigationActions.navigateToBiblijateka(
+                                    listItem[0], listItem[2]
+                                )
+                            }
+                        }, inProcess = {
+                            isProgressVisable = it
+                        })
+                    }
                 }
+                isDialogBiblijatekaVisable = false
             }
-            isDialogBiblijatekaVisable = false
         })
     }
     if (isDialogNoWIFIVisable) {
@@ -414,7 +416,8 @@ fun BiblijatekaListItems(
                                     if (k.getBoolean("admin", false) && biblijateka != AllDestinations.BIBLIJATEKA_NIADAUNIA && !searchText) {
                                         editListItem(listItem[index])
                                     }
-                                }), bitmap = bitmap.asImageBitmap(), contentDescription = null)
+                                }), bitmap = bitmap.asImageBitmap(), contentDescription = null
+                        )
                     }
                     val maxLine = remember { mutableIntStateOf(2) }
                     Text(
