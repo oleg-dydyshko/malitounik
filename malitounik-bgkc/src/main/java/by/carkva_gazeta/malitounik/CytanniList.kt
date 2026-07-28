@@ -1331,12 +1331,12 @@ fun CytanniList(
                                             viewModel.isPaused = false
                                             viewModel.isSpeaking = false
                                             viewModel.stop()
+                                            val oldPerevod = perevod
                                             perevod = Settings.PEREVODCATOLIK
                                             val dir = File("${context.filesDir}/Catolik")
                                             if (!dir.exists()) {
                                                 viewModel.dialogDownLoad = true
                                             } else {
-                                                val oldPerevod = perevod
                                                 if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
                                                     "perevodMaranata", perevod
                                                 )
@@ -1354,12 +1354,12 @@ fun CytanniList(
                                             viewModel.isPaused = false
                                             viewModel.isSpeaking = false
                                             viewModel.stop()
+                                            val oldPerevod = perevod
                                             perevod = Settings.PEREVODCATOLIK
                                             val dir = File("${context.filesDir}/Catolik")
                                             if (!dir.exists()) {
                                                 viewModel.dialogDownLoad = true
                                             } else {
-                                                val oldPerevod = perevod
                                                 if (biblia == Settings.CHYTANNI_MARANATA) edit.putString(
                                                     "perevodMaranata", perevod
                                                 )
