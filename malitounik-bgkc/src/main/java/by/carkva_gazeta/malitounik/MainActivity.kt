@@ -84,8 +84,6 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
 import java.math.BigInteger
-import java.net.HttpURLConnection
-import java.net.URL
 import java.security.MessageDigest
 import java.util.Calendar
 
@@ -190,59 +188,41 @@ object Settings {
     }
 
     @Suppress("DEPRECATION")
-    suspend fun isNetworkAvailable(context: Context, typeTransport: Int = TRANSPORT_ALL): Boolean {
+    fun isNetworkAvailable(context: Context, typeTransport: Int = TRANSPORT_ALL): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val nw = connectivityManager.activeNetwork ?: return false
         val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
         when (typeTransport) {
             TRANSPORT_CELLULAR -> {
-                if (actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                    if (actNw.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) {
-                        if (checkIsConnectionSlow()) {
-                            Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_LONG).show()
-                            return false
-                        } else return true
-                    }
+                if (actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) && actNw.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) {
+                    return true
                 }
             }
 
             TRANSPORT_WIFI -> {
-                if (actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                    if (actNw.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) {
-                        if (checkIsConnectionSlow()) {
-                            Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_LONG).show()
-                            return false
-                        } else return true
-                    }
+                if (actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) && actNw.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) {
+                    return true
                 }
             }
 
             TRANSPORT_ALL -> {
                 return when {
-                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
-                        if (checkIsConnectionSlow()) {
-                            Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_LONG).show()
-                            false
-                        } else true
+                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) && actNw.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) -> {
+                        true
                     }
-                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
-                        if (checkIsConnectionSlow()) {
-                            Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_LONG).show()
-                            false
-                        } else true
+
+                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) && actNw.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) -> {
+                        true
                     }
-                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_VPN) -> {
-                        if (checkIsConnectionSlow()) {
-                            Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_LONG).show()
-                            false
-                        } else true
+
+                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_VPN) && actNw.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) -> {
+                        true
                     }
-                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> {
-                        if (checkIsConnectionSlow()) {
-                            Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_LONG).show()
-                            false
-                        } else true
+
+                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) && actNw.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) -> {
+                        true
                     }
+
                     else -> {
                         Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_LONG).show()
                         false
@@ -251,22 +231,6 @@ object Settings {
             }
         }
         return false
-    }
-
-    suspend fun checkIsConnectionSlow(): Boolean = withContext(Dispatchers.IO) {
-        val startTime = System.currentTimeMillis()
-        try {
-            val url = URL("https://google.com")
-            val connection = url.openConnection() as HttpURLConnection
-            connection.connectTimeout = 3000
-            connection.readTimeout = 3000
-            connection.connect()
-            val responseCode = connection.responseCode
-            val duration = System.currentTimeMillis() - startTime
-            return@withContext responseCode == 204 && duration > 1500
-        } catch (_: Throwable) {
-            return@withContext true
-        }
     }
 
     private fun mkTime(year: Int, month: Int, day: Int, hour: Int): Long {

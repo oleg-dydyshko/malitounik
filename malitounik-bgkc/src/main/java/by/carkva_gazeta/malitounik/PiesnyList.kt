@@ -163,6 +163,11 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
         )
         piesnyAll.add(
             PiesnyListItem(
+                Settings.PIESNY_DA_BAGARODZICY, "pesny/piesni_bahar_uladarka_i_ziamli_i_nieba.html", "Уладарка і зямлі, і неба", "https://youtu.be/GgbeRuWu2Hw?"
+            )
+        )
+        piesnyAll.add(
+            PiesnyListItem(
                 Settings.PIESNY_ZA_BELARUS, "pesny/piesni_belarus_ave_maria_pazniak.html", "Ave Maria"
             )
         )

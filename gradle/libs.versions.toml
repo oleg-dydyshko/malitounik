@@ -22,13 +22,13 @@ material3 = "1.4.0"
 navigation = "2.9.8"
 compose-bom = "2026.06.01"
 activity-compose = "1.13.0"
-firebase-bom = "34.16.0"
+firebase-bom = "34.17.0"
 glanceAppwidget = "1.1.1"
 media3CommonKtx = "1.10.1"
 media3Session = "1.10.1"
 firebaseAppcheckKtx = "18.0.0"
-firebaseAppcheckPlayintegrity = "19.3.0"
-firebaseAppcheckDebug = "19.3.0"
+firebaseAppcheckPlayintegrity = "19.4.0"
+firebaseAppcheckDebug = "19.4.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
