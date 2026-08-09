@@ -544,18 +544,27 @@ open class CytanniListViewModel : ViewModel() {
             val file = File("${context.filesDir}/cache/cache1.txt")
             when (perevod) {
                 Settings.PEREVODCATOLIK -> Malitounik.referens.child("/chytanne/Catolik/catolikVersion.txt").getFile(file).addOnCompleteListener {
-                    if (it.isSuccessful) result = file.readText().trim().toInt()
-                    else error = true
+                    if (it.isSuccessful) {
+                        val res = file.readText().trim()
+                        result = if (res.isNotEmpty()) res.toInt()
+                        else 1
+                    } else error = true
                 }.await()
 
                 Settings.PEREVODSINOIDAL -> Malitounik.referens.child("/chytanne/Sinodal/sinaidalVersion.txt").getFile(file).addOnCompleteListener {
-                    if (it.isSuccessful) result = file.readText().trim().toInt()
-                    else error = true
+                    if (it.isSuccessful) {
+                        val res = file.readText().trim()
+                        result = if (res.isNotEmpty()) res.toInt()
+                        else 1
+                    }else error = true
                 }.await()
 
                 Settings.PEREVODNEWAMERICANBIBLE -> Malitounik.referens.child("/chytanne/NewAmericanBible/NewAmericanBibleVersion.txt").getFile(file).addOnCompleteListener {
-                    if (it.isSuccessful) result = file.readText().trim().toInt()
-                    else error = true
+                    if (it.isSuccessful) {
+                        val res = file.readText().trim()
+                        result = if (res.isNotEmpty()) res.toInt()
+                        else 1
+                    }else error = true
                 }.await()
             }
         } catch (_: Throwable) {
