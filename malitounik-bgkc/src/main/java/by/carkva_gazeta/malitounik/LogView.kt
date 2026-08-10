@@ -212,7 +212,7 @@ class LogView : ViewModel() {
         }
     }
 
-    private suspend fun sendAndClearLogFile(context: Context, zip: File, isClearLogFile: Boolean = true, isSendLogFile: Boolean = true) {
+    private fun sendAndClearLogFile(context: Context, zip: File, isClearLogFile: Boolean = true, isSendLogFile: Boolean = true) {
         if (isSendLogFile) {
             val sendIntent = Intent(Intent.ACTION_SEND)
             sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "by.carkva_gazeta.malitounik.fileprovider", zip))
@@ -220,8 +220,8 @@ class LogView : ViewModel() {
             sendIntent.type = "application/zip"
             context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.set_log_file)))
         }
-        if (isClearLogFile && Settings.isNetworkAvailable(context)) {
-            CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO).launch {
+            if (isClearLogFile && Settings.isNetworkAvailable(context)) {
                 val logFile = File("${context.filesDir}/cache/log.txt")
                 logFile.writer().use {
                     it.write("")

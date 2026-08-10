@@ -188,49 +188,40 @@ object Settings {
     }
 
     @Suppress("DEPRECATION")
-    fun isNetworkAvailable(context: Context, typeTransport: Int = TRANSPORT_ALL): Boolean {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val nw = connectivityManager.activeNetwork ?: return false
-        val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
-        when (typeTransport) {
-            TRANSPORT_CELLULAR -> {
-                if (actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) && actNw.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) {
-                    return true
+    suspend fun isNetworkAvailable(context: Context, typeTransport: Int = TRANSPORT_ALL): Boolean {
+        return withContext(Dispatchers.Main) {
+            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val nw = connectivityManager.activeNetwork ?: return@withContext false
+            val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return@withContext false
+            return@withContext when (typeTransport) {
+                TRANSPORT_CELLULAR -> {
+                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) && actNw.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
                 }
-            }
 
-            TRANSPORT_WIFI -> {
-                if (actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) && actNw.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) {
-                    return true
+                TRANSPORT_WIFI -> {
+                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) && actNw.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
                 }
-            }
 
-            TRANSPORT_ALL -> {
-                return when {
-                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) && actNw.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) -> {
-                        true
-                    }
+                TRANSPORT_ALL -> {
+                    when {
+                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) && actNw.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) -> true
 
-                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) && actNw.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) -> {
-                        true
-                    }
+                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) && actNw.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) -> true
 
-                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_VPN) && actNw.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) -> {
-                        true
-                    }
+                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_VPN) && actNw.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) -> true
 
-                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) && actNw.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) -> {
-                        true
-                    }
+                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) && actNw.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) -> true
 
-                    else -> {
-                        Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_LONG).show()
-                        false
+                        else -> {
+                            Toast.makeText(context, context.getString(R.string.no_internet), Toast.LENGTH_LONG).show()
+                            false
+                        }
                     }
                 }
+
+                else -> false
             }
         }
-        return false
     }
 
     private fun mkTime(year: Int, month: Int, day: Int, hour: Int): Long {
