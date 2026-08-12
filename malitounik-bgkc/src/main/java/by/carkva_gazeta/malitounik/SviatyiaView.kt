@@ -258,6 +258,25 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
     }
     val fileOpisanie = File("${context.filesDir}/sviatyja/opisanie$mun.json")
     val fileSvity = File("${context.filesDir}/sviaty.json")
+    LaunchedEffect(Settings.dzenNoch) {
+        if (svity) {
+            if (fileSvity.exists()) {
+                val sviatyiaListLocale = loadOpisanieSviat(context, position)
+                sviatyiaList.clear()
+                sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, true, position))
+            } else {
+                dialoNoIntent = true
+            }
+        } else {
+            if (fileOpisanie.exists()) {
+                val sviatyiaListLocale = loadOpisanieSviatyia(context, year, mun, day)
+                sviatyiaList.clear()
+                sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, false, position))
+            } else {
+                dialoNoIntent = true
+            }
+        }
+    }
     LaunchedEffect(Unit) {
         isProgressVisable = true
         if (!Settings.isNetworkAvailable(context)) {
@@ -1290,17 +1309,17 @@ fun loadOpisanieSviat(context: Context, position: Int): SnapshotStateList<Opisan
             val type = TypeToken.getParameterized(ArrayList::class.java, TypeToken.getParameterized(ArrayList::class.java, String::class.java).type).type
             val arrayList = gson.fromJson<ArrayList<ArrayList<String>>>(builder, type)
             arrayList?.forEach { strings ->
-                var puxomuia = false
+                var ruxomuia = false
                 val day = if (strings[2].toInt() == Settings.PASHA) Settings.data[position][22].toInt()
                 else Settings.data[position][1].toInt()
                 val mun = if (strings[2].toInt() == Settings.PASHA) 1
                 else Settings.data[position][2].toInt() + 1
                 if (strings[2].toInt() == Settings.UNDER) {
                     if (strings[3].contains("Айцоў першых 6-ці Ўсяленскіх сабораў", true) && Settings.data[position][1].toInt() >= 13 && Settings.data[position][1].toInt() <= 19 && Settings.data[position][2].toInt() == Calendar.JULY) {
-                        puxomuia = true
+                        ruxomuia = true
                     }
                 }
-                if (puxomuia || (day == strings[0].toInt() && mun == strings[1].toInt())) {
+                if (ruxomuia || (day == strings[0].toInt() && mun == strings[1].toInt())) {
                     var res = strings[3]
                     if (Settings.dzenNoch) res = res.replace("#d00505", "#ff6666", true)
                     val t1 = res.indexOf("</strong>")
