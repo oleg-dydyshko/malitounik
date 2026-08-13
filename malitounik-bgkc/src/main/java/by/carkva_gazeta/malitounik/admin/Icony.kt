@@ -493,6 +493,10 @@ suspend fun getIcons(context: Context, viewModel: SviatyiaViewModel, resultList:
         val images = ArrayList<DataImages>()
         val itPos = StringBuilder()
         val list = Malitounik.referens.child("/chytanne/icons").list(1000).await()
+        if (list.items.isEmpty()) {
+            Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
+            return
+        }
         var day = viewModel.svaity[viewModel.sviatyPosotion][0].toInt()
         var mun = viewModel.svaity[viewModel.sviatyPosotion][1].toInt()
         val type = viewModel.svaity[viewModel.sviatyPosotion][2].toInt()
