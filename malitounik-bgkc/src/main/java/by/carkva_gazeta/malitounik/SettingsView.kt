@@ -251,7 +251,7 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                         })
                     }
                 }, actions = {
-                    if (admin) {
+                    if (admin && !backPressHandled) {
                         IconButton(onClick = {
                             Settings.vibrate()
                             dialodAdmitExit = true

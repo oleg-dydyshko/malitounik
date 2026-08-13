@@ -466,103 +466,105 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                         }
                     },
                     actions = {
-                        if (viewModel.edit) {
-                            PlainTooltip(stringResource(R.string.edit_admin_piarliny), TooltipAnchorPosition.Below) {
-                                IconButton({
-                                    viewPiarlinyEdit = true
-                                }) {
-                                    Icon(
-                                        modifier = Modifier.size(24.dp),
-                                        painter = painterResource(R.drawable.book_white_edit),
-                                        tint = PrimaryTextBlack,
-                                        contentDescription = stringResource(R.string.edit_admin_piarliny)
-                                    )
-                                }
-                            }
-                            PlainTooltip(stringResource(R.string.edit_admin_img_sviat), TooltipAnchorPosition.Below) {
-                                IconButton({
-                                    navigationActions.navigateToEditIcon()
-                                }) {
-                                    Icon(
-                                        modifier = Modifier.size(24.dp),
-                                        painter = painterResource(R.drawable.image_icon_file),
-                                        tint = PrimaryTextBlack,
-                                        contentDescription = stringResource(R.string.edit_admin_img_sviat)
-                                    )
-                                }
-                            }
-                            PlainTooltip(stringResource(R.string.save_sabytie), TooltipAnchorPosition.Below) {
-                                IconButton({
-                                    saveFilesSvaityxISvait(context, viewModel.svaity, viewModel.sviatyPosotion, viewModel.positionPasha, textFieldValueStateTitle.text, isLoad = {
-                                        isProgressVisable = it
-                                    }) {
-                                        if (svity) {
-                                            if (fileSvity.exists()) {
-                                                val sviatyiaListLocale = loadOpisanieSviat(context, position)
-                                                sviatyiaList.clear()
-                                                sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, true, position))
-                                            } else {
-                                                dialoNoIntent = true
-                                            }
-                                        } else {
-                                            if (fileOpisanie.exists()) {
-                                                val sviatyiaListLocale = loadOpisanieSviatyia(context, year, mun, day)
-                                                sviatyiaList.clear()
-                                                sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, false, position))
-                                            } else {
-                                                dialoNoIntent = true
-                                            }
-                                        }
-                                    }
-                                }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.save),
-                                        tint = PrimaryTextBlack,
-                                        contentDescription = stringResource(R.string.save_sabytie)
-                                    )
-                                }
-                            }
-                        } else {
-                            if (checkPiarliny) {
-                                PlainTooltip(stringResource(R.string.piarliny), TooltipAnchorPosition.Below) {
+                        if (!backPressHandled) {
+                            if (viewModel.edit) {
+                                PlainTooltip(stringResource(R.string.edit_admin_piarliny), TooltipAnchorPosition.Below) {
                                     IconButton({
-                                        viewPiarliny = true
+                                        viewPiarlinyEdit = true
                                     }) {
                                         Icon(
                                             modifier = Modifier.size(24.dp),
-                                            painter = painterResource(R.drawable.book_white),
+                                            painter = painterResource(R.drawable.book_white_edit),
                                             tint = PrimaryTextBlack,
-                                            contentDescription = stringResource(R.string.piarliny)
+                                            contentDescription = stringResource(R.string.edit_admin_piarliny)
                                         )
                                     }
                                 }
-                            }
-                            PlainTooltip(stringResource(R.string.fullscreen_apis), TooltipAnchorPosition.Below) {
-                                IconButton(onClick = {
-                                    Settings.vibrate()
-                                    fullscreen = true
-                                }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.fullscreen),
-                                        contentDescription = stringResource(R.string.fullscreen),
-                                        tint = MaterialTheme.colorScheme.onSecondary
-                                    )
-                                }
-                            }
-                            if (k.getBoolean("admin", false)) {
-                                VerticalDivider()
-                                PlainTooltip(stringResource(R.string.redagaktirovat), TooltipAnchorPosition.Below) {
-                                    IconButton(onClick = {
-                                        Settings.vibrate()
-                                        if (viewModel.svaity.isNotEmpty()) textFieldValueStateTitle = TextFieldValue(viewModel.svaity[viewModel.sviatyPosotion][3])
-                                        imageFull = false
-                                        viewModel.edit = true
+                                PlainTooltip(stringResource(R.string.edit_admin_img_sviat), TooltipAnchorPosition.Below) {
+                                    IconButton({
+                                        navigationActions.navigateToEditIcon()
                                     }) {
                                         Icon(
-                                            painter = painterResource(R.drawable.edit),
-                                            contentDescription = stringResource(R.string.redagaktirovat),
+                                            modifier = Modifier.size(24.dp),
+                                            painter = painterResource(R.drawable.image_icon_file),
+                                            tint = PrimaryTextBlack,
+                                            contentDescription = stringResource(R.string.edit_admin_img_sviat)
+                                        )
+                                    }
+                                }
+                                PlainTooltip(stringResource(R.string.save_sabytie), TooltipAnchorPosition.Below) {
+                                    IconButton({
+                                        saveFilesSvaityxISvait(context, viewModel.svaity, viewModel.sviatyPosotion, viewModel.positionPasha, textFieldValueStateTitle.text, isLoad = {
+                                            isProgressVisable = it
+                                        }) {
+                                            if (svity) {
+                                                if (fileSvity.exists()) {
+                                                    val sviatyiaListLocale = loadOpisanieSviat(context, position)
+                                                    sviatyiaList.clear()
+                                                    sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, true, position))
+                                                } else {
+                                                    dialoNoIntent = true
+                                                }
+                                            } else {
+                                                if (fileOpisanie.exists()) {
+                                                    val sviatyiaListLocale = loadOpisanieSviatyia(context, year, mun, day)
+                                                    sviatyiaList.clear()
+                                                    sviatyiaList.addAll(loadIconsOnImageView(context, sviatyiaListLocale, false, position))
+                                                } else {
+                                                    dialoNoIntent = true
+                                                }
+                                            }
+                                        }
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.save),
+                                            tint = PrimaryTextBlack,
+                                            contentDescription = stringResource(R.string.save_sabytie)
+                                        )
+                                    }
+                                }
+                            } else {
+                                if (checkPiarliny) {
+                                    PlainTooltip(stringResource(R.string.piarliny), TooltipAnchorPosition.Below) {
+                                        IconButton({
+                                            viewPiarliny = true
+                                        }) {
+                                            Icon(
+                                                modifier = Modifier.size(24.dp),
+                                                painter = painterResource(R.drawable.book_white),
+                                                tint = PrimaryTextBlack,
+                                                contentDescription = stringResource(R.string.piarliny)
+                                            )
+                                        }
+                                    }
+                                }
+                                PlainTooltip(stringResource(R.string.fullscreen_apis), TooltipAnchorPosition.Below) {
+                                    IconButton(onClick = {
+                                        Settings.vibrate()
+                                        fullscreen = true
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.fullscreen),
+                                            contentDescription = stringResource(R.string.fullscreen),
                                             tint = MaterialTheme.colorScheme.onSecondary
                                         )
+                                    }
+                                }
+                                if (k.getBoolean("admin", false)) {
+                                    VerticalDivider()
+                                    PlainTooltip(stringResource(R.string.redagaktirovat), TooltipAnchorPosition.Below) {
+                                        IconButton(onClick = {
+                                            Settings.vibrate()
+                                            if (viewModel.svaity.isNotEmpty()) textFieldValueStateTitle = TextFieldValue(viewModel.svaity[viewModel.sviatyPosotion][3])
+                                            imageFull = false
+                                            viewModel.edit = true
+                                        }) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.edit),
+                                                contentDescription = stringResource(R.string.redagaktirovat),
+                                                tint = MaterialTheme.colorScheme.onSecondary
+                                            )
+                                        }
                                     }
                                 }
                             }

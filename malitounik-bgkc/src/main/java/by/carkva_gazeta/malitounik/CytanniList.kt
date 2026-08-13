@@ -1007,181 +1007,183 @@ fun CytanniList(
                         }
                     }
                 }, actions = {
-                    if (isSelectMode) {
-                        PlainTooltip(stringResource(R.string.select_all), TooltipAnchorPosition.Below) {
-                            IconButton(onClick = {
-                                Settings.vibrate()
-                                isSelectAll = true
-                            }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.select_all), contentDescription = stringResource(R.string.select_all), tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                            }
-                        }
-                        PlainTooltip(stringResource(R.string.copy_list), TooltipAnchorPosition.Below) {
-                            IconButton(onClick = {
-                                Settings.vibrate()
-                                isCopyMode = true
-                            }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.content_copy), contentDescription = stringResource(R.string.copy_list), tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                            }
-                        }
-                        PlainTooltip(stringResource(R.string.share), TooltipAnchorPosition.Below) {
-                            IconButton(onClick = {
-                                Settings.vibrate()
-                                isShareMode = true
-                            }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.share), contentDescription = stringResource(R.string.share), tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                            }
-                        }
-                    } else {
-                        if (!isBottomBar) {
-                            var expandedUp by remember { mutableStateOf(false) }
-                            LaunchedEffect(expandedUp) {
-                                if (viewModel.autoScrollSensor && !dialogRazdel && !showDropdown) viewModel.autoScroll(title, !expandedUp)
-                            }
-                            if (!(viewModel.isSpeaking || viewModel.isPaused)) {
-                                if (viewModel.listState[viewModel.selectedIndex].lazyListState.canScrollForward) {
-                                    val iconAutoScroll = if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
-                                    else painterResource(R.drawable.play_circle)
-                                    PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play), TooltipAnchorPosition.Below) {
-                                        IconButton(onClick = {
-                                            Settings.vibrate()
-                                            viewModel.autoScrollSensor = !viewModel.autoScrollSensor
-                                            viewModel.autoScroll(title, viewModel.autoScrollSensor)
-                                            if (viewModel.autoScrollSensor) {
-                                                actyvity.window.addFlags(
-                                                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                                                )
-                                            } else if (!k.getBoolean("power", false)) {
-                                                actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                                            }
-                                        }) {
-                                            Icon(
-                                                iconAutoScroll, contentDescription = stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play), tint = MaterialTheme.colorScheme.onSecondary
-                                            )
-                                        }
-                                    }
-                                } else if (viewModel.listState[viewModel.selectedIndex].lazyListState.canScrollBackward) {
-                                    PlainTooltip(stringResource(R.string.auto_up), TooltipAnchorPosition.Below) {
-                                        IconButton(onClick = {
-                                            Settings.vibrate()
-                                            isUpList = true
-                                        }) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.arrow_upward), contentDescription = stringResource(R.string.auto_up), tint = MaterialTheme.colorScheme.onSecondary
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                            if (biblia == Settings.CHYTANNI_BIBLIA) {
-                                PlainTooltip(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), TooltipAnchorPosition.Below) {
-                                    IconButton(
-                                        onClick = {
-                                            Settings.vibrate()
-                                            viewModel.saveVybranoe(context, perevod)
-                                        }) {
-                                        val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
-                                        else painterResource(R.drawable.star)
-                                        Icon(
-                                            painter = icon, contentDescription = stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), tint = MaterialTheme.colorScheme.onSecondary
-                                        )
-                                    }
-                                }
-                            }
-                            PlainTooltip(stringResource(R.string.more_items), TooltipAnchorPosition.Below) {
+                    if (!backPressHandled) {
+                        if (isSelectMode) {
+                            PlainTooltip(stringResource(R.string.select_all), TooltipAnchorPosition.Below) {
                                 IconButton(onClick = {
                                     Settings.vibrate()
-                                    expandedUp = true
+                                    isSelectAll = true
                                 }) {
                                     Icon(
-                                        painter = painterResource(R.drawable.more_vert), contentDescription = stringResource(R.string.more_items), tint = MaterialTheme.colorScheme.onSecondary
+                                        painter = painterResource(R.drawable.select_all), contentDescription = stringResource(R.string.select_all), tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
                             }
-                            AppDropdownMenu(
-                                expanded = expandedUp, onDismissRequest = { expandedUp = false }) {
-                                if (biblia == Settings.CHYTANNI_BIBLIA && viewModel.listState.size - 1 > 1) {
+                            PlainTooltip(stringResource(R.string.copy_list), TooltipAnchorPosition.Below) {
+                                IconButton(onClick = {
+                                    Settings.vibrate()
+                                    isCopyMode = true
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.content_copy), contentDescription = stringResource(R.string.copy_list), tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
+                            }
+                            PlainTooltip(stringResource(R.string.share), TooltipAnchorPosition.Below) {
+                                IconButton(onClick = {
+                                    Settings.vibrate()
+                                    isShareMode = true
+                                }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.share), contentDescription = stringResource(R.string.share), tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
+                            }
+                        } else {
+                            if (!isBottomBar) {
+                                var expandedUp by remember { mutableStateOf(false) }
+                                LaunchedEffect(expandedUp) {
+                                    if (viewModel.autoScrollSensor && !dialogRazdel && !showDropdown) viewModel.autoScroll(title, !expandedUp)
+                                }
+                                if (!(viewModel.isSpeaking || viewModel.isPaused)) {
+                                    if (viewModel.listState[viewModel.selectedIndex].lazyListState.canScrollForward) {
+                                        val iconAutoScroll = if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
+                                        else painterResource(R.drawable.play_circle)
+                                        PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play), TooltipAnchorPosition.Below) {
+                                            IconButton(onClick = {
+                                                Settings.vibrate()
+                                                viewModel.autoScrollSensor = !viewModel.autoScrollSensor
+                                                viewModel.autoScroll(title, viewModel.autoScrollSensor)
+                                                if (viewModel.autoScrollSensor) {
+                                                    actyvity.window.addFlags(
+                                                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                                    )
+                                                } else if (!k.getBoolean("power", false)) {
+                                                    actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                                                }
+                                            }) {
+                                                Icon(
+                                                    iconAutoScroll, contentDescription = stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play), tint = MaterialTheme.colorScheme.onSecondary
+                                                )
+                                            }
+                                        }
+                                    } else if (viewModel.listState[viewModel.selectedIndex].lazyListState.canScrollBackward) {
+                                        PlainTooltip(stringResource(R.string.auto_up), TooltipAnchorPosition.Below) {
+                                            IconButton(onClick = {
+                                                Settings.vibrate()
+                                                isUpList = true
+                                            }) {
+                                                Icon(
+                                                    painter = painterResource(R.drawable.arrow_upward), contentDescription = stringResource(R.string.auto_up), tint = MaterialTheme.colorScheme.onSecondary
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                                if (biblia == Settings.CHYTANNI_BIBLIA) {
+                                    PlainTooltip(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), TooltipAnchorPosition.Below) {
+                                        IconButton(
+                                            onClick = {
+                                                Settings.vibrate()
+                                                viewModel.saveVybranoe(context, perevod)
+                                            }) {
+                                            val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
+                                            else painterResource(R.drawable.star)
+                                            Icon(
+                                                painter = icon, contentDescription = stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), tint = MaterialTheme.colorScheme.onSecondary
+                                            )
+                                        }
+                                    }
+                                }
+                                PlainTooltip(stringResource(R.string.more_items), TooltipAnchorPosition.Below) {
+                                    IconButton(onClick = {
+                                        Settings.vibrate()
+                                        expandedUp = true
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.more_vert), contentDescription = stringResource(R.string.more_items), tint = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    }
+                                }
+                                AppDropdownMenu(
+                                    expanded = expandedUp, onDismissRequest = { expandedUp = false }) {
+                                    if (biblia == Settings.CHYTANNI_BIBLIA && viewModel.listState.size - 1 > 1) {
+                                        DropdownMenuItem(onClick = {
+                                            Settings.vibrate()
+                                            expandedUp = false
+                                            dialogRazdel = true
+                                            viewModel.autoScroll(title, false)
+                                        }, text = { Text(stringResource(R.string.pazdel), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.apps), contentDescription = stringResource(R.string.pazdel)
+                                            )
+                                        })
+                                    }
                                     DropdownMenuItem(onClick = {
                                         Settings.vibrate()
                                         expandedUp = false
-                                        dialogRazdel = true
                                         viewModel.autoScroll(title, false)
-                                    }, text = { Text(stringResource(R.string.pazdel), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                        isSelectMode = true
+                                    }, text = { Text(stringResource(R.string.share), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
                                         Icon(
-                                            painter = painterResource(R.drawable.apps), contentDescription = stringResource(R.string.pazdel)
+                                            painter = painterResource(R.drawable.share), contentDescription = stringResource(R.string.share)
+                                        )
+                                    })
+                                    DropdownMenuItem(onClick = {
+                                        Settings.vibrate()
+                                        expandedUp = false
+                                        fullscreen = true
+                                    }, text = { Text(stringResource(R.string.fullscreen), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.fullscreen), contentDescription = stringResource(R.string.fullscreen)
+                                        )
+                                    })
+                                    DropdownMenuItem(onClick = {
+                                        Settings.vibrate()
+                                        expandedUp = false
+                                        showDropdown = !showDropdown
+                                        viewModel.autoScroll(title, false)
+                                        menuPosition = 2
+                                    }, text = { Text(stringResource(R.string.perevody), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                        Icon(
+                                            modifier = Modifier.size(24.dp),
+                                            painter = painterResource(R.drawable.book_red), contentDescription = stringResource(R.string.perevody)
+                                        )
+                                    })
+                                    DropdownMenuItem(onClick = {
+                                        Settings.vibrate()
+                                        expandedUp = false
+                                        showDropdown = !showDropdown
+                                        viewModel.autoScroll(title, false)
+                                        menuPosition = 1
+                                    }, text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.format_size), contentDescription = stringResource(R.string.menu_font_size_app)
+                                        )
+                                    })
+                                    DropdownMenuItem(onClick = {
+                                        Settings.vibrate()
+                                        expandedUp = false
+                                        if (viewModel.isSpeaking || viewModel.isPaused) {
+                                            viewModel.isSpeaking = false
+                                            viewModel.isPaused = false
+                                            viewModel.stop()
+                                        } else {
+                                            if (k.getBoolean("isTTSHelp", true) && !(perevod == Settings.PEREVODSINOIDAL || perevod == Settings.PEREVODNEWAMERICANBIBLE)) {
+                                                viewModel.dialodTTSHelp = true
+                                            } else {
+                                                viewModel.isSpeaking = true
+                                                viewModel.speak(viewModel.clearTextForTTS(viewModel.listState[viewModel.selectedIndex].item))
+                                                viewModel.autoScroll(title, false)
+                                                viewModel.autoScrollSensor = false
+                                            }
+                                        }
+                                    }, text = { Text(stringResource(R.string.tts), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.text_to_speech), contentDescription = stringResource(R.string.tts)
                                         )
                                     })
                                 }
-                                DropdownMenuItem(onClick = {
-                                    Settings.vibrate()
-                                    expandedUp = false
-                                    viewModel.autoScroll(title, false)
-                                    isSelectMode = true
-                                }, text = { Text(stringResource(R.string.share), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.share), contentDescription = stringResource(R.string.share)
-                                    )
-                                })
-                                DropdownMenuItem(onClick = {
-                                    Settings.vibrate()
-                                    expandedUp = false
-                                    fullscreen = true
-                                }, text = { Text(stringResource(R.string.fullscreen), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.fullscreen), contentDescription = stringResource(R.string.fullscreen)
-                                    )
-                                })
-                                DropdownMenuItem(onClick = {
-                                    Settings.vibrate()
-                                    expandedUp = false
-                                    showDropdown = !showDropdown
-                                    viewModel.autoScroll(title, false)
-                                    menuPosition = 2
-                                }, text = { Text(stringResource(R.string.perevody), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                    Icon(
-                                        modifier = Modifier.size(24.dp),
-                                        painter = painterResource(R.drawable.book_red), contentDescription = stringResource(R.string.perevody)
-                                    )
-                                })
-                                DropdownMenuItem(onClick = {
-                                    Settings.vibrate()
-                                    expandedUp = false
-                                    showDropdown = !showDropdown
-                                    viewModel.autoScroll(title, false)
-                                    menuPosition = 1
-                                }, text = { Text(stringResource(R.string.menu_font_size_app), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.format_size), contentDescription = stringResource(R.string.menu_font_size_app)
-                                    )
-                                })
-                                DropdownMenuItem(onClick = {
-                                    Settings.vibrate()
-                                    expandedUp = false
-                                    if (viewModel.isSpeaking || viewModel.isPaused) {
-                                        viewModel.isSpeaking = false
-                                        viewModel.isPaused = false
-                                        viewModel.stop()
-                                    } else {
-                                        if (k.getBoolean("isTTSHelp", true) && !(perevod == Settings.PEREVODSINOIDAL || perevod == Settings.PEREVODNEWAMERICANBIBLE)) {
-                                            viewModel.dialodTTSHelp = true
-                                        } else {
-                                            viewModel.isSpeaking = true
-                                            viewModel.speak(viewModel.clearTextForTTS(viewModel.listState[viewModel.selectedIndex].item))
-                                            viewModel.autoScroll(title, false)
-                                            viewModel.autoScrollSensor = false
-                                        }
-                                    }
-                                }, text = { Text(stringResource(R.string.tts), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.text_to_speech), contentDescription = stringResource(R.string.tts)
-                                    )
-                                })
                             }
                         }
                     }
