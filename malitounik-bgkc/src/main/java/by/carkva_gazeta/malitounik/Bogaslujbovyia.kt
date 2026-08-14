@@ -825,7 +825,6 @@ fun Bogaslujbovyia(
                 if (!k.getBoolean("power", false)) actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 viewModel.autoScroll(title, false)
                 viewModel.autoScrollSensor = false
-                viewModel.saveVybranaeOnDisk(context, title, resursEncode)
                 navController.popBackStack()
             }
         }
@@ -1240,7 +1239,6 @@ fun Bogaslujbovyia(
                                                         backPressHandled = true
                                                         viewModel.autoScroll(title, false)
                                                         viewModel.autoScrollSensor = false
-                                                        viewModel.saveVybranaeOnDisk(context, title, resurs)
                                                         navController.popBackStack()
                                                     }
                                                 }
