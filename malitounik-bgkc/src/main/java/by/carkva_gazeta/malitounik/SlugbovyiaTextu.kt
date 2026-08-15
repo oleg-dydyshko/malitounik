@@ -1145,6 +1145,11 @@ class SlugbovyiaTextu {
         )
         datMinALL.add(
             SlugbovyiaTextuData(
+                228, "Усьпеньне Найсьвяцейшай Багародзіцы і Заўсёды Дзевы Марыі", "bogashlugbovya/mm_15_08_uspiennie_jutran.html", JUTRAN
+            )
+        )
+        datMinALL.add(
+            SlugbovyiaTextuData(
                 223, "Пасьвяцьце Перамяненьня і сьв. мучаніка Лаўрына", "bogashlugbovya/mm_10_08_pasviaccie_pieramianiennia_muczanika_laurena_viaczernia.html", VIACZERNIA
             )
         )
