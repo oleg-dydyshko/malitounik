@@ -20,7 +20,12 @@ class Malitounik : Application() {
     companion object {
         private var instance: Malitounik? = null
         private val storage: FirebaseStorage
-            get() = Firebase.storage
+            get() {
+                val firebase = Firebase.storage
+                firebase.maxUploadRetryTimeMillis = 300000
+                firebase.maxOperationRetryTimeMillis = 300000
+                return firebase
+            }
         val referens: StorageReference
             get() = storage.reference
 
