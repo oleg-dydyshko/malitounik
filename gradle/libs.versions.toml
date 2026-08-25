@@ -1,6 +1,6 @@
 [versions]
 media3Exoplayer = "1.11.0"
-agp = "9.3.1"
+agp = "9.3.2"
 kotlin = "2.4.10"
 services = "4.5.0"
 coreKtx = "1.19.0"
@@ -22,13 +22,13 @@ material3 = "1.4.0"
 navigation = "2.9.8"
 compose-bom = "2026.08.00"
 activity-compose = "1.13.0"
-firebase-bom = "34.17.0"
+firebase-bom = "34.18.0"
 glanceAppwidget = "1.1.1"
 media3CommonKtx = "1.11.0"
 media3Session = "1.11.0"
 firebaseAppcheckKtx = "18.0.0"
-firebaseAppcheckPlayintegrity = "19.4.0"
-firebaseAppcheckDebug = "19.4.0"
+firebaseAppcheckPlayintegrity = "19.4.1"
+firebaseAppcheckDebug = "19.4.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

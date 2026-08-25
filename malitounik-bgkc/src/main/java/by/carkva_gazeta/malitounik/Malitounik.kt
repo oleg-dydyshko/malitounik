@@ -22,7 +22,6 @@ class Malitounik : Application() {
         private val storage: FirebaseStorage
             get() {
                 val firebase = Firebase.storage
-                firebase.maxUploadRetryTimeMillis = 300000
                 firebase.maxOperationRetryTimeMillis = 300000
                 return firebase
             }
