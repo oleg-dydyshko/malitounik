@@ -208,14 +208,9 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
             var day: String
             var i = 0
             var newDay = 0
-            var end = 42
-            if (42 - (munAll + wik) >= 6) {
-                end -= 7
-            }
-            if (munAll + wik == 29) {
-                end -= 7
-            }
             var e = 1
+            val doDay = wik - 1
+            var ii = 0
             Column(
                 modifier = Modifier
                     .clip(RoundedCornerShape(10.dp))
@@ -300,28 +295,35 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                         color = PrimaryTextBlack
                     )
                 }
-                (1..end / 7).forEach { _ ->
+                (1..6).forEach { _ ->
                     Row(modifier = Modifier.fillMaxWidth()) {
                         (1..7).forEach { _ ->
                             if (e < wik) {
                                 oldDay++
                                 day = "start"
+                                ii++
                             } else if (e < munAll + wik) {
                                 i++
                                 day = i.toString()
                             } else {
                                 newDay++
                                 day = "end"
-                                i = 0
+                                i++
                             }
                             when (day) {
                                 "start" -> {
                                     val fon = if (e == 1) BezPosta
                                     else Divider
+                                    val clickPos = calPas - (doDay - ii) - 1
                                     Text(
                                         text = oldDay.toString(),
                                         modifier = Modifier
                                             .weight(1f)
+                                            .clickable {
+                                                Settings.vibrate()
+                                                Settings.caliandarPosition = clickPos
+                                                setPageCaliandar(clickPos)
+                                            }
                                             .padding(end = 1.dp, bottom = 1.dp)
                                             .background(fon)
                                             .padding(6.dp),
@@ -332,12 +334,20 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                                 }
 
                                 "end" -> {
+                                    val fon = if (Settings.data[calPas + i - 1][0].toInt() == Calendar.SUNDAY) BezPosta
+                                    else Divider
+                                    val clickPos = calPas + i - 1
                                     Text(
                                         text = newDay.toString(),
                                         modifier = Modifier
                                             .weight(1f)
+                                            .clickable {
+                                                Settings.vibrate()
+                                                Settings.caliandarPosition = clickPos
+                                                setPageCaliandar(clickPos)
+                                            }
                                             .padding(end = 1.dp, bottom = 1.dp)
-                                            .background(Divider)
+                                            .background(fon)
                                             .padding(6.dp),
                                         textAlign = TextAlign.Center,
                                         color = SecondaryText,
