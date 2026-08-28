@@ -10,10 +10,10 @@ android {
 
     defaultConfig {
         applicationId = "by.carkva_gazeta.malitounik"
-        minSdk = 23
+        minSdk = 24
         targetSdk = 37
-        versionCode = 442668
-        versionName = "6.0.7.26"
+        versionCode = 442669
+        versionName = "6.0.7.27"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
