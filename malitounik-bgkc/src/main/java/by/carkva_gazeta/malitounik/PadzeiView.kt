@@ -1122,7 +1122,7 @@ fun AddPadzeia(
     }
     if (save) {
         savePadzeia(
-            context, listPadzeia, position, padzeia, setTimeZa, data, data2, time, time2, textFieldState2Position, textFieldStatePosition, modeRepit, setPautorRaz, countText, konecSabytie, colorPosition, isSave = { isSave() })
+            context, editPadzeia,listPadzeia, position, padzeia, setTimeZa, data, data2, time, time2, textFieldState2Position, textFieldStatePosition, modeRepit, setPautorRaz, countText, konecSabytie, colorPosition, isSave = { isSave() })
     }
 }
 
@@ -1191,7 +1191,7 @@ fun MyTimePickerDialog(
 }
 
 fun savePadzeia(
-    context: Context, padzeiaList: SnapshotStateList<Padzeia>, position: Int, padzeiaNazva: String, pavedamicZaText: String, data: String, data2: String, time: String, time2: String, pavedamicZaPosit: Int, repit: Int, repitSettings: Int, repitSettingsCountText: String, repitSettingsDataText: String, konecSabytie: Boolean, color: Int, isSave: () -> Unit
+    context: Context, editPadzeia: Boolean, padzeiaList: SnapshotStateList<Padzeia>, position: Int, padzeiaNazva: String, pavedamicZaText: String, data: String, data2: String, time: String, time2: String, pavedamicZaPosit: Int, repit: Int, repitSettings: Int, repitSettingsCountText: String, repitSettingsDataText: String, konecSabytie: Boolean, color: Int, isSave: () -> Unit
 ) {
     val edit = padzeiaNazva.trim()
     var edit2 = pavedamicZaText
@@ -1223,7 +1223,7 @@ fun savePadzeia(
         } else {
             edit2 = "-1"
         }
-        if (position != -1 && padzeiaList.isNotEmpty()) {
+        if (position != -1 && padzeiaList.isNotEmpty() && editPadzeia) {
             val p = padzeiaList[position]
             val padz = p.padz
             val del = ArrayList<Padzeia>()
