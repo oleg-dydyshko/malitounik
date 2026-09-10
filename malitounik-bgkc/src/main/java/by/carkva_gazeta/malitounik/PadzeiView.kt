@@ -1225,9 +1225,10 @@ fun savePadzeia(
         }
         if (position != -1 && padzeiaList.isNotEmpty()) {
             val p = padzeiaList[position]
+            val padz = p.padz
             val del = ArrayList<Padzeia>()
             padzeiaList.forEach {
-                if (p.padz == it.padz) {
+                if (padz == it.padz) {
                     del.add(it)
                     if (it.sec != "-1") {
                         val intent = Settings.createIntentSabytie(context, it.padz, it.dat, it.tim)
