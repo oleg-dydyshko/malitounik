@@ -91,8 +91,8 @@ object Settings {
     const val TRANSPORT_ALL = 100
     const val TRANSPORT_WIFI = 101
     const val TRANSPORT_CELLULAR = 102
-    const val GET_CALIANDAR_YEAR_MIN = 2024
-    const val GET_CALIANDAR_YEAR_MAX = 2027
+    const val GET_CALIANDAR_YEAR_MIN = 2025
+    const val GET_CALIANDAR_YEAR_MAX = 2028
     const val NOTIFICATION_CHANNEL_ID_SABYTIE = "3003"
     const val NOTIFICATION_CHANNEL_ID_SVIATY = "2003"
     const val NOTIFICATION_CHANNEL_ID_RADIO_MARYIA = "4007"

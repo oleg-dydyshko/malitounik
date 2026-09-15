@@ -417,8 +417,8 @@ fun MaeNatatki(
                                 textFieldLoaded = true
                             }
                         }, placeholder = { Text(stringResource(R.string.natatka), fontSize = Settings.fontInterface.sp) }, value = viewModel.textFieldValueNatatkaContent, onValueChange = {
-                        viewModel.textFieldValueNatatkaContent = it
-                    }, textStyle = TextStyle(fontSize = Settings.fontInterface.sp)
+                    viewModel.textFieldValueNatatkaContent = it
+                }, textStyle = TextStyle(fontSize = Settings.fontInterface.sp)
                 )
             } else {
                 SelectionContainer {
@@ -439,20 +439,16 @@ fun MaeNatatki(
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(start = 10.dp)
-                                .combinedClickable(
-                                    onClick = {
-                                        Settings.vibrate()
-                                        viewModel.natatkaPosition = index
-                                        viewModel.natatkaVisable = true
-                                        viewModel.textFieldValueState = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].title)
-                                        viewModel.textFieldValueNatatkaContent = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].content)
-                                    },
-                                    onLongClick = {
-                                        Settings.vibrate(true)
-                                        viewModel.isDeliteNatatka = true
-                                    }
-                                ), verticalAlignment = Alignment.CenterVertically
-                        ) {
+                                .combinedClickable(onClick = {
+                                    Settings.vibrate()
+                                    viewModel.natatkaPosition = index
+                                    viewModel.natatkaVisable = true
+                                    viewModel.textFieldValueState = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].title)
+                                    viewModel.textFieldValueNatatkaContent = TextFieldValue(viewModel.fileList[viewModel.natatkaPosition].content)
+                                }, onLongClick = {
+                                    Settings.vibrate(true)
+                                    viewModel.isDeliteNatatka = true
+                                }), verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 modifier = Modifier.size(5.dp), painter = painterResource(R.drawable.poiter), tint = MaterialTheme.colorScheme.primary, contentDescription = null
                             )
@@ -463,15 +459,12 @@ fun MaeNatatki(
                             )
                         }
                         if (viewModel.fileList.size > 1) {
-                            Icon(
-                                modifier = Modifier
-                                    .clickable {
-                                        dialogHelpCustomSort = true
-                                    }
-                                    .padding(top = 10.dp, start = 5.dp, end = 15.dp, bottom = 10.dp)
-                                    .size(24.dp),
-                                painter = painterResource(R.drawable.menu_move), tint = Divider, contentDescription = null
-                            )
+                            Icon(modifier = Modifier
+                                .clickable {
+                                    dialogHelpCustomSort = true
+                                }
+                                .padding(top = 10.dp, start = 5.dp, end = 15.dp, bottom = 10.dp)
+                                .size(24.dp), painter = painterResource(R.drawable.menu_move), tint = Divider, contentDescription = null)
                         }
                     }
                     HorizontalDivider()
