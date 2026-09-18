@@ -631,7 +631,7 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
         )
         piesnyAll.add(
             PiesnyListItem(
-                Settings.PIESNY_PRASLAULENNIA, "pesny/piesni_prasl_kryzu_chrystovy.html", "Крыжу Хрыстовы", "https://youtu.be/GfD6ga5iknM"
+                Settings.PIESNY_PRASLAULENNIA, "pesny/piesni_prasl_kryzu_chrystovy.html", "Крыжу Хрыстовы", "https://youtu.be/gSVsLqvXQbg?si=x-zVAK-3aqFRv36k"
             )
         )
         piesnyAll.add(PiesnyListItem(Settings.PIESNY_PRASLAULENNIA, "pesny/piesni_prasl_tvoj_chram.html", "Твой хpам"))
