@@ -2663,7 +2663,7 @@ fun knigaBiblii(kniga: String): Int {
     if (kniga == "Плач") bible = 29
     if (kniga == "Пасл Ер") bible = 30
     if (kniga == "Вар") bible = 31
-    if (kniga == "Езк") bible = 32
+    if (kniga == "Езк" || kniga == "Ез") bible = 32
     if (kniga == "Дан") bible = 33
     if (kniga == "Ас") bible = 34
     if (kniga == "Ёіл") bible = 35

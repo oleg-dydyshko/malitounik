@@ -2326,6 +2326,8 @@ class SlugbovyiaTextu {
         datMinALL.add(SlugbovyiaTextuData(366, "31 сьнежня – Адданьне сьвята Нараджэньня Госпада, Бога і Збаўцы нашага Ісуса Хрыста", "bogashlugbovya/mm_31_12_addannie_sviata_rastva_viaczernia.html", VIACZERNIA))
         datMinALL.add(SlugbovyiaTextuData(NIADZELIA_PASLA_RASTVA_PRAV_JAZEPA_CARA_DAVIDA_JAKUBA, "Нядзеля пасьля Нараджэньня Госпада і Збаўцы нашага Ісуса Хрыста. Памяць сьвятых і праведных Язэпа, цара Давіда і Якуба, сваяка Гасподняга", "bogashlugbovya/mm_26_31_ndz_pasla_rastva_prav_jazepa_cara_davida_jakuba_liturhija.html", LITURHIJA))
         datMinALL.add(SlugbovyiaTextuData(22, "22 студзеня – Апостала Цімафея", "bogashlugbovya/mm_22_01_apostala_cimafieja_viaczernia.html", VIACZERNIA))
+        datMinALL.add(SlugbovyiaTextuData(260, "16 верасьня – Пасьвяцьце Ўзвышэньня і сьвятой вялікамучаніцы Яўхіміі Ўсяхвальнае", "bogashlugbovya/mm_16_09_pasviaccie_uzvyszennia_vialikamuczanicy_jauchimii_viaczernia.html", VIACZERNIA))
+        datMinALL.add(SlugbovyiaTextuData(261, "17 верасьня – Пасьвяцьце Ўзвышэньня і сьвятых мучаніц Веры, Надзеі і Любові, і маці іх Сафіі", "bogashlugbovya/mm_17_09_pasviaccie_uzvyszennia_viery_nadziei_lubovi_maci_safii_viaczernia.html", VIACZERNIA))
     }
 
     fun getNazouSluzby(sluzba: Int): String {
