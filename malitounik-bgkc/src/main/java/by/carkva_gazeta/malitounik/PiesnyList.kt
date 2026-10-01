@@ -687,6 +687,11 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
         )
         piesnyAll.add(
             PiesnyListItem(
+                Settings.PIESNY_PRASLAULENNIA, "pesny/piesni_prasl_boza_ty_boh_moj.html", "Божа, Ты Бог мой", "https://youtu.be/fo2NnVsD1IY?si=zwARf4LukzJhQ6M5"
+            )
+        )
+        piesnyAll.add(
+            PiesnyListItem(
                 Settings.PIESNY_VIALIKODNYIA, "pesny/piesni_vlkdzn_chrystos_uvaskros_u_radasci_ziamla.html", "Хрыстос уваскрос – у радасьці зямля", "https://youtu.be/xTwiYbIpcEc?si=YQPNbFylcO1JICQE"
             )
         )
