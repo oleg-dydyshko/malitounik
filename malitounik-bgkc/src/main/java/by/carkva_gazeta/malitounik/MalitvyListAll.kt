@@ -1207,8 +1207,8 @@ fun getPrynagodnyia1(): SnapshotStateList<BogaslujbovyiaListData> {
             "Малітва да Багародзіцы, праслаўленай у цудатворнай Жыровіцкай іконе", "prynagodnyia/mltv_mb_zyrovickaja.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
-    list.add(BogaslujbovyiaListData("Малітва да Маці Божай Бялыніцкай", "prynagodnyia/mltv_mb_bialynickaja.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
-    list.add(BogaslujbovyiaListData("Малітва да Найсьвяцейшае Багародзіцы з пакорным і скрушлівым сэрцам", "prynagodnyia/mltv_da_baharodzicy_skaryna.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва да Маці Божай Бялыніцкай (З акту адданьня Маці Божай Бялыніцкай)", "prynagodnyia/mltv_mb_bialynickaja.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва да Найсьвяцейшае Багародзіцы з пакорным і скрушлівым сэрцам (Францішак Скарына)", "prynagodnyia/mltv_da_baharodzicy_skaryna.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
         list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
     } else {
@@ -1240,7 +1240,7 @@ fun getPrynagodnyia2(): SnapshotStateList<BogaslujbovyiaListData> {
     )
     list.add(BogaslujbovyiaListData("Блаславеньне маці (Матчына малітва)", "prynagodnyia/prynagodnyia_40.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(BogaslujbovyiaListData("Малітва за хросьнікаў", "prynagodnyia/mltv_za_chrosnikau.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
-    list.add(BogaslujbovyiaListData("Малітва да сьв. Язэпа", "prynagodnyia/prynagodnyia_37.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва да сьв. Язэпа (Папы Льва XIІI)", "prynagodnyia/prynagodnyia_37.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(BogaslujbovyiaListData("Малітва мужа і бацькі да сьв. Язэпа", "prynagodnyia/prynagodnyia_38.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(BogaslujbovyiaListData("Малітва да сьв. Язэпа за мужчынаў", "prynagodnyia/prynagodnyia_39.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
@@ -1253,8 +1253,8 @@ fun getPrynagodnyia2(): SnapshotStateList<BogaslujbovyiaListData> {
 
 fun getPrynagodnyia3(): SnapshotStateList<BogaslujbovyiaListData> {
     val list = SnapshotStateList<BogaslujbovyiaListData>()
-    list.add(BogaslujbovyiaListData("Малітва за Беларусь", "prynagodnyia/prynagodnyia_10.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
-    list.add(BogaslujbovyiaListData("Малітва за Айчыну - Ян Павел II", "prynagodnyia/prynagodnyia_36.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва за Беларусь (а. Леў Гарошка)", "prynagodnyia/prynagodnyia_10.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва за Айчыну (паводле сьв. Яна Паўла ІІ)", "prynagodnyia/prynagodnyia_36.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(
         BogaslujbovyiaListData(
             "Малітва за ўсіх, што пацярпелі за Беларусь", "prynagodnyia/mltv_paciarpieli_za_bielarus.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
@@ -1296,7 +1296,7 @@ fun getPrynagodnyia4(): SnapshotStateList<BogaslujbovyiaListData> {
             "Малітва аб еднасьці царквы (Экзарха Леаніда Фёдарава)", "prynagodnyia/mltv_ab_jednasci_carkvy_leanida_fiodarava.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
-    list.add(BogaslujbovyiaListData("Малітва за нашую зямлю", "prynagodnyia/mltv_za_naszuju_ziamlu.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва за нашую зямлю (Сьвятога Айца Францішка, папы Рымскага)", "prynagodnyia/mltv_za_naszuju_ziamlu.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
         list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
     } else {
@@ -1347,7 +1347,7 @@ fun getPrynagodnyia6(): SnapshotStateList<BogaslujbovyiaListData> {
     )
     list.add(BogaslujbovyiaListData("Малітва аб блаславеньні", "prynagodnyia/prynagodnyia_0.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(BogaslujbovyiaListData("Малітва кіроўцы", "prynagodnyia/mltv_kiroucy.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
-    list.add(BogaslujbovyiaListData("Малітва за ўмацаваньне ў любові", "prynagodnyia/prynagodnyia_17.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва за ўмацаваньне ў любові (Міхаліна)", "prynagodnyia/prynagodnyia_17.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(BogaslujbovyiaListData("Малітва маладога чалавека", "prynagodnyia/prynagodnyia_18.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(BogaslujbovyiaListData("Малітва на ўсякую патрэбу", "prynagodnyia/prynagodnyia_19.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(
@@ -1382,13 +1382,13 @@ fun getPrynagodnyia6(): SnapshotStateList<BogaslujbovyiaListData> {
     list.add(BogaslujbovyiaListData("Малітва ў дзень нараджэньня", "prynagodnyia/mltv_dzien_naradzennia.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(
         BogaslujbovyiaListData(
-            "Малітва аб духу любові", "prynagodnyia/mltv_ab_duchu_lubovi_sv_franciszak.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
+            "Малітва аб духу любові (Сьвятога Францішка Асізскага)", "prynagodnyia/mltv_ab_duchu_lubovi_sv_franciszak.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
-    list.add(BogaslujbovyiaListData("Малітва на кожны час", "prynagodnyia/mltv_na_kozny_czas.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва на кожны час («Доўгацярплівы, шматміласэрны і ўсеспагадлівы Хрысьце Божа»)", "prynagodnyia/mltv_na_kozny_czas.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     list.add(
         BogaslujbovyiaListData(
-            "Малітвы за памерлых («Божа духаў і ўсякага цялеснага стварэньня»)", "prynagodnyia/mltv_za_pamierlych_boza_duchau.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
+            "Малітва за памерлых («Божа духаў і ўсякага цялеснага стварэньня»)", "prynagodnyia/mltv_za_pamierlych_boza_duchau.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
     list.add(
@@ -1396,7 +1396,7 @@ fun getPrynagodnyia6(): SnapshotStateList<BogaslujbovyiaListData> {
             "Юбілейная малітва", "prynagodnyia/mltv_jubilejnaja.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"
         )
     )
-    list.add(BogaslujbovyiaListData("Малітва аб муках Госпада нашага Ісуса Хрыста", "prynagodnyia/mltv_ab_mukach_hospada.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
+    list.add(BogaslujbovyiaListData("Малітва аб муках Госпада нашага Ісуса Хрыста (З «Малой падарожнай кніжкі» Францішка Скарыны)", "prynagodnyia/mltv_ab_mukach_hospada.html", "МАЛІТВЫ -> ПРЫНАГОДНЫЯ МАЛІТВЫ"))
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
         list.sortWith(compareBy(Collator.getInstance(Locale.of("be", "BE"))) { it.title })
     } else {
