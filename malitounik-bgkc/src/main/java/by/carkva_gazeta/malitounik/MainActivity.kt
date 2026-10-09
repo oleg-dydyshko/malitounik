@@ -231,6 +231,12 @@ object Settings {
         return calendar.timeInMillis
     }
 
+    private fun mkTime(year: Int, month: Int, day: Int): Long {
+        val calendar = Calendar.getInstance()
+        calendar[year, month, day, 0, 0] = 0
+        return calendar.timeInMillis
+    }
+
     private fun mkTimeDayPosition(year: Int, month: Int, day: Int): Int {
         dataCaliandar()
         for (i in data.indices) {
@@ -251,12 +257,6 @@ object Settings {
         intent.putExtra("caliandarPosition", caliandarPosition)
         intent.`package` = context.packageName
         return intent
-    }
-
-    private fun mkTime(year: Int, month: Int, day: Int): Long {
-        val calendar = Calendar.getInstance()
-        calendar[year, month, day, 0, 0] = 0
-        return calendar.timeInMillis
     }
 
     fun createIntentSabytie(context: Context, title: String, data: String, time: String): Intent {
