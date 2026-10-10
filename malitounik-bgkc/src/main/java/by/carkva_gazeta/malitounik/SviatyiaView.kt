@@ -842,12 +842,14 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                                                     sendIntent.putExtra(Intent.EXTRA_TEXT, sviatyiaList[index].text.trim())
                                                     sendIntent.putExtra(Intent.EXTRA_SUBJECT, sviatyiaList[index].text.trim())
                                                     sendIntent.type = "image/*"
+                                                    sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                                                     context.startActivity(Intent.createChooser(sendIntent, zmiest))
                                                 } else {
                                                     val sendIntent = Intent(Intent.ACTION_SEND)
                                                     sendIntent.putExtra(Intent.EXTRA_TEXT, sb.toString())
                                                     sendIntent.putExtra(Intent.EXTRA_SUBJECT, zmiest)
                                                     sendIntent.type = "text/plain"
+                                                    sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                                                     context.startActivity(Intent.createChooser(sendIntent, zmiest))
                                                 }
                                                 Toast.makeText(context, copy, Toast.LENGTH_SHORT).show()

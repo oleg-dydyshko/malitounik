@@ -144,6 +144,7 @@ import by.carkva_gazeta.malitounik.KaliandarScreenYear
 import by.carkva_gazeta.malitounik.LogView
 import by.carkva_gazeta.malitounik.MaeNatatki
 import by.carkva_gazeta.malitounik.MainActivity
+import by.carkva_gazeta.malitounik.Malitounik
 import by.carkva_gazeta.malitounik.MalitvyListAll
 import by.carkva_gazeta.malitounik.PadzeiaView
 import by.carkva_gazeta.malitounik.ParafiiBGKC
@@ -755,9 +756,19 @@ fun AppNavGraph(navController: NavHostController = rememberNavController(), boga
     }
 }
 
+fun setCalendarHourOfDay(): Calendar {
+    val calendar = Calendar.getInstance()
+    val context = Malitounik.applicationContext()
+    val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+    if (k.getBoolean("isDayLiturgia", false) && calendar[Calendar.HOUR_OF_DAY] >= 18) {
+        calendar.add(Calendar.DATE, 1)
+    }
+    return calendar
+}
+
 fun findCaliandarToDay(isGlobal: Boolean = true): ArrayList<String> {
     var caliandarPosition = Settings.caliandarPosition
-    val calendar = Calendar.getInstance()
+    val calendar = setCalendarHourOfDay()
     for (i in Settings.data.indices) {
         if (calendar[Calendar.DATE] == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
             caliandarPosition = i
@@ -771,7 +782,7 @@ fun findCaliandarToDay(isGlobal: Boolean = true): ArrayList<String> {
 }
 
 fun findCaliandarPosition() {
-    val calendar = Calendar.getInstance()
+    val calendar = setCalendarHourOfDay()
     for (i in Settings.data.indices) {
         if (calendar[Calendar.DATE] == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
             Settings.caliandarPosition = i
@@ -921,14 +932,10 @@ fun MainConteiner(
         isAppearanceLight = if (drawerState.isOpen) {
             !Settings.dzenNoch
         } else {
-            if (currentRoute == AllDestinations.KALIANDAR) {
-                when {
-                    Settings.data[Settings.caliandarPosition][7].toInt() == 3 -> false
-                    Settings.data[Settings.caliandarPosition][5].toInt() > 0 -> false
-                    else -> true
-                }
-            } else {
-                false
+            currentRoute == AllDestinations.KALIANDAR && when {
+                Settings.data[Settings.caliandarPosition][7].toInt() == 3 -> false
+                Settings.data[Settings.caliandarPosition][5].toInt() > 0 -> false
+                else -> true
             }
         }
     }
@@ -1201,8 +1208,7 @@ fun MainConteiner(
         }
         val configuration = LocalConfiguration.current
         LaunchedEffect(configuration.orientation) {
-            isBottomBar = if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT && k.getBoolean("bottomBar", false)) k.getBoolean("bottomBar", false)
-            else false
+            isBottomBar = configuration.orientation == Configuration.ORIENTATION_PORTRAIT && k.getBoolean("bottomBar", false) && k.getBoolean("bottomBar", false)
         }
         LaunchedEffect(viewModel.textFieldValueState) {
             if (!(viewModel.perevodBiblii == Settings.PEREVODSINOIDAL || viewModel.perevodBiblii == Settings.PEREVODNEWAMERICANBIBLE || currentRoute == AllDestinations.MAE_NATATKI_MENU)) {
@@ -1339,7 +1345,7 @@ fun MainConteiner(
                         if (!isBottomBar && (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR)) {
                             PlainTooltip(stringResource(R.string.set_data), TooltipAnchorPosition.Below) {
                                 Text(
-                                    text = Calendar.getInstance()[Calendar.DATE].toString(), modifier = Modifier
+                                    text = setCalendarHourOfDay()[Calendar.DATE].toString(), modifier = Modifier
                                         .clickable {
                                             Settings.vibrate()
                                             showDropdown = true
@@ -1763,7 +1769,7 @@ fun MainConteiner(
                                 }
                                 PlainTooltip(stringResource(R.string.set_data)) {
                                     Text(
-                                        text = Calendar.getInstance()[Calendar.DATE].toString(), modifier = Modifier
+                                        text = setCalendarHourOfDay()[Calendar.DATE].toString(), modifier = Modifier
                                             .clickable {
                                                 Settings.vibrate()
                                                 showDropdown = true
@@ -2229,7 +2235,7 @@ fun SearchSviatyia(lazyColumnStateSearchSvityia: LazyListState, innerPadding: Pa
                         .padding(start = 10.dp)
                         .clickable {
                             Settings.vibrate()
-                            val calendar = Calendar.getInstance()
+                            val calendar = setCalendarHourOfDay()
                             calendar[Calendar.DAY_OF_YEAR] = viewModel.searchListSvityia[index].dayOfYear
                             for (e in Settings.data.indices) {
                                 if (calendar[Calendar.DATE] == Settings.data[e][1].toInt() && calendar[Calendar.MONTH] == Settings.data[e][2].toInt() && calendar[Calendar.YEAR] == Settings.data[e][3].toInt()) {

@@ -23,7 +23,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
@@ -84,7 +83,6 @@ object PasochnicaList {
     var pasochnicaAction by mutableIntStateOf(NONE)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PasochnicaList(navController: NavHostController, innerPadding: PaddingValues, viewModel: Piasochnica) {
     val view = LocalView.current

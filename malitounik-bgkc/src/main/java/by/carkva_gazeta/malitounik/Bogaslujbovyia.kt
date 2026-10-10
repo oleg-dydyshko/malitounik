@@ -703,8 +703,7 @@ fun Bogaslujbovyia(
     )
     val configuration = LocalConfiguration.current
     LaunchedEffect(configuration.orientation) {
-        isBottomBar = if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT && k.getBoolean("bottomBar", false)) k.getBoolean("bottomBar", false)
-        else false
+        isBottomBar = configuration.orientation == Configuration.ORIENTATION_PORTRAIT && k.getBoolean("bottomBar", false) && k.getBoolean("bottomBar", false)
     }
     LaunchedEffect(viewModel.find) {
         if (viewModel.find) {

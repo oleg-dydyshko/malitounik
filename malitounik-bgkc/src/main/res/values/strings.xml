@@ -936,5 +936,8 @@
     <string name="psalom_100">Псалом 100 (версія 1997, 2000 гг.)</string>
     <string name="play_pesny">Паслухаць песьню</string>
     <string name="gestures">Жэсты</string>
+    <string name="is_day_liturgia_title">Пачатак дня:</string>
+    <string name="is_day_liturgia_astronom">Астранамічны (у 00:00 гадзін)</string>
+    <string name="is_day_liturgia_liturgia">Літургічны (у 18:00 гадзін)</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

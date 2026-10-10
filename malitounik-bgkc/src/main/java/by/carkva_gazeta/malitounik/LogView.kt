@@ -218,6 +218,7 @@ class LogView : ViewModel() {
             sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(context, "by.carkva_gazeta.malitounik.fileprovider", zip))
             sendIntent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.set_log_file))
             sendIntent.type = "application/zip"
+            sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.set_log_file)))
         }
         CoroutineScope(Dispatchers.IO).launch {

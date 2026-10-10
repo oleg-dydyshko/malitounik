@@ -53,6 +53,7 @@ import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
 import by.carkva_gazeta.malitounik.ui.theme.StrogiPost
 import by.carkva_gazeta.malitounik.ui.theme.TitleCalendarMounth
 import by.carkva_gazeta.malitounik.views.PlainTooltip
+import by.carkva_gazeta.malitounik.views.setCalendarHourOfDay
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.GregorianCalendar
@@ -150,7 +151,7 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
                         .size(24.dp)
                         .clickable {
                             Settings.vibrate()
-                            val calendar = Calendar.getInstance()
+                            val calendar = setCalendarHourOfDay()
                             for (i in Settings.data.indices) {
                                 if (calendar[Calendar.DATE] == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
                                     Settings.caliandarPosition = i
@@ -197,7 +198,7 @@ fun KaliandarScreenMounth(setPageCaliandar: (Int) -> Unit) {
             }
             val mun = Settings.data[calPas][2].toInt()
             val year = Settings.data[calPas][3].toInt()
-            val c = Calendar.getInstance()
+            val c = setCalendarHourOfDay()
             val munTudey = mun == c[Calendar.MONTH] && year == c[Calendar.YEAR]
             val calendarFull = GregorianCalendar(year, mun, 1)
             val wik = calendarFull[Calendar.DAY_OF_WEEK]

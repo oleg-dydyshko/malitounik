@@ -754,8 +754,7 @@ fun CytanniList(
     var isBottomBar by remember { mutableStateOf(k.getBoolean("bottomBar", false)) }
     val configuration = LocalConfiguration.current
     LaunchedEffect(configuration.orientation) {
-        isBottomBar = if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT && k.getBoolean("bottomBar", false)) k.getBoolean("bottomBar", false)
-        else false
+        isBottomBar = configuration.orientation == Configuration.ORIENTATION_PORTRAIT && k.getBoolean("bottomBar", false) && k.getBoolean("bottomBar", false)
     }
     if (viewModel.listState[viewModel.selectedIndex].item.isNotEmpty() && viewModel.bibleTime) {
         viewModel.bibleTime = false

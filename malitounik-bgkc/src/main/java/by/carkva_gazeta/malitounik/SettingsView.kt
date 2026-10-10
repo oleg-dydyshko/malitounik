@@ -500,6 +500,55 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                         }
                     })
             }
+            Text(
+                text = stringResource(R.string.is_day_liturgia_title), fontStyle = FontStyle.Italic, fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
+            )
+            Column(Modifier.selectableGroup()) {
+                var isDayLiturgia by remember { mutableStateOf(k.getBoolean("isDayLiturgia", false)) }
+                val edit = k.edit()
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            Settings.vibrate()
+                            isDayLiturgia = false
+                            edit.putBoolean("isDayLiturgia", false)
+                            edit.apply()
+                        }, verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = !isDayLiturgia, onClick = {
+                            Settings.vibrate()
+                            isDayLiturgia = false
+                            edit.putBoolean("isDayLiturgia", false)
+                            edit.apply()
+                        })
+                    Text(
+                        stringResource(R.string.is_day_liturgia_astronom), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            Settings.vibrate()
+                            isDayLiturgia = true
+                            edit.putBoolean("isDayLiturgia", true)
+                            edit.apply()
+                        }, verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = isDayLiturgia, onClick = {
+                            Settings.vibrate()
+                            isDayLiturgia = true
+                            edit.putBoolean("isDayLiturgia", true)
+                            edit.apply()
+                        })
+                    Text(
+                        stringResource(R.string.is_day_liturgia_liturgia), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp
+                    )
+                }
+            }
             var adminDayInYearState by remember { mutableStateOf(k.getBoolean("adminDayInYear", false)) }
             var adminOnlyNotificationsState by remember { mutableStateOf(k.getBoolean("adminOnlyNotifications", false)) }
             var adminNotificationsState by remember { mutableStateOf(k.getBoolean("adminNotifications", false)) }

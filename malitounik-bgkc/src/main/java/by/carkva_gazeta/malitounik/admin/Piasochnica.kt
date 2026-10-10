@@ -1343,7 +1343,7 @@ fun Piasochnica(
                         .imePadding(),
                     factory = {
                         editText.apply {
-                            setText(viewModel.htmlText)
+                            text = viewModel.htmlText
                             setTextColor(ContextCompat.getColor(context, if (Settings.dzenNoch) R.color.colorWhite else R.color.colorPrimary_text))
                             setLinkTextColor(ContextCompat.getColor(context, if (Settings.dzenNoch) R.color.colorPrimary_black else R.color.colorPrimary))
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -1356,7 +1356,7 @@ fun Piasochnica(
                     },
                     update = { editText ->
                         editText.removeTextChangedListener(textWatcher)
-                        editText.setText(viewModel.htmlText)
+                        editText.text = viewModel.htmlText
                         if (startEditPosition == 0) editText.setSelection(endEditPosition)
                         else editText.setSelection(startEditPosition, endEditPosition)
                         editText.setTextColor(ContextCompat.getColor(context, if (Settings.dzenNoch) R.color.colorWhite else R.color.colorPrimary_text))

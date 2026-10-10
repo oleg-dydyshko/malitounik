@@ -12,7 +12,6 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -119,7 +118,7 @@ import java.util.Calendar
 import java.util.GregorianCalendar
 import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PadzeiaView(navController: NavHostController) {
     val context = LocalContext.current
@@ -227,10 +226,10 @@ fun PadzeiaView(navController: NavHostController) {
         }, onDelAll = {
             coroutineScope.launch {
                 val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                for (p in listPadzeia) {
-                    if (p.sec != "-1") {
-                        val intent = Settings.createIntentSabytie(context, p.padz, p.dat, p.tim)
-                        val londs3 = p.paznic / 100000L
+                for ((padz, dat, tim, paznic, _, sec) in listPadzeia) {
+                    if (sec != "-1") {
+                        val intent = Settings.createIntentSabytie(context, padz, dat, tim)
+                        val londs3 = paznic / 100000L
                         val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                         alarmManager.cancel(pIntent)
                         pIntent.cancel()
@@ -386,11 +385,11 @@ fun PadzeiaView(navController: NavHostController) {
                             pIntent.cancel()
                         }
                     } else {
-                        for (p in del) {
-                            if (p.padz == sab.padz) {
-                                if (p.sec != "-1") {
-                                    val intent = Settings.createIntentSabytie(context, p.padz, p.dat, p.tim)
-                                    val londs3 = p.paznic / 100000L
+                        for ((padz, dat, tim, paznic, _, sec) in del) {
+                            if (padz == sab.padz) {
+                                if (sec != "-1") {
+                                    val intent = Settings.createIntentSabytie(context, padz, dat, tim)
+                                    val londs3 = paznic / 100000L
                                     val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                                     alarmManager.cancel(pIntent)
                                     pIntent.cancel()
@@ -399,10 +398,10 @@ fun PadzeiaView(navController: NavHostController) {
                         }
                     }
                 } else {
-                    for (p in del) {
-                        if (p.sec != "-1") {
-                            val intent = Settings.createIntentSabytie(context, p.padz, p.dat, p.tim)
-                            val londs3 = p.paznic / 100000L
+                    for ((padz, dat, tim, paznic, _, sec) in del) {
+                        if (sec != "-1") {
+                            val intent = Settings.createIntentSabytie(context, padz, dat, tim)
+                            val londs3 = paznic / 100000L
                             val pIntent = PendingIntent.getBroadcast(context, londs3.toInt(), intent, PendingIntent.FLAG_IMMUTABLE or 0)
                             alarmManager.cancel(pIntent)
                             pIntent.cancel()
