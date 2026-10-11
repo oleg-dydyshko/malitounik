@@ -61,6 +61,7 @@ import by.carkva_gazeta.malitounik.ui.theme.PrimaryBlack
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.StrogiPost
+import by.carkva_gazeta.malitounik.views.setCalendarHourOfDay
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -80,7 +81,7 @@ class CaliandarWidget : GlanceAppWidget() {
 
 fun getDataKaliandar(): Int {
     Settings.dataCaliandar()
-    val calendar = Calendar.getInstance()
+    val calendar = setCalendarHourOfDay()
     var kalPosition = 0
     for (i in Settings.data.indices) {
         if (calendar[Calendar.DATE] == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
@@ -308,8 +309,14 @@ class Widget : GlanceAppWidgetReceiver() {
 
     private fun mkTime(addDate: Int): Long {
         val calendar = Calendar.getInstance()
+        val context = Malitounik.applicationContext()
+        val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+        if (k.getBoolean("isDayLiturgia", false)) {
+            calendar.set(Calendar.HOUR_OF_DAY, 18)
+        } else {
+            calendar.set(Calendar.HOUR_OF_DAY, 0)
+        }
         calendar.add(Calendar.DATE, addDate)
-        calendar.set(Calendar.HOUR_OF_DAY, 0)
         calendar.set(Calendar.MINUTE, 0)
         calendar.set(Calendar.SECOND, 0)
         calendar.set(Calendar.MILLISECOND, 0)

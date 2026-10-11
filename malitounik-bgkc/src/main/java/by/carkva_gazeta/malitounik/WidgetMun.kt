@@ -64,6 +64,7 @@ import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
 import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
 import by.carkva_gazeta.malitounik.ui.theme.StrogiPost
 import by.carkva_gazeta.malitounik.ui.theme.TitleCalendarMounth
+import by.carkva_gazeta.malitounik.views.setCalendarHourOfDay
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -134,7 +135,7 @@ private fun getImageActionCallback(clickType: Int): Action {
 private fun findDefaultCaliandarMun(): Int {
     Settings.dataCaliandar()
     var caliandarPosition = Settings.caliandarPosition
-    val calendar = Calendar.getInstance()
+    val calendar = setCalendarHourOfDay()
     for (i in Settings.data.indices) {
         if (1 == Settings.data[i][1].toInt() && calendar[Calendar.MONTH] == Settings.data[i][2].toInt() && calendar[Calendar.YEAR] == Settings.data[i][3].toInt()) {
             caliandarPosition = i
@@ -148,7 +149,7 @@ private fun getDataKaliandar(date: Int, position: Int): Int {
     Settings.dataCaliandar()
     val oldData = Settings.data[position]
     var newPosition = position
-    val calendar = if (date == 0) Calendar.getInstance() as GregorianCalendar
+    val calendar = if (date == 0) setCalendarHourOfDay() as GregorianCalendar
     else GregorianCalendar(oldData[3].toInt(), oldData[2].toInt(), oldData[1].toInt())
     calendar.add(Calendar.MONTH, date)
     for (i in Settings.data.indices) {
@@ -168,7 +169,7 @@ fun CalendarMun(context: Context) {
     val data = Settings.data
     val mun = data[position][2].toInt()
     val year = data[position][3].toInt()
-    val c = Calendar.getInstance()
+    val c = setCalendarHourOfDay()
     val munTudey = mun == c[Calendar.MONTH] && year == c[Calendar.YEAR]
     val calendarFull = GregorianCalendar(year, mun, 1)
     val wik = calendarFull[Calendar.DAY_OF_WEEK]
@@ -442,8 +443,14 @@ class WidgetMun : GlanceAppWidgetReceiver() {
 
     private fun mkTime(addDate: Int): Long {
         val calendar = Calendar.getInstance()
+        val context = Malitounik.applicationContext()
+        val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
+        if (k.getBoolean("isDayLiturgia", false)) {
+            calendar.set(Calendar.HOUR_OF_DAY, 18)
+        } else {
+            calendar.set(Calendar.HOUR_OF_DAY, 0)
+        }
         calendar.add(Calendar.DATE, addDate)
-        calendar.set(Calendar.HOUR_OF_DAY, 0)
         calendar.set(Calendar.MINUTE, 0)
         calendar.set(Calendar.SECOND, 0)
         calendar.set(Calendar.MILLISECOND, 0)
