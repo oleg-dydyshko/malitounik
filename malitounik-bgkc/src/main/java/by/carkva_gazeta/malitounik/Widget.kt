@@ -236,10 +236,12 @@ private fun Caliandar(context: Context) {
                         }
                     }
                 }
-                if (data[20] != "0" && data[0].toInt() == Calendar.SUNDAY) {
+                if (data[20].isNotEmpty() && data[0].toInt() == Calendar.SUNDAY) {
+                    val t1 = data[20].indexOf("\n")
+                    val ton = if (t1 != -1) data[20].take(t1) else data[20]
                     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalAlignment = Alignment.Bottom) {
                         Row(modifier = GlanceModifier.fillMaxWidth().padding(vertical = 2.dp).background(Primary), horizontalAlignment = Alignment.CenterHorizontally, verticalAlignment = Alignment.CenterVertically) {
-                            Text(text = "Тон ${data[20]}", style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 18.sp, textAlign = TextAlign.Center))
+                            Text(text = ton, style = TextStyle(color = ColorProvider(PrimaryTextBlack, PrimaryTextBlack), fontSize = 18.sp, textAlign = TextAlign.Center))
                         }
                     }
                 }

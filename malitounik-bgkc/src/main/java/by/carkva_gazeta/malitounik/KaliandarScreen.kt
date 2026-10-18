@@ -122,7 +122,7 @@ fun KaliandarScreen(
             modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column(modifier = Modifier.size(80.dp, 100.dp), verticalArrangement = Arrangement.Top) {
-                if (data[20] != "0" && data[0].toInt() == Calendar.SUNDAY) {
+                if (data[20].isNotEmpty()) {
                     Text(
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
@@ -130,7 +130,7 @@ fun KaliandarScreen(
                                 Settings.vibrate()
                                 val trapary = getTraparyKandakiNiadzelnyia()
                                 navigateToBogaslujbovyia(trapary[data[20].toInt() - 1].title, trapary[data[20].toInt() - 1].resource)
-                            }, text = "Тон ${data[20]}", textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.primary, fontSize = Settings.fontInterface.sp
+                            }, text = data[20], textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.primary, fontSize = Settings.fontInterface.sp
                     )
                 } else if (data[7].toInt() > 0) {
                     if (text != "") {
