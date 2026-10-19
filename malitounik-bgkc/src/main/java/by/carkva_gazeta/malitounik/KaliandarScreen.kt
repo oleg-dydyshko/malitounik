@@ -123,13 +123,20 @@ fun KaliandarScreen(
         ) {
             Column(modifier = Modifier.size(80.dp, 100.dp), verticalArrangement = Arrangement.Top) {
                 if (data[20].isNotEmpty()) {
+                    val t1 = data[20].indexOf("\n")
+                    val ton = if (t1 != -1) {
+                        val t2 = data[20].indexOf(" ")
+                        data[20].substring(t2 + 1, t1).toInt() - 1
+                    } else 0
                     Text(
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
                             .clickable {
-                                Settings.vibrate()
-                                val trapary = getTraparyKandakiNiadzelnyia()
-                                navigateToBogaslujbovyia(trapary[data[20].toInt() - 1].title, trapary[data[20].toInt() - 1].resource)
+                                if (ton != 0) {
+                                    Settings.vibrate()
+                                    val trapary = getTraparyKandakiNiadzelnyia()
+                                    navigateToBogaslujbovyia(trapary[ton].title, trapary[ton].resource)
+                                }
                             }, text = data[20], textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.primary, fontSize = Settings.fontInterface.sp
                     )
                 } else if (data[7].toInt() > 0) {

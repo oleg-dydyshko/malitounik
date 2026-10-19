@@ -2478,10 +2478,14 @@ class SlugbovyiaTextu {
         }
         if (slugbaType == LITURHIJA) {
             val data = Settings.data[Settings.caliandarPosition]
-            if (data[0].toInt() == Calendar.SUNDAY && data[20] != "0") {
+            if (data[0].toInt() == Calendar.SUNDAY && data[20].isNotEmpty()) {
                 val list = getTraparyKandakiNiadzelnyia()
-                val ton = data[20].toInt() - 1
-                resultDay.add(SlugbovyiaTextuData(day, list[ton].title, list[ton].resource, LITURHIJA))
+                val t1 = data[20].indexOf("\n")
+                val ton = if (t1 != -1) {
+                    val t2 = data[20].indexOf(" ")
+                    data[20].substring(t2 + 1, t1).toInt() - 1
+                } else 0
+                if (ton != 0) resultDay.add(SlugbovyiaTextuData(day, list[ton].title, list[ton].resource, LITURHIJA))
             }
             if (data[0].toInt() != Calendar.SUNDAY) {
                 val list = getTraparyKandakiShtodzennyia()
