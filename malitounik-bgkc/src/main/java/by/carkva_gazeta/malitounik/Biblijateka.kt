@@ -119,6 +119,7 @@ class PdfBitmapConverter(
     suspend fun loadSection(startPosition: Int, loadSize: Int): List<Bitmap> {
         return withContext(Dispatchers.IO) {
             val bitmaps = mutableListOf<Bitmap>()
+            if (startPosition < 0) return@withContext bitmaps
             renderer?.close()
             ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY).use { descriptor ->
                 with(PdfRenderer(descriptor)) {
