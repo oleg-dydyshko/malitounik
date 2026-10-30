@@ -1915,7 +1915,7 @@ fun CytanniList(
                         ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
                     ) {
                         Image(
-                            painter = painterResource(R.drawable.tts_stop),
+                            painter = painterResource(R.drawable.stop_circle),
                             contentDescription = null,
                             modifier = Modifier
                                 .padding(end = 10.dp)
@@ -1939,7 +1939,7 @@ fun CytanniList(
                         ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
                     ) {
                         Image(
-                            painter = painterResource(if (viewModel.isPaused) R.drawable.tts_play else R.drawable.tts_pause),
+                            painter = painterResource(if (viewModel.isPaused) R.drawable.play_circle else R.drawable.pause_circle),
                             contentDescription = null,
                             modifier = Modifier
                                 .align(Alignment.Bottom)
