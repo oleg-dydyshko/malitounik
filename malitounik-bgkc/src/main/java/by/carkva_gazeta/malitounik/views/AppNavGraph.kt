@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.os.Build
 import android.view.WindowManager
 import androidx.activity.compose.BackHandler
@@ -29,7 +28,6 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -88,7 +86,6 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -1160,7 +1157,6 @@ fun MainConteiner(
         var tollBarColor by remember { mutableStateOf(if (Settings.dzenNoch) BackgroundTolBarDark else Primary) }
         var textTollBarColor by remember { mutableStateOf(PrimaryTextBlack) }
         var title by rememberSaveable { mutableStateOf("") }
-        var isBottomBar by remember { mutableStateOf(k.getBoolean("bottomBar", false)) }
         viewModel.isIconSort = currentRoute == AllDestinations.VYBRANAE_LIST || currentRoute == AllDestinations.MAE_NATATKI_MENU
         title = when (currentRoute) {
             AllDestinations.KALIANDAR -> stringResource(R.string.kaliandar2)
@@ -1205,10 +1201,6 @@ fun MainConteiner(
             DialogEditSvityiaAndSviaty(adminViewModel) {
                 dialogEditSvityiaAndSviaty = false
             }
-        }
-        val configuration = LocalConfiguration.current
-        LaunchedEffect(configuration.orientation) {
-            isBottomBar = configuration.orientation == Configuration.ORIENTATION_PORTRAIT && k.getBoolean("bottomBar", false) && k.getBoolean("bottomBar", false)
         }
         LaunchedEffect(viewModel.textFieldValueState) {
             if (!(viewModel.perevodBiblii == Settings.PEREVODSINOIDAL || viewModel.perevodBiblii == Settings.PEREVODNEWAMERICANBIBLE || currentRoute == AllDestinations.MAE_NATATKI_MENU)) {
@@ -1342,7 +1334,7 @@ fun MainConteiner(
                     }
                 }, actions = {
                     if (!(viewModel.searchText || viewModel.searchFullText || viewModel.isEditMode || viewModel.natatkaVisable)) {
-                        if (!isBottomBar && (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR)) {
+                        if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
                             PlainTooltip(stringResource(R.string.set_data), TooltipAnchorPosition.Below) {
                                 Text(
                                     text = setCalendarHourOfDay()[Calendar.DATE].toString(), modifier = Modifier
@@ -1629,26 +1621,24 @@ fun MainConteiner(
                                     painter = painterResource(R.drawable.info), contentDescription = stringResource(R.string.symbols_menu)
                                 )
                             })
-                            if (!isBottomBar) {
-                                DropdownMenuItem(onClick = {
-                                    Settings.vibrate()
-                                    expandedUp = false
-                                    navigationActions.navigateToPadzeiView()
-                                }, text = { Text(stringResource(R.string.sabytie), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.event), contentDescription = stringResource(R.string.sabytie)
-                                    )
-                                })
-                                DropdownMenuItem(onClick = {
-                                    Settings.vibrate()
-                                    expandedUp = false
-                                    viewModel.searchText = true
-                                }, text = { Text(stringResource(R.string.poshuk_sviatych), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.search), contentDescription = stringResource(R.string.poshuk_sviatych)
-                                    )
-                                })
-                            }
+                            DropdownMenuItem(onClick = {
+                                Settings.vibrate()
+                                expandedUp = false
+                                navigationActions.navigateToPadzeiView()
+                            }, text = { Text(stringResource(R.string.sabytie), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.event), contentDescription = stringResource(R.string.sabytie)
+                                )
+                            })
+                            DropdownMenuItem(onClick = {
+                                Settings.vibrate()
+                                expandedUp = false
+                                viewModel.searchText = true
+                            }, text = { Text(stringResource(R.string.poshuk_sviatych), fontSize = (Settings.fontInterface - 2).sp) }, trailingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.search), contentDescription = stringResource(R.string.poshuk_sviatych)
+                                )
+                            })
                         }
                         if (k.getBoolean("admin", false) || k.getBoolean("adminOnlyNotifications", false)) {
                             HorizontalDivider()
@@ -1718,71 +1708,6 @@ fun MainConteiner(
                                         else pagerState.scrollToPage(date)
                                     }
                                 })
-                        }
-                    }
-                    if (isBottomBar) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(tollBarColor)
-                                .navigationBarsPadding(), horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            if (currentRoute == AllDestinations.KALIANDAR || currentRoute == AllDestinations.KALIANDAR_YEAR) {
-                                PlainTooltip(stringResource(R.string.poshuk_sviatych)) {
-                                    IconButton(onClick = {
-                                        Settings.vibrate()
-                                        viewModel.searchText = true
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.search), contentDescription = stringResource(R.string.poshuk_sviatych), tint = textTollBarColor
-                                        )
-                                    }
-                                }
-                                PlainTooltip(stringResource(R.string.sabytie)) {
-                                    IconButton(onClick = {
-                                        Settings.vibrate()
-                                        navigationActions.navigateToPadzeiView()
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.event), contentDescription = stringResource(R.string.sabytie), tint = textTollBarColor
-                                        )
-                                    }
-                                }
-                                PlainTooltip(stringResource(if (k.getBoolean("caliandarList", false)) R.string.set_book_caliandar else R.string.set_list_caliandar)) {
-                                    IconButton({
-                                        k.edit {
-                                            if (k.getBoolean("caliandarList", false)) {
-                                                navigationActions.navigateToKaliandar()
-                                                putBoolean("caliandarList", false)
-                                            } else {
-                                                putBoolean("caliandarList", true)
-                                                navigationActions.navigateToKaliandarYear()
-                                            }
-                                        }
-                                    }) {
-                                        val icon = if (k.getBoolean("caliandarList", false)) painterResource(R.drawable.calendar_today)
-                                        else painterResource(R.drawable.list)
-                                        Icon(
-                                            painter = icon, tint = textTollBarColor, contentDescription = stringResource(if (k.getBoolean("caliandarList", false)) R.string.set_book_caliandar else R.string.set_list_caliandar)
-                                        )
-                                    }
-                                }
-                                PlainTooltip(stringResource(R.string.set_data)) {
-                                    Text(
-                                        text = setCalendarHourOfDay()[Calendar.DATE].toString(), modifier = Modifier
-                                            .clickable {
-                                                Settings.vibrate()
-                                                showDropdown = true
-                                            }
-                                            .padding(horizontal = 10.dp, vertical = 7.dp)
-                                            .clip(shape = RoundedCornerShape(3.dp))
-                                            .background(textTollBarColor)
-                                            .padding(1.dp)
-                                            .clip(shape = RoundedCornerShape(3.dp))
-                                            .background(if (isToDay) Divider else StrogiPost)
-                                            .padding(horizontal = 5.dp), fontSize = 14.sp, color = if (isToDay) PrimaryText else PrimaryTextBlack)
-                                }
-                            }
                         }
                     }
                 }

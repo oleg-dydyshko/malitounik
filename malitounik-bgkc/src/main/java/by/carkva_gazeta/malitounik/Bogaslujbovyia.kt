@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Build
 import android.print.PrintAttributes
 import android.print.PrintManager
@@ -32,7 +31,6 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollBy
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,7 +40,6 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -104,7 +101,6 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -671,7 +667,6 @@ fun Bogaslujbovyia(
     var textFieldLoaded by remember { mutableStateOf(false) }
     var adminResourceEditPosition by remember { mutableIntStateOf(0) }
     val scrollStateDop = rememberScrollState()
-    var isBottomBar by remember { mutableStateOf(k.getBoolean("bottomBar", false)) }
     var backPressHandled by remember { mutableStateOf(false) }
     var iskniga by rememberSaveable { mutableStateOf(false) }
     var textLayout by remember { mutableStateOf<TextLayoutResult?>(null) }
@@ -701,10 +696,6 @@ fun Bogaslujbovyia(
             initialValue = SheetValue.Hidden
         )
     )
-    val configuration = LocalConfiguration.current
-    LaunchedEffect(configuration.orientation) {
-        isBottomBar = configuration.orientation == Configuration.ORIENTATION_PORTRAIT && k.getBoolean("bottomBar", false) && k.getBoolean("bottomBar", false)
-    }
     LaunchedEffect(viewModel.find) {
         if (viewModel.find) {
             viewModel.scrollState.animateScrollTo(viewModel.scrollToY.toInt())
@@ -1098,7 +1089,6 @@ fun Bogaslujbovyia(
         LaunchedEffect(expandedUp) {
             if (viewModel.autoScrollSensor && !isShare && !viewModel.searchText) viewModel.autoScroll(title, !expandedUp)
         }
-        val interactionSourse = remember { MutableInteractionSource() }
         LaunchedEffect(shareIsLaunch) {
             if (shareIsLaunch) {
                 val sent = selectedText.ifEmpty { textLayout?.layoutInput?.text?.text }
@@ -1300,50 +1290,11 @@ fun Bogaslujbovyia(
                                                     )
                                                 }
                                             }
-                                            if (k.getBoolean("admin", false) && isBottomBar) {
+                                            if (k.getBoolean("admin", false)) {
                                                 VerticalDivider()
                                             }
                                         }
-                                        if (!iskniga && !isBottomBar) {
-                                            if (!(viewModel.isSpeaking || viewModel.isPaused)) {
-                                                if (viewModel.scrollState.canScrollForward) {
-                                                    val iconAutoScroll = if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
-                                                    else painterResource(R.drawable.play_circle)
-                                                    PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play), TooltipAnchorPosition.Below) {
-                                                        IconButton(onClick = {
-                                                            Settings.vibrate()
-                                                            viewModel.autoScrollSensor = !viewModel.autoScrollSensor
-                                                            viewModel.autoScroll(title, viewModel.autoScrollSensor)
-                                                            if (viewModel.autoScrollSensor) {
-                                                                actyvity.window.addFlags(
-                                                                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                                                                )
-                                                            } else if (!k.getBoolean("power", false)) {
-                                                                actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                                                            }
-                                                        }) {
-                                                            Icon(
-                                                                iconAutoScroll,
-                                                                contentDescription = stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play),
-                                                                tint = MaterialTheme.colorScheme.onSecondary
-                                                            )
-                                                        }
-                                                    }
-                                                } else if (viewModel.scrollState.canScrollBackward) {
-                                                    PlainTooltip(stringResource(R.string.auto_up), TooltipAnchorPosition.Below) {
-                                                        IconButton(onClick = {
-                                                            Settings.vibrate()
-                                                            isUpList = true
-                                                        }) {
-                                                            Icon(
-                                                                painter = painterResource(R.drawable.arrow_upward),
-                                                                contentDescription = stringResource(R.string.auto_up),
-                                                                tint = MaterialTheme.colorScheme.onSecondary
-                                                            )
-                                                        }
-                                                    }
-                                                }
-                                            }
+                                        if (!iskniga) {
                                             if (listResource.isEmpty()) {
                                                 PlainTooltip(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add), TooltipAnchorPosition.Below) {
                                                     IconButton(onClick = {
@@ -1506,7 +1457,7 @@ fun Bogaslujbovyia(
                                                 }
                                             }
                                         }
-                                        if (k.getBoolean("admin", false) && (isBottomBar || iskniga)) {
+                                        if (k.getBoolean("admin", false) && iskniga) {
                                             PlainTooltip(stringResource(R.string.redagaktirovat)) {
                                                 IconButton(onClick = {
                                                     Settings.vibrate()
@@ -1645,151 +1596,6 @@ fun Bogaslujbovyia(
                                     }
                                 }
                             }
-                            if (isBottomBar) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable(interactionSource = interactionSourse, indication = null) {}
-                                        .padding(top = 10.dp)
-                                        .background(MaterialTheme.colorScheme.onTertiary)
-                                        .navigationBarsPadding(),
-                                    horizontalArrangement = Arrangement.SpaceAround
-                                ) {
-                                    PlainTooltip(stringResource(R.string.tts)) {
-                                        IconButton(onClick = {
-                                            Settings.vibrate()
-                                            if (viewModel.isSpeaking || viewModel.isPaused) {
-                                                viewModel.isSpeaking = false
-                                                viewModel.isPaused = false
-                                                viewModel.stop()
-                                            } else {
-                                                if (k.getBoolean("isTTSHelp", true)) {
-                                                    viewModel.dialodTTSHelp = true
-                                                } else {
-                                                    viewModel.isSpeaking = true
-                                                    viewModel.creteTTSList(textLayout)
-                                                    viewModel.speak()
-                                                    viewModel.autoScroll(title, false)
-                                                    viewModel.autoScrollSensor = false
-                                                }
-                                            }
-                                        }) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.text_to_speech),
-                                                contentDescription = stringResource(R.string.tts),
-                                                tint = MaterialTheme.colorScheme.onSecondary
-                                            )
-                                        }
-                                    }
-                                    PlainTooltip(stringResource(R.string.menu_font_size_app_info)) {
-                                        IconButton(onClick = {
-                                            Settings.vibrate()
-                                            showDropdown = !showDropdown
-                                            viewModel.autoScroll(title, false)
-                                        }) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.format_size),
-                                                contentDescription = stringResource(R.string.menu_font_size_app),
-                                                tint = MaterialTheme.colorScheme.onSecondary
-                                            )
-                                        }
-                                    }
-                                    PlainTooltip(stringResource(R.string.share)) {
-                                        IconButton(onClick = {
-                                            Settings.vibrate()
-                                            showDropdown = false
-                                            viewModel.autoScroll(title, false)
-                                            isShare = true
-                                        }) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.share),
-                                                contentDescription = stringResource(R.string.share),
-                                                tint = MaterialTheme.colorScheme.onSecondary
-                                            )
-                                        }
-                                    }
-                                    PlainTooltip(stringResource(R.string.searche_text)) {
-                                        IconButton(onClick = {
-                                            Settings.vibrate()
-                                            viewModel.searchText = true
-                                            viewModel.autoScroll(title, false)
-                                            viewModel.search(textLayout)
-                                        }) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.search),
-                                                contentDescription = stringResource(R.string.searche_text),
-                                                tint = MaterialTheme.colorScheme.onSecondary
-                                            )
-                                        }
-                                    }
-                                    PlainTooltip(stringResource(R.string.fullscreen_apis)) {
-                                        IconButton(onClick = {
-                                            Settings.vibrate()
-                                            fullscreen = true
-                                        }) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.fullscreen),
-                                                contentDescription = stringResource(R.string.fullscreen),
-                                                tint = MaterialTheme.colorScheme.onSecondary
-                                            )
-                                        }
-                                    }
-                                    PlainTooltip(stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add)) {
-                                        IconButton(onClick = {
-                                            Settings.vibrate()
-                                            viewModel.saveVybranoe(context)
-                                        }) {
-                                            val icon = if (viewModel.isVybranoe) painterResource(R.drawable.stars)
-                                            else painterResource(R.drawable.star)
-                                            Icon(
-                                                painter = icon,
-                                                contentDescription = stringResource(if (viewModel.isVybranoe) R.string.vybranae_remove else R.string.vybranae_add),
-                                                tint = MaterialTheme.colorScheme.onSecondary
-                                            )
-                                        }
-                                    }
-                                    if (!(viewModel.isSpeaking || viewModel.isPaused)) {
-                                        if (viewModel.scrollState.canScrollForward) {
-                                            val iconAutoScroll =
-                                                if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
-                                                else painterResource(R.drawable.play_circle)
-                                            PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play)) {
-                                                IconButton(onClick = {
-                                                    Settings.vibrate()
-                                                    viewModel.autoScrollSensor = !viewModel.autoScrollSensor
-                                                    viewModel.autoScroll(title, viewModel.autoScrollSensor)
-                                                    if (viewModel.autoScrollSensor) {
-                                                        actyvity.window.addFlags(
-                                                            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                                                        )
-                                                    } else if (!k.getBoolean("power", false)) {
-                                                        actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                                                    }
-                                                }) {
-                                                    Icon(
-                                                        iconAutoScroll,
-                                                        contentDescription = stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play),
-                                                        tint = MaterialTheme.colorScheme.onSecondary
-                                                    )
-                                                }
-                                            }
-                                        } else if (viewModel.scrollState.canScrollBackward) {
-                                            PlainTooltip(stringResource(R.string.auto_up)) {
-                                                IconButton(onClick = {
-                                                    Settings.vibrate()
-                                                    isUpList = true
-                                                }) {
-                                                    Icon(
-                                                        painter = painterResource(R.drawable.arrow_upward),
-                                                        contentDescription = stringResource(R.string.auto_up),
-                                                        tint = MaterialTheme.colorScheme.onSecondary
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
                         }
                     }
                 }
@@ -1891,7 +1697,7 @@ fun Bogaslujbovyia(
                             HtmlText(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp))
+                                    .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(10.dp))
                                     .pointerInput(Unit) {
                                         if (k.getBoolean("gestures", true)) {
                                             awaitEachGesture {
@@ -1950,7 +1756,7 @@ fun Bogaslujbovyia(
                                 BasicTextField(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp)),
+                                        .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(10.dp)),
                                     value = text,
                                     onValueChange = { newText ->
                                         text = newText
@@ -1966,7 +1772,7 @@ fun Bogaslujbovyia(
                                 BasicTextField(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(if (isBottomBar) 0.dp else 10.dp)),
+                                        .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(10.dp)),
                                     value = text,
                                     onValueChange = { newText ->
                                         text = newText
@@ -2059,7 +1865,7 @@ fun Bogaslujbovyia(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = if (!isBottomBar || fullscreen) 10.dp else 0.dp, end = 10.dp),
+                            .padding(bottom = if (fullscreen) 10.dp else 0.dp, end = 10.dp),
                         horizontalArrangement = Arrangement.End
                     ) {
                         AnimatedVisibility(
@@ -2151,36 +1957,40 @@ fun Bogaslujbovyia(
                                 }
                             }
                         }
-                        AnimatedVisibility(
-                            viewModel.autoScrollSensor, enter = fadeIn(
-                                tween(
-                                    durationMillis = 700, easing = LinearOutSlowInEasing
-                                )
-                            ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
-                        ) {
-                            Image(
-                                painter = painterResource(R.drawable.minus_auto_scroll),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .padding(horizontal = 10.dp)
-                                    .clip(shape = RoundedCornerShape(10.dp))
-                                    .pointerInput(PointerEventType.Press) {
-                                        awaitPointerEventScope {
-                                            while (true) {
-                                                val event = awaitPointerEvent()
-                                                if (event.type == PointerEventType.Press) {
-                                                    autoScrollRepitMinus = true
-                                                }
-                                                if (event.type == PointerEventType.Release) {
-                                                    autoScrollRepitMinus = false
-                                                }
-                                            }
+                        if (!(viewModel.isSpeaking || viewModel.isPaused)) {
+                            if (viewModel.scrollState.canScrollForward) {
+                                val iconAutoScroll = if (viewModel.autoScrollSensor) painterResource(R.drawable.stop_circle)
+                                else painterResource(R.drawable.play_circle)
+                                PlainTooltip(stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play), TooltipAnchorPosition.Below) {
+                                    IconButton(onClick = {
+                                        Settings.vibrate()
+                                        viewModel.autoScrollSensor = !viewModel.autoScrollSensor
+                                        viewModel.autoScroll(title, viewModel.autoScrollSensor)
+                                        if (viewModel.autoScrollSensor) {
+                                            actyvity.window.addFlags(
+                                                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                            )
+                                        } else if (!k.getBoolean("power", false)) {
+                                            actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                                         }
+                                    }) {
+                                        Icon(
+                                            iconAutoScroll, contentDescription = stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play), tint = Button, modifier = Modifier.size(40.dp)
+                                        )
                                     }
-                                    .background(Button)
-                                    .size(40.dp)
-                                    .padding(5.dp)
-                            )
+                                }
+                            } else if (viewModel.scrollState.canScrollBackward) {
+                                PlainTooltip(stringResource(R.string.auto_up), TooltipAnchorPosition.Below) {
+                                    IconButton(onClick = {
+                                        Settings.vibrate()
+                                        isUpList = true
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.arrow_circle_up), contentDescription = stringResource(R.string.auto_up), tint = Button, modifier = Modifier.size(40.dp)
+                                        )
+                                    }
+                                }
+                            }
                         }
                         AnimatedVisibility(
                             viewModel.autoScrollSensor, enter = fadeIn(
@@ -2189,30 +1999,49 @@ fun Bogaslujbovyia(
                                 )
                             ), exit = fadeOut(tween(durationMillis = 700, easing = LinearOutSlowInEasing))
                         ) {
-                            Image(
-                                painter = painterResource(R.drawable.plus_auto_scroll),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .align(Alignment.Bottom)
-                                    .clip(shape = RoundedCornerShape(10.dp))
-                                    .pointerInput(PointerEventType.Press) {
-                                        awaitPointerEventScope {
-                                            while (true) {
-                                                val event = awaitPointerEvent()
-                                                if (event.type == PointerEventType.Press) {
-                                                    autoScrollRepitPlus = true
-                                                }
-                                                if (event.type == PointerEventType.Release) {
-                                                    autoScrollRepitPlus = false
+                            Row {
+                                Icon(
+                                    tint = Button,
+                                    painter = painterResource(R.drawable.do_not_disturb_on),
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .clip(shape = RoundedCornerShape(10.dp))
+                                        .pointerInput(PointerEventType.Press) {
+                                            awaitPointerEventScope {
+                                                while (true) {
+                                                    val event = awaitPointerEvent()
+                                                    if (event.type == PointerEventType.Press) {
+                                                        autoScrollRepitMinus = true
+                                                    }
+                                                    if (event.type == PointerEventType.Release) {
+                                                        autoScrollRepitMinus = false
+                                                    }
                                                 }
                                             }
                                         }
-                                    }
-                                    .background(Button)
-                                    .size(40.dp)
-                                    .padding(5.dp)
-
-                            )
+                                        .size(48.dp)
+                                        .padding(4.dp)
+                                )
+                                Icon(
+                                    tint = Button,
+                                    painter = painterResource(R.drawable.add_circle), contentDescription = null, modifier = Modifier
+                                        .pointerInput(PointerEventType.Press) {
+                                            awaitPointerEventScope {
+                                                while (true) {
+                                                    val event = awaitPointerEvent()
+                                                    if (event.type == PointerEventType.Press) {
+                                                        autoScrollRepitPlus = true
+                                                    }
+                                                    if (event.type == PointerEventType.Release) {
+                                                        autoScrollRepitPlus = false
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        .size(48.dp)
+                                        .padding(4.dp)
+                                )
+                            }
                         }
                     }
                 }

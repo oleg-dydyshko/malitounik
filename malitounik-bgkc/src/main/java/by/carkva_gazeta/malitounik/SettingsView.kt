@@ -426,55 +426,6 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                     Settings.fontInterface = it
                 }, colors = SliderDefaults.colors(inactiveTrackColor = Divider)
             )
-            Text(
-                modifier = Modifier.padding(top = 10.dp), text = stringResource(R.string.settings_title_panel), fontStyle = FontStyle.Italic, fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
-            )
-            Column(Modifier.selectableGroup()) {
-                var buttomBar by remember { mutableStateOf(k.getBoolean("bottomBar", false)) }
-                val edit = k.edit()
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            Settings.vibrate()
-                            buttomBar = false
-                            edit.putBoolean("bottomBar", false)
-                            edit.apply()
-                        }, verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(
-                        selected = !buttomBar, onClick = {
-                            Settings.vibrate()
-                            buttomBar = false
-                            edit.putBoolean("bottomBar", false)
-                            edit.apply()
-                        })
-                    Text(
-                        stringResource(R.string.settings_top_panel), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            Settings.vibrate()
-                            buttomBar = true
-                            edit.putBoolean("bottomBar", true)
-                            edit.apply()
-                        }, verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(
-                        selected = buttomBar, onClick = {
-                            Settings.vibrate()
-                            buttomBar = true
-                            edit.putBoolean("bottomBar", true)
-                            edit.apply()
-                        })
-                    Text(
-                        stringResource(R.string.settings_battom_panel), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.secondary, fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp
-                    )
-                }
-            }
             var gestures by remember { mutableStateOf(k.getBoolean("gestures", true)) }
             Row(
                 verticalAlignment = Alignment.CenterVertically, modifier = Modifier

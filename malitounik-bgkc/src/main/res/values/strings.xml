@@ -34,9 +34,6 @@
     <string name="set_perakvad_biblii">Выбраць пераклад Бібліі</string>
     <string name="set_list_caliandar">Дні календара спісам</string>
     <string name="set_book_caliandar">Дні календара кніжкай</string>
-    <string name="settings_battom_panel">Ніжняй панэлі</string>
-    <string name="settings_top_panel">Верхняй панэлі</string>
-    <string name="settings_title_panel">Кнопкі кіраваньня разьмешчаны на:</string>
     <string name="apav_only">Толькі абавязковыя сьвяты</string>
     <string name="apav_all">Усе сьвяты</string>
     <string name="apav_no">Без апавяшчэньняў</string>
