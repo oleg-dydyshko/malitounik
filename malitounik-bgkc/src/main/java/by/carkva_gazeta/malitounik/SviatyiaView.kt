@@ -738,19 +738,17 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                     modifier = Modifier
                         .fillMaxSize()
                         .pointerInput(PointerEventType.Press) {
-                            if (k.getBoolean("gestures", true)) {
-                                awaitPointerEventScope {
-                                    while (true) {
-                                        val event = awaitPointerEvent()
-                                        if (event.changes.size == 2) {
-                                            fontSize *= event.calculateZoom()
-                                            fontSize = fontSize.coerceIn(18f, 58f)
-                                            k.edit {
-                                                putFloat("font_biblia", fontSize)
-                                            }
-                                            event.changes.forEach { pointerInputChange: PointerInputChange ->
-                                                pointerInputChange.consume()
-                                            }
+                            awaitPointerEventScope {
+                                while (true) {
+                                    val event = awaitPointerEvent()
+                                    if (event.changes.size == 2) {
+                                        fontSize *= event.calculateZoom()
+                                        fontSize = fontSize.coerceIn(18f, 58f)
+                                        k.edit {
+                                            putFloat("font_biblia", fontSize)
+                                        }
+                                        event.changes.forEach { pointerInputChange: PointerInputChange ->
+                                            pointerInputChange.consume()
                                         }
                                     }
                                 }
@@ -759,9 +757,7 @@ fun SviatyiaView(navController: NavHostController, svity: Boolean, position: Int
                         .pointerInput(Unit) {
                             detectTapGestures(
                                 onDoubleTap = {
-                                    if (k.getBoolean("gestures", true)) {
-                                        fullscreen = !fullscreen
-                                    }
+                                    fullscreen = !fullscreen
                                 }
                             )
                         },

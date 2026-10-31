@@ -1683,9 +1683,7 @@ fun Bogaslujbovyia(
                             .pointerInput(Unit) {
                                 detectTapGestures(
                                     onDoubleTap = {
-                                        if (k.getBoolean("gestures", true)) {
-                                            fullscreen = !fullscreen
-                                        }
+                                        fullscreen = !fullscreen
                                     }
                                 )
                             }
@@ -1699,26 +1697,24 @@ fun Bogaslujbovyia(
                                     .fillMaxWidth()
                                     .padding(start = 10.dp, end = 10.dp, top = padding.plus(10.dp), bottom = innerPadding.calculateBottomPadding().plus(10.dp))
                                     .pointerInput(Unit) {
-                                        if (k.getBoolean("gestures", true)) {
-                                            awaitEachGesture {
-                                                awaitFirstDown()
-                                                fontGestureBakcVisable = false
-                                                fontGestureValue = fontSize
-                                                do {
-                                                    val event = awaitPointerEvent()
-                                                    if (event.changes.size == 2) {
-                                                        fontSize *= event.calculateZoom()
-                                                        fontSize = fontSize.coerceIn(18f, 58f)
-                                                        k.edit {
-                                                            putFloat("font_biblia", fontSize)
-                                                        }
-                                                        event.changes.forEach { pointerInputChange: PointerInputChange ->
-                                                            pointerInputChange.consume()
-                                                        }
+                                        awaitEachGesture {
+                                            awaitFirstDown()
+                                            fontGestureBakcVisable = false
+                                            fontGestureValue = fontSize
+                                            do {
+                                                val event = awaitPointerEvent()
+                                                if (event.changes.size == 2) {
+                                                    fontSize *= event.calculateZoom()
+                                                    fontSize = fontSize.coerceIn(18f, 58f)
+                                                    k.edit {
+                                                        putFloat("font_biblia", fontSize)
                                                     }
-                                                } while (event.changes.any { it.pressed })
-                                                if (fontGestureValue != fontSize) fontGestureBakcVisable = true
-                                            }
+                                                    event.changes.forEach { pointerInputChange: PointerInputChange ->
+                                                        pointerInputChange.consume()
+                                                    }
+                                                }
+                                            } while (event.changes.any { it.pressed })
+                                            if (fontGestureValue != fontSize) fontGestureBakcVisable = true
                                         }
                                     },
                                 text = viewModel.htmlText,

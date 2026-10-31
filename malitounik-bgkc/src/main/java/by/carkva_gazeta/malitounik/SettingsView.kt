@@ -426,33 +426,8 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                     Settings.fontInterface = it
                 }, colors = SliderDefaults.colors(inactiveTrackColor = Divider)
             )
-            var gestures by remember { mutableStateOf(k.getBoolean("gestures", true)) }
-            Row(
-                verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                    .padding(vertical = 10.dp)
-                    .clickable {
-                        Settings.vibrate()
-                        gestures = !gestures
-                        k.edit {
-                            putBoolean("gestures", gestures)
-                        }
-                    }) {
-                Text(
-                    stringResource(R.string.gestures), modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
-                )
-                Switch(
-                    modifier = Modifier.scale(0.8f), checked = gestures, onCheckedChange = {
-                        Settings.vibrate()
-                        gestures = it
-                        k.edit {
-                            putBoolean("gestures", gestures)
-                        }
-                    })
-            }
             Text(
-                text = stringResource(R.string.is_day_liturgia_title), fontStyle = FontStyle.Italic, fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
+                text = stringResource(R.string.is_day_liturgia_title), fontStyle = FontStyle.Italic, fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary, modifier = Modifier.padding(top = 10.dp)
             )
             Column(Modifier.selectableGroup()) {
                 var isDayLiturgia by remember { mutableStateOf(k.getBoolean("isDayLiturgia", false)) }

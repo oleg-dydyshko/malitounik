@@ -1740,25 +1740,23 @@ fun CytanniList(
                     LazyColumn(
                         Modifier
                             .pointerInput(PointerEventType.Press) {
-                                if (k.getBoolean("gestures", true)) {
-                                    awaitPointerEventScope {
-                                        while (true) {
-                                            val event = awaitPointerEvent()
-                                            if (event.type == PointerEventType.Press) {
-                                                viewModel.autoScroll(title, false)
+                                awaitPointerEventScope {
+                                    while (true) {
+                                        val event = awaitPointerEvent()
+                                        if (event.type == PointerEventType.Press) {
+                                            viewModel.autoScroll(title, false)
+                                        }
+                                        if (viewModel.autoScrollSensor && event.type == PointerEventType.Release && !isScrollRun) {
+                                            viewModel.autoScroll(title, true)
+                                        }
+                                        if (event.changes.size == 2) {
+                                            fontSize *= event.calculateZoom()
+                                            fontSize = fontSize.coerceIn(18f, 58f)
+                                            k.edit {
+                                                putFloat("font_biblia", fontSize)
                                             }
-                                            if (viewModel.autoScrollSensor && event.type == PointerEventType.Release && !isScrollRun) {
-                                                viewModel.autoScroll(title, true)
-                                            }
-                                            if (event.changes.size == 2) {
-                                                fontSize *= event.calculateZoom()
-                                                fontSize = fontSize.coerceIn(18f, 58f)
-                                                k.edit {
-                                                    putFloat("font_biblia", fontSize)
-                                                }
-                                                event.changes.forEach { pointerInputChange: PointerInputChange ->
-                                                    pointerInputChange.consume()
-                                                }
+                                            event.changes.forEach { pointerInputChange: PointerInputChange ->
+                                                pointerInputChange.consume()
                                             }
                                         }
                                     }
@@ -1779,9 +1777,7 @@ fun CytanniList(
                                                     viewModel.listState[page].stateList[index] = !viewModel.listState[page].stateList[index]
                                                 }
                                             }, onDoubleTap = {
-                                                if (k.getBoolean("gestures", true)) {
-                                                    fullscreen = !fullscreen
-                                                }
+                                                fullscreen = !fullscreen
                                             })
                                         }
                                 } else {
@@ -1789,9 +1785,7 @@ fun CytanniList(
                                         .pointerInput(Unit) {
                                             detectTapGestures(
                                                 onDoubleTap = {
-                                                    if (k.getBoolean("gestures", true)) {
-                                                        fullscreen = !fullscreen
-                                                    }
+                                                    fullscreen = !fullscreen
                                                 })
                                         }
                                 }

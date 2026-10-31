@@ -1,6 +1,5 @@
 package by.carkva_gazeta.malitounik.views
 
-import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -14,7 +13,6 @@ import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -29,8 +27,7 @@ import kotlin.time.Duration.Companion.milliseconds
 fun PlainTooltip(title: String, positioning: TooltipAnchorPosition = TooltipAnchorPosition.Above, content: @Composable () -> Unit) {
     var delay = 4000L
     val t1 = title.indexOf("\n")
-    val k = LocalContext.current.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-    val newTitle = if (!k.getBoolean("gestures", true) && t1 != -1) title.take(t1)
+    val newTitle = if (t1 != -1) title.take(t1)
     else title
     val anotatedString = AnnotatedString.Builder(newTitle).apply {
         val t2 = newTitle.indexOf("\n")
