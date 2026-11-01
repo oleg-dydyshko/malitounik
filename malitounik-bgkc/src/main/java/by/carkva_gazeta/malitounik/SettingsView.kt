@@ -13,7 +13,6 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -99,7 +98,6 @@ import by.carkva_gazeta.malitounik.ui.theme.Divider
 import by.carkva_gazeta.malitounik.ui.theme.Primary
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryText
 import by.carkva_gazeta.malitounik.ui.theme.PrimaryTextBlack
-import by.carkva_gazeta.malitounik.ui.theme.SecondaryText
 import by.carkva_gazeta.malitounik.views.PlainTooltip
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -592,261 +590,39 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                     })
             }
             Text(
-                modifier = Modifier.padding(top = 10.dp), text = stringResource(R.string.biblia), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.primary
+                modifier = Modifier.padding(top = 10.dp), text = stringResource(R.string.plan_chytannia), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.primary
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.primary)
-            var sinoidalState by remember { mutableStateOf(k.getBoolean("sinoidal_bible", false)) }
-            Row(
-                verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                    .clickable {
-                        Settings.vibrate()
-                        sinoidalState = !sinoidalState
-                        k.edit {
-                            putBoolean("sinoidal_bible", sinoidalState)
-                            if (!sinoidalState && k.getString("perevodMaranata", Settings.PEREVODSEMUXI) == Settings.PEREVODSINOIDAL) {
-                                putString("perevodMaranata", Settings.PEREVODSEMUXI)
-                            }
-                        }
-                        if (sinoidalState) {
-                            val dir = File("${context.filesDir}/Sinodal")
-                            if (!dir.exists()) {
-                                perevod = Settings.PEREVODSINOIDAL
-                                dialogDownLoad = true
-                            }
-                        }
-                    }
-                    .padding(vertical = 5.dp)) {
-                Text(
-                    stringResource(R.string.bsinaidal), modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
-                )
-                Switch(
-                    modifier = Modifier.scale(0.8f), checked = sinoidalState, onCheckedChange = {
-                        Settings.vibrate()
-                        sinoidalState = it
-                        k.edit {
-                            putBoolean("sinoidal_bible", sinoidalState)
-                            if (!sinoidalState && k.getString("perevodMaranata", Settings.PEREVODSEMUXI) == Settings.PEREVODSINOIDAL) {
-                                putString("perevodMaranata", Settings.PEREVODSEMUXI)
-                            }
-                        }
-                        if (sinoidalState) {
-                            val dir = File("${context.filesDir}/Sinodal")
-                            if (!dir.exists()) {
-                                perevod = Settings.PEREVODSINOIDAL
-                                dialogDownLoad = true
-                            }
-                        }
-                    })
-            }
-            var catolikState by remember { mutableStateOf(k.getBoolean("catolik_bible", false)) }
-            Row(
-                verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                    .clickable {
-                        Settings.vibrate()
-                        catolikState = !catolikState
-                        k.edit {
-                            putBoolean("catolik_bible", catolikState)
-                            if (!catolikState && k.getString("perevod", Settings.PEREVODSEMUXI) == Settings.PEREVODCATOLIK) {
-                                putString("perevod", Settings.PEREVODSEMUXI)
-                            }
-                        }
-                        if (catolikState) {
-                            val dir = File("${context.filesDir}/Catolik")
-                            if (!dir.exists()) {
-                                perevod = Settings.PEREVODCATOLIK
-                                dialogDownLoad = true
-                            }
-                        }
-                    }
-                    .padding(vertical = 5.dp)) {
-                Text(
-                    stringResource(R.string.title_biblia_catolik), modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
-                )
-                Switch(
-                    modifier = Modifier.scale(0.8f), checked = catolikState, onCheckedChange = {
-                        Settings.vibrate()
-                        catolikState = it
-                        k.edit {
-                            putBoolean("catolik_bible", catolikState)
-                            if (!catolikState && k.getString("perevod", Settings.PEREVODSEMUXI) == Settings.PEREVODCATOLIK) {
-                                putString("perevod", Settings.PEREVODSEMUXI)
-                            }
-                        }
-                        if (catolikState) {
-                            val dir = File("${context.filesDir}/Catolik")
-                            if (!dir.exists()) {
-                                perevod = Settings.PEREVODCATOLIK
-                                dialogDownLoad = true
-                            }
-                        }
-                    })
-            }
-            var newkingjamesState by remember { mutableStateOf(k.getBoolean("newkingjames_bible", false)) }
-            var newkingjamesTranslate by remember { mutableStateOf(k.getBoolean("newkingjames_translate", false)) }
-            Column(
-                modifier = Modifier
-                    .clip(shape = RoundedCornerShape(10.dp))
-                    .border(
-                        width = 1.dp,
-                        color = SecondaryText,
-                        shape = RoundedCornerShape(10.dp)
-                    )
-                    .padding(horizontal = 10.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                        .clickable {
-                            Settings.vibrate()
-                            newkingjamesState = !newkingjamesState
-                            k.edit {
-                                putBoolean("newkingjames_bible", newkingjamesState)
-                                if (!newkingjamesState && k.getString("perevodMaranata", Settings.PEREVODSEMUXI) == Settings.PEREVODNEWAMERICANBIBLE) {
-                                    putString("perevodMaranata", Settings.PEREVODSEMUXI)
-                                }
-                                if (newkingjamesState) {
-                                    putBoolean("newkingjames_translate", false)
-                                    newkingjamesTranslate = false
-                                }
-                            }
-                            if (newkingjamesState) {
-                                val dir = File("${context.filesDir}/NewAmericanBible")
-                                if (!dir.exists()) {
-                                    perevod = Settings.PEREVODNEWAMERICANBIBLE
-                                    dialogDownLoad = true
-                                }
-                            }
-                        }
-                        .padding(vertical = 5.dp)) {
-                    Text(
-                        stringResource(R.string.perevod_new_american_bible), modifier = Modifier
-                            .weight(1f)
-                            .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
-                    )
-                    Switch(
-                        modifier = Modifier.scale(0.8f), checked = newkingjamesState, onCheckedChange = {
-                            Settings.vibrate()
-                            newkingjamesState = it
-                            k.edit {
-                                putBoolean("newkingjames_bible", newkingjamesState)
-                                if (!newkingjamesState && k.getString("perevodMaranata", Settings.PEREVODSEMUXI) == Settings.PEREVODNEWAMERICANBIBLE) {
-                                    putString("perevodMaranata", Settings.PEREVODSEMUXI)
-                                }
-                                if (newkingjamesState) {
-                                    putBoolean("newkingjames_translate", false)
-                                    newkingjamesTranslate = false
-                                }
-                            }
-                            if (newkingjamesState) {
-                                val dir = File("${context.filesDir}/NewAmericanBible")
-                                if (!dir.exists()) {
-                                    perevod = Settings.PEREVODNEWAMERICANBIBLE
-                                    dialogDownLoad = true
-                                }
-                            }
-                        })
-                }
-                if (newkingjamesState) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                            .clickable {
-                                Settings.vibrate()
-                                newkingjamesTranslate = !newkingjamesTranslate
-                                k.edit {
-                                    putBoolean("newkingjames_translate", newkingjamesTranslate)
-                                }
-                            }
-                            .padding(vertical = 5.dp)) {
-                        Text(
-                            stringResource(R.string.translate), modifier = Modifier
-                                .weight(1f)
-                                .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
-                        )
-                        Switch(
-                            modifier = Modifier.scale(0.8f), checked = newkingjamesTranslate, onCheckedChange = {
-                                Settings.vibrate()
-                                newkingjamesTranslate = it
-                                k.edit {
-                                    putBoolean("newkingjames_translate", newkingjamesTranslate)
-                                }
-                            })
-                    }
-                }
-            }
             var maranafaState by remember { mutableStateOf(k.getBoolean("maranafa", false)) }
-            var paralelState by remember { mutableStateOf(k.getBoolean("paralel_maranata", true)) }
-            Column(
-                modifier = Modifier
-                    .padding(top = 10.dp)
-                    .clip(shape = RoundedCornerShape(10.dp))
-                    .border(
-                        width = 1.dp,
-                        color = SecondaryText,
-                        shape = RoundedCornerShape(10.dp)
-                    )
-                    .padding(horizontal = 10.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                        .clickable {
-                            Settings.vibrate()
-                            maranafaState = !maranafaState
-                            k.edit {
-                                putBoolean("maranafa", maranafaState)
-                                if (maranafaState) {
-                                    putBoolean("paralel_maranata", true)
-                                    paralelState = true
-                                }
+            Row(
+                verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                    .clickable {
+                        Settings.vibrate()
+                        maranafaState = !maranafaState
+                        k.edit {
+                            putBoolean("maranafa", maranafaState)
+                            if (maranafaState) {
+                                putBoolean("paralel_maranata", true)
                             }
                         }
-                        .padding(vertical = 5.dp)) {
-                    Text(
-                        stringResource(R.string.maranata_opis), modifier = Modifier
-                            .weight(1f)
-                            .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
-                    )
-                    Switch(
-                        modifier = Modifier.scale(0.8f), checked = maranafaState, onCheckedChange = {
-                            Settings.vibrate()
-                            maranafaState = it
-                            k.edit {
-                                putBoolean("maranafa", maranafaState)
-                                if (maranafaState) {
-                                    putBoolean("paralel_maranata", true)
-                                    paralelState = true
-                                }
-                            }
-                        })
-                }
-                if (maranafaState) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                            .clickable {
-                                Settings.vibrate()
-                                paralelState = !paralelState
-                                k.edit {
-                                    putBoolean("paralel_maranata", paralelState)
-                                }
-                            }
-                            .padding(vertical = 5.dp)) {
-                        Text(
-                            stringResource(R.string.paralel), modifier = Modifier
-                                .weight(1f)
-                                .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
-                        )
-                        Switch(
-                            modifier = Modifier.scale(0.8f), checked = paralelState, onCheckedChange = {
-                                Settings.vibrate()
-                                paralelState = it
-                                k.edit {
-                                    putBoolean("paralel_maranata", paralelState)
-                                }
-                            })
                     }
-                }
+                    .padding(vertical = 10.dp)) {
+                Text(
+                    stringResource(R.string.maranata_opis), modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
+                )
+                Switch(
+                    modifier = Modifier.scale(0.8f), checked = maranafaState, onCheckedChange = {
+                        Settings.vibrate()
+                        maranafaState = it
+                        k.edit {
+                            putBoolean("maranafa", maranafaState)
+                            if (maranafaState) {
+                                putBoolean("paralel_maranata", true)
+                            }
+                        }
+                    })
             }
             Text(
                 modifier = Modifier.padding(top = 20.dp), text = stringResource(R.string.sviaty_notifi), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.primary
@@ -1189,8 +965,6 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                     adminDayInYearState = false
                     adminOnlyNotificationsState = false
                     adminNotificationsState = false
-                    catolikState = false
-                    paralelState = false
                     modePkcSvaity = false
                     modePravasSvaity = false
                     modeGosudSvaity = false

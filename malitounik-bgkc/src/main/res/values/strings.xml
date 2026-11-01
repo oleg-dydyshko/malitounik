@@ -898,7 +898,7 @@
     <string name="title_down_load">СПАМПАВАЦЬ БІБЛІЮ</string>
     <string name="content_down_load">Спампаваць %1$s памерам у %2$s?</string>
     <string name="title_down_load_update">АБНАВІЦЬ ТЭКСТ БІБЛІІ</string>
-    <string name="translate">З перакладам</string>
+    <string name="translate">З перакладам У. Чарняўскага 2017</string>
     <string name="file_not_find">файл у базе не знойдзены</string>
     <string name="admin">АДМІНІСТРАВАНЬНЕ:</string>
     <string name="sort_time">Сартаваць па апошнім часе мадыфікацыі</string>
@@ -935,5 +935,6 @@
     <string name="is_day_liturgia_title">Пачатак дня:</string>
     <string name="is_day_liturgia_astronom">Астранамічны (у 00:00 гадзін)</string>
     <string name="is_day_liturgia_liturgia">Літургічны (у 18:00 гадзін)</string>
+    <string name="plan_chytannia">ПЛАН ЧЫТАНЬНЯ БІБЛІІ:</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

@@ -42,6 +42,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -57,6 +58,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
@@ -1220,6 +1222,34 @@ fun BoxWithConstraintsScope.BibliaMenuList(
             }
         } else {
             viewModel.isIconSort = false
+        }
+        if (perevod == Settings.PEREVODNEWAMERICANBIBLE) {
+            var newkingjamesTranslate by remember { mutableStateOf(k.getBoolean("newkingjames_translate", false)) }
+            Row(
+                verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                    .clickable {
+                        Settings.vibrate()
+                        newkingjamesTranslate = !newkingjamesTranslate
+                        k.edit {
+                            putBoolean("newkingjames_translate", newkingjamesTranslate)
+                        }
+                    }
+                    .padding(horizontal = 10.dp)
+            ) {
+                Text(
+                    stringResource(R.string.translate), modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
+                )
+                Switch(
+                    modifier = Modifier.scale(0.8f), checked = newkingjamesTranslate, onCheckedChange = {
+                        Settings.vibrate()
+                        newkingjamesTranslate = it
+                        k.edit {
+                            putBoolean("newkingjames_translate", newkingjamesTranslate)
+                        }
+                    })
+            }
         }
         if (perevod == Settings.PEREVODNADSAN) {
             Column(

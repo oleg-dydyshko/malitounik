@@ -365,60 +365,54 @@ fun DrawView(
                             )
                         }
                     )
-                    if (k.getBoolean("catolik_bible", false)) {
-                        NavigationItem(
-                            label = stringResource(id = R.string.title_biblia_catolik),
-                            selected = route == AllDestinations.BIBLIA_CATOLIK,
-                            onClick = {
-                                Settings.vibrate()
-                                navigateToRazdel(AllDestinations.BIBLIA_CATOLIK)
-                            },
-                            icon = {
-                                Icon(
-                                    modifier = Modifier.size(12.dp, 12.dp),
-                                    painter = painterResource(R.drawable.krest),
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    contentDescription = null
-                                )
-                            }
-                        )
-                    }
-                    if (k.getBoolean("sinoidal_bible", false)) {
-                        NavigationItem(
-                            label = stringResource(id = R.string.bsinaidal),
-                            selected = route == AllDestinations.BIBLIA_SINODAL,
-                            onClick = {
-                                Settings.vibrate()
-                                navigateToRazdel(AllDestinations.BIBLIA_SINODAL)
-                            },
-                            icon = {
-                                Icon(
-                                    modifier = Modifier.size(12.dp, 12.dp),
-                                    painter = painterResource(R.drawable.krest),
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    contentDescription = null
-                                )
-                            }
-                        )
-                    }
-                    if (k.getBoolean("newkingjames_bible", false)) {
-                        NavigationItem(
-                            label = stringResource(id = R.string.perevod_new_american_bible),
-                            selected = route == AllDestinations.BIBLIA_NEW_AMERICAN_BIBLE,
-                            onClick = {
-                                Settings.vibrate()
-                                navigateToRazdel(AllDestinations.BIBLIA_NEW_AMERICAN_BIBLE)
-                            },
-                            icon = {
-                                Icon(
-                                    modifier = Modifier.size(12.dp, 12.dp),
-                                    painter = painterResource(R.drawable.krest),
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    contentDescription = null
-                                )
-                            }
-                        )
-                    }
+                    NavigationItem(
+                        label = stringResource(id = R.string.title_biblia_catolik),
+                        selected = route == AllDestinations.BIBLIA_CATOLIK,
+                        onClick = {
+                            Settings.vibrate()
+                            navigateToRazdel(AllDestinations.BIBLIA_CATOLIK)
+                        },
+                        icon = {
+                            Icon(
+                                modifier = Modifier.size(12.dp, 12.dp),
+                                painter = painterResource(R.drawable.krest),
+                                tint = MaterialTheme.colorScheme.primary,
+                                contentDescription = null
+                            )
+                        }
+                    )
+                    NavigationItem(
+                        label = stringResource(id = R.string.bsinaidal),
+                        selected = route == AllDestinations.BIBLIA_SINODAL,
+                        onClick = {
+                            Settings.vibrate()
+                            navigateToRazdel(AllDestinations.BIBLIA_SINODAL)
+                        },
+                        icon = {
+                            Icon(
+                                modifier = Modifier.size(12.dp, 12.dp),
+                                painter = painterResource(R.drawable.krest),
+                                tint = MaterialTheme.colorScheme.primary,
+                                contentDescription = null
+                            )
+                        }
+                    )
+                    NavigationItem(
+                        label = stringResource(id = R.string.perevod_new_american_bible),
+                        selected = route == AllDestinations.BIBLIA_NEW_AMERICAN_BIBLE,
+                        onClick = {
+                            Settings.vibrate()
+                            navigateToRazdel(AllDestinations.BIBLIA_NEW_AMERICAN_BIBLE)
+                        },
+                        icon = {
+                            Icon(
+                                modifier = Modifier.size(12.dp, 12.dp),
+                                painter = painterResource(R.drawable.krest),
+                                tint = MaterialTheme.colorScheme.primary,
+                                contentDescription = null
+                            )
+                        }
+                    )
                 }
             }
         }

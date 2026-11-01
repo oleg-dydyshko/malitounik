@@ -58,6 +58,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -83,6 +84,7 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
@@ -183,19 +185,16 @@ open class CytanniListViewModel : ViewModel() {
         }
         val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
         if (isFirstDialodVisable) {
-            var isBibleEnable = k.getBoolean("catolik_bible", false)
             var dir = File("${context.filesDir}/Catolik")
-            if (isBibleEnable && perevod == Settings.PEREVODCATOLIK && !dir.exists()) {
+            if (perevod == Settings.PEREVODCATOLIK && !dir.exists()) {
                 dialogDownLoad = true
             }
-            isBibleEnable = k.getBoolean("sinoidal_bible", false)
             dir = File("${context.filesDir}/Sinodal")
-            if (isBibleEnable && perevod == Settings.PEREVODSINOIDAL && !dir.exists()) {
+            if (perevod == Settings.PEREVODSINOIDAL && !dir.exists()) {
                 dialogDownLoad = true
             }
-            isBibleEnable = k.getBoolean("newkingjames_translate", false)
             dir = File("${context.filesDir}/NewAmericanBible")
-            if (isBibleEnable && perevod == Settings.PEREVODNEWAMERICANBIBLE && !dir.exists()) {
+            if (perevod == Settings.PEREVODNEWAMERICANBIBLE && !dir.exists()) {
                 dialogDownLoad = true
             }
             isFirstDialodVisable = false
@@ -1136,6 +1135,34 @@ fun CytanniList(
                                         painter = painterResource(R.drawable.text_to_speech), contentDescription = stringResource(R.string.tts)
                                     )
                                 })
+                                if (biblia == Settings.CHYTANNI_MARANATA) {
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            Settings.vibrate()
+                                            isParallel = !isParallel
+                                            k.edit {
+                                                putBoolean("paralel_maranata", isParallel)
+                                            }
+                                        },
+                                        text = {
+                                            Text(
+                                                stringResource(R.string.paralel), modifier = Modifier
+                                                    .weight(1f)
+                                                    .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
+                                            )
+                                        },
+                                        trailingIcon = {
+                                            Switch(
+                                                modifier = Modifier.scale(0.7f), checked = isParallel, onCheckedChange = {
+                                                    Settings.vibrate()
+                                                    isParallel = !isParallel
+                                                    k.edit {
+                                                        putBoolean("paralel_maranata", isParallel)
+                                                    }
+                                                })
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
@@ -1285,7 +1312,7 @@ fun CytanniList(
                                     )
                                 }
                             }
-                            if (k.getBoolean("catolik_bible", false) && ((biblia == Settings.CHYTANNI_BIBLIA && knigaBiblii(viewModel.knigaText) >= 50) || biblia == Settings.CHYTANNI_VYBRANAE)) {
+                            if ((biblia == Settings.CHYTANNI_BIBLIA && knigaBiblii(viewModel.knigaText) >= 50) || biblia == Settings.CHYTANNI_VYBRANAE) {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -1367,7 +1394,7 @@ fun CytanniList(
                                     )
                                 }
                             }
-                            if (k.getBoolean("sinoidal_bible", false) && biblia != Settings.CHYTANNI_LITURGICHNYIA) {
+                            if (biblia != Settings.CHYTANNI_LITURGICHNYIA) {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -1418,7 +1445,7 @@ fun CytanniList(
                                     )
                                 }
                             }
-                            if (k.getBoolean("newkingjames_bible", false) && biblia != Settings.CHYTANNI_LITURGICHNYIA) {
+                            if (biblia != Settings.CHYTANNI_LITURGICHNYIA) {
                                 if (getRealBook(knigaBiblii(viewModel.knigaText), Settings.PEREVODNEWAMERICANBIBLE) != -1 || knigaBiblii(viewModel.knigaText) == 30) {
                                     Row(
                                         modifier = Modifier
