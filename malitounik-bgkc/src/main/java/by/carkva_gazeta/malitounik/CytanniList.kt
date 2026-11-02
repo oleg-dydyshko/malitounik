@@ -755,9 +755,6 @@ fun CytanniList(
     var isSelectMode by rememberSaveable { mutableStateOf(false) }
     var backPressHandled by remember { mutableStateOf(false) }
     val actyvity = LocalActivity.current as MainActivity
-    if (viewModel.autoScrollSensor) {
-        actyvity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-    }
     val backTime by remember { mutableLongStateOf(System.currentTimeMillis()) }
     BackHandler(!backPressHandled || isSelectMode || isParallelVisable || showDropdown) {
         when {
@@ -785,12 +782,19 @@ fun CytanniList(
                         }
                     }
                     backPressHandled = true
-                    if (!k.getBoolean("power", false)) actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     viewModel.autoScroll(title, false)
                     viewModel.autoScrollSensor = false
                     navController.popBackStack()
                 }
             }
+        }
+    }
+    var power by remember { mutableLongStateOf(Calendar.getInstance().timeInMillis) }
+    LaunchedEffect(power, viewModel.autoScrollSensor) {
+        actyvity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        if (!viewModel.autoScrollSensor) {
+            delay((5 * 60 * 1000).milliseconds)
+            actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
     }
     var isUpList by remember { mutableStateOf(false) }
@@ -980,7 +984,6 @@ fun CytanniList(
                                                     putInt("bible_time_${viewModel.perevodName}_offset", viewModel.listState[viewModel.selectedIndex].lazyListState.firstVisibleItemScrollOffset)
                                                 }
                                             }
-                                            if (!k.getBoolean("power", false)) actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                                             viewModel.autoScroll(title, false)
                                             viewModel.autoScrollSensor = false
                                             navController.popBackStack()
@@ -1772,9 +1775,11 @@ fun CytanniList(
                                         val event = awaitPointerEvent()
                                         if (event.type == PointerEventType.Press) {
                                             viewModel.autoScroll(title, false)
+                                            power = Calendar.getInstance().timeInMillis
                                         }
                                         if (viewModel.autoScrollSensor && event.type == PointerEventType.Release && !isScrollRun) {
                                             viewModel.autoScroll(title, true)
+                                            power = Calendar.getInstance().timeInMillis
                                         }
                                         if (event.changes.size == 2) {
                                             fontSize *= event.calculateZoom()
@@ -1882,9 +1887,6 @@ fun CytanniList(
                             if (viewModel.listState[page].lazyListState.lastScrolledForward && !viewModel.listState[page].lazyListState.canScrollForward) {
                                 viewModel.autoScroll(title, false)
                                 viewModel.autoScrollSensor = false
-                                if (!k.getBoolean("power", false)) {
-                                    actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                                }
                             }
                         }
                     }
@@ -2026,13 +2028,6 @@ fun CytanniList(
                                     Settings.vibrate()
                                     viewModel.autoScrollSensor = !viewModel.autoScrollSensor
                                     viewModel.autoScroll(title, viewModel.autoScrollSensor)
-                                    if (viewModel.autoScrollSensor) {
-                                        actyvity.window.addFlags(
-                                            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                                        )
-                                    } else if (!k.getBoolean("power", false)) {
-                                        actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                                    }
                                 }) {
                                     Icon(
                                         iconAutoScroll, contentDescription = stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play), tint = Button, modifier = Modifier.size(40.dp)

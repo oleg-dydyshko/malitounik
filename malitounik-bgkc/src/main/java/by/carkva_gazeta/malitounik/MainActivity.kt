@@ -26,7 +26,6 @@ import android.os.IBinder
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
@@ -1176,15 +1175,6 @@ class MainActivity : ComponentActivity(), SensorEventListener, ServiceRadyjoMary
         val k = getSharedPreferences("biblia", MODE_PRIVATE)
         if (k.getInt("mode_night", Settings.MODE_NIGHT_SYSTEM) == Settings.MODE_NIGHT_AUTO) {
             setlightSensor()
-        }
-        try {
-            if (k.getBoolean("power", false)) {
-                window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            }
-        } catch (_: ClassCastException) {
-            k.edit {
-                remove("power")
-            }
         }
         /*val dir = File("$filesDir/NewKingJames")
         if (dir.exists()) dir.deleteRecursively()

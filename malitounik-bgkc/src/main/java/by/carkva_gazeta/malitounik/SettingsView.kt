@@ -8,7 +8,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.SystemClock
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -555,39 +554,6 @@ fun SettingsView(navController: NavHostController, viewModel: SearchBibleViewMod
                             }
                         })
                 }
-            }
-            Text(
-                modifier = Modifier.padding(top = 10.dp), text = stringResource(R.string.econom_enargi), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.primary
-            )
-            HorizontalDivider(color = MaterialTheme.colorScheme.primary)
-            var power by remember { mutableStateOf(k.getBoolean("power", false)) }
-            Row(
-                verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                    .clickable {
-                        Settings.vibrate()
-                        power = !power
-                        k.edit {
-                            putBoolean("power", power)
-                        }
-                        if (power) (context as Activity).window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                        else (context as Activity).window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                    }
-                    .padding(vertical = 5.dp)) {
-                Text(
-                    stringResource(R.string.econom_enargi_no), modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 10.dp), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.secondary
-                )
-                Switch(
-                    modifier = Modifier.scale(0.8f), checked = power, onCheckedChange = {
-                        Settings.vibrate()
-                        power = it
-                        k.edit {
-                            putBoolean("power", power)
-                        }
-                        if (power) (context as Activity).window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                        else (context as Activity).window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                    })
             }
             Text(
                 modifier = Modifier.padding(top = 10.dp), text = stringResource(R.string.plan_chytannia), fontSize = (Settings.fontInterface - 2).sp, lineHeight = ((Settings.fontInterface - 2) * 1.15f).sp, color = MaterialTheme.colorScheme.primary

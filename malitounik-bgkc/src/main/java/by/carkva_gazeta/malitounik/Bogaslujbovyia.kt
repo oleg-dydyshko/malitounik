@@ -80,6 +80,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -684,9 +685,6 @@ fun Bogaslujbovyia(
     val isUtran by remember { mutableStateOf(resursEncode == "bogashlugbovya/jutran_niadzelnaja.html") }
     val isLiturgia by remember { mutableStateOf(resursEncode == "bogashlugbovya/lit_jana_zalatavusnaha.html" || resursEncode == "bogashlugbovya/lit_jan_zalat_vielikodn.html" || resursEncode == "bogashlugbovya/lit_vasila_vialikaha.html" || resursEncode == "bogashlugbovya/abiednica.html" || resursEncode == "bogashlugbovya/vialikdzien_liturhija.html") }
     val data = remember { findCaliandarToDay(false) }
-    if (viewModel.autoScrollSensor) {
-        actyvity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-    }
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         SheetState(
             skipHiddenState = false,
@@ -696,6 +694,14 @@ fun Bogaslujbovyia(
             initialValue = SheetValue.Hidden
         )
     )
+    var power by remember { mutableLongStateOf(Calendar.getInstance().timeInMillis) }
+    LaunchedEffect(power, viewModel.autoScrollSensor) {
+        actyvity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        if (!viewModel.autoScrollSensor) {
+            delay((5 * 60 * 1000).milliseconds)
+            actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+    }
     LaunchedEffect(viewModel.find) {
         if (viewModel.find) {
             viewModel.scrollState.animateScrollTo(viewModel.scrollToY.toInt())
@@ -812,7 +818,6 @@ fun Bogaslujbovyia(
                 AppNavGraphState.searchBogaslujbovyia = ""
                 fullscreen = false
                 backPressHandled = true
-                if (!k.getBoolean("power", false)) actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 viewModel.autoScroll(title, false)
                 viewModel.autoScrollSensor = false
                 navController.popBackStack()
@@ -1673,9 +1678,11 @@ fun Bogaslujbovyia(
                                         val event = awaitPointerEvent()
                                         if (event.type == PointerEventType.Press) {
                                             viewModel.autoScroll(title, false)
+                                            power = Calendar.getInstance().timeInMillis
                                         }
                                         if (viewModel.autoScrollSensor && !isShare && !viewModel.searchText && event.type == PointerEventType.Release && !isScrollRun) {
                                             viewModel.autoScroll(title, true)
+                                            power = Calendar.getInstance().timeInMillis
                                         }
                                     }
                                 }
@@ -1784,9 +1791,6 @@ fun Bogaslujbovyia(
                         if (viewModel.scrollState.lastScrolledForward && !viewModel.scrollState.canScrollForward) {
                             viewModel.autoScroll(title, false)
                             viewModel.autoScrollSensor = false
-                            if (!k.getBoolean("power", false)) {
-                                actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                            }
                         }
                     }
                 }
@@ -1962,13 +1966,6 @@ fun Bogaslujbovyia(
                                         Settings.vibrate()
                                         viewModel.autoScrollSensor = !viewModel.autoScrollSensor
                                         viewModel.autoScroll(title, viewModel.autoScrollSensor)
-                                        if (viewModel.autoScrollSensor) {
-                                            actyvity.window.addFlags(
-                                                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                                            )
-                                        } else if (!k.getBoolean("power", false)) {
-                                            actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                                        }
                                     }) {
                                         Icon(
                                             iconAutoScroll, contentDescription = stringResource(if (viewModel.autoScrollSensor) R.string.auto_stop else R.string.auto_play), tint = Button, modifier = Modifier.size(40.dp)

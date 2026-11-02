@@ -1032,9 +1032,6 @@ fun MainConteiner(
     if (logView) {
         DialogLogProgramy {
             logView = false
-            if (!k.getBoolean("power", false)) {
-                context.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            }
         }
     }
     if (removeAllVybranaeDialog || removeAllNatatkiDialog) {
