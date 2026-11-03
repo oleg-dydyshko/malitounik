@@ -784,6 +784,7 @@ fun CytanniList(
                     backPressHandled = true
                     viewModel.autoScroll(title, false)
                     viewModel.autoScrollSensor = false
+                    actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     navController.popBackStack()
                 }
             }
@@ -986,6 +987,7 @@ fun CytanniList(
                                             }
                                             viewModel.autoScroll(title, false)
                                             viewModel.autoScrollSensor = false
+                                            actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                                             navController.popBackStack()
                                         }
                                     }
