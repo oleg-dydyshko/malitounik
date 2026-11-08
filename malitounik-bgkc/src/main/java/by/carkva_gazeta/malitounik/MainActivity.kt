@@ -85,6 +85,7 @@ import java.io.InputStreamReader
 import java.math.BigInteger
 import java.security.MessageDigest
 import java.util.Calendar
+import java.util.GregorianCalendar
 
 object Settings {
     const val TRANSPORT_ALL = 100
@@ -224,15 +225,8 @@ object Settings {
     }
 
     private fun mkTime(year: Int, month: Int, day: Int, hour: Int): Long {
-        val calendar = Calendar.getInstance()
-        calendar[year, month, day, hour, 0] = 0
+        val calendar = GregorianCalendar(year, month, day, hour, 0, 0)
         calendar[Calendar.MILLISECOND] = 0
-        return calendar.timeInMillis
-    }
-
-    private fun mkTime(year: Int, month: Int, day: Int): Long {
-        val calendar = Calendar.getInstance()
-        calendar[year, month, day, 0, 0] = 0
         return calendar.timeInMillis
     }
 
@@ -311,7 +305,7 @@ object Settings {
                 cw.add(Calendar.DATE, 1)
             }
             pIntent = PendingIntent.getBroadcast(context, 60, intent, PendingIntent.FLAG_IMMUTABLE or 0)
-            setAlarm(context, mkTime(cw[Calendar.YEAR], cw[Calendar.MONTH], cw[Calendar.DAY_OF_MONTH]), pIntent)
+            setAlarm(context, mkTime(cw[Calendar.YEAR], cw[Calendar.MONTH], cw[Calendar.DAY_OF_MONTH], 0), pIntent)
             val thisAppWidget = ComponentName(context.packageName, context.packageName + ".Widget_mun")
             val appWidgetManager = AppWidgetManager.getInstance(context)
             val ids = appWidgetManager.getAppWidgetIds(thisAppWidget)
@@ -332,7 +326,7 @@ object Settings {
             intent = Intent(context, WidgetRadyjoMaryia::class.java)
             pIntent = PendingIntent.getBroadcast(context, 52, intent, PendingIntent.FLAG_IMMUTABLE or 0)
             setAlarm(
-                context, mkTime(cw[Calendar.YEAR], cw[Calendar.MONTH], cw[Calendar.DAY_OF_MONTH]), pIntent
+                context, mkTime(cw[Calendar.YEAR], cw[Calendar.MONTH], cw[Calendar.DAY_OF_MONTH], 0), pIntent
             )
         }
         val c = Calendar.getInstance()

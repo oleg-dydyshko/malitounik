@@ -934,5 +934,6 @@
     <string name="is_day_liturgia_astronom">Астранамічны (у 00:00 гадзін)</string>
     <string name="is_day_liturgia_liturgia">Літургічны (у 18:00 гадзін)</string>
     <string name="plan_chytannia">ПЛАН ЧЫТАНЬНЯ БІБЛІІ:</string>
+    <string name="ton">Тон</string>
     <!--%1$s is a string and %2$d is a decimal number-->
 </resources>

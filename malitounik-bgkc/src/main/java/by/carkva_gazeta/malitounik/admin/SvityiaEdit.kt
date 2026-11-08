@@ -88,6 +88,7 @@ fun DialogEditSvityiaAndSviaty(adminViewModel: Piasochnica, onDismiss: () -> Uni
             val munName = stringArrayResource(R.array.meciac_smoll)
             var textFieldValueStateTitle by rememberSaveable { mutableStateOf("") }
             var textFieldValueStateCytanne by rememberSaveable { mutableStateOf("") }
+            var textFieldValueStateTon by rememberSaveable { mutableStateOf("") }
             var textFieldStateTitleCytanne by rememberSaveable { mutableStateOf("") }
             var textFieldStateCytanne by rememberSaveable { mutableStateOf("") }
             var style by rememberSaveable { mutableIntStateOf(0) }
@@ -100,10 +101,11 @@ fun DialogEditSvityiaAndSviaty(adminViewModel: Piasochnica, onDismiss: () -> Uni
                 if (activity?.savedInstanceState == null) {
                     setDate(context = context, isLoad = {
                         isProgressVisable = it
-                    }) { sviatyiaList, titleCytanny, cytanny, dayOfPascha ->
+                    }) { sviatyiaList, titleCytanny, cytanny, ton, dayOfPascha ->
                         dayPascha = dayOfPascha
                         textFieldValueStateTitle = sviatyiaList[0]
                         textFieldValueStateCytanne = sviatyiaList[1]
+                        textFieldValueStateTon = ton
                         var position = 2
                         when (sviatyiaList[2].toInt()) {
                             6 -> position = 0
@@ -163,7 +165,7 @@ fun DialogEditSvityiaAndSviaty(adminViewModel: Piasochnica, onDismiss: () -> Uni
                                 .padding(10.dp),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
                             keyboardActions = KeyboardActions(onDone = {
-                                adminViewModel.sendPostRequest(textFieldValueStateTitle, textFieldValueStateCytanne, style, tipicon.toString(), textFieldStateTitleCytanne, textFieldStateCytanne, dayPascha) {
+                                adminViewModel.sendPostRequest(textFieldValueStateTitle, textFieldValueStateCytanne, style, tipicon.toString(), textFieldStateTitleCytanne, textFieldStateCytanne, textFieldValueStateTon, dayPascha) {
                                     isProgressVisable = it
                                     if (!isProgressVisable) onDismiss()
                                 }
@@ -181,7 +183,7 @@ fun DialogEditSvityiaAndSviaty(adminViewModel: Piasochnica, onDismiss: () -> Uni
                                 .padding(start = 10.dp, end = 10.dp, bottom = 10.dp),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
                             keyboardActions = KeyboardActions(onDone = {
-                                adminViewModel.sendPostRequest(textFieldValueStateTitle, textFieldValueStateCytanne, style, tipicon.toString(), textFieldStateTitleCytanne, textFieldStateCytanne, dayPascha) {
+                                adminViewModel.sendPostRequest(textFieldValueStateTitle, textFieldValueStateCytanne, style, tipicon.toString(), textFieldStateTitleCytanne, textFieldStateCytanne, textFieldValueStateTon, dayPascha) {
                                     isProgressVisable = it
                                     if (!isProgressVisable) onDismiss()
                                 }
@@ -214,7 +216,7 @@ fun DialogEditSvityiaAndSviaty(adminViewModel: Piasochnica, onDismiss: () -> Uni
                                 .padding(start = 10.dp, end = 10.dp, bottom = 10.dp),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
                             keyboardActions = KeyboardActions(onDone = {
-                                adminViewModel.sendPostRequest(textFieldValueStateTitle, textFieldValueStateCytanne, style, tipicon.toString(), textFieldStateTitleCytanne, textFieldStateCytanne, dayPascha) {
+                                adminViewModel.sendPostRequest(textFieldValueStateTitle, textFieldValueStateCytanne, style, tipicon.toString(), textFieldStateTitleCytanne, textFieldStateCytanne, textFieldValueStateTon, dayPascha) {
                                     isProgressVisable = it
                                     if (!isProgressVisable) onDismiss()
                                 }
@@ -232,7 +234,25 @@ fun DialogEditSvityiaAndSviaty(adminViewModel: Piasochnica, onDismiss: () -> Uni
                                 .padding(start = 10.dp, end = 10.dp, bottom = 10.dp),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
                             keyboardActions = KeyboardActions(onDone = {
-                                adminViewModel.sendPostRequest(textFieldValueStateTitle, textFieldValueStateCytanne, style, tipicon.toString(), textFieldStateTitleCytanne, textFieldStateCytanne, dayPascha) {
+                                adminViewModel.sendPostRequest(textFieldValueStateTitle, textFieldValueStateCytanne, style, tipicon.toString(), textFieldStateTitleCytanne, textFieldStateCytanne, textFieldValueStateTon, dayPascha) {
+                                    isProgressVisable = it
+                                    if (!isProgressVisable) onDismiss()
+                                }
+                            })
+                        )
+                        TextField(
+                            textStyle = TextStyle(fontSize = Settings.fontInterface.sp),
+                            placeholder = { Text(stringResource(R.string.ton), fontSize = Settings.fontInterface.sp) },
+                            value = textFieldValueStateTon,
+                            onValueChange = {
+                                textFieldValueStateTon = it
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 10.dp, end = 10.dp, bottom = 10.dp),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
+                            keyboardActions = KeyboardActions(onDone = {
+                                adminViewModel.sendPostRequest(textFieldValueStateTitle, textFieldValueStateCytanne, style, tipicon.toString(), textFieldStateTitleCytanne, textFieldStateCytanne, textFieldValueStateTon, dayPascha) {
                                     isProgressVisable = it
                                     if (!isProgressVisable) onDismiss()
                                 }
@@ -257,7 +277,7 @@ fun DialogEditSvityiaAndSviaty(adminViewModel: Piasochnica, onDismiss: () -> Uni
                             TextButton(
                                 onClick = {
                                     Settings.vibrate()
-                                    adminViewModel.sendPostRequest(textFieldValueStateTitle, textFieldValueStateCytanne, style, tipicon.toString(), textFieldStateTitleCytanne, textFieldStateCytanne, dayPascha) {
+                                    adminViewModel.sendPostRequest(textFieldValueStateTitle, textFieldValueStateCytanne, style, tipicon.toString(), textFieldStateTitleCytanne, textFieldStateCytanne, textFieldValueStateTon,dayPascha) {
                                         isProgressVisable = it
                                         if (!isProgressVisable) onDismiss()
                                     }
@@ -301,7 +321,7 @@ suspend fun loadCalendarSviatyiaFile(context: Context, count: Int = 0): String {
     return builder
 }
 
-fun setDate(context: Context, count: Int = 0, isLoad: (Boolean) -> Unit, dataList: (ArrayList<String>, String, String, Int) -> Unit) {
+fun setDate(context: Context, count: Int = 0, isLoad: (Boolean) -> Unit, dataList: (ArrayList<String>, String, String, String, Int) -> Unit) {
     CoroutineScope(Dispatchers.Main).launch {
         if (Settings.isNetworkAvailable(context)) {
             isLoad(true)
@@ -350,8 +370,16 @@ fun setDate(context: Context, count: Int = 0, isLoad: (Boolean) -> Unit, dataLis
                                 if (dayOfPascha == myDayOfPasha) {
                                     val preList = fw.split("<>")
                                     val title = preList[2]
-                                    val cytanne = preList[3]
-                                    dataList(if (sviatyia.isNotEmpty()) sviatyia[c[24].toInt() - 1] else ArrayList(), title, cytanne, dayOfPascha)
+                                    var cytanne: String
+                                    var ton: String
+                                    if (preList.size == 5) {
+                                        cytanne = preList[4]
+                                        ton = preList[3]
+                                    } else {
+                                        cytanne = preList[3]
+                                        ton = ""
+                                    }
+                                    dataList(if (sviatyia.isNotEmpty()) sviatyia[c[24].toInt() - 1] else ArrayList(), title, cytanne, ton, dayOfPascha)
                                     return@forEachLine
                                 }
                             }
@@ -366,7 +394,7 @@ fun setDate(context: Context, count: Int = 0, isLoad: (Boolean) -> Unit, dataLis
                 Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
             }
             if (error && count < 3) {
-                setDate(context = context, count = count + 1, isLoad = { isLoad(false) }, dataList = { list, title, cytanne, dayOfPascha -> dataList(list, title, cytanne, dayOfPascha) })
+                setDate(context = context, count = count + 1, isLoad = { isLoad(false) }, dataList = { list, title, cytanne, ton, dayOfPascha -> dataList(list, title, cytanne, ton, dayOfPascha) })
             }
             isLoad(false)
         } else isLoad(false)

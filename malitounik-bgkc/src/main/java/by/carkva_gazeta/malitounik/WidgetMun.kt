@@ -443,13 +443,7 @@ class WidgetMun : GlanceAppWidgetReceiver() {
 
     private fun mkTime(addDate: Int): Long {
         val calendar = Calendar.getInstance()
-        val context = Malitounik.applicationContext()
-        val k = context.getSharedPreferences("biblia", Context.MODE_PRIVATE)
-        if (k.getBoolean("isDayLiturgia", false)) {
-            calendar.set(Calendar.HOUR_OF_DAY, 18)
-        } else {
-            calendar.set(Calendar.HOUR_OF_DAY, 0)
-        }
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
         calendar.add(Calendar.DATE, addDate)
         calendar.set(Calendar.MINUTE, 0)
         calendar.set(Calendar.SECOND, 0)

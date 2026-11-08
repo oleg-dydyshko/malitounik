@@ -721,7 +721,7 @@ class Piasochnica : ViewModel() {
         }
     }
 
-    fun sendPostRequest(svityia: String, chtenieSvaitomu: String, style: Int, tipicon: String, titleCytanne: String, cytanne: String, dayOfPascha: Int, count: Int = 0, isLoad: (Boolean) -> Unit) {
+    fun sendPostRequest(svityia: String, chtenieSvaitomu: String, style: Int, tipicon: String, titleCytanne: String, cytanne: String, ton: String, dayOfPascha: Int, count: Int = 0, isLoad: (Boolean) -> Unit) {
         val context = Malitounik.applicationContext()
         var error = false
         viewModelScope.launch {
@@ -811,7 +811,10 @@ class Piasochnica : ViewModel() {
                                     }
                                     if (dayOfPascha == myDayOfPasha) {
                                         val preList = fw.split("<>")
-                                        sb.append(preList[0]).append("<>").append(preList[1]).append("<>").append(titleCytanne).append("<>").append(cytanne).append("\n")
+                                        val titleTon = if (ton.isNotEmpty()) {
+                                            "<>$ton"
+                                        } else ""
+                                        sb.append(preList[0]).append("<>").append(preList[1]).append("<>").append(titleCytanne).append(titleTon).append("<>").append(cytanne).append("\n")
                                     } else {
                                         sb.append("$fw\n")
                                     }
@@ -834,7 +837,8 @@ class Piasochnica : ViewModel() {
                         }
                     }.await()
                     saveLogFile()
-                } catch (_: Throwable) {
+                } catch (e: Throwable) {
+                    e.printStackTrace()
                     error = true
                     Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
                 }
@@ -842,7 +846,7 @@ class Piasochnica : ViewModel() {
             } else isLoad(false)
         }
         if (error && count < 3) {
-            sendPostRequest(svityia, chtenieSvaitomu, style, tipicon, titleCytanne, cytanne, dayOfPascha, count + 1, isLoad = { })
+            sendPostRequest(svityia, chtenieSvaitomu, style, tipicon, titleCytanne, cytanne, ton, dayOfPascha, count + 1, isLoad = { })
         } else if (count == 3) {
             Toast.makeText(context, context.getString(R.string.error_ch), Toast.LENGTH_SHORT).show()
             isLoad(false)

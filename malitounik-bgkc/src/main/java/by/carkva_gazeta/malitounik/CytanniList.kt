@@ -794,7 +794,7 @@ fun CytanniList(
     LaunchedEffect(power, viewModel.autoScrollSensor) {
         actyvity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         if (!viewModel.autoScrollSensor) {
-            delay((5 * 60 * 1000).milliseconds)
+            delay((2 * 60 * 1000).milliseconds)
             actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
     }
