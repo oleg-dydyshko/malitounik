@@ -848,6 +848,7 @@ fun CytanniList(
     LifecycleResumeEffect(Unit) {
         if (viewModel.autoScrollSensor) viewModel.autoScroll(title, true)
         onPauseOrDispose {
+            actyvity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             viewModel.autoScroll(title, false)
             viewModel.shutdown()
             viewModel.isPaused = false
@@ -994,7 +995,7 @@ fun CytanniList(
                                 }
                             }, content = {
                                 Icon(
-                                    painter = painterResource(R.drawable.arrow_back), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = stringResource(R.string.exit_page)
+                                    painter = painterResource(R.drawable.close), tint = MaterialTheme.colorScheme.onSecondary, contentDescription = stringResource(R.string.exit_page)
                                 )
                             })
                         }
@@ -1690,7 +1691,7 @@ fun CytanniList(
                         if (biblia == Settings.CHYTANNI_BIBLIA && perevodRoot != Settings.PEREVODNADSAN) {
                             viewModel.subTitle = resultPage[0].title.substringBeforeLast(" ")
                         }
-                        if (viewModel.subTitle.isEmpty() && biblia != Settings.CHYTANNI_BIBLIA) {
+                        if (biblia != Settings.CHYTANNI_BIBLIA) {
                             viewModel.subTitle = resultPage[0].title
                         }
                     })
