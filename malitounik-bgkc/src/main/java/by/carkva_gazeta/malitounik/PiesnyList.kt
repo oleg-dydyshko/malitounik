@@ -682,6 +682,16 @@ fun PiesnyList(navController: NavHostController, piesny: String, innerPadding: P
         )
         piesnyAll.add(
             PiesnyListItem(
+                Settings.PIESNY_PRASLAULENNIA, "pesny/piesni_prasl_tabie_addaju_ja_zyccio.html", "Табе аддаю я жыцьцё", "https://youtu.be/P_3pqn9slMY?si=w3M9zjArxZymirhu"
+            )
+        )
+        piesnyAll.add(
+            PiesnyListItem(
+                Settings.PIESNY_PRASLAULENNIA, "pesny/piesni_prasl_ty_hospad_sviatla.html", "Ты – Госпад сьвятла", "https://youtu.be/G3sf1PjkIS4?si=I5CpD6bmyI_Y4j6i"
+            )
+        )
+        piesnyAll.add(
+            PiesnyListItem(
                 Settings.PIESNY_PRASLAULENNIA, "pesny/piesni_prasl_praslaulajcie_sluhi.html", "Праслаўляйце, слугі", "https://youtu.be/jAhVX1Y8gpE?si=UYWKNeRpaCYwsHs"
             )
         )

@@ -102,7 +102,7 @@ fun KaliandarScreenInfo(navController: NavHostController) {
                             },
                             content = {
                                 Icon(
-                                    painter = painterResource(R.drawable.close),
+                                    painter = painterResource(R.drawable.arrow_back),
                                     tint = MaterialTheme.colorScheme.onSecondary,
                                     contentDescription = stringResource(R.string.exit_page)
                                 )
